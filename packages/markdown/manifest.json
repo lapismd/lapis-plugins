@@ -1,0 +1,33 @@
+{
+  "id": "markdown",
+  "name": "Markdown",
+  "author": "Lapis Notes",
+  "version": "0.1.0",
+  "minAppVersion": "0.1.0",
+  "description": "Mira-powered Markdown editing with source, live preview, and reading modes.",
+  "lapis": {
+    "manifestVersion": 1,
+    "source": "official",
+    "locked": false,
+    "enabledByDefault": true,
+    "runtime": {
+      "entries": {
+        "workspace": {
+          "path": "main.mjs",
+          "format": "esm",
+          "sharedDependencies": [
+            "@lapis-notes/api",
+            "@lapis-notes/api/agent-tools",
+            "@lapis-notes/api/editor",
+            "@lapis-notes/api/editor/core",
+            "@lapis-notes/api/editor/language-service",
+            "@lapis-notes/api/icon",
+            "@lapis-notes/api/vault",
+            "@lapis-notes/api/workspace-host"
+          ],
+          "requiresReloadOnUpdate": false
+        }
+      }
+    }
+  }
+}

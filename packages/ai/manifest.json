@@ -1,0 +1,34 @@
+{
+  "id": "ai",
+  "name": "AI",
+  "version": "0.1.0",
+  "minAppVersion": "0.1.0",
+  "description": "Provider-agnostic agent chat with ACP and optional native runtimes.",
+  "author": "Lapis Notes",
+  "lapis": {
+    "manifestVersion": 1,
+    "source": "official",
+    "locked": false,
+    "enabledByDefault": true,
+    "runtime": {
+      "entries": {
+        "workspace": {
+          "path": "main.mjs",
+          "format": "esm",
+          "sharedDependencies": [
+            "@lapis-notes/api",
+            "@lapis-notes/api/agent-skills",
+            "@lapis-notes/api/agent-tools",
+            "@lapis-notes/api/app-database",
+            "@lapis-notes/api/desktop-native",
+            "@lapis-notes/api/path",
+            "@lapis-notes/api/vault",
+            "@lapis-notes/api/workspace-host",
+            "@lapis-notes/markdown/embed"
+          ],
+          "requiresReloadOnUpdate": false
+        }
+      }
+    }
+  }
+}

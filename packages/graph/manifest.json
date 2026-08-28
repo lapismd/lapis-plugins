@@ -1,0 +1,30 @@
+{
+  "id": "lapis-graph",
+  "name": "Graph",
+  "version": "0.1.0",
+  "minAppVersion": "0.1.0",
+  "description": "Global and local graph views powered by indexed metadata",
+  "author": "Lapis Notes",
+  "authorUrl": "https://app.lapis.md",
+  "isDesktopOnly": false,
+  "lapis": {
+    "manifestVersion": 1,
+    "source": "official",
+    "locked": false,
+    "enabledByDefault": true,
+    "runtime": {
+      "entries": {
+        "workspace": {
+          "path": "main.mjs",
+          "format": "esm",
+          "sharedDependencies": [
+            "@lapis-notes/api",
+            "@lapis-notes/api/telemetry",
+            "@lapis-notes/markdown/embed"
+          ],
+          "requiresReloadOnUpdate": false
+        }
+      }
+    }
+  }
+}

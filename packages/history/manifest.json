@@ -1,0 +1,27 @@
+{
+  "id": "history",
+  "name": "History",
+  "version": "0.1.0",
+  "minAppVersion": "0.1.0",
+  "description": "File history",
+  "author": "Lapis Notes",
+  "lapis": {
+    "manifestVersion": 1,
+    "source": "official",
+    "locked": false,
+    "enabledByDefault": true,
+    "runtime": {
+      "entries": {
+        "workspace": {
+          "path": "main.mjs",
+          "format": "esm",
+          "sharedDependencies": [
+            "@lapis-notes/api",
+            "@lapis-notes/api/workspace-host"
+          ],
+          "requiresReloadOnUpdate": false
+        }
+      }
+    }
+  }
+}

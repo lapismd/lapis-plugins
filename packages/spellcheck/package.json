@@ -1,0 +1,65 @@
+{
+  "name": "@lapis-notes/spellcheck",
+  "version": "0.1.0",
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "scripts": {
+    "build": "pnpm run prepack",
+    "check": "pnpm check:types",
+    "check:types": "svelte-check --tsconfig ./tsconfig.json --fail-on-warnings --output human",
+    "test": "vitest run",
+    "prepack": "svelte-package --input src --output dist --tsconfig tsconfig.json && publint",
+    "publint": "publint",
+    "pack": "pnpm pack --pack-destination ../../.release/npm"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./manifest.json": "./manifest.json",
+    "./styles.css": "./styles.css"
+  },
+  "dependencies": {
+    "@lapis-notes/api": "^0.1.0",
+    "harper.js": "^2.7.0"
+  },
+  "devDependencies": {
+    "@sveltejs/package": "^2.5.0",
+    "svelte": "^5.38.2",
+    "svelte-check": "^4.3.1",
+    "typescript": "~5.9.3",
+    "vite": "^6.4.2",
+    "vitest": "^4.1.8"
+  },
+  "description": "Harper grammar and spelling diagnostics for open notes",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lapismd/lapis-plugins.git",
+    "directory": "packages/spellcheck"
+  },
+  "homepage": "https://github.com/lapismd/lapis-plugins/tree/main/packages/spellcheck#readme",
+  "bugs": {
+    "url": "https://github.com/lapismd/lapis-plugins/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "manifest.json",
+    "styles.css",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE.md",
+    "!dist/**/*.test.*",
+    "!dist/**/*.spec.*"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "svelte": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}

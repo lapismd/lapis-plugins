@@ -1,0 +1,633 @@
+import type { App } from "@lapis-notes/api";
+import { FileProperties } from "@lapis-notes/markdown";
+import type { Meta, StoryObj } from "@storybook/svelte-vite";
+import { expect, userEvent, waitFor, within } from "storybook/test";
+import PanelDemo from "../../_shared/panels/PanelDemo.svelte";
+import { panelExampleSources } from "../../_shared/panels/Panel.example-sources";
+import type { PanelDemoLayout } from "../../_shared/panels/create-panel-demo";
+import {
+  expectPanelAlignment,
+  expectPanelPlacement,
+  expectPanelSource,
+  PANEL_DOCS_PARAMETERS,
+  PANEL_PLACEMENTS,
+  panelDemoApp,
+  placementParameters,
+} from "../../_shared/panels/panel-story-helpers";
+import "../../_shared/panels/Panel.docs.css";
+
+const kind = "file-properties" as const;
+const sources = panelExampleSources(kind);
+
+const meta = {
+  title: "Plugins/Markdown/Panels/File Properties",
+  component: FileProperties,
+  args: { app: undefined as unknown as App },
+  argTypes: {
+    app: {
+      control: false,
+      description:
+        "Initialized Lapis App supplied by the Markdown plugin view.",
+    },
+  },
+  tags: ["visual-pending", "test"],
+  parameters: {
+    layout: "fullscreen",
+    docs: {
+      ...PANEL_DOCS_PARAMETERS,
+      description: {
+        component:
+          "File Properties accepts only the initialized Lapis App. Each story keeps one minimal active Markdown note because property editing is file-scoped.",
+      },
+    },
+  },
+} satisfies Meta<typeof FileProperties>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+type StoryRender = NonNullable<Story["render"]>;
+
+function renderPlacement(layout: PanelDemoLayout): StoryRender {
+  return (() => ({
+    Component: PanelDemo,
+    props: { kind, layout },
+  })) as StoryRender;
+}
+
+function resizePanelTab(
+  canvasElement: HTMLElement,
+  layout: PanelDemoLayout,
+): (() => void) | null {
+  if (layout === "middle-top-tabs") {
+    const split = canvasElement.querySelector<HTMLElement>(
+      '[data-workspace-split-id="main"]',
+    );
+    const panes = split
+      ? Array.from(
+          split.querySelectorAll<HTMLElement>("[data-pane]"),
+        ).filter(
+          (pane) => pane.closest("[data-workspace-split-id]") === split,
+        )
+      : [];
+    if (panes.length !== 2) {
+      throw new Error("Expected two panes in the panel story main split");
+    }
+    const panelPane = canvasElement
+      .querySelector<HTMLElement>('[data-testid="file-properties-panel"]')
+      ?.closest<HTMLElement>("[data-pane]");
+    if (!panelPane || !panes.includes(panelPane)) {
+      throw new Error("Could not locate the File Properties story pane");
+    }
+    const originalStyles = panes.map((pane) => pane.getAttribute("style"));
+    for (const pane of panes) {
+      if (pane === panelPane) {
+        pane.style.setProperty("flex", "0 0 224px", "important");
+        pane.style.setProperty("width", "224px", "important");
+        pane.style.setProperty("max-width", "224px", "important");
+      } else {
+        pane.style.setProperty("flex", "1 1 auto", "important");
+      }
+    }
+    return () => {
+      panes.forEach((pane, index) => {
+        const style = originalStyles[index];
+        if (style === null) pane.removeAttribute("style");
+        else pane.setAttribute("style", style);
+      });
+    };
+  }
+
+  return null;
+}
+
+function placementStory(
+  layout: PanelDemoLayout,
+  source: string,
+  description: string,
+): Story {
+  return {
+    name: PANEL_PLACEMENTS[layout].name,
+    parameters: placementParameters(kind, layout, source, description),
+    render: renderPlacement(layout),
+    play: async ({ args, canvasElement, parameters }) => {
+      const panel = await expectPanelPlacement(
+        canvasElement,
+        kind,
+        layout,
+        "file-properties-panel",
+        args,
+      );
+      const alignment = await expectPanelAlignment(
+        canvasElement,
+        "file-properties-panel",
+      );
+      await waitFor(() => {
+        expect(
+          panel.getByRole("combobox", { name: "status value" }),
+        ).toHaveTextContent("ready");
+      });
+      const editor = alignment.panelElement.querySelector<HTMLElement>(
+        '[data-testid="mira-frontmatter-editor"]',
+      );
+      const widgetShell = alignment.panelElement.querySelector<HTMLElement>(
+        ".markdown-widget-shell",
+      );
+      expect(editor).not.toBeNull();
+      expect(widgetShell).not.toBeNull();
+      expect(getComputedStyle(widgetShell as HTMLElement).minWidth).toBe("0px");
+      expect(getComputedStyle(widgetShell as HTMLElement).backgroundColor).toBe(
+        "rgba(0, 0, 0, 0)",
+      );
+      expect(
+        Math.abs(
+          (editor?.getBoundingClientRect().width ?? 0) -
+            alignment.availableContentWidth,
+        ),
+      ).toBeLessThan(1);
+
+      const tagsRow = alignment.panelElement.querySelector<HTMLElement>(
+        '[data-property="tags"]',
+      );
+      const aliasesRow = alignment.panelElement.querySelector<HTMLElement>(
+        '[data-property="aliases"]',
+      );
+      const ownersRow = alignment.panelElement.querySelector<HTMLElement>(
+        '[data-property="owners"]',
+      );
+      expect(tagsRow).not.toBeNull();
+      expect(aliasesRow).not.toBeNull();
+      expect(ownersRow).not.toBeNull();
+      const tagsTypeButton = within(tagsRow as HTMLElement).getByRole(
+        "button",
+        { name: "Property options for tags" },
+      );
+      const tagsTypeIcon = tagsTypeButton.querySelector<SVGElement>("svg");
+      expect(tagsTypeIcon).not.toBeNull();
+      expect(tagsTypeIcon?.querySelector('path[d="M4 9h16"]')).not.toBeNull();
+      expect(tagsTypeIcon?.querySelector('path[d="M4 15h16"]')).not.toBeNull();
+      const tags = within(tagsRow as HTMLElement);
+      const aliases = within(aliasesRow as HTMLElement);
+      const owners = within(ownersRow as HTMLElement);
+      expect(tags.getByText("demo", { exact: true })).toBeVisible();
+      expect(tags.getByText("markdown", { exact: true })).toBeVisible();
+      expect(tags.getByText("project/alpha", { exact: true })).toBeVisible();
+      expect(tags.getByRole("button", { name: "Remove demo" })).toBeVisible();
+      expect(
+        getComputedStyle(
+          tags
+            .getByText("demo", { exact: true })
+            .closest(".metadata-property-pill-chip") as HTMLElement,
+        ).backgroundColor,
+      ).not.toBe("rgba(0, 0, 0, 0)");
+      expect(aliases.getByText("Lapis Home", { exact: true })).toBeVisible();
+      expect(aliases.getByText("Idea inbox", { exact: true })).toBeVisible();
+      expect(
+        aliases
+          .getByText("Idea inbox", { exact: true })
+          .closest(".metadata-property-pill-link"),
+      ).not.toBeNull();
+      const linkedAlias = aliases.getByRole("button", {
+        name: "Idea inbox",
+      });
+      const linkedAliasBounds = linkedAlias.getBoundingClientRect();
+      expect(linkedAliasBounds.width).toBeGreaterThan(
+        linkedAliasBounds.height * 2.5,
+      );
+      let tagsInput = tags.getByRole("combobox", { name: "tags value" });
+      await userEvent.click(tagsInput);
+      await userEvent.type(tagsInput, "ide");
+      await waitFor(() => {
+        expect(
+          within(canvasElement.ownerDocument.body).getByRole("option", {
+            name: "ideas",
+          }),
+        ).toBeVisible();
+      });
+      await userEvent.keyboard("{Escape}");
+      const longTag =
+        "topic/financial-planning-and-long-term-investing-with-custom-scenarios-and-review-notes";
+      tagsInput = tags.getByRole("combobox", { name: "tags value" });
+      await userEvent.clear(tagsInput);
+      await userEvent.type(tagsInput, longTag);
+      await expect(tagsInput).toHaveValue(longTag);
+      await userEvent.keyboard("{Enter}");
+      const longTagLabel = tags.getByText(longTag, { exact: true });
+      const longTagPill = longTagLabel.closest<HTMLElement>(
+        ".metadata-property-pill-chip",
+      );
+      expect(longTagPill).not.toBeNull();
+      const aliasPill = aliases
+        .getByText("Lapis Home", { exact: true })
+        .closest<HTMLElement>(".metadata-property-pill-chip");
+      expect(aliasPill).not.toBeNull();
+      expect(
+        getComputedStyle(aliasPill as HTMLElement).backgroundColor,
+      ).not.toBe(getComputedStyle(alignment.viewHost).backgroundColor);
+      expect(
+        aliases.getByRole("button", { name: "Remove Lapis Home" }),
+      ).toBeVisible();
+      expect(owners.getByText("Ada Lovelace", { exact: true })).toBeVisible();
+      expect(owners.getByText("Grace Hopper", { exact: true })).toBeVisible();
+      const ownersPill = owners
+        .getByText("Ada Lovelace", { exact: true })
+        .closest<HTMLElement>(".metadata-property-pill-chip");
+      expect(ownersPill).not.toBeNull();
+      expect(
+        getComputedStyle(ownersPill as HTMLElement).backgroundColor,
+      ).not.toBe(getComputedStyle(alignment.viewHost).backgroundColor);
+
+      for (const [scope, label] of [
+        [tags, "demo"],
+        [aliases, "Lapis Home"],
+        [owners, "Ada Lovelace"],
+      ] as const) {
+        const remove = scope.getByRole("button", {
+          name: `Remove ${label}`,
+        });
+        const removeIcon = remove.querySelector<SVGElement>("svg");
+        expect(removeIcon).not.toBeNull();
+        expect(
+          removeIcon?.querySelector('path[d="M18 6 6 18"]'),
+        ).not.toBeNull();
+        expect(
+          removeIcon?.querySelector('path[d="m6 6 12 12"]'),
+        ).not.toBeNull();
+        expect(
+          removeIcon?.getBoundingClientRect().width ?? 0,
+        ).toBeGreaterThanOrEqual(9);
+      }
+
+      const page = within(canvasElement.ownerDocument.body);
+      let ownersInput = owners.getByRole("combobox", {
+        name: "owners value",
+      });
+      await userEvent.click(ownersInput);
+      await userEvent.type(ownersInput, "Mar");
+      let ownerOption = await page.findByRole("option", {
+        name: "Margaret Hamilton",
+      });
+      await expect(ownerOption).toHaveAttribute("aria-selected", "false");
+      const ownerSuggestions = ownerOption.closest<HTMLElement>(
+        ".mira-property-value-suggestions",
+      );
+      expect(ownerSuggestions).not.toBeNull();
+      expect((ownersRow as HTMLElement).contains(ownerSuggestions)).toBe(false);
+      const ownerOptionBounds = ownerOption.getBoundingClientRect();
+      const ownerOptionHit = canvasElement.ownerDocument.elementFromPoint(
+        ownerOptionBounds.left + ownerOptionBounds.width / 2,
+        ownerOptionBounds.top + ownerOptionBounds.height / 2,
+      );
+      expect(
+        ownerOptionHit === ownerOption || ownerOption.contains(ownerOptionHit),
+      ).toBe(true);
+      await userEvent.keyboard("{Enter}");
+      await expect(owners.getByText("Mar", { exact: true })).toBeVisible();
+
+      const longOwner =
+        "International Collaboration and Research Coordination Working Group";
+      ownersInput = owners.getByRole("combobox", { name: "owners value" });
+      await userEvent.type(ownersInput, longOwner);
+      await expect(ownersInput).toHaveValue(longOwner);
+      await userEvent.keyboard("{Enter}");
+      const longOwnerLabel = owners.getByText(longOwner, { exact: true });
+      const longOwnerPill = longOwnerLabel.closest<HTMLElement>(
+        ".metadata-property-pill-chip",
+      );
+      expect(longOwnerPill).not.toBeNull();
+
+      expect(getComputedStyle(longTagPill as HTMLElement).borderRadius).toBe(
+        getComputedStyle(longOwnerPill as HTMLElement).borderRadius,
+      );
+
+      for (const [label, pill] of [
+        [longTagLabel, longTagPill],
+        [longOwnerLabel, longOwnerPill],
+      ] as const) {
+        const style = getComputedStyle(label);
+        const pillStyle = getComputedStyle(pill as HTMLElement);
+        const pillBounds = (pill as HTMLElement).getBoundingClientRect();
+        const labelBounds = label.getBoundingClientRect();
+        expect(style.whiteSpace).toBe("normal");
+        expect(style.overflowWrap).toBe("anywhere");
+        expect(style.textOverflow).toBe("clip");
+        expect(pillStyle.backgroundColor).not.toBe("rgba(0, 0, 0, 0)");
+        expect(labelBounds.left).toBeGreaterThan(pillBounds.left);
+        expect(labelBounds.top).toBeGreaterThanOrEqual(pillBounds.top);
+        expect(labelBounds.right).toBeLessThan(pillBounds.right);
+        expect(labelBounds.bottom).toBeLessThanOrEqual(pillBounds.bottom);
+      }
+
+      ownersInput = owners.getByRole("combobox", { name: "owners value" });
+      await userEvent.type(ownersInput, "Mar");
+      ownerOption = await page.findByRole("option", {
+        name: "Margaret Hamilton",
+      });
+      await userEvent.click(ownerOption);
+      await expect(
+        owners.getByText("Margaret Hamilton", { exact: true }),
+      ).toBeVisible();
+
+      await userEvent.click(tagsTypeButton);
+      const optionsMenu = page.getByRole("menu", {
+        name: "Property options for tags",
+      });
+      const propertyType = within(optionsMenu).getByRole("menuitem", {
+        name: "Property type",
+      });
+      await expect(optionsMenu).toBeVisible();
+      expect(
+        within(optionsMenu)
+          .getAllByRole("menuitem")
+          .map((item) => item.textContent?.trim()),
+      ).toEqual(["Property type", "Cut", "Copy", "Paste", "Remove"]);
+      expect(
+        within(optionsMenu).queryByRole("menuitemcheckbox", { name: "Text" }),
+      ).not.toBeInTheDocument();
+
+      propertyType.focus();
+      await userEvent.keyboard("{ArrowRight}");
+      const typeMenu = page.getByRole("menu", {
+        name: "Property type for tags",
+      });
+      const textType = within(typeMenu).getByRole("menuitemcheckbox", {
+        name: "Text",
+      });
+      const tagsType = within(typeMenu).getByRole("menuitemcheckbox", {
+        name: "Tags",
+      });
+      await expect(typeMenu).toBeVisible();
+      await expect(textType).toBeVisible();
+      await expect(textType).toHaveAttribute("aria-checked", "false");
+      expect(textType.firstElementChild?.querySelector("svg")).toBeNull();
+      expect(
+        textType.querySelector(".metadata-property-type-menu__type-icon"),
+      ).not.toBeNull();
+      await expect(tagsType).toHaveAttribute("aria-checked", "true");
+      expect(tagsType.firstElementChild?.querySelector("svg")).not.toBeNull();
+      expect(
+        tagsType.querySelector(".metadata-property-type-menu__type-icon"),
+      ).not.toBeNull();
+      expect((tagsRow as HTMLElement).contains(typeMenu)).toBe(false);
+      expect(typeMenu.getBoundingClientRect().bottom).toBeGreaterThan(
+        (tagsRow as HTMLElement).getBoundingClientRect().bottom,
+      );
+      const textTypeBounds = textType.getBoundingClientRect();
+      const hit = canvasElement.ownerDocument.elementFromPoint(
+        textTypeBounds.left + textTypeBounds.width / 2,
+        textTypeBounds.top + textTypeBounds.height / 2,
+      );
+      expect(
+        hit === textType || textType.contains(hit),
+        `Expected the Text item to own its center point; hit ${hit?.tagName ?? "nothing"}.${hit instanceof HTMLElement ? hit.className : ""}`,
+      ).toBe(true);
+      await userEvent.keyboard("{Escape}");
+      await userEvent.keyboard("{Escape}");
+      await waitFor(() => {
+        expect(
+          page.queryByRole("menu", { name: "Property options for tags" }),
+        ).toBeNull();
+        expect(
+          page.queryByRole("menu", { name: "Property type for tags" }),
+        ).toBeNull();
+        expect(
+          getComputedStyle(canvasElement.ownerDocument.body).pointerEvents,
+        ).not.toBe("none");
+      });
+
+      const propertyContainer =
+        alignment.panelElement.querySelector<HTMLElement>(
+          ".mira-frontmatter.metadata-container",
+        );
+      const tagsKey = tagsRow?.querySelector<HTMLElement>(
+        ".metadata-property-key",
+      );
+      const tagsValue = tagsRow?.querySelector<HTMLElement>(
+        ".metadata-property-value",
+      );
+      const tagsKeyInput = tagsRow?.querySelector<HTMLElement>(
+        ".metadata-property-key-input",
+      );
+      const firstTagPill = tagsRow?.querySelector<HTMLElement>(
+        ".metadata-property-pill-chip",
+      );
+      expect(propertyContainer).not.toBeNull();
+      expect(tagsKey).not.toBeNull();
+      expect(tagsValue).not.toBeNull();
+      expect(tagsKeyInput).not.toBeNull();
+      expect(firstTagPill).not.toBeNull();
+      if ((propertyContainer?.getBoundingClientRect().width ?? 0) >= 250) {
+        expect(getComputedStyle(tagsRow as HTMLElement).flexWrap).toBe(
+          "nowrap",
+        );
+      }
+
+      const restorePanelTab = resizePanelTab(
+        canvasElement,
+        layout,
+      );
+      if (restorePanelTab) {
+        try {
+          await waitFor(() => {
+            const keyBounds = tagsKey?.getBoundingClientRect();
+            const valueBounds = tagsValue?.getBoundingClientRect();
+            const rowBounds = tagsRow?.getBoundingClientRect();
+            const keyInputBounds = tagsKeyInput?.getBoundingClientRect();
+            const keyInputStyle = getComputedStyle(tagsKeyInput as HTMLElement);
+            const labelTextStart =
+              (keyInputBounds?.left ?? 0) +
+              Number.parseFloat(keyInputStyle.paddingInlineStart);
+            const valueStart = firstTagPill?.getBoundingClientRect().left ?? 0;
+            expect(
+              propertyContainer?.getBoundingClientRect().width ?? 0,
+            ).toBeLessThan(250);
+            expect(getComputedStyle(tagsRow as HTMLElement).flexWrap).toBe(
+              "wrap",
+            );
+            expect(
+              Math.abs((keyBounds?.width ?? 0) - (rowBounds?.width ?? 0)),
+              "narrow property key spans the row",
+            ).toBeLessThanOrEqual(2);
+            expect(
+              Math.abs((valueBounds?.width ?? 0) - (rowBounds?.width ?? 0)),
+              "narrow property value spans the row",
+            ).toBeLessThanOrEqual(2);
+            expect(valueBounds?.top ?? 0).toBeGreaterThanOrEqual(
+              (keyBounds?.bottom ?? 0) - 1,
+            );
+            expect(
+              Math.abs(valueStart - labelTextStart),
+              "narrow property value aligns with the label text",
+            ).toBeLessThan(1);
+            const ownersValue = ownersRow?.querySelector<HTMLElement>(
+              ".metadata-property-value",
+            );
+            for (const [pill, valueContainer] of [
+              [longTagPill, tagsValue],
+              [longOwnerPill, ownersValue],
+            ] as const) {
+              const pillBounds = pill?.getBoundingClientRect();
+              const valueContainerBounds =
+                valueContainer?.getBoundingClientRect();
+              expect(pillBounds?.right ?? 0).toBeLessThanOrEqual(
+                (valueContainerBounds?.right ?? 0) + 1,
+              );
+              expect(
+                (pill?.scrollWidth ?? 0) - (pill?.clientWidth ?? 0),
+              ).toBeLessThanOrEqual(1);
+            }
+            const scrollViewport =
+              alignment.panelElement.querySelector<HTMLElement>(
+                '.markdown-sidebar-panel__scroll [data-ui-part="scroll-area-viewport"]',
+              );
+            expect(scrollViewport).not.toBeNull();
+            expect(
+              (scrollViewport?.scrollWidth ?? 0) -
+                (scrollViewport?.clientWidth ?? 0),
+            ).toBeLessThanOrEqual(1);
+            expect(scrollViewport?.scrollLeft ?? 0).toBe(0);
+          });
+        } finally {
+          restorePanelTab();
+        }
+        await waitFor(() => {
+          expect(
+            propertyContainer?.getBoundingClientRect().width ?? 0,
+          ).toBeGreaterThanOrEqual(250);
+          expect(getComputedStyle(tagsRow as HTMLElement).flexWrap).toBe(
+            "nowrap",
+          );
+        });
+      }
+
+      let status = panel.getByRole("combobox", { name: "status value" });
+      await userEvent.click(status);
+      await userEvent.clear(status);
+      await userEvent.type(status, "pla");
+      const plannedOption = await page.findByRole("option", {
+        name: "planned",
+      });
+      await expect(plannedOption).toHaveAttribute("aria-selected", "false");
+      const statusRow = status.closest<HTMLElement>(".metadata-property");
+      const statusSuggestions = plannedOption.closest<HTMLElement>(
+        ".mira-property-value-suggestions",
+      );
+      expect(statusRow).not.toBeNull();
+      expect(statusSuggestions).not.toBeNull();
+      expect(statusRow?.contains(statusSuggestions)).toBe(false);
+      const plannedBounds = plannedOption.getBoundingClientRect();
+      const plannedHit = canvasElement.ownerDocument.elementFromPoint(
+        plannedBounds.left + plannedBounds.width / 2,
+        plannedBounds.top + plannedBounds.height / 2,
+      );
+      expect(
+        plannedHit === plannedOption || plannedOption.contains(plannedHit),
+      ).toBe(true);
+      await userEvent.keyboard("{Enter}");
+      status = panel.getByRole("combobox", { name: "status value" });
+      await expect(status).toHaveTextContent("pla");
+
+      await userEvent.clear(status);
+      await userEvent.type(status, "pla");
+      await userEvent.click(
+        await page.findByRole("option", { name: "planned" }),
+      );
+      status = panel.getByRole("combobox", { name: "status value" });
+      await expect(status).toHaveTextContent("planned");
+      if (layout === "middle-top-tabs") {
+        status.blur();
+        await waitFor(() => expect(status).not.toHaveFocus());
+        const app = panelDemoApp(canvasElement);
+        const file = app.vault.getFileByPath("Notes/Welcome.md");
+        if (!file) throw new Error("Missing seeded Welcome note");
+        await waitFor(
+          async () => {
+            expect(await app.vault.cachedRead(file)).toMatch(
+              /(?:^|\n)status: planned(?:\n|$)/u,
+            );
+          },
+          { timeout: 5_000 },
+        );
+        await app.fileManager.processFrontMatter(file, (frontmatter) => {
+          frontmatter.status = "review";
+        });
+        await waitFor(
+          async () => {
+            expect(await app.vault.cachedRead(file)).toMatch(
+              /(?:^|\n)status: review(?:\n|$)/u,
+            );
+          },
+          { timeout: 5_000 },
+        );
+        status = panel.getByRole("combobox", { name: "status value" });
+      }
+      await userEvent.click(status);
+      await expect(status).toHaveFocus();
+      await expect(status).toHaveAttribute("contenteditable", "true");
+      const focusedProperty = status.closest<HTMLElement>(".metadata-property");
+      const focusedValue = status.closest<HTMLElement>(
+        ".metadata-property-value",
+      );
+      expect(focusedProperty).not.toBeNull();
+      expect(focusedValue).not.toBeNull();
+      const focusedPropertyStyle = getComputedStyle(
+        focusedProperty as HTMLElement,
+      );
+      expect(
+        Number.parseFloat(focusedPropertyStyle.borderTopWidth),
+      ).toBeGreaterThan(0.9);
+      expect(focusedPropertyStyle.boxShadow).not.toBe("none");
+      expect(focusedPropertyStyle.borderRadius).toBe("4px");
+      const focusedValueBackground = getComputedStyle(
+        focusedValue as HTMLElement,
+      ).backgroundColor;
+      expect(focusedValueBackground).not.toBe(
+        getComputedStyle(alignment.viewHost).backgroundColor,
+      );
+      expect(getComputedStyle(status).outlineStyle).toBe("none");
+      expect(
+        Array.from(
+          alignment.panelElement.querySelectorAll<HTMLTextAreaElement>(
+            "textarea",
+          ),
+        ).every((textarea) => getComputedStyle(textarea).resize === "none"),
+      ).toBe(true);
+      expect(getComputedStyle(status).fontSize).toBe("12px");
+      await userEvent.keyboard("{Escape}");
+      await expect(
+        panel.getByRole("button", { name: /Add property/i }),
+      ).toBeVisible();
+      await expectPanelSource(parameters, kind, layout);
+    },
+  };
+}
+
+export const MiddleTopTabs = placementStory(
+  "middle-top-tabs",
+  sources.MiddleTopTabs,
+  "File Properties beside the minimal active Markdown note, with the panel receiving the larger middle split.",
+);
+export const StackedTabs = placementStory(
+  "stacked-tabs",
+  sources.StackedTabs,
+  "File Properties selected in stacked tabs beside the minimal active note.",
+);
+export const LeftSidebar = placementStory(
+  "left-sidebar",
+  sources.LeftSidebar,
+  "File Properties in the left sidebar with only its required note in the body.",
+);
+export const RightSidebar = placementStory(
+  "right-sidebar",
+  sources.RightSidebar,
+  "File Properties in the right sidebar with only its required note in the body.",
+);
+export const BottomPanel = placementStory(
+  "bottom-panel",
+  sources.BottomPanel,
+  "File Properties inside real grouped bottom-panel chrome.",
+);
+export const SidebarGroup = placementStory(
+  "sidebar-group",
+  sources.SidebarGroup,
+  "File Properties as the only view in a grouped right-sidebar item.",
+);

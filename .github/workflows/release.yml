@@ -1,0 +1,62 @@
+name: Publish approved plugin releases
+
+on:
+  workflow_dispatch:
+    inputs:
+      plugin:
+        description: Package directory, package name, plugin ID, or all
+        required: true
+        default: all
+      approval:
+        description: Enter FIRST_PUBLICATION_APPROVED after the manual gate
+        required: true
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  publish:
+    if: >-
+      vars.FRAMEWORK_PACKAGES_PUBLISHED == 'true' &&
+      vars.FIRST_PUBLICATION_APPROVED == 'true' &&
+      inputs.approval == 'FIRST_PUBLICATION_APPROVED'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment: first-publication
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: Build production-signed candidates
+        run: pnpm release:prepare && pnpm test:storybook && pnpm release:plan -- --production
+        env:
+          LAPIS_PLUGIN_RELEASE_PRIVATE_KEY: ${{ secrets.LAPIS_PLUGIN_RELEASE_PRIVATE_KEY }}
+          LAPIS_PLUGIN_RELEASE_KEY_ID: ${{ secrets.LAPIS_PLUGIN_RELEASE_KEY_ID }}
+      - name: Create registry GitHub App token
+        id: registry-app
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.LAPIS_REGISTRY_APP_ID }}
+          private-key: ${{ secrets.LAPIS_REGISTRY_APP_PRIVATE_KEY }}
+          owner: lapismd
+          repositories: |
+            lapis-plugins
+            plugin-registry
+      - name: Publish npm, GitHub assets, and registry dispatch
+        run: pnpm release:publish-approved -- --plugin "${{ inputs.plugin }}"
+        env:
+          FIRST_PUBLICATION_APPROVED: "true"
+          LAPIS_PUBLICATION_APPROVED: "true"
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
+          REGISTRY_GITHUB_TOKEN: ${{ steps.registry-app.outputs.token }}

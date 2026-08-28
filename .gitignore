@@ -1,0 +1,12 @@
+node_modules/
+dist/
+storybook-static/
+.turbo/
+**/.svelte-kit/
+**/.cursor/
+.release/
+spec/book/
+.visual-delta/cache/
+*.tsbuildinfo
+pnpm-debug.log*
+.DS_Store

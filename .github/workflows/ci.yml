@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prerequisite:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report framework publication prerequisite
+        run: |
+          if [ "${{ vars.FRAMEWORK_PACKAGES_PUBLISHED }}" = "true" ]; then
+            echo "Published framework packages are available."
+          else
+            echo "Validation remains intentionally deferred until the framework package publication gate completes."
+          fi
+
+  validate:
+    needs: prerequisite
+    if: vars.FRAMEWORK_PACKAGES_PUBLISHED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm release:prepare
+      - run: pnpm test:storybook
+      - run: pnpm release:plan
+      - uses: actions/upload-artifact@v4
+        with:
+          name: first-party-plugin-candidate-artifacts
+          path: |
+            .release/npm/*.tgz
+            .release/npm/*.sha256
+            .release/npm/manifest.json
+            .release/plugins/**/*.lapis-plugin
+            .release/plugins/**/*.sha256
+            .release/release-plan.json
+          if-no-files-found: error
+          retention-days: 14
