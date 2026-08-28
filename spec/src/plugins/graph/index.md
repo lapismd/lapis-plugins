@@ -5,6 +5,8 @@ boundary MUST NOT require a sibling-repository path or workspace `link:`
 override.
 Package acceptance resolves Graph manifest metadata from the packed npm
 package, independently of the repository source layout.
+Lapis API and Markdown host modules are peer-provided by the application so the
+packed plugin shares the host's App and framework identity.
 
 `@lapis-notes/graph` owns the global and local graph views over indexed vault
 metadata. It preserves the legacy canvas presentation and control structure

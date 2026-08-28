@@ -8,6 +8,8 @@ The real-App AI shell loads the public Source Editor before Markdown so it uses
 the same source settings and file associations as production hosts.
 Package acceptance resolves AI manifest metadata from the packed npm package,
 independently of the repository source layout.
+Lapis API, UI, and Markdown host modules are peer-provided by the application
+so the packed plugin shares the host's App and framework identity.
 
 AI also owns the default read-only `.jsonl` file view. Portable
 `transcript.jsonl` files use the same durable validation and chat-item

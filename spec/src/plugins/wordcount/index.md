@@ -9,6 +9,8 @@ active text editor. Presentation stays on the API status-bar contract and the
 Design Core status item. It does not contribute a default sidebar leaf; an
 empty vault still seeds File Explorer, Search, Bookmarks, Outline, File Properties, and
 Tags.
+The Lapis API host module is peer-provided by the application so the packed
+plugin shares the host's App and framework identity.
 Desktop and web startup report the Word Count name on the plugins task while
 that plugin enables, then restore layout before starting metadata cache load.
 Those host manifests MAY declare sibling `@lapismd/ai-host` without moving Word

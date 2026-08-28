@@ -1,6 +1,6 @@
 {
   "name": "@lapis-notes/spellcheck",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "AGPL-3.0-or-later",
   "type": "module",
   "scripts": {
@@ -23,8 +23,10 @@
     "./styles.css": "./styles.css"
   },
   "dependencies": {
-    "@lapis-notes/api": "^0.1.0",
     "harper.js": "^2.7.0"
+  },
+  "peerDependencies": {
+    "@lapis-notes/api": "^0.1.0"
   },
   "devDependencies": {
     "@sveltejs/package": "^2.5.0",

@@ -9,6 +9,12 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const invalidProtocol = /^(?:workspace|link|file):/;
 const findings = [];
 
+function packageNameFromImport(importPath) {
+  return importPath.startsWith("@")
+    ? importPath.split("/").slice(0, 2).join("/")
+    : importPath.split("/")[0];
+}
+
 for (const plugin of pluginPackages) {
   const packageRoot = path.join(root, "packages", plugin.directory);
   const packageJson = JSON.parse(
@@ -41,6 +47,24 @@ for (const plugin of pluginPackages) {
       if (invalidProtocol.test(String(range))) {
         findings.push(`${plugin.directory}: ${field}.${name} uses ${range}`);
       }
+      if (
+        (field === "dependencies" || field === "optionalDependencies") &&
+        name.startsWith("@lapis-notes/")
+      ) {
+        findings.push(
+          `${plugin.directory}: ${field}.${name} must be a peer dependency supplied by the host`,
+        );
+      }
+    }
+  }
+  for (const sharedDependency of
+    manifest.lapis?.runtime?.entries?.workspace?.sharedDependencies ?? []) {
+    if (!sharedDependency.startsWith("@lapis-notes/")) continue;
+    const hostPackage = packageNameFromImport(sharedDependency);
+    if (!packageJson.peerDependencies?.[hostPackage]) {
+      findings.push(
+        `${plugin.directory}: runtime host module ${sharedDependency} requires peerDependencies.${hostPackage}`,
+      );
     }
   }
   for (const exportPath of [".", "./manifest.json", "./styles.css"]) {

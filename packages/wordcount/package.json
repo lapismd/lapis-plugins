@@ -1,6 +1,6 @@
 {
   "name": "@lapis-notes/wordcount",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "AGPL-3.0-or-later",
   "type": "module",
   "scripts": {
@@ -24,7 +24,9 @@
   },
   "dependencies": {
     "@codemirror/state": "^6.4.1",
-    "@codemirror/view": "^6.35.0",
+    "@codemirror/view": "^6.35.0"
+  },
+  "peerDependencies": {
     "@lapis-notes/api": "^0.1.0"
   },
   "devDependencies": {

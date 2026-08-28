@@ -2,7 +2,7 @@
   "id": "markdown",
   "name": "Markdown",
   "author": "Lapis Notes",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "minAppVersion": "0.1.0",
   "description": "Mira-powered Markdown editing with source, live preview, and reading modes.",
   "lapis": {

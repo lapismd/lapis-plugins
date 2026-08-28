@@ -1,6 +1,6 @@
 {
   "name": "@lapis-notes/bookmarks",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Lapis Notes bookmarks plugin",
   "license": "AGPL-3.0-or-later",
   "type": "module",
@@ -40,11 +40,11 @@
     "./styles.css": "./styles.css"
   },
   "dependencies": {
-    "@lapis-notes/api": "^0.1.0",
     "@lapismd/design-core": "^0.1.0",
     "@lucide/svelte": "^0.523.0"
   },
   "peerDependencies": {
+    "@lapis-notes/api": "^0.1.0",
     "svelte": "^5.0.0"
   },
   "devDependencies": {

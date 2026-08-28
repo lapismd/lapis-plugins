@@ -1,7 +1,7 @@
 {
   "id": "lapis-source-editor",
   "name": "Source Editor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "minAppVersion": "0.1.0",
   "description": "Source editing for text, JSON, and YAML files",
   "author": "Lapis Notes",

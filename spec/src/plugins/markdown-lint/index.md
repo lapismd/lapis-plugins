@@ -4,6 +4,8 @@
 shared Problems infrastructure. Language-service, Problems panel, desktop
 sidecar, and host lifecycle requirements remain defined by their owning
 chapters.
+Lapis API and Language Service host modules are peer-provided by the
+application so the packed plugin shares the host's App and framework identity.
 
 ## Requirements
 

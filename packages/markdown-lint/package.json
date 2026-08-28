@@ -1,6 +1,6 @@
 {
   "name": "@lapis-notes/markdown-lint",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "AGPL-3.0-or-later",
   "type": "module",
   "scripts": {
@@ -22,7 +22,7 @@
     "./manifest.json": "./manifest.json",
     "./styles.css": "./styles.css"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@lapis-notes/api": "^0.1.0",
     "@lapis-notes/language-service": "^0.1.0"
   },

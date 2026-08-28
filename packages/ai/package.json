@@ -1,6 +1,6 @@
 {
   "name": "@lapis-notes/ai",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Lapis Notes provider-agnostic AI agent plugin",
   "license": "AGPL-3.0-or-later",
   "type": "module",
@@ -46,15 +46,15 @@
     "./manifest.json": "./manifest.json"
   },
   "dependencies": {
-    "@lapis-notes/api": "^0.1.0",
-    "@lapis-notes/markdown": "^0.1.0",
-    "@lapis-notes/ui": "^0.1.0",
     "@lapismd/design-core": "^0.1.0",
     "@lucide/svelte": "^0.523.0",
     "ajv": "^8.20.0",
     "yaml": "^2.9.0"
   },
   "peerDependencies": {
+    "@lapis-notes/api": "^0.1.0",
+    "@lapis-notes/markdown": "^0.1.2",
+    "@lapis-notes/ui": "^0.1.0",
     "svelte": "^5.0.0"
   },
   "devDependencies": {

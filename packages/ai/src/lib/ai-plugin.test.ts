@@ -124,9 +124,11 @@ describe("AiPlugin contracts", () => {
     const index = readFileSync("src/lib/index.ts", "utf8");
     const manifest = JSON.parse(readFileSync("package.json", "utf8")) as {
       dependencies?: Record<string, string>;
+      peerDependencies?: Record<string, string>;
     };
 
-    expect(manifest.dependencies?.["@lapis-notes/markdown"]).toBe("^0.1.0");
+    expect(manifest.dependencies?.["@lapis-notes/markdown"]).toBeUndefined();
+    expect(manifest.peerDependencies?.["@lapis-notes/markdown"]).toBeDefined();
     expect(manifest.dependencies?.["@lapismd/mira"]).toBeUndefined();
     expect(manifest.dependencies?.["@lapismd/mira-editor"]).toBeUndefined();
     expect(panel).toContain('from "@lapis-notes/markdown/embed"');

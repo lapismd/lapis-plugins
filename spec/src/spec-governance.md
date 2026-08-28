@@ -18,3 +18,6 @@ map to the owning Markdown panel chapter. Shared build, release, Storybook,
 workflow, and repository files map to [Distribution and releases](distribution.md)
 and this chapter. Release-security tests cover the tokenless npm workflow,
 approved-release environment, and immutable-version patch rollback policy.
+Package-boundary verification also rejects bundled Lapis host packages and
+requires every externalized Lapis runtime module to resolve through a declared
+peer supplied by the consuming application.

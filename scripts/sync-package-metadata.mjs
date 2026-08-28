@@ -6,7 +6,6 @@ import { fileURLToPath } from "node:url";
 
 import {
   frameworkPackageVersions,
-  packageNames,
   pluginPackages,
 } from "./package-catalog.mjs";
 
@@ -206,6 +205,7 @@ function normalizePackage(packageJson, manifest, plugin) {
   normalized.types = "./dist/index.d.ts";
   normalized.exports = normalizeExports(normalized.exports);
   normalized.scripts = normalizeScripts(packageJson.scripts ?? {});
+  moveHostPackagesToPeers(normalized);
   for (const field of [
     "dependencies",
     "optionalDependencies",
@@ -217,6 +217,23 @@ function normalizePackage(packageJson, manifest, plugin) {
     }
   }
   return normalized;
+}
+
+function moveHostPackagesToPeers(packageJson) {
+  const peerDependencies = { ...(packageJson.peerDependencies ?? {}) };
+  for (const field of ["dependencies", "optionalDependencies"]) {
+    const dependencies = { ...(packageJson[field] ?? {}) };
+    for (const [name, version] of Object.entries(dependencies)) {
+      if (!name.startsWith("@lapis-notes/")) continue;
+      peerDependencies[name] = version;
+      delete dependencies[name];
+    }
+    if (Object.keys(dependencies).length > 0) packageJson[field] = dependencies;
+    else delete packageJson[field];
+  }
+  if (Object.keys(peerDependencies).length > 0) {
+    packageJson.peerDependencies = peerDependencies;
+  }
 }
 
 function normalizeExports(exports) {
@@ -262,7 +279,7 @@ function normalizeDependencies(dependencies) {
     a.localeCompare(b),
   )) {
     normalized[name] = frameworkPackageVersions.get(name) ??
-      (packageNames.has(name) ? "^0.1.0" : version);
+      version;
   }
   return normalized;
 }

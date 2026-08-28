@@ -1,7 +1,7 @@
 {
   "id": "spellcheck",
   "name": "Spell Check",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "minAppVersion": "0.1.0",
   "description": "Harper grammar and spelling diagnostics for open notes",
   "author": "Lapis Notes",
