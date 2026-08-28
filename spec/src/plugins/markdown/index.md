@@ -1,5 +1,9 @@
 # Markdown Plugin
 
+The package-owned `registry.json` is the source for curated categories,
+highlights, and documentation paths under LP-SPEC-021. Manifest and package
+metadata remain authoritative for the fields defined by LP-SPEC-022.
+
 Daily notes remain ordinary authoritative Markdown documents. The Markdown
 plugin parses and edits them through its existing file surfaces while the
 API-owned daily-document provider supplies identity and path policy to domain

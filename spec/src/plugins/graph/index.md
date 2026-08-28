@@ -1,5 +1,9 @@
 # Graph Plugin
 
+The package-owned `registry.json` is the source for curated categories,
+highlights, and documentation paths under LP-SPEC-021. Manifest and package
+metadata remain authoritative for the fields defined by LP-SPEC-022.
+
 The package consumes the published Design Core semver contract. Its public UI
 boundary MUST NOT require a sibling-repository path or workspace `link:`
 override.

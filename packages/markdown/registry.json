@@ -1,0 +1,12 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 1,
+  "categories": ["editor", "markdown"],
+  "highlights": [
+    "Edit Markdown in source, live preview, and reading modes.",
+    "Use Mira-powered authoring, metadata, embeds, and workspace panels.",
+    "Keep files portable as ordinary Markdown in the active vault."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/markdown#readme",
+  "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
+}

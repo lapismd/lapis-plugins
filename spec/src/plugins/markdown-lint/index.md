@@ -1,5 +1,9 @@
 # Markdown Lint Plugin
 
+The package-owned `registry.json` is the source for curated categories,
+highlights, and documentation paths under LP-SPEC-021. Manifest and package
+metadata remain authoritative for the fields defined by LP-SPEC-022.
+
 `@lapis-notes/markdown-lint` adapts open Markdown document diagnostics into the
 shared Problems infrastructure. Language-service, Problems panel, desktop
 sidecar, and host lifecycle requirements remain defined by their owning

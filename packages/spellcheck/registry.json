@@ -1,0 +1,12 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 1,
+  "categories": ["diagnostics", "writing"],
+  "highlights": [
+    "Check spelling and grammar in open notes with Harper.",
+    "Review diagnostics and suggestions in editor and Problems surfaces.",
+    "Configure dialect, dictionaries, rules, and file scopes per vault."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/spellcheck#readme",
+  "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
+}

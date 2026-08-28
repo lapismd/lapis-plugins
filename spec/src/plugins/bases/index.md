@@ -1,5 +1,9 @@
 # Bases Plugin
 
+The package-owned `registry.json` is the source for curated categories,
+highlights, and documentation paths under LP-SPEC-021. Manifest and package
+metadata remain authoritative for the fields defined by LP-SPEC-022.
+
 The package consumes the published Design Core semver contract. Runtime and
 tests MUST NOT depend on a sibling-repository path or a workspace `link:`
 override; local source overrides remain an optional development concern.

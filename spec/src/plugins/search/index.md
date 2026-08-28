@@ -1,5 +1,9 @@
 # Search Plugin
 
+The package-owned `registry.json` is the source for curated categories,
+highlights, and documentation paths under LP-SPEC-021. Manifest and package
+metadata remain authoritative for the fields defined by LP-SPEC-022.
+
 `@lapis-notes/search` owns vault search indexing, query presentation, result
 navigation, and the `search` workspace view. Query parsing and generated search
 state remain API contracts, while reusable search chrome remains Design Core.

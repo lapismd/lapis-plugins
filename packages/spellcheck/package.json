@@ -20,7 +20,8 @@
       "default": "./dist/index.js"
     },
     "./manifest.json": "./manifest.json",
-    "./styles.css": "./styles.css"
+    "./styles.css": "./styles.css",
+    "./registry.json": "./registry.json"
   },
   "dependencies": {
     "harper.js": "^2.7.0"
@@ -52,6 +53,7 @@
   "files": [
     "dist",
     "manifest.json",
+    "registry.json",
     "styles.css",
     "README.md",
     "CHANGELOG.md",

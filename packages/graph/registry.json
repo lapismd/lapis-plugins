@@ -1,0 +1,12 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 1,
+  "categories": ["graph", "visualization"],
+  "highlights": [
+    "Explore global and local relationships across notes, tags, and attachments.",
+    "Open connected notes directly from an interactive canvas.",
+    "Tune grouping, forces, and time-lapse views for large vaults."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/graph#readme",
+  "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
+}

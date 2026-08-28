@@ -67,7 +67,12 @@ for (const plugin of pluginPackages) {
       );
     }
   }
-  for (const exportPath of [".", "./manifest.json", "./styles.css"]) {
+  for (const exportPath of [
+    ".",
+    "./manifest.json",
+    "./registry.json",
+    "./styles.css",
+  ]) {
     if (!packageJson.exports?.[exportPath]) {
       findings.push(`${plugin.directory}: missing ${exportPath} export`);
     }

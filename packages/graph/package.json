@@ -17,6 +17,7 @@
   "files": [
     "dist",
     "manifest.json",
+    "registry.json",
     "styles.css",
     "README.md",
     "CHANGELOG.md",
@@ -46,7 +47,8 @@
       "default": "./dist/styles.css"
     },
     "./styles.css": "./styles.css",
-    "./manifest.json": "./manifest.json"
+    "./manifest.json": "./manifest.json",
+    "./registry.json": "./registry.json"
   },
   "dependencies": {
     "@lapismd/design-core": "^0.1.0",

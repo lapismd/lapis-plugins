@@ -1,0 +1,12 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 1,
+  "categories": ["navigation", "productivity"],
+  "highlights": [
+    "Bookmark files, folders, searches, and grouped destinations.",
+    "Open saved workspace locations from one compact panel.",
+    "Organize frequently used resources without changing vault content."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/bookmarks#readme",
+  "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
+}

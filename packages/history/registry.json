@@ -1,0 +1,12 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 1,
+  "categories": ["history", "versioning"],
+  "highlights": [
+    "Capture bounded local revisions as vault files change.",
+    "Compare saved revisions with the current document.",
+    "Restore selected content through the normal vault write path."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/history#readme",
+  "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
+}

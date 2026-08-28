@@ -1,5 +1,9 @@
 # Source Editor Plugin
 
+The package-owned `registry.json` is the source for curated categories,
+highlights, and documentation paths under LP-SPEC-021. Manifest and package
+metadata remain authoritative for the fields defined by LP-SPEC-022.
+
 `@lapis-notes/source-editor` owns host-neutral source editing policy. The API
 owns the generic editor and file-view contracts, while applications own the
 static profile and Markdown owns Markdown-specific associations and rich

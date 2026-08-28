@@ -1,5 +1,9 @@
 # History Plugin
 
+The package-owned `registry.json` is the source for curated categories,
+highlights, and documentation paths under LP-SPEC-021. Manifest and package
+metadata remain authoritative for the fields defined by LP-SPEC-022.
+
 `@lapis-notes/history` owns vault file-revision capture, the movable History
 panel, and the main-area compare tab. Persistence remains the existing
 `AppDatabase` file-history contract. This plugin is not AI conversation

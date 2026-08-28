@@ -1,0 +1,12 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 1,
+  "categories": ["statistics", "writing"],
+  "highlights": [
+    "Show live word and character counts in the status bar.",
+    "Estimate reading time for the active document.",
+    "Update counts as editors and active files change."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/wordcount#readme",
+  "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
+}

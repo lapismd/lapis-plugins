@@ -1,0 +1,12 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 1,
+  "categories": ["ai", "productivity"],
+  "highlights": [
+    "Chat with provider-neutral agents inside the workspace.",
+    "Review tool calls, reasoning, approvals, and results in one transcript.",
+    "Switch compatible ACP agents without moving conversation ownership out of Lapis."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/ai#readme",
+  "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
+}

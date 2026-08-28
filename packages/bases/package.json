@@ -17,6 +17,7 @@
   "files": [
     "dist",
     "manifest.json",
+    "registry.json",
     "styles.css",
     "README.md",
     "CHANGELOG.md",
@@ -37,7 +38,8 @@
       "default": "./dist/index.js"
     },
     "./styles.css": "./styles.css",
-    "./manifest.json": "./manifest.json"
+    "./manifest.json": "./manifest.json",
+    "./registry.json": "./registry.json"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.18.6",

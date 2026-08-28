@@ -1,0 +1,12 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 1,
+  "categories": ["navigation", "search"],
+  "highlights": [
+    "Search file names, metadata, tags, and note content.",
+    "Open results in the workspace from a reusable search panel.",
+    "Expose scoped search capabilities to compatible agent tools."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/search#readme",
+  "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
+}

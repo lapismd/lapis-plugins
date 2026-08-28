@@ -1,0 +1,12 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 1,
+  "categories": ["data", "database", "editor"],
+  "highlights": [
+    "Create structured views over notes and front matter.",
+    "Filter and organize vault data without leaving the workspace.",
+    "Keep editable views backed by ordinary Lapis content."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/bases#readme",
+  "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
+}

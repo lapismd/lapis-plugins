@@ -1,0 +1,12 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 1,
+  "categories": ["diagnostics", "linting"],
+  "highlights": [
+    "Show Markdown diagnostics for open documents.",
+    "Apply supported code actions from editor and Problems surfaces.",
+    "Configure rule exclusions and path filters per vault."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/markdown-lint#readme",
+  "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
+}

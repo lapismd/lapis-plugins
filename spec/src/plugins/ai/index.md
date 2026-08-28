@@ -1,5 +1,9 @@
 # AI Plugin
 
+The package-owned `registry.json` is the source for curated categories,
+highlights, and documentation paths under LP-SPEC-021. Manifest and package
+metadata remain authoritative for the fields defined by LP-SPEC-022.
+
 `@lapis-notes/ai` owns the provider-agnostic agent runtime, session control,
 normalized events, and the movable chat panel. Domain plugins may register
 tools and consume events. They MUST NOT own Codex, Claude, Cursor, or acpx

@@ -20,7 +20,8 @@
       "default": "./dist/index.js"
     },
     "./manifest.json": "./manifest.json",
-    "./styles.css": "./styles.css"
+    "./styles.css": "./styles.css",
+    "./registry.json": "./registry.json"
   },
   "peerDependencies": {
     "@lapis-notes/api": "^0.1.0",
@@ -50,6 +51,7 @@
   "files": [
     "dist",
     "manifest.json",
+    "registry.json",
     "styles.css",
     "README.md",
     "CHANGELOG.md",

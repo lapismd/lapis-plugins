@@ -193,6 +193,7 @@ function normalizePackage(packageJson, manifest, plugin) {
   normalized.files = [
     "dist",
     "manifest.json",
+    "registry.json",
     "styles.css",
     "README.md",
     "CHANGELOG.md",
@@ -248,6 +249,7 @@ function normalizeExports(exports) {
     default: "./dist/index.js",
   };
   normalized["./manifest.json"] = "./manifest.json";
+  normalized["./registry.json"] = "./registry.json";
   normalized["./styles.css"] = "./styles.css";
   return normalized;
 }

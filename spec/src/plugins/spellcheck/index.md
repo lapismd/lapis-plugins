@@ -1,5 +1,9 @@
 # Spell Check Plugin
 
+The package-owned `registry.json` is the source for curated categories,
+highlights, and documentation paths under LP-SPEC-021. Manifest and package
+metadata remain authoritative for the fields defined by LP-SPEC-022.
+
 Canonical daily notes use the same Markdown spellcheck pipeline as other
 notes. Spellcheck does not participate in daily-document resolution or Tasks
 occurrence state.

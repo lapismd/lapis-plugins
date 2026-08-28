@@ -1,5 +1,9 @@
 # Bookmarks Plugin
 
+The package-owned `registry.json` is the source for curated categories,
+highlights, and documentation paths under LP-SPEC-021. Manifest and package
+metadata remain authoritative for the fields defined by LP-SPEC-022.
+
 `@lapis-notes/bookmarks` owns the movable Bookmarks panel and Obsidian-compatible
 `.obsidian/bookmarks.json`. It does not own Explorer, Search, or Graph.
 

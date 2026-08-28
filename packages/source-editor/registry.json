@@ -1,0 +1,12 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 1,
+  "categories": ["editor", "source"],
+  "highlights": [
+    "Edit text, JSON, and YAML files with syntax-aware source views.",
+    "Open supported files through normal workspace routing.",
+    "Keep edits synchronized through the Lapis vault lifecycle."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/source-editor#readme",
+  "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
+}
