@@ -1,6 +1,6 @@
 import "./styles.css";
 
-export { default as manifest } from "../../manifest.json";
+export { default as manifest } from "@lapis-notes/graph/manifest.json";
 export { GraphControlsOverlay, GraphEmbed } from "./public-components";
 export { GraphPlugin } from "./graph-plugin";
 export { default } from "./graph-plugin";

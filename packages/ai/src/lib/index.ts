@@ -1,6 +1,6 @@
 import "./styles.css";
 
-export { default as manifest } from "../../manifest.json";
+export { default as manifest } from "@lapis-notes/ai/manifest.json";
 export { AiPlugin, default } from "./ai-plugin";
 export {
   AiCatalogPanel,

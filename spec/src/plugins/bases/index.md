@@ -3,6 +3,8 @@
 The package consumes the published Design Core semver contract. Runtime and
 tests MUST NOT depend on a sibling-repository path or a workspace `link:`
 override; local source overrides remain an optional development concern.
+Package acceptance resolves Bases manifest metadata from the packed npm
+package, independently of the repository source layout.
 
 ## Requirements
 

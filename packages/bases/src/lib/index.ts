@@ -2,7 +2,7 @@ import "./bases-view/functions";
 import { BasesPlugin } from "./bases-plugin";
 import "./styles.css";
 
-export { default as manifest } from "../../manifest.json";
+export { default as manifest } from "@lapis-notes/bases/manifest.json";
 export { BasesPlugin };
 export { default as BasesViewSurface } from "./bases-view-surface.svelte";
 export {

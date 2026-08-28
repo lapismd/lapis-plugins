@@ -6,6 +6,8 @@ panel, and the main-area compare tab. Persistence remains the existing
 history.
 The governed real-App shell loads the public Source Editor before Markdown;
 History does not carry a Storybook-only editor fixture.
+Package acceptance resolves History manifest metadata from the packed npm
+package, independently of the repository source layout.
 
 ## Requirements
 

@@ -33,7 +33,7 @@ import {
   type GraphProblemReporter,
   type GraphProblemScope,
 } from "./graph-problems";
-import manifestSpec from "../../manifest.json";
+import manifestSpec from "@lapis-notes/graph/manifest.json";
 
 interface GraphFocusableView {
   focusActiveFile(): void;

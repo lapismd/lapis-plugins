@@ -6,6 +6,8 @@ tools and consume events. They MUST NOT own Codex, Claude, Cursor, or acpx
 execution APIs.
 The real-App AI shell loads the public Source Editor before Markdown so it uses
 the same source settings and file associations as production hosts.
+Package acceptance resolves AI manifest metadata from the packed npm package,
+independently of the repository source layout.
 
 AI also owns the default read-only `.jsonl` file view. Portable
 `transcript.jsonl` files use the same durable validation and chat-item

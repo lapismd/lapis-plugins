@@ -1,7 +1,7 @@
 {
   "id": "lapis-graph",
   "name": "Graph",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "minAppVersion": "0.1.0",
   "description": "Global and local graph views powered by indexed metadata",
   "author": "Lapis Notes",

@@ -58,10 +58,10 @@ import "$lib/styles.css";
 import { createMarkdownNoteTools } from "$lib/agent-tools/note-tools";
 import { mount, unmount } from "svelte";
 import MarkdownFileSurface from "$lib/components/embed/markdown-file-surface.svelte";
-import manifestSpec from "../../manifest.json";
+import manifestSpec from "@lapis-notes/markdown/manifest.json";
 
 export { FileEmbed, MarkdownEmbed, NoteLink } from "$lib/components/embed";
-export { default as manifest } from "../../manifest.json";
+export { default as manifest } from "@lapis-notes/markdown/manifest.json";
 export { createLapisMiraFileAdapter } from "$lib/mira/file-adapter";
 export {
   createMarkdownNoteTools,

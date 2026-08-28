@@ -16,4 +16,5 @@ The specification-first map assigns each `packages/<name>` tree to its matching
 `spec/src/plugins/<name>` chapter. Markdown panel and story changes additionally
 map to the owning Markdown panel chapter. Shared build, release, Storybook,
 workflow, and repository files map to [Distribution and releases](distribution.md)
-and this chapter.
+and this chapter. Release-security tests cover the tokenless npm workflow,
+approved-release environment, and immutable-version patch rollback policy.

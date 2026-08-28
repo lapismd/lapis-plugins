@@ -57,7 +57,6 @@ jobs:
         env:
           FIRST_PUBLICATION_APPROVED: "true"
           LAPIS_PUBLICATION_APPROVED: "true"
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ github.token }}
           GH_TOKEN: ${{ github.token }}
           REGISTRY_GITHUB_TOKEN: ${{ steps.registry-app.outputs.token }}

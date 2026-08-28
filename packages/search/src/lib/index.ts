@@ -1,6 +1,6 @@
 import "./styles.css";
 
-export { default as manifest } from "../../manifest.json";
+export { default as manifest } from "@lapis-notes/search/manifest.json";
 export { SearchManager } from "./search-manager";
 export type {
   SearchQueryHit,

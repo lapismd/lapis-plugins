@@ -14,6 +14,8 @@ the canonical Obsidian-compatible names governed by `LN-MD-085` and
 `LN-MD-086`, while former Lapis IDs remain load-only compatibility aliases.
 The Deno desktop host loads the same public Markdown package and verified asset
 metadata as web; Markdown does not own a desktop-specific loader or asset URL.
+Package acceptance resolves Markdown manifest metadata from the packed npm
+package, independently of the repository source layout.
 
 ## Requirements
 

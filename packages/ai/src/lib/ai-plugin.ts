@@ -91,7 +91,7 @@ import {
   tryCreateNodeUserAgentsStore,
   type UserAgentsCommandStore,
 } from "./commands/user-agents";
-import manifestSpec from "../../manifest.json";
+import manifestSpec from "@lapis-notes/ai/manifest.json";
 
 export class AiPlugin extends Plugin {
   private data: AiPluginData = {

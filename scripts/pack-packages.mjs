@@ -7,6 +7,7 @@ import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 
 import { pluginPackages } from "./package-catalog.mjs";
+import { verifyBuiltImportBoundaries } from "./lib/npm-package-imports.mjs";
 
 const execFileAsync = promisify(execFile);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -17,6 +18,7 @@ const manifest = [];
 
 for (const plugin of pluginPackages) {
   const packageRoot = path.join(root, "packages", plugin.directory);
+  await verifyBuiltImportBoundaries(packageRoot, plugin.packageName);
   const { stdout } = await execFileAsync(
     "pnpm",
     ["pack", "--json", "--pack-destination", outDir],

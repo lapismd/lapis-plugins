@@ -14,7 +14,7 @@ import {
   createBasesViewRegistrations,
   parseBasesDocument,
 } from "./bases-view";
-import manifestSpec from "../../manifest.json";
+import manifestSpec from "@lapis-notes/bases/manifest.json";
 
 type BasesRenderHandle = {
   destroy: () => void;

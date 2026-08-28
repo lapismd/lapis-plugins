@@ -13,7 +13,7 @@ Register the exported plugin class in the application's `PluginProfile`. Import
 registration so the host owns its lifecycle.
 
 The runtime plugin ID is `lapis-graph`. A matching signed
-`lapis-graph-0.1.0.lapis-plugin` archive is attached to the
+`lapis-graph-0.1.1.lapis-plugin` archive is attached to the
 package-scoped GitHub release for manual or registry installation.
 
 See the [repository README](https://github.com/lapismd/lapis-plugins#readme) for

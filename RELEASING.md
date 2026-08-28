@@ -47,3 +47,24 @@ The GitHub App is installed only on `lapis-plugins` and `plugin-registry`. The
 release workflow uses `LAPIS_REGISTRY_APP_ID` and
 `LAPIS_REGISTRY_APP_PRIVATE_KEY` to create an installation token scoped to
 those two repositories and the contents permission needed for dispatch.
+
+## npm trusted publishing
+
+The initial `0.1.0` npm package versions were published manually from the
+verified release tarballs. Every package now trusts the GitHub Actions workflow
+`release.yml` in `lapismd/lapis-plugins`, restricted to the
+`first-publication` environment and the `npm publish` action.
+
+Automated npm publication uses GitHub OIDC with `id-token: write`. It must not
+receive or require a long-lived `NPM_TOKEN` or `NODE_AUTH_TOKEN`. Keep the npm
+CLI at version 11.5.1 or newer so it can exchange the workflow identity for a
+short-lived publishing credential. GitHub release and registry dispatch
+credentials remain separate from npm authentication.
+
+## Correcting a published package
+
+Never use `npm unpublish` as the normal rollback. Publish a verified patch
+version first, prove that its public tarball works in a clean registry-only
+consumer, and then deprecate the affected bad version with a message pointing
+to the replacement. Delete a GitHub release or package-scoped tag only when it
+represents the bad artifact and no published registry entry depends on it.

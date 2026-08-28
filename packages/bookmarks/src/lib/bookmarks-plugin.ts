@@ -23,7 +23,7 @@ import {
   mountDialog,
 } from "./mount-dialog";
 import PickBookmarkGroup from "./pick-bookmark-group.svelte";
-import manifestSpec from "../../manifest.json";
+import manifestSpec from "@lapis-notes/bookmarks/manifest.json";
 
 export class BookmarksPlugin extends Plugin {
   readonly store: BookmarksStore;

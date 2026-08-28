@@ -1,6 +1,6 @@
 import "./styles.css";
 
-export { default as manifest } from "../../manifest.json";
+export { default as manifest } from "@lapis-notes/history/manifest.json";
 export { HistoryComparePanel, HistoryPanel } from "./public-components";
 export {
   HISTORY_PLUGIN_ID,

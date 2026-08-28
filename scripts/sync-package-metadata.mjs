@@ -113,7 +113,11 @@ for (const plugin of pluginPackages) {
   const packageJson = JSON.parse(await readFile(packagePath, "utf8"));
   const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
 
-  const normalizedManifest = normalizeManifest(manifest, plugin);
+  const normalizedManifest = normalizeManifest(
+    manifest,
+    plugin,
+    packageJson.version,
+  );
   const normalizedPackage = normalizePackage(
     packageJson,
     normalizedManifest,
@@ -134,14 +138,14 @@ if (findings.length) {
   );
 }
 
-function normalizeManifest(manifest, plugin) {
+function normalizeManifest(manifest, plugin, packageVersion) {
   const packageSharedDependencies = sharedDependencies.get(plugin.directory);
   assert.ok(packageSharedDependencies, `Missing host modules for ${plugin.directory}`);
   const lapis = manifest.lapis ?? {};
   return {
     ...manifest,
     id: plugin.pluginId,
-    version: "0.1.0",
+    version: packageVersion,
     minAppVersion: "0.1.0",
     lapis: {
       ...lapis,

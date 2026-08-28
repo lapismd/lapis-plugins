@@ -3,6 +3,8 @@
 The package consumes the published Design Core semver contract. Its public UI
 boundary MUST NOT require a sibling-repository path or workspace `link:`
 override.
+Package acceptance resolves Graph manifest metadata from the packed npm
+package, independently of the repository source layout.
 
 `@lapis-notes/graph` owns the global and local graph views over indexed vault
 metadata. It preserves the legacy canvas presentation and control structure

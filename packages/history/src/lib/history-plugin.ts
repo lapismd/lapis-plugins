@@ -26,7 +26,7 @@ import {
   HistoryCompareViewType,
   HistoryViewType,
 } from "./history-view-type";
-import manifestSpec from "../../manifest.json";
+import manifestSpec from "@lapis-notes/history/manifest.json";
 
 export const HISTORY_PLUGIN_ID = "history";
 

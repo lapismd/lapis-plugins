@@ -23,7 +23,7 @@ import { createNotesSearchSlashCommand } from "./notes-search-command";
 import { createNotesSearchTool } from "./notes-search-tool";
 import SearchToolResult from "./search-tool-result.svelte";
 import { reconcileSearchAfterMetadata } from "./search-startup";
-import manifestSpec from "../../manifest.json";
+import manifestSpec from "@lapis-notes/search/manifest.json";
 
 export class SearchPlugin extends Plugin {
   private settings: SearchPluginSettings;

@@ -1,6 +1,6 @@
 import "./styles.css";
 
-export { default as manifest } from "../../manifest.json";
+export { default as manifest } from "@lapis-notes/bookmarks/manifest.json";
 export { activateBookmark, bookmarkableTarget } from "./activate-bookmark";
 export { BookmarksPanel } from "./public-components";
 export { BookmarksPlugin } from "./bookmarks-plugin";

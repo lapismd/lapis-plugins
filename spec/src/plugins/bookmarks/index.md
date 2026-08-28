@@ -5,6 +5,8 @@
 
 The package consumes the published Design Core semver contract and MUST NOT
 assume a sibling-repository path or a workspace `link:` override.
+Package acceptance resolves Bookmarks manifest metadata from the packed npm
+package, independently of the repository source layout.
 
 ## Requirements
 

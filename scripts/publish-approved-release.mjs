@@ -36,7 +36,7 @@ function requireApproval() {
   ) {
     throw new Error("The explicit first-publication approval gate is closed.");
   }
-  for (const name of ["GITHUB_TOKEN", "REGISTRY_GITHUB_TOKEN", "NODE_AUTH_TOKEN"]) {
+  for (const name of ["GITHUB_TOKEN", "REGISTRY_GITHUB_TOKEN"]) {
     if (!process.env[name]) throw new Error(`${name} is required.`);
   }
 }
