@@ -1,10 +1,5 @@
 #!/usr/bin/env node
-import {
-  createHash,
-  createPrivateKey,
-  createPublicKey,
-} from "node:crypto";
-import { execFile } from "node:child_process";
+import { createHash, createPrivateKey, createPublicKey } from "node:crypto";
 import { existsSync } from "node:fs";
 import {
   chmod,
@@ -19,10 +14,12 @@ import {
 } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import { svelte, vitePreprocess } from "@sveltejs/vite-plugin-svelte";
-import { init as initEsModuleLexer, parse as parseModule } from "es-module-lexer";
+import {
+  init as initEsModuleLexer,
+  parse as parseModule,
+} from "es-module-lexer";
 import { build as viteBuild } from "vite";
 
 import {
@@ -36,8 +33,8 @@ import {
   pluginPackageBySelector,
   pluginPackages,
 } from "./package-catalog.mjs";
+import { resolveSourceCommit } from "./lib/source-commit.mjs";
 
-const execFileAsync = promisify(execFile);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const options = parseOptions(process.argv.slice(2));
 const selected = options.plugin
@@ -46,14 +43,14 @@ const selected = options.plugin
 const releaseRoot = path.resolve(root, options.outDir ?? ".release/plugins");
 const runtimeRoot = path.resolve(root, ".release/runtime");
 const signing = await resolveSigningMaterial();
-const sourceCommit = options.commit ?? process.env.GITHUB_SHA ??
-  (await currentCommit());
+const sourceCommit =
+  options.commit ?? (await resolveSourceCommit({ cwd: root }));
 
 await mkdir(releaseRoot, { recursive: true });
 await mkdir(runtimeRoot, { recursive: true });
 await writeFile(
   path.join(root, ".release/plugin-release-public.pem"),
-  signing.publicKey,
+  signing.publicKey
 );
 
 try {
@@ -69,22 +66,30 @@ try {
 async function buildPlugin(plugin) {
   const packageRoot = path.join(root, "packages", plugin.directory);
   const packageJson = JSON.parse(
-    await readFile(path.join(packageRoot, "package.json"), "utf8"),
+    await readFile(path.join(packageRoot, "package.json"), "utf8")
   );
   const manifest = JSON.parse(
-    await readFile(path.join(packageRoot, "manifest.json"), "utf8"),
+    await readFile(path.join(packageRoot, "manifest.json"), "utf8")
   );
-  if (packageJson.version !== manifest.version || manifest.id !== plugin.pluginId) {
-    throw new Error(`${plugin.packageName} package and runtime metadata differ.`);
+  if (
+    packageJson.version !== manifest.version ||
+    manifest.id !== plugin.pluginId
+  ) {
+    throw new Error(
+      `${plugin.packageName} package and runtime metadata differ.`
+    );
   }
 
   const runtimeDir = path.join(
     runtimeRoot,
-    `${plugin.pluginId}-${packageJson.version}`,
+    `${plugin.pluginId}-${packageJson.version}`
   );
   await rm(runtimeDir, { recursive: true, force: true });
   await buildRuntime(plugin, packageRoot, runtimeDir);
-  await copyFile(path.join(packageRoot, "manifest.json"), path.join(runtimeDir, "manifest.json"));
+  await copyFile(
+    path.join(packageRoot, "manifest.json"),
+    path.join(runtimeDir, "manifest.json")
+  );
   const stylesPath = path.join(runtimeDir, "styles.css");
   if (!existsSync(stylesPath)) await writeFile(stylesPath, "");
 
@@ -98,7 +103,7 @@ async function buildPlugin(plugin) {
   });
   const signedReleasePath = path.join(
     packaged.releaseDir,
-    "release.signed.json",
+    "release.signed.json"
   );
   await signReleaseManifest({
     input: packaged.releasePath,
@@ -127,12 +132,20 @@ async function buildPlugin(plugin) {
   ]);
   await rm(reproductionPath, { force: true });
   if (!first.equals(second)) {
-    throw new Error(`${plugin.pluginId} bundle reproduction was not deterministic.`);
+    throw new Error(
+      `${plugin.pluginId} bundle reproduction was not deterministic.`
+    );
   }
   const checksum = createHash("sha256").update(first).digest("hex");
-  await writeFile(`${built.bundlePath}.sha256`, `${checksum}  ${path.basename(built.bundlePath)}\n`);
+  await writeFile(
+    `${built.bundlePath}.sha256`,
+    `${checksum}  ${path.basename(built.bundlePath)}\n`
+  );
   console.log(
-    `${plugin.packageName}@${packageJson.version}: ${path.relative(root, built.bundlePath)} ${checksum}`,
+    `${plugin.packageName}@${packageJson.version}: ${path.relative(
+      root,
+      built.bundlePath
+    )} ${checksum}`
   );
 }
 
@@ -191,27 +204,37 @@ async function buildRuntime(plugin, packageRoot, outDir) {
 
   const mainPath = path.join(outDir, "main.mjs");
   if (!existsSync(mainPath)) {
-    const candidate = (await readdir(outDir)).find((file) => file.endsWith(".mjs"));
-    if (!candidate) throw new Error(`${plugin.packageName} did not emit an ESM entry.`);
+    const candidate = (await readdir(outDir)).find((file) =>
+      file.endsWith(".mjs")
+    );
+    if (!candidate)
+      throw new Error(`${plugin.packageName} did not emit an ESM entry.`);
     await rename(path.join(outDir, candidate), mainPath);
   }
   const bareImports = await scanBareImports(await readFile(mainPath, "utf8"));
   const declared = new Set(
-    JSON.parse(await readFile(path.join(packageRoot, "manifest.json"), "utf8"))
-      .lapis.runtime.entries.workspace.sharedDependencies,
+    JSON.parse(
+      await readFile(path.join(packageRoot, "manifest.json"), "utf8")
+    ).lapis.runtime.entries.workspace.sharedDependencies
   );
   for (const specifier of bareImports) {
     if (!isApprovedHostModule(specifier)) {
-      throw new Error(`${plugin.packageName} left non-host dependency ${specifier} external.`);
+      throw new Error(
+        `${plugin.packageName} left non-host dependency ${specifier} external.`
+      );
     }
     if (!declared.has(specifier)) {
-      throw new Error(`${plugin.packageName} did not declare host module ${specifier}.`);
+      throw new Error(
+        `${plugin.packageName} did not declare host module ${specifier}.`
+      );
     }
   }
 }
 
 function isApprovedHostModule(specifier) {
-  return approvedWorkspaceHostModules.some((pattern) => pattern.test(specifier));
+  return approvedWorkspaceHostModules.some((pattern) =>
+    pattern.test(specifier)
+  );
 }
 
 async function scanBareImports(source) {
@@ -229,7 +252,9 @@ async function scanBareImports(source) {
 }
 
 async function resolveSigningMaterial() {
-  const temporaryDirectory = await mkdtemp(path.join(tmpdir(), "lapis-plugin-signing-"));
+  const temporaryDirectory = await mkdtemp(
+    path.join(tmpdir(), "lapis-plugin-signing-")
+  );
   const privateKeyFile = path.join(temporaryDirectory, "private.pem");
   const secret = process.env.LAPIS_PLUGIN_RELEASE_PRIVATE_KEY;
   const keyId = process.env.LAPIS_PLUGIN_RELEASE_KEY_ID;
@@ -237,7 +262,9 @@ async function resolveSigningMaterial() {
   let publicKey;
   if (secret || keyId) {
     if (!secret || !keyId) {
-      throw new Error("Both LAPIS_PLUGIN_RELEASE_PRIVATE_KEY and LAPIS_PLUGIN_RELEASE_KEY_ID are required.");
+      throw new Error(
+        "Both LAPIS_PLUGIN_RELEASE_PRIVATE_KEY and LAPIS_PLUGIN_RELEASE_KEY_ID are required."
+      );
     }
     privateKey = secret.replace(/\\n/g, "\n");
     publicKey = createPublicKey(createPrivateKey(privateKey)).export({
@@ -259,19 +286,6 @@ async function resolveSigningMaterial() {
   };
 }
 
-async function currentCommit() {
-  try {
-    const { stdout } = await execFileAsync(
-      "jj",
-      ["--no-pager", "log", "-r", "@", "--no-graph", "-T", "commit_id"],
-      { cwd: root },
-    );
-    return stdout.trim() || undefined;
-  } catch {
-    return undefined;
-  }
-}
-
 function requiredPlugin(selector) {
   const plugin = pluginPackageBySelector(selector);
   if (!plugin) throw new Error(`Unknown plugin selector: ${selector}`);
@@ -282,8 +296,11 @@ function parseOptions(args) {
   const options = {};
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
+    if (arg === "--") continue;
     if (!arg.startsWith("--")) throw new Error(`Unexpected argument: ${arg}`);
-    const key = arg.slice(2).replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+    const key = arg
+      .slice(2)
+      .replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
     options[key] = args[index + 1];
     index += 1;
   }
