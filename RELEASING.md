@@ -28,7 +28,12 @@ prepare and present:
 - deterministic bundle reproduction and signature verification;
 - clean registry-only Web and Deno consumer evidence;
 - the generated registry diff;
-- plugin-management UI interaction, accessibility, and visual-parity evidence.
+- plugin-management UI interaction and accessibility evidence.
+
+Visual-parity stories and capture wiring are included for later review, but
+visual results and baselines are explicitly non-gating. A missing or failing
+visual comparison must not block npm publication, GitHub assets, a registry pull
+request, or registry deployment.
 
 Stop for explicit approval. Approval is also required before merging the first
 generated registry PR or changing production registry deployment.
@@ -37,3 +42,8 @@ After approval, the release workflow publishes npm, creates the package-scoped
 GitHub release, and sends the verified release coordinates to the registry by
 `repository_dispatch` using a narrowly scoped GitHub App token. Secrets contain
 private key material; release logs and artifacts never do.
+
+The GitHub App is installed only on `lapis-plugins` and `plugin-registry`. The
+release workflow uses `LAPIS_REGISTRY_APP_ID` and
+`LAPIS_REGISTRY_APP_PRIVATE_KEY` to create an installation token scoped to
+those two repositories and the contents permission needed for dispatch.
