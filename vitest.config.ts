@@ -9,6 +9,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   optimizeDeps: {
     exclude: [
+      "@lapis-notes/api",
       "@lapis-notes/language-service",
       "@lapismd/design-core",
     ],
@@ -20,6 +21,8 @@ export default defineConfig({
       "@storybook/addon-a11y/preview",
       "@storybook/svelte-vite",
       "character-entities",
+      "@lapis-notes/api > eventemitter3",
+      "@lapismd/mira/**",
       "debug",
       "extend",
       "markdownlint",
@@ -36,6 +39,7 @@ export default defineConfig({
         ],
         optimizeDeps: {
           exclude: [
+            "@lapis-notes/api",
             "@lapis-notes/language-service",
             "@lapismd/design-core",
           ],
@@ -47,6 +51,8 @@ export default defineConfig({
             "@storybook/addon-a11y/preview",
             "@storybook/svelte-vite",
             "character-entities",
+            "@lapis-notes/api > eventemitter3",
+            "@lapismd/mira/**",
             "debug",
             "extend",
             "markdownlint",

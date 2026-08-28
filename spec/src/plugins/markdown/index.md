@@ -72,13 +72,13 @@ package, independently of the repository source layout.
 | LN-MD-111 | Frontmatter property controls in Live Preview and File Properties MUST expose Mira's standard portalled dropdown with a `Property type` submenu above Cut, Copy, Paste, and Remove. Each type choice MUST show its registered icon. Both menus MUST remain visible and hit-testable outside the property row and workspace viewport; types MUST NOT be flattened into a custom panel.                      |
 | LN-MD-112 | Reading mode's floating outline MUST resolve the actual document scroll owner. As the shared Scroll Area moves, the rail stroke and expanded outline item MUST both identify the current section without requiring outline interaction.                                                                                                                                                                    |
 | LN-MD-097 | Markdown `extractMetadata` MUST run off the renderer thread through a worker. Vault I/O, link resolution, `$state` apply, and `AppDatabase` writes MUST stay on the main thread. `read()` MAY use the same parse synchronously when a worker is unavailable.                                                                                                                                               |
-| LN-MD-099 | Published `parse-metadata` MUST import the metadata worker as `./metadata-worker?worker&inline` without a `.ts` suffix so Vite hosts resolve the packaged `metadata-worker.js`.                                                                                                                                                                                                                            |
+| LN-MD-099 | Published `parse-metadata` MUST construct its module worker with the standards-aligned `new Worker(new URL("./metadata-worker.js", import.meta.url), { type: "module" })` form. The package MUST NOT expose a Vite query-suffix worker import that dependency optimization can interpret as an ordinary module.                                                                                     |
 
 File Properties value autocomplete and wikilink pills stay on the Lapis
 frontmatter adapter and Mira file adapter. Live Preview and Reading receive the
 same App-scoped configuration so text and list property values can be completed
 from metadata across the vault; Mira owns the portalled editor UI. Metadata parse uses a Markdown
-worker whose packaged import stays extensionless; heavy type widgets remain deferred. File-scoped Outline, Backlinks, and
+worker whose packaged URL stays on the emitted JavaScript file; heavy type widgets remain deferred. File-scoped Outline, Backlinks, and
 Outgoing Links share one follow helper under `LN-MD-098` and do not rewrite
 state when a leaf event repeats the same followed path.
 Linked mentions paint from `getCache`/`getFileCache` even when `getAllItems()`

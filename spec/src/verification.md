@@ -14,6 +14,8 @@ and records repository-level extraction and release gates.
 | LP-SPEC-016 | distribution | Planned | Repository specification, package-boundary checks, release-security tests, deterministic artifact verification, and shared Storybook build. |
 | LP-SPEC-017 | distribution | Planned | Repository specification, package-boundary checks, release-security tests, deterministic artifact verification, and shared Storybook build. |
 | LP-SPEC-018 | distribution | Implemented | Repository specification, package-boundary checks, release-security tests, deterministic artifact verification, and shared Storybook build. |
+| LP-SPEC-019 | distribution | Implemented | Markdown worker regression coverage, package checks, npm pack, deterministic tarball verification, and real Desktop/Web Vite acceptance exercise the standards-aligned emitted worker URL without consumer aliases. |
+| LP-SPEC-020 | distribution | Implemented | Shared Storybook and Vitest configurations require deep Mira and transitive CommonJS pre-bundles plus excluded, deduplicated API state; the interaction and accessibility catalog imports plugin stories through that boundary. |
 | LN-AI-001 | ai-plugin | Implemented | package location, runtime ID `ai`, bundled default-enabled registration |
 | LN-AI-002 | ai-plugin | Implemented | public exports expose AgentRuntime; vendor SDKs stay in adapters |
 | LN-AI-003 | ai-plugin | Implemented | Fake and ACP sessions block on respondToApproval |

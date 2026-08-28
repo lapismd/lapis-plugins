@@ -21,3 +21,5 @@ approved-release environment, and immutable-version patch rollback policy.
 Package-boundary verification also rejects bundled Lapis host packages and
 requires every externalized Lapis runtime module to resolve through a declared
 peer supplied by the consuming application.
+Worker packaging changes require focused package checks plus a packed consumer
+development startup that exercises Vite dependency discovery.

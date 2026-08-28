@@ -7,11 +7,12 @@ const parseMetadataSource = readFileSync(
   "utf8",
 );
 
-describe("parse-metadata worker import", () => {
-  it("keeps the Vite worker specifier extensionless for packaged consumers", () => {
+describe("parse-metadata worker construction", () => {
+  it("uses the standard module-worker URL form in packaged consumers", () => {
     expect(parseMetadataSource).toContain(
-      'from "./metadata-worker?worker&inline"',
+      'new URL("./metadata-worker.js", import.meta.url)',
     );
-    expect(parseMetadataSource).not.toContain("metadata-worker.ts?worker");
+    expect(parseMetadataSource).toContain('{ type: "module" }');
+    expect(parseMetadataSource).not.toContain("?worker");
   });
 });

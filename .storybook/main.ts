@@ -88,6 +88,7 @@ const config: StorybookConfig = {
       resolve: {
         dedupe: [
           "svelte",
+          "@lapis-notes/api",
           "@codemirror/state",
           "@codemirror/view",
           "@codemirror/language",
@@ -113,6 +114,7 @@ const config: StorybookConfig = {
       optimizeDeps: {
         exclude: [
           "@storybook/svelte",
+          "@lapis-notes/api",
           "@lapis-notes/language-service",
           "@lapismd/design-core",
         ],
@@ -123,6 +125,8 @@ const config: StorybookConfig = {
           "react-dom",
           "react-dom/client",
           "character-entities",
+          "@lapis-notes/api > eventemitter3",
+          "@lapismd/mira/**",
           "debug",
           "extend",
           "markdownlint",

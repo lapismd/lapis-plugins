@@ -1,6 +1,3 @@
-/// <reference path="../../vite-env.d.ts" />
-
-import MetadataWorker from "./metadata-worker?worker&inline";
 import { extractMetadata } from "./extract-metadata";
 import type {
   MetadataWorkerRequest,
@@ -25,7 +22,10 @@ function acquireWorker(): Worker | null {
     return null;
   }
   try {
-    const instance = new MetadataWorker();
+    const instance = new Worker(
+      new URL("./metadata-worker.js", import.meta.url),
+      { type: "module" },
+    );
     instance.onmessage = (event: MessageEvent<MetadataWorkerResponse>) => {
       const task = pending.get(event.data.id);
       if (!task) return;
