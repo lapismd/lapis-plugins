@@ -87,6 +87,9 @@ filters. Design Core owns reusable query, colour, sort, and popover controls;
 Markdown owns read-only note rendering. Workspace placement and vault
 persistence remain application concerns. Initial Global alignment is a
 projection-wide fit; active-file focus is a separate, explicit camera action.
+Graph declares Markdown as both a runtime peer and a development dependency so
+clean workspace validation builds Markdown's public `FileEmbed` exports before
+Graph checks them while released applications still own the shared peer.
 
 The coordinator treats the canonical snapshot as disposable generated state.
 It reads database readiness separately from MetadataCache reconciliation,
