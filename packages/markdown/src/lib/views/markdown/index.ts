@@ -19,7 +19,7 @@ export type MarkdownViewModeType = "source" | "preview" | "live-preview";
 type LegacyMarkdownViewState = MarkdownViewState & { source?: boolean };
 
 export function markdownViewReturnTarget(
-  state: Record<string, unknown>,
+  state: Record<string, unknown>
 ): MarkdownViewReturnTarget | null {
   const candidate = state["returnTarget"];
   if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) {
@@ -67,13 +67,13 @@ export class MarkdownView extends RootMarkdownView {
   private resolveDefaultMode(): MarkdownViewModeType {
     const config = this.app?.configuration?.getConfiguration?.();
     const viewForNew = String(
-      config?.get?.("editor.defaultViewForNewTabs", "editing") ?? "editing",
+      config?.get?.("editor.defaultViewForNewTabs", "editing") ?? "editing"
     );
     if (viewForNew === "reading") {
       return "preview";
     }
     const editingMode = String(
-      config?.get?.("editor.defaultEditingMode", "source") ?? "source",
+      config?.get?.("editor.defaultEditingMode", "source") ?? "source"
     );
     return editingMode === "live-preview" ? "live-preview" : "source";
   }
@@ -89,7 +89,7 @@ export class MarkdownView extends RootMarkdownView {
 
   setState(
     state: Record<string, unknown>,
-    result?: ViewStateResult,
+    result?: ViewStateResult
   ): Promise<void> {
     const previous = { ...this.getState() } as LegacyMarkdownViewState;
     const nextMode =
@@ -105,10 +105,18 @@ export class MarkdownView extends RootMarkdownView {
   }
 
   async onLoadFile(
-    file: Parameters<RootMarkdownView["onLoadFile"]>[0],
+    file: Parameters<RootMarkdownView["onLoadFile"]>[0]
   ): Promise<void> {
     this.pendingEditorExtensionRefresh = false;
     await super.onLoadFile(file);
+    const frontmatter = this.app.metadataCache.getCache(file.path)?.frontmatter;
+    if (frontmatter) {
+      await Promise.all(
+        Object.keys(frontmatter).map((key) =>
+          this.app.metadataTypeManager.getValuesAsync(key)
+        )
+      );
+    }
   }
 
   getViewData(): string {
@@ -133,7 +141,7 @@ export class MarkdownView extends RootMarkdownView {
 
   private switchModeFromAction(
     targetMode: MarkdownViewModeType,
-    event: MouseEvent,
+    event: MouseEvent
   ): void {
     if (event.metaKey || event.ctrlKey) {
       const leaf = this.app.workspace.getLeaf("split", "horizontal");
@@ -150,13 +158,13 @@ export class MarkdownView extends RootMarkdownView {
     }
 
     void this.setState({ ...this.getState(), mode: targetMode }).then(() =>
-      this.app.workspace.requestSaveLayout(),
+      this.app.workspace.requestSaveLayout()
     );
   }
 
   private switchToReturnTarget(
     target: MarkdownViewReturnTarget,
-    event: MouseEvent,
+    event: MouseEvent
   ): void {
     const leaf =
       event.metaKey || event.ctrlKey
@@ -173,7 +181,7 @@ export class MarkdownView extends RootMarkdownView {
             ...(file ? { file } : {}),
           },
         },
-        { history: true },
+        { history: true }
       )
       .then(() => this.app.workspace.requestSaveLayout());
   }
@@ -191,7 +199,7 @@ export class MarkdownView extends RootMarkdownView {
       this.addAction(
         "pencil",
         "Current view: preview\nClick to edit\n⌘+Click to open to the right",
-        (event) => this.switchModeFromAction("live-preview", event),
+        (event) => this.switchModeFromAction("live-preview", event)
       );
       this.component = mount(MiraPreview, {
         target: this.containerEl,
@@ -219,13 +227,13 @@ export class MarkdownView extends RootMarkdownView {
       this.addAction(
         returnTarget.icon ?? "book-open",
         `Current view: editing\nClick to open ${returnTarget.label}\n⌘+Click to open to the right`,
-        (event) => this.switchToReturnTarget(returnTarget, event),
+        (event) => this.switchToReturnTarget(returnTarget, event)
       );
     } else {
       this.addAction(
         "book-open",
         "Current view: editing\nClick to read\n⌘+Click to open to the right",
-        (event) => this.switchModeFromAction("preview", event),
+        (event) => this.switchModeFromAction("preview", event)
       );
     }
 
@@ -238,7 +246,7 @@ export class MarkdownView extends RootMarkdownView {
         mode,
         onModeChange: (nextMode) => {
           void this.setState({ ...this.getState(), mode: nextMode }).then(() =>
-            this.app.workspace.requestSaveLayout(),
+            this.app.workspace.requestSaveLayout()
           );
         },
       },
@@ -309,7 +317,7 @@ export class MarkdownView extends RootMarkdownView {
           .onClick(() => {
             void this.app.configuration.updateConfigurationOption(
               MIRA_EDITOR_SETTING_KEYS.toolbar,
-              !editorSettings.toolbar,
+              !editorSettings.toolbar
             );
           });
       });

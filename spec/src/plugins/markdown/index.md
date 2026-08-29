@@ -129,6 +129,9 @@ These first-party views use persisted metadata facets and paged rows directly;
 file-scoped Outline, File Properties, Backlinks, and Outgoing Links fetch their
 current path asynchronously and discard results superseded by a later followed
 file or revision. Markdown does not acquire the third-party snapshot lease.
+File Properties re-resolves and re-synchronizes Mira from its refresh callback
+so a committed same-path metadata change is applied even when the followed
+`TFile` identity remains stable.
 The six canonical Markdown panels register `ViewAccess.command` openers from
 their registry. Markdown and Media remain `ViewAccess.file`, and legacy panel
 view types remain `ViewAccess.alias` without palette duplicates.

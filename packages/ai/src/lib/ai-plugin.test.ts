@@ -311,6 +311,13 @@ describe("AiPlugin contracts", () => {
     expect(source).toContain("this.containerEl.replaceChildren()");
     expect(source).toContain("mount(AiCatalogPanel");
     expect(panel).toContain("loadCatalog");
+    expect(panel).toContain('app.workspace.on("layout-ready"');
+    expect(panel).toContain("if (app.workspace.layoutReady) void refresh()");
+    expect(panel).toContain('app.workspace.on("active-leaf-change"');
+    expect(panel).toContain("app.workspace.offref(activeLeaf)");
+    expect(panel).toContain("generation !== refreshGeneration");
+    expect(panel).toContain("nextSignature === groupsSignature");
+    expect(panel).toContain("--ui-workspace-foreground");
     expect(panel).toContain("Enable ${tool.name} for the next chat");
   });
 

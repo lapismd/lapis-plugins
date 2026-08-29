@@ -61,6 +61,8 @@
   let openKeys = new SvelteSet<string>();
   let openedCatalogPath = $state<string | null>(null);
   let defaultsApplied = false;
+  let refreshGeneration = 0;
+  let groupsSignature = "";
 
   const visibleGroups = $derived(filterCatalogGroups(groups, query));
   const filtering = $derived(query.trim().length > 0);
@@ -95,7 +97,13 @@
   }
 
   async function refresh(): Promise<void> {
-    groups = await loadCatalog();
+    const generation = ++refreshGeneration;
+    const nextGroups = await loadCatalog();
+    if (generation !== refreshGeneration) return;
+    const nextSignature = JSON.stringify(nextGroups);
+    if (nextSignature === groupsSignature) return;
+    groupsSignature = nextSignature;
+    groups = nextGroups;
     if (!defaultsApplied) {
       openKeys.clear();
       for (const key of collectCatalogFolderKeys(groups)) {
@@ -106,6 +114,7 @@
   }
 
   onMount(() => {
+    const layout = app.workspace.on("layout-ready", () => void refresh());
     const tools = app.agentTools.on("changed", () => void refresh());
     const commands = app.agentSlashCommands.on("changed", () => void refresh());
     const skills = app.agentSkills.on("changed", () => void refresh());
@@ -113,9 +122,13 @@
     const deleted = app.vault.on("delete", () => void refresh());
     const modified = app.vault.on("modify", () => void refresh());
     const renamed = app.vault.on("rename", () => void refresh());
+    const activeLeaf = app.workspace.on("active-leaf-change", () =>
+      void refresh(),
+    );
     const unsubscribeSettings = subscribeSettings?.(() => void refresh());
-    void refresh();
+    if (app.workspace.layoutReady) void refresh();
     return () => {
+      app.workspace.offref(layout);
       app.agentTools.offref(tools);
       app.agentSlashCommands.offref(commands);
       app.agentSkills.offref(skills);
@@ -123,6 +136,7 @@
       app.vault.offref(deleted);
       app.vault.offref(modified);
       app.vault.offref(renamed);
+      app.workspace.offref(activeLeaf);
       unsubscribeSettings?.();
     };
   });
@@ -733,7 +747,10 @@
 
   :global(.ai-catalog .suggestion-highlight) {
     border-radius: 0.125rem;
-    color: var(--ui-search-highlight-foreground, inherit);
+    color: var(
+      --ui-search-highlight-foreground,
+      var(--ui-workspace-foreground, var(--foreground))
+    );
     background: var(
       --ui-search-highlight-background,
       color-mix(in srgb, var(--primary) 22%, transparent)

@@ -47,3 +47,6 @@ the GitHub App client ID and private key, avoiding the deprecated numeric App ID
 input while keeping missing credentials fail closed before publication.
 Generated-output cleanup is protected by LP-SPEC-028 and focused filesystem
 tests that distinguish full preparation from a single-plugin rebuild.
+When a consumer Storybook scenario exposes an extracted-plugin defect, the
+behavioral correction and its canonical requirement remain plugin-owned while
+the consumer interaction remains valid cross-repository acceptance evidence.

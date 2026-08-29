@@ -23,3 +23,8 @@
 | LP-SPEC-026 | A same-version replacement MAY overwrite only the matching GitHub release archive and checksum after an explicit plugin selection, matching npm integrity, and proof that the registry does not publish that version. It MUST NOT overwrite, unpublish, or republish npm; a registry-published defect MUST use a fixed patch and npm deprecation. |
 | LP-SPEC-027 | GitHub CI and release workflows MUST configure Node 24 LTS and use action majors whose JavaScript entrypoints run on Node 24, so repository automation does not depend on GitHub's deprecated Node 20 action runtime. Both workflows MUST install the pinned mdBook tool required by the canonical specification gate before release preparation. |
 | LP-SPEC-028 | Full all-plugin release preparation MUST remove stale generated plugin archive directories before signing the current eleven-version candidate set. A focused single-plugin build MAY preserve other current candidates, but verification of the full set MUST never scan archives produced by a prior signing key or version. |
+
+Plugin behavior corrections use an independent package patch changeset and
+retain focused owning-package checks plus real consumer Storybook acceptance as
+release evidence. Preparing that candidate does not authorize npm publication,
+public release assets, or registry dispatch.

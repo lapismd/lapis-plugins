@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { App } from "@lapis-notes/api";
+  import type { App, TFile } from "@lapis-notes/api";
   import {
     FrontmatterEditor,
     type FrontmatterController,
@@ -17,13 +17,8 @@
   import MarkdownSidebarPanel from "../sidebar-panel/markdown-sidebar-panel.svelte";
 
   let { app }: { app: App } = $props();
-  let followRevision = $state(0);
+  let activeFile = $state<TFile | null>(null);
   let syncGeneration = 0;
-
-  const activeFile = $derived.by(() => {
-    followRevision;
-    return resolvePanelTargetFile(app);
-  });
 
   const fileAdapter = $derived(createLapisMiraFileAdapter(app));
   const propertyManager: FrontmatterPropertyManager = untrack(() =>
@@ -33,26 +28,48 @@
     createLapisFrontmatterController(app, null, propertyManager),
   );
 
-  $effect(() => {
-    const file = activeFile;
-    const generation = ++syncGeneration;
-    void (async () => {
-      if (file) await app.metadataCache.getFileCacheAsync(file);
-      if (generation !== syncGeneration || file !== activeFile) return;
-      syncLapisFrontmatterController(
-        controller,
-        app,
-        file ?? null,
-        propertyManager,
-      );
-    })();
-  });
+  async function hydrateIndexedValues(
+    frontmatter: Record<string, unknown> | null,
+  ): Promise<void> {
+    if (!frontmatter) return;
+    await Promise.all(
+      Object.keys(frontmatter).map((key) =>
+        app.metadataTypeManager.getValuesAsync(key),
+      ),
+    );
+  }
 
-  onMount(() =>
-    subscribeFileScopedPanelRefresh(app, () => {
-      followRevision += 1;
-    }),
-  );
+  async function refreshFileProperties(): Promise<void> {
+    const file = resolvePanelTargetFile(app);
+    const isNewTarget = activeFile?.path !== file?.path;
+    const generation = ++syncGeneration;
+    const refreshedCache = file
+      ? await app.metadataCache.getFileCacheAsync(file)
+      : null;
+    const refreshedFrontmatter = refreshedCache?.frontmatter ?? null;
+    if (file && isNewTarget) {
+      await hydrateIndexedValues(refreshedFrontmatter);
+    }
+    if (
+      generation !== syncGeneration ||
+      file?.path !== resolvePanelTargetFile(app)?.path
+    ) {
+      return;
+    }
+    syncLapisFrontmatterController(
+      controller,
+      app,
+      file,
+      propertyManager,
+      refreshedFrontmatter,
+    );
+    activeFile = file;
+    if (file && !isNewTarget) {
+      void hydrateIndexedValues(refreshedFrontmatter);
+    }
+  }
+
+  onMount(() => subscribeFileScopedPanelRefresh(app, refreshFileProperties));
 </script>
 
 <MarkdownSidebarPanel

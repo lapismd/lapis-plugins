@@ -53,6 +53,7 @@ vi.mock("@lapis-notes/api", () => ({
 import {
   commitLapisFrontmatterRecord,
   createLapisFrontmatterPropertyManager,
+  syncLapisFrontmatterController,
 } from "./lapis-frontmatter-adapter";
 
 function createAppFixture(frontmatter: Record<string, unknown>) {
@@ -110,6 +111,10 @@ function createAppFixture(frontmatter: Record<string, unknown>) {
           if (key === "tags") return [["demo"], ["ideas", "project/beta"]];
           return [];
         },
+        getValuesAsync: vi.fn(async (key: string) => {
+          if (key === "tags") return [["demo"], ["ideas", "project/beta"]];
+          return [];
+        }),
         setType: vi.fn((key: string, type: string) => {
           types[key] = { name: key, type };
         }),
@@ -125,12 +130,12 @@ function createAppFixture(frontmatter: Record<string, unknown>) {
         processFrontMatter: vi.fn(
           async (
             _file: { path: string },
-            mutate: (data: Record<string, unknown>) => void,
+            mutate: (data: Record<string, unknown>) => void
           ) => {
             const next = structuredClone(current);
             mutate(next);
             current = next;
-          },
+          }
         ),
       },
       metadataCache: {
@@ -146,7 +151,7 @@ describe("lapis frontmatter adapter", () => {
     vi.clearAllMocks();
   });
 
-  it("exposes Lapis definitions while preserving Mira native editors", () => {
+  it("exposes Lapis definitions while preserving Mira native editors", async () => {
     const { app } = createAppFixture({ title: "Demo" });
     const manager = createLapisFrontmatterPropertyManager(app);
 
@@ -155,16 +160,15 @@ describe("lapis frontmatter adapter", () => {
     expect(manager.resolveWidget("tags")?.render).toBeUndefined();
     expect(manager.resolveWidget("aliases")?.render).toBeUndefined();
     expect(manager.resolveType("count", "count", "2")).toBe("number");
-    expect(manager.config.valueSuggestions?.("tags", "ide")).toEqual([
-      "demo",
-      "ideas",
-      "project/beta",
-    ]);
+    await expect(
+      manager.config.valueSuggestions?.("tags", "ide")
+    ).resolves.toEqual(["demo", "ideas", "project/beta"]);
+    expect(app.metadataTypeManager.getValuesAsync).not.toHaveBeenCalled();
 
     manager.setType("status", "text");
     expect(app.metadataTypeManager.setType).toHaveBeenCalledWith(
       "status",
-      "text",
+      "text"
     );
   });
 
@@ -187,5 +191,29 @@ describe("lapis frontmatter adapter", () => {
       title: "Updated",
       count: 4,
     });
+  });
+
+  it("synchronizes from the refreshed metadata record instead of a stale cache", () => {
+    const { app } = createAppFixture({ status: "planned" });
+    const propertyManager = createLapisFrontmatterPropertyManager(app);
+    const controller = {
+      getRecord: () => ({ status: "planned" }),
+      update: vi.fn(),
+      syncRecord: vi.fn(),
+    } as any;
+
+    syncLapisFrontmatterController(
+      controller,
+      app,
+      { path: "note.md" } as any,
+      propertyManager,
+      { status: "review" }
+    );
+
+    expect(controller.update).toHaveBeenCalled();
+    expect(controller.syncRecord).toHaveBeenCalledWith(
+      { status: "review" },
+      { commit: false }
+    );
   });
 });

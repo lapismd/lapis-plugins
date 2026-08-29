@@ -49,6 +49,7 @@ function createApp(values: Record<string, unknown> = {}): App {
       types: {},
       registeredTypeWidgets: {},
       getValues: vi.fn(() => ["ideas"]),
+      getValuesAsync: vi.fn(async () => ["ideas"]),
       getAllProperties: () => ({}),
     },
     embedRegistry: { get: () => null },
@@ -57,7 +58,7 @@ function createApp(values: Record<string, unknown> = {}): App {
 }
 
 describe("Lapis Mira authoring composition", () => {
-  it("enables the complete portable defaults without a duplicate base layer", () => {
+  it("enables the complete portable defaults without a duplicate base layer", async () => {
     const app = createApp();
     const resolved = resolveMarkdownMiraExtensions(app);
     const options = createMarkdownMiraCodeMirrorOptions({
@@ -70,12 +71,12 @@ describe("Lapis Mira authoring composition", () => {
     expect(options.blockControls).toBe(true);
     expect(options.fileAdapter).toBeDefined();
     expect(options.frontmatterOpen).toBe(false);
-    expect(
+    await expect(
       (options.frontmatterConfig as FrontmatterConfig).valueSuggestions?.(
         "tags",
-        "ide",
-      ),
-    ).toEqual(["ideas"]);
+        "ide"
+      )
+    ).resolves.toEqual(["ideas"]);
     expect(resolved.frontmatterDefaultOpen).toBe(false);
     expect(resolved.outlineNavigation).toBe(true);
     expect(resolved.features).toMatchObject({
@@ -92,7 +93,7 @@ describe("Lapis Mira authoring composition", () => {
         "mermaid",
         "default-slash-commands",
         "selection-toolbar",
-      ]),
+      ])
     );
   });
 
@@ -119,10 +120,10 @@ describe("Lapis Mira authoring composition", () => {
       doodleDividers: true,
     });
     expect(
-      resolved.miraExtensions.map((extension) => extension.name),
+      resolved.miraExtensions.map((extension) => extension.name)
     ).toContain("doodle-dividers");
     expect(
-      resolved.miraExtensions.map((extension) => extension.name),
+      resolved.miraExtensions.map((extension) => extension.name)
     ).not.toContain("selection-toolbar");
     expect(options.blockControls).toMatchObject({ enabled: true });
     expect(options.frontmatterOpen).toBe(true);
@@ -145,9 +146,7 @@ describe("Lapis Mira authoring composition", () => {
     });
 
     expect(resolved.miraExtensions).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ name: "tasks:items" }),
-      ]),
+      expect.arrayContaining([expect.objectContaining({ name: "tasks:items" })])
     );
   });
 
@@ -176,8 +175,8 @@ describe("Lapis Mira authoring composition", () => {
     expect(mounted).toHaveBeenCalledOnce();
     expect(
       document.head.querySelector(
-        '[data-mira-extension-style="id:lifecycle-test"]',
-      ),
+        '[data-mira-extension-style="id:lifecycle-test"]'
+      )
     ).not.toBeNull();
 
     view.destroy();
@@ -185,8 +184,8 @@ describe("Lapis Mira authoring composition", () => {
     expect(cleaned).toHaveBeenCalledOnce();
     expect(
       document.head.querySelector(
-        '[data-mira-extension-style="id:lifecycle-test"]',
-      ),
+        '[data-mira-extension-style="id:lifecycle-test"]'
+      )
     ).toBeNull();
   });
 });

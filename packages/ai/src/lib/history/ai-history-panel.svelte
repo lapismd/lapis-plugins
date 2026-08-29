@@ -922,7 +922,10 @@
 
   :global(.ai-history .suggestion-highlight) {
     border-radius: 0.125rem;
-    color: var(--ui-search-highlight-foreground, inherit);
+    color: var(
+      --ui-search-highlight-foreground,
+      var(--ui-workspace-foreground, var(--foreground))
+    );
     background: var(
       --ui-search-highlight-background,
       color-mix(in srgb, var(--primary) 22%, transparent)

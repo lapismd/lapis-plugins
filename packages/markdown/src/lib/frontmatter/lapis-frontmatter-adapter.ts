@@ -58,8 +58,12 @@ function liveFrontmatterConfig(app: App): FrontmatterConfig {
   return {
     types,
     widgets,
-    valueSuggestions: (key) =>
-      flattenMetadataValues(manager.getValues(key)),
+    valueSuggestions: async (key) => {
+      const cached = flattenMetadataValues(manager.getValues(key));
+      return cached.length > 0
+        ? cached
+        : flattenMetadataValues(await manager.getValuesAsync(key));
+    },
     propertySuggestions: () => {
       const properties = manager.getAllProperties();
       const names = new Set([
@@ -79,9 +83,7 @@ function liveFrontmatterConfig(app: App): FrontmatterConfig {
     },
     onActionError(error, action) {
       new Notice(
-        error instanceof Error
-          ? error.message
-          : `Failed to ${action} property`,
+        error instanceof Error ? error.message : `Failed to ${action} property`
       );
     },
   };
@@ -92,7 +94,7 @@ function withLiveConfig(app: App): FrontmatterPropertyManager {
 }
 
 export function createLapisFrontmatterPropertyManager(
-  app: App,
+  app: App
 ): FrontmatterPropertyManager {
   const manager: FrontmatterPropertyManager = {
     get config() {
@@ -101,7 +103,7 @@ export function createLapisFrontmatterPropertyManager(
     resolveType(
       pathString: string,
       key: string,
-      value: unknown,
+      value: unknown
     ): FrontmatterPropertyKind {
       return withLiveConfig(app).resolveType(pathString, key, value);
     },
@@ -112,14 +114,14 @@ export function createLapisFrontmatterPropertyManager(
       return withLiveConfig(app).typeOptions();
     },
     resolveWidget(
-      kind: FrontmatterPropertyKind,
+      kind: FrontmatterPropertyKind
     ): FrontmatterTypeDefinition | null {
       return withLiveConfig(app).resolveWidget(kind);
     },
     coerceValue(
       value: unknown,
       kind: FrontmatterPropertyKind,
-      property?: FrontmatterProperty,
+      property?: FrontmatterProperty
     ): unknown {
       return withLiveConfig(app).coerceValue(value, kind, property);
     },
@@ -134,7 +136,7 @@ export function createLapisFrontmatterPropertyManager(
         const result = await app.metadataTypeManager.rename(prevId, newId);
         if (result.failedFiles.length) {
           new Notice(
-            `Renamed ${result.updatedFiles.length} files; ${result.failedFiles.length} failed`,
+            `Renamed ${result.updatedFiles.length} files; ${result.failedFiles.length} failed`
           );
         } else if (prevId !== newId) {
           new Notice(`Successfully renamed property ${prevId} -> ${newId}`);
@@ -153,7 +155,7 @@ export function createLapisFrontmatterPropertyManager(
 
 function recordsEqual(
   left: Record<string, unknown>,
-  right: Record<string, unknown>,
+  right: Record<string, unknown>
 ): boolean {
   return JSON.stringify(left) === JSON.stringify(right);
 }
@@ -161,7 +163,7 @@ function recordsEqual(
 export async function commitLapisFrontmatterRecord(
   app: App,
   file: TFile,
-  commit: FrontmatterControllerCommit,
+  commit: FrontmatterControllerCommit
 ): Promise<void> {
   try {
     await app.fileManager.processFrontMatter(file, (frontmatter) => {
@@ -181,7 +183,7 @@ export async function commitLapisFrontmatterRecord(
     new Notice(
       error instanceof Error
         ? error.message
-        : `Failed to update properties for ${file.path}`,
+        : `Failed to update properties for ${file.path}`
     );
   }
 }
@@ -189,7 +191,7 @@ export async function commitLapisFrontmatterRecord(
 export function createLapisFrontmatterController(
   app: App,
   file: TFile | null,
-  propertyManager: FrontmatterPropertyManager,
+  propertyManager: FrontmatterPropertyManager
 ): FrontmatterController {
   const seed =
     file != null
@@ -213,9 +215,12 @@ export function syncLapisFrontmatterController(
   app: App,
   file: TFile | null,
   propertyManager: FrontmatterPropertyManager,
+  sourceRecord?: Record<string, unknown> | null
 ): void {
   const seed =
-    file != null
+    sourceRecord !== undefined
+      ? { ...(sourceRecord ?? {}) }
+      : file != null
       ? { ...(app.metadataCache.getCache(file.path)?.frontmatter ?? {}) }
       : {};
 
