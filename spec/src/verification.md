@@ -22,7 +22,7 @@ and records repository-level extraction and release gates.
 | LP-SPEC-024 | distribution | Implemented | The tracked root pnpm lockfile and release-security test require frozen installs in both CI and approved publication workflows. |
 | LP-SPEC-025 | distribution | Implemented | Release workflow source tests enumerate all eleven default-selected boolean inputs, reject the removed free-form plugin input and an empty workflow selection, and selection tests cover explicit comma-separated package lists and unknown selectors. |
 | LP-SPEC-026 | distribution | Implemented | Approved-publisher tests require explicit selection for replacement and refuse any version present in signed registry source metadata; publication still verifies immutable npm integrity before GitHub asset replacement. |
-| LP-SPEC-027 | distribution | Implemented | Workflow source tests require Node 24 builds plus checkout v7, setup-node v7, pnpm/action-setup v6, and upload-artifact v7 Node 24 action runtimes, and pin mdBook 0.5.4 before the CI specification gate. |
+| LP-SPEC-027 | distribution | Implemented | Workflow source tests require Node 24 builds plus checkout v7, setup-node v7, pnpm/action-setup v6, and upload-artifact v7 Node 24 action runtimes, and pin mdBook 0.5.4 before CI and approved-release specification gates. |
 | LP-SPEC-028 | distribution | Implemented | Release-output filesystem tests prove full preparation deletes stale signed bundles while focused single-plugin preparation preserves other generated candidates. |
 | LN-AI-001 | ai-plugin | Implemented | package location, runtime ID `ai`, bundled default-enabled registration |
 | LN-AI-002 | ai-plugin | Implemented | public exports expose AgentRuntime; vendor SDKs stay in adapters |

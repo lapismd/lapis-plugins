@@ -91,6 +91,9 @@ jobs:
           node-version: 24
           cache: pnpm
           registry-url: https://registry.npmjs.org
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: mdbook@0.5.4
       - name: Resolve selected plugins
         id: selection
         shell: bash
