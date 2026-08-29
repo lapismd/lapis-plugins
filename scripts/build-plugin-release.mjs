@@ -34,6 +34,7 @@ import {
   pluginPackages,
 } from "./package-catalog.mjs";
 import { isPluginSelfReference } from "./lib/runtime-host-modules.mjs";
+import { preparePluginReleaseRoot } from "./lib/release-output.mjs";
 import { resolveSourceCommit } from "./lib/source-commit.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -47,7 +48,10 @@ const signing = await resolveSigningMaterial();
 const sourceCommit =
   options.commit ?? (await resolveSourceCommit({ cwd: root }));
 
-await mkdir(releaseRoot, { recursive: true });
+await preparePluginReleaseRoot({
+  releaseRoot,
+  clean: !options.plugin,
+});
 await mkdir(runtimeRoot, { recursive: true });
 await writeFile(
   path.join(root, ".release/plugin-release-public.pem"),

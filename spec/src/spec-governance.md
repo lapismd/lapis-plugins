@@ -33,3 +33,5 @@ Manual publication controls, bounded GitHub-asset replacement, and workflow
 runtime upgrades are protected by LP-SPEC-025 through LP-SPEC-027. Their tests
 must cover all eleven boolean inputs, explicit-selection parsing, registry
 replacement refusal, npm immutability, and Node 24 action/build configuration.
+Generated-output cleanup is protected by LP-SPEC-028 and focused filesystem
+tests that distinguish full preparation from a single-plugin rebuild.
