@@ -26,6 +26,9 @@ source file maps to its owning plugin chapter, while shared schema, audit, and
 dispatch tooling map to Distribution and this governance chapter.
 Worker packaging changes require focused package checks plus a packed consumer
 development startup that exercises Vite dependency discovery.
+Shared real-App Storybook helpers retain a bounded readiness wait so concurrent
+catalog startup does not turn healthy plugin initialization into a timing-only
+failure while real boot errors still fail closed.
 Release dependency resolution is protected by LP-SPEC-024: the tracked root
 lockfile and frozen workflow installs are part of the reviewed release source,
 not runner-local state.

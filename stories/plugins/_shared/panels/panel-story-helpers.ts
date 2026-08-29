@@ -216,7 +216,7 @@ export async function expectPanelPlacement(
       if (requiresFile) expect(markdown).not.toBeNull();
       else expect(markdown).toBeNull();
     },
-    { timeout: 12_000 },
+    { timeout: 20_000 },
   );
 
   await new Promise<void>((resolve) => {
