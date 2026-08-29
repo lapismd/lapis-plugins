@@ -19,6 +19,7 @@ and records repository-level extraction and release gates.
 | LP-SPEC-021 | distribution | Implemented | Eleven package-owned `registry.json` files and the package metadata audit verify schema, bounds, safe paths, HTTPS links, and present Markdown sources. |
 | LP-SPEC-022 | distribution | Implemented | Package metadata audit and registry automation tests preserve manifest/package ownership and exclude source-owned trust claims. |
 | LP-SPEC-023 | distribution | Implemented | The metadata dispatch script validates the minimal exact-commit payload and is isolated from npm and GitHub release publication. |
+| LP-SPEC-024 | distribution | Implemented | The tracked root pnpm lockfile and release-security test require frozen installs in both CI and approved publication workflows. |
 | LN-AI-001 | ai-plugin | Implemented | package location, runtime ID `ai`, bundled default-enabled registration |
 | LN-AI-002 | ai-plugin | Implemented | public exports expose AgentRuntime; vendor SDKs stay in adapters |
 | LN-AI-003 | ai-plugin | Implemented | Fake and ACP sessions block on respondToApproval |
