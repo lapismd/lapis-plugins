@@ -227,7 +227,7 @@ and records repository-level extraction and release gates.
 | LN-BASE-008 | bases-plugin | In progress | read-only registrations, invalid fenced-YAML, teardown cleanup, and early/late image URL revocation pass; real-App embed stories remain |
 | LN-BASE-009 | bases-plugin | Implemented | source-linked runtime import, publint, declarations, package entry/style exports, and public BasesViewSurface Autodocs pass |
 | LN-BASE-010 | bases-plugin | Implemented | no-Tailwind, no-global-App, Design Core import, semantic marker, native CSS, token audits, and focused composition stories pass |
-| LN-BASE-011 | bases-plugin | Implemented | 43-file Storybook suite covers public views, workflows, real editor shell and real-App scenarios; pointer acceptance waits for explicit file-view readiness and visuals remain pending human review |
+| LN-BASE-011 | bases-plugin | Implemented | 43-file Storybook suite covers public views, workflows, real editor shell and real-App scenarios; runtime and pointer acceptance use explicit readiness with bounded concurrent-startup allowance, and visuals remain pending human review |
 | LN-BASE-012 | bases-plugin | Implemented | canonical parity-gap section and root migration checklist exclude Tasks and full-parity claims |
 | LN-BASE-013 | bases-plugin | Implemented | reference and current browser measurements plus focused 1rem checkbox-density, pixel-track, measured variable-row, view, and editor-shell coverage assert shared geometry through live resize, persistence, and horizontal scroll |
 | LN-BASE-014 | bases-plugin | Implemented | plugin and registration-inventory unit tests assert the exact legacy view, associations, embeds, fenced blocks, actions, and five built-in view items without invented commands |

@@ -87,7 +87,7 @@ async function waitForWorkflow(canvasElement: HTMLElement, type: string) {
         ),
       ).toBeVisible();
     },
-    { timeout: 8_000 },
+    { timeout: 20_000 },
   );
   return { canvas, body: within(canvasElement.ownerDocument.body) };
 }

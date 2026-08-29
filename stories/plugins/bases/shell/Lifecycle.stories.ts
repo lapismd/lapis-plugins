@@ -67,7 +67,7 @@ export const FileView: Story = {
         expect(
           canvas.getByTestId("bases-editor-shell-status"),
         ).toHaveTextContent("ready"),
-      { timeout: 8_000 },
+      { timeout: 20_000 },
     );
     const app = demoApp(canvasElement);
     const leaf = app.workspace.getLeavesOfType(BasesViewType)[0]!;
@@ -129,7 +129,7 @@ export const DisableAndRestore: Story = {
         expect(
           canvas.getByTestId("bases-editor-shell-status"),
         ).toHaveTextContent("ready"),
-      { timeout: 8_000 },
+      { timeout: 20_000 },
     );
     const app = demoApp(canvasElement);
     const leaf = app.workspace.getLeavesOfType(BasesViewType)[0]!;
