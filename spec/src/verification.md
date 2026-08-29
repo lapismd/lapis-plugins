@@ -11,7 +11,7 @@ and records repository-level extraction and release gates.
 | LP-SPEC-013 | distribution | Implemented | Repository specification, package-boundary checks, release-security tests, deterministic artifact verification, and shared Storybook build. |
 | LP-SPEC-014 | distribution | Implemented | Repository specification, package-boundary checks, release-security tests, deterministic artifact verification, and shared Storybook build. |
 | LP-SPEC-015 | distribution | Implemented | Repository specification, package-boundary checks, release-security tests, deterministic artifact verification, and shared Storybook build. |
-| LP-SPEC-016 | distribution | Planned | Repository specification, package-boundary checks, release-security tests, deterministic artifact verification, and shared Storybook build. |
+| LP-SPEC-016 | distribution | Planned | Repository specification, package-boundary checks, release-security tests, deterministic artifact verification, shared Storybook build, and client-ID-based GitHub App token minting. |
 | LP-SPEC-017 | distribution | Planned | Repository specification, package-boundary checks, release-security tests, deterministic artifact verification, and shared Storybook build. |
 | LP-SPEC-018 | distribution | Implemented | Repository specification, package-boundary checks, release-security tests, deterministic artifact verification, and shared Storybook build. |
 | LP-SPEC-019 | distribution | Implemented | Markdown worker regression coverage, package checks, npm pack, deterministic tarball verification, and real Desktop/Web Vite acceptance exercise the standards-aligned emitted worker URL without consumer aliases. |

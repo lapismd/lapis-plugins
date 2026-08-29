@@ -42,5 +42,8 @@ must cover all eleven boolean inputs, explicit-selection parsing, registry
 replacement refusal, npm immutability, and Node 24 action/build configuration.
 Both ordinary CI and approved publication provision the pinned mdBook release
 before invoking their canonical specification gates.
+The approved publication workflow mints its narrowly scoped registry token from
+the GitHub App client ID and private key, avoiding the deprecated numeric App ID
+input while keeping missing credentials fail closed before publication.
 Generated-output cleanup is protected by LP-SPEC-028 and focused filesystem
 tests that distinguish full preparation from a single-plugin rebuild.

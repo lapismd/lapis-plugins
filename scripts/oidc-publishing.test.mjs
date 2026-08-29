@@ -22,6 +22,8 @@ const publisher = await readFile(
 test("publishes npm packages through the protected OIDC workflow", () => {
   assert.match(workflow, /id-token:\s*write/);
   assert.match(workflow, /environment:\s*first-publication/);
+  assert.match(workflow, /client-id:\s*\$\{\{ secrets\.LAPIS_REGISTRY_APP_CLIENT_ID \}\}/);
+  assert.doesNotMatch(workflow, /app-id:|LAPIS_REGISTRY_APP_ID/);
   assert.doesNotMatch(workflow, /NPM_TOKEN|NODE_AUTH_TOKEN/);
 });
 
