@@ -88,6 +88,10 @@ state when a leaf event repeats the same followed path.
 Linked mentions paint from `getCache`/`getFileCache` even when `getAllItems()`
 is still empty. Backlinks also read `resolvedLinks` for inbound sources.
 
+The governed File Properties interaction opens Mira's nested `Property type`
+menu through its standard pointer-hover trigger and verifies that closing both
+menu layers releases the document-level pointer lock.
+
 ## Ownership
 
 Reusable Plugin and Editor contracts remain in `@lapis-notes/api`. Markdown

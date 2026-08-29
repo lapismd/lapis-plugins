@@ -344,9 +344,8 @@ function placementStory(
         within(optionsMenu).queryByRole("menuitemcheckbox", { name: "Text" }),
       ).not.toBeInTheDocument();
 
-      propertyType.focus();
-      await userEvent.keyboard("{ArrowRight}");
-      const typeMenu = page.getByRole("menu", {
+      await userEvent.hover(propertyType);
+      const typeMenu = await page.findByRole("menu", {
         name: "Property type for tags",
       });
       const textType = within(typeMenu).getByRole("menuitemcheckbox", {

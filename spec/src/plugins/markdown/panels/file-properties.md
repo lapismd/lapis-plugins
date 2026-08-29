@@ -35,4 +35,6 @@ panel under `LN-MD-111`. File Properties uses Mira's standard dropdown styling
 and legacy-compatible hierarchy: `Property type` opens the checked type submenu,
 each choice displays its registered type icon, and Cut, Copy, Paste, and Remove
 remain top-level actions. The panel does not replace or override Mira's
-portalled menu.
+portalled menu. Governed interaction opens the nested menu through its pointer
+hover contract, verifies its checked items, and closes both menu layers so a
+completed placement cannot retain the document-level modal pointer lock.
