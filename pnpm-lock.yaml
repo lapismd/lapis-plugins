@@ -198,9 +198,6 @@ importers:
       '@lapis-notes/api':
         specifier: ^0.1.0
         version: 0.1.0(6c20b451d3e45ebc99483189e5b02463)
-      '@lapis-notes/markdown':
-        specifier: ^0.1.2
-        version: link:../markdown
       '@lapis-notes/ui':
         specifier: ^0.1.0
         version: 0.1.0(@lapismd/design-core@0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)
@@ -217,6 +214,9 @@ importers:
         specifier: ^2.9.0
         version: 2.9.0
     devDependencies:
+      '@lapis-notes/markdown':
+        specifier: ^0.1.2
+        version: link:../markdown
       '@sveltejs/package':
         specifier: ^2.5.0
         version: 2.5.8(svelte@5.56.10)(typescript@5.8.3)

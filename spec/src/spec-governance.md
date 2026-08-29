@@ -26,6 +26,9 @@ source file maps to its owning plugin chapter, while shared schema, audit, and
 dispatch tooling map to Distribution and this governance chapter.
 Worker packaging changes require focused package checks plus a packed consumer
 development startup that exercises Vite dependency discovery.
+Cross-plugin public imports retain runtime peer ownership while a matching
+semver development edge makes Turbo build the provider's package exports before
+a clean consumer check.
 Shared real-App Storybook helpers retain a bounded readiness wait so concurrent
 catalog startup does not turn healthy plugin initialization into a timing-only
 failure while real boot errors still fail closed.

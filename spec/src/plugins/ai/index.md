@@ -431,3 +431,6 @@ exports used by
 Autodocs, while the six-position stories still construct them through the real
 AI plugin. Selecting the deterministic Fake runtime suppresses desktop-host
 unavailability because no live transport is required.
+AI declares Markdown as both a runtime peer and a development dependency so a
+clean workspace builds the public `MarkdownEmbed` contract before AI's Svelte
+checks while released applications still own the shared peer.

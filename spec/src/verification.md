@@ -6,7 +6,7 @@ and records repository-level extraction and release gates.
 | ID | Chapter | Status | Evidence |
 | --- | --- | --- | --- |
 | LP-SPEC-010 | distribution | Implemented | Repository specification, package-boundary checks, release-security tests, deterministic artifact verification, and shared Storybook build. |
-| LP-SPEC-011 | distribution | Implemented | Repository specification, package-boundary checks, release-security tests, deterministic artifact verification, and shared Storybook build. |
+| LP-SPEC-011 | distribution | Implemented | Repository specification, package-boundary checks, release-security tests, deterministic artifact verification, shared Storybook build, and semver development edges that build cross-plugin peer exports before clean checks. |
 | LP-SPEC-012 | distribution | Implemented | Repository specification, package-boundary checks, release-security tests, deterministic artifact verification, and shared Storybook build. |
 | LP-SPEC-013 | distribution | Implemented | Repository specification, package-boundary checks, release-security tests, deterministic artifact verification, and shared Storybook build. |
 | LP-SPEC-014 | distribution | Implemented | Repository specification, package-boundary checks, release-security tests, deterministic artifact verification, and shared Storybook build. |
