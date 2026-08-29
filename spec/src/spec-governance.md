@@ -29,3 +29,7 @@ development startup that exercises Vite dependency discovery.
 Release dependency resolution is protected by LP-SPEC-024: the tracked root
 lockfile and frozen workflow installs are part of the reviewed release source,
 not runner-local state.
+Manual publication controls, bounded GitHub-asset replacement, and workflow
+runtime upgrades are protected by LP-SPEC-025 through LP-SPEC-027. Their tests
+must cover all eleven boolean inputs, explicit-selection parsing, registry
+replacement refusal, npm immutability, and Node 24 action/build configuration.

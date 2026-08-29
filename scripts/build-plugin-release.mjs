@@ -33,6 +33,7 @@ import {
   pluginPackageBySelector,
   pluginPackages,
 } from "./package-catalog.mjs";
+import { isPluginSelfReference } from "./lib/runtime-host-modules.mjs";
 import { resolveSourceCommit } from "./lib/source-commit.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -188,7 +189,9 @@ async function buildRuntime(plugin, packageRoot, outDir) {
         cssFileName: "styles",
       },
       rollupOptions: {
-        external: isApprovedHostModule,
+        external: (specifier) =>
+          !isPluginSelfReference(plugin.packageName, specifier) &&
+          isApprovedHostModule(specifier),
         output: {
           entryFileNames: "main.mjs",
           chunkFileNames: "assets/[name]-[hash].mjs",

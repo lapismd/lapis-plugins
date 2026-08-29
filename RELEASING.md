@@ -43,6 +43,13 @@ GitHub release, and sends the verified release coordinates to the registry by
 `repository_dispatch` using a narrowly scoped GitHub App token. Secrets contain
 private key material; release logs and artifacts never do.
 
+The manual workflow presents one checkbox per plugin, with every plugin selected
+by default. Clear any plugin that should not be included in that run. The
+advanced replacement checkbox only clobbers the selected same-version GitHub
+archive and checksum after npm integrity matches and the public registry source
+proves that version is not indexed. It never replaces npm content. Once a
+version is registry-published, correct it with a patch release instead.
+
 The GitHub App is installed only on `lapis-plugins` and `plugin-registry`. The
 release workflow uses `LAPIS_REGISTRY_APP_ID` and
 `LAPIS_REGISTRY_APP_PRIVATE_KEY` to create an installation token scoped to

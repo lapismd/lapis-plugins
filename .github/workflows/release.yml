@@ -3,13 +3,70 @@ name: Publish approved plugin releases
 on:
   workflow_dispatch:
     inputs:
-      plugin:
-        description: Package directory, package name, plugin ID, or all
+      plugin_ai:
+        description: Release @lapis-notes/ai
         required: true
-        default: all
+        default: true
+        type: boolean
+      plugin_bases:
+        description: Release @lapis-notes/bases
+        required: true
+        default: true
+        type: boolean
+      plugin_bookmarks:
+        description: Release @lapis-notes/bookmarks
+        required: true
+        default: true
+        type: boolean
+      plugin_graph:
+        description: Release @lapis-notes/graph
+        required: true
+        default: true
+        type: boolean
+      plugin_history:
+        description: Release @lapis-notes/history
+        required: true
+        default: true
+        type: boolean
+      plugin_markdown:
+        description: Release @lapis-notes/markdown
+        required: true
+        default: true
+        type: boolean
+      plugin_markdown_lint:
+        description: Release @lapis-notes/markdown-lint
+        required: true
+        default: true
+        type: boolean
+      plugin_search:
+        description: Release @lapis-notes/search
+        required: true
+        default: true
+        type: boolean
+      plugin_source_editor:
+        description: Release @lapis-notes/source-editor
+        required: true
+        default: true
+        type: boolean
+      plugin_spellcheck:
+        description: Release @lapis-notes/spellcheck
+        required: true
+        default: true
+        type: boolean
+      plugin_wordcount:
+        description: Release @lapis-notes/wordcount
+        required: true
+        default: true
+        type: boolean
+      replace_existing_github_assets:
+        description: Replace same-version GitHub assets only; never npm and blocked once registry-published
+        required: true
+        default: false
+        type: boolean
       approval:
         description: Enter FIRST_PUBLICATION_APPROVED after the manual gate
         required: true
+        type: string
 
 permissions:
   contents: write
@@ -25,15 +82,59 @@ jobs:
     timeout-minutes: 45
     environment: first-publication
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
         with:
           version: 10.34.5
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: pnpm
           registry-url: https://registry.npmjs.org
+      - name: Resolve selected plugins
+        id: selection
+        shell: bash
+        run: |
+          set -euo pipefail
+          plugin_names=(
+            ai
+            bases
+            bookmarks
+            graph
+            history
+            markdown
+            markdown-lint
+            search
+            source-editor
+            spellcheck
+            wordcount
+          )
+          plugin_inputs=(
+            "${{ inputs.plugin_ai }}"
+            "${{ inputs.plugin_bases }}"
+            "${{ inputs.plugin_bookmarks }}"
+            "${{ inputs.plugin_graph }}"
+            "${{ inputs.plugin_history }}"
+            "${{ inputs.plugin_markdown }}"
+            "${{ inputs.plugin_markdown_lint }}"
+            "${{ inputs.plugin_search }}"
+            "${{ inputs.plugin_source_editor }}"
+            "${{ inputs.plugin_spellcheck }}"
+            "${{ inputs.plugin_wordcount }}"
+          )
+          selected_plugins=()
+          for index in "${!plugin_names[@]}"; do
+            if [[ "${plugin_inputs[$index]}" == "true" ]]; then
+              selected_plugins+=("${plugin_names[$index]}")
+            fi
+          done
+          if [[ "${#selected_plugins[@]}" -eq 0 ]]; then
+            echo "Select at least one plugin to release." >&2
+            exit 1
+          fi
+          plugin_list="$(IFS=,; echo "${selected_plugins[*]}")"
+          echo "plugins=$plugin_list" >> "$GITHUB_OUTPUT"
+          echo "Selected plugins: $plugin_list"
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
       - name: Build production-signed candidates
@@ -53,7 +154,14 @@ jobs:
             plugin-registry
           permission-contents: write
       - name: Publish npm, GitHub assets, and registry dispatch
-        run: pnpm release:publish-approved -- --plugin "${{ inputs.plugin }}"
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--plugins "${{ steps.selection.outputs.plugins }}")
+          if [[ "${{ inputs.replace_existing_github_assets }}" == "true" ]]; then
+            args+=(--replace-github-assets)
+          fi
+          pnpm release:publish-approved -- "${args[@]}"
         env:
           FIRST_PUBLICATION_APPROVED: "true"
           LAPIS_PUBLICATION_APPROVED: "true"
