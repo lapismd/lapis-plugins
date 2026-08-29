@@ -35,6 +35,9 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: mdbook@0.5.4
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm release:prepare

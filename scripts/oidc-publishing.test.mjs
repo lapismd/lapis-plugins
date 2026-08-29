@@ -68,4 +68,6 @@ test("GitHub workflows run Node 24 actions and Node 24 builds", () => {
     assert.doesNotMatch(source, /@v4|node-version:\s*["']?20/);
   }
   assert.match(ciWorkflow, /actions\/upload-artifact@v7/);
+  assert.match(ciWorkflow, /taiki-e\/install-action@v2/);
+  assert.match(ciWorkflow, /tool:\s*mdbook@0\.5\.4/);
 });
