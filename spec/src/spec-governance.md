@@ -2,15 +2,15 @@
 
 ## Requirements
 
-| ID | Requirement |
-| --- | --- |
-| LP-SPEC-001 | `spec/src` MUST remain the canonical specification for this repository and MUST build with mdBook. |
-| LP-SPEC-002 | Protected package, Storybook, release, validation, and CI changes MUST update an owning canonical chapter in the same Jujutsu change. |
-| LP-SPEC-003 | Every normative requirement ID MUST be unique and MUST have exactly one verification row with concrete evidence. |
+| ID          | Requirement                                                                                                                                                                                                                     |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| LP-SPEC-001 | `spec/src` MUST remain the canonical specification for this repository and MUST build with mdBook.                                                                                                                              |
+| LP-SPEC-002 | Protected package, Storybook, release, validation, and CI changes MUST update an owning canonical chapter in the same Jujutsu change.                                                                                           |
+| LP-SPEC-003 | Every normative requirement ID MUST be unique and MUST have exactly one verification row with concrete evidence.                                                                                                                |
 | LP-SPEC-004 | Plugin behavior and plugin-owned Storybook verification MUST live in this repository. Framework profiles, installation UI, host persistence, Safe Mode, Workspace Trust, and signature policy MUST remain owned by Lapis Notes. |
-| LP-SPEC-005 | File Explorer MUST remain framework-owned in `lapis-notes`; this repository MUST NOT publish or specify it as one of the extracted plugins. |
-| LP-SPEC-006 | The repository MUST use one root Storybook that discovers package-owned stories and applies one addon, theme, accessibility, and visual-validation policy. It MUST NOT create a Storybook per package. |
-| LP-SPEC-007 | Tracked agent guidance MUST require explicit or context-owned App access, reject `globalThis.app`, preserve unrelated work, and commit verified slices with Jujutsu. |
+| LP-SPEC-005 | File Explorer MUST remain framework-owned in `lapis-notes`; this repository MUST NOT publish or specify it as one of the extracted plugins.                                                                                     |
+| LP-SPEC-006 | The repository MUST use one root Storybook that discovers package-owned stories and applies one addon, theme, accessibility, and visual-validation policy. It MUST NOT create a Storybook per package.                          |
+| LP-SPEC-007 | Tracked agent guidance MUST require explicit or context-owned App access, reject `globalThis.app`, preserve unrelated work, and commit verified slices with Jujutsu.                                                            |
 
 The specification-first map assigns each `packages/<name>` tree to its matching
 `spec/src/plugins/<name>` chapter. Markdown panel and story changes additionally
@@ -47,6 +47,8 @@ the GitHub App client ID and private key, avoiding the deprecated numeric App ID
 input while keeping missing credentials fail closed before publication.
 Generated-output cleanup is protected by LP-SPEC-028 and focused filesystem
 tests that distinguish full preparation from a single-plugin rebuild.
+Changesets owns package changelogs under LP-SPEC-029; documentation sync tests
+must prove candidate preparation preserves existing release history.
 When a consumer Storybook scenario exposes an extracted-plugin defect, the
 behavioral correction and its canonical requirement remain plugin-owned while
 the consumer interaction remains valid cross-repository acceptance evidence.
