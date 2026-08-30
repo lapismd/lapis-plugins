@@ -8,5 +8,16 @@
     "Switch compatible ACP agents without moving conversation ownership out of Lapis."
   ],
   "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/ai#readme",
+  "appearance": { "icon": "sparkles", "accent": "#A855F7" },
+  "gallery": [
+    {
+      "id": "overview",
+      "path": "registry-assets/gallery/overview.png",
+      "surface": "desktop",
+      "alt": "AI plugin chat showing a completed workspace search and response.",
+      "caption": "Keep agent conversations and reviewed tool work inside Lapis.",
+      "capture": { "storyId": "plugins-ai-registry--overview" }
+    }
+  ],
   "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
 }

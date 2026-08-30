@@ -8,5 +8,16 @@
     "Update counts as editors and active files change."
   ],
   "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/wordcount#readme",
+  "appearance": { "icon": "whole-word", "accent": "#06B6D4" },
+  "gallery": [
+    {
+      "id": "overview",
+      "path": "registry-assets/gallery/overview.png",
+      "surface": "desktop",
+      "alt": "Word Count plugin showing live word, character, and reading-time totals.",
+      "caption": "See live writing statistics for the current document or selection.",
+      "capture": { "storyId": "plugins-word-count-registry--overview" }
+    }
+  ],
   "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
 }

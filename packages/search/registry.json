@@ -8,5 +8,16 @@
     "Expose scoped search capabilities to compatible agent tools."
   ],
   "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/search#readme",
+  "appearance": { "icon": "search", "accent": "#F59E0B" },
+  "gallery": [
+    {
+      "id": "overview",
+      "path": "registry-assets/gallery/overview.png",
+      "surface": "desktop",
+      "alt": "Search plugin showing faceted results across notes and metadata.",
+      "caption": "Find file names, metadata, tags, and note content from one indexed surface.",
+      "capture": { "storyId": "plugins-search-registry--overview" }
+    }
+  ],
   "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
 }

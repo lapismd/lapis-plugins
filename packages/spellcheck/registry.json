@@ -8,5 +8,16 @@
     "Configure dialect, dictionaries, rules, and file scopes per vault."
   ],
   "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/spellcheck#readme",
+  "appearance": { "icon": "spell-check-2", "accent": "#22C55E" },
+  "gallery": [
+    {
+      "id": "overview",
+      "path": "registry-assets/gallery/overview.png",
+      "surface": "desktop",
+      "alt": "Spellcheck plugin showing writing suggestions beside an open note.",
+      "caption": "Review private spelling and grammar suggestions powered by Harper.",
+      "capture": { "storyId": "plugins-spellcheck-registry--overview" }
+    }
+  ],
   "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
 }

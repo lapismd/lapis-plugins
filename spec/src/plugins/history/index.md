@@ -3,6 +3,9 @@
 The package-owned `registry.json` is the source for curated categories,
 highlights, and documentation paths under LP-SPEC-021. Manifest and package
 metadata remain authoritative for the fields defined by LP-SPEC-022.
+Registry identity and capture-backed gallery media remain package-owned under
+LP-SPEC-030 and LP-SPEC-031; the governed source story stays `visual-pending`
+until separate visual approval.
 
 `@lapis-notes/history` owns vault file-revision capture, the movable History
 panel, and the main-area compare tab. Persistence remains the existing

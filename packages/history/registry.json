@@ -8,5 +8,16 @@
     "Restore selected content through the normal vault write path."
   ],
   "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/history#readme",
+  "appearance": { "icon": "history", "accent": "#6366F1" },
+  "gallery": [
+    {
+      "id": "overview",
+      "path": "registry-assets/gallery/overview.png",
+      "surface": "desktop",
+      "alt": "History plugin comparing a saved revision with the current note.",
+      "caption": "Review bounded local revisions and restore through the vault write path.",
+      "capture": { "storyId": "plugins-history-registry--overview" }
+    }
+  ],
   "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
 }

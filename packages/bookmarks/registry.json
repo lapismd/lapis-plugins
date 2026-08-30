@@ -8,5 +8,16 @@
     "Organize frequently used resources without changing vault content."
   ],
   "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/bookmarks#readme",
+  "appearance": { "icon": "bookmark", "accent": "#E11D48" },
+  "gallery": [
+    {
+      "id": "overview",
+      "path": "registry-assets/gallery/overview.png",
+      "surface": "desktop",
+      "alt": "Bookmarks plugin showing saved notes, searches, and grouped destinations.",
+      "caption": "Keep important vault destinations in one compact navigation panel.",
+      "capture": { "storyId": "plugins-bookmarks-registry--overview" }
+    }
+  ],
   "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
 }

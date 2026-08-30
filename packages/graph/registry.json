@@ -8,5 +8,16 @@
     "Tune grouping, forces, and time-lapse views for large vaults."
   ],
   "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/graph#readme",
+  "appearance": { "icon": "network", "accent": "#8B5CF6" },
+  "gallery": [
+    {
+      "id": "overview",
+      "path": "registry-assets/gallery/overview.png",
+      "surface": "desktop",
+      "alt": "Graph plugin showing connected notes, tags, specifications, and media.",
+      "caption": "Explore global and local relationships across the active vault.",
+      "capture": { "storyId": "plugins-graph-registry--overview" }
+    }
+  ],
   "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
 }

@@ -8,5 +8,16 @@
     "Keep editable views backed by ordinary Lapis content."
   ],
   "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/bases#readme",
+  "appearance": { "icon": "table-2", "accent": "#14B8A6" },
+  "gallery": [
+    {
+      "id": "overview",
+      "path": "registry-assets/gallery/overview.png",
+      "surface": "desktop",
+      "alt": "Bases plugin showing a filtered table of active projects.",
+      "caption": "Build editable structured views over ordinary notes and metadata.",
+      "capture": { "storyId": "plugins-bases-registry--overview" }
+    }
+  ],
   "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
 }

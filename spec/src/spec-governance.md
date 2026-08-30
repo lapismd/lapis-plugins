@@ -24,6 +24,9 @@ peer supplied by the consuming application.
 Package registry metadata is protected by the same mapped spec-first rule. Each
 source file maps to its owning plugin chapter, while shared schema, audit, and
 dispatch tooling map to Distribution and this governance chapter.
+Shared registry showcase and capture tooling MUST use the root Storybook, fixed
+viewports, package-owned source stories, and deterministic comparison without
+creating or approving Visual Delta baselines.
 Worker packaging changes require focused package checks plus a packed consumer
 development startup that exercises Vite dependency discovery.
 Cross-plugin public imports retain runtime peer ownership while a matching

@@ -8,5 +8,16 @@
     "Keep files portable as ordinary Markdown in the active vault."
   ],
   "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/markdown#readme",
+  "appearance": { "icon": "file-text", "accent": "#2563EB" },
+  "gallery": [
+    {
+      "id": "overview",
+      "path": "registry-assets/gallery/overview.png",
+      "surface": "desktop",
+      "alt": "Markdown plugin showing a syntax-aware note editor in Lapis.",
+      "caption": "Write portable Markdown in source, live preview, or reading mode.",
+      "capture": { "storyId": "plugins-markdown-registry--overview" }
+    }
+  ],
   "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
 }

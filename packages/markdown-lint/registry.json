@@ -8,5 +8,16 @@
     "Configure rule exclusions and path filters per vault."
   ],
   "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/markdown-lint#readme",
+  "appearance": { "icon": "list-checks", "accent": "#F97316" },
+  "gallery": [
+    {
+      "id": "overview",
+      "path": "registry-assets/gallery/overview.png",
+      "surface": "desktop",
+      "alt": "Markdown Lint plugin showing inline diagnostics and focused suggestions.",
+      "caption": "Find Markdown issues and apply supported code actions without leaving the note.",
+      "capture": { "storyId": "plugins-markdown-lint-registry--overview" }
+    }
+  ],
   "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
 }

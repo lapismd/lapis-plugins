@@ -3,6 +3,9 @@
 The package-owned `registry.json` is the source for curated categories,
 highlights, and documentation paths under LP-SPEC-021. Manifest and package
 metadata remain authoritative for the fields defined by LP-SPEC-022.
+Registry identity and capture-backed gallery media remain package-owned under
+LP-SPEC-030 and LP-SPEC-031; the governed source story stays `visual-pending`
+until separate visual approval.
 
 Canonical daily notes use the same Markdown word-count pipeline as other
 notes. Word Count does not participate in daily-document resolution or Tasks
