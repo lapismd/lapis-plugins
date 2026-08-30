@@ -44,6 +44,11 @@ Shared Storybook test setup also fails closed on Svelte `derived_inert`
 diagnostics. The classifier is deliberately narrow so unrelated warnings keep
 their existing behavior while destroyed-effect reads cannot leave an
 interaction run falsely green.
+Until the affected Bits UI releases provide equivalent lifecycle cleanup, the
+root dependency graph applies reviewed pnpm patches to every resolved version.
+Release verification checks both patch mappings and the Link Preview selection
+timer and Scroll Area resize-timer cancellation, so a lockfile update cannot
+silently restore the destroyed-effect reads.
 Release dependency resolution is protected by LP-SPEC-024: the tracked root
 lockfile and frozen workflow installs are part of the reviewed release source,
 not runner-local state.

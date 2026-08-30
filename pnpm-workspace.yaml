@@ -3,9 +3,12 @@ packages:
 
 linkWorkspacePackages: true
 
+onlyBuiltDependencies:
+  - esbuild
+
 overrides:
   aria-query: "5.3.2"
   sharp: ">=0.35.0"
-
-onlyBuiltDependencies:
-  - esbuild
+patchedDependencies:
+  bits-ui@2.18.1: patches/bits-ui@2.18.1.patch
+  bits-ui@2.19.0: patches/bits-ui@2.19.0.patch

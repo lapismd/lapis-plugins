@@ -8,6 +8,14 @@ overrides:
   aria-query: 5.3.2
   sharp: '>=0.35.0'
 
+patchedDependencies:
+  bits-ui@2.18.1:
+    hash: 248e4b269a350a0195aca52b2d94bc4de53f4daa2b1f6ce5730b8c718152a047
+    path: patches/bits-ui@2.18.1.patch
+  bits-ui@2.19.0:
+    hash: 248e4b269a350a0195aca52b2d94bc4de53f4daa2b1f6ce5730b8c718152a047
+    path: patches/bits-ui@2.19.0.patch
+
 importers:
 
   .:
@@ -6171,7 +6179,7 @@ snapshots:
       '@tanstack/virtual-core': 3.17.8
       '@tursodatabase/database-wasm': 0.7.2
       '@types/lodash-es': 4.17.12
-      bits-ui: 2.18.1(@internationalized/date@3.12.3)(svelte@5.56.10)
+      bits-ui: 2.18.1(patch_hash=248e4b269a350a0195aca52b2d94bc4de53f4daa2b1f6ce5730b8c718152a047)(@internationalized/date@3.12.3)(svelte@5.56.10)
       clsx: 2.1.1
       eventemitter3: 5.0.4
       fflate: 0.8.3
@@ -6232,7 +6240,7 @@ snapshots:
       '@tanstack/virtual-core': 3.17.8
       '@tursodatabase/database-wasm': 0.7.2
       '@types/lodash-es': 4.17.12
-      bits-ui: 2.18.1(@internationalized/date@3.12.3)(svelte@5.56.10)
+      bits-ui: 2.18.1(patch_hash=248e4b269a350a0195aca52b2d94bc4de53f4daa2b1f6ce5730b8c718152a047)(@internationalized/date@3.12.3)(svelte@5.56.10)
       clsx: 2.1.1
       eventemitter3: 5.0.4
       fflate: 0.8.3
@@ -6436,7 +6444,7 @@ snapshots:
       '@lezer/highlight': 1.2.3
       '@lezer/lr': 1.4.10
       '@lucide/svelte': 1.35.0(svelte@5.56.10)
-      bits-ui: 2.19.0(@internationalized/date@3.12.3)(svelte@5.56.10)
+      bits-ui: 2.19.0(patch_hash=248e4b269a350a0195aca52b2d94bc4de53f4daa2b1f6ce5730b8c718152a047)(@internationalized/date@3.12.3)(svelte@5.56.10)
       chrono-node: 2.10.1
       clsx: 2.1.1
       codemirror-lang-mermaid: 0.5.0
@@ -6566,7 +6574,7 @@ snapshots:
       '@lezer/highlight': 1.2.3
       '@lezer/markdown': 1.7.2
       '@lucide/svelte': 0.525.0(svelte@5.56.10)
-      bits-ui: 2.18.1(@internationalized/date@3.12.3)(svelte@5.56.10)
+      bits-ui: 2.18.1(patch_hash=248e4b269a350a0195aca52b2d94bc4de53f4daa2b1f6ce5730b8c718152a047)(@internationalized/date@3.12.3)(svelte@5.56.10)
       clsx: 2.1.1
       hast-util-to-text: 4.0.2
       lodash-es: 4.18.1
@@ -7766,7 +7774,7 @@ snapshots:
 
   big.js@7.0.1: {}
 
-  bits-ui@2.18.1(@internationalized/date@3.12.3)(svelte@5.56.10):
+  bits-ui@2.18.1(patch_hash=248e4b269a350a0195aca52b2d94bc4de53f4daa2b1f6ce5730b8c718152a047)(@internationalized/date@3.12.3)(svelte@5.56.10):
     dependencies:
       '@floating-ui/core': 1.8.0
       '@floating-ui/dom': 1.8.0
@@ -7779,7 +7787,7 @@ snapshots:
     transitivePeerDependencies:
       - '@sveltejs/kit'
 
-  bits-ui@2.19.0(@internationalized/date@3.12.3)(svelte@5.56.10):
+  bits-ui@2.19.0(patch_hash=248e4b269a350a0195aca52b2d94bc4de53f4daa2b1f6ce5730b8c718152a047)(@internationalized/date@3.12.3)(svelte@5.56.10):
     dependencies:
       '@floating-ui/core': 1.8.0
       '@floating-ui/dom': 1.8.0
