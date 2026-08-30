@@ -49,6 +49,11 @@ root dependency graph applies reviewed pnpm patches to every resolved version.
 Release verification checks both patch mappings and the Link Preview selection
 timer and Scroll Area resize-timer cancellation, so a lockfile update cannot
 silently restore the destroyed-effect reads.
+CI image and remote-cache changes are protected by LP-SPEC-036. The checked-in
+image manifest, dependency-only context generator, Dockerfile, publication
+workflow, remote-cache configuration, and their focused tests map to
+Distribution and this governance chapter. Local credentials remain in the
+ignored root `.env`; the tracked `.env.example` documents names only.
 Release dependency resolution is protected by LP-SPEC-024: the tracked root
 lockfile and frozen workflow installs are part of the reviewed release source,
 not runner-local state.

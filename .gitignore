@@ -1,7 +1,9 @@
 node_modules/
+.env
 dist/
 storybook-static/
 .turbo/
+.ci/dependency-context/
 **/.svelte-kit/
 **/.cursor/
 .release/
