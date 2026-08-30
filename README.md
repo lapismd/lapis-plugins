@@ -41,5 +41,18 @@ pnpm build
 pnpm build-storybook
 ```
 
+`pnpm ci:packages` runs the package build, check, and test graph through one
+bounded Turbo invocation. `pnpm ci:release` adds policy, specification,
+release-tool, npm-pack, signed archive, verification, and static Storybook
+gates. Turbo defaults to half the available processors, capped at four; set
+`TURBO_CONCURRENCY` to a positive number or percentage to override it.
+
+For Linux parity, `pnpm ci:container` uses the digest-pinned public CI image and
+lockfile-keyed local volumes. Copy `.env.example` to the ignored `.env` and add
+the two secret values to opt into the shared remote cache. Without a complete
+set of `TURBO_API`, `TURBO_TEAM`, `TURBO_TOKEN`, and
+`TURBO_REMOTE_CACHE_SIGNATURE_KEY`, the runner performs normal local execution
+without remote-cache access. Do not commit `.env`.
+
 See [RELEASING.md](./RELEASING.md) for the manual publication gate and release
 asset contract.

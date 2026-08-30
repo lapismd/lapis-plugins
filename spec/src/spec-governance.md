@@ -54,6 +54,11 @@ image manifest, dependency-only context generator, Dockerfile, publication
 workflow, remote-cache configuration, and their focused tests map to
 Distribution and this governance chapter. Local credentials remain in the
 ignored root `.env`; the tracked `.env.example` documents names only.
+Turbo orchestration, bounded artifact workers, already-built packing, and the
+local container runner are protected by LP-SPEC-037. Their shared concurrency
+and container helpers require focused scheduling, failure-cancellation,
+ordering, cache-forwarding, and secretless-fallback tests before the complete
+package and release lanes run.
 Release dependency resolution is protected by LP-SPEC-024: the tracked root
 lockfile and frozen workflow installs are part of the reviewed release source,
 not runner-local state.

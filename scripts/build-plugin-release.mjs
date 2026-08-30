@@ -34,6 +34,7 @@ import {
   pluginPackages,
 } from "./package-catalog.mjs";
 import { isPluginSelfReference } from "./lib/runtime-host-modules.mjs";
+import { resolveWorkerLimit, runBoundedWorkers } from "./lib/concurrency.mjs";
 import { preparePluginReleaseRoot } from "./lib/release-output.mjs";
 import { resolveSourceCommit } from "./lib/source-commit.mjs";
 
@@ -59,8 +60,12 @@ await writeFile(
 );
 
 try {
-  for (const plugin of selected) {
-    await buildPlugin(plugin);
+  const workerLimit = resolveWorkerLimit("LAPIS_PLUGIN_BUILD_WORKERS", 2);
+  const results = await runBoundedWorkers(selected, workerLimit, buildPlugin);
+  for (const result of [...results].sort((left, right) =>
+    left.packageName.localeCompare(right.packageName)
+  )) {
+    console.log(result.log);
   }
 } finally {
   if (signing.temporaryDirectory) {
@@ -146,12 +151,13 @@ async function buildPlugin(plugin) {
     `${built.bundlePath}.sha256`,
     `${checksum}  ${path.basename(built.bundlePath)}\n`
   );
-  console.log(
-    `${plugin.packageName}@${packageJson.version}: ${path.relative(
+  return {
+    packageName: plugin.packageName,
+    log: `${plugin.packageName}@${packageJson.version}: ${path.relative(
       root,
       built.bundlePath
-    )} ${checksum}`
-  );
+    )} ${checksum}`,
+  };
 }
 
 async function buildRuntime(plugin, packageRoot, outDir) {

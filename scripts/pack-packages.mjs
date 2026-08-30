@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { execFile } from "node:child_process";
+import { execFile, spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -7,16 +7,30 @@ import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 
 import { pluginPackages } from "./package-catalog.mjs";
+import { resolveWorkerLimit, runBoundedWorkers } from "./lib/concurrency.mjs";
 import { verifyBuiltImportBoundaries } from "./lib/npm-package-imports.mjs";
 
 const execFileAsync = promisify(execFile);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const alreadyBuilt = process.argv.slice(2).filter((arg) => arg !== "--").includes("--already-built");
+if (!alreadyBuilt) await runBuild();
 const outDir = path.join(root, ".release/npm");
 await rm(outDir, { recursive: true, force: true });
 await mkdir(outDir, { recursive: true });
-const manifest = [];
+const workerLimit = resolveWorkerLimit("LAPIS_PACKAGE_PACK_WORKERS", 4);
+const packed = await runBoundedWorkers(pluginPackages, workerLimit, packPlugin);
+const manifest = packed
+  .map((result) => result.manifest)
+  .sort((left, right) => left.packageName.localeCompare(right.packageName));
+for (const result of [...packed].sort((left, right) => left.log.localeCompare(right.log))) {
+  console.log(result.log);
+}
+await writeFile(
+  path.join(outDir, "manifest.json"),
+  `${JSON.stringify(manifest, null, 2)}\n`,
+);
 
-for (const plugin of pluginPackages) {
+async function packPlugin(plugin) {
   const packageRoot = path.join(root, "packages", plugin.directory);
   await verifyBuiltImportBoundaries(packageRoot, plugin.packageName);
   const { stdout } = await execFileAsync(
@@ -50,21 +64,28 @@ for (const plugin of pluginPackages) {
     .update(await readFile(tarballPath))
     .digest("hex");
   await writeFile(`${tarballPath}.sha256`, `${checksum}  ${path.basename(tarballPath)}\n`);
-  manifest.push({
-    packageName: plugin.packageName,
-    pluginId: plugin.pluginId,
-    version: packageJson.version,
-    tarball: path.relative(root, tarballPath),
-    sha256: checksum,
-    files,
-  });
-  console.log(`Packed ${plugin.packageName}@${packageJson.version}: ${checksum}`);
+  return {
+    log: `Packed ${plugin.packageName}@${packageJson.version}: ${checksum}`,
+    manifest: {
+      packageName: plugin.packageName,
+      pluginId: plugin.pluginId,
+      version: packageJson.version,
+      tarball: path.relative(root, tarballPath),
+      sha256: checksum,
+      files,
+    },
+  };
 }
 
-await writeFile(
-  path.join(outDir, "manifest.json"),
-  `${JSON.stringify(manifest, null, 2)}\n`,
-);
+async function runBuild() {
+  console.log("Building packages before packing (use --already-built to skip).");
+  const child = spawn("pnpm", ["build"], { cwd: root, stdio: "inherit" });
+  const exitCode = await new Promise((resolve, reject) => {
+    child.on("error", reject);
+    child.on("exit", (code, signal) => resolve(signal ? 1 : (code ?? 1)));
+  });
+  if (exitCode !== 0) throw new Error(`Package build failed with exit code ${exitCode}.`);
+}
 
 function parsePackResult(stdout) {
   const starts = [0];
