@@ -63,7 +63,9 @@ The CI fan-out and stable aggregation gate are protected by LP-SPEC-038. The
 workflow, pinned setup composite, Turbo cache summary reporter, and workflow
 source tests map to Distribution and this chapter. Functional Storybook and
 axe failures remain blocking in their own lane; visual baselines do not become
-a deployment gate through this infrastructure change.
+a deployment gate through this infrastructure change. Container setup marks
+the checked-out workspace as a trusted Git directory before specification
+tools inspect tracked files; this trust is scoped to the exact workspace path.
 Release dependency resolution is protected by LP-SPEC-024: the tracked root
 lockfile and frozen workflow installs are part of the reviewed release source,
 not runner-local state.

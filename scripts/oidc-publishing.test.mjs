@@ -42,6 +42,10 @@ test("does not require a long-lived npm token at runtime", () => {
 
 test("builds release candidates from the committed dependency graph", () => {
   assert.match(lockfile, /^lockfileVersion:/m);
+  assert.match(
+    ciSetup,
+    /git config --global --add safe\.directory "\$\{GITHUB_WORKSPACE\}"/,
+  );
   assert.match(ciSetup, /pnpm install --frozen-lockfile/);
   assert.match(workflow, /pnpm install --frozen-lockfile/);
 });
