@@ -56,12 +56,12 @@
   },
   "peerDependencies": {
     "@lapis-notes/api": "^0.1.0",
-    "@lapis-notes/markdown": "^0.1.2",
+    "@lapis-notes/markdown": "^0.1.4",
     "@lapis-notes/ui": "^0.1.0",
     "svelte": "^5.0.0"
   },
   "devDependencies": {
-    "@lapis-notes/markdown": "^0.1.2",
+    "@lapis-notes/markdown": "^0.1.4",
     "@sveltejs/package": "^2.5.0",
     "@sveltejs/vite-plugin-svelte": "^5.1.1",
     "@tsconfig/svelte": "^5.0.5",

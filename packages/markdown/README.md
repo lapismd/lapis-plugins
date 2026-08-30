@@ -13,7 +13,7 @@ Register the exported plugin class in the application's `PluginProfile`. Import
 registration so the host owns its lifecycle.
 
 The runtime plugin ID is `markdown`. A matching signed
-`markdown-0.1.3.lapis-plugin` archive is attached to the
+`markdown-0.1.4.lapis-plugin` archive is attached to the
 package-scoped GitHub release for manual or registry installation.
 
 See the [repository README](https://github.com/lapismd/lapis-plugins#readme) for

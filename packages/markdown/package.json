@@ -1,6 +1,6 @@
 {
   "name": "@lapis-notes/markdown",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "license": "AGPL-3.0-or-later",
   "type": "module",
   "scripts": {
@@ -54,7 +54,7 @@
   },
   "dependencies": {
     "@lapismd/design-core": "^0.1.0",
-    "@lapismd/mira": "^0.0.1",
+    "@lapismd/mira": "~0.0.1",
     "@lapismd/mira-editor": "^0.0.1",
     "@lapismd/mira-plugin-ai": "^0.0.1",
     "@lapismd/mira-plugin-mermaid": "^0.0.1",
