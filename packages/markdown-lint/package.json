@@ -52,6 +52,7 @@
     "dist",
     "manifest.json",
     "registry.json",
+    "registry-content",
     "styles.css",
     "README.md",
     "CHANGELOG.md",

@@ -10,6 +10,9 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const maxMarkdownBytes = 256 * 1024;
 const maxLogoBytes = 512 * 1024;
 const maxGalleryBytes = 5 * 1024 * 1024;
+const registryOverviewPath = "registry-content/overview.md";
+const packageInstallInstruction =
+  /\b(?:pnpm|npm|yarn|bun)\s+(?:add|install)\b|install for static composition/i;
 const allowedKeys = new Set([
   "$schema",
   "schemaVersion",
@@ -84,6 +87,9 @@ for (const plugin of pluginPackages) {
   if (contentKeys.length !== 2 || !contentKeys.includes("overview") || !contentKeys.includes("changelog")) {
     findings.push(`${plugin.directory}: content must define overview and changelog only`);
   }
+  if (source.content?.overview !== registryOverviewPath) {
+    findings.push(`${plugin.directory}: overview must use ${registryOverviewPath}`);
+  }
   for (const [kind, relativePath] of Object.entries(source.content ?? {})) {
     if (!isSafeMarkdownPath(relativePath)) {
       findings.push(`${plugin.directory}: unsafe ${kind} Markdown path ${String(relativePath)}`);
@@ -94,6 +100,12 @@ for (const plugin of pluginPackages) {
       if (!file.isFile()) findings.push(`${plugin.directory}: ${relativePath} is not a file`);
       if (file.size > maxMarkdownBytes) {
         findings.push(`${plugin.directory}: ${relativePath} exceeds ${maxMarkdownBytes} bytes`);
+      }
+      if (kind === "overview") {
+        const markdown = await readFile(path.join(packageRoot, relativePath), "utf8");
+        if (packageInstallInstruction.test(markdown)) {
+          findings.push(`${plugin.directory}: registry overview contains package installation instructions`);
+        }
       }
     } catch {
       findings.push(`${plugin.directory}: missing ${relativePath}`);

@@ -19,5 +19,5 @@
       "capture": { "storyId": "plugins-history-registry--overview" }
     }
   ],
-  "content": { "overview": "README.md", "changelog": "CHANGELOG.md" }
+  "content": { "overview": "registry-content/overview.md", "changelog": "CHANGELOG.md" }
 }

@@ -34,6 +34,9 @@ for (const plugin of pluginPackages) {
   if (manifest.id !== plugin.pluginId) {
     findings.push(`${plugin.directory}: runtime plugin ID changed`);
   }
+  if (typeof manifest.isDesktopOnly !== "boolean") {
+    findings.push(`${plugin.directory}: isDesktopOnly must be an explicit boolean`);
+  }
   if (packageJson.publishConfig?.access !== "public") {
     findings.push(`${plugin.directory}: package is not configured public`);
   }

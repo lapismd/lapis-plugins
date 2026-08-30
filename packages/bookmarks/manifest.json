@@ -5,6 +5,7 @@
   "minAppVersion": "0.1.0",
   "description": "Bookmark files, folders, searches, and groups",
   "author": "Lapis Notes",
+  "isDesktopOnly": false,
   "lapis": {
     "manifestVersion": 1,
     "source": "official",

@@ -109,7 +109,7 @@ export async function packageOfficialPlugin(options) {
     },
     compatibility: {
       minAppVersion: manifest.minAppVersion ?? "0.0.0",
-      platforms: manifest.isDesktopOnly ? ["electron"] : ["web", "electron"],
+      platforms: manifest.isDesktopOnly ? ["desktop"] : ["web", "desktop"],
       ...(manifest.isDesktopOnly ? { desktopOnly: true } : {}),
     },
     ...(runtimeMetadata ? { runtime: runtimeMetadata } : {}),

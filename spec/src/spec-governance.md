@@ -27,6 +27,11 @@ dispatch tooling map to Distribution and this governance chapter.
 Shared registry showcase and capture tooling MUST use the root Storybook, fixed
 viewports, package-owned source stories, and deterministic comparison without
 creating or approving Visual Delta baselines.
+Registry platform generation and dedicated Overview-content auditing are
+protected by LP-SPEC-032 and LP-SPEC-033. Shared manifest normalization,
+release compatibility, package-file, and registry metadata checks map to
+Distribution and this governance chapter; each package-owned Overview remains
+mapped to its owning plugin chapter.
 Worker packaging changes require focused package checks plus a packed consumer
 development startup that exercises Vite dependency discovery.
 Cross-plugin public imports retain runtime peer ownership while a matching

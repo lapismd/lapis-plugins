@@ -43,6 +43,7 @@ test("packages deterministic official plugin release manifest", async () => {
   const manifest = JSON.parse(firstRelease);
   assert.equal(manifest.pluginId, "lapis-test");
   assert.equal(manifest.version, "1.2.3");
+  assert.deepEqual(manifest.compatibility.platforms, ["web", "desktop"]);
   assert.deepEqual(
     manifest.files.map((file) => file.path),
     ["main.mjs", "manifest.json", "styles.css"],
@@ -51,6 +52,26 @@ test("packages deterministic official plugin release manifest", async () => {
     manifest.files.some((file) => "url" in file),
     false,
   );
+  await rm(dir.root, { recursive: true, force: true });
+});
+
+test("uses desktop as the only native compatibility platform", async () => {
+  const dir = await fixtureDir();
+  await writePluginFiles(dir.input, {
+    id: "lapis-test",
+    version: "1.2.3",
+    isDesktopOnly: true,
+  });
+
+  const release = await packageOfficialPlugin({
+    pluginId: "lapis-test",
+    version: "1.2.3",
+    inputDir: dir.input,
+    outDir: dir.out,
+  });
+  const manifest = JSON.parse(await readFile(release.releasePath, "utf8"));
+
+  assert.deepEqual(manifest.compatibility.platforms, ["desktop"]);
   await rm(dir.root, { recursive: true, force: true });
 });
 

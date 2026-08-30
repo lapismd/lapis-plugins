@@ -146,6 +146,7 @@ function normalizeManifest(manifest, plugin, packageVersion) {
     id: plugin.pluginId,
     version: packageVersion,
     minAppVersion: "0.1.0",
+    isDesktopOnly: manifest.isDesktopOnly ?? false,
     lapis: {
       ...lapis,
       manifestVersion: 1,
@@ -194,6 +195,7 @@ function normalizePackage(packageJson, manifest, plugin) {
     "dist",
     "manifest.json",
     "registry.json",
+    "registry-content",
     "styles.css",
     "README.md",
     "CHANGELOG.md",
