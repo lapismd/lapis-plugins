@@ -59,6 +59,11 @@ local container runner are protected by LP-SPEC-037. Their shared concurrency
 and container helpers require focused scheduling, failure-cancellation,
 ordering, cache-forwarding, and secretless-fallback tests before the complete
 package and release lanes run.
+The CI fan-out and stable aggregation gate are protected by LP-SPEC-038. The
+workflow, pinned setup composite, Turbo cache summary reporter, and workflow
+source tests map to Distribution and this chapter. Functional Storybook and
+axe failures remain blocking in their own lane; visual baselines do not become
+a deployment gate through this infrastructure change.
 Release dependency resolution is protected by LP-SPEC-024: the tracked root
 lockfile and frozen workflow installs are part of the reviewed release source,
 not runner-local state.

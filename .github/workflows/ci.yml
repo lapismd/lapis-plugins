@@ -8,6 +8,21 @@ on:
 
 permissions:
   contents: read
+  packages: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  TURBO_API: ${{ vars.TURBO_API }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_REMOTE_CACHE_SIGNATURE_KEY: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
 
 jobs:
   prerequisite:
@@ -21,27 +36,117 @@ jobs:
             echo "Validation remains intentionally deferred until the framework package publication gate completes."
           fi
 
-  validate:
+  build-cache:
     needs: prerequisite
     if: vars.FRAMEWORK_PACKAGES_PUBLISHED == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 20
+    container:
+      image: ghcr.io/lapismd/lapis-plugins-ci@sha256:5c6a20bf2e9f28c59567661df08fef936a9ca62491c40b644ec60e53be019632
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
-        with:
-          version: 10.34.5
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24
-          cache: pnpm
-      - uses: taiki-e/install-action@v2
-        with:
-          tool: mdbook@0.5.4
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm release:prepare
+      - uses: ./.github/actions/ci-setup
+      - name: Populate signed remote build cache
+        run: node scripts/run-turbo.mjs build --summarize
+      - name: Report build-cache result
+        run: node scripts/report-turbo-cache.mjs --github-summary
+
+  quality:
+    needs: build-cache
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      image: ghcr.io/lapismd/lapis-plugins-ci@sha256:5c6a20bf2e9f28c59567661df08fef936a9ca62491c40b644ec60e53be019632
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/ci-setup
+      - run: pnpm packages:check
+      - run: pnpm spec:check
+      - run: pnpm check:no-tailwind
+      - name: Run package checks
+        run: node scripts/run-turbo.mjs build check --summarize
+      - name: Report cache restoration
+        run: node scripts/report-turbo-cache.mjs --github-summary
+
+  unit:
+    needs: build-cache
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    container:
+      image: ghcr.io/lapismd/lapis-plugins-ci@sha256:5c6a20bf2e9f28c59567661df08fef936a9ca62491c40b644ec60e53be019632
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/ci-setup
+      - name: Run package unit tests
+        run: node scripts/run-turbo.mjs build test --summarize
+      - name: Report cache restoration
+        run: node scripts/report-turbo-cache.mjs --github-summary
+      - run: pnpm test:release
+
+  storybook-static:
+    needs: build-cache
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      image: ghcr.io/lapismd/lapis-plugins-ci@sha256:5c6a20bf2e9f28c59567661df08fef936a9ca62491c40b644ec60e53be019632
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/ci-setup
+      - name: Restore package builds
+        run: node scripts/run-turbo.mjs build --summarize
+      - name: Report cache restoration
+        run: node scripts/report-turbo-cache.mjs --github-summary
+      - run: pnpm build-storybook
+
+  storybook-interaction:
+    needs: build-cache
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    container:
+      image: ghcr.io/lapismd/lapis-plugins-ci@sha256:5c6a20bf2e9f28c59567661df08fef936a9ca62491c40b644ec60e53be019632
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/ci-setup
+      - name: Restore package builds
+        run: node scripts/run-turbo.mjs build --summarize
+      - name: Report cache restoration
+        run: node scripts/report-turbo-cache.mjs --github-summary
       - run: pnpm test:storybook
+
+  release-artifacts:
+    needs: build-cache
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container:
+      image: ghcr.io/lapismd/lapis-plugins-ci@sha256:5c6a20bf2e9f28c59567661df08fef936a9ca62491c40b644ec60e53be019632
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/ci-setup
+      - name: Restore package builds
+        run: node scripts/run-turbo.mjs build --summarize
+      - name: Report cache restoration
+        run: node scripts/report-turbo-cache.mjs --github-summary
+      - run: pnpm packages:pack -- --already-built
+      - run: pnpm plugin:build
+      - run: pnpm plugin:verify
       - run: pnpm release:plan
       - uses: actions/upload-artifact@v7
         with:
@@ -55,3 +160,43 @@ jobs:
             .release/release-plan.json
           if-no-files-found: error
           retention-days: 14
+
+  validate:
+    if: always()
+    needs:
+      - prerequisite
+      - build-cache
+      - quality
+      - unit
+      - storybook-static
+      - storybook-interaction
+      - release-artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aggregate blocking validation lanes
+        env:
+          PREREQUISITE: ${{ needs.prerequisite.result }}
+          BUILD_CACHE: ${{ needs.build-cache.result }}
+          QUALITY: ${{ needs.quality.result }}
+          UNIT: ${{ needs.unit.result }}
+          STORYBOOK_STATIC: ${{ needs.storybook-static.result }}
+          STORYBOOK_INTERACTION: ${{ needs.storybook-interaction.result }}
+          RELEASE_ARTIFACTS: ${{ needs.release-artifacts.result }}
+        run: |
+          set -euo pipefail
+          results=(
+            "$PREREQUISITE"
+            "$BUILD_CACHE"
+            "$QUALITY"
+            "$UNIT"
+            "$STORYBOOK_STATIC"
+            "$STORYBOOK_INTERACTION"
+            "$RELEASE_ARTIFACTS"
+          )
+          for result in "${results[@]}"; do
+            if [ "$result" != "success" ]; then
+              echo "A required CI lane finished with: $result" >&2
+              exit 1
+            fi
+          done
+          echo "All blocking Lapis Plugins validation lanes passed."

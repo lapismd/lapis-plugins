@@ -10,6 +10,13 @@ const ciWorkflow = await readFile(
   new URL("../.github/workflows/ci.yml", import.meta.url),
   "utf8"
 );
+const ciSetup = await readFile(
+  new URL("../.github/actions/ci-setup/action.yml", import.meta.url),
+  "utf8"
+);
+const ciImages = JSON.parse(
+  await readFile(new URL("../.ci/images.json", import.meta.url), "utf8")
+);
 const lockfile = await readFile(
   new URL("../pnpm-lock.yaml", import.meta.url),
   "utf8"
@@ -35,7 +42,7 @@ test("does not require a long-lived npm token at runtime", () => {
 
 test("builds release candidates from the committed dependency graph", () => {
   assert.match(lockfile, /^lockfileVersion:/m);
-  assert.match(ciWorkflow, /pnpm install --frozen-lockfile/);
+  assert.match(ciSetup, /pnpm install --frozen-lockfile/);
   assert.match(workflow, /pnpm install --frozen-lockfile/);
 });
 
@@ -62,14 +69,22 @@ test("offers explicit plugin checkboxes instead of a free-form selector", () => 
 });
 
 test("GitHub workflows run Node 24 actions and Node 24 builds", () => {
-  for (const source of [workflow, ciWorkflow]) {
-    assert.match(source, /actions\/checkout@v7/);
-    assert.match(source, /pnpm\/action-setup@v6/);
-    assert.match(source, /actions\/setup-node@v7/);
-    assert.match(source, /node-version:\s*24/);
-    assert.doesNotMatch(source, /@v4|node-version:\s*["']?20/);
-    assert.match(source, /taiki-e\/install-action@v2/);
-    assert.match(source, /tool:\s*mdbook@0\.5\.4/);
-  }
+  assert.match(workflow, /actions\/checkout@v7/);
+  assert.match(workflow, /pnpm\/action-setup@v6/);
+  assert.match(workflow, /actions\/setup-node@v7/);
+  assert.match(workflow, /node-version:\s*24/);
+  assert.match(workflow, /taiki-e\/install-action@v2/);
+  assert.match(workflow, /tool:\s*mdbook@0\.5\.4/);
+
+  assert.match(ciWorkflow, /actions\/checkout@v7/);
+  assert.match(
+    ciWorkflow,
+    new RegExp(`${ciImages.dependencies.image}@${ciImages.dependencies.digest}`),
+  );
+  assert.match(ciSetup, /v24\.15\.0/);
+  assert.match(ciSetup, /10\.34\.5/);
+  assert.match(ciSetup, /Version 1\.61\.1/);
+  assert.match(ciSetup, /mdbook v0\.5\.4/);
+  assert.doesNotMatch(ciWorkflow + ciSetup, /node-version:\s*["']?20/);
   assert.match(ciWorkflow, /actions\/upload-artifact@v7/);
 });
