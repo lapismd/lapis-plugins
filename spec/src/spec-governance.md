@@ -66,6 +66,10 @@ axe failures remain blocking in their own lane; visual baselines do not become
 a deployment gate through this infrastructure change. Container setup marks
 the checked-out workspace as a trusted Git directory before specification
 tools inspect tracked files; this trust is scoped to the exact workspace path.
+The reusable validation, production-candidate handoff, and downloaded-artifact
+reverification boundary are protected by LP-SPEC-039. Publication workflow
+tests must prove the protected job consumes the validated candidate without
+rebuilding payloads and retains the explicit plugin and replacement inputs.
 Release dependency resolution is protected by LP-SPEC-024: the tracked root
 lockfile and frozen workflow installs are part of the reviewed release source,
 not runner-local state.

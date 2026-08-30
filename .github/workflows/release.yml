@@ -71,32 +71,49 @@ on:
 permissions:
   contents: write
   id-token: write
+  packages: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  TURBO_API: ${{ vars.TURBO_API }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_REMOTE_CACHE_SIGNATURE_KEY: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
 
 jobs:
-  publish:
-    if: >-
-      vars.FRAMEWORK_PACKAGES_PUBLISHED == 'true' &&
-      vars.FIRST_PUBLICATION_APPROVED == 'true' &&
-      inputs.approval == 'FIRST_PUBLICATION_APPROVED'
+  selection:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
-    environment: first-publication
+    outputs:
+      plugins: ${{ steps.selection.outputs.plugins }}
     steps:
-      - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
-        with:
-          version: 10.34.5
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24
-          cache: pnpm
-          registry-url: https://registry.npmjs.org
-      - uses: taiki-e/install-action@v2
-        with:
-          tool: mdbook@0.5.4
+      - name: Confirm the protected release gate
+        env:
+          APPROVAL_INPUT: ${{ inputs.approval }}
+          FRAMEWORK_PACKAGES_PUBLISHED: ${{ vars.FRAMEWORK_PACKAGES_PUBLISHED }}
+          FIRST_PUBLICATION_APPROVED: ${{ vars.FIRST_PUBLICATION_APPROVED }}
+        run: |
+          set -euo pipefail
+          if [[ "$FRAMEWORK_PACKAGES_PUBLISHED" != "true" ]]; then
+            echo "Framework packages must be published before plugin release." >&2
+            exit 1
+          fi
+          if [[ "$FIRST_PUBLICATION_APPROVED" != "true" ]]; then
+            echo "The first-publication repository gate is closed." >&2
+            exit 1
+          fi
+          if [[ "$APPROVAL_INPUT" != "FIRST_PUBLICATION_APPROVED" ]]; then
+            echo "Enter FIRST_PUBLICATION_APPROVED to start protected validation." >&2
+            exit 1
+          fi
       - name: Resolve selected plugins
         id: selection
-        shell: bash
         run: |
           set -euo pipefail
           plugin_names=(
@@ -138,16 +155,100 @@ jobs:
           plugin_list="$(IFS=,; echo "${selected_plugins[*]}")"
           echo "plugins=$plugin_list" >> "$GITHUB_OUTPUT"
           echo "Selected plugins: $plugin_list"
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
+
+  validate:
+    needs: selection
+    uses: ./.github/workflows/ci.yml
+    secrets: inherit
+
+  production-candidate:
+    needs:
+      - selection
+      - validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: read
+    container:
+      image: ghcr.io/lapismd/lapis-plugins-ci@sha256:5c6a20bf2e9f28c59567661df08fef936a9ca62491c40b644ec60e53be019632
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/ci-setup
+      - name: Restore validated package builds
+        run: node scripts/run-turbo.mjs build --summarize
+      - name: Report cache restoration
+        run: node scripts/report-turbo-cache.mjs --github-summary
+      - name: Pack npm candidates from validated builds
+        run: pnpm packages:pack -- --already-built
       - name: Build production-signed candidates
-        run: pnpm release:prepare && pnpm test:storybook && pnpm release:plan -- --production
+        run: pnpm plugin:build
         env:
           LAPIS_PLUGIN_RELEASE_PRIVATE_KEY: ${{ secrets.LAPIS_PLUGIN_RELEASE_PRIVATE_KEY }}
           LAPIS_PLUGIN_RELEASE_KEY_ID: ${{ secrets.LAPIS_PLUGIN_RELEASE_KEY_ID }}
+      - name: Verify production candidate
+        run: |
+          set -euo pipefail
+          pnpm plugin:verify
+          pnpm release:plan -- --production
+          jq -e --arg source "$GITHUB_SHA" \
+            '.production == true and .generatedFrom == $source and (.releases | length == 11) and all(.releases[]; .sourceCommit == $source)' \
+            .release/release-plan.json >/dev/null
+      - uses: actions/upload-artifact@v7
+        with:
+          name: production-plugin-candidate-${{ github.run_id }}
+          path: |
+            .release/npm/*.tgz
+            .release/npm/*.sha256
+            .release/npm/manifest.json
+            .release/plugins/**/*.lapis-plugin
+            .release/plugins/**/*.sha256
+            .release/plugin-release-public.pem
+            .release/release-plan.json
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    needs:
+      - selection
+      - validate
+      - production-candidate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: first-publication
+    permissions:
+      contents: write
+      id-token: write
+      packages: read
+    container:
+      image: ghcr.io/lapismd/lapis-plugins-ci@sha256:5c6a20bf2e9f28c59567661df08fef936a9ca62491c40b644ec60e53be019632
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/ci-setup
+      - uses: actions/download-artifact@v8
+        with:
+          name: production-plugin-candidate-${{ github.run_id }}
+          path: .release
+      - name: Reverify the downloaded production candidate
+        run: |
+          set -euo pipefail
+          candidate_plan="$RUNNER_TEMP/production-release-plan.json"
+          cp .release/release-plan.json "$candidate_plan"
+          pnpm plugin:verify
+          pnpm release:plan -- --production
+          cmp "$candidate_plan" .release/release-plan.json
+          jq -e --arg source "$GITHUB_SHA" \
+            '.production == true and .generatedFrom == $source and (.releases | length == 11) and all(.releases[]; .sourceCommit == $source)' \
+            .release/release-plan.json >/dev/null
       - name: Create registry GitHub App token
         id: registry-app
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@7bd03711494f032dfa3be3558f7dc8787b0be333 # v3.1.0
         with:
           client-id: ${{ secrets.LAPIS_REGISTRY_APP_CLIENT_ID }}
           private-key: ${{ secrets.LAPIS_REGISTRY_APP_PRIVATE_KEY }}
@@ -160,7 +261,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          args=(--plugins "${{ steps.selection.outputs.plugins }}")
+          args=(--plugins "${{ needs.selection.outputs.plugins }}")
           if [[ "${{ inputs.replace_existing_github_assets }}" == "true" ]]; then
             args+=(--replace-github-assets)
           fi
