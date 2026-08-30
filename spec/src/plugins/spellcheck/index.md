@@ -4,8 +4,9 @@ The package-owned `registry.json` is the source for curated categories,
 highlights, and registry-only Overview content under LP-SPEC-021 and LP-SPEC-033. Manifest and package
 metadata remain authoritative for the fields defined by LP-SPEC-022.
 Registry identity and capture-backed gallery media remain package-owned under
-LP-SPEC-030 and LP-SPEC-031; the governed source story stays `visual-pending`
-until separate visual approval.
+LP-SPEC-030 and LP-SPEC-031. The governed `Registry Screenshots` story covers
+Suggestions with the Problems panel and stays `visual-pending` until separate
+visual approval.
 
 Canonical daily notes use the same Markdown spellcheck pipeline as other
 notes. Spellcheck does not participate in daily-document resolution or Tasks

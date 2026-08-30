@@ -4,8 +4,9 @@ The package-owned `registry.json` is the source for curated categories,
 highlights, and registry-only Overview content under LP-SPEC-021 and LP-SPEC-033. Manifest and package
 metadata remain authoritative for the fields defined by LP-SPEC-022.
 Registry identity and capture-backed gallery media remain package-owned under
-LP-SPEC-030 and LP-SPEC-031; the governed source story stays `visual-pending`
-until separate visual approval.
+LP-SPEC-030 and LP-SPEC-031. Governed `Registry Screenshots` stories cover
+Table, Cards, and Grouped List; all stay `visual-pending` until separate visual
+approval.
 
 The package consumes the published Design Core semver contract. Runtime and
 tests MUST NOT depend on a sibling-repository path or a workspace `link:`

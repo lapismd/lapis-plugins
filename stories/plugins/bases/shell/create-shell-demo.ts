@@ -9,7 +9,11 @@ import { FileExplorerPlugin } from "@lapis-notes/file-explorer";
 import { MarkdownPlugin } from "@lapis-notes/markdown";
 import { SearchPlugin } from "@lapis-notes/search";
 import { watchMetadata } from "../../../workspace/watch-metadata";
-import { createBasesViewsSeed } from "../bases-views-fixture";
+import {
+  createBasesViewsDocument,
+  createBasesViewsSeed,
+  type BasesViewScenario,
+} from "../bases-views-fixture";
 
 export const BASES_EDITOR_SHELL_CONFIGURATION = {
   "appearence.interface.showTabTitleBar": true,
@@ -91,12 +95,19 @@ export function createBasesEditorShellLayout() {
   };
 }
 
-export function createBasesEditorShellSeed(): Record<
+export function createBasesEditorShellSeed(
+  scenario: BasesViewScenario = "table",
+): Record<
   string,
   string | ArrayBuffer
 > {
   return {
     ...createBasesViewsSeed(),
+    "Bases/Projects.base": JSON.stringify(
+      createBasesViewsDocument(scenario),
+      null,
+      2,
+    ),
     ".obsidian/app.json": JSON.stringify(
       BASES_EDITOR_SHELL_CONFIGURATION,
       null,
@@ -110,20 +121,24 @@ export function createBasesEditorShellSeed(): Record<
   };
 }
 
-export async function bootBasesEditorShellDemo(): Promise<{
+export async function bootBasesEditorShellDemo(
+  scenario: BasesViewScenario = "table",
+): Promise<{
   app: App;
   dispose: () => Promise<void>;
 }> {
-  const adapter = new MemoryVaultAdapter(createBasesEditorShellSeed(), {
-    name: "Lapis Bases Editor Shell",
-    vaultId: "lapis-bases-editor-shell",
+  const adapter = new MemoryVaultAdapter(createBasesEditorShellSeed(scenario), {
+    name: `Lapis Bases Editor Shell ${scenario}`,
+    vaultId: `lapis-bases-editor-shell-${scenario}`,
     clock: 1_700_000_000_000,
   });
   const app = new App({
     version: "0.0.1-story",
     configPath: ".obsidian/app.json",
     adapter,
-    appDatabase: new MemoryAppDatabase("lapis-bases-editor-shell"),
+    appDatabase: new MemoryAppDatabase(
+      `lapis-bases-editor-shell-${scenario}`,
+    ),
     workspaceShell: { application: { name: "Lapis Notes" } },
     markdownRenderer: async () => {},
   });

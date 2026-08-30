@@ -5,6 +5,11 @@ import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
 import { pluginPackages } from "./package-catalog.mjs";
+import {
+  REGISTRY_MEDIA_TONES,
+  resolveFocusCrop,
+  validateRegistryCardCopy,
+} from "./registry-media-compositor.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const maxMarkdownBytes = 256 * 1024;
@@ -37,19 +42,6 @@ const allowedIcons = new Set([
   "table-2",
   "whole-word",
 ]);
-const expectedRegistryStories = new Map([
-  ["ai", "plugins-ai-registry--overview"],
-  ["bases", "plugins-bases-registry--overview"],
-  ["bookmarks", "plugins-bookmarks-registry--overview"],
-  ["graph", "plugins-graph-registry--overview"],
-  ["history", "plugins-history-registry--overview"],
-  ["markdown", "plugins-markdown-registry--overview"],
-  ["markdown-lint", "plugins-markdown-lint-registry--overview"],
-  ["search", "plugins-search-registry--overview"],
-  ["source-editor", "plugins-source-editor-registry--overview"],
-  ["spellcheck", "plugins-spellcheck-registry--overview"],
-  ["wordcount", "plugins-word-count-registry--overview"],
-]);
 const findings = [];
 
 for (const plugin of pluginPackages) {
@@ -59,11 +51,14 @@ for (const plugin of pluginPackages) {
   try {
     source = JSON.parse(await readFile(sourcePath, "utf8"));
   } catch (error) {
-    findings.push(`${plugin.directory}: registry.json is missing or invalid (${error.message})`);
+    findings.push(
+      `${plugin.directory}: registry.json is missing or invalid (${error.message})`
+    );
     continue;
   }
   for (const key of Object.keys(source)) {
-    if (!allowedKeys.has(key)) findings.push(`${plugin.directory}: unsupported registry field ${key}`);
+    if (!allowedKeys.has(key))
+      findings.push(`${plugin.directory}: unsupported registry field ${key}`);
   }
   if (source.schemaVersion !== 1) {
     findings.push(`${plugin.directory}: registry schemaVersion must be 1`);
@@ -84,27 +79,47 @@ for (const plugin of pluginPackages) {
   await validateAppearance(plugin.directory, packageRoot, source.appearance);
   await validateGallery(plugin.directory, packageRoot, source.gallery);
   const contentKeys = Object.keys(source.content ?? {});
-  if (contentKeys.length !== 2 || !contentKeys.includes("overview") || !contentKeys.includes("changelog")) {
-    findings.push(`${plugin.directory}: content must define overview and changelog only`);
+  if (
+    contentKeys.length !== 2 ||
+    !contentKeys.includes("overview") ||
+    !contentKeys.includes("changelog")
+  ) {
+    findings.push(
+      `${plugin.directory}: content must define overview and changelog only`
+    );
   }
   if (source.content?.overview !== registryOverviewPath) {
-    findings.push(`${plugin.directory}: overview must use ${registryOverviewPath}`);
+    findings.push(
+      `${plugin.directory}: overview must use ${registryOverviewPath}`
+    );
   }
   for (const [kind, relativePath] of Object.entries(source.content ?? {})) {
     if (!isSafeMarkdownPath(relativePath)) {
-      findings.push(`${plugin.directory}: unsafe ${kind} Markdown path ${String(relativePath)}`);
+      findings.push(
+        `${plugin.directory}: unsafe ${kind} Markdown path ${String(
+          relativePath
+        )}`
+      );
       continue;
     }
     try {
       const file = await stat(path.join(packageRoot, relativePath));
-      if (!file.isFile()) findings.push(`${plugin.directory}: ${relativePath} is not a file`);
+      if (!file.isFile())
+        findings.push(`${plugin.directory}: ${relativePath} is not a file`);
       if (file.size > maxMarkdownBytes) {
-        findings.push(`${plugin.directory}: ${relativePath} exceeds ${maxMarkdownBytes} bytes`);
+        findings.push(
+          `${plugin.directory}: ${relativePath} exceeds ${maxMarkdownBytes} bytes`
+        );
       }
       if (kind === "overview") {
-        const markdown = await readFile(path.join(packageRoot, relativePath), "utf8");
+        const markdown = await readFile(
+          path.join(packageRoot, relativePath),
+          "utf8"
+        );
         if (packageInstallInstruction.test(markdown)) {
-          findings.push(`${plugin.directory}: registry overview contains package installation instructions`);
+          findings.push(
+            `${plugin.directory}: registry overview contains package installation instructions`
+          );
         }
       }
     } catch {
@@ -114,7 +129,11 @@ for (const plugin of pluginPackages) {
 }
 
 async function validateAppearance(directory, packageRoot, appearance) {
-  if (!appearance || typeof appearance !== "object" || Array.isArray(appearance)) {
+  if (
+    !appearance ||
+    typeof appearance !== "object" ||
+    Array.isArray(appearance)
+  ) {
     findings.push(`${directory}: appearance is required`);
     return;
   }
@@ -127,20 +146,29 @@ async function validateAppearance(directory, packageRoot, appearance) {
   if (!allowedIcons.has(appearance.icon)) {
     findings.push(`${directory}: appearance.icon is not allowlisted`);
   }
-  if (typeof appearance.accent !== "string" || !/^#[A-Fa-f0-9]{6}$/.test(appearance.accent)) {
-    findings.push(`${directory}: appearance.accent must be a six-digit hex colour`);
+  if (
+    typeof appearance.accent !== "string" ||
+    !/^#[A-Fa-f0-9]{6}$/.test(appearance.accent)
+  ) {
+    findings.push(
+      `${directory}: appearance.accent must be a six-digit hex colour`
+    );
   }
   if (appearance.logo !== undefined) {
     if (
       !appearance.logo ||
       typeof appearance.logo !== "object" ||
       Array.isArray(appearance.logo) ||
-      Object.keys(appearance.logo).some((key) => !["path", "alt"].includes(key)) ||
+      Object.keys(appearance.logo).some(
+        (key) => !["path", "alt"].includes(key)
+      ) ||
       typeof appearance.logo.alt !== "string" ||
       !appearance.logo.alt.trim() ||
       appearance.logo.alt.length > 120
     ) {
-      findings.push(`${directory}: appearance.logo must contain only a safe path and bounded alt text`);
+      findings.push(
+        `${directory}: appearance.logo must contain only a safe path and bounded alt text`
+      );
       return;
     }
     await validateImage(directory, packageRoot, appearance.logo.path, {
@@ -155,14 +183,16 @@ async function validateAppearance(directory, packageRoot, appearance) {
 }
 
 async function validateGallery(directory, packageRoot, gallery) {
-  if (!Array.isArray(gallery) || gallery.length < 1 || gallery.length > 10) {
-    findings.push(`${directory}: gallery must contain 1-10 images`);
+  if (!Array.isArray(gallery) || gallery.length < 1 || gallery.length > 5) {
+    findings.push(`${directory}: gallery must contain 1-5 cards`);
     return;
   }
   const ids = new Set();
   const paths = new Set();
-  const surfaceCounts = { desktop: 0, mobile: 0 };
-  const expectedStoryId = expectedRegistryStories.get(directory);
+  const storyIds = new Set();
+  const expectedStoryPrefix = `plugins-${storyIdPluginSegment(
+    directory
+  )}-registry-screenshots--`;
   for (const item of gallery) {
     if (!item || typeof item !== "object" || Array.isArray(item)) {
       findings.push(`${directory}: gallery items must be objects`);
@@ -170,81 +200,204 @@ async function validateGallery(directory, packageRoot, gallery) {
     }
     const allowedGalleryKeys = new Set([
       "id",
-      "path",
-      "surface",
       "alt",
-      "caption",
+      "images",
       "capture",
+      "card",
     ]);
     for (const key of Object.keys(item)) {
       if (!allowedGalleryKeys.has(key)) {
         findings.push(`${directory}: unsupported gallery field ${key}`);
       }
     }
-    if (typeof item.id !== "string" || !/^[a-z0-9][a-z0-9-]{0,31}$/.test(item.id)) {
+    if (
+      typeof item.id !== "string" ||
+      !/^[a-z0-9][a-z0-9-]{0,31}$/.test(item.id)
+    ) {
       findings.push(`${directory}: invalid gallery id ${String(item.id)}`);
     } else if (ids.has(item.id)) {
       findings.push(`${directory}: duplicate gallery id ${item.id}`);
     } else {
       ids.add(item.id);
     }
-    if (typeof item.path === "string" && paths.has(item.path)) {
-      findings.push(`${directory}: duplicate gallery path ${item.path}`);
-    }
-    paths.add(item.path);
-    if (item.surface !== "desktop" && item.surface !== "mobile") {
-      findings.push(`${directory}: gallery surface must be desktop or mobile`);
-      continue;
-    }
-    surfaceCounts[item.surface] += 1;
-    if (surfaceCounts[item.surface] > 5) {
-      findings.push(`${directory}: gallery permits at most five ${item.surface} images`);
-    }
-    if (typeof item.alt !== "string" || !item.alt.trim() || item.alt.length > 240) {
-      findings.push(`${directory}: gallery alt text must contain 1-240 characters`);
-    }
-    if (item.caption !== undefined && (typeof item.caption !== "string" || !item.caption.trim() || item.caption.length > 240)) {
-      findings.push(`${directory}: gallery caption must contain 1-240 characters`);
-    }
     if (
-      !item.capture ||
-      typeof item.capture !== "object" ||
-      Object.keys(item.capture).length !== 1 ||
-      item.capture.storyId !== expectedStoryId
+      typeof item.alt !== "string" ||
+      !item.alt.trim() ||
+      item.alt.length > 240
     ) {
-      findings.push(`${directory}: gallery capture must reference ${expectedStoryId}`);
+      findings.push(
+        `${directory}: gallery alt text must contain 1-240 characters`
+      );
     }
-    await validateImage(directory, packageRoot, item.path, {
-      label: `${item.surface} gallery image`,
-      maxBytes: maxGalleryBytes,
-      allowSvg: false,
-      dimensions: ({ width, height }) =>
-        item.surface === "desktop"
-          ? width === 1200 && height === 800
-          : width === 900 && height === 1600,
-      dimensionsMessage:
-        item.surface === "desktop" ? "must be 1200x800" : "must be 900x1600",
-    });
+    const imageKeys = Object.keys(item.images ?? {});
+    if (
+      imageKeys.length !== 2 ||
+      !imageKeys.includes("preview") ||
+      !imageKeys.includes("full")
+    ) {
+      findings.push(
+        `${directory}: gallery images must define preview and full only`
+      );
+    }
+    for (const [variant, dimensions] of [
+      ["preview", { width: 1200, height: 800 }],
+      ["full", { width: 2400, height: 1600 }],
+    ]) {
+      const reference = item.images?.[variant];
+      if (
+        !reference ||
+        typeof reference !== "object" ||
+        Array.isArray(reference) ||
+        Object.keys(reference).length !== 1
+      ) {
+        findings.push(
+          `${directory}: ${variant} image must contain a path only`
+        );
+        continue;
+      }
+      const expectedPath = `registry-assets/gallery/${item.id}.${variant}.webp`;
+      if (reference.path !== expectedPath) {
+        findings.push(
+          `${directory}: ${variant} image must use ${expectedPath}`
+        );
+      }
+      if (paths.has(reference.path)) {
+        findings.push(`${directory}: duplicate gallery path ${reference.path}`);
+      }
+      paths.add(reference.path);
+      await validateImage(directory, packageRoot, reference.path, {
+        label: `${variant} gallery image`,
+        maxBytes: maxGalleryBytes,
+        allowSvg: false,
+        dimensions: ({ width, height }) =>
+          width === dimensions.width && height === dimensions.height,
+        dimensionsMessage: `must be ${dimensions.width}x${dimensions.height}`,
+      });
+    }
+    validateCapture(directory, item.capture, expectedStoryPrefix, storyIds);
+    validateCard(directory, item.card);
   }
-  if (surfaceCounts.desktop === 0) {
-    findings.push(`${directory}: gallery requires a desktop image`);
+}
+
+function validateCapture(directory, capture, expectedStoryPrefix, storyIds) {
+  if (
+    !capture ||
+    typeof capture !== "object" ||
+    Array.isArray(capture) ||
+    Object.keys(capture).some((key) => !["storyId", "focus"].includes(key)) ||
+    Object.keys(capture).length !== 2
+  ) {
+    findings.push(
+      `${directory}: gallery capture must define storyId and focus only`
+    );
+    return;
+  }
+  if (
+    typeof capture.storyId !== "string" ||
+    !capture.storyId.startsWith(expectedStoryPrefix)
+  ) {
+    findings.push(
+      `${directory}: gallery storyId must start with ${expectedStoryPrefix}`
+    );
+  } else if (storyIds.has(capture.storyId)) {
+    findings.push(`${directory}: duplicate gallery storyId ${capture.storyId}`);
+  } else {
+    storyIds.add(capture.storyId);
   }
   try {
-    const storySource = await readFile(
-      path.join(root, "stories", "plugins", directory, "RegistryOverview.stories.ts"),
-      "utf8",
-    );
-    if (!storySource.includes('tags: ["visual-pending"]') || !storySource.includes("export const Overview")) {
-      findings.push(`${directory}: registry story must export Overview and remain visual-pending`);
-    }
-  } catch {
-    findings.push(`${directory}: registry Storybook story is missing`);
+    resolveFocusCrop(capture.focus);
+  } catch (error) {
+    findings.push(`${directory}: ${error.message}`);
   }
+}
+
+function validateCard(directory, card) {
+  if (
+    !card ||
+    typeof card !== "object" ||
+    Array.isArray(card) ||
+    Object.keys(card).length !== 2 ||
+    Object.keys(card).some((key) => !["headline", "description"].includes(key))
+  ) {
+    findings.push(
+      `${directory}: gallery card must define headline and description only`
+    );
+    return;
+  }
+  if (
+    !Array.isArray(card.headline) ||
+    card.headline.length < 1 ||
+    card.headline.length > 4
+  ) {
+    findings.push(`${directory}: card headline must contain 1-4 segments`);
+  } else {
+    for (const segment of card.headline) {
+      if (
+        !segment ||
+        typeof segment !== "object" ||
+        Array.isArray(segment) ||
+        Object.keys(segment).length !== 2 ||
+        typeof segment.text !== "string" ||
+        !segment.text.trim() ||
+        segment.text.length > 60 ||
+        /[#*`<>]/.test(segment.text) ||
+        !Object.hasOwn(REGISTRY_MEDIA_TONES, segment.tone)
+      ) {
+        findings.push(`${directory}: card headline segment is invalid`);
+      }
+    }
+  }
+  if (
+    !Array.isArray(card.description) ||
+    card.description.length < 1 ||
+    card.description.length > 6
+  ) {
+    findings.push(`${directory}: card description must contain 1-6 segments`);
+  } else {
+    let descriptionLength = 0;
+    for (const segment of card.description) {
+      if (
+        !segment ||
+        typeof segment !== "object" ||
+        Array.isArray(segment) ||
+        Object.keys(segment).length !== 2 ||
+        typeof segment.text !== "string" ||
+        !segment.text.trim() ||
+        segment.text.length > 120 ||
+        /[#*`<>]/.test(segment.text) ||
+        !Object.hasOwn(REGISTRY_MEDIA_TONES, segment.tone)
+      ) {
+        findings.push(`${directory}: card description segment is invalid`);
+      } else {
+        descriptionLength += segment.text.length;
+      }
+    }
+    descriptionLength += Math.max(0, card.description.length - 1);
+    if (descriptionLength > 180) {
+      findings.push(`${directory}: card description exceeds 180 characters`);
+    }
+  }
+  try {
+    validateRegistryCardCopy(card);
+  } catch (error) {
+    findings.push(`${directory}: ${error.message}`);
+  }
+}
+
+function storyIdPluginSegment(directory) {
+  return (
+    {
+      spellcheck: "spell-check",
+      wordcount: "word-count",
+    }[directory] ?? directory
+  );
 }
 
 async function validateImage(directory, packageRoot, relativePath, options) {
   if (!isSafeAssetPath(relativePath)) {
-    findings.push(`${directory}: unsafe ${options.label} path ${String(relativePath)}`);
+    findings.push(
+      `${directory}: unsafe ${options.label} path ${String(relativePath)}`
+    );
     return;
   }
   const sourcePath = path.join(packageRoot, relativePath);
@@ -257,7 +410,9 @@ async function validateImage(directory, packageRoot, relativePath, options) {
     return;
   }
   if (file.size < 1 || file.size > options.maxBytes) {
-    findings.push(`${directory}: ${relativePath} exceeds the ${options.label} size limit`);
+    findings.push(
+      `${directory}: ${relativePath} exceeds the ${options.label} size limit`
+    );
     return;
   }
   const extension = path.extname(relativePath).slice(1).toLowerCase();
@@ -268,11 +423,15 @@ async function validateImage(directory, packageRoot, relativePath, options) {
       limitInputPixels: 20_000_000,
     }).metadata();
   } catch (error) {
-    findings.push(`${directory}: cannot decode ${relativePath} (${error.message})`);
+    findings.push(
+      `${directory}: cannot decode ${relativePath} (${error.message})`
+    );
     return;
   }
   if (metadata.format !== extension) {
-    findings.push(`${directory}: ${relativePath} extension does not match its image content`);
+    findings.push(
+      `${directory}: ${relativePath} extension does not match its image content`
+    );
   }
   if (metadata.format === "svg") {
     if (!options.allowSvg) {
@@ -280,7 +439,9 @@ async function validateImage(directory, packageRoot, relativePath, options) {
     } else {
       const source = await readFile(sourcePath, "utf8");
       if (containsUnsafeSvg(source)) {
-        findings.push(`${directory}: ${relativePath} contains unsafe SVG content`);
+        findings.push(
+          `${directory}: ${relativePath} contains unsafe SVG content`
+        );
       }
     }
   }
@@ -293,12 +454,20 @@ if (findings.length) {
   console.error(findings.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log(`Verified ${pluginPackages.length} plugin registry metadata sources.`);
+  console.log(
+    `Verified ${pluginPackages.length} plugin registry metadata sources.`
+  );
 }
 
 function validateStringList(directory, label, value, options) {
-  if (!Array.isArray(value) || value.length < 1 || value.length > options.maxItems) {
-    findings.push(`${directory}: ${label} must contain 1-${options.maxItems} unique values`);
+  if (
+    !Array.isArray(value) ||
+    value.length < 1 ||
+    value.length > options.maxItems
+  ) {
+    findings.push(
+      `${directory}: ${label} must contain 1-${options.maxItems} unique values`
+    );
     return;
   }
   if (new Set(value).size !== value.length) {
@@ -330,7 +499,9 @@ function isSafeMarkdownPath(value) {
     value.endsWith(".md") &&
     !value.startsWith("/") &&
     !value.includes("\\") &&
-    value.split("/").every((segment) => segment && segment !== "." && segment !== "..")
+    value
+      .split("/")
+      .every((segment) => segment && segment !== "." && segment !== "..")
   );
 }
 
@@ -339,7 +510,9 @@ function isSafeAssetPath(value) {
     typeof value === "string" &&
     /^registry-assets\/[A-Za-z0-9._/-]+\.(?:png|webp|svg)$/.test(value) &&
     !value.includes("\\") &&
-    value.split("/").every((segment) => segment && segment !== "." && segment !== "..")
+    value
+      .split("/")
+      .every((segment) => segment && segment !== "." && segment !== "..")
   );
 }
 

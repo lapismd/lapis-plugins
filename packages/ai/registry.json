@@ -11,13 +11,88 @@
   "appearance": { "icon": "sparkles", "accent": "#A855F7" },
   "gallery": [
     {
-      "id": "overview",
-      "path": "registry-assets/gallery/overview.png",
-      "surface": "desktop",
-      "alt": "AI plugin chat showing a completed workspace search and response.",
-      "caption": "Keep agent conversations and reviewed tool work inside Lapis.",
-      "capture": { "storyId": "plugins-ai-registry--overview" }
+      "id": "chat-tool-activity",
+      "alt": "Lapis AI chat showing a completed vault read tool call and a concise response beside Explorer.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/chat-tool-activity.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/chat-tool-activity.full.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-ai-registry-screenshots--chat-with-tool-activity",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          { "text": "Work with agents", "tone": "neutral" },
+          { "text": "without leaving your notes", "tone": "violet" }
+        ],
+        "description": [
+          { "text": "Follow", "tone": "neutral" },
+          { "text": "tool activity,", "tone": "violet" },
+          { "text": "reasoning,", "tone": "cyan" },
+          {
+            "text": "and the final answer in one app-owned conversation.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    },
+    {
+      "id": "history",
+      "alt": "AI conversation history organized by note scope in the right sidebar.",
+      "images": {
+        "preview": { "path": "registry-assets/gallery/history.preview.webp" },
+        "full": { "path": "registry-assets/gallery/history.full.webp" }
+      },
+      "capture": {
+        "storyId": "plugins-ai-registry-screenshots--history",
+        "focus": "right-sidebar"
+      },
+      "card": {
+        "headline": [
+          { "text": "Conversations stay", "tone": "neutral" },
+          { "text": "close to their context", "tone": "cyan" }
+        ],
+        "description": [
+          { "text": "Find", "tone": "neutral" },
+          { "text": "active and archived chats", "tone": "cyan" },
+          { "text": "by folder while Lapis keeps the", "tone": "neutral" },
+          { "text": "transcript portable.", "tone": "violet" }
+        ]
+      }
+    },
+    {
+      "id": "catalog",
+      "alt": "AI catalog in the right sidebar listing tools, commands, and skills.",
+      "images": {
+        "preview": { "path": "registry-assets/gallery/catalog.preview.webp" },
+        "full": { "path": "registry-assets/gallery/catalog.full.webp" }
+      },
+      "capture": {
+        "storyId": "plugins-ai-registry-screenshots--catalog",
+        "focus": "right-sidebar"
+      },
+      "card": {
+        "headline": [
+          { "text": "Choose the capabilities", "tone": "neutral" },
+          { "text": "each chat can use", "tone": "green" }
+        ],
+        "description": [
+          { "text": "Browse", "tone": "neutral" },
+          { "text": "application tools,", "tone": "green" },
+          { "text": "slash commands, and", "tone": "neutral" },
+          { "text": "vault skills", "tone": "violet" },
+          { "text": "from one live catalog.", "tone": "neutral" }
+        ]
+      }
     }
   ],
-  "content": { "overview": "registry-content/overview.md", "changelog": "CHANGELOG.md" }
+  "content": {
+    "overview": "registry-content/overview.md",
+    "changelog": "CHANGELOG.md"
+  }
 }

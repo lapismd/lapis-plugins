@@ -40,6 +40,7 @@ import { SourceEditorPlugin } from "@lapis-notes/source-editor";
 import { MarkdownLintPlugin } from "@lapis-notes/markdown-lint";
 import { SpellcheckPlugin } from "@lapis-notes/spellcheck";
 import { SearchPlugin, SearchViewType } from "@lapis-notes/search";
+import { WordCountPlugin } from "@lapis-notes/wordcount";
 import { watchMetadata } from "../../../workspace/watch-metadata";
 
 export type PanelDemoKind =
@@ -576,6 +577,46 @@ export function createPanelDemoSeed(
     ].join("\n"),
     "Notes/FilenameOnly.md":
       "# Quiet note\n\nThe body deliberately omits the filename token.\n",
+    "Notes/Editorial review.md": [
+      "# Editorial review",
+      "",
+      "A polished product update should be concise, useful, and easy to scan.",
+      "",
+      "# A second title",
+      "",
+      "##missing heading space",
+      "",
+      "The release note includes a clear owner, an outcome, and the next decision.",
+      "",
+    ].join("\n"),
+    "Notes/Field notes.md": [
+      "---",
+      "title: Field notes",
+      "tags: [writing, research]",
+      "status: draft",
+      "---",
+      "",
+      "# Field notes",
+      "",
+      "The team recieved the first accesibility review yesterday.",
+      "",
+      "We can definately simplify the navigation and seperate the advanced controls.",
+      "",
+      "## Next interview",
+      "",
+      "Ask participants which labels feel natural and where they expect history to live.",
+      "",
+    ].join("\n"),
+    "Projects/settings.json": JSON.stringify(
+      {
+        workspace: "Research",
+        autosave: true,
+        reviewers: ["Maya Chen", "Priya Shah"],
+        export: { format: "markdown", includeMetadata: true },
+      },
+      null,
+      2,
+    ),
     "Assets/map.png": new Uint8Array([137, 80, 78, 71]).buffer,
     ...(kind === "ai-history" ? createAiHistorySeed() : {}),
     ...(kind === "ai-catalog" ? createAiCatalogSeed() : {}),
@@ -810,6 +851,7 @@ export async function bootPanelDemo(
     { plugin: MarkdownPlugin, required: false, enabledByDefault: true },
     { plugin: MarkdownLintPlugin, required: false, enabledByDefault: true },
     { plugin: SpellcheckPlugin, required: false, enabledByDefault: true },
+    { plugin: WordCountPlugin, required: false, enabledByDefault: true },
     { plugin: FileExplorerPlugin, required: false, enabledByDefault: true },
     { plugin: SearchPlugin, required: false, enabledByDefault: true },
     {

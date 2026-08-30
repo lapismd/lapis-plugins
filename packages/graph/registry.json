@@ -11,13 +11,62 @@
   "appearance": { "icon": "network", "accent": "#8B5CF6" },
   "gallery": [
     {
-      "id": "overview",
-      "path": "registry-assets/gallery/overview.png",
-      "surface": "desktop",
-      "alt": "Graph plugin showing connected notes, tags, specifications, and media.",
-      "caption": "Explore global and local relationships across the active vault.",
-      "capture": { "storyId": "plugins-graph-registry--overview" }
+      "id": "global-graph",
+      "alt": "Global graph sidebar showing connected notes, tags, and unresolved links.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/global-graph.preview.webp"
+        },
+        "full": { "path": "registry-assets/gallery/global-graph.full.webp" }
+      },
+      "capture": {
+        "storyId": "plugins-graph-registry-screenshots--global-graph",
+        "focus": "right-sidebar"
+      },
+      "card": {
+        "headline": [
+          { "text": "See how your vault", "tone": "neutral" },
+          { "text": "connects", "tone": "violet" }
+        ],
+        "description": [
+          {
+            "text": "Explore notes, tags, attachments, and",
+            "tone": "neutral"
+          },
+          { "text": "unresolved links", "tone": "rose" },
+          { "text": "in a live global map.", "tone": "cyan" }
+        ]
+      }
+    },
+    {
+      "id": "local-graph",
+      "alt": "Local graph sidebar focused on the active Welcome note and its nearest relationships.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/local-graph.preview.webp"
+        },
+        "full": { "path": "registry-assets/gallery/local-graph.full.webp" }
+      },
+      "capture": {
+        "storyId": "plugins-graph-registry-screenshots--local-graph",
+        "focus": "right-sidebar"
+      },
+      "card": {
+        "headline": [
+          { "text": "Focus on what is", "tone": "neutral" },
+          { "text": "nearby", "tone": "cyan" }
+        ],
+        "description": [
+          {
+            "text": "Follow the active note and its closest relationships without losing your writing context.",
+            "tone": "neutral"
+          }
+        ]
+      }
     }
   ],
-  "content": { "overview": "registry-content/overview.md", "changelog": "CHANGELOG.md" }
+  "content": {
+    "overview": "registry-content/overview.md",
+    "changelog": "CHANGELOG.md"
+  }
 }

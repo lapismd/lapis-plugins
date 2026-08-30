@@ -11,13 +11,58 @@
   "appearance": { "icon": "history", "accent": "#6366F1" },
   "gallery": [
     {
-      "id": "overview",
-      "path": "registry-assets/gallery/overview.png",
-      "surface": "desktop",
-      "alt": "History plugin comparing a saved revision with the current note.",
-      "caption": "Review bounded local revisions and restore through the vault write path.",
-      "capture": { "storyId": "plugins-history-registry--overview" }
+      "id": "history-sidebar",
+      "alt": "History sidebar showing saved local revisions for the active Welcome note.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/history-sidebar.preview.webp"
+        },
+        "full": { "path": "registry-assets/gallery/history-sidebar.full.webp" }
+      },
+      "capture": {
+        "storyId": "plugins-history-registry-screenshots--history-sidebar",
+        "focus": "right-sidebar"
+      },
+      "card": {
+        "headline": [
+          { "text": "A local timeline", "tone": "neutral" },
+          { "text": "for every edit", "tone": "amber" }
+        ],
+        "description": [
+          {
+            "text": "Browse bounded snapshots of the active file without sending content elsewhere.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    },
+    {
+      "id": "compare",
+      "alt": "History compare view showing a saved revision beside the current Markdown document.",
+      "images": {
+        "preview": { "path": "registry-assets/gallery/compare.preview.webp" },
+        "full": { "path": "registry-assets/gallery/compare.full.webp" }
+      },
+      "capture": {
+        "storyId": "plugins-history-registry-screenshots--compare",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          { "text": "Compare changes", "tone": "neutral" },
+          { "text": "before restoring", "tone": "green" }
+        ],
+        "description": [
+          {
+            "text": "Review a saved revision against the live document, then restore through the vault.",
+            "tone": "neutral"
+          }
+        ]
+      }
     }
   ],
-  "content": { "overview": "registry-content/overview.md", "changelog": "CHANGELOG.md" }
+  "content": {
+    "overview": "registry-content/overview.md",
+    "changelog": "CHANGELOG.md"
+  }
 }

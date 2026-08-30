@@ -11,13 +11,40 @@
   "appearance": { "icon": "list-checks", "accent": "#F97316" },
   "gallery": [
     {
-      "id": "overview",
-      "path": "registry-assets/gallery/overview.png",
-      "surface": "desktop",
-      "alt": "Markdown Lint plugin showing inline diagnostics and focused suggestions.",
-      "caption": "Find Markdown issues and apply supported code actions without leaving the note.",
-      "capture": { "storyId": "plugins-markdown-lint-registry--overview" }
+      "id": "editor-diagnostics",
+      "alt": "Markdown editor with inline lint markers and a Problems panel listing heading issues.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/editor-diagnostics.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/editor-diagnostics.full.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-markdown-lint-registry-screenshots--editor-diagnostics-with-problems",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          { "text": "Catch Markdown issues", "tone": "neutral" },
+          { "text": "where you write", "tone": "amber" }
+        ],
+        "description": [
+          { "text": "See", "tone": "neutral" },
+          { "text": "diagnostics", "tone": "rose" },
+          {
+            "text": "in the editor and the shared Problems surface, with",
+            "tone": "neutral"
+          },
+          { "text": "supported fixes", "tone": "green" },
+          { "text": "close by.", "tone": "neutral" }
+        ]
+      }
     }
   ],
-  "content": { "overview": "registry-content/overview.md", "changelog": "CHANGELOG.md" }
+  "content": {
+    "overview": "registry-content/overview.md",
+    "changelog": "CHANGELOG.md"
+  }
 }

@@ -1,5 +1,6 @@
 import type { StorybookConfig } from "@storybook/svelte-vite";
 import { svelte, vitePreprocess } from "@sveltejs/vite-plugin-svelte";
+import tailwindcss from "@tailwindcss/vite";
 import { existsSync, realpathSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -64,6 +65,16 @@ const config: StorybookConfig = {
     "@storybook/addon-svelte-csf",
     "@storybook/addon-themes",
     "@storybook/addon-vitest",
+    {
+      name: "@lapismd/storybook-addon-visual-delta",
+      options: {
+        visualDelta: {
+          snapshotDir: ".visual-delta/artifacts",
+          readOnly: true,
+          affectedTests: false,
+        },
+      },
+    },
   ],
   framework: {
     name: "@storybook/svelte-vite",
@@ -82,6 +93,7 @@ const config: StorybookConfig = {
         emitCss: false,
         compilerOptions: { runes: undefined },
       }),
+      tailwindcss(),
       ...nonSveltePlugins,
     ];
     return mergeConfig(viteConfig, {
@@ -110,7 +122,10 @@ const config: StorybookConfig = {
         ],
       },
       esbuild: { target: "esnext" },
-      worker: { format: "es" },
+      worker: {
+        format: "es",
+        rollupOptions: { output: { inlineDynamicImports: true } },
+      },
       optimizeDeps: {
         exclude: [
           "@storybook/svelte",

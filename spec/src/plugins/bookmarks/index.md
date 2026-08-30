@@ -4,8 +4,8 @@ The package-owned `registry.json` is the source for curated categories,
 highlights, and registry-only Overview content under LP-SPEC-021 and LP-SPEC-033. Manifest and package
 metadata remain authoritative for the fields defined by LP-SPEC-022.
 Registry identity and capture-backed gallery media remain package-owned under
-LP-SPEC-030 and LP-SPEC-031; the governed source story stays `visual-pending`
-until separate visual approval.
+LP-SPEC-030 and LP-SPEC-031. The governed `Registry Screenshots` story covers
+the Bookmarks sidebar and stays `visual-pending` until separate visual approval.
 
 `@lapis-notes/bookmarks` owns the movable Bookmarks panel and Obsidian-compatible
 `.obsidian/bookmarks.json`. It does not own Explorer, Search, or Graph.

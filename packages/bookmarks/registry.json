@@ -11,13 +11,36 @@
   "appearance": { "icon": "bookmark", "accent": "#E11D48" },
   "gallery": [
     {
-      "id": "overview",
-      "path": "registry-assets/gallery/overview.png",
-      "surface": "desktop",
-      "alt": "Bookmarks plugin showing saved notes, searches, and grouped destinations.",
-      "caption": "Keep important vault destinations in one compact navigation panel.",
-      "capture": { "storyId": "plugins-bookmarks-registry--overview" }
+      "id": "bookmarks-sidebar",
+      "alt": "Bookmarks sidebar containing saved notes, a folder, a search, a URL, and a graph shortcut.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/bookmarks-sidebar.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/bookmarks-sidebar.full.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-bookmarks-registry-screenshots--bookmarks-sidebar",
+        "focus": "right-sidebar"
+      },
+      "card": {
+        "headline": [
+          { "text": "Keep every useful place", "tone": "neutral" },
+          { "text": "one click away", "tone": "rose" }
+        ],
+        "description": [
+          {
+            "text": "Save notes, headings, folders, searches, URLs, and graph views in one familiar tree.",
+            "tone": "neutral"
+          }
+        ]
+      }
     }
   ],
-  "content": { "overview": "registry-content/overview.md", "changelog": "CHANGELOG.md" }
+  "content": {
+    "overview": "registry-content/overview.md",
+    "changelog": "CHANGELOG.md"
+  }
 }

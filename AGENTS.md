@@ -44,6 +44,30 @@ specifications.
 - Do not create or replace visual baselines before explicit visual-parity
   approval.
 
+### Registry media authoring
+
+- Keep registry capture stories under `Plugins/<Plugin>/Registry Screenshots`
+  with `registry-media` and `visual-pending` tags. A checked-in `registry.json`
+  story ID is the fixed source of every generated card; never discover a
+  substitute story by name or tag.
+- Capture a real 1200x800 application shell at 2x density in the Lapis light
+  presentation. Keep Explorer open
+  for full-shell views. A sidebar-only card may focus the sidebar plus half of
+  the adjacent document, and status-only surfaces may use the bounded status
+  crop.
+- Add a card for each materially different plugin view, up to five cards per
+  plugin. Use realistic vault content, filenames, metadata, results, and
+  relationships that present the feature at its best.
+- Express headline and description copy as allowlisted colour segments. Keep
+  most description copy neutral and accent only phrases whose meaning benefits
+  from the shared violet, cyan, green, amber, or rose palette.
+- Keep the marketing copy on the left and the captured product surface on the
+  right for every card. Use the bundled Inter face for marketing copy; do not
+  add per-card layout or font choices.
+- Use `pnpm registry:media:capture` to regenerate declared preview and full
+  assets and `pnpm registry:media:check` to prove they are current. These
+  commands never create, replace, or approve Visual Delta baselines.
+
 ## Version control
 
 Use Jujutsu for status, diffs, commits, bookmarks, and pushes. Preserve

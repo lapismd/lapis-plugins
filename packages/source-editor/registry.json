@@ -11,13 +11,36 @@
   "appearance": { "icon": "file-code-2", "accent": "#0EA5E9" },
   "gallery": [
     {
-      "id": "overview",
-      "path": "registry-assets/gallery/overview.png",
-      "surface": "desktop",
-      "alt": "Source Editor plugin showing syntax-aware JSON editing.",
-      "caption": "Edit text, JSON, and YAML through the normal Lapis workspace lifecycle.",
-      "capture": { "storyId": "plugins-source-editor-registry--overview" }
+      "id": "json-editor",
+      "alt": "Syntax-highlighted project settings JSON open beside the file Explorer.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/json-editor.preview.webp"
+        },
+        "full": { "path": "registry-assets/gallery/json-editor.full.webp" }
+      },
+      "capture": {
+        "storyId": "plugins-source-editor-registry-screenshots--json-editor",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          { "text": "Edit JSON and YAML", "tone": "neutral" },
+          { "text": "in the same workspace", "tone": "cyan" }
+        ],
+        "description": [
+          { "text": "Open", "tone": "neutral" },
+          { "text": "JSON, YAML, and text", "tone": "cyan" },
+          {
+            "text": "through normal Lapis routing with syntax-aware editing.",
+            "tone": "neutral"
+          }
+        ]
+      }
     }
   ],
-  "content": { "overview": "registry-content/overview.md", "changelog": "CHANGELOG.md" }
+  "content": {
+    "overview": "registry-content/overview.md",
+    "changelog": "CHANGELOG.md"
+  }
 }

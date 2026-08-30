@@ -11,13 +11,38 @@
   "appearance": { "icon": "spell-check-2", "accent": "#22C55E" },
   "gallery": [
     {
-      "id": "overview",
-      "path": "registry-assets/gallery/overview.png",
-      "surface": "desktop",
-      "alt": "Spellcheck plugin showing writing suggestions beside an open note.",
-      "caption": "Review private spelling and grammar suggestions powered by Harper.",
-      "capture": { "storyId": "plugins-spellcheck-registry--overview" }
+      "id": "suggestions-problems",
+      "alt": "Writing note with spelling diagnostics and a shared Problems panel.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/suggestions-problems.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/suggestions-problems.full.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-spell-check-registry-screenshots--suggestions-and-problems",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          { "text": "Polish the draft", "tone": "neutral" },
+          { "text": "without sharing it", "tone": "green" }
+        ],
+        "description": [
+          { "text": "Review", "tone": "neutral" },
+          {
+            "text": "private spelling and grammar suggestions",
+            "tone": "green"
+          },
+          { "text": "in the editor and Problems panel.", "tone": "neutral" }
+        ]
+      }
     }
   ],
-  "content": { "overview": "registry-content/overview.md", "changelog": "CHANGELOG.md" }
+  "content": {
+    "overview": "registry-content/overview.md",
+    "changelog": "CHANGELOG.md"
+  }
 }

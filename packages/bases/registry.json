@@ -11,13 +11,83 @@
   "appearance": { "icon": "table-2", "accent": "#14B8A6" },
   "gallery": [
     {
-      "id": "overview",
-      "path": "registry-assets/gallery/overview.png",
-      "surface": "desktop",
-      "alt": "Bases plugin showing a filtered table of active projects.",
-      "caption": "Build editable structured views over ordinary notes and metadata.",
-      "capture": { "storyId": "plugins-bases-registry--overview" }
+      "id": "table",
+      "alt": "Projects base displayed as a score-sorted table beside the file Explorer.",
+      "images": {
+        "preview": { "path": "registry-assets/gallery/table.preview.webp" },
+        "full": { "path": "registry-assets/gallery/table.full.webp" }
+      },
+      "capture": {
+        "storyId": "plugins-bases-registry-screenshots--table",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          { "text": "Turn note metadata into", "tone": "neutral" },
+          { "text": "focused tables", "tone": "cyan" }
+        ],
+        "description": [
+          {
+            "text": "Sort, filter, and edit project fields without moving data out of",
+            "tone": "neutral"
+          },
+          { "text": "ordinary notes.", "tone": "green" }
+        ]
+      }
+    },
+    {
+      "id": "cards",
+      "alt": "Projects base displayed as visual cards with artwork, owner, status, and score.",
+      "images": {
+        "preview": { "path": "registry-assets/gallery/cards.preview.webp" },
+        "full": { "path": "registry-assets/gallery/cards.full.webp" }
+      },
+      "capture": {
+        "storyId": "plugins-bases-registry-screenshots--cards",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          { "text": "See the work", "tone": "neutral" },
+          { "text": "at a glance", "tone": "violet" }
+        ],
+        "description": [
+          {
+            "text": "Use cover images and selected properties to build a compact project portfolio.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    },
+    {
+      "id": "grouped-list",
+      "alt": "Projects base grouped into Active and Planning sections in a list view.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/grouped-list.preview.webp"
+        },
+        "full": { "path": "registry-assets/gallery/grouped-list.full.webp" }
+      },
+      "capture": {
+        "storyId": "plugins-bases-registry-screenshots--grouped-list",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          { "text": "Group related notes", "tone": "neutral" },
+          { "text": "around the next decision", "tone": "green" }
+        ],
+        "description": [
+          {
+            "text": "Shape the same source data into a grouped list when a table is more than you need.",
+            "tone": "neutral"
+          }
+        ]
+      }
     }
   ],
-  "content": { "overview": "registry-content/overview.md", "changelog": "CHANGELOG.md" }
+  "content": {
+    "overview": "registry-content/overview.md",
+    "changelog": "CHANGELOG.md"
+  }
 }

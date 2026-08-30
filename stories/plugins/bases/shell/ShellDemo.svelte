@@ -4,6 +4,7 @@
   import { WorkspaceShell } from "@lapis-notes/workspace";
   import type { WorkspaceRequestedDisplayMode } from "@lapismd/design-core/workspace/core";
   import { bootBasesEditorShellDemo } from "./create-shell-demo";
+  import type { BasesViewScenario } from "../bases-views-fixture";
   import "@lapis-notes/bases/styles.css";
   import "@lapismd/mira/themes/obsidian.css";
   import "@lapismd/mira-editor/styles.css";
@@ -14,7 +15,11 @@
   let root = $state<HTMLDivElement>();
   let {
     displayMode = "desktop",
-  }: { displayMode?: WorkspaceRequestedDisplayMode } = $props();
+    scenario = "table",
+  }: {
+    displayMode?: WorkspaceRequestedDisplayMode;
+    scenario?: BasesViewScenario;
+  } = $props();
 
   $effect(() => {
     if (!root || !app) return;
@@ -27,7 +32,7 @@
 
   onMount(() => {
     let cancelled = false;
-    const runtimePromise = bootBasesEditorShellDemo();
+    const runtimePromise = bootBasesEditorShellDemo(scenario);
     void runtimePromise
       .then((runtime) => {
         if (cancelled) return;
@@ -53,6 +58,7 @@
   class="bases-editor-shell-demo"
   data-testid="bases-editor-shell-demo"
   data-status={status}
+  data-scenario={scenario}
 >
   <output
     class="bases-editor-shell-demo__status"

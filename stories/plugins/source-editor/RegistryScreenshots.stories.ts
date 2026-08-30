@@ -1,0 +1,27 @@
+import type { Meta, StoryObj } from "@storybook/svelte-vite";
+import PanelDemo from "../_shared/panels/PanelDemo.svelte";
+import {
+  openRegistryFile,
+  waitForRegistrySurface,
+} from "../_shared/registry/registry-story-helpers";
+
+const meta = {
+  title: "Plugins/Source Editor/Registry Screenshots",
+  component: PanelDemo,
+  tags: ["registry-media", "visual-pending"],
+  parameters: { layout: "fullscreen" },
+} satisfies Meta<typeof PanelDemo>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const JsonEditor: Story = {
+  render: (() => ({
+    Component: PanelDemo,
+    props: { kind: "explorer", layout: "left-sidebar" },
+  })) as Story["render"],
+  play: async ({ canvasElement }) => {
+    await openRegistryFile(canvasElement, "Projects/settings.json");
+    await waitForRegistrySurface(canvasElement, ".source-text-file-view");
+  },
+};

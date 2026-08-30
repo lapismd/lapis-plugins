@@ -11,13 +11,140 @@
   "appearance": { "icon": "file-text", "accent": "#2563EB" },
   "gallery": [
     {
-      "id": "overview",
-      "path": "registry-assets/gallery/overview.png",
-      "surface": "desktop",
-      "alt": "Markdown plugin showing a syntax-aware note editor in Lapis.",
-      "caption": "Write portable Markdown in source, live preview, or reading mode.",
-      "capture": { "storyId": "plugins-markdown-registry--overview" }
+      "id": "live-preview",
+      "alt": "Welcome note open in live preview with Explorer visible on the left.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/live-preview.preview.webp"
+        },
+        "full": { "path": "registry-assets/gallery/live-preview.full.webp" }
+      },
+      "capture": {
+        "storyId": "plugins-markdown-registry-screenshots--live-preview",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          { "text": "Write with structure", "tone": "neutral" },
+          { "text": "and stay in the flow", "tone": "violet" }
+        ],
+        "description": [
+          { "text": "Live Preview keeps", "tone": "neutral" },
+          { "text": "Markdown portable", "tone": "violet" },
+          {
+            "text": "while formatting the document around your cursor.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    },
+    {
+      "id": "source",
+      "alt": "Welcome note open as syntax-highlighted Markdown source beside Explorer.",
+      "images": {
+        "preview": { "path": "registry-assets/gallery/source.preview.webp" },
+        "full": { "path": "registry-assets/gallery/source.full.webp" }
+      },
+      "capture": {
+        "storyId": "plugins-markdown-registry-screenshots--source",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          { "text": "The source is always", "tone": "neutral" },
+          { "text": "yours", "tone": "cyan" }
+        ],
+        "description": [
+          { "text": "Edit", "tone": "neutral" },
+          { "text": "front matter, links, and embeds", "tone": "cyan" },
+          {
+            "text": "directly with a syntax-aware source view.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    },
+    {
+      "id": "reading",
+      "alt": "Welcome note rendered in reading mode with Explorer open on the left.",
+      "images": {
+        "preview": { "path": "registry-assets/gallery/reading.preview.webp" },
+        "full": { "path": "registry-assets/gallery/reading.full.webp" }
+      },
+      "capture": {
+        "storyId": "plugins-markdown-registry-screenshots--reading",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          { "text": "Read without the", "tone": "neutral" },
+          { "text": "editing chrome", "tone": "green" }
+        ],
+        "description": [
+          {
+            "text": "Switch the same file into a calm rendered view for review, navigation, and reference.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    },
+    {
+      "id": "outline-sidebar",
+      "alt": "Outline sidebar displaying nested headings from the active Welcome note.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/outline-sidebar.preview.webp"
+        },
+        "full": { "path": "registry-assets/gallery/outline-sidebar.full.webp" }
+      },
+      "capture": {
+        "storyId": "plugins-markdown-registry-screenshots--outline-sidebar",
+        "focus": "right-sidebar"
+      },
+      "card": {
+        "headline": [
+          { "text": "Navigate long notes", "tone": "neutral" },
+          { "text": "by their shape", "tone": "amber" }
+        ],
+        "description": [
+          {
+            "text": "Follow a live nested outline and jump directly to the section you need.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    },
+    {
+      "id": "backlinks-sidebar",
+      "alt": "Backlinks sidebar showing linked and unlinked references to the active note.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/backlinks-sidebar.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/backlinks-sidebar.full.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-markdown-registry-screenshots--backlinks-sidebar",
+        "focus": "right-sidebar"
+      },
+      "card": {
+        "headline": [
+          { "text": "Find every mention", "tone": "neutral" },
+          { "text": "in context", "tone": "rose" }
+        ],
+        "description": [
+          {
+            "text": "Review linked and unlinked references without navigating away from the active document.",
+            "tone": "neutral"
+          }
+        ]
+      }
     }
   ],
-  "content": { "overview": "registry-content/overview.md", "changelog": "CHANGELOG.md" }
+  "content": {
+    "overview": "registry-content/overview.md",
+    "changelog": "CHANGELOG.md"
+  }
 }

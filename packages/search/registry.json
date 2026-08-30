@@ -11,13 +11,36 @@
   "appearance": { "icon": "search", "accent": "#F59E0B" },
   "gallery": [
     {
-      "id": "overview",
-      "path": "registry-assets/gallery/overview.png",
-      "surface": "desktop",
-      "alt": "Search plugin showing faceted results across notes and metadata.",
-      "caption": "Find file names, metadata, tags, and note content from one indexed surface.",
-      "capture": { "storyId": "plugins-search-registry--overview" }
+      "id": "search-sidebar",
+      "alt": "Search sidebar showing indexed results from note content, filenames, and metadata.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/search-sidebar.preview.webp"
+        },
+        "full": { "path": "registry-assets/gallery/search-sidebar.full.webp" }
+      },
+      "capture": {
+        "storyId": "plugins-search-registry-screenshots--search-sidebar",
+        "focus": "right-sidebar"
+      },
+      "card": {
+        "headline": [
+          { "text": "Find the right note", "tone": "neutral" },
+          { "text": "from one query", "tone": "amber" }
+        ],
+        "description": [
+          { "text": "Search", "tone": "neutral" },
+          {
+            "text": "filenames, properties, tags, and content",
+            "tone": "amber"
+          },
+          { "text": "from a reusable indexed sidebar.", "tone": "neutral" }
+        ]
+      }
     }
   ],
-  "content": { "overview": "registry-content/overview.md", "changelog": "CHANGELOG.md" }
+  "content": {
+    "overview": "registry-content/overview.md",
+    "changelog": "CHANGELOG.md"
+  }
 }

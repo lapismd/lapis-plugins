@@ -11,13 +11,37 @@
   "appearance": { "icon": "whole-word", "accent": "#06B6D4" },
   "gallery": [
     {
-      "id": "overview",
-      "path": "registry-assets/gallery/overview.png",
-      "surface": "desktop",
-      "alt": "Word Count plugin showing live word, character, and reading-time totals.",
-      "caption": "See live writing statistics for the current document or selection.",
-      "capture": { "storyId": "plugins-word-count-registry--overview" }
+      "id": "focused-status-bar",
+      "alt": "Markdown editor with live word and character totals highlighted in the bottom status bar.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/focused-status-bar.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/focused-status-bar.full.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-word-count-registry-screenshots--editor-with-focused-status-bar",
+        "focus": "bottom-status"
+      },
+      "card": {
+        "headline": [
+          { "text": "Keep writing totals", "tone": "neutral" },
+          { "text": "in sight", "tone": "cyan" }
+        ],
+        "description": [
+          { "text": "See", "tone": "neutral" },
+          { "text": "live word and character counts", "tone": "violet" },
+          { "text": "in the status bar, with", "tone": "neutral" },
+          { "text": "reading time", "tone": "amber" },
+          { "text": "one click away.", "tone": "neutral" }
+        ]
+      }
     }
   ],
-  "content": { "overview": "registry-content/overview.md", "changelog": "CHANGELOG.md" }
+  "content": {
+    "overview": "registry-content/overview.md",
+    "changelog": "CHANGELOG.md"
+  }
 }

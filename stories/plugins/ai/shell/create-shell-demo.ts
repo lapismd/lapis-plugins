@@ -32,7 +32,8 @@ export type AiWorkspaceScenario =
   | "recovery"
   | "jsonl-preview"
   | "community-tools"
-  | "reload-resume";
+  | "reload-resume"
+  | "registry-chat";
 
 export const LOCAL_CONVERSATION_ID = "123e4567-e89b-42d3-a456-426614174000";
 export const FOLLOW_NEAR_CONVERSATION_ID =
@@ -154,7 +155,7 @@ export function createAiWorkspaceSeed(
   scenario: AiWorkspaceScenario = "default",
 ): Record<string, string> {
   const initialLocation =
-    scenario === "agent-switching"
+    scenario === "agent-switching" || scenario === "registry-chat"
       ? { scopeDir: "Notes", conversationId: LOCAL_CONVERSATION_ID }
       : scenario === "recovery"
         ? { scopeDir: "Notes", conversationId: RECOVERY_CONVERSATION_ID }
@@ -468,7 +469,43 @@ function createConversationScenarioSeed(
       ],
       activeBindingId: "binding-codex",
       transcript:
-        scenario === "jsonl-preview"
+        scenario === "registry-chat"
+          ? [
+              message(
+                "registry-user",
+                "user",
+                "Summarize this note and identify the next action.",
+                "binding-codex",
+              ),
+              {
+                schemaVersion: 1,
+                id: "registry-thinking",
+                type: "thinking.summary",
+                kind: "summary",
+                text: "I inspected the active note and its linked project context.",
+                createdAt: "2026-08-16T09:01:30.000Z",
+                agentBindingId: "binding-codex",
+              },
+              {
+                schemaVersion: 1,
+                id: "registry-tool",
+                type: "tool",
+                toolId: "registry-vault-read",
+                name: "vault.read",
+                state: "completed",
+                input: JSON.stringify({ path: "Notes/Welcome.md" }),
+                output: JSON.stringify({ content: "Ask the AI chat." }),
+                createdAt: "2026-08-16T09:01:45.000Z",
+                agentBindingId: "binding-codex",
+              },
+              message(
+                "registry-assistant",
+                "assistant",
+                "## Summary\n\nThe welcome note introduces the in-workspace AI flow. Next, connect the first project note and review its open TODO.",
+                "binding-codex",
+              ),
+            ]
+          : scenario === "jsonl-preview"
           ? [
               message(
                 "preview-user",

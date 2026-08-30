@@ -4,7 +4,8 @@ The package-owned `registry.json` is the source for curated categories,
 highlights, and registry-only Overview content under LP-SPEC-021 and LP-SPEC-033. Manifest and package
 metadata remain authoritative for the fields defined by LP-SPEC-022.
 Registry identity and capture-backed gallery media remain package-owned under
-LP-SPEC-030 and LP-SPEC-031; the governed source story stays `visual-pending`
+LP-SPEC-030 and LP-SPEC-031. Governed `Registry Screenshots` stories cover Live
+Preview, Source, Reading, Outline, and Backlinks; all stay `visual-pending`
 until separate visual approval.
 
 Daily notes remain ordinary authoritative Markdown documents. The Markdown
