@@ -40,6 +40,10 @@ a clean consumer check.
 Shared real-App Storybook helpers retain a bounded readiness wait so concurrent
 catalog startup does not turn healthy plugin initialization into a timing-only
 failure while real boot errors still fail closed.
+Shared Storybook test setup also fails closed on Svelte `derived_inert`
+diagnostics. The classifier is deliberately narrow so unrelated warnings keep
+their existing behavior while destroyed-effect reads cannot leave an
+interaction run falsely green.
 Release dependency resolution is protected by LP-SPEC-024: the tracked root
 lockfile and frozen workflow installs are part of the reviewed release source,
 not runner-local state.
