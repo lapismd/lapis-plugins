@@ -16,10 +16,15 @@ type Story = StoryObj<typeof meta>;
 export const EditorWithFocusedStatusBar: Story = {
   render: (() => ({
     Component: PanelDemo,
-    props: { kind: "explorer", layout: "left-sidebar" },
+    props: {
+      kind: "explorer",
+      layout: "left-sidebar",
+      hideSidebars: true,
+      diagnostics: "none",
+    },
   })) as Story["render"],
   play: async ({ canvasElement }) => {
-    await openRegistryFile(canvasElement, "Notes/Welcome.md", {
+    await openRegistryFile(canvasElement, "Notes/Word count draft.md", {
       mode: "live-preview",
     });
     await waitFor(
@@ -30,6 +35,10 @@ export const EditorWithFocusedStatusBar: Story = {
         expect(item).not.toBeNull();
         expect(item).toHaveTextContent(/words/);
         expect(item).toHaveTextContent(/characters/);
+        const leftSidebar = canvasElement.querySelector<HTMLElement>(
+          '[data-workspace-surface="left-sidebar"]',
+        );
+        expect(leftSidebar?.getBoundingClientRect().width ?? 0).toBeLessThan(2);
       },
       { timeout: 12_000 },
     );

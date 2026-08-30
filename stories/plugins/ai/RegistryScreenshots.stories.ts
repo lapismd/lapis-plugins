@@ -36,6 +36,10 @@ export const ChatWithToolActivity: Story = {
     const panel = await canvas.findByTestId("ai-chat-panel");
     await waitFor(
       () => {
+        const leftSidebar = canvasElement.querySelector<HTMLElement>(
+          '[data-workspace-surface="left-sidebar"]',
+        );
+        expect(leftSidebar?.getBoundingClientRect().width ?? 0).toBeLessThan(2);
         expect(within(panel).getByText("vault.read")).toBeVisible();
         expect(
           within(panel).getByRole("article", {
@@ -51,7 +55,11 @@ export const ChatWithToolActivity: Story = {
 export const History: Story = {
   render: (() => ({
     Component: PanelDemo,
-    props: { kind: "ai-history", layout: "right-sidebar" },
+    props: {
+      kind: "ai-history",
+      layout: "right-sidebar",
+      diagnostics: "none",
+    },
   })) as Story["render"],
   play: async ({ canvasElement }) => {
     await registryPanelApp(canvasElement);
@@ -65,7 +73,11 @@ export const History: Story = {
 export const Catalog: Story = {
   render: (() => ({
     Component: PanelDemo,
-    props: { kind: "ai-catalog", layout: "right-sidebar" },
+    props: {
+      kind: "ai-catalog",
+      layout: "right-sidebar",
+      diagnostics: "none",
+    },
   })) as Story["render"],
   play: async ({ canvasElement }) => {
     await registryPanelApp(canvasElement);

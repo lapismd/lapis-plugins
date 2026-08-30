@@ -96,6 +96,7 @@
     <Button
       {@attach draggable.attachHandle}
       size="sm"
+      aria-label={`Reorder ${column?.displayName ?? "sort"}`}
       class="drag-handle bases-style-mr-0-5-1caf26"
       variant="ghost"
     >
@@ -179,6 +180,7 @@
         <Button
           variant="ghost"
           size="sm"
+          aria-label={`Remove ${column?.displayName ?? "sort"}`}
           class="bases-style-bg-background-e6f9e3 bases-style-h-8-ed8a5d bases-style-rounded-none-0c5e91 bases-style-rounded-r-md-d4eb07 bases-style-border-none-4a5f0e bases-style-shadow-none-ad47d1 bases-style-outline-none-df37b1"
           onclick={() => deleteSort()}
         >

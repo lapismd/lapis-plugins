@@ -5,8 +5,8 @@ highlights, and registry-only Overview content under LP-SPEC-021 and LP-SPEC-033
 metadata remain authoritative for the fields defined by LP-SPEC-022.
 Registry identity and capture-backed gallery media remain package-owned under
 LP-SPEC-030 and LP-SPEC-031. The governed `Registry Screenshots` story covers
-an editor with the focused status bar and stays `visual-pending` until separate
-visual approval.
+a simple Markdown note filling a focused workspace with its Word Count status
+bar visible, and stays `visual-pending` until separate visual approval.
 
 Canonical daily notes use the same Markdown word-count pipeline as other
 notes. Word Count does not participate in daily-document resolution or Tasks

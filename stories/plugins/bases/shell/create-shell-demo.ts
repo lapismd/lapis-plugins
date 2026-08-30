@@ -2,13 +2,13 @@ import {
   App,
   installApplicationCompatibility,
   MemoryAppDatabase,
-  MemoryVaultAdapter,
 } from "@lapis-notes/api";
 import { BasesPlugin } from "@lapis-notes/bases";
 import { FileExplorerPlugin } from "@lapis-notes/file-explorer";
 import { MarkdownPlugin } from "@lapis-notes/markdown";
 import { SearchPlugin } from "@lapis-notes/search";
 import { watchMetadata } from "../../../workspace/watch-metadata";
+import { BasesStoryVaultAdapter } from "../create-bases-views-demo";
 import {
   createBasesViewsDocument,
   createBasesViewsSeed,
@@ -44,7 +44,11 @@ function tabs(id: string, children: ReturnType<typeof leaf>[]) {
   };
 }
 
-export function createBasesEditorShellLayout() {
+export function createBasesEditorShellLayout(
+  options: {
+    focusMode?: boolean;
+  } = {},
+) {
   return {
     main: {
       id: "main",
@@ -70,7 +74,7 @@ export function createBasesEditorShellLayout() {
           leaf("file-explorer", "Files", "folder-closed", "file-explorer"),
         ]),
       ],
-      width: "17rem",
+      width: options.focusMode ? "0px" : "17rem",
     },
     right: {
       id: "right",
@@ -97,10 +101,8 @@ export function createBasesEditorShellLayout() {
 
 export function createBasesEditorShellSeed(
   scenario: BasesViewScenario = "table",
-): Record<
-  string,
-  string | ArrayBuffer
-> {
+  options: { focusMode?: boolean } = {},
+): Record<string, string | ArrayBuffer> {
   return {
     ...createBasesViewsSeed(),
     "Bases/Projects.base": JSON.stringify(
@@ -114,7 +116,7 @@ export function createBasesEditorShellSeed(
       2,
     ),
     ".obsidian/workspace.json": JSON.stringify(
-      createBasesEditorShellLayout(),
+      createBasesEditorShellLayout(options),
       null,
       2,
     ),
@@ -123,22 +125,24 @@ export function createBasesEditorShellSeed(
 
 export async function bootBasesEditorShellDemo(
   scenario: BasesViewScenario = "table",
+  options: { focusMode?: boolean } = {},
 ): Promise<{
   app: App;
   dispose: () => Promise<void>;
 }> {
-  const adapter = new MemoryVaultAdapter(createBasesEditorShellSeed(scenario), {
-    name: `Lapis Bases Editor Shell ${scenario}`,
-    vaultId: `lapis-bases-editor-shell-${scenario}`,
-    clock: 1_700_000_000_000,
-  });
+  const adapter = new BasesStoryVaultAdapter(
+    createBasesEditorShellSeed(scenario, options),
+    {
+      name: `Lapis Bases Editor Shell ${scenario}`,
+      vaultId: `lapis-bases-editor-shell-${scenario}`,
+      clock: 1_700_000_000_000,
+    },
+  );
   const app = new App({
     version: "0.0.1-story",
     configPath: ".obsidian/app.json",
     adapter,
-    appDatabase: new MemoryAppDatabase(
-      `lapis-bases-editor-shell-${scenario}`,
-    ),
+    appDatabase: new MemoryAppDatabase(`lapis-bases-editor-shell-${scenario}`),
     workspaceShell: { application: { name: "Lapis Notes" } },
     markdownRenderer: async () => {},
   });
@@ -194,6 +198,7 @@ export async function bootBasesEditorShellDemo(
         await plugin.disable().catch(() => undefined);
       }
       await app.workspace.disposeWorkspaceHost();
+      adapter.disposeResourceUrls();
       disposeApplicationCompatibility();
     },
   };

@@ -134,7 +134,11 @@ export async function createHarperLinterForRuntime(
     } catch {
       // Some renderers expose Worker but cannot construct Harper's module worker.
     }
-    await workerLinter?.dispose?.().catch(() => undefined);
+    try {
+      void workerLinter?.dispose?.().catch(() => undefined);
+    } catch {
+      // Cleanup is best-effort; a failed worker must not block local startup.
+    }
   }
 
   const localLinter = factories.createLocal();

@@ -1,9 +1,11 @@
 # Bases
 
-Bases creates structured views over notes and their front matter. It is useful
-for turning ordinary vault content into focused collections that can be
-filtered, organized, and reviewed without moving the underlying data into a
-separate database format.
+Bases turns ordinary Markdown notes and front matter into live, structured
+collections without moving the source into a separate database. A `.base`
+file describes which notes belong, which properties appear, and how the result
+should be filtered, sorted, limited, or grouped.
 
-Open a Base inside the workspace to explore related notes while keeping the
-source content editable through normal Lapis file workflows.
+Use tables for detailed review, visual cards for portfolios with cover images,
+or grouped lists for faster scanning. Changes to supported properties still
+flow through normal vault files, so the same notes remain portable and usable
+everywhere else in Lapis.

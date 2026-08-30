@@ -12,7 +12,7 @@
   "gallery": [
     {
       "id": "chat-tool-activity",
-      "alt": "Lapis AI chat showing a completed vault read tool call and a concise response beside Explorer.",
+      "alt": "Focused Lapis AI chat showing a completed vault read tool call and a concise response.",
       "images": {
         "preview": {
           "path": "registry-assets/gallery/chat-tool-activity.preview.webp"

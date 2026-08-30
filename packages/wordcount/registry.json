@@ -12,7 +12,7 @@
   "gallery": [
     {
       "id": "focused-status-bar",
-      "alt": "Markdown editor with live word and character totals highlighted in the bottom status bar.",
+      "alt": "Focused Markdown editor with live word and character totals highlighted in the bottom status bar.",
       "images": {
         "preview": {
           "path": "registry-assets/gallery/focused-status-bar.preview.webp"

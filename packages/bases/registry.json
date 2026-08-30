@@ -12,38 +12,38 @@
   "gallery": [
     {
       "id": "table",
-      "alt": "Projects base displayed as a score-sorted table beside the file Explorer.",
+      "alt": "Focused projects table with the Filter panel open to an Active status rule.",
       "images": {
         "preview": { "path": "registry-assets/gallery/table.preview.webp" },
         "full": { "path": "registry-assets/gallery/table.full.webp" }
       },
       "capture": {
-        "storyId": "plugins-bases-registry-screenshots--table",
+        "storyId": "plugins-bases-registry-screenshots--filter-options",
         "focus": "full-shell"
       },
       "card": {
         "headline": [
-          { "text": "Turn note metadata into", "tone": "neutral" },
-          { "text": "focused tables", "tone": "cyan" }
+          { "text": "Filter the work", "tone": "neutral" },
+          { "text": "to what matters now", "tone": "cyan" }
         ],
         "description": [
           {
-            "text": "Sort, filter, and edit project fields without moving data out of",
+            "text": "Combine property rules across one view or every view while the source stays",
             "tone": "neutral"
           },
-          { "text": "ordinary notes.", "tone": "green" }
+          { "text": "ordinary Markdown.", "tone": "green" }
         ]
       }
     },
     {
       "id": "cards",
-      "alt": "Projects base displayed as visual cards with artwork, owner, status, and score.",
+      "alt": "Focused projects base displayed as visual cards with actual cover artwork, owner, status, and score.",
       "images": {
         "preview": { "path": "registry-assets/gallery/cards.preview.webp" },
         "full": { "path": "registry-assets/gallery/cards.full.webp" }
       },
       "capture": {
-        "storyId": "plugins-bases-registry-screenshots--cards",
+        "storyId": "plugins-bases-registry-screenshots--cover-cards",
         "focus": "full-shell"
       },
       "card": {
@@ -61,7 +61,7 @@
     },
     {
       "id": "grouped-list",
-      "alt": "Projects base grouped into Active and Planning sections in a list view.",
+      "alt": "Focused projects list grouped into Active and Planning sections with the Group by controls open.",
       "images": {
         "preview": {
           "path": "registry-assets/gallery/grouped-list.preview.webp"

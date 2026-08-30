@@ -12,7 +12,7 @@
   "gallery": [
     {
       "id": "suggestions-problems",
-      "alt": "Writing note with spelling diagnostics and a shared Problems panel.",
+      "alt": "Focused writing note with visible spelling diagnostics and a populated shared Problems panel.",
       "images": {
         "preview": {
           "path": "registry-assets/gallery/suggestions-problems.preview.webp"
@@ -37,6 +37,33 @@
             "tone": "green"
           },
           { "text": "in the editor and Problems panel.", "tone": "neutral" }
+        ]
+      }
+    },
+    {
+      "id": "editor-action-popover",
+      "alt": "Focused writing note with a spelling diagnostic action popover and Quick Fix control visible.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/editor-action-popover.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/editor-action-popover.full.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-spell-check-registry-screenshots--editor-action-popover",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          { "text": "Fix a suggestion", "tone": "neutral" },
+          { "text": "where it appears", "tone": "amber" }
+        ],
+        "description": [
+          { "text": "Hover a marked phrase to review", "tone": "neutral" },
+          { "text": "private local suggestions", "tone": "green" },
+          { "text": "and apply the right action in place.", "tone": "neutral" }
         ]
       }
     }

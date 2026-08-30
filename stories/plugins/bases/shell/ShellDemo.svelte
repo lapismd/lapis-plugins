@@ -16,9 +16,11 @@
   let {
     displayMode = "desktop",
     scenario = "table",
+    focusMode = false,
   }: {
     displayMode?: WorkspaceRequestedDisplayMode;
     scenario?: BasesViewScenario;
+    focusMode?: boolean;
   } = $props();
 
   $effect(() => {
@@ -32,7 +34,7 @@
 
   onMount(() => {
     let cancelled = false;
-    const runtimePromise = bootBasesEditorShellDemo(scenario);
+    const runtimePromise = bootBasesEditorShellDemo(scenario, { focusMode });
     void runtimePromise
       .then((runtime) => {
         if (cancelled) return;
@@ -59,6 +61,7 @@
   data-testid="bases-editor-shell-demo"
   data-status={status}
   data-scenario={scenario}
+  data-focus-mode={focusMode ? "true" : "false"}
 >
   <output
     class="bases-editor-shell-demo__status"

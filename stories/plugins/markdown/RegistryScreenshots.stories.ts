@@ -16,11 +16,16 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-function editorStory(mode: "live-preview" | "source" | "preview"): Story {
+function editorStory(
+  mode: "live-preview" | "source" | "preview",
+  kind: "explorer" | "outline" | "file-properties",
+  layout: "left-sidebar" | "right-sidebar",
+  sidebarSelector?: string,
+): Story {
   return {
     render: (() => ({
       Component: PanelDemo,
-      props: { kind: "explorer", layout: "left-sidebar" },
+      props: { kind, layout, diagnostics: "none" },
     })) as Story["render"],
     play: async ({ canvasElement }) => {
       await openRegistryFile(canvasElement, "Notes/Welcome.md", { mode });
@@ -30,6 +35,9 @@ function editorStory(mode: "live-preview" | "source" | "preview"): Story {
           ? '[data-ui-component="markdown-mira-preview"]'
           : ".markdown-view__editor",
       );
+      if (sidebarSelector) {
+        await waitForRegistrySurface(canvasElement, sidebarSelector);
+      }
     },
   };
 }
@@ -38,7 +46,7 @@ function sidebarStory(kind: "outline" | "backlinks", selector: string): Story {
   return {
     render: (() => ({
       Component: PanelDemo,
-      props: { kind, layout: "right-sidebar" },
+      props: { kind, layout: "right-sidebar", diagnostics: "none" },
     })) as Story["render"],
     play: async ({ canvasElement }) => {
       await registryPanelApp(canvasElement);
@@ -47,13 +55,19 @@ function sidebarStory(kind: "outline" | "backlinks", selector: string): Story {
   };
 }
 
-export const LivePreview = editorStory("live-preview");
-export const Source = editorStory("source");
-export const Reading = editorStory("preview");
-export const OutlineSidebar = sidebarStory(
+export const LivePreview = editorStory(
+  "live-preview",
   "outline",
+  "right-sidebar",
   '[data-testid="outline-panel"]',
 );
+export const Source = editorStory(
+  "source",
+  "file-properties",
+  "right-sidebar",
+  '[data-testid="file-properties-panel"]',
+);
+export const Reading = editorStory("preview", "explorer", "left-sidebar");
 export const BacklinksSidebar = sidebarStory(
   "backlinks",
   '[data-testid="backlinks-panel"]',

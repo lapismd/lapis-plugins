@@ -12,7 +12,7 @@
   "gallery": [
     {
       "id": "live-preview",
-      "alt": "Welcome note open in live preview with Explorer visible on the left.",
+      "alt": "Welcome note open in live preview with its nested Outline visible in the right sidebar.",
       "images": {
         "preview": {
           "path": "registry-assets/gallery/live-preview.preview.webp"
@@ -21,7 +21,7 @@
       },
       "capture": {
         "storyId": "plugins-markdown-registry-screenshots--live-preview",
-        "focus": "full-shell"
+        "focus": "right-sidebar"
       },
       "card": {
         "headline": [
@@ -40,14 +40,14 @@
     },
     {
       "id": "source",
-      "alt": "Welcome note open as syntax-highlighted Markdown source beside Explorer.",
+      "alt": "Welcome note open as syntax-highlighted Markdown source with file properties in the right sidebar.",
       "images": {
         "preview": { "path": "registry-assets/gallery/source.preview.webp" },
         "full": { "path": "registry-assets/gallery/source.full.webp" }
       },
       "capture": {
         "storyId": "plugins-markdown-registry-screenshots--source",
-        "focus": "full-shell"
+        "focus": "right-sidebar"
       },
       "card": {
         "headline": [
@@ -83,32 +83,6 @@
         "description": [
           {
             "text": "Switch the same file into a calm rendered view for review, navigation, and reference.",
-            "tone": "neutral"
-          }
-        ]
-      }
-    },
-    {
-      "id": "outline-sidebar",
-      "alt": "Outline sidebar displaying nested headings from the active Welcome note.",
-      "images": {
-        "preview": {
-          "path": "registry-assets/gallery/outline-sidebar.preview.webp"
-        },
-        "full": { "path": "registry-assets/gallery/outline-sidebar.full.webp" }
-      },
-      "capture": {
-        "storyId": "plugins-markdown-registry-screenshots--outline-sidebar",
-        "focus": "right-sidebar"
-      },
-      "card": {
-        "headline": [
-          { "text": "Navigate long notes", "tone": "neutral" },
-          { "text": "by their shape", "tone": "amber" }
-        ],
-        "description": [
-          {
-            "text": "Follow a live nested outline and jump directly to the section you need.",
             "tone": "neutral"
           }
         ]

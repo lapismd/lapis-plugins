@@ -75,6 +75,24 @@ describe("Harper runtime selection", () => {
     ).resolves.toBe(localLinter);
   });
 
+  it("does not wait for failed worker cleanup before using the local linter", async () => {
+    const localLinter = createMockLinter({});
+
+    await expect(
+      createHarperLinterForRuntime({
+        nodeRuntime: false,
+        workerAvailable: true,
+        workerSetupTimeoutMs: 1,
+        createWorker: () =>
+          createMockLinter({
+            setup: () => new Promise(() => undefined),
+            dispose: () => new Promise(() => undefined),
+          }),
+        createLocal: () => localLinter,
+      }),
+    ).resolves.toBe(localLinter);
+  });
+
   it("keeps a worker that becomes ready before the deadline", async () => {
     let workerDisposed = false;
     const workerLinter = createMockLinter({

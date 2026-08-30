@@ -3,6 +3,7 @@
   import { WorkspaceShell } from "@lapis-notes/workspace";
   import {
     bootPanelDemo,
+    type PanelDemoDiagnostics,
     type PanelDemoKind,
     type PanelDemoLayout,
   } from "./create-panel-demo";
@@ -14,9 +15,15 @@
   let {
     kind,
     layout = "middle-top-tabs",
+    hideSidebars = false,
+    diagnostics = "all",
+    graphData = "default",
   }: {
     kind: PanelDemoKind;
     layout?: PanelDemoLayout;
+    hideSidebars?: boolean;
+    diagnostics?: PanelDemoDiagnostics;
+    graphData?: "default" | "registry-rich";
   } = $props();
 
   let app = $state<App | null>(null);
@@ -34,7 +41,11 @@
 
   onMount(() => {
     let cancelled = false;
-    const runtimePromise = bootPanelDemo(kind, layout);
+    const runtimePromise = bootPanelDemo(kind, layout, {
+      hideSidebars,
+      diagnostics,
+      graphData,
+    });
     void runtimePromise.then((runtime) => {
       if (cancelled) {
         return;
@@ -55,6 +66,7 @@
   data-testid="panel-demo"
   data-panel-kind={kind}
   data-panel-layout={layout}
+  data-sidebars-hidden={hideSidebars ? "true" : "false"}
   data-status={status}
 >
   <div class="panel-demo__status" data-testid="panel-demo-status">{status}</div>

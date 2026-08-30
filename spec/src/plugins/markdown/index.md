@@ -5,8 +5,8 @@ highlights, and registry-only Overview content under LP-SPEC-021 and LP-SPEC-033
 metadata remain authoritative for the fields defined by LP-SPEC-022.
 Registry identity and capture-backed gallery media remain package-owned under
 LP-SPEC-030 and LP-SPEC-031. Governed `Registry Screenshots` stories cover Live
-Preview, Source, Reading, Outline, and Backlinks; all stay `visual-pending`
-until separate visual approval.
+Preview beside the right Outline, Source beside right File Properties, Reading,
+and Backlinks; all stay `visual-pending` until separate visual approval.
 
 Daily notes remain ordinary authoritative Markdown documents. The Markdown
 plugin parses and edits them through its existing file surfaces while the

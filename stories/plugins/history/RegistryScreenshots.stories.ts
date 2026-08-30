@@ -19,7 +19,11 @@ type Story = StoryObj<typeof meta>;
 export const HistorySidebar: Story = {
   render: (() => ({
     Component: PanelDemo,
-    props: { kind: "history", layout: "right-sidebar" },
+    props: {
+      kind: "history",
+      layout: "right-sidebar",
+      diagnostics: "none",
+    },
   })) as Story["render"],
   play: async ({ canvasElement }) => {
     await registryPanelApp(canvasElement);

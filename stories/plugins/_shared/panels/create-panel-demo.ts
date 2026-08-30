@@ -68,6 +68,18 @@ export type PanelDemoLayout =
   | "bottom-panel"
   | "sidebar-group";
 
+export type PanelDemoDiagnostics =
+  | "all"
+  | "none"
+  | "markdownlint"
+  | "spellcheck";
+
+export interface PanelDemoOptions {
+  hideSidebars?: boolean;
+  diagnostics?: PanelDemoDiagnostics;
+  graphData?: "default" | "registry-rich";
+}
+
 export const PANEL_DEMO_LAYOUTS: PanelDemoLayout[] = [
   "middle-top-tabs",
   "stacked-tabs",
@@ -435,6 +447,7 @@ const HISTORY_WRAP_LINE =
 export function createPanelDemoSeed(
   kind: PanelDemoKind,
   layout: PanelDemoLayout,
+  options: PanelDemoOptions = {},
 ): Record<string, string | ArrayBuffer> {
   const welcomeSections =
     kind === "outline"
@@ -493,6 +506,19 @@ export function createPanelDemoSeed(
           "",
         ];
 
+  const workspaceLayout = createPanelDemoLayout(kind, layout);
+  const useRegistryGraphData =
+    (kind === "graph" || kind === "local-graph") &&
+    options.graphData === "registry-rich";
+  if (options.hideSidebars) {
+    for (const side of ["left", "right"] as const) {
+      const dock = workspaceLayout[side];
+      if (dock && typeof dock === "object") {
+        (dock as Record<string, unknown>).width = "0px";
+      }
+    }
+  }
+
   return {
     ".obsidian/app.json": JSON.stringify(
       {
@@ -520,11 +546,7 @@ export function createPanelDemoSeed(
       null,
       2,
     ),
-    ".obsidian/workspace.json": JSON.stringify(
-      createPanelDemoLayout(kind, layout),
-      null,
-      2,
-    ),
+    ".obsidian/workspace.json": JSON.stringify(workspaceLayout, null, 2),
     "Notes/Welcome.md": [
       "---",
       "title: Welcome",
@@ -540,6 +562,15 @@ export function createPanelDemoSeed(
       "This seed drives focused Markdown panel stories and names Research plainly.",
       "",
       ...welcomeSections,
+      ...(useRegistryGraphData
+        ? [
+            "",
+            "## Connected work",
+            "",
+            "Follow [[Projects/Aurora]], [[Projects/Harbor]], [[Notes/Research]], and [[People/Maya Chen]] across #project/atlas and #knowledge-graph.",
+            "",
+          ]
+        : []),
       ...(kind === "history" ? ["", HISTORY_WRAP_LINE, ""] : []),
     ].join("\n"),
     "Notes/Ideas.markdown": [
@@ -607,6 +638,14 @@ export function createPanelDemoSeed(
       "Ask participants which labels feel natural and where they expect history to live.",
       "",
     ].join("\n"),
+    "Notes/Word count draft.md": [
+      "# A small writing goal",
+      "",
+      "Write one clear page about the project, then review it once for flow.",
+      "",
+      "Keep the language direct, preserve the useful details, and stop when the idea feels complete.",
+      "",
+    ].join("\n"),
     "Projects/settings.json": JSON.stringify(
       {
         workspace: "Research",
@@ -618,10 +657,66 @@ export function createPanelDemoSeed(
       2,
     ),
     "Assets/map.png": new Uint8Array([137, 80, 78, 71]).buffer,
+    ...(useRegistryGraphData ? createGraphSeed() : {}),
     ...(kind === "ai-history" ? createAiHistorySeed() : {}),
     ...(kind === "ai-catalog" ? createAiCatalogSeed() : {}),
     ...(kind === "history" ? createHistorySeed() : {}),
     ...(kind === "bookmarks" ? createBookmarksSeed() : {}),
+  };
+}
+
+function createGraphSeed(): Record<string, string> {
+  return {
+    "Projects/Aurora.md": [
+      "---",
+      "tags: [project/atlas, product, active]",
+      "---",
+      "",
+      "# Aurora",
+      "",
+      "Aurora connects [[Welcome]], [[Projects/Harbor]], [[Projects/Roadmap]], and [[People/Maya Chen]].",
+      "",
+    ].join("\n"),
+    "Projects/Harbor.md": [
+      "---",
+      "tags: [project/atlas, platform]",
+      "---",
+      "",
+      "# Harbor",
+      "",
+      "Harbor supports [[Projects/Aurora]], [[Projects/Roadmap]], and [[Notes/Ideas]].",
+      "",
+    ].join("\n"),
+    "Projects/Roadmap.md": [
+      "---",
+      "tags: [project/atlas, planning]",
+      "---",
+      "",
+      "# Roadmap",
+      "",
+      "The roadmap links [[Projects/Aurora]], [[Projects/Harbor]], [[Notes/Research]], and [[Meetings/Launch review]].",
+      "",
+    ].join("\n"),
+    "People/Maya Chen.md": [
+      "---",
+      "tags: [people, design]",
+      "---",
+      "",
+      "# Maya Chen",
+      "",
+      "Maya owns [[Projects/Aurora]] and contributes to [[Meetings/Launch review]].",
+      "",
+    ].join("\n"),
+    "Meetings/Launch review.md": [
+      "---",
+      "tags: [meeting, project/atlas]",
+      "---",
+      "",
+      "# Launch review",
+      "",
+      "Review [[Projects/Roadmap]], [[Projects/Aurora]], and [[Notes/Research]] with [[People/Maya Chen]].",
+      "",
+    ].join("\n"),
   };
 }
 
@@ -830,12 +925,16 @@ function countPanelLeaves(app: App, panelType: string): number {
 export async function bootPanelDemo(
   kind: PanelDemoKind,
   layout: PanelDemoLayout,
+  options: PanelDemoOptions = {},
 ): Promise<{ app: App; dispose: () => Promise<void> }> {
-  const adapter = new MemoryVaultAdapter(createPanelDemoSeed(kind, layout), {
-    name: `Lapis Panel ${kind} ${layout}`,
-    vaultId: `lapis-panel-${kind}-${layout}`,
-    clock: 1_700_000_000_000,
-  });
+  const adapter = new MemoryVaultAdapter(
+    createPanelDemoSeed(kind, layout, options),
+    {
+      name: `Lapis Panel ${kind} ${layout}`,
+      vaultId: `lapis-panel-${kind}-${layout}`,
+      clock: 1_700_000_000_000,
+    },
+  );
   const app = new App({
     version: "0.0.1-story",
     configPath: ".obsidian/app.json",
@@ -845,12 +944,21 @@ export async function bootPanelDemo(
     markdownRenderer: async () => {},
   });
   const disposeApplicationCompatibility = installApplicationCompatibility(app);
+  const diagnostics = options.diagnostics ?? "all";
 
   app.plugins.registerCorePlugins([
     { plugin: SourceEditorPlugin, required: true },
     { plugin: MarkdownPlugin, required: false, enabledByDefault: true },
-    { plugin: MarkdownLintPlugin, required: false, enabledByDefault: true },
-    { plugin: SpellcheckPlugin, required: false, enabledByDefault: true },
+    {
+      plugin: MarkdownLintPlugin,
+      required: false,
+      enabledByDefault: diagnostics === "all" || diagnostics === "markdownlint",
+    },
+    {
+      plugin: SpellcheckPlugin,
+      required: false,
+      enabledByDefault: diagnostics === "all" || diagnostics === "spellcheck",
+    },
     { plugin: WordCountPlugin, required: false, enabledByDefault: true },
     { plugin: FileExplorerPlugin, required: false, enabledByDefault: true },
     { plugin: SearchPlugin, required: false, enabledByDefault: true },
@@ -891,7 +999,9 @@ export async function bootPanelDemo(
   ]) {
     if (!persistedPaths.has(expectedPath)) {
       throw new Error(
-        `Panel fixture metadata index is missing ${expectedPath}; indexed ${[...persistedPaths].join(", ") || "nothing"}`,
+        `Panel fixture metadata index is missing ${expectedPath}; indexed ${
+          [...persistedPaths].join(", ") || "nothing"
+        }`,
       );
     }
   }
@@ -900,13 +1010,31 @@ export async function bootPanelDemo(
   if (searchPlugin instanceof SearchPlugin) {
     await searchPlugin.refreshIndex("storybook-panel-demo");
   }
+  const graphPlugin = app.plugins.plugins.get("lapis-graph");
+  if (
+    graphPlugin instanceof GraphPlugin &&
+    options.graphData === "registry-rich"
+  ) {
+    const settings = graphPlugin.getSettings();
+    await graphPlugin.updateSettings({
+      ...settings,
+      filters: {
+        ...settings.filters,
+        showTags: true,
+        showAttachments: true,
+      },
+      localGraph: { depth: 2 },
+    });
+  }
   const persistedTags = await app.metadataCache.queryFacets({
     kind: "tag",
     limit: 100,
   });
   if (!persistedTags.some((tag) => tag.value === "demo")) {
     throw new Error(
-      `Panel fixture metadata facets are incomplete; indexed tags ${persistedTags.map((tag) => String(tag.value)).join(", ") || "nothing"}`,
+      `Panel fixture metadata facets are incomplete; indexed tags ${
+        persistedTags.map((tag) => String(tag.value)).join(", ") || "nothing"
+      }`,
     );
   }
   if (kind === "history") {

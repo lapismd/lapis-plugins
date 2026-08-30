@@ -32,22 +32,34 @@ All sources live under `Plugins/<Plugin>/Registry Screenshots` and carry both
 
 | Plugin        | Required cards                                                    |
 | ------------- | ----------------------------------------------------------------- |
-| AI            | Chat with tool activity, History, Catalog                         |
-| Bases         | Table, Cards, Grouped List                                        |
+| AI            | Focused chat with tool activity, History, Catalog                             |
+| Bases         | Filter options, Cover cards, Grouped list                                     |
 | Bookmarks     | Bookmarks sidebar                                                 |
-| Graph         | Global Graph, Local Graph                                         |
+| Graph         | Focused Global Graph, Local Graph sidebar                                     |
 | History       | History sidebar, Compare                                          |
-| Markdown      | Live Preview, Source, Reading, Outline sidebar, Backlinks sidebar |
+| Markdown      | Live Preview with Outline, Source with Properties, Reading, Backlinks sidebar |
 | Markdown Lint | Editor diagnostics with Problems                                  |
-| Search        | Search sidebar                                                    |
-| Source Editor | JSON editor                                                       |
-| Spell Check   | Suggestions and Problems                                          |
-| Word Count    | Editor with focused status bar                                    |
+| Search        | Populated Search sidebar, Search filters                                      |
+| Source Editor | Focused JSON editor                                                           |
+| Spell Check   | Suggestions and Problems, Editor action popover                               |
+| Word Count    | Focused editor with status bar                                                |
 
 Full-shell stories use the common 1200x800 application frame with Explorer
-open. Sidebar cards show the full sidebar and approximately half of the
-adjacent document. Stories use realistic data and start or finish their play
-function in the exact state intended for capture.
+open unless the card explicitly demonstrates focus mode, an editor/sidebar
+pairing, or the shared Problems surface. Focus-mode cards hide both sidebars
+and let the requested workspace view fill the shell. Sidebar cards show the
+full requested sidebar and approximately half of the adjacent document while
+hiding the opposite sidebar. Stories use realistic data and start or finish
+their play function in the exact state intended for capture. Open filters,
+menus, diagnostics, and action popovers are part of that fixed final state and
+MUST be asserted by the story play and remain observable after settled capture
+readiness. Diagnostic stories stabilize the actual source-specific provider
+results used by both the editor and Problems surface; they MUST NOT capture a
+transient result that later clears or a hover card that closes before capture.
+Registry stories that do not demonstrate diagnostics MUST disable the
+Markdown Lint and Spell Check providers before the workspace loads. A
+diagnostic registry story enables only the provider it demonstrates, so
+unrelated asynchronous results cannot alter its settled pixels.
 
 ## Catalog host
 
@@ -55,7 +67,9 @@ The root Storybook compiles Design Core's Tailwind v4 catalog stylesheet and
 uses DM Sans Variable for application UI plus Source Code Pro Variable for
 code and editor content. Its toolbar exposes the Lapis/default brand selector
 and a sun/moon light-dark control; both globals are reflected on the preview
-document.
+document. Browser-only dependency shims MUST preserve the public names used by
+production imports; Storybook's inlined Harper binary therefore re-exports its
+`binaryInlined` value under the production module's `binary` name.
 
 Registry capture always requests the Lapis light presentation and waits for
 both bundled font faces before measuring or capturing a story. Missing fonts,

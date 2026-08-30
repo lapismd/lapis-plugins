@@ -12,7 +12,7 @@
   "gallery": [
     {
       "id": "search-sidebar",
-      "alt": "Search sidebar showing indexed results from note content, filenames, and metadata.",
+      "alt": "Left Search sidebar showing populated indexed results and expanded match context from notes and metadata.",
       "images": {
         "preview": {
           "path": "registry-assets/gallery/search-sidebar.preview.webp"
@@ -21,7 +21,7 @@
       },
       "capture": {
         "storyId": "plugins-search-registry-screenshots--search-sidebar",
-        "focus": "right-sidebar"
+        "focus": "left-sidebar"
       },
       "card": {
         "headline": [
@@ -35,6 +35,34 @@
             "tone": "amber"
           },
           { "text": "from a reusable indexed sidebar.", "tone": "neutral" }
+        ]
+      }
+    },
+    {
+      "id": "search-filters",
+      "alt": "Left Search sidebar with populated results and its file type, retrieval, and view settings open.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/search-filters.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/search-filters.full.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-search-registry-screenshots--search-filters",
+        "focus": "left-sidebar"
+      },
+      "card": {
+        "headline": [
+          { "text": "Shape every query", "tone": "neutral" },
+          { "text": "without leaving Search", "tone": "cyan" }
+        ],
+        "description": [
+          { "text": "Tune", "tone": "neutral" },
+          { "text": "file type, retrieval, case, context,", "tone": "amber" },
+          { "text": "and structured semantic matching", "tone": "violet" },
+          { "text": "from one compact panel.", "tone": "neutral" }
         ]
       }
     }

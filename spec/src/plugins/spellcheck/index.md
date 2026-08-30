@@ -4,9 +4,10 @@ The package-owned `registry.json` is the source for curated categories,
 highlights, and registry-only Overview content under LP-SPEC-021 and LP-SPEC-033. Manifest and package
 metadata remain authoritative for the fields defined by LP-SPEC-022.
 Registry identity and capture-backed gallery media remain package-owned under
-LP-SPEC-030 and LP-SPEC-031. The governed `Registry Screenshots` story covers
-Suggestions with the Problems panel and stays `visual-pending` until separate
-visual approval.
+LP-SPEC-030 and LP-SPEC-031. Governed `Registry Screenshots` stories cover real
+Harper errors with a populated Problems panel and a second focused editor with
+the diagnostic action popover held open; both hide the sidebars and stay
+`visual-pending` until separate visual approval.
 
 Canonical daily notes use the same Markdown spellcheck pipeline as other
 notes. Spellcheck does not participate in daily-document resolution or Tasks
@@ -40,7 +41,7 @@ status-bar ownership.
 | LN-SPL-005 | Suggestion actions MUST be serializable document edits. Add to dictionary and Ignore MUST persist configuration and refresh on the next diagnostics request. |
 | LN-SPL-006 | Spell Check MUST publish `spellcheck:status` on `app.statusBar` with Lucide `spell-check` and an optional dialect segment. Click MUST open dialect choices and a checking toggle. It MUST NOT use compatibility status DOM, the Harper logo, or flag emoji. |
 | LN-SPL-007 | Spell Check MUST refresh `spellcheck:status` from plugin load and configuration updates. It MUST NOT subscribe to `layout-change` for that item. A no-op dialect or checking write MUST NOT upsert the status bar. |
-| LN-SPL-008 | Spell Check MUST start Harper during plugin load and MUST surface setup failure through LN-WS-077. It MUST prefer Harper's worker linter when the renderer provides `Worker`, then fall back to the local WASM linter when `Worker` is unavailable, cannot construct the worker linter, rejects setup, or does not become ready within a bounded startup window. Open-document diagnostics requested while Harper is still warming MUST complete with no Spell Check diagnostics instead of timing out. It MUST NOT fail plugin enablement. |
+| LN-SPL-008 | Spell Check MUST start Harper during plugin load and MUST surface setup failure through LN-WS-077. It MUST prefer Harper's worker linter when the renderer provides `Worker`, then fall back to the local WASM linter when `Worker` is unavailable, cannot construct the worker linter, rejects setup, or does not become ready within a bounded startup window. Cleanup of a failed worker MUST be best-effort and MUST NOT delay the local fallback. Open-document diagnostics requested while Harper is still warming MUST complete with no Spell Check diagnostics instead of timing out. It MUST NOT fail plugin enablement. |
 | LN-SPL-009 | An open misspelled Markdown note on the web host MUST publish a Harper Problems row beside Markdownlint after Spell Check starts. The manager timeout row MUST NOT remain once setup succeeds. |
 | LN-SPL-010 | Spell Check code actions MUST use cspell-style titles: bare suggestion text, `Add: "<word>" to dictionary`, and `Ignore: "<word>"`. Ignore this suggestion MUST remain last. User, folder, and cspell.json targets MUST NOT appear. |
 

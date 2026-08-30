@@ -3,15 +3,13 @@ import {
   type BasesAllOptions,
   type QueryController,
 } from "@lapis-notes/api";
-import type {
-  BasesDocument,
-  BasesViewRegistration,
-} from "@lapis-notes/bases";
+import type { BasesDocument, BasesViewRegistration } from "@lapis-notes/bases";
 
 export type BasesViewScenario =
   | "table"
   | "editable-cells"
   | "query-controls"
+  | "filter-options"
   | "schema-settings"
   | "cards"
   | "grouped-list"
@@ -182,6 +180,7 @@ const activeViewNames: Record<BasesViewScenario, string> = {
   table: "Portfolio table",
   "editable-cells": "Editable fields",
   "query-controls": "Portfolio table",
+  "filter-options": "Portfolio table",
   "schema-settings": "Story options",
   cards: "Project cards",
   "grouped-list": "Projects by status",
@@ -192,6 +191,15 @@ const activeViewNames: Record<BasesViewScenario, string> = {
 export function createBasesViewsDocument(
   scenario: BasesViewScenario,
 ): BasesDocument {
+  const clonedViews = structuredClone(views);
+  if (scenario === "filter-options") {
+    const table = clonedViews.find((view) => view.name === "Portfolio table");
+    if (table) {
+      table.filter = {
+        and: [{ column: "note.status", op: "=", value: "Active" }],
+      };
+    }
+  }
   return {
     filters: { and: [] },
     properties: {
@@ -208,7 +216,7 @@ export function createBasesViewsDocument(
     formulas: {},
     summaries: {},
     activeView: activeViewNames[scenario],
-    views: structuredClone(views),
+    views: clonedViews,
   };
 }
 

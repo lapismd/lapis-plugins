@@ -15,9 +15,18 @@ type Story = StoryObj<typeof meta>;
 export const EditorDiagnosticsWithProblems: Story = {
   render: (() => ({
     Component: PanelDemo,
-    props: { kind: "explorer", layout: "left-sidebar" },
+    props: {
+      kind: "explorer",
+      layout: "left-sidebar",
+      hideSidebars: true,
+      diagnostics: "markdownlint",
+    },
   })) as Story["render"],
   play: async ({ canvasElement }) => {
-    await showRegistryProblems(canvasElement, "Notes/Editorial review.md");
+    await showRegistryProblems(
+      canvasElement,
+      "Notes/Editorial review.md",
+      "markdownlint"
+    );
   },
 };

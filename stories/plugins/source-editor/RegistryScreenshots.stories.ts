@@ -18,10 +18,21 @@ type Story = StoryObj<typeof meta>;
 export const JsonEditor: Story = {
   render: (() => ({
     Component: PanelDemo,
-    props: { kind: "explorer", layout: "left-sidebar" },
+    props: {
+      kind: "explorer",
+      layout: "left-sidebar",
+      hideSidebars: true,
+      diagnostics: "none",
+    },
   })) as Story["render"],
   play: async ({ canvasElement }) => {
     await openRegistryFile(canvasElement, "Projects/settings.json");
     await waitForRegistrySurface(canvasElement, ".source-text-file-view");
+    const leftSidebar = canvasElement.querySelector<HTMLElement>(
+      '[data-workspace-surface="left-sidebar"]'
+    );
+    if ((leftSidebar?.getBoundingClientRect().width ?? 0) >= 2) {
+      throw new Error("Focused Source Editor story left the sidebar visible");
+    }
   },
 };

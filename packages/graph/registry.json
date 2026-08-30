@@ -12,7 +12,7 @@
   "gallery": [
     {
       "id": "global-graph",
-      "alt": "Global graph sidebar showing connected notes, tags, and unresolved links.",
+      "alt": "Focused global graph showing a richly connected project network with notes, tags, attachments, and unresolved links.",
       "images": {
         "preview": {
           "path": "registry-assets/gallery/global-graph.preview.webp"
@@ -21,7 +21,7 @@
       },
       "capture": {
         "storyId": "plugins-graph-registry-screenshots--global-graph",
-        "focus": "right-sidebar"
+        "focus": "full-shell"
       },
       "card": {
         "headline": [
@@ -40,7 +40,7 @@
     },
     {
       "id": "local-graph",
-      "alt": "Local graph sidebar focused on the active Welcome note and its nearest relationships.",
+      "alt": "Local graph sidebar focused on the active Welcome note and its connected project notes and tags.",
       "images": {
         "preview": {
           "path": "registry-assets/gallery/local-graph.preview.webp"

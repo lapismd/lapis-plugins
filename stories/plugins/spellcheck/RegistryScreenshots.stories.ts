@@ -1,6 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
+import { expect, userEvent, within } from "storybook/test";
 import PanelDemo from "../_shared/panels/PanelDemo.svelte";
-import { showRegistryProblems } from "../_shared/registry/registry-story-helpers";
+import {
+  showRegistryDiagnostics,
+  showRegistryProblems,
+} from "../_shared/registry/registry-story-helpers";
 
 const meta = {
   title: "Plugins/Spell Check/Registry Screenshots",
@@ -12,12 +16,50 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const focusedEditor = (() => ({
+  Component: PanelDemo,
+  props: {
+    kind: "explorer",
+    layout: "left-sidebar",
+    hideSidebars: true,
+    diagnostics: "spellcheck",
+  },
+})) as NonNullable<Story["render"]>;
+
 export const SuggestionsAndProblems: Story = {
-  render: (() => ({
-    Component: PanelDemo,
-    props: { kind: "explorer", layout: "left-sidebar" },
-  })) as Story["render"],
+  render: focusedEditor,
   play: async ({ canvasElement }) => {
-    await showRegistryProblems(canvasElement, "Notes/Field notes.md");
+    await showRegistryProblems(canvasElement, "Notes/Field notes.md", "harper");
+  },
+};
+
+export const EditorActionPopover: Story = {
+  name: "Editor action popover",
+  render: focusedEditor,
+  play: async ({ canvasElement }) => {
+    await showRegistryDiagnostics(
+      canvasElement,
+      "Notes/Field notes.md",
+      "harper",
+    );
+    const lintRange = [
+      ...canvasElement.querySelectorAll<HTMLElement>(".cm-lintRange"),
+    ].find((range) =>
+      /recieved|accesibility|definately|seperate/u.test(
+        range.textContent ?? "",
+      ),
+    );
+    expect(lintRange).not.toBeNull();
+    await userEvent.hover(lintRange!);
+    const body = within(canvasElement.ownerDocument.body);
+    const tooltip = await body.findByTestId("lapis-lint-tooltip");
+    expect(within(tooltip).getByTestId("lapis-lint-source")).toHaveTextContent(
+      /harper/i,
+    );
+    const quickFix = within(tooltip).getByRole("button", {
+      name: "Quick Fix",
+    });
+    expect(quickFix).toBeVisible();
+    await userEvent.hover(tooltip);
   },
 };

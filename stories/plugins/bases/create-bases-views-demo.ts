@@ -4,7 +4,7 @@ import { MarkdownPlugin } from "@lapis-notes/markdown";
 import { watchMetadata } from "../../workspace/watch-metadata";
 import { createBasesViewsSeed } from "./bases-views-fixture";
 
-class BasesStoryVaultAdapter extends MemoryVaultAdapter {
+export class BasesStoryVaultAdapter extends MemoryVaultAdapter {
   readonly #resourceUrls = new Set<string>();
 
   async getResourceUrl(path: string): Promise<string> {

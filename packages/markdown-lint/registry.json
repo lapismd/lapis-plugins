@@ -12,7 +12,7 @@
   "gallery": [
     {
       "id": "editor-diagnostics",
-      "alt": "Markdown editor with inline lint markers and a Problems panel listing heading issues.",
+      "alt": "Focused Markdown editor with inline lint markers and a populated Problems panel listing heading issues.",
       "images": {
         "preview": {
           "path": "registry-assets/gallery/editor-diagnostics.preview.webp"

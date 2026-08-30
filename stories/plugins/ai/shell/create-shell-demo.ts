@@ -51,7 +51,7 @@ export const LIVE_HOST_RELOAD_ASSISTANT_TEXT =
 export { isLiveAgentAttachConfigured } from "../live-agent-attach";
 
 export function createAiWorkspacePluginData(
-  defaultRuntime: "fake" | "acp" = "fake",
+  defaultRuntime: "fake" | "acp" = "fake"
 ) {
   return {
     settings: {
@@ -70,7 +70,7 @@ function leaf(
   title: string,
   icon: string,
   type: string,
-  state: Record<string, unknown> = {},
+  state: Record<string, unknown> = {}
 ) {
   return {
     id,
@@ -93,7 +93,7 @@ function split(
   id: string,
   direction: "horizontal" | "vertical",
   children: unknown[],
-  extra: Record<string, unknown> = {},
+  extra: Record<string, unknown> = {}
 ) {
   return {
     id,
@@ -105,10 +105,13 @@ function split(
   };
 }
 
-export function createAiWorkspaceLayout(initialLocation?: {
-  scopeDir: string;
-  conversationId: string;
-}, scenario: AiWorkspaceScenario = "default") {
+export function createAiWorkspaceLayout(
+  initialLocation?: {
+    scopeDir: string;
+    conversationId: string;
+  },
+  scenario: AiWorkspaceScenario = "default"
+) {
   const jsonlPath = `Notes/.lapis/agents/sessions/${LOCAL_CONVERSATION_ID}/transcript.jsonl`;
   const mainLeaf =
     scenario === "jsonl-preview"
@@ -117,13 +120,11 @@ export function createAiWorkspaceLayout(initialLocation?: {
           "transcript.jsonl",
           "messages-square",
           AiJsonlViewType,
-          { file: jsonlPath },
+          { file: jsonlPath }
         )
       : leaf("ai-chat", "AI", "sparkles", AiViewType, initialLocation);
   return {
-    main: split("main", "horizontal", [
-      tabs("main-tabs", [mainLeaf]),
-    ]),
+    main: split("main", "horizontal", [tabs("main-tabs", [mainLeaf])]),
     left: split(
       "left",
       "vertical",
@@ -132,7 +133,7 @@ export function createAiWorkspaceLayout(initialLocation?: {
           leaf("file-explorer", "Files", "folder-closed", "file-explorer"),
         ]),
       ],
-      { width: "17rem" },
+      { width: scenario === "registry-chat" ? "0px" : "17rem" }
     ),
     right: split(
       "right",
@@ -142,7 +143,7 @@ export function createAiWorkspaceLayout(initialLocation?: {
           leaf("search", "Search", "search", "search", { query: "TODO" }),
         ]),
       ],
-      { width: "0px" },
+      { width: "0px" }
     ),
     bottom: { ...tabs("bottom-panel", []), height: "0px" },
     floating: [],
@@ -152,25 +153,25 @@ export function createAiWorkspaceLayout(initialLocation?: {
 
 export function createAiWorkspaceSeed(
   pluginData = AI_WORKSPACE_PLUGIN_DATA,
-  scenario: AiWorkspaceScenario = "default",
+  scenario: AiWorkspaceScenario = "default"
 ): Record<string, string> {
   const initialLocation =
     scenario === "agent-switching" || scenario === "registry-chat"
       ? { scopeDir: "Notes", conversationId: LOCAL_CONVERSATION_ID }
       : scenario === "recovery"
-        ? { scopeDir: "Notes", conversationId: RECOVERY_CONVERSATION_ID }
-        : scenario === "reload-resume"
-          ? {
-              scopeDir: "Notes",
-              conversationId: LIVE_HOST_RELOAD_CONVERSATION_ID,
-            }
-          : undefined;
+      ? { scopeDir: "Notes", conversationId: RECOVERY_CONVERSATION_ID }
+      : scenario === "reload-resume"
+      ? {
+          scopeDir: "Notes",
+          conversationId: LIVE_HOST_RELOAD_CONVERSATION_ID,
+        }
+      : undefined;
   return {
     ".obsidian/app.json": JSON.stringify(AI_WORKSPACE_CONFIGURATION, null, 2),
     ".obsidian/workspace.json": JSON.stringify(
       createAiWorkspaceLayout(initialLocation, scenario),
       null,
-      2,
+      2
     ),
     ".obsidian/ai.json": JSON.stringify(pluginData, null, 2),
     "Notes/Welcome.md": "# Welcome\n\nAsk the AI chat in the workspace.\n",
@@ -192,7 +193,7 @@ export function createAiWorkspaceSeed(
                 "near-assistant",
                 "assistant",
                 "The near folder chat is open.",
-                "binding-near",
+                "binding-near"
               ),
             ],
           }),
@@ -209,21 +210,21 @@ export function createAiWorkspaceSeed(
                 "far-assistant",
                 "assistant",
                 "The deeper Atlas chat is open.",
-                "binding-far",
+                "binding-far"
               ),
             ],
           }),
         }
       : scenario === "default" ||
-          scenario === "community-tools" ||
-          scenario === "reload-resume"
-        ? {}
-        : createConversationScenarioSeed(scenario)),
+        scenario === "community-tools" ||
+        scenario === "reload-resume"
+      ? {}
+      : createConversationScenarioSeed(scenario)),
   };
 }
 
 export async function bootAiWorkspaceDemo(
-  options: AiWorkspaceDemoOptions = {},
+  options: AiWorkspaceDemoOptions = {}
 ): Promise<{
   app: App;
   dispose: () => Promise<void>;
@@ -233,7 +234,7 @@ export async function bootAiWorkspaceDemo(
   const scenario = options.scenario ?? "default";
   const seed = createAiWorkspaceSeed(
     createAiWorkspacePluginData(defaultRuntime),
-    scenario,
+    scenario
   );
   const storageKey = portableConversationStorageKey(vaultId);
   let persistedFiles: Record<string, string> = {};
@@ -247,8 +248,8 @@ export async function bootAiWorkspaceDemo(
             Object.entries(parsed).filter(
               (entry): entry is [string, string] =>
                 isPortableConversationFile(entry[0]) &&
-                typeof entry[1] === "string",
-            ),
+                typeof entry[1] === "string"
+            )
           );
           Object.assign(seed, persistedFiles);
         }
@@ -300,7 +301,7 @@ export async function bootAiWorkspaceDemo(
               content: [{ type: "text", text: "42 words" }],
               structuredContent: { words: 42 },
             }),
-          },
+          }
         )
       : undefined;
 
@@ -376,7 +377,7 @@ export async function bootAiWorkspaceDemo(
   await app.workspace.loadLayout();
   if (scenario === "local-conversations" || scenario === "follow-scope") {
     const activeNote = app.vault.getFileByPath(
-      scenario === "follow-scope" ? "Projects/work.md" : "Notes/Welcome.md",
+      scenario === "follow-scope" ? "Projects/work.md" : "Notes/Welcome.md"
     );
     const aiLeaf = app.workspace.getLeavesOfType(AiViewType)[0];
     if (activeNote && aiLeaf) {
@@ -408,7 +409,7 @@ export async function bootAiWorkspaceDemo(
 }
 
 function createConversationScenarioSeed(
-  scenario: Exclude<AiWorkspaceScenario, "default">,
+  scenario: Exclude<AiWorkspaceScenario, "default">
 ): Record<string, string> {
   const seeded = {
     ...conversationFiles({
@@ -475,7 +476,7 @@ function createConversationScenarioSeed(
                 "registry-user",
                 "user",
                 "Summarize this note and identify the next action.",
-                "binding-codex",
+                "binding-codex"
               ),
               {
                 schemaVersion: 1,
@@ -502,7 +503,7 @@ function createConversationScenarioSeed(
                 "registry-assistant",
                 "assistant",
                 "## Summary\n\nThe welcome note introduces the in-workspace AI flow. Next, connect the first project note and review its open TODO.",
-                "binding-codex",
+                "binding-codex"
               ),
             ]
           : scenario === "jsonl-preview"
@@ -511,7 +512,7 @@ function createConversationScenarioSeed(
                 "preview-user",
                 "user",
                 "Summarize the preview log",
-                "binding-codex",
+                "binding-codex"
               ),
               {
                 schemaVersion: 1,
@@ -538,7 +539,7 @@ function createConversationScenarioSeed(
                 "preview-assistant",
                 "assistant",
                 "Preview **rendering** is ready.",
-                "binding-codex",
+                "binding-codex"
               ),
             ]
           : scenario === "agent-switching"
@@ -548,7 +549,7 @@ function createConversationScenarioSeed(
                 "assistant-1",
                 "assistant",
                 "Codex reviewed the project note.",
-                "binding-codex",
+                "binding-codex"
               ),
               {
                 schemaVersion: 3,
@@ -567,13 +568,13 @@ function createConversationScenarioSeed(
                 "user-2",
                 "user",
                 "Continue with Cursor",
-                "binding-cursor",
+                "binding-cursor"
               ),
               message(
                 "assistant-2",
                 "assistant",
                 "Cursor continued in the same local conversation.",
-                "binding-cursor",
+                "binding-cursor"
               ),
               {
                 schemaVersion: 3,
@@ -600,13 +601,13 @@ function createConversationScenarioSeed(
                 "user-3",
                 "user",
                 "Finish back in Codex",
-                "binding-codex",
+                "binding-codex"
               ),
               message(
                 "assistant-3",
                 "assistant",
                 "Codex resumed its original binding with the Cursor delta.",
-                "binding-codex",
+                "binding-codex"
               ),
             ]
           : [
@@ -614,13 +615,13 @@ function createConversationScenarioSeed(
                 "user-1",
                 "user",
                 "Summarize the project",
-                "binding-codex",
+                "binding-codex"
               ),
               message(
                 "assistant-1",
                 "assistant",
                 "The project has one welcome note and one TODO.",
-                "binding-codex",
+                "binding-codex"
               ),
             ],
       usage: { used: 12_920, limit: 128_000 },
@@ -637,7 +638,7 @@ function createConversationScenarioSeed(
           "archived-assistant",
           "assistant",
           "This conversation is archived.",
-          "binding-archived",
+          "binding-archived"
         ),
       ],
     }),
@@ -671,13 +672,13 @@ function createConversationScenarioSeed(
           "recovery-user",
           "user",
           "Finish the interrupted task",
-          "binding-recovery",
+          "binding-recovery"
         ),
         message(
           "recovery-assistant",
           "assistant",
           "The durable response remains available offline.",
-          "binding-recovery",
+          "binding-recovery"
         ),
         {
           schemaVersion: 1,
@@ -743,7 +744,9 @@ function conversationFiles(input: {
       `status: ${input.status}`,
       "",
     ].join("\n"),
-    [`${root}/agents.jsonl`]: `${agents.map((entry) => JSON.stringify(entry)).join("\n")}\n`,
+    [`${root}/agents.jsonl`]: `${agents
+      .map((entry) => JSON.stringify(entry))
+      .join("\n")}\n`,
     [`${root}/transcript.jsonl`]: `${transcript}\n${
       input.malformedFinalLine ? '{"schemaVersion":1,"type":"message"' : ""
     }`,
@@ -767,7 +770,7 @@ function message(
   id: string,
   role: "user" | "assistant",
   text: string,
-  agentBindingId: string,
+  agentBindingId: string
 ) {
   return {
     schemaVersion: 1,
@@ -786,7 +789,7 @@ export function portableConversationStorageKey(vaultId: string): string {
 
 export function isPortableConversationFile(path: string): boolean {
   return /(?:^|\/)\.lapis\/agents\/sessions\/[0-9a-f-]+\/(?:metadata\.yaml|agents\.jsonl|transcript\.jsonl)$/u.test(
-    path,
+    path
   );
 }
 
@@ -805,13 +808,13 @@ export function createLiveHostReloadConversationFiles(): Record<
         "live-reload-user",
         "user",
         "Continue the restored live conversation",
-        "binding-live-reload",
+        "binding-live-reload"
       ),
       message(
         "live-reload-assistant",
         "assistant",
         LIVE_HOST_RELOAD_ASSISTANT_TEXT,
-        "binding-live-reload",
+        "binding-live-reload"
       ),
     ],
     usage: { used: 12_920, limit: 128_000 },
@@ -820,26 +823,26 @@ export function createLiveHostReloadConversationFiles(): Record<
 
 export function seedPortableConversationStorage(
   vaultId: string,
-  files: Record<string, string>,
+  files: Record<string, string>
 ): void {
   if (typeof localStorage === "undefined") return;
   const portableFiles = Object.fromEntries(
     Object.entries(files).filter(([path, data]) => {
       return isPortableConversationFile(path) && typeof data === "string";
-    }),
+    })
   );
   localStorage.setItem(
     portableConversationStorageKey(vaultId),
-    JSON.stringify(portableFiles),
+    JSON.stringify(portableFiles)
   );
 }
 
 export function readPortableConversationStorage(
-  vaultId: string,
+  vaultId: string
 ): Record<string, string> {
   if (typeof localStorage === "undefined") return {};
   const storedVaultData = localStorage.getItem(
-    portableConversationStorageKey(vaultId),
+    portableConversationStorageKey(vaultId)
   );
   if (!storedVaultData) return {};
   try {
@@ -850,8 +853,8 @@ export function readPortableConversationStorage(
     return Object.fromEntries(
       Object.entries(parsed).filter(
         (entry): entry is [string, string] =>
-          isPortableConversationFile(entry[0]) && typeof entry[1] === "string",
-      ),
+          isPortableConversationFile(entry[0]) && typeof entry[1] === "string"
+      )
     );
   } catch {
     return {};

@@ -29,7 +29,8 @@ viewports, package-owned source stories, and deterministic comparison without
 creating or approving Visual Delta baselines.
 Tracked registry-media guidance and the canonical registry-media chapter MUST
 stay aligned on story naming, capture density, authored data, generation
-commands, and baseline policy.
+commands, source-specific diagnostic isolation, production-compatible browser
+shims, and baseline policy.
 Registry platform generation and dedicated Overview-content auditing are
 protected by LP-SPEC-032 and LP-SPEC-033. Shared manifest normalization,
 release compatibility, package-file, and registry metadata checks map to

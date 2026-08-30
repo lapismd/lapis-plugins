@@ -30,7 +30,7 @@
         ],
         "description": [
           {
-            "text": "Browse bounded snapshots of the active file without sending content elsewhere.",
+            "text": "Browse timestamped local snapshots of the active note, with bounded retention and no remote history service.",
             "tone": "neutral"
           }
         ]

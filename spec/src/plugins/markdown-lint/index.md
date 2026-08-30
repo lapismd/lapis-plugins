@@ -5,8 +5,8 @@ highlights, and registry-only Overview content under LP-SPEC-021 and LP-SPEC-033
 metadata remain authoritative for the fields defined by LP-SPEC-022.
 Registry identity and capture-backed gallery media remain package-owned under
 LP-SPEC-030 and LP-SPEC-031. The governed `Registry Screenshots` story covers
-editor diagnostics with the Problems panel and stays `visual-pending` until
-separate visual approval.
+real Markdownlint editor diagnostics with a populated Problems panel while both
+sidebars are hidden, and stays `visual-pending` until separate visual approval.
 
 `@lapis-notes/markdown-lint` adapts open Markdown document diagnostics into the
 shared Problems infrastructure. Language-service, Problems panel, desktop

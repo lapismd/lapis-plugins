@@ -12,7 +12,7 @@
   "gallery": [
     {
       "id": "json-editor",
-      "alt": "Syntax-highlighted project settings JSON open beside the file Explorer.",
+      "alt": "Focused syntax-highlighted project settings JSON editor filling the workspace.",
       "images": {
         "preview": {
           "path": "registry-assets/gallery/json-editor.preview.webp"

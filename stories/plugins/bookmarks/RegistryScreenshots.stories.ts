@@ -18,7 +18,11 @@ type Story = StoryObj<typeof meta>;
 export const BookmarksSidebar: Story = {
   render: (() => ({
     Component: PanelDemo,
-    props: { kind: "bookmarks", layout: "right-sidebar" },
+    props: {
+      kind: "bookmarks",
+      layout: "right-sidebar",
+      diagnostics: "none",
+    },
   })) as Story["render"],
   play: async ({ canvasElement }) => {
     await registryPanelApp(canvasElement);

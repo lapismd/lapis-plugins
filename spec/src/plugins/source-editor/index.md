@@ -5,7 +5,8 @@ highlights, and registry-only Overview content under LP-SPEC-021 and LP-SPEC-033
 metadata remain authoritative for the fields defined by LP-SPEC-022.
 Registry identity and capture-backed gallery media remain package-owned under
 LP-SPEC-030 and LP-SPEC-031. The governed `Registry Screenshots` story covers
-the JSON editor and stays `visual-pending` until separate visual approval.
+the JSON editor filling a focused workspace and stays `visual-pending` until
+separate visual approval.
 
 `@lapis-notes/source-editor` owns host-neutral source editing policy. The API
 owns the generic editor and file-view contracts, while applications own the

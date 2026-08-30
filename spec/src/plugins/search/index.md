@@ -4,8 +4,10 @@ The package-owned `registry.json` is the source for curated categories,
 highlights, and registry-only Overview content under LP-SPEC-021 and LP-SPEC-033. Manifest and package
 metadata remain authoritative for the fields defined by LP-SPEC-022.
 Registry identity and capture-backed gallery media remain package-owned under
-LP-SPEC-030 and LP-SPEC-031. The governed `Registry Screenshots` story covers
-the Search sidebar and stays `visual-pending` until separate visual approval.
+LP-SPEC-030 and LP-SPEC-031. Governed `Registry Screenshots` stories cover a
+populated left Search sidebar and the same result set with its filter and view
+settings open; both hide the right sidebar and stay `visual-pending` until
+separate visual approval.
 
 `@lapis-notes/search` owns vault search indexing, query presentation, result
 navigation, and the `search` workspace view. Query parsing and generated search

@@ -108,8 +108,15 @@ const config: StorybookConfig = {
         ],
         alias: [
           {
+            find: /^harper\.js\/binaryInlined$/,
+            replacement: path.join(
+              repoRoot,
+              "packages/spellcheck/node_modules/harper.js/dist/binaryInlined.js",
+            ),
+          },
+          {
             find: /^harper\.js\/binary$/,
-            replacement: "harper.js/binaryInlined",
+            replacement: path.join(storybookDir, "harper-binary.ts"),
           },
           ...packageAliases.map(([find, replacement]) => ({
             find: new RegExp(`^${find.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`),
@@ -139,7 +146,9 @@ const config: StorybookConfig = {
           "react",
           "react-dom",
           "react-dom/client",
+          "@storybook/addon-themes",
           "character-entities",
+          "@codemirror/lint",
           "@lapis-notes/api > eventemitter3",
           "@lapismd/mira/**",
           "debug",
