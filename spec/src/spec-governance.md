@@ -49,6 +49,9 @@ Generated-output cleanup is protected by LP-SPEC-028 and focused filesystem
 tests that distinguish full preparation from a single-plugin rebuild.
 Changesets owns package changelogs under LP-SPEC-029; documentation sync tests
 must prove candidate preparation preserves existing release history.
+Applying and deleting a consumed Changeset maps the resulting version metadata
+to Distribution, this governance chapter, and every selected plugin chapter so
+release-only changes cannot bypass the same specification review as behavior.
 When a consumer Storybook scenario exposes an extracted-plugin defect, the
 behavioral correction and its canonical requirement remain plugin-owned while
 the consumer interaction remains valid cross-repository acceptance evidence.

@@ -297,6 +297,8 @@ The catalog chrome verifies:
 - Filter hides non-matches; Expand all opens every expandable row.
 - Activating the non-file Catalog leaf retains the most recently active file
   scope for folder-backed commands and skills.
+- A packed-package consumer restoring Catalog as the active leaf still exposes
+  Open actions for commands discovered under that retained file scope.
 
 ### LN-AI-156 acceptance details
 

@@ -29,3 +29,6 @@ Plugin behavior corrections use an independent package patch changeset and
 retain focused owning-package checks plus real consumer Storybook acceptance as
 release evidence. Preparing that candidate does not authorize npm publication,
 public release assets, or registry dispatch.
+Applying that changeset to a release candidate MUST update the selected package
+metadata and each owning plugin chapter together, then pass the complete
+tarball, signed-archive, and clean-consumer preparation gate before approval.
