@@ -881,7 +881,7 @@ export class AiPlugin extends Plugin {
       settings: this.getSettings(),
       pluginLabel: (pluginId) => contributingPluginLabel(this.app, pluginId),
       userAgents: this.userAgents,
-      scopeDir: this.createConversationInput().scopeDir,
+      scopeDir: this.currentConversationScope(),
     });
   }
 

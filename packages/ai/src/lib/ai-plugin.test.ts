@@ -306,6 +306,7 @@ describe("AiPlugin contracts", () => {
       "src/lib/catalog/ai-catalog-panel.svelte",
       "utf8",
     );
+    const plugin = readFileSync("src/lib/ai-plugin.ts", "utf8");
 
     expect(source).toContain("this.unload()");
     expect(source).toContain("this.containerEl.replaceChildren()");
@@ -317,6 +318,10 @@ describe("AiPlugin contracts", () => {
     expect(panel).toContain("app.workspace.offref(activeLeaf)");
     expect(panel).toContain("generation !== refreshGeneration");
     expect(panel).toContain("nextSignature === groupsSignature");
+    expect(plugin).toContain("scopeDir: this.currentConversationScope()");
+    expect(plugin).not.toContain(
+      "scopeDir: this.createConversationInput().scopeDir",
+    );
     expect(panel).toContain("--ui-workspace-foreground");
     expect(panel).toContain("Enable ${tool.name} for the next chat");
   });
