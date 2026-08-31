@@ -17,7 +17,7 @@ type Story = StoryObj<typeof meta>;
 
 function slidesApp(canvasElement: HTMLElement): App {
   const root = canvasElement.querySelector<HTMLElement & { __lapisApp?: App }>(
-    '[data-testid="slides-demo"]',
+    '[data-testid="slides-demo"]'
   );
   if (!root?.__lapisApp) throw new Error("Slides story has no explicit App");
   return root.__lapisApp;
@@ -29,13 +29,13 @@ export const Presentation: Story = {
     await waitFor(
       () => {
         expect(canvas.getByTestId("slides-demo-status")).toHaveTextContent(
-          "ready",
+          "ready"
         );
         expect(
-          canvasElement.querySelector('[data-app-shell-ready="true"]'),
+          canvasElement.querySelector('[data-app-shell-ready="true"]')
         ).not.toBeNull();
       },
-      { timeout: 20_000 },
+      { timeout: 20_000 }
     );
 
     const app = slidesApp(canvasElement);
@@ -48,7 +48,7 @@ export const Presentation: Story = {
     const deck = await waitFor(
       () => {
         const candidate = canvasElement.querySelector<HTMLElement>(
-          '[data-testid="slides-deck"]',
+          '[data-testid="slides-deck"]'
         );
         expect(candidate).not.toBeNull();
         expect(candidate?.dataset.revealReady).toBe("true");
@@ -56,7 +56,7 @@ export const Presentation: Story = {
         expect(app.workspace.getLeavesOfType(SlidesViewType)).toHaveLength(1);
         return candidate!;
       },
-      { timeout: 20_000 },
+      { timeout: 20_000 }
     );
 
     const deckCanvas = within(deck);
@@ -66,24 +66,24 @@ export const Presentation: Story = {
 
     await waitFor(() => {
       expect(
-        deckCanvas.getByRole("heading", { level: 2, name: "Goals" }),
+        deckCanvas.getByRole("heading", { level: 2, name: "Goals" })
       ).toBeVisible();
       expect(
-        deckCanvas.getByText("Confirm markdown slide splitting."),
+        deckCanvas.getByText("Confirm markdown slide splitting.")
       ).toBeVisible();
       expect(
-        deckCanvas.getByText("Confirm lists, code, and notes render."),
+        deckCanvas.getByText("Confirm lists, code, and notes render.")
       ).toBeVisible();
     });
 
     await new Promise((resolve) => setTimeout(resolve, 300));
     expect(
-      deckCanvas.getByRole("heading", { level: 2, name: "Goals" }),
+      deckCanvas.getByRole("heading", { level: 2, name: "Goals" })
     ).toBeVisible();
 
     expect(deck.querySelector(".controls")).toBeVisible();
     expect(
-      canvas.getByRole("button", { name: "Close presentation" }),
+      canvas.getByRole("button", { name: "Close presentation" })
     ).toBeVisible();
   },
 };

@@ -58,13 +58,14 @@ Graph. History shows Explorer, Compare, and History. Markdown shows Backlinks,
 Live Preview, and File Properties. Bases uses the populated cover cards view.
 Bookmarks and Search show their primary panel on the left beside an empty main
 workspace. Markdown Lint, Source Editor, Spell Check, and Word Count use the
-complete shell with both sidebars closed.
+complete shell with both sidebars closed. Slides uses the full-screen Goals
+presentation.
 
 Overview media is intentionally selective. AI uses focused tool activity,
 Bases uses Grouped List, Graph uses the focused Global Graph, History uses
 Compare, Markdown uses Reading, Search uses open search filters, and Spell
 Check uses the editor action popover. Bookmarks, Markdown Lint, Source Editor,
-and Word Count omit Overview media because their available full-screen state
+Slides, and Word Count omit Overview media because their available full-screen state
 would repeat the banner rather than add useful context.
 
 Full-shell stories use the common 1200x800 application frame with Explorer

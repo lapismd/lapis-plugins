@@ -9,6 +9,29 @@
   ],
   "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/slides#readme",
   "appearance": { "icon": "presentation", "accent": "#42AFFA" },
+  "media": {
+    "banner": {
+      "alt": "Slides full-screen presentation showing the Goals slide from the Release Walkthrough Markdown fixture.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/banner.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/banner.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/banner.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/banner.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-slides-registry-screenshots--presentation",
+        "focus": "full-shell"
+      }
+    }
+  },
   "gallery": [
     {
       "id": "presentation",
@@ -19,6 +42,12 @@
         },
         "full": {
           "path": "registry-assets/gallery/presentation.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/presentation.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/presentation.dark.webp"
         }
       },
       "capture": {
