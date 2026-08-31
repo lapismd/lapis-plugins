@@ -8,7 +8,54 @@
     "Keep edits synchronized through the Lapis vault lifecycle."
   ],
   "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/source-editor#readme",
-  "appearance": { "icon": "file-code-2", "accent": "#0EA5E9" },
+  "appearance": {
+    "icon": "file-code-2",
+    "accent": "#0EA5E9"
+  },
+  "media": {
+    "banner": {
+      "alt": "Lapis Source Editor showing a populated JSON document in the complete shell with both sidebars closed.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/banner.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/banner.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/banner.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/banner.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-source-editor-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    },
+    "overview": {
+      "alt": "Lapis Source Editor showing a populated JSON document in the complete shell with both sidebars closed.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/overview.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/overview.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/overview.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/overview.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-source-editor-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    }
+  },
   "gallery": [
     {
       "id": "json-editor",
@@ -17,7 +64,15 @@
         "preview": {
           "path": "registry-assets/gallery/json-editor.preview.webp"
         },
-        "full": { "path": "registry-assets/gallery/json-editor.full.webp" }
+        "full": {
+          "path": "registry-assets/gallery/json-editor.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/json-editor.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/json-editor.dark.webp"
+        }
       },
       "capture": {
         "storyId": "plugins-source-editor-registry-screenshots--json-editor",
@@ -25,12 +80,24 @@
       },
       "card": {
         "headline": [
-          { "text": "Edit JSON and YAML", "tone": "neutral" },
-          { "text": "in the same workspace", "tone": "cyan" }
+          {
+            "text": "Edit JSON and YAML",
+            "tone": "neutral"
+          },
+          {
+            "text": "in the same workspace",
+            "tone": "cyan"
+          }
         ],
         "description": [
-          { "text": "Open", "tone": "neutral" },
-          { "text": "JSON, YAML, and text", "tone": "cyan" },
+          {
+            "text": "Open",
+            "tone": "neutral"
+          },
+          {
+            "text": "JSON, YAML, and text",
+            "tone": "cyan"
+          },
           {
             "text": "through normal Lapis routing with syntax-aware editing.",
             "tone": "neutral"

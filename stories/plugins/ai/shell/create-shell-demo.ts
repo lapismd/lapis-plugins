@@ -4,7 +4,13 @@ import {
   MemoryAppDatabase,
   MemoryVaultAdapter,
 } from "@lapis-notes/api";
-import { AiJsonlViewType, AiPlugin, AiViewType } from "@lapis-notes/ai";
+import {
+  AiCatalogViewType,
+  AiHistoryViewType,
+  AiJsonlViewType,
+  AiPlugin,
+  AiViewType,
+} from "@lapis-notes/ai";
 import { FileExplorerPlugin } from "@lapis-notes/file-explorer";
 import { MarkdownPlugin } from "@lapis-notes/markdown";
 import { SourceEditorPlugin } from "@lapis-notes/source-editor";
@@ -33,7 +39,8 @@ export type AiWorkspaceScenario =
   | "jsonl-preview"
   | "community-tools"
   | "reload-resume"
-  | "registry-chat";
+  | "registry-chat"
+  | "registry-overview";
 
 export const LOCAL_CONVERSATION_ID = "123e4567-e89b-42d3-a456-426614174000";
 export const FOLLOW_NEAR_CONVERSATION_ID =
@@ -123,6 +130,34 @@ export function createAiWorkspaceLayout(
           { file: jsonlPath }
         )
       : leaf("ai-chat", "AI", "sparkles", AiViewType, initialLocation);
+  if (scenario === "registry-overview") {
+    return {
+      main: split("main", "horizontal", [tabs("main-tabs", [mainLeaf])]),
+      left: split(
+        "left",
+        "vertical",
+        [
+          tabs("left-panel-tabs", [
+            leaf("ai-history", "History", "history", AiHistoryViewType),
+          ]),
+        ],
+        { width: "18rem" }
+      ),
+      right: split(
+        "right",
+        "vertical",
+        [
+          tabs("right-panel-tabs", [
+            leaf("ai-catalog", "Catalog", "library", AiCatalogViewType),
+          ]),
+        ],
+        { width: "18rem" }
+      ),
+      bottom: { ...tabs("bottom-panel", []), height: "0px" },
+      floating: [],
+      active: mainLeaf.id,
+    };
+  }
   return {
     main: split("main", "horizontal", [tabs("main-tabs", [mainLeaf])]),
     left: split(
@@ -156,7 +191,9 @@ export function createAiWorkspaceSeed(
   scenario: AiWorkspaceScenario = "default"
 ): Record<string, string> {
   const initialLocation =
-    scenario === "agent-switching" || scenario === "registry-chat"
+    scenario === "agent-switching" ||
+    scenario === "registry-chat" ||
+    scenario === "registry-overview"
       ? { scopeDir: "Notes", conversationId: LOCAL_CONVERSATION_ID }
       : scenario === "recovery"
       ? { scopeDir: "Notes", conversationId: RECOVERY_CONVERSATION_ID }
@@ -176,7 +213,29 @@ export function createAiWorkspaceSeed(
     ".obsidian/ai.json": JSON.stringify(pluginData, null, 2),
     "Notes/Welcome.md": "# Welcome\n\nAsk the AI chat in the workspace.\n",
     "Notes/alpha.md": "# Alpha\n\nTODO: summarize this note.\n",
-    ...(scenario === "follow-scope"
+    ...(scenario === "registry-overview"
+      ? {
+          "Notes/.agents/skills/daily/SKILL.md": [
+            "---",
+            "name: daily",
+            "description: Plan and review the current daily note",
+            "---",
+            "",
+            "Use the active note and linked project context.",
+            "",
+          ].join("\n"),
+          "Notes/.agents/commands/review.md": [
+            "---",
+            "description: Review the current note for gaps",
+            "kind: prompt",
+            "---",
+            "",
+            "Review the active note and list the next action.",
+            "",
+          ].join("\n"),
+          ...createConversationScenarioSeed(scenario),
+        }
+      : scenario === "follow-scope"
       ? {
           "Projects/work.md": "# Work\n\nActive project note.\n",
           "Projects/Atlas/note.md": "# Atlas\n\nNested project note.\n",
@@ -470,7 +529,7 @@ function createConversationScenarioSeed(
       ],
       activeBindingId: "binding-codex",
       transcript:
-        scenario === "registry-chat"
+        scenario === "registry-chat" || scenario === "registry-overview"
           ? [
               message(
                 "registry-user",

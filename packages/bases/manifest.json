@@ -6,6 +6,7 @@
   "description": "Build table, card, and grouped views from Markdown properties",
   "author": "Lapis Notes Bases",
   "authorUrl": "https://app.lapis.md",
+  "authorAvatarUrl": "https://www.gravatar.com/avatar/1df68d9ff087b0dd72fd8626056fca7f?s=128&d=404",
   "isDesktopOnly": false,
   "lapis": {
     "manifestVersion": 1,

@@ -30,3 +30,9 @@ export const EditorDiagnosticsWithProblems: Story = {
     );
   },
 };
+
+export const Overview: Story = {
+  name: "Overview",
+  render: EditorDiagnosticsWithProblems.render,
+  play: EditorDiagnosticsWithProblems.play,
+};

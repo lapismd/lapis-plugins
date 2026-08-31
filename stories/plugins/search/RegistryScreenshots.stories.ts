@@ -89,3 +89,9 @@ export const SearchFilters: Story = {
     ).toBeVisible();
   },
 };
+
+export const Overview: Story = {
+  name: "Overview",
+  render: SearchSidebar.render,
+  play: SearchSidebar.play,
+};

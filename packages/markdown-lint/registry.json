@@ -8,7 +8,54 @@
     "Configure rule exclusions and path filters per vault."
   ],
   "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/markdown-lint#readme",
-  "appearance": { "icon": "list-checks", "accent": "#F97316" },
+  "appearance": {
+    "icon": "list-checks",
+    "accent": "#F97316"
+  },
+  "media": {
+    "banner": {
+      "alt": "Lapis Markdown Lint showing real editor diagnostics and a populated Problems panel with both sidebars closed.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/banner.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/banner.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/banner.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/banner.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-markdown-lint-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    },
+    "overview": {
+      "alt": "Lapis Markdown Lint showing real editor diagnostics and a populated Problems panel with both sidebars closed.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/overview.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/overview.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/overview.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/overview.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-markdown-lint-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    }
+  },
   "gallery": [
     {
       "id": "editor-diagnostics",
@@ -19,6 +66,12 @@
         },
         "full": {
           "path": "registry-assets/gallery/editor-diagnostics.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/editor-diagnostics.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/editor-diagnostics.dark.webp"
         }
       },
       "capture": {
@@ -27,18 +80,36 @@
       },
       "card": {
         "headline": [
-          { "text": "Catch Markdown issues", "tone": "neutral" },
-          { "text": "where you write", "tone": "amber" }
+          {
+            "text": "Catch Markdown issues",
+            "tone": "neutral"
+          },
+          {
+            "text": "where you write",
+            "tone": "amber"
+          }
         ],
         "description": [
-          { "text": "See", "tone": "neutral" },
-          { "text": "diagnostics", "tone": "rose" },
+          {
+            "text": "See",
+            "tone": "neutral"
+          },
+          {
+            "text": "diagnostics",
+            "tone": "rose"
+          },
           {
             "text": "in the editor and the shared Problems surface, with",
             "tone": "neutral"
           },
-          { "text": "supported fixes", "tone": "green" },
-          { "text": "close by.", "tone": "neutral" }
+          {
+            "text": "supported fixes",
+            "tone": "green"
+          },
+          {
+            "text": "close by.",
+            "tone": "neutral"
+          }
         ]
       }
     }

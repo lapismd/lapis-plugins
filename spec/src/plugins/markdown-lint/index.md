@@ -11,6 +11,9 @@ The shared registry fixture MUST retain the source-specific editor and Problems
 diagnostics through settled capture readiness.
 Its generated card preserves the complete full-shell capture so the editor and
 Problems surface remain visible before the shared dark right-edge gutter.
+The fixed Overview state reuses that populated diagnostics shell with both
+sidebars closed. Banner and Overview media expose split, light, and dark
+variants.
 
 `@lapis-notes/markdown-lint` adapts open Markdown document diagnostics into the
 shared Problems infrastructure. Language-service, Problems panel, desktop

@@ -8,7 +8,54 @@
     "Organize frequently used resources without changing vault content."
   ],
   "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/bookmarks#readme",
-  "appearance": { "icon": "bookmark", "accent": "#E11D48" },
+  "appearance": {
+    "icon": "bookmark",
+    "accent": "#E11D48"
+  },
+  "media": {
+    "banner": {
+      "alt": "Lapis Bookmarks in the primary left sidebar beside an empty main workspace.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/banner.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/banner.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/banner.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/banner.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-bookmarks-registry-screenshots--overview",
+        "focus": "left-sidebar"
+      }
+    },
+    "overview": {
+      "alt": "Lapis Bookmarks in the primary left sidebar beside an empty main workspace.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/overview.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/overview.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/overview.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/overview.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-bookmarks-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    }
+  },
   "gallery": [
     {
       "id": "bookmarks-sidebar",
@@ -19,6 +66,12 @@
         },
         "full": {
           "path": "registry-assets/gallery/bookmarks-sidebar.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/bookmarks-sidebar.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/bookmarks-sidebar.dark.webp"
         }
       },
       "capture": {
@@ -27,8 +80,14 @@
       },
       "card": {
         "headline": [
-          { "text": "Keep every useful place", "tone": "neutral" },
-          { "text": "one click away", "tone": "rose" }
+          {
+            "text": "Keep every useful place",
+            "tone": "neutral"
+          },
+          {
+            "text": "one click away",
+            "tone": "rose"
+          }
         ],
         "description": [
           {

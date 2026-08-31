@@ -94,6 +94,12 @@ export const CoverCards: Story = {
   },
 };
 
+export const Overview: Story = {
+  name: "Overview",
+  args: focusedArgs("cards"),
+  play: CoverCards.play,
+};
+
 export const GroupedList: Story = {
   name: "Grouped list",
   args: focusedArgs("grouped-list"),

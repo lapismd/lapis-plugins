@@ -8,7 +8,54 @@
     "Keep files portable as ordinary Markdown in the active vault."
   ],
   "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/markdown#readme",
-  "appearance": { "icon": "file-text", "accent": "#2563EB" },
+  "appearance": {
+    "icon": "file-text",
+    "accent": "#2563EB"
+  },
+  "media": {
+    "banner": {
+      "alt": "Lapis Markdown with Backlinks on the left, Live Preview in the main workspace, and File Properties on the right.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/banner.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/banner.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/banner.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/banner.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-markdown-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    },
+    "overview": {
+      "alt": "Lapis Markdown with Backlinks on the left, Live Preview in the main workspace, and File Properties on the right.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/overview.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/overview.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/overview.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/overview.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-markdown-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    }
+  },
   "gallery": [
     {
       "id": "live-preview",
@@ -17,7 +64,15 @@
         "preview": {
           "path": "registry-assets/gallery/live-preview.preview.webp"
         },
-        "full": { "path": "registry-assets/gallery/live-preview.full.webp" }
+        "full": {
+          "path": "registry-assets/gallery/live-preview.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/live-preview.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/live-preview.dark.webp"
+        }
       },
       "capture": {
         "storyId": "plugins-markdown-registry-screenshots--live-preview",
@@ -25,12 +80,24 @@
       },
       "card": {
         "headline": [
-          { "text": "Write with structure", "tone": "neutral" },
-          { "text": "and stay in the flow", "tone": "violet" }
+          {
+            "text": "Write with structure",
+            "tone": "neutral"
+          },
+          {
+            "text": "and stay in the flow",
+            "tone": "violet"
+          }
         ],
         "description": [
-          { "text": "Live Preview keeps", "tone": "neutral" },
-          { "text": "Markdown portable", "tone": "violet" },
+          {
+            "text": "Live Preview keeps",
+            "tone": "neutral"
+          },
+          {
+            "text": "Markdown portable",
+            "tone": "violet"
+          },
           {
             "text": "while formatting the document around your cursor.",
             "tone": "neutral"
@@ -42,8 +109,18 @@
       "id": "source",
       "alt": "Welcome note open as syntax-highlighted Markdown source with file properties in the right sidebar.",
       "images": {
-        "preview": { "path": "registry-assets/gallery/source.preview.webp" },
-        "full": { "path": "registry-assets/gallery/source.full.webp" }
+        "preview": {
+          "path": "registry-assets/gallery/source.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/source.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/source.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/source.dark.webp"
+        }
       },
       "capture": {
         "storyId": "plugins-markdown-registry-screenshots--source",
@@ -51,12 +128,24 @@
       },
       "card": {
         "headline": [
-          { "text": "The source is always", "tone": "neutral" },
-          { "text": "yours", "tone": "cyan" }
+          {
+            "text": "The source is always",
+            "tone": "neutral"
+          },
+          {
+            "text": "yours",
+            "tone": "cyan"
+          }
         ],
         "description": [
-          { "text": "Edit", "tone": "neutral" },
-          { "text": "front matter, links, and embeds", "tone": "cyan" },
+          {
+            "text": "Edit",
+            "tone": "neutral"
+          },
+          {
+            "text": "front matter, links, and embeds",
+            "tone": "cyan"
+          },
           {
             "text": "directly with a syntax-aware source view.",
             "tone": "neutral"
@@ -68,8 +157,18 @@
       "id": "reading",
       "alt": "Welcome note rendered in reading mode with Explorer open on the left.",
       "images": {
-        "preview": { "path": "registry-assets/gallery/reading.preview.webp" },
-        "full": { "path": "registry-assets/gallery/reading.full.webp" }
+        "preview": {
+          "path": "registry-assets/gallery/reading.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/reading.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/reading.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/reading.dark.webp"
+        }
       },
       "capture": {
         "storyId": "plugins-markdown-registry-screenshots--reading",
@@ -77,8 +176,14 @@
       },
       "card": {
         "headline": [
-          { "text": "Read without the", "tone": "neutral" },
-          { "text": "editing chrome", "tone": "green" }
+          {
+            "text": "Read without the",
+            "tone": "neutral"
+          },
+          {
+            "text": "editing chrome",
+            "tone": "green"
+          }
         ],
         "description": [
           {
@@ -97,6 +202,12 @@
         },
         "full": {
           "path": "registry-assets/gallery/backlinks-sidebar.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/backlinks-sidebar.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/backlinks-sidebar.dark.webp"
         }
       },
       "capture": {
@@ -105,8 +216,14 @@
       },
       "card": {
         "headline": [
-          { "text": "Find every mention", "tone": "neutral" },
-          { "text": "in context", "tone": "rose" }
+          {
+            "text": "Find every mention",
+            "tone": "neutral"
+          },
+          {
+            "text": "in context",
+            "tone": "rose"
+          }
         ],
         "description": [
           {

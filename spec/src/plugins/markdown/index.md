@@ -12,6 +12,9 @@ shared readiness marker permits media generation.
 Reading preserves the complete full-shell capture, while the editor-and-panel
 cards retain their declared right-sidebar crops. Every frame retains the shared
 dark right-edge gutter.
+The fixed Overview state places Backlinks left, Live Preview in the main area,
+and File Properties right. Banner and Overview media reuse it in split, light,
+and dark variants.
 
 Daily notes remain ordinary authoritative Markdown documents. The Markdown
 plugin parses and edits them through its existing file surfaces while the

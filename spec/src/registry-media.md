@@ -1,14 +1,23 @@
 # Registry Media
 
-LP-SPEC-031 governs the source stories, composition metadata, generated files,
-and validation used for first-party registry cards.
+LP-SPEC-031, LP-SPEC-042, and LP-SPEC-043 govern the source stories,
+composition metadata, generated files, and validation used for first-party
+registry media.
 
 ## Source contract
 
-Each `registry.json` declares one to five gallery items. An item owns a stable
-ID, bounded alternative text, explicit preview and full output paths, one exact
-Storybook story ID, and card composition metadata. Capture never selects a
-different story when the declared story is missing.
+Each `registry.json` declares required `media.banner` and `media.overview`
+objects plus one to five gallery items. Banner and Overview media own bounded
+alternative text, four explicit output paths, one exact Storybook story ID,
+and one focus preset. A gallery item additionally owns a stable ID and card
+composition metadata. Capture never selects a different story when the
+declared story is missing.
+
+Every item exposes a 1200x800 split preview plus 2400x1600 split, light, and
+dark lossless-WebP outputs. Split media uses dark in the upper-left and light
+in the lower-right. The generated public registry retains only alternative
+text and resolved media references; stable gallery IDs remain on gallery
+items. Capture, focus, and card instructions are source-only.
 
 Card headlines and descriptions are ordered plain-text segments. Their tones
 are limited to `neutral`, `violet`, `cyan`, `green`, `amber`, and `rose`;
@@ -20,10 +29,6 @@ The card contract does not expose a per-image layout choice. Focus is one of
 `full-shell`, `left-sidebar`,
 `right-sidebar`, `bottom-status`, or a normalized custom rectangle wholly
 inside the captured viewport.
-
-The generated public registry retains only the card ID, alternative text, and
-the resolved preview and full image references. Capture and composition
-instructions remain source-only.
 
 ## Fixed Storybook inventory
 
@@ -42,7 +47,15 @@ All sources live under `Plugins/<Plugin>/Registry Screenshots` and carry both
 | Search        | Populated Search sidebar, Search filters                                      |
 | Source Editor | Focused JSON editor                                                           |
 | Spell Check   | Suggestions and Problems, Editor action popover                               |
-| Word Count    | Focused editor with status bar                                                |
+| Word Count    | Complete shell with both sidebars closed and status bar                       |
+
+Each plugin also owns one explicit Overview story. AI shows History left,
+Chat in the main area, and Catalog right. Graph shows Explorer, Global Graph,
+and Local Graph. History shows Explorer, Compare, and History. Markdown shows
+Backlinks, Live Preview, and File Properties. Bases uses the populated cover
+cards view. Bookmarks and Search show their primary panel on the left beside an
+empty main workspace. Markdown Lint, Source Editor, Spell Check, and Word Count
+use the complete shell with both sidebars closed.
 
 Full-shell stories use the common 1200x800 application frame with Explorer
 open unless the card explicitly demonstrates focus mode, an editor/sidebar
@@ -71,10 +84,11 @@ document. Browser-only dependency shims MUST preserve the public names used by
 production imports; Storybook's inlined Harper binary therefore re-exports its
 `binaryInlined` value under the production module's `binary` name.
 
-Registry capture always requests the Lapis light presentation and waits for
-both bundled font faces before measuring or capturing a story. Missing fonts,
-unresolved catalog theme variables, or a mismatched capture theme fail closed
-instead of producing fallback-font media.
+Registry capture requests both Lapis light and dark presentations and waits
+for both bundled font faces before measuring or capturing a story. Each
+distinct story is captured once per theme and reused for its gallery, banner,
+and Overview roles. Missing fonts, unresolved catalog theme variables, or a
+mismatched capture theme fail closed instead of producing fallback-font media.
 
 ## Capture and composition
 
@@ -84,7 +98,7 @@ and 2x device scale, and writes its declared assets. `--plugin <id>` limits a
 capture run without changing the contract. `pnpm registry:media:check` performs
 the same work without writing and fails when any artifact differs.
 
-The 2400x1600 browser capture is the only raster input. Composition uses the
+The two 2400x1600 browser captures are the only raster inputs. Composition uses the
 bundled Inter face at the fixed 400-700 weights used by the Notebook Navigator
 reference, with heavier and slightly larger headline and supporting copy. A
 fixed black canvas and allowlisted palette preserve inline description colours
@@ -97,9 +111,11 @@ taller 1440x1280 frame and MAY cover-crop to the declared subject. Every frame
 retains a fixed 48px dark gutter at the outer right edge. Composition applies
 the declared crop without upscaling, keeps screenshot framing intentionally
 tight, and emits a 2400x1600 lossless-WebP full image. The
-1200x800 lossless-WebP preview is downscaled from that full image. Text or image
-overflow, unexpected dimensions, unsafe paths, missing tags, and stale bytes
-are failures.
+1200x800 lossless-WebP preview is downscaled from that full image. Gallery
+marketing copy is identical in both themes, so the diagonal changes only the
+product pixels. Banner and Overview media apply the diagonal across the full
+product capture. Text or image overflow, unexpected dimensions, unsafe paths,
+missing tags, theme mismatch, split mismatch, and stale bytes are failures.
 
 Registry capture is independent from Visual Delta baseline review. Generated
 cards remain reviewable through the local source registry preview, while their

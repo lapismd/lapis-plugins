@@ -9,6 +9,10 @@ export const REGISTRY_MEDIA_DIMENSIONS = Object.freeze({
 });
 
 export const REGISTRY_MEDIA_SCREENSHOT_RIGHT_GUTTER = 48;
+export const REGISTRY_MEDIA_SPLIT = Object.freeze({
+  topX: 1600,
+  bottomX: 960,
+});
 
 export const REGISTRY_MEDIA_TONES = Object.freeze({
   neutral: "#F7F5FA",
@@ -43,20 +47,86 @@ const FOCUS_CROPS = Object.freeze({
   "bottom-status": { x: 0, y: 0.2, width: 1, height: 0.8 },
 });
 
-export async function composeRegistryMedia({ source, focus, card, fontPath }) {
-  const metadata = await sharp(source, {
-    failOn: "warning",
-    limitInputPixels: 4_000_000,
-  }).metadata();
-  if (
-    metadata.width !== REGISTRY_MEDIA_DIMENSIONS.capture.width ||
-    metadata.height !== REGISTRY_MEDIA_DIMENSIONS.capture.height
-  ) {
-    throw new Error(
-      `Capture is ${metadata.width}x${metadata.height}; expected 2400x1600.`
+export async function composeRegistryMedia({
+  lightSource,
+  darkSource,
+  focus,
+  card,
+  fontPath,
+}) {
+  const { headline, description } = validateRegistryCardCopy(card);
+  const light = await composeRegistryCardTheme({
+    source: lightSource,
+    focus,
+    headline,
+    description,
+    fontPath,
+  });
+  const dark = await composeRegistryCardTheme({
+    source: darkSource,
+    focus,
+    headline,
+    description,
+    fontPath,
+  });
+  const full = await composeDiagonalSplit({ light, dark });
+  const preview = await createPreview(full);
+
+  for (const [variant, bytes] of Object.entries({
+    preview,
+    full,
+    light,
+    dark,
+  })) {
+    await assertDimensions(
+      bytes,
+      variant === "preview"
+        ? REGISTRY_MEDIA_DIMENSIONS.preview
+        : REGISTRY_MEDIA_DIMENSIONS.full,
+      variant
     );
   }
+  return { preview, full, light, dark };
+}
 
+export async function composeRegistryProductMedia({ lightSource, darkSource }) {
+  await Promise.all([
+    assertCapture(lightSource, "light"),
+    assertCapture(darkSource, "dark"),
+  ]);
+  const light = await sharp(lightSource)
+    .webp({ lossless: true, effort: 6 })
+    .toBuffer();
+  const dark = await sharp(darkSource)
+    .webp({ lossless: true, effort: 6 })
+    .toBuffer();
+  const full = await composeDiagonalSplit({ light, dark });
+  const preview = await createPreview(full);
+  for (const [variant, bytes] of Object.entries({
+    preview,
+    full,
+    light,
+    dark,
+  })) {
+    await assertDimensions(
+      bytes,
+      variant === "preview"
+        ? REGISTRY_MEDIA_DIMENSIONS.preview
+        : REGISTRY_MEDIA_DIMENSIONS.full,
+      variant
+    );
+  }
+  return { preview, full, light, dark };
+}
+
+async function composeRegistryCardTheme({
+  source,
+  focus,
+  headline,
+  description,
+  fontPath,
+}) {
+  const metadata = await assertCapture(source, "registry");
   const crop = resolveFocusCrop(focus);
   const pixels = {
     left: Math.round(crop.x * metadata.width),
@@ -77,7 +147,6 @@ export async function composeRegistryMedia({ source, focus, card, fontPath }) {
     );
   }
 
-  const { headline, description } = validateRegistryCardCopy(card);
   const positions = {
     copyX: 80,
     screenshotX:
@@ -118,7 +187,7 @@ export async function composeRegistryMedia({ source, focus, card, fontPath }) {
       screenshotFrame,
     })
   );
-  const full = await sharp(background, {
+  return sharp(background, {
     density: 72,
     limitInputPixels: 4_000_000,
   })
@@ -144,7 +213,42 @@ export async function composeRegistryMedia({ source, focus, card, fontPath }) {
     ])
     .webp({ lossless: true, effort: 6 })
     .toBuffer();
-  const preview = await sharp(full)
+}
+
+async function assertCapture(source, label) {
+  const metadata = await sharp(source, {
+    failOn: "warning",
+    limitInputPixels: 4_000_000,
+  }).metadata();
+  if (
+    metadata.width !== REGISTRY_MEDIA_DIMENSIONS.capture.width ||
+    metadata.height !== REGISTRY_MEDIA_DIMENSIONS.capture.height
+  ) {
+    throw new Error(
+      `${label} capture is ${metadata.width}x${metadata.height}; expected 2400x1600.`
+    );
+  }
+  return metadata;
+}
+
+async function composeDiagonalSplit({ light, dark }) {
+  const { width, height } = REGISTRY_MEDIA_DIMENSIONS.full;
+  const mask = Buffer.from(
+    `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg"><polygon points="${REGISTRY_MEDIA_SPLIT.topX},0 ${width},0 ${width},${height} ${REGISTRY_MEDIA_SPLIT.bottomX},${height}" fill="#fff"/></svg>`
+  );
+  const lightRegion = await sharp(light)
+    .ensureAlpha()
+    .composite([{ input: mask, blend: "dest-in" }])
+    .png({ compressionLevel: 9, adaptiveFiltering: false })
+    .toBuffer();
+  return sharp(dark)
+    .composite([{ input: lightRegion, left: 0, top: 0 }])
+    .webp({ lossless: true, effort: 6 })
+    .toBuffer();
+}
+
+async function createPreview(full) {
+  return sharp(full)
     .resize(
       REGISTRY_MEDIA_DIMENSIONS.preview.width,
       REGISTRY_MEDIA_DIMENSIONS.preview.height,
@@ -152,10 +256,6 @@ export async function composeRegistryMedia({ source, focus, card, fontPath }) {
     )
     .webp({ lossless: true, effort: 6 })
     .toBuffer();
-
-  await assertDimensions(full, REGISTRY_MEDIA_DIMENSIONS.full, "full");
-  await assertDimensions(preview, REGISTRY_MEDIA_DIMENSIONS.preview, "preview");
-  return { full, preview };
 }
 
 export function resolveFocusCrop(focus) {

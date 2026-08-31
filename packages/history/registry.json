@@ -8,7 +8,54 @@
     "Restore selected content through the normal vault write path."
   ],
   "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/history#readme",
-  "appearance": { "icon": "history", "accent": "#6366F1" },
+  "appearance": {
+    "icon": "history",
+    "accent": "#6366F1"
+  },
+  "media": {
+    "banner": {
+      "alt": "Lapis History with Explorer on the left, a revision comparison in the main workspace, and History on the right.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/banner.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/banner.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/banner.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/banner.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-history-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    },
+    "overview": {
+      "alt": "Lapis History with Explorer on the left, a revision comparison in the main workspace, and History on the right.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/overview.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/overview.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/overview.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/overview.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-history-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    }
+  },
   "gallery": [
     {
       "id": "history-sidebar",
@@ -17,7 +64,15 @@
         "preview": {
           "path": "registry-assets/gallery/history-sidebar.preview.webp"
         },
-        "full": { "path": "registry-assets/gallery/history-sidebar.full.webp" }
+        "full": {
+          "path": "registry-assets/gallery/history-sidebar.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/history-sidebar.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/history-sidebar.dark.webp"
+        }
       },
       "capture": {
         "storyId": "plugins-history-registry-screenshots--history-sidebar",
@@ -25,8 +80,14 @@
       },
       "card": {
         "headline": [
-          { "text": "A local timeline", "tone": "neutral" },
-          { "text": "for every edit", "tone": "amber" }
+          {
+            "text": "A local timeline",
+            "tone": "neutral"
+          },
+          {
+            "text": "for every edit",
+            "tone": "amber"
+          }
         ],
         "description": [
           {
@@ -40,8 +101,18 @@
       "id": "compare",
       "alt": "History compare view showing a saved revision beside the current Markdown document.",
       "images": {
-        "preview": { "path": "registry-assets/gallery/compare.preview.webp" },
-        "full": { "path": "registry-assets/gallery/compare.full.webp" }
+        "preview": {
+          "path": "registry-assets/gallery/compare.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/compare.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/compare.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/compare.dark.webp"
+        }
       },
       "capture": {
         "storyId": "plugins-history-registry-screenshots--compare",
@@ -49,8 +120,14 @@
       },
       "card": {
         "headline": [
-          { "text": "Compare changes", "tone": "neutral" },
-          { "text": "before restoring", "tone": "green" }
+          {
+            "text": "Compare changes",
+            "tone": "neutral"
+          },
+          {
+            "text": "before restoring",
+            "tone": "green"
+          }
         ],
         "description": [
           {

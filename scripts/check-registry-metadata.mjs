@@ -16,6 +16,8 @@ const maxMarkdownBytes = 256 * 1024;
 const maxLogoBytes = 512 * 1024;
 const maxGalleryBytes = 5 * 1024 * 1024;
 const registryOverviewPath = "registry-content/overview.md";
+const officialAuthorAvatarUrl =
+  "https://www.gravatar.com/avatar/1df68d9ff087b0dd72fd8626056fca7f?s=128&d=404";
 const packageInstallInstruction =
   /\b(?:pnpm|npm|yarn|bun)\s+(?:add|install)\b|install for static composition/i;
 const allowedKeys = new Set([
@@ -25,6 +27,7 @@ const allowedKeys = new Set([
   "highlights",
   "documentationUrl",
   "appearance",
+  "media",
   "gallery",
   "content",
 ]);
@@ -47,6 +50,7 @@ const findings = [];
 for (const plugin of pluginPackages) {
   const packageRoot = path.join(root, "packages", plugin.directory);
   const sourcePath = path.join(packageRoot, "registry.json");
+  const manifestPath = path.join(packageRoot, "manifest.json");
   let source;
   try {
     source = JSON.parse(await readFile(sourcePath, "utf8"));
@@ -55,6 +59,18 @@ for (const plugin of pluginPackages) {
       `${plugin.directory}: registry.json is missing or invalid (${error.message})`
     );
     continue;
+  }
+  try {
+    const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+    if (manifest.authorAvatarUrl !== officialAuthorAvatarUrl) {
+      findings.push(
+        `${plugin.directory}: manifest authorAvatarUrl must use the official Lapis Gravatar`
+      );
+    }
+  } catch (error) {
+    findings.push(
+      `${plugin.directory}: manifest.json is missing or invalid (${error.message})`
+    );
   }
   for (const key of Object.keys(source)) {
     if (!allowedKeys.has(key))
@@ -77,7 +93,14 @@ for (const plugin of pluginPackages) {
     findings.push(`${plugin.directory}: documentationUrl must use HTTPS`);
   }
   await validateAppearance(plugin.directory, packageRoot, source.appearance);
-  await validateGallery(plugin.directory, packageRoot, source.gallery);
+  const mediaPaths = new Set();
+  await validateMedia(plugin.directory, packageRoot, source.media, mediaPaths);
+  await validateGallery(
+    plugin.directory,
+    packageRoot,
+    source.gallery,
+    mediaPaths
+  );
   const contentKeys = Object.keys(source.content ?? {});
   if (
     contentKeys.length !== 2 ||
@@ -125,6 +148,68 @@ for (const plugin of pluginPackages) {
     } catch {
       findings.push(`${plugin.directory}: missing ${relativePath}`);
     }
+  }
+}
+
+async function validateMedia(directory, packageRoot, media, paths) {
+  if (!media || typeof media !== "object" || Array.isArray(media)) {
+    findings.push(`${directory}: media must define banner and overview`);
+    return;
+  }
+  const keys = Object.keys(media);
+  if (
+    keys.length !== 2 ||
+    !keys.includes("banner") ||
+    !keys.includes("overview")
+  ) {
+    findings.push(`${directory}: media must define banner and overview only`);
+  }
+  const expectedStoryPrefix = `plugins-${storyIdPluginSegment(
+    directory
+  )}-registry-screenshots--`;
+  for (const role of ["banner", "overview"]) {
+    const item = media[role];
+    if (
+      !item ||
+      typeof item !== "object" ||
+      Array.isArray(item) ||
+      Object.keys(item).length !== 3 ||
+      Object.keys(item).some(
+        (key) => !["alt", "images", "capture"].includes(key)
+      )
+    ) {
+      findings.push(
+        `${directory}: ${role} media must define alt, images, and capture only`
+      );
+      continue;
+    }
+    if (
+      typeof item.alt !== "string" ||
+      !item.alt.trim() ||
+      item.alt.length > 240
+    ) {
+      findings.push(
+        `${directory}: ${role} alt text must contain 1-240 characters`
+      );
+    }
+    await validateImageVariants(
+      directory,
+      packageRoot,
+      item.images,
+      `registry-assets/${role}`,
+      paths,
+      role
+    );
+    validateCapture(directory, item.capture, expectedStoryPrefix);
+  }
+  if (
+    media.banner?.capture?.storyId &&
+    media.overview?.capture?.storyId &&
+    media.banner.capture.storyId !== media.overview.capture.storyId
+  ) {
+    findings.push(
+      `${directory}: banner and overview must reuse the same Storybook story`
+    );
   }
 }
 
@@ -182,13 +267,12 @@ async function validateAppearance(directory, packageRoot, appearance) {
   }
 }
 
-async function validateGallery(directory, packageRoot, gallery) {
+async function validateGallery(directory, packageRoot, gallery, paths) {
   if (!Array.isArray(gallery) || gallery.length < 1 || gallery.length > 5) {
     findings.push(`${directory}: gallery must contain 1-5 cards`);
     return;
   }
   const ids = new Set();
-  const paths = new Set();
   const storyIds = new Set();
   const expectedStoryPrefix = `plugins-${storyIdPluginSegment(
     directory
@@ -229,53 +313,70 @@ async function validateGallery(directory, packageRoot, gallery) {
         `${directory}: gallery alt text must contain 1-240 characters`
       );
     }
-    const imageKeys = Object.keys(item.images ?? {});
-    if (
-      imageKeys.length !== 2 ||
-      !imageKeys.includes("preview") ||
-      !imageKeys.includes("full")
-    ) {
-      findings.push(
-        `${directory}: gallery images must define preview and full only`
-      );
-    }
-    for (const [variant, dimensions] of [
-      ["preview", { width: 1200, height: 800 }],
-      ["full", { width: 2400, height: 1600 }],
-    ]) {
-      const reference = item.images?.[variant];
-      if (
-        !reference ||
-        typeof reference !== "object" ||
-        Array.isArray(reference) ||
-        Object.keys(reference).length !== 1
-      ) {
-        findings.push(
-          `${directory}: ${variant} image must contain a path only`
-        );
-        continue;
-      }
-      const expectedPath = `registry-assets/gallery/${item.id}.${variant}.webp`;
-      if (reference.path !== expectedPath) {
-        findings.push(
-          `${directory}: ${variant} image must use ${expectedPath}`
-        );
-      }
-      if (paths.has(reference.path)) {
-        findings.push(`${directory}: duplicate gallery path ${reference.path}`);
-      }
-      paths.add(reference.path);
-      await validateImage(directory, packageRoot, reference.path, {
-        label: `${variant} gallery image`,
-        maxBytes: maxGalleryBytes,
-        allowSvg: false,
-        dimensions: ({ width, height }) =>
-          width === dimensions.width && height === dimensions.height,
-        dimensionsMessage: `must be ${dimensions.width}x${dimensions.height}`,
-      });
-    }
+    await validateImageVariants(
+      directory,
+      packageRoot,
+      item.images,
+      `registry-assets/gallery/${item.id}`,
+      paths,
+      "gallery"
+    );
     validateCapture(directory, item.capture, expectedStoryPrefix, storyIds);
     validateCard(directory, item.card);
+  }
+}
+
+async function validateImageVariants(
+  directory,
+  packageRoot,
+  images,
+  expectedBasePath,
+  paths,
+  role
+) {
+  const variants = ["preview", "full", "light", "dark"];
+  const imageKeys = Object.keys(images ?? {});
+  if (
+    imageKeys.length !== variants.length ||
+    variants.some((variant) => !imageKeys.includes(variant))
+  ) {
+    findings.push(
+      `${directory}: ${role} images must define preview, full, light, and dark only`
+    );
+  }
+  for (const variant of variants) {
+    const dimensions =
+      variant === "preview"
+        ? { width: 1200, height: 800 }
+        : { width: 2400, height: 1600 };
+    const reference = images?.[variant];
+    if (
+      !reference ||
+      typeof reference !== "object" ||
+      Array.isArray(reference) ||
+      Object.keys(reference).length !== 1
+    ) {
+      findings.push(`${directory}: ${variant} image must contain a path only`);
+      continue;
+    }
+    const expectedPath = `${expectedBasePath}.${variant}.webp`;
+    if (reference.path !== expectedPath) {
+      findings.push(`${directory}: ${variant} image must use ${expectedPath}`);
+    }
+    if (paths.has(reference.path)) {
+      findings.push(
+        `${directory}: duplicate registry media path ${reference.path}`
+      );
+    }
+    paths.add(reference.path);
+    await validateImage(directory, packageRoot, reference.path, {
+      label: `${variant} ${role} image`,
+      maxBytes: maxGalleryBytes,
+      allowSvg: false,
+      dimensions: ({ width, height }) =>
+        width === dimensions.width && height === dimensions.height,
+      dimensionsMessage: `must be ${dimensions.width}x${dimensions.height}`,
+    });
   }
 }
 
@@ -299,9 +400,9 @@ function validateCapture(directory, capture, expectedStoryPrefix, storyIds) {
     findings.push(
       `${directory}: gallery storyId must start with ${expectedStoryPrefix}`
     );
-  } else if (storyIds.has(capture.storyId)) {
+  } else if (storyIds?.has(capture.storyId)) {
     findings.push(`${directory}: duplicate gallery storyId ${capture.storyId}`);
-  } else {
+  } else if (storyIds) {
     storyIds.add(capture.storyId);
   }
   try {

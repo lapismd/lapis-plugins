@@ -11,6 +11,8 @@ The generated card preserves the complete full-shell capture so the focused
 editor remains visible before the shared dark right-edge gutter.
 Capture readiness MUST assert the populated JSON document and focused workspace
 instead of relying only on shell startup.
+The fixed Overview state reuses that populated editor shell with both sidebars
+closed. Banner and Overview media expose split, light, and dark variants.
 
 `@lapis-notes/source-editor` owns host-neutral source editing policy. The API
 owns the generic editor and file-view contracts, while applications own the

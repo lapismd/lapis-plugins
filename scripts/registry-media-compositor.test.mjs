@@ -6,9 +6,11 @@ import sharp from "sharp";
 
 import {
   composeRegistryMedia,
+  composeRegistryProductMedia,
   defaultRegistryMediaFontPath,
   REGISTRY_MEDIA_DIMENSIONS,
   REGISTRY_MEDIA_SCREENSHOT_RIGHT_GUTTER,
+  REGISTRY_MEDIA_SPLIT,
   resolveRegistryScreenshotFrame,
 } from "./registry-media-compositor.mjs";
 
@@ -46,7 +48,8 @@ test("full-shell cards preserve both source edges and a dark outer gutter", asyn
     .toBuffer();
 
   const { full } = await composeRegistryMedia({
-    source,
+    lightSource: source,
+    darkSource: source,
     focus: "full-shell",
     card: {
       headline: [{ text: "Full window", tone: "neutral" }],
@@ -64,6 +67,40 @@ test("full-shell cards preserve both source edges and a dark outer gutter", asyn
   assert.deepEqual(pixel(decoded, screenshotRight - 20, 800), [0, 255, 255]);
   assert.notDeepEqual(pixel(decoded, screenshotRight + 20, 800), [0, 255, 255]);
 });
+
+test("product media uses a fixed dark-upper-left and light-lower-right split", async () => {
+  const lightSource = await solidCapture("#F8FAFC");
+  const darkSource = await solidCapture("#111827");
+  const media = await composeRegistryProductMedia({ lightSource, darkSource });
+  const decoded = await sharp(media.full)
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  assert.deepEqual(
+    pixel(decoded, REGISTRY_MEDIA_SPLIT.topX - 100, 100),
+    [17, 24, 39]
+  );
+  assert.deepEqual(
+    pixel(decoded, REGISTRY_MEDIA_SPLIT.bottomX + 100, 1500),
+    [248, 250, 252]
+  );
+  assert.equal((await sharp(media.preview).metadata()).width, 1200);
+  assert.equal((await sharp(media.light).metadata()).width, 2400);
+  assert.equal((await sharp(media.dark).metadata()).width, 2400);
+});
+
+function solidCapture(background) {
+  return sharp({
+    create: {
+      width: REGISTRY_MEDIA_DIMENSIONS.capture.width,
+      height: REGISTRY_MEDIA_DIMENSIONS.capture.height,
+      channels: 3,
+      background,
+    },
+  })
+    .png()
+    .toBuffer();
+}
 
 function pixel({ data, info }, x, y) {
   const offset = (y * info.width + x) * info.channels;

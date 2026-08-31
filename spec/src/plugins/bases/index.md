@@ -12,6 +12,8 @@ All three focused views use the uncropped full-shell composition so their
 complete workspace width remains visible before the shared dark right-edge
 gutter. The manifest summary names the table, card, and grouped Markdown
 property views instead of repeating the plugin name.
+The fixed Overview state uses the populated cover-card workspace with real
+artwork. Banner and Overview media reuse it in split, light, and dark variants.
 
 The package consumes the published Design Core semver contract. Runtime and
 tests MUST NOT depend on a sibling-repository path or a workspace `link:`

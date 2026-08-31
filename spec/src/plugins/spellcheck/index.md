@@ -12,6 +12,9 @@ The shared registry fixture MUST preserve Harper diagnostics after provider
 settling, and the popover story MUST assert the authored open action state.
 Both generated cards preserve the complete full-shell capture so diagnostics
 and the action popover remain visible before the shared dark right-edge gutter.
+The fixed Overview state reuses the populated Problems shell with both
+sidebars closed. Banner and Overview media expose split, light, and dark
+variants.
 
 Canonical daily notes use the same Markdown spellcheck pipeline as other
 notes. Spellcheck does not participate in daily-document resolution or Tasks

@@ -11,6 +11,9 @@ Capture readiness keeps the completed tool activity visible and asserts the
 focused transcript state before media generation begins.
 The focused chat uses the uncropped full-shell composition so the complete
 workspace and composer remain visible before the shared dark right-edge gutter.
+The fixed Overview state places History on the left, the populated Chat in the
+main area, and Catalog on the right. Banner and Overview media reuse that
+settled story in split, light, and dark variants.
 
 `@lapis-notes/ai` owns the provider-agnostic agent runtime, session control,
 normalized events, and the movable chat panel. Domain plugins may register

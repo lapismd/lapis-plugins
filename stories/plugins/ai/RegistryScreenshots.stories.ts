@@ -28,26 +28,49 @@ export const ChatWithToolActivity: Story = {
     await waitFor(
       () => {
         expect(canvas.getByTestId("ai-workspace-status")).toHaveTextContent(
-          "ready",
+          "ready"
         );
       },
-      { timeout: 12_000 },
+      { timeout: 12_000 }
     );
     const panel = await canvas.findByTestId("ai-chat-panel");
     await waitFor(
       () => {
         const leftSidebar = canvasElement.querySelector<HTMLElement>(
-          '[data-workspace-surface="left-sidebar"]',
+          '[data-workspace-surface="left-sidebar"]'
         );
         expect(leftSidebar?.getBoundingClientRect().width ?? 0).toBeLessThan(2);
         expect(within(panel).getByText("vault.read")).toBeVisible();
         expect(
           within(panel).getByRole("article", {
             name: "Message from assistant",
-          }),
+          })
         ).toHaveTextContent("Summary");
       },
-      { timeout: 10_000 },
+      { timeout: 10_000 }
+    );
+  },
+};
+
+export const Overview: Story = {
+  render: (() => ({
+    Component: AiWorkspaceDemo,
+    props: { scenario: "registry-overview" },
+  })) as Story["render"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await waitFor(
+      () => {
+        expect(canvas.getByTestId("ai-workspace-status")).toHaveTextContent(
+          "ready"
+        );
+        expect(canvas.getByTestId("ai-chat-panel")).toHaveTextContent(
+          "Summary"
+        );
+        expect(canvas.getByTestId("ai-conversation-history")).toBeVisible();
+        expect(canvas.getByTestId("ai-catalog")).toBeVisible();
+      },
+      { timeout: 20_000 }
     );
   },
 };
@@ -65,7 +88,7 @@ export const History: Story = {
     await registryPanelApp(canvasElement);
     await waitForRegistrySurface(
       canvasElement,
-      '[data-testid="ai-conversation-history"]',
+      '[data-testid="ai-conversation-history"]'
     );
   },
 };

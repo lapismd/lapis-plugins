@@ -8,7 +8,54 @@
     "Expose scoped search capabilities to compatible agent tools."
   ],
   "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/search#readme",
-  "appearance": { "icon": "search", "accent": "#F59E0B" },
+  "appearance": {
+    "icon": "search",
+    "accent": "#F59E0B"
+  },
+  "media": {
+    "banner": {
+      "alt": "Lapis Search with populated indexed results in the primary left sidebar beside an empty main workspace.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/banner.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/banner.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/banner.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/banner.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-search-registry-screenshots--overview",
+        "focus": "left-sidebar"
+      }
+    },
+    "overview": {
+      "alt": "Lapis Search with populated indexed results in the primary left sidebar beside an empty main workspace.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/overview.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/overview.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/overview.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/overview.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-search-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    }
+  },
   "gallery": [
     {
       "id": "search-sidebar",
@@ -17,7 +64,15 @@
         "preview": {
           "path": "registry-assets/gallery/search-sidebar.preview.webp"
         },
-        "full": { "path": "registry-assets/gallery/search-sidebar.full.webp" }
+        "full": {
+          "path": "registry-assets/gallery/search-sidebar.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/search-sidebar.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/search-sidebar.dark.webp"
+        }
       },
       "capture": {
         "storyId": "plugins-search-registry-screenshots--search-sidebar",
@@ -25,16 +80,28 @@
       },
       "card": {
         "headline": [
-          { "text": "Find the right note", "tone": "neutral" },
-          { "text": "from one query", "tone": "amber" }
+          {
+            "text": "Find the right note",
+            "tone": "neutral"
+          },
+          {
+            "text": "from one query",
+            "tone": "amber"
+          }
         ],
         "description": [
-          { "text": "Search", "tone": "neutral" },
+          {
+            "text": "Search",
+            "tone": "neutral"
+          },
           {
             "text": "filenames, properties, tags, and content",
             "tone": "amber"
           },
-          { "text": "from a reusable indexed sidebar.", "tone": "neutral" }
+          {
+            "text": "from a reusable indexed sidebar.",
+            "tone": "neutral"
+          }
         ]
       }
     },
@@ -47,6 +114,12 @@
         },
         "full": {
           "path": "registry-assets/gallery/search-filters.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/search-filters.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/search-filters.dark.webp"
         }
       },
       "capture": {
@@ -55,14 +128,32 @@
       },
       "card": {
         "headline": [
-          { "text": "Shape every query", "tone": "neutral" },
-          { "text": "without leaving Search", "tone": "cyan" }
+          {
+            "text": "Shape every query",
+            "tone": "neutral"
+          },
+          {
+            "text": "without leaving Search",
+            "tone": "cyan"
+          }
         ],
         "description": [
-          { "text": "Tune", "tone": "neutral" },
-          { "text": "file type, retrieval, case, context,", "tone": "amber" },
-          { "text": "and structured semantic matching", "tone": "violet" },
-          { "text": "from one compact panel.", "tone": "neutral" }
+          {
+            "text": "Tune",
+            "tone": "neutral"
+          },
+          {
+            "text": "file type, retrieval, case, context,",
+            "tone": "amber"
+          },
+          {
+            "text": "and structured semantic matching",
+            "tone": "violet"
+          },
+          {
+            "text": "from one compact panel.",
+            "tone": "neutral"
+          }
         ]
       }
     }

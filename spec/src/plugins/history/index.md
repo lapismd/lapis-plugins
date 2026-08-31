@@ -11,6 +11,9 @@ Compare preserves the complete full-shell capture, while History retains its
 declared sidebar-focused crop. Both frames retain the shared dark right-edge
 gutter. The manifest summary names revision browsing, comparison, and restore
 instead of the generic feature label.
+The fixed Overview state places Explorer left, Compare in the main area, and
+History right. Banner and Overview media reuse that settled state in split,
+light, and dark variants.
 The sidebar capture MUST finish with the authored revision inventory visible
 rather than a transient loading or empty state.
 

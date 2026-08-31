@@ -8,7 +8,54 @@
     "Update counts as editors and active files change."
   ],
   "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/wordcount#readme",
-  "appearance": { "icon": "whole-word", "accent": "#06B6D4" },
+  "appearance": {
+    "icon": "whole-word",
+    "accent": "#06B6D4"
+  },
+  "media": {
+    "banner": {
+      "alt": "Lapis Word Count showing a simple Markdown document and populated status bar in the complete shell with both sidebars closed.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/banner.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/banner.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/banner.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/banner.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-word-count-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    },
+    "overview": {
+      "alt": "Lapis Word Count showing a simple Markdown document and populated status bar in the complete shell with both sidebars closed.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/overview.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/overview.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/overview.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/overview.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-word-count-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    }
+  },
   "gallery": [
     {
       "id": "focused-status-bar",
@@ -19,23 +66,50 @@
         },
         "full": {
           "path": "registry-assets/gallery/focused-status-bar.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/focused-status-bar.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/focused-status-bar.dark.webp"
         }
       },
       "capture": {
         "storyId": "plugins-word-count-registry-screenshots--editor-with-focused-status-bar",
-        "focus": "bottom-status"
+        "focus": "full-shell"
       },
       "card": {
         "headline": [
-          { "text": "Keep writing totals", "tone": "neutral" },
-          { "text": "in sight", "tone": "cyan" }
+          {
+            "text": "Keep writing totals",
+            "tone": "neutral"
+          },
+          {
+            "text": "in sight",
+            "tone": "cyan"
+          }
         ],
         "description": [
-          { "text": "See", "tone": "neutral" },
-          { "text": "live word and character counts", "tone": "violet" },
-          { "text": "in the status bar, with", "tone": "neutral" },
-          { "text": "reading time", "tone": "amber" },
-          { "text": "one click away.", "tone": "neutral" }
+          {
+            "text": "See",
+            "tone": "neutral"
+          },
+          {
+            "text": "live word and character counts",
+            "tone": "violet"
+          },
+          {
+            "text": "in the status bar, with",
+            "tone": "neutral"
+          },
+          {
+            "text": "reading time",
+            "tone": "amber"
+          },
+          {
+            "text": "one click away.",
+            "tone": "neutral"
+          }
         ]
       }
     }

@@ -6,6 +6,7 @@
   "description": "Markdown diagnostics provider",
   "author": "Lapis Notes",
   "authorUrl": "https://app.lapis.md",
+  "authorAvatarUrl": "https://www.gravatar.com/avatar/1df68d9ff087b0dd72fd8626056fca7f?s=128&d=404",
   "isDesktopOnly": false,
   "lapis": {
     "manifestVersion": 1,
@@ -40,9 +41,7 @@
               "items": {
                 "type": "string"
               },
-              "default": [
-                "MD013"
-              ]
+              "default": ["MD013"]
             },
             "includeGlobs": {
               "type": "array",
@@ -51,9 +50,7 @@
               "items": {
                 "type": "string"
               },
-              "default": [
-                "**/*.{md,markdown,mdown,mkd,mdwn,mdtxt,mdtext}"
-              ]
+              "default": ["**/*.{md,markdown,mdown,mkd,mdwn,mdtxt,mdtext}"]
             },
             "excludeGlobs": {
               "type": "array",
@@ -79,9 +76,7 @@
         {
           "id": "markdown-lint",
           "service": "language-service",
-          "languages": [
-            "markdown"
-          ],
+          "languages": ["markdown"],
           "priority": 100,
           "capabilities": {
             "diagnostics": true,

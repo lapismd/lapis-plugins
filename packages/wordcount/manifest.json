@@ -5,6 +5,7 @@
   "minAppVersion": "0.1.0",
   "description": "Status bar word and character count",
   "author": "Lapis Notes",
+  "authorAvatarUrl": "https://www.gravatar.com/avatar/1df68d9ff087b0dd72fd8626056fca7f?s=128&d=404",
   "isDesktopOnly": false,
   "lapis": {
     "manifestVersion": 1,
@@ -16,9 +17,7 @@
         "workspace": {
           "path": "main.mjs",
           "format": "esm",
-          "sharedDependencies": [
-            "@lapis-notes/api"
-          ],
+          "sharedDependencies": ["@lapis-notes/api"],
           "requiresReloadOnUpdate": false
         }
       }

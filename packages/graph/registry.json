@@ -8,7 +8,54 @@
     "Tune grouping, forces, and time-lapse views for large vaults."
   ],
   "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/graph#readme",
-  "appearance": { "icon": "network", "accent": "#8B5CF6" },
+  "appearance": {
+    "icon": "network",
+    "accent": "#8B5CF6"
+  },
+  "media": {
+    "banner": {
+      "alt": "Lapis Graph with Explorer on the left, a connected Global Graph in the main workspace, and Local Graph on the right.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/banner.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/banner.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/banner.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/banner.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-graph-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    },
+    "overview": {
+      "alt": "Lapis Graph with Explorer on the left, a connected Global Graph in the main workspace, and Local Graph on the right.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/overview.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/overview.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/overview.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/overview.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-graph-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    }
+  },
   "gallery": [
     {
       "id": "global-graph",
@@ -17,7 +64,15 @@
         "preview": {
           "path": "registry-assets/gallery/global-graph.preview.webp"
         },
-        "full": { "path": "registry-assets/gallery/global-graph.full.webp" }
+        "full": {
+          "path": "registry-assets/gallery/global-graph.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/global-graph.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/global-graph.dark.webp"
+        }
       },
       "capture": {
         "storyId": "plugins-graph-registry-screenshots--global-graph",
@@ -25,16 +80,28 @@
       },
       "card": {
         "headline": [
-          { "text": "See how your vault", "tone": "neutral" },
-          { "text": "connects", "tone": "violet" }
+          {
+            "text": "See how your vault",
+            "tone": "neutral"
+          },
+          {
+            "text": "connects",
+            "tone": "violet"
+          }
         ],
         "description": [
           {
             "text": "Explore notes, tags, attachments, and",
             "tone": "neutral"
           },
-          { "text": "unresolved links", "tone": "rose" },
-          { "text": "in a live global map.", "tone": "cyan" }
+          {
+            "text": "unresolved links",
+            "tone": "rose"
+          },
+          {
+            "text": "in a live global map.",
+            "tone": "cyan"
+          }
         ]
       }
     },
@@ -45,7 +112,15 @@
         "preview": {
           "path": "registry-assets/gallery/local-graph.preview.webp"
         },
-        "full": { "path": "registry-assets/gallery/local-graph.full.webp" }
+        "full": {
+          "path": "registry-assets/gallery/local-graph.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/local-graph.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/local-graph.dark.webp"
+        }
       },
       "capture": {
         "storyId": "plugins-graph-registry-screenshots--local-graph",
@@ -53,8 +128,14 @@
       },
       "card": {
         "headline": [
-          { "text": "Focus on what is", "tone": "neutral" },
-          { "text": "nearby", "tone": "cyan" }
+          {
+            "text": "Focus on what is",
+            "tone": "neutral"
+          },
+          {
+            "text": "nearby",
+            "tone": "cyan"
+          }
         ],
         "description": [
           {

@@ -40,21 +40,19 @@ export const EditorActionPopover: Story = {
     await showRegistryDiagnostics(
       canvasElement,
       "Notes/Field notes.md",
-      "harper",
+      "harper"
     );
     const lintRange = [
       ...canvasElement.querySelectorAll<HTMLElement>(".cm-lintRange"),
     ].find((range) =>
-      /recieved|accesibility|definately|seperate/u.test(
-        range.textContent ?? "",
-      ),
+      /recieved|accesibility|definately|seperate/u.test(range.textContent ?? "")
     );
     expect(lintRange).not.toBeNull();
     await userEvent.hover(lintRange!);
     const body = within(canvasElement.ownerDocument.body);
     const tooltip = await body.findByTestId("lapis-lint-tooltip");
     expect(within(tooltip).getByTestId("lapis-lint-source")).toHaveTextContent(
-      /harper/i,
+      /harper/i
     );
     const quickFix = within(tooltip).getByRole("button", {
       name: "Quick Fix",
@@ -62,4 +60,10 @@ export const EditorActionPopover: Story = {
     expect(quickFix).toBeVisible();
     await userEvent.hover(tooltip);
   },
+};
+
+export const Overview: Story = {
+  name: "Overview",
+  render: SuggestionsAndProblems.render,
+  play: SuggestionsAndProblems.play,
 };

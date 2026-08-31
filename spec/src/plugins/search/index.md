@@ -11,6 +11,9 @@ separate visual approval.
 The filter capture MUST leave its authored controls open and assert that final
 state before the media compositor reads the story.
 Both focused frames retain the shared dark right-edge gutter.
+The fixed Overview state places populated Search in the primary left sidebar
+beside an empty main workspace with the right dock closed. Banner and Overview
+media reuse it in split, light, and dark variants.
 
 `@lapis-notes/search` owns vault search indexing, query presentation, result
 navigation, and the `search` workspace view. Query parsing and generated search

@@ -5,9 +5,12 @@ highlights, and registry-only Overview content under LP-SPEC-021 and LP-SPEC-033
 metadata remain authoritative for the fields defined by LP-SPEC-022.
 Registry identity and capture-backed gallery media remain package-owned under
 LP-SPEC-030 and LP-SPEC-031. The governed `Registry Screenshots` story covers
-the populated Bookmarks sidebar in the shared light shell and stays
+the populated Bookmarks sidebar in the shared themed shell and stays
 `visual-pending` until separate visual approval.
 Its focused frame retains the shared dark right-edge gutter.
+The fixed Overview state places Bookmarks in the primary left sidebar beside
+an empty main workspace with the right dock closed. Banner and Overview media
+reuse it in split, light, and dark variants.
 
 `@lapis-notes/bookmarks` owns the movable Bookmarks panel and Obsidian-compatible
 `.obsidian/bookmarks.json`. It does not own Explorer, Search, or Graph.

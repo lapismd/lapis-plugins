@@ -30,17 +30,29 @@ export const EditorWithFocusedStatusBar: Story = {
     await waitFor(
       () => {
         const item = canvasElement.querySelector<HTMLElement>(
-          '[data-status-bar-item-id="wordcount:status"]',
+          '[data-status-bar-item-id="wordcount:status"]'
         );
         expect(item).not.toBeNull();
         expect(item).toHaveTextContent(/words/);
         expect(item).toHaveTextContent(/characters/);
         const leftSidebar = canvasElement.querySelector<HTMLElement>(
-          '[data-workspace-surface="left-sidebar"]',
+          '[data-workspace-surface="left-sidebar"]'
+        );
+        const rightSidebar = canvasElement.querySelector<HTMLElement>(
+          '[data-workspace-surface="right-sidebar"]'
         );
         expect(leftSidebar?.getBoundingClientRect().width ?? 0).toBeLessThan(2);
+        expect(rightSidebar?.getBoundingClientRect().width ?? 0).toBeLessThan(
+          2
+        );
       },
-      { timeout: 12_000 },
+      { timeout: 12_000 }
     );
   },
+};
+
+export const Overview: Story = {
+  name: "Overview",
+  render: EditorWithFocusedStatusBar.render,
+  play: EditorWithFocusedStatusBar.play,
 };

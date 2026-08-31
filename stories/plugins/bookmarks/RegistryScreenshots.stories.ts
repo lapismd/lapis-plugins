@@ -28,7 +28,25 @@ export const BookmarksSidebar: Story = {
     await registryPanelApp(canvasElement);
     await waitForRegistrySurface(
       canvasElement,
-      '[data-testid="bookmarks-panel"]',
+      '[data-testid="bookmarks-panel"]'
+    );
+  },
+};
+
+export const Overview: Story = {
+  render: (() => ({
+    Component: PanelDemo,
+    props: {
+      kind: "bookmarks",
+      layout: "left-sidebar",
+      diagnostics: "none",
+    },
+  })) as Story["render"],
+  play: async ({ canvasElement }) => {
+    await registryPanelApp(canvasElement);
+    await waitForRegistrySurface(
+      canvasElement,
+      '[data-testid="bookmarks-panel"]'
     );
   },
 };

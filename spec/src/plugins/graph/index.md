@@ -11,6 +11,9 @@ unresolved-link network plus its populated Local Graph sidebar; both stay
 The Global Graph card preserves the complete full-shell capture, while Local
 Graph retains its declared sidebar-focused crop. Both frames retain the shared
 dark right-edge gutter.
+The fixed Overview state places Explorer left, Global Graph in the main area,
+and Local Graph right. Banner and Overview media reuse that settled state in
+split, light, and dark variants.
 Graph captures MUST wait for the loading status to clear, the canvas to be
 visible, and the deterministic node/link inventory to be populated. The Local
 Graph capture additionally waits for its final focused layout paint after

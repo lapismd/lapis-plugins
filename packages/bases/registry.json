@@ -8,14 +8,71 @@
     "Keep editable views backed by ordinary Lapis content."
   ],
   "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/bases#readme",
-  "appearance": { "icon": "table-2", "accent": "#14B8A6" },
+  "appearance": {
+    "icon": "table-2",
+    "accent": "#14B8A6"
+  },
+  "media": {
+    "banner": {
+      "alt": "Lapis Bases showing a populated project cover-card view with real artwork and useful properties.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/banner.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/banner.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/banner.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/banner.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-bases-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    },
+    "overview": {
+      "alt": "Lapis Bases showing a populated project cover-card view with real artwork and useful properties.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/overview.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/overview.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/overview.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/overview.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-bases-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    }
+  },
   "gallery": [
     {
       "id": "table",
       "alt": "Focused projects table with the Filter panel open to an Active status rule.",
       "images": {
-        "preview": { "path": "registry-assets/gallery/table.preview.webp" },
-        "full": { "path": "registry-assets/gallery/table.full.webp" }
+        "preview": {
+          "path": "registry-assets/gallery/table.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/table.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/table.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/table.dark.webp"
+        }
       },
       "capture": {
         "storyId": "plugins-bases-registry-screenshots--filter-options",
@@ -23,15 +80,24 @@
       },
       "card": {
         "headline": [
-          { "text": "Filter the work", "tone": "neutral" },
-          { "text": "to what matters now", "tone": "cyan" }
+          {
+            "text": "Filter the work",
+            "tone": "neutral"
+          },
+          {
+            "text": "to what matters now",
+            "tone": "cyan"
+          }
         ],
         "description": [
           {
             "text": "Combine property rules across one view or every view while the source stays",
             "tone": "neutral"
           },
-          { "text": "ordinary Markdown.", "tone": "green" }
+          {
+            "text": "ordinary Markdown.",
+            "tone": "green"
+          }
         ]
       }
     },
@@ -39,8 +105,18 @@
       "id": "cards",
       "alt": "Focused projects base displayed as visual cards with actual cover artwork, owner, status, and score.",
       "images": {
-        "preview": { "path": "registry-assets/gallery/cards.preview.webp" },
-        "full": { "path": "registry-assets/gallery/cards.full.webp" }
+        "preview": {
+          "path": "registry-assets/gallery/cards.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/cards.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/cards.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/cards.dark.webp"
+        }
       },
       "capture": {
         "storyId": "plugins-bases-registry-screenshots--cover-cards",
@@ -48,8 +124,14 @@
       },
       "card": {
         "headline": [
-          { "text": "See the work", "tone": "neutral" },
-          { "text": "at a glance", "tone": "violet" }
+          {
+            "text": "See the work",
+            "tone": "neutral"
+          },
+          {
+            "text": "at a glance",
+            "tone": "violet"
+          }
         ],
         "description": [
           {
@@ -66,7 +148,15 @@
         "preview": {
           "path": "registry-assets/gallery/grouped-list.preview.webp"
         },
-        "full": { "path": "registry-assets/gallery/grouped-list.full.webp" }
+        "full": {
+          "path": "registry-assets/gallery/grouped-list.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/grouped-list.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/grouped-list.dark.webp"
+        }
       },
       "capture": {
         "storyId": "plugins-bases-registry-screenshots--grouped-list",
@@ -74,8 +164,14 @@
       },
       "card": {
         "headline": [
-          { "text": "Group related notes", "tone": "neutral" },
-          { "text": "around the next decision", "tone": "green" }
+          {
+            "text": "Group related notes",
+            "tone": "neutral"
+          },
+          {
+            "text": "around the next decision",
+            "tone": "green"
+          }
         ],
         "description": [
           {

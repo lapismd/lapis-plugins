@@ -36,3 +36,9 @@ export const JsonEditor: Story = {
     }
   },
 };
+
+export const Overview: Story = {
+  name: "Overview",
+  render: JsonEditor.render,
+  play: JsonEditor.play,
+};
