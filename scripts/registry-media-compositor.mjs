@@ -18,7 +18,16 @@ export const REGISTRY_MEDIA_TONES = Object.freeze({
 });
 
 const CANVAS = REGISTRY_MEDIA_DIMENSIONS.full;
-const SCREENSHOT = { width: 1440, height: 1280, radius: 16 };
+const FULL_SHELL_SCREENSHOT = Object.freeze({
+  width: 1440,
+  height: 960,
+  radius: 16,
+});
+const FOCUSED_SCREENSHOT = Object.freeze({
+  width: 1440,
+  height: 1280,
+  radius: 16,
+});
 const BACKGROUND = "#000000";
 const MUTED = "#C7C0CC";
 const DESCRIPTION_TONES = Object.freeze({
@@ -55,23 +64,24 @@ export async function composeRegistryMedia({ source, focus, card, fontPath }) {
   };
   pixels.width = Math.min(pixels.width, metadata.width - pixels.left);
   pixels.height = Math.min(pixels.height, metadata.height - pixels.top);
+  const screenshotFrame = resolveRegistryScreenshotFrame(focus);
   const coverScale = Math.max(
-    SCREENSHOT.width / pixels.width,
-    SCREENSHOT.height / pixels.height
+    screenshotFrame.width / pixels.width,
+    screenshotFrame.height / pixels.height
   );
   if (coverScale > 1) {
     throw new Error(
-      `Focus crop ${pixels.width}x${pixels.height} would upscale to ${SCREENSHOT.width}x${SCREENSHOT.height}.`
+      `Focus crop ${pixels.width}x${pixels.height} would upscale to ${screenshotFrame.width}x${screenshotFrame.height}.`
     );
   }
 
   const { headline, description } = validateRegistryCardCopy(card);
   const positions = { copyX: 80, screenshotX: 960 };
-  const screenshotY = 160;
+  const screenshotY = Math.round((CANVAS.height - screenshotFrame.height) / 2);
 
   const screenshot = await sharp(source)
     .extract(pixels)
-    .resize(SCREENSHOT.width, SCREENSHOT.height, {
+    .resize(screenshotFrame.width, screenshotFrame.height, {
       fit: "cover",
       position: focusPosition(focus),
       withoutEnlargement: true,
@@ -80,7 +90,7 @@ export async function composeRegistryMedia({ source, focus, card, fontPath }) {
     .composite([
       {
         input: Buffer.from(
-          `<svg width="${SCREENSHOT.width}" height="${SCREENSHOT.height}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" rx="${SCREENSHOT.radius}" fill="#fff"/></svg>`
+          `<svg width="${screenshotFrame.width}" height="${screenshotFrame.height}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" rx="${screenshotFrame.radius}" fill="#fff"/></svg>`
         ),
         blend: "dest-in",
       },
@@ -97,6 +107,7 @@ export async function composeRegistryMedia({ source, focus, card, fontPath }) {
       copyX: positions.copyX,
       screenshotX: positions.screenshotX,
       screenshotY,
+      screenshotFrame,
     })
   );
   const full = await sharp(background, {
@@ -111,12 +122,12 @@ export async function composeRegistryMedia({ source, focus, card, fontPath }) {
       },
       {
         input: Buffer.from(
-          `<svg width="${SCREENSHOT.width}" height="${
-            SCREENSHOT.height
+          `<svg width="${screenshotFrame.width}" height="${
+            screenshotFrame.height
           }" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="${
-            SCREENSHOT.width - 2
-          }" height="${SCREENSHOT.height - 2}" rx="${
-            SCREENSHOT.radius
+            screenshotFrame.width - 2
+          }" height="${screenshotFrame.height - 2}" rx="${
+            screenshotFrame.radius
           }" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="2"/></svg>`
         ),
         left: positions.screenshotX,
@@ -173,6 +184,10 @@ export function resolveFocusCrop(focus) {
   return crop;
 }
 
+export function resolveRegistryScreenshotFrame(focus) {
+  return focus === "full-shell" ? FULL_SHELL_SCREENSHOT : FOCUSED_SCREENSHOT;
+}
+
 export function validateRegistryCardCopy(card) {
   return {
     headline: layoutHeadline(card.headline),
@@ -181,7 +196,7 @@ export function validateRegistryCardCopy(card) {
 }
 
 function focusPosition(focus) {
-  if (focus === "full-shell") return "west";
+  if (focus === "full-shell") return "centre";
   if (focus === "left-sidebar") return "left";
   if (focus === "right-sidebar") return "right";
   if (focus === "bottom-status") return "southeast";
@@ -317,6 +332,7 @@ function renderCardSvg({
   copyX,
   screenshotX,
   screenshotY,
+  screenshotFrame,
 }) {
   const headlineStep = 132;
   const descriptionStep = 68;
@@ -377,13 +393,13 @@ function renderCardSvg({
       </filter>
     </defs>
     <rect width="2400" height="1600" fill="${BACKGROUND}"/>
-    <ellipse cx="${screenshotX + SCREENSHOT.width / 2}" cy="${
-    screenshotY + SCREENSHOT.height / 2
+    <ellipse cx="${screenshotX + screenshotFrame.width / 2}" cy="${
+    screenshotY + screenshotFrame.height / 2
   }" rx="940" ry="760" fill="url(#glow)"/>
-    <rect x="${shadowX}" y="${shadowY}" width="${SCREENSHOT.width}" height="${
-    SCREENSHOT.height
-  }" rx="${
-    SCREENSHOT.radius
+    <rect x="${shadowX}" y="${shadowY}" width="${
+    screenshotFrame.width
+  }" height="${screenshotFrame.height}" rx="${
+    screenshotFrame.radius
   }" fill="#000" fill-opacity="0.72" filter="url(#shadow)"/>
     <text x="${copyX}" y="${eyebrowY}" fill="#8F8798" class="eyebrow">LAPIS PLUGIN</text>
     ${headlineSvg}

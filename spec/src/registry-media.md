@@ -90,10 +90,12 @@ reference, with heavier and slightly larger headline and supporting copy. A
 fixed black canvas and allowlisted palette preserve inline description colours
 while wrapping deterministically. The complete copy block is vertically
 centred, with a deliberate visual gap between the eyebrow and headline. Copy
-always occupies the left region, while the captured product surface occupies
-the right at approximately four-fifths of the card height. Composition applies
-the declared crop without upscaling, keeps screenshot framing intentionally
-tight, and emits a 2400x1600 lossless-WebP full image. The
+always occupies the left region. A `full-shell` card fits the complete 3:2
+capture into a 1440x960 frame on the right and MUST preserve both horizontal
+edges without cover cropping. Focused sidebar, status, and custom presets use a
+taller 1440x1280 frame and MAY cover-crop to the declared subject. Composition
+applies the declared crop without upscaling, keeps screenshot framing
+intentionally tight, and emits a 2400x1600 lossless-WebP full image. The
 1200x800 lossless-WebP preview is downscaled from that full image. Text or image
 overflow, unexpected dimensions, unsafe paths, missing tags, and stale bytes
 are failures.

@@ -10,6 +10,8 @@ the diagnostic action popover held open; both hide the sidebars and stay
 `visual-pending` until separate visual approval.
 The shared registry fixture MUST preserve Harper diagnostics after provider
 settling, and the popover story MUST assert the authored open action state.
+Both generated cards preserve the complete full-shell capture so diagnostics
+and the action popover remain visible from edge to edge.
 
 Canonical daily notes use the same Markdown spellcheck pipeline as other
 notes. Spellcheck does not participate in daily-document resolution or Tasks

@@ -8,6 +8,8 @@ LP-SPEC-030 and LP-SPEC-031. Governed `Registry Screenshots` stories cover
 focused Filter options, Cover cards with real artwork, and a Grouped List with
 its grouping controls open; all stay `visual-pending` until separate visual
 approval.
+All three focused views use the uncropped full-shell composition so their
+complete workspace width remains visible in the generated cards.
 
 The package consumes the published Design Core semver contract. Runtime and
 tests MUST NOT depend on a sibling-repository path or a workspace `link:`

@@ -9,6 +9,8 @@ focused chat with tool activity, History, and Catalog; all stay
 `visual-pending` until separate visual approval.
 Capture readiness keeps the completed tool activity visible and asserts the
 focused transcript state before media generation begins.
+The focused chat uses the uncropped full-shell composition so the complete
+workspace, composer, and right edge remain visible in the generated card.
 
 `@lapis-notes/ai` owns the provider-agnostic agent runtime, session control,
 normalized events, and the movable chat panel. Domain plugins may register

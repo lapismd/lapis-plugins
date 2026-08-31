@@ -7,6 +7,8 @@ Registry identity and capture-backed gallery media remain package-owned under
 LP-SPEC-030 and LP-SPEC-031. Governed `Registry Screenshots` stories cover the
 populated local-snapshot History sidebar and Compare view; both stay
 `visual-pending` until separate visual approval.
+Compare preserves the complete full-shell capture, while History retains its
+declared sidebar-focused crop.
 The sidebar capture MUST finish with the authored revision inventory visible
 rather than a transient loading or empty state.
 
