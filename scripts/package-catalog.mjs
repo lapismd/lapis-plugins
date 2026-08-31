@@ -32,6 +32,11 @@ export const pluginPackages = [
     pluginId: "search",
   },
   {
+    directory: "slides",
+    packageName: "@lapis-notes/slides",
+    pluginId: "lapis-slides",
+  },
+  {
     directory: "source-editor",
     packageName: "@lapis-notes/source-editor",
     pluginId: "lapis-source-editor",

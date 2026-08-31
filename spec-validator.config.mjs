@@ -13,6 +13,7 @@ const packages = [
   "markdown",
   "markdown-lint",
   "search",
+  "slides",
   "source-editor",
   "spellcheck",
   "wordcount",

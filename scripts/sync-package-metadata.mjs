@@ -23,6 +23,7 @@ const descriptions = new Map([
   ["markdown-lint", "Markdown diagnostics for Lapis applications"],
   ["markdown", "Markdown editing, preview, metadata, and panels for Lapis applications"],
   ["source-editor", "Source editing for text, JSON, and YAML files"],
+  ["slides", "Presentation mode for Markdown notes"],
   ["spellcheck", "Harper grammar and spelling diagnostics for open notes"],
   ["wordcount", "Status bar word, character, and reading-time counts"],
 ]);
@@ -92,6 +93,7 @@ const sharedDependencies = new Map([
       "@lapis-notes/api/agent-tools",
     ],
   ],
+  ["slides", ["@lapis-notes/api", "@lapis-notes/markdown/embed"]],
   [
     "source-editor",
     [

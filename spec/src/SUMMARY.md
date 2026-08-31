@@ -20,6 +20,7 @@
       - [Tags](plugins/markdown/panels/tags.md)
   - [Plugins / Markdown Lint](plugins/markdown-lint/index.md)
   - [Plugins / Search](plugins/search/index.md)
+  - [Plugins / Slides](plugins/slides/index.md)
   - [Plugins / Source Editor](plugins/source-editor/index.md)
   - [Plugins / Spell Check](plugins/spellcheck/index.md)
   - [Plugins / Word Count](plugins/wordcount/index.md)
