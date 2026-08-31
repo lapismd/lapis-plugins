@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, waitFor } from "storybook/test";
 import { FileExplorerViewType } from "@lapis-notes/file-explorer";
 import { LocalGraphViewType } from "@lapis-notes/graph";
+import { WORKSPACE_SHELL_DOCS_PARAMETERS } from "../../workspace/docs-parameters";
 import PanelDemo from "../_shared/panels/PanelDemo.svelte";
 import {
   registryPanelApp,
@@ -12,7 +13,10 @@ const meta = {
   title: "Plugins/Graph/Registry Screenshots",
   component: PanelDemo,
   tags: ["registry-media", "visual-pending"],
-  parameters: { layout: "fullscreen" },
+  parameters: {
+    layout: "fullscreen",
+    docs: WORKSPACE_SHELL_DOCS_PARAMETERS,
+  },
 } satisfies Meta<typeof PanelDemo>;
 
 export default meta;

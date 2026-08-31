@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import PanelDemo from "../_shared/panels/PanelDemo.svelte";
+import { WORKSPACE_SHELL_DOCS_PARAMETERS } from "../../workspace/docs-parameters";
 import {
   registryPanelApp,
   waitForRegistrySurface,
@@ -9,7 +10,10 @@ const meta = {
   title: "Plugins/Bookmarks/Registry Screenshots",
   component: PanelDemo,
   tags: ["registry-media", "visual-pending"],
-  parameters: { layout: "fullscreen" },
+  parameters: {
+    layout: "fullscreen",
+    docs: WORKSPACE_SHELL_DOCS_PARAMETERS,
+  },
 } satisfies Meta<typeof PanelDemo>;
 
 export default meta;

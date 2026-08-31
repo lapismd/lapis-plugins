@@ -76,3 +76,6 @@ openFile or registered command
 The plugin owns bookmark persistence and presentation. Cross-panel navigation
 uses registered commands. The canonical palette opener is
 `Bookmarks: Open Bookmarks` (`bookmarks:open-bookmarks`).
+
+Bookmarks registry-media Autodocs use the shared full-workspace framing
+governed by LP-SPEC-044.

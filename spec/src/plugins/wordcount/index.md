@@ -60,3 +60,6 @@ counting, or status-bar ownership.
 | LN-WC-002 | Word Count MUST report words and characters for the active `TextFileView`. A non-empty selection MUST replace the document count. Other leaves MUST hide the status item.                                   |
 | LN-WC-003 | Word Count MUST update `app.statusBar` with optional segments and a reading-time command. Clicking the status item MUST show reading time. It MUST NOT use compatibility status DOM.                        |
 | LN-WC-004 | Deno desktop, web, editor-demo, and audited Storybook hosts MUST register Word Count as `enabledByDefault: true` and load it before metadata and layout restoration.                                        |
+
+Word Count registry-media Autodocs use the shared full-workspace framing
+governed by LP-SPEC-044.

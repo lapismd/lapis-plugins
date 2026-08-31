@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, waitFor } from "storybook/test";
+import { WORKSPACE_SHELL_DOCS_PARAMETERS } from "../../workspace/docs-parameters";
 import SlidesDemo from "./SlidesDemo.svelte";
 import {
   advanceToHeading,
@@ -11,7 +12,11 @@ const meta = {
   title: "Plugins/Slides/Registry Screenshots",
   component: SlidesDemo,
   tags: ["registry-media", "visual-pending"],
-  parameters: { layout: "fullscreen", visualDelta: { delay: 150 } },
+  parameters: {
+    layout: "fullscreen",
+    docs: WORKSPACE_SHELL_DOCS_PARAMETERS,
+    visualDelta: { delay: 150 },
+  },
 } satisfies Meta<typeof SlidesDemo>;
 
 export default meta;

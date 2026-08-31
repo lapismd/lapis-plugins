@@ -105,3 +105,6 @@ name comparison remain future work tracked in `MIGRATION.md`.
 The current query source lowers safe candidates into AppDatabase filters and
 reads unbounded candidate sets in stable path pages. A fully lowered view limit
 uses one bounded sorted page; final PEaQL evaluation remains authoritative.
+
+Bases registry-media Autodocs use the shared full-workspace framing governed
+by LP-SPEC-044.

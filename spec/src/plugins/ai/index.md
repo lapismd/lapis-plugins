@@ -449,3 +449,6 @@ unavailability because no live transport is required.
 AI declares Markdown as both a runtime peer and a development dependency so a
 clean workspace builds the public `MarkdownEmbed` contract before AI's Svelte
 checks while released applications still own the shared peer.
+
+AI registry-media Autodocs use the shared full-workspace framing governed by
+LP-SPEC-044.

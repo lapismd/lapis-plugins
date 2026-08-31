@@ -36,3 +36,6 @@ Settings persist through API configuration. Include and exclude globs use the
 shared editor-association glob dialect, not vscode `!` negation in one list.
 Code actions follow vscode-markdownlint titles, including vault-scope disable
 through `markdown-lint.disabledRules` (LN-MDL-005).
+
+Markdown Lint registry-media Autodocs use the shared full-workspace framing
+governed by LP-SPEC-044.

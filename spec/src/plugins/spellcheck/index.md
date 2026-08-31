@@ -75,3 +75,6 @@ titles (LN-SPL-010). Settings persist through API configuration. Markdown mode
 skips code fences. Ignore comments such as `harper:ignore` MAY mask regions
 through Harper `regex_mask`. Browser `editor.behaviour.spellCheck` remains a
 separate setting.
+
+Spell Check registry-media Autodocs use the shared full-workspace framing
+governed by LP-SPEC-044.

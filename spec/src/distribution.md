@@ -38,6 +38,7 @@
 | LP-SPEC-041 | Every first-party manifest MUST declare the HTTPS Lapis author avatar for `dev@lapis.md`. Manifest auditing MUST reject a missing, insecure, or different first-party avatar without changing package identity or release provenance. |
 | LP-SPEC-042 | Every first-party registry source MUST declare banner media plus one to five gallery items and MAY declare one Overview image only for a materially different full-screen state. A declared Overview MUST use a different governed story from the banner. Each item MUST expose a 1200x800 split preview and 2400x1600 split, light, and dark lossless-WebP outputs. Capture and card instructions MUST remain source-only. |
 | LP-SPEC-043 | Registry capture MUST render each distinct story once per light and dark theme at a 1200x800 CSS viewport and 2x density, cache by story and theme, and apply an exact corner-to-corner dark-upper-left/light-lower-right diagonal over half of the affected product area. It MUST reject stale, upscaled, malformed, or mismatched outputs and MUST NOT create or approve Visual Delta baselines. |
+| LP-SPEC-044 | Full-workspace Autodocs families, including registry-media stories, MUST use the shared padding-free Docs canvas and render each story in an isolated 700-pixel-high iframe. A repository-local specification audit MUST inventory these families and fail when a story omits the shared contract. |
 
 Plugin behavior corrections use an independent package patch changeset and
 retain focused owning-package checks plus real consumer Storybook acceptance as

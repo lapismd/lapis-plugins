@@ -108,3 +108,5 @@ release-only changes cannot bypass the same specification review as behavior.
 When a consumer Storybook scenario exposes an extracted-plugin defect, the
 behavioral correction and its canonical requirement remain plugin-owned while
 the consumer interaction remains valid cross-repository acceptance evidence.
+The repository-local Storybook Docs audit enforces the shared full-workspace
+framing required by LP-SPEC-044 across every governed plugin family.

@@ -120,3 +120,6 @@ Unified and split FileDiff share one toolbar toggle whose icon follows
 the current view. Wrap text is a pressed toggle that wraps long FileDiff
 and MergeEditor lines. The plugin registers a Design Core History settings
 section for exclude/include globs, tracked extensions, and capture caps.
+
+History registry-media Autodocs use the shared full-workspace framing governed
+by LP-SPEC-044.

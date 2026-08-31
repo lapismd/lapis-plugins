@@ -34,6 +34,7 @@ the explicit source leaf when the presentation closes.
 | LN-SLIDES-015 | Banner and `presentation` registry media MUST contain deterministic 1200x800 split preview plus 2400x1600 split, light, and dark WebPs. Package tests MUST cover parsing, both notes syntaxes, attributes, invalid YAML, command/menu guards, tab/source behavior, close/Escape, live refresh, index retention, and teardown. Visual Delta baselines MUST remain pending until separate approval. |
 | LN-SLIDES-016 | The presentation overlay MUST inherit the active application light or dark semantic background, foreground, selection, and secondary-surface tokens without forcing a theme class. Theme changes MUST flow through CSS custom properties without recreating the deck. |
 | LN-SLIDES-017 | Storybook MUST include an interaction-backed vertical-deck example that opens Slides through the public command, enters a vertical stack, navigates down, and asserts the active nested slide. The canonical fixture MUST exercise both horizontal and vertical separators. |
+| LN-SLIDES-018 | Both Slides Autodocs families MUST use the repository's shared full-workspace Docs contract: a padding-free canvas containing an isolated 700-pixel-high story iframe. |
 
 ## Runtime flow
 

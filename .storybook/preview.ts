@@ -5,6 +5,7 @@ import "@lapismd/design-core/storybook.css";
 import "@lapismd/design-core/themes/lapis.css";
 import "@lapis-notes/ui/theme.css";
 import "@lapis-notes/ui/codemirror-autocomplete.css";
+import "../stories/workspace/docs.css";
 
 const preview: Preview = {
   tags: ["autodocs", "test"],

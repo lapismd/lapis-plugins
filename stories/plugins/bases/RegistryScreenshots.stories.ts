@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, userEvent, waitFor, within } from "storybook/test";
+import { WORKSPACE_SHELL_DOCS_PARAMETERS } from "../../workspace/docs-parameters";
 import BasesEditorShellDemo from "./shell/ShellDemo.svelte";
 import type { BasesViewScenario } from "./bases-views-fixture";
 
@@ -7,7 +8,10 @@ const meta = {
   title: "Plugins/Bases/Registry Screenshots",
   component: BasesEditorShellDemo,
   tags: ["registry-media", "visual-pending"],
-  parameters: { layout: "fullscreen" },
+  parameters: {
+    layout: "fullscreen",
+    docs: WORKSPACE_SHELL_DOCS_PARAMETERS,
+  },
 } satisfies Meta<typeof BasesEditorShellDemo>;
 
 export default meta;

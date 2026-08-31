@@ -113,3 +113,6 @@ the snapshot only after a stable-fingerprint build completes. Metadata changes
 during a build queue one follow-up instead of opening another native event
 stream. Progress and telemetry contain aggregate pages, files, nodes, links,
 durations, and outcomes only; paths, labels, tags, and query text remain local.
+
+Graph registry-media Autodocs use the shared full-workspace framing governed
+by LP-SPEC-044.

@@ -157,3 +157,6 @@ newest generation, and surface query failures without snapshot fallback.
 Core tag projection combines inline Markdown tags with normalized frontmatter
 tags, including hierarchy ancestors, before Tags or Search facets query the
 database.
+
+Markdown registry-media Autodocs use the shared full-workspace framing
+governed by LP-SPEC-044.

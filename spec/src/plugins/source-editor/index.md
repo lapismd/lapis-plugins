@@ -33,3 +33,6 @@ plugin shares the host's App and framework identity.
 | LN-SRC-005 | Source Editor MUST receive App explicitly through plugin construction and lifecycle. It MUST NOT read or assign `globalThis.app`.                                                                      |
 | LN-SRC-006 | Package tests MUST cover its runtime ID, registration order assumptions, source associations, settings, unload behavior, and public export surface.                                                    |
 | LN-SRC-007 | The npm tarball and signed runtime archive MUST carry the same package version, runtime ID, manifest, source commit, and lifecycle CSS as the other extracted first-party plugins.                     |
+
+Source Editor registry-media Autodocs use the shared full-workspace framing
+governed by LP-SPEC-044.

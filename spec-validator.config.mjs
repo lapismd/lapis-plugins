@@ -31,6 +31,9 @@ export default defineConfig(tableRequirements(), {
     specFirst: "LP-SPEC-002",
     internal: "LP-SPEC-003",
   },
+  diagnostics: {
+    "STORYBOOK-DOCS-CONTRACT": "LP-SPEC-044",
+  },
   validators: {
     summary: true,
     governance: {
@@ -84,4 +87,5 @@ export default defineConfig(tableRequirements(), {
       ],
     },
   },
+  plugins: ["scripts/spec-validation/storybook-docs-audit.mjs"],
 });

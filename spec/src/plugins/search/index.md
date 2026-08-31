@@ -149,3 +149,6 @@ plain labels and delegate insertion escaping to the API formatter so selected
 values always round-trip through the shared parser. The API vault-syntax
 factory is the single catalog consumed by Search and Graph; each plugin owns
 only its value discovery, diagnostics, and query consequences.
+
+Search registry-media Autodocs use the shared full-workspace framing governed
+by LP-SPEC-044.

@@ -39,6 +39,7 @@ and records repository-level extraction and release gates.
 | LP-SPEC-041 | distribution | Implemented | Package metadata auditing checks all twelve manifests for the canonical HTTPS Lapis Gravatar while preserving existing author and provenance fields. |
 | LP-SPEC-042 | distribution, registry-media | Implemented | Source audits require banner and gallery media, permit only a materially distinct Overview story, and verify exact split preview/full plus light/dark full paths, dimensions, formats, and package ownership. |
 | LP-SPEC-043 | distribution, registry-media | Implemented | Capture and compositor tests cover two-theme story caching, corner-to-corner half-area diagonal pixels, deterministic four-variant output, no upscaling, stale-byte rejection, and unchanged Visual Delta baselines. |
+| LP-SPEC-044 | spec-governance, distribution | Implemented | The shared full-workspace Docs parameters and scoped canvas stylesheet enforce an isolated 700px, padding-free story; the repository-local Storybook Docs audit inventories every governed family and fails omissions. |
 | LN-AI-001 | ai-plugin | Implemented | package location, runtime ID `ai`, bundled default-enabled registration |
 | LN-AI-002 | ai-plugin | Implemented | public exports expose AgentRuntime; vendor SDKs stay in adapters |
 | LN-AI-003 | ai-plugin | Implemented | Fake and ACP sessions block on respondToApproval |
@@ -503,6 +504,7 @@ and records repository-level extraction and release gates.
 | LN-SLIDES-015 | plugins/slides/index | Implemented | media checks verify deterministic banner and gallery split preview/full plus light/dark WebPs; package tests and signed browser acceptance cover parser, lifecycle, refresh, index retention, close, unload, restart, disable, and re-enable. |
 | LN-SLIDES-016 | plugins/slides/index | Implemented | Slides CSS bridges Reveal surfaces to host semantic tokens, the component regression rejects a forced dark class, and the governed registry story asserts computed light and dark presentation colors. |
 | LN-SLIDES-017 | plugins/slides/index | Implemented | the canonical walkthrough contains a vertical stack and the Vertical Deck story drives Reveal into its nested child, navigates down, and asserts the active stack and slide. |
+| LN-SLIDES-018 | plugins/slides/index | Implemented | both Slides story families consume the shared full-workspace Docs parameters, while the repository-local audit and live Storybook Docs acceptance verify the isolated 700px, padding-free canvas. |
 | LN-SRC-001 | plugins/source-editor/index | Implemented | Source Editor manifest, exports, unit tests, package build, publint, npm-pack, App-ownership audit, and signed archive verification. |
 | LN-SRC-002 | plugins/source-editor/index | Implemented | Source Editor manifest, exports, unit tests, package build, publint, npm-pack, App-ownership audit, and signed archive verification. |
 | LN-SRC-003 | plugins/source-editor/index | Implemented | Source Editor manifest, exports, unit tests, package build, publint, npm-pack, App-ownership audit, and signed archive verification. |
