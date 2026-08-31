@@ -10,7 +10,8 @@ and Backlinks; all stay `visual-pending` until separate visual approval.
 Each capture MUST assert its final editor mode and adjacent panel before the
 shared readiness marker permits media generation.
 Reading preserves the complete full-shell capture, while the editor-and-panel
-cards retain their declared right-sidebar crops.
+cards retain their declared right-sidebar crops. Every frame retains the shared
+dark right-edge gutter.
 
 Daily notes remain ordinary authoritative Markdown documents. The Markdown
 plugin parses and edits them through its existing file surfaces while the

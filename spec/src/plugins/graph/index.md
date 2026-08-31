@@ -9,7 +9,8 @@ focused Global Graph with a richly connected note, tag, attachment, and
 unresolved-link network plus its populated Local Graph sidebar; both stay
 `visual-pending` until separate visual approval.
 The Global Graph card preserves the complete full-shell capture, while Local
-Graph retains its declared sidebar-focused crop.
+Graph retains its declared sidebar-focused crop. Both frames retain the shared
+dark right-edge gutter.
 Graph captures MUST wait for the loading status to clear, the canvas to be
 visible, and the deterministic node/link inventory to be populated. The Local
 Graph capture additionally waits for its final focused layout paint after

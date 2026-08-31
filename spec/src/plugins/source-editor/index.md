@@ -8,7 +8,7 @@ LP-SPEC-030 and LP-SPEC-031. The governed `Registry Screenshots` story covers
 the JSON editor filling a focused workspace and stays `visual-pending` until
 separate visual approval.
 The generated card preserves the complete full-shell capture so the focused
-editor remains visible from edge to edge.
+editor remains visible before the shared dark right-edge gutter.
 Capture readiness MUST assert the populated JSON document and focused workspace
 instead of relying only on shell startup.
 

@@ -1,6 +1,6 @@
 # Bases
 
-Bases
+Build table, card, and grouped views from Markdown properties
 
 ## Install for static composition
 

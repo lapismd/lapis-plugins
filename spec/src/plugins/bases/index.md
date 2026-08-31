@@ -9,7 +9,9 @@ focused Filter options, Cover cards with real artwork, and a Grouped List with
 its grouping controls open; all stay `visual-pending` until separate visual
 approval.
 All three focused views use the uncropped full-shell composition so their
-complete workspace width remains visible in the generated cards.
+complete workspace width remains visible before the shared dark right-edge
+gutter. The manifest summary names the table, card, and grouped Markdown
+property views instead of repeating the plugin name.
 
 The package consumes the published Design Core semver contract. Runtime and
 tests MUST NOT depend on a sibling-repository path or a workspace `link:`

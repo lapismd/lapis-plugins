@@ -163,7 +163,7 @@ describe("BasesPlugin", () => {
       id: "bases",
       name: "Bases",
       minAppVersion: "0.1.0",
-      description: "Bases",
+      description: "Build table, card, and grouped views from Markdown properties",
       author: "Lapis Notes Bases",
       authorUrl: "https://app.lapis.md",
       isDesktopOnly: false,

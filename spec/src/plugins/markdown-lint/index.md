@@ -10,7 +10,7 @@ sidebars are hidden, and stays `visual-pending` until separate visual approval.
 The shared registry fixture MUST retain the source-specific editor and Problems
 diagnostics through settled capture readiness.
 Its generated card preserves the complete full-shell capture so the editor and
-Problems surface remain visible from edge to edge.
+Problems surface remain visible before the shared dark right-edge gutter.
 
 `@lapis-notes/markdown-lint` adapts open Markdown document diagnostics into the
 shared Problems infrastructure. Language-service, Problems panel, desktop

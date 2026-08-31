@@ -8,7 +8,9 @@ LP-SPEC-030 and LP-SPEC-031. Governed `Registry Screenshots` stories cover the
 populated local-snapshot History sidebar and Compare view; both stay
 `visual-pending` until separate visual approval.
 Compare preserves the complete full-shell capture, while History retains its
-declared sidebar-focused crop.
+declared sidebar-focused crop. Both frames retain the shared dark right-edge
+gutter. The manifest summary names revision browsing, comparison, and restore
+instead of the generic feature label.
 The sidebar capture MUST finish with the authored revision inventory visible
 rather than a transient loading or empty state.
 

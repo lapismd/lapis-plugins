@@ -93,9 +93,10 @@ centred, with a deliberate visual gap between the eyebrow and headline. Copy
 always occupies the left region. A `full-shell` card fits the complete 3:2
 capture into a 1440x960 frame on the right and MUST preserve both horizontal
 edges without cover cropping. Focused sidebar, status, and custom presets use a
-taller 1440x1280 frame and MAY cover-crop to the declared subject. Composition
-applies the declared crop without upscaling, keeps screenshot framing
-intentionally tight, and emits a 2400x1600 lossless-WebP full image. The
+taller 1440x1280 frame and MAY cover-crop to the declared subject. Every frame
+retains a fixed 48px dark gutter at the outer right edge. Composition applies
+the declared crop without upscaling, keeps screenshot framing intentionally
+tight, and emits a 2400x1600 lossless-WebP full image. The
 1200x800 lossless-WebP preview is downscaled from that full image. Text or image
 overflow, unexpected dimensions, unsafe paths, missing tags, and stale bytes
 are failures.

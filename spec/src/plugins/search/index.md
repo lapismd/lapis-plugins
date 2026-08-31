@@ -10,6 +10,7 @@ settings open; both hide the right sidebar and stay `visual-pending` until
 separate visual approval.
 The filter capture MUST leave its authored controls open and assert that final
 state before the media compositor reads the story.
+Both focused frames retain the shared dark right-edge gutter.
 
 `@lapis-notes/search` owns vault search indexing, query presentation, result
 navigation, and the `search` workspace view. Query parsing and generated search

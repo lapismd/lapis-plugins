@@ -8,6 +8,8 @@ export const REGISTRY_MEDIA_DIMENSIONS = Object.freeze({
   preview: { width: 1200, height: 800 },
 });
 
+export const REGISTRY_MEDIA_SCREENSHOT_RIGHT_GUTTER = 48;
+
 export const REGISTRY_MEDIA_TONES = Object.freeze({
   neutral: "#F7F5FA",
   violet: "#B9A0FF",
@@ -76,7 +78,13 @@ export async function composeRegistryMedia({ source, focus, card, fontPath }) {
   }
 
   const { headline, description } = validateRegistryCardCopy(card);
-  const positions = { copyX: 80, screenshotX: 960 };
+  const positions = {
+    copyX: 80,
+    screenshotX:
+      CANVAS.width -
+      screenshotFrame.width -
+      REGISTRY_MEDIA_SCREENSHOT_RIGHT_GUTTER,
+  };
   const screenshotY = Math.round((CANVAS.height - screenshotFrame.height) / 2);
 
   const screenshot = await sharp(source)

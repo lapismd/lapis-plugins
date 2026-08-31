@@ -1,6 +1,6 @@
 # History
 
-File history
+Browse, compare, and restore saved file revisions
 
 ## Install for static composition
 

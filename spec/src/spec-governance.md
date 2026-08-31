@@ -32,8 +32,9 @@ stay aligned on story naming, capture density, authored data, generation
 commands, source-specific diagnostic isolation, production-compatible browser
 shims, final-state assertions, and baseline policy.
 Shared full-shell framing changes MUST preserve the complete 3:2 source capture
-and prove both horizontal edges remain in the composed output; subject-focused
-presets retain their explicitly bounded crop.
+and prove both horizontal edges remain in the composed output. Every composed
+frame MUST preserve the shared dark right-edge gutter; subject-focused presets
+retain their explicitly bounded crop.
 Registry platform generation and dedicated Overview-content auditing are
 protected by LP-SPEC-032 and LP-SPEC-033. Shared manifest normalization,
 release compatibility, package-file, and registry metadata checks map to

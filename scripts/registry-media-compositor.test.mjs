@@ -7,13 +7,16 @@ import sharp from "sharp";
 import {
   composeRegistryMedia,
   defaultRegistryMediaFontPath,
+  REGISTRY_MEDIA_DIMENSIONS,
+  REGISTRY_MEDIA_SCREENSHOT_RIGHT_GUTTER,
   resolveRegistryScreenshotFrame,
 } from "./registry-media-compositor.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-test("full-shell cards preserve both horizontal edges of the captured window", async () => {
-  assert.deepEqual(resolveRegistryScreenshotFrame("full-shell"), {
+test("full-shell cards preserve both source edges and a dark outer gutter", async () => {
+  const frame = resolveRegistryScreenshotFrame("full-shell");
+  assert.deepEqual(frame, {
     width: 1440,
     height: 960,
     radius: 16,
@@ -52,9 +55,14 @@ test("full-shell cards preserve both horizontal edges of the captured window", a
     fontPath: defaultRegistryMediaFontPath(root),
   });
   const decoded = await sharp(full).raw().toBuffer({ resolveWithObject: true });
+  const screenshotRight =
+    REGISTRY_MEDIA_DIMENSIONS.full.width -
+    REGISTRY_MEDIA_SCREENSHOT_RIGHT_GUTTER;
+  const screenshotLeft = screenshotRight - frame.width;
 
-  assert.deepEqual(pixel(decoded, 980, 800), [255, 0, 0]);
-  assert.deepEqual(pixel(decoded, 2380, 800), [0, 255, 255]);
+  assert.deepEqual(pixel(decoded, screenshotLeft + 20, 800), [255, 0, 0]);
+  assert.deepEqual(pixel(decoded, screenshotRight - 20, 800), [0, 255, 255]);
+  assert.notDeepEqual(pixel(decoded, screenshotRight + 20, 800), [0, 255, 255]);
 });
 
 function pixel({ data, info }, x, y) {
