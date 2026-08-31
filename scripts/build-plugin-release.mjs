@@ -33,7 +33,10 @@ import {
   pluginPackageBySelector,
   pluginPackages,
 } from "./package-catalog.mjs";
-import { isPluginSelfReference } from "./lib/runtime-host-modules.mjs";
+import {
+  isImplicitRendererEsmHostModule,
+  isPluginSelfReference,
+} from "./lib/runtime-host-modules.mjs";
 import { resolveWorkerLimit, runBoundedWorkers } from "./lib/concurrency.mjs";
 import { preparePluginReleaseRoot } from "./lib/release-output.mjs";
 import { resolveSourceCommit } from "./lib/source-commit.mjs";
@@ -201,7 +204,8 @@ async function buildRuntime(plugin, packageRoot, outDir) {
       rollupOptions: {
         external: (specifier) =>
           !isPluginSelfReference(plugin.packageName, specifier) &&
-          isApprovedHostModule(specifier),
+          (isApprovedHostModule(specifier) ||
+            isImplicitRendererEsmHostModule(specifier)),
         output: {
           entryFileNames: "main.mjs",
           chunkFileNames: "assets/[name]-[hash].mjs",
@@ -231,6 +235,9 @@ async function buildRuntime(plugin, packageRoot, outDir) {
     ).lapis.runtime.entries.workspace.sharedDependencies
   );
   for (const specifier of bareImports) {
+    if (isImplicitRendererEsmHostModule(specifier)) {
+      continue;
+    }
     if (!isApprovedHostModule(specifier)) {
       throw new Error(
         `${plugin.packageName} left non-host dependency ${specifier} external.`

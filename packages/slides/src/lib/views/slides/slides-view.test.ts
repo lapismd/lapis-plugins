@@ -49,9 +49,9 @@ vi.mock("@lapis-notes/api", () => {
     containerEl = (() => {
       const element = document.createElement("div");
       return Object.assign(element, {
-      empty() {
+        empty() {
           element.replaceChildren();
-      },
+        },
       });
     })();
 
@@ -78,13 +78,15 @@ import { SlidesView, SlidesViewType } from "./index";
 function createView() {
   const workspace = {
     activeLeaf: null as unknown,
+    activateLeaf: vi.fn(),
     getLeafById: vi.fn(),
-    setActiveLeaf: vi.fn(),
+    revealLeaf: vi.fn(async () => undefined),
+    requestSaveLayout: vi.fn(),
   };
   const app = { workspace };
   const WorkspaceLeafConstructor = WorkspaceLeaf as unknown as new (
     app: unknown,
-    id: string,
+    id: string
   ) => WorkspaceLeaf;
   const leaf = new WorkspaceLeafConstructor(app, "slides-leaf") as never;
   const view = new SlidesView(leaf);
@@ -117,11 +119,11 @@ describe("SlidesView", () => {
     expect(view.getViewData()).toBe("");
   });
 
-  it("mounts the presentation and returns to its explicit source leaf", () => {
+  it("mounts the presentation and reveals its explicit source leaf", async () => {
     const { app, leaf, view, workspace } = createView();
     const WorkspaceLeafConstructor = WorkspaceLeaf as unknown as new (
       app: unknown,
-      id: string,
+      id: string
     ) => WorkspaceLeaf;
     const source = new WorkspaceLeafConstructor(app, "source-leaf");
     workspace.getLeafById.mockReturnValue(source);
@@ -137,16 +139,22 @@ describe("SlidesView", () => {
       sourcePath: "Deck.md",
     });
 
-    (harness.mountedProps?.onClose as () => void)();
+    await (harness.mountedProps?.onClose as () => Promise<void>)();
     expect(leaf.close).toHaveBeenCalledOnce();
-    expect(workspace.setActiveLeaf).toHaveBeenCalledWith(source);
+    expect(workspace.activateLeaf).toHaveBeenCalledWith(source, {
+      focusRootHost: false,
+      source: "api",
+      operation: "close-presentation",
+    });
+    expect(workspace.revealLeaf).toHaveBeenCalledWith(source);
+    expect(workspace.requestSaveLayout).toHaveBeenCalledOnce();
   });
 
-  it("falls back to a sibling source leaf and unmounts cleanly", () => {
+  it("falls back to a sibling source leaf and unmounts cleanly", async () => {
     const { app, leaf, view, workspace } = createView();
     const WorkspaceLeafConstructor = WorkspaceLeaf as unknown as new (
       app: unknown,
-      id: string,
+      id: string
     ) => WorkspaceLeaf;
     const sibling = new WorkspaceLeafConstructor(app, "sibling");
     (leaf as unknown as { parent: { children: unknown[] } }).parent.children = [
@@ -155,8 +163,14 @@ describe("SlidesView", () => {
     ];
 
     view.load();
-    (harness.mountedProps?.onClose as () => void)();
-    expect(workspace.setActiveLeaf).toHaveBeenCalledWith(sibling);
+    await (harness.mountedProps?.onClose as () => Promise<void>)();
+    expect(workspace.activateLeaf).toHaveBeenCalledWith(sibling, {
+      focusRootHost: false,
+      source: "api",
+      operation: "close-presentation",
+    });
+    expect(workspace.revealLeaf).toHaveBeenCalledWith(sibling);
+    expect(workspace.requestSaveLayout).toHaveBeenCalledOnce();
 
     view.unload();
     expect(harness.unmount).toHaveBeenCalledWith(harness.component);

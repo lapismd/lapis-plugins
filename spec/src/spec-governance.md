@@ -21,6 +21,10 @@ approved-release environment, and immutable-version patch rollback policy.
 Package-boundary verification also rejects bundled Lapis host packages and
 requires every externalized Lapis runtime module to resolve through a declared
 peer supplied by the consuming application.
+Shared release tooling MAY treat only the three compiler-emitted Svelte
+renderer specifiers named by LP-SPEC-014 as an implicit host ABI. Focused tests
+MUST reject arbitrary Svelte subpaths and keep this ABI out of authored plugin
+manifest dependencies.
 Package registry metadata is protected by the same mapped spec-first rule. Each
 source file maps to its owning plugin chapter, while shared schema, audit, and
 dispatch tooling map to Distribution and this governance chapter.

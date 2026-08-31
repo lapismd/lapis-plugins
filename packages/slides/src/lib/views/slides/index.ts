@@ -64,17 +64,25 @@ export class SlidesView extends TextFileView {
         app: this.app,
         editor: this.editor,
         sourcePath: this.file?.path ?? "",
-        onClose: () => {
-          const previousLeaf = this.getPreviousLeaf();
-          this.leaf.close();
-
-          const nextLeaf = previousLeaf ?? this.app.workspace.activeLeaf;
-          if (nextLeaf) {
-            this.app.workspace.setActiveLeaf(nextLeaf);
-          }
-        },
+        onClose: () => this.returnToSource(),
       },
     });
+  }
+
+  private async returnToSource(): Promise<void> {
+    const previousLeaf = this.getPreviousLeaf();
+    this.leaf.close();
+
+    const nextLeaf = previousLeaf ?? this.app.workspace.activeLeaf;
+    if (nextLeaf && nextLeaf !== this.leaf) {
+      this.app.workspace.activateLeaf(nextLeaf, {
+        focusRootHost: false,
+        source: "api",
+        operation: "close-presentation",
+      });
+      await this.app.workspace.revealLeaf(nextLeaf);
+    }
+    this.app.workspace.requestSaveLayout();
   }
 
   private getPreviousLeaf(): WorkspaceLeaf | null {
