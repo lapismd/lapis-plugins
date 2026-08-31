@@ -7,6 +7,16 @@ import {
   expectSlidesTheme,
   openSlidesPresentation,
 } from "./slides-story";
+import {
+  pluginWorkspaceSource,
+  registryStoryParameters,
+} from "../_shared/registry/registry-docs";
+
+const registrySource = pluginWorkspaceSource(
+  "@lapis-notes/slides",
+  "SlidesPlugin",
+  "lapis-slides:start-presentation"
+);
 
 const meta = {
   title: "Plugins/Slides/Registry Screenshots",
@@ -14,7 +24,13 @@ const meta = {
   tags: ["registry-media", "visual-pending"],
   parameters: {
     layout: "fullscreen",
-    docs: WORKSPACE_SHELL_DOCS_PARAMETERS,
+    docs: {
+      ...WORKSPACE_SHELL_DOCS_PARAMETERS,
+      description: {
+        component:
+          "An app-backed Reveal.js presentation opened from the active Markdown note.",
+      },
+    },
     visualDelta: { delay: 150 },
   },
 } satisfies Meta<typeof SlidesDemo>;
@@ -23,6 +39,13 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Presentation: Story = {
+  parameters: {
+    ...registryStoryParameters(
+      registrySource,
+      "The Goals slide demonstrates Markdown lists, presentation controls, and the close action."
+    ),
+    visualDelta: { delay: 150 },
+  },
   play: async ({ canvasElement, globals }) => {
     const { canvas, deck, deckCanvas } = await openSlidesPresentation(
       canvasElement

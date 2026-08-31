@@ -3,6 +3,15 @@ import { expect, waitFor } from "storybook/test";
 import { WORKSPACE_SHELL_DOCS_PARAMETERS } from "../../workspace/docs-parameters";
 import PanelDemo from "../_shared/panels/PanelDemo.svelte";
 import { openRegistryFile } from "../_shared/registry/registry-story-helpers";
+import {
+  pluginWorkspaceSource,
+  registryStoryParameters,
+} from "../_shared/registry/registry-docs";
+
+const registrySource = pluginWorkspaceSource(
+  "@lapis-notes/wordcount",
+  "WordCountPlugin"
+);
 
 const meta = {
   title: "Plugins/Word Count/Registry Screenshots",
@@ -10,7 +19,13 @@ const meta = {
   tags: ["registry-media", "visual-pending"],
   parameters: {
     layout: "fullscreen",
-    docs: WORKSPACE_SHELL_DOCS_PARAMETERS,
+    docs: {
+      ...WORKSPACE_SHELL_DOCS_PARAMETERS,
+      description: {
+        component:
+          "An app-backed Markdown editor with live word and character counts in the status bar.",
+      },
+    },
   },
 } satisfies Meta<typeof PanelDemo>;
 
@@ -18,6 +33,10 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const EditorWithFocusedStatusBar: Story = {
+  parameters: registryStoryParameters(
+    registrySource,
+    "The focused editor updates word and character totals for the active note."
+  ),
   render: (() => ({
     Component: PanelDemo,
     props: {
@@ -57,6 +76,10 @@ export const EditorWithFocusedStatusBar: Story = {
 
 export const Overview: Story = {
   name: "Overview",
+  parameters: registryStoryParameters(
+    registrySource,
+    "The Word Count overview focuses the editor and its status-bar totals."
+  ),
   render: EditorWithFocusedStatusBar.render,
   play: EditorWithFocusedStatusBar.play,
 };

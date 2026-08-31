@@ -115,4 +115,5 @@ stream. Progress and telemetry contain aggregate pages, files, nodes, links,
 durations, and outcomes only; paths, labels, tags, and query text remain local.
 
 Graph registry-media Autodocs use the shared full-workspace framing governed
-by LP-SPEC-044.
+by LP-SPEC-044, show public plugin setup under LP-SPEC-045, and provide
+component and story descriptions under LP-SPEC-046.

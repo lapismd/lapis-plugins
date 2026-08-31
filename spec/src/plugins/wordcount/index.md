@@ -62,4 +62,5 @@ counting, or status-bar ownership.
 | LN-WC-004 | Deno desktop, web, editor-demo, and audited Storybook hosts MUST register Word Count as `enabledByDefault: true` and load it before metadata and layout restoration.                                        |
 
 Word Count registry-media Autodocs use the shared full-workspace framing
-governed by LP-SPEC-044.
+governed by LP-SPEC-044, show public plugin setup under LP-SPEC-045, and
+provide component and story descriptions under LP-SPEC-046.

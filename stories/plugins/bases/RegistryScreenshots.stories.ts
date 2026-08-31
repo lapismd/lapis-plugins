@@ -3,6 +3,15 @@ import { expect, userEvent, waitFor, within } from "storybook/test";
 import { WORKSPACE_SHELL_DOCS_PARAMETERS } from "../../workspace/docs-parameters";
 import BasesEditorShellDemo from "./shell/ShellDemo.svelte";
 import type { BasesViewScenario } from "./bases-views-fixture";
+import {
+  pluginWorkspaceSource,
+  registryStoryParameters,
+} from "../_shared/registry/registry-docs";
+
+const registrySource = pluginWorkspaceSource(
+  "@lapis-notes/bases",
+  "BasesPlugin"
+);
 
 const meta = {
   title: "Plugins/Bases/Registry Screenshots",
@@ -10,7 +19,13 @@ const meta = {
   tags: ["registry-media", "visual-pending"],
   parameters: {
     layout: "fullscreen",
-    docs: WORKSPACE_SHELL_DOCS_PARAMETERS,
+    docs: {
+      ...WORKSPACE_SHELL_DOCS_PARAMETERS,
+      description: {
+        component:
+          "App-backed Bases views showing filters, cards, and grouped lists in the Lapis workspace.",
+      },
+    },
   },
 } satisfies Meta<typeof BasesEditorShellDemo>;
 
@@ -53,6 +68,10 @@ function focusedArgs(scenario: BasesViewScenario) {
 
 export const FilterOptions: Story = {
   name: "Filter options",
+  parameters: registryStoryParameters(
+    registrySource,
+    "A table view opens the filter builder with a Status condition."
+  ),
   args: focusedArgs("filter-options"),
   play: async ({ canvasElement }) => {
     const canvas = await waitForScenario(
@@ -78,6 +97,10 @@ export const FilterOptions: Story = {
 
 export const CoverCards: Story = {
   name: "Cover cards",
+  parameters: registryStoryParameters(
+    registrySource,
+    "A card view renders note covers and property-driven content."
+  ),
   args: focusedArgs("cards"),
   play: async ({ canvasElement }) => {
     const canvas = await waitForScenario(
@@ -100,12 +123,20 @@ export const CoverCards: Story = {
 
 export const Overview: Story = {
   name: "Overview",
+  parameters: registryStoryParameters(
+    registrySource,
+    "The focused Bases workspace presents the card view as an end-to-end plugin overview."
+  ),
   args: focusedArgs("cards"),
   play: CoverCards.play,
 };
 
 export const GroupedList: Story = {
   name: "Grouped list",
+  parameters: registryStoryParameters(
+    registrySource,
+    "A list view groups notes by Status and exposes its sort configuration."
+  ),
   args: focusedArgs("grouped-list"),
   play: async ({ canvasElement }) => {
     const canvas = await waitForScenario(

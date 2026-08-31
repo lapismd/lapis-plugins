@@ -38,4 +38,5 @@ Code actions follow vscode-markdownlint titles, including vault-scope disable
 through `markdown-lint.disabledRules` (LN-MDL-005).
 
 Markdown Lint registry-media Autodocs use the shared full-workspace framing
-governed by LP-SPEC-044.
+governed by LP-SPEC-044, show public plugin setup under LP-SPEC-045, and
+provide component and story descriptions under LP-SPEC-046.

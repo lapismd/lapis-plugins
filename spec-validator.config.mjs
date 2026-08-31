@@ -30,9 +30,16 @@ export default defineConfig(tableRequirements(), {
     bookIgnore: "LP-SPEC-001",
     specFirst: "LP-SPEC-002",
     internal: "LP-SPEC-003",
+    storybookCatalog: "LP-SPEC-045",
   },
   diagnostics: {
     "STORYBOOK-DOCS-CONTRACT": "LP-SPEC-044",
+    "STORYBOOK-DOCS-COMPONENT": "LP-SPEC-046",
+    "STORYBOOK-DOCS-DESCRIPTION": "LP-SPEC-046",
+    "STORYBOOK-DOCS-PROPERTIES": "LP-SPEC-046",
+    "SPEC-STORY-SOURCE-BOUNDARY": "LP-SPEC-045",
+    "SPEC-STORY-SOURCE-FIELDS": "LP-SPEC-045",
+    "SPEC-STORY-SOURCE-MISSING": "LP-SPEC-045",
   },
   validators: {
     summary: true,
@@ -53,6 +60,14 @@ export default defineConfig(tableRequirements(), {
       statuses: ["Implemented", "In progress", "Planned", "Visual pending"],
     }),
     book: true,
+    storybookCatalog: {
+      roots: ["stories"],
+      packageRoots: ["packages"],
+      storyOnlyName: "(?:Demo|Harness|Fixture)$",
+      forbiddenSource:
+        "\\b(?:PanelDemo|[A-Z][A-Za-z0-9]*(?:Demo|Harness|Fixture))\\b|\\bargs\\s*\\.",
+      plainTextLanguages: [],
+    },
     specFirst: {
       mode: "mapped",
       canonicalPattern: "^spec/src/(?!SUMMARY\\.md$|verification\\.md$).+\\.md$",

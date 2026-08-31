@@ -10,6 +10,15 @@ import {
   registryPanelApp,
   waitForRegistrySurface,
 } from "../_shared/registry/registry-story-helpers";
+import {
+  pluginWorkspaceSource,
+  registryStoryParameters,
+} from "../_shared/registry/registry-docs";
+
+const registrySource = pluginWorkspaceSource(
+  "@lapis-notes/markdown",
+  "MarkdownPlugin"
+);
 
 const meta = {
   title: "Plugins/Markdown/Registry Screenshots",
@@ -17,7 +26,13 @@ const meta = {
   tags: ["registry-media", "visual-pending"],
   parameters: {
     layout: "fullscreen",
-    docs: WORKSPACE_SHELL_DOCS_PARAMETERS,
+    docs: {
+      ...WORKSPACE_SHELL_DOCS_PARAMETERS,
+      description: {
+        component:
+          "App-backed Markdown editing, reading, links, and properties workflows in the Lapis workspace.",
+      },
+    },
   },
 } satisfies Meta<typeof PanelDemo>;
 
@@ -28,9 +43,11 @@ function editorStory(
   mode: "live-preview" | "source" | "preview",
   kind: "explorer" | "outline" | "file-properties",
   layout: "left-sidebar" | "right-sidebar",
+  description: string,
   sidebarSelector?: string
 ): Story {
   return {
+    parameters: registryStoryParameters(registrySource, description),
     render: (() => ({
       Component: PanelDemo,
       props: { kind, layout, diagnostics: "none" },
@@ -50,8 +67,13 @@ function editorStory(
   };
 }
 
-function sidebarStory(kind: "outline" | "backlinks", selector: string): Story {
+function sidebarStory(
+  kind: "outline" | "backlinks",
+  selector: string,
+  description: string
+): Story {
   return {
+    parameters: registryStoryParameters(registrySource, description),
     render: (() => ({
       Component: PanelDemo,
       props: { kind, layout: "right-sidebar", diagnostics: "none" },
@@ -67,21 +89,33 @@ export const LivePreview = editorStory(
   "live-preview",
   "outline",
   "right-sidebar",
+  "Live Preview keeps Markdown editable while the Outline tracks the active note.",
   '[data-testid="outline-panel"]'
 );
 export const Source = editorStory(
   "source",
   "file-properties",
   "right-sidebar",
+  "Source mode exposes Markdown text beside the active file properties.",
   '[data-testid="file-properties-panel"]'
 );
-export const Reading = editorStory("preview", "explorer", "left-sidebar");
+export const Reading = editorStory(
+  "preview",
+  "explorer",
+  "left-sidebar",
+  "Reading mode renders the active note beside Explorer."
+);
 export const BacklinksSidebar = sidebarStory(
   "backlinks",
-  '[data-testid="backlinks-panel"]'
+  '[data-testid="backlinks-panel"]',
+  "Backlinks lists notes that reference the active Markdown file."
 );
 
 export const Overview: Story = {
+  parameters: registryStoryParameters(
+    registrySource,
+    "The overview combines Live Preview, Backlinks, and File Properties in one workspace."
+  ),
   render: (() => ({
     Component: PanelDemo,
     props: {

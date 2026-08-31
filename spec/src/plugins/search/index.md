@@ -151,4 +151,5 @@ factory is the single catalog consumed by Search and Graph; each plugin owns
 only its value discovery, diagnostics, and query consequences.
 
 Search registry-media Autodocs use the shared full-workspace framing governed
-by LP-SPEC-044.
+by LP-SPEC-044, show public plugin setup under LP-SPEC-045, and provide
+component and story descriptions under LP-SPEC-046.

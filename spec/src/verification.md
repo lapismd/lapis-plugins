@@ -40,6 +40,8 @@ and records repository-level extraction and release gates.
 | LP-SPEC-042 | distribution, registry-media | Implemented | Source audits require banner and gallery media, permit only a materially distinct Overview story, and verify exact split preview/full plus light/dark full paths, dimensions, formats, and package ownership. |
 | LP-SPEC-043 | distribution, registry-media | Implemented | Capture and compositor tests cover two-theme story caching, corner-to-corner half-area diagonal pixels, deterministic four-variant output, no upscaling, stale-byte rejection, and unchanged Visual Delta baselines. |
 | LP-SPEC-044 | spec-governance, distribution | Implemented | The shared full-workspace Docs parameters and scoped canvas stylesheet enforce an isolated 700px, padding-free story; the repository-local Storybook Docs audit inventories every governed family and fails omissions. |
+| LP-SPEC-045 | spec-governance, distribution | Implemented | The shared Storybook catalog validator inventories story-only demos, harnesses, and fixtures, requires complete explicit source metadata, and rejects snippets that expose internal render boundaries or Storybook args. |
+| LP-SPEC-046 | spec-governance, distribution | Implemented | The repository-local Storybook Docs audit requires non-empty component and story descriptions, verifies governed public component identities, and checks documented injected and public properties without exposing harness controls. |
 | LN-AI-001 | ai-plugin | Implemented | package location, runtime ID `ai`, bundled default-enabled registration |
 | LN-AI-002 | ai-plugin | Implemented | public exports expose AgentRuntime; vendor SDKs stay in adapters |
 | LN-AI-003 | ai-plugin | Implemented | Fake and ACP sessions block on respondToApproval |

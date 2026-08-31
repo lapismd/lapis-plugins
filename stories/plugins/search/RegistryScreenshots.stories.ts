@@ -6,6 +6,15 @@ import {
   registryPanelApp,
   waitForRegistrySurface,
 } from "../_shared/registry/registry-story-helpers";
+import {
+  pluginWorkspaceSource,
+  registryStoryParameters,
+} from "../_shared/registry/registry-docs";
+
+const registrySource = pluginWorkspaceSource(
+  "@lapis-notes/search",
+  "SearchPlugin"
+);
 
 const meta = {
   title: "Plugins/Search/Registry Screenshots",
@@ -13,7 +22,13 @@ const meta = {
   tags: ["registry-media", "visual-pending"],
   parameters: {
     layout: "fullscreen",
-    docs: WORKSPACE_SHELL_DOCS_PARAMETERS,
+    docs: {
+      ...WORKSPACE_SHELL_DOCS_PARAMETERS,
+      description: {
+        component:
+          "App-backed Search results and filters shown in the public Lapis workspace panel.",
+      },
+    },
   },
 } satisfies Meta<typeof PanelDemo>;
 
@@ -57,6 +72,10 @@ async function populateSearch(canvasElement: HTMLElement) {
 
 export const SearchSidebar: Story = {
   name: "Populated Search sidebar",
+  parameters: registryStoryParameters(
+    registrySource,
+    "A populated vault search shows matching files and expandable result excerpts."
+  ),
   render: renderSearch(),
   play: async ({ canvasElement }) => {
     const panel = await populateSearch(canvasElement);
@@ -79,6 +98,10 @@ export const SearchSidebar: Story = {
 
 export const SearchFilters: Story = {
   name: "Search filters",
+  parameters: registryStoryParameters(
+    registrySource,
+    "Search settings expose file-type and retrieval filters for the active query."
+  ),
   render: renderSearch(),
   play: async ({ canvasElement }) => {
     const panel = await populateSearch(canvasElement);
@@ -96,6 +119,10 @@ export const SearchFilters: Story = {
 
 export const Overview: Story = {
   name: "Overview",
+  parameters: registryStoryParameters(
+    registrySource,
+    "The Search overview presents populated results in the left sidebar."
+  ),
   render: SearchSidebar.render,
   play: SearchSidebar.play,
 };

@@ -9,18 +9,22 @@ const registryStory =
   "stories/plugins/bookmarks/RegistryScreenshots.stories.ts";
 const slidesDecks = "stories/plugins/slides/Decks.stories.ts";
 const panelStory = "stories/plugins/graph/panels/Graph.stories.ts";
+const compareStory = "stories/plugins/history/Compare.stories.ts";
 
 function validSources() {
   return new Map([
     [
       registryStory,
-      'import { WORKSPACE_SHELL_DOCS_PARAMETERS } from "../../workspace/docs-parameters";\nparameters: { docs: WORKSPACE_SHELL_DOCS_PARAMETERS }',
+      'import { WORKSPACE_SHELL_DOCS_PARAMETERS } from "../../workspace/docs-parameters";\ncomponent: PanelDemo;\nparameters: { docs: { ...WORKSPACE_SHELL_DOCS_PARAMETERS, description: { component: "Bookmarks registry workflow." } } };\nparameters: registryStoryParameters(source, "Bookmarks story.")',
     ],
     [
       slidesDecks,
-      'import { WORKSPACE_SHELL_DOCS_PARAMETERS } from "../../workspace/docs-parameters";\nparameters: { docs: WORKSPACE_SHELL_DOCS_PARAMETERS }',
+      'import { WORKSPACE_SHELL_DOCS_PARAMETERS } from "../../workspace/docs-parameters";\ncomponent: SlidesDemo;\nparameters: { docs: { ...WORKSPACE_SHELL_DOCS_PARAMETERS, description: { component: "Slides decks." } } };\nparameters: registryStoryParameters(source, "Vertical deck.")',
     ],
-    [panelStory, "parameters: { docs: { ...PANEL_DOCS_PARAMETERS } }"],
+    [
+      panelStory,
+      'component: GraphControlsOverlay;\nparameters: { docs: { ...PANEL_DOCS_PARAMETERS, description: { component: "Graph controls." } } };\nparameters: placementParameters(kind, layout, source, description)',
+    ],
     [
       "stories/workspace/docs-parameters.ts",
       'const WORKSPACE_SHELL_DOCS_CANVAS_CLASS = "workspace-shell-docs-canvas";\nconst WORKSPACE_SHELL_DOCS_STORY = { height: "700px", inline: false };\nconst WORKSPACE_SHELL_DOCS_PARAMETERS = { canvas: { className: WORKSPACE_SHELL_DOCS_CANVAS_CLASS }, story: WORKSPACE_SHELL_DOCS_STORY };',
@@ -30,6 +34,14 @@ function validSources() {
       ".workspace-shell-docs-canvas .docs-story .sb-story { padding: 0; }",
     ],
     [".storybook/preview.ts", 'import "../stories/workspace/docs.css";'],
+    [
+      "stories/plugins/_shared/panels/panel-story-helpers.ts",
+      'function placementParameters() { return { docs: { description: { story: description }, source: { code: source, language: "ts", type: "code" } } }; }',
+    ],
+    [
+      "stories/plugins/_shared/registry/registry-docs.ts",
+      'function registryStoryParameters() { return { docs: { description: { story: description }, source: { code: source, language: "tsx", type: "code" } } }; }',
+    ],
   ]);
 }
 
@@ -56,7 +68,10 @@ test("accepts the shared isolated 700px padding-free Docs contract", () => {
 
 test("rejects a full-workspace story without shared Docs parameters", () => {
   const sources = validSources();
-  sources.set(registryStory, 'parameters: { layout: "fullscreen" }');
+  sources.set(
+    registryStory,
+    'component: PanelDemo;\nparameters: { layout: "fullscreen", docs: { description: { component: "Bookmarks registry workflow." } } };\nparameters: registryStoryParameters(source, "Bookmarks story.")'
+  );
 
   const findings = audit(sources).filter(
     (entry) => entry.file === registryStory
@@ -68,11 +83,53 @@ test("rejects a full-workspace story without shared Docs parameters", () => {
 
 test("rejects an inventoried panel without a governed 700px contract", () => {
   const sources = validSources();
-  sources.set(panelStory, 'parameters: { layout: "fullscreen" }');
+  sources.set(
+    panelStory,
+    'component: GraphControlsOverlay;\nparameters: { layout: "fullscreen", docs: { description: { component: "Graph controls." } } };\nparameters: placementParameters(kind, layout, source, description)'
+  );
 
   const findings = audit(sources).filter((entry) => entry.file === panelStory);
   assert.equal(findings.length, 1);
   assert.match(findings[0].message, /governed isolated 700px Docs contract/);
+});
+
+test("rejects story-only components and missing Autodocs descriptions", () => {
+  const sources = validSources();
+  sources.set(
+    panelStory,
+    "component: PanelDemo;\nparameters: { docs: { ...PANEL_DOCS_PARAMETERS } }"
+  );
+
+  const findings = audit(sources).filter((entry) => entry.file === panelStory);
+  assert.deepEqual(
+    findings.map((entry) => entry.code),
+    [
+      "STORYBOOK-DOCS-DESCRIPTION",
+      "STORYBOOK-DOCS-COMPONENT",
+      "STORYBOOK-DOCS-DESCRIPTION",
+    ]
+  );
+});
+
+test("requires History Compare to document its public component and properties", () => {
+  const sources = validSources();
+  sources.set(
+    compareStory,
+    'component: HistoryPanel;\nparameters: { docs: { ...PANEL_DOCS_PARAMETERS, description: { component: "History compare." } } };\nparameters: compareParameters(source, description)'
+  );
+
+  const findings = auditStorybookDocs({
+    trackedFiles: [compareStory],
+    inventory: [compareStory],
+    readOptional(file) {
+      return sources.get(file) ?? null;
+    },
+  }).filter((entry) => entry.file === compareStory);
+
+  assert.deepEqual(
+    findings.map((entry) => entry.code),
+    ["STORYBOOK-DOCS-PROPERTIES"]
+  );
 });
 
 test("rejects drift in dimensions, padding, and preview installation", () => {

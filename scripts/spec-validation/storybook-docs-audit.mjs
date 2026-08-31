@@ -1,6 +1,10 @@
 const SHARED_PARAMETERS_FILE = "stories/workspace/docs-parameters.ts";
 const SHARED_STYLES_FILE = "stories/workspace/docs.css";
 const PREVIEW_FILE = ".storybook/preview.ts";
+const PANEL_HELPER_FILE =
+  "stories/plugins/_shared/panels/panel-story-helpers.ts";
+const REGISTRY_DOCS_FILE = "stories/plugins/_shared/registry/registry-docs.ts";
+const HISTORY_COMPARE_FILE = "stories/plugins/history/Compare.stories.ts";
 const SLIDES_DECKS_FILE = "stories/plugins/slides/Decks.stories.ts";
 const FULL_WORKSPACE_STORY_INVENTORY = [
   "stories/plugins/ai/shell/Shell.stories.ts",
@@ -24,6 +28,15 @@ function finding(file, line, message) {
     code: "STORYBOOK-DOCS-CONTRACT",
     file,
     line,
+    message,
+  };
+}
+
+function semanticFinding(code, file, source, token, message) {
+  return {
+    code,
+    file,
+    line: lineFor(source, token),
     message,
   };
 }
@@ -65,6 +78,9 @@ export function auditStorybookDocs({
     const requiresDirectSharedParameters =
       file === SLIDES_DECKS_FILE ||
       /\/RegistryScreenshots\.stories\.ts$/.test(file);
+    const appliesDirectSharedParameters =
+      source.includes("docs: WORKSPACE_SHELL_DOCS_PARAMETERS") ||
+      source.includes("...WORKSPACE_SHELL_DOCS_PARAMETERS");
     const recognizedContract = [
       "docs: WORKSPACE_SHELL_DOCS_PARAMETERS",
       "WORKSPACE_SHELL_DOCS_STORY",
@@ -83,10 +99,7 @@ export function auditStorybookDocs({
         )
       );
     }
-    if (
-      requiresDirectSharedParameters &&
-      !source.includes("docs: WORKSPACE_SHELL_DOCS_PARAMETERS")
-    ) {
+    if (requiresDirectSharedParameters && !appliesDirectSharedParameters) {
       findings.push(
         finding(
           file,
@@ -103,6 +116,85 @@ export function auditStorybookDocs({
           "full-workspace Autodocs must apply a governed isolated 700px Docs contract"
         )
       );
+    }
+
+    const isRegistry = /\/RegistryScreenshots\.stories\.ts$/.test(file);
+    const isPanel = /\/panels\/.+\.stories\.ts$/.test(file);
+    const isComponentDocs = isPanel || file === HISTORY_COMPARE_FILE;
+
+    if (
+      (isRegistry || isComponentDocs || file === SLIDES_DECKS_FILE) &&
+      !/description:\s*\{\s*component:\s*["'`]/s.test(source)
+    ) {
+      findings.push(
+        semanticFinding(
+          "STORYBOOK-DOCS-DESCRIPTION",
+          file,
+          source,
+          "parameters:",
+          "Autodocs must provide a non-empty component description"
+        )
+      );
+    }
+
+    if (
+      isComponentDocs &&
+      !/component:\s*(?![A-Za-z0-9_$]*(?:Demo|Harness|Fixture)\b)[A-Za-z_$][A-Za-z0-9_$]*/.test(
+        source
+      )
+    ) {
+      findings.push(
+        semanticFinding(
+          "STORYBOOK-DOCS-COMPONENT",
+          file,
+          source,
+          "component:",
+          "component Autodocs must identify the public component, not a story-only render boundary"
+        )
+      );
+    }
+
+    const storyDescriptionContract =
+      isRegistry || file === SLIDES_DECKS_FILE
+        ? "registryStoryParameters("
+        : isPanel
+        ? "placementParameters("
+        : file === HISTORY_COMPARE_FILE
+        ? "compareParameters("
+        : null;
+    if (
+      storyDescriptionContract &&
+      !source.includes(storyDescriptionContract)
+    ) {
+      findings.push(
+        semanticFinding(
+          "STORYBOOK-DOCS-DESCRIPTION",
+          file,
+          source,
+          "export const",
+          "Autodocs stories must provide non-empty story descriptions"
+        )
+      );
+    }
+
+    if (file === HISTORY_COMPARE_FILE) {
+      const requiredHistoryTokens = [
+        "component: HistoryComparePanel",
+        "compareState:",
+        "Initialized Lapis App supplied by the History compare view.",
+        "File, revision, and comparison mode supplied by the History compare view.",
+      ];
+      if (requiredHistoryTokens.some((token) => !source.includes(token))) {
+        findings.push(
+          semanticFinding(
+            "STORYBOOK-DOCS-PROPERTIES",
+            file,
+            source,
+            "argTypes:",
+            "History Compare Autodocs must document the public app and compareState properties"
+          )
+        );
+      }
     }
   }
 
@@ -153,6 +245,44 @@ export function auditStorybookDocs({
         PREVIEW_FILE,
         1,
         "Storybook preview must install the shared full-workspace Docs styles"
+      )
+    );
+  }
+
+  const panelHelper = readOptional(PANEL_HELPER_FILE);
+  if (
+    panelHelper === null ||
+    !panelHelper.includes("description: { story: description }") ||
+    !panelHelper.includes(
+      'source: { code: source, language: "ts", type: "code" }'
+    )
+  ) {
+    findings.push(
+      semanticFinding(
+        "STORYBOOK-DOCS-DESCRIPTION",
+        PANEL_HELPER_FILE,
+        panelHelper ?? "",
+        "placementParameters",
+        "panel story parameters must provide public source and a non-empty story description"
+      )
+    );
+  }
+
+  const registryDocs = readOptional(REGISTRY_DOCS_FILE);
+  if (
+    registryDocs === null ||
+    !registryDocs.includes("description: { story: description }") ||
+    !registryDocs.includes(
+      'source: { code: source, language: "tsx", type: "code" }'
+    )
+  ) {
+    findings.push(
+      semanticFinding(
+        "STORYBOOK-DOCS-DESCRIPTION",
+        REGISTRY_DOCS_FILE,
+        registryDocs ?? "",
+        "registryStoryParameters",
+        "registry story parameters must provide public source and a non-empty story description"
       )
     );
   }

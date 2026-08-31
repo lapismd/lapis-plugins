@@ -110,3 +110,7 @@ behavioral correction and its canonical requirement remain plugin-owned while
 the consumer interaction remains valid cross-repository acceptance evidence.
 The repository-local Storybook Docs audit enforces the shared full-workspace
 framing required by LP-SPEC-044 across every governed plugin family.
+The canonical Storybook catalog validator enforces the public Show Code
+boundary required by LP-SPEC-045. The repository-local Docs audit additionally
+enforces the component identity, explanatory copy, and public Properties
+contract required by LP-SPEC-046 because those semantics are repository-owned.

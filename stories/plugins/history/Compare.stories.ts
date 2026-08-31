@@ -1,5 +1,9 @@
 import type { App } from "@lapis-notes/api";
-import { HistoryPlugin, HistoryPanel } from "@lapis-notes/history";
+import {
+  HistoryComparePanel,
+  HistoryPlugin,
+  type HistoryCompareViewState,
+} from "@lapis-notes/history";
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, userEvent, waitFor, within } from "storybook/test";
 import { workspaceCatalogParameters } from "../../catalog/catalog.mjs";
@@ -17,14 +21,32 @@ import {
 } from "./Compare.example-sources";
 import "../_shared/panels/Panel.docs.css";
 
+const renderHistoryCompare = (() => ({
+  Component: PanelDemo,
+  props: { kind: "history", layout: "right-sidebar" },
+})) as NonNullable<Meta<typeof HistoryComparePanel>["render"]>;
+
 const meta = {
   title: "Plugins/History/Compare",
-  component: HistoryPanel,
-  args: { app: undefined as unknown as App },
+  component: HistoryComparePanel,
+  render: renderHistoryCompare,
+  args: {
+    app: undefined as unknown as App,
+    compareState: {
+      filePath: "Notes/Welcome.md",
+      revisionId: "selected-revision",
+      compareMode: "current",
+    } satisfies HistoryCompareViewState,
+  },
   argTypes: {
     app: {
       control: false,
-      description: "Initialized Lapis App supplied by the History view.",
+      description: "Initialized Lapis App supplied by the History compare view.",
+    },
+    compareState: {
+      control: false,
+      description:
+        "File, revision, and comparison mode supplied by the History compare view.",
     },
   },
   tags: ["visual-pending", "test"],
@@ -39,7 +61,7 @@ const meta = {
       },
     },
   },
-} satisfies Meta<typeof HistoryPanel>;
+} satisfies Meta<typeof HistoryComparePanel>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -52,7 +74,7 @@ function compareParameters(source: string, description: string, baseline: string
       canvas: { className: "panel-demo-docs-canvas" },
       story: WORKSPACE_SHELL_DOCS_STORY,
       description: { story: description },
-      source: { code: source, language: "ts", type: "code" },
+      source: { code: source, language: "tsx", type: "code" },
     },
     visualDelta: {
       images: [
@@ -89,11 +111,6 @@ async function readyHistory(
   }
   return { app, plugin, model, revisions };
 }
-
-const renderHistoryCompare: NonNullable<Story["render"]> = (() => ({
-  Component: PanelDemo,
-  props: { kind: "history", layout: "right-sidebar" },
-})) as NonNullable<Story["render"]>;
 
 async function waitForCompare(
   canvasElement: HTMLElement,

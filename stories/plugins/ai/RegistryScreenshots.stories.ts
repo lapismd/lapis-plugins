@@ -6,7 +6,13 @@ import {
   registryPanelApp,
   waitForRegistrySurface,
 } from "../_shared/registry/registry-story-helpers";
+import {
+  pluginWorkspaceSource,
+  registryStoryParameters,
+} from "../_shared/registry/registry-docs";
 import AiWorkspaceDemo from "./shell/ShellDemo.svelte";
+
+const registrySource = pluginWorkspaceSource("@lapis-notes/ai", "AiPlugin");
 
 const meta = {
   title: "Plugins/AI/Registry Screenshots",
@@ -14,7 +20,13 @@ const meta = {
   tags: ["registry-media", "visual-pending"],
   parameters: {
     layout: "fullscreen",
-    docs: WORKSPACE_SHELL_DOCS_PARAMETERS,
+    docs: {
+      ...WORKSPACE_SHELL_DOCS_PARAMETERS,
+      description: {
+        component:
+          "App-backed AI workflows showing chat, conversation history, and the agent catalog in the Lapis workspace.",
+      },
+    },
   },
 } satisfies Meta<typeof PanelDemo>;
 
@@ -23,6 +35,10 @@ type Story = StoryObj<typeof meta>;
 
 export const ChatWithToolActivity: Story = {
   name: "Chat with tool activity",
+  parameters: registryStoryParameters(
+    registrySource,
+    "A live chat trace shows assistant output alongside completed tool activity."
+  ),
   render: (() => ({
     Component: AiWorkspaceDemo,
     props: { scenario: "registry-chat" },
@@ -57,6 +73,10 @@ export const ChatWithToolActivity: Story = {
 };
 
 export const Overview: Story = {
+  parameters: registryStoryParameters(
+    registrySource,
+    "The complete AI workspace combines chat, conversation history, and the agent catalog."
+  ),
   render: (() => ({
     Component: AiWorkspaceDemo,
     props: { scenario: "registry-overview" },
@@ -80,6 +100,10 @@ export const Overview: Story = {
 };
 
 export const History: Story = {
+  parameters: registryStoryParameters(
+    registrySource,
+    "Conversation History is mounted in the right sidebar with seeded sessions."
+  ),
   render: (() => ({
     Component: PanelDemo,
     props: {
@@ -98,6 +122,10 @@ export const History: Story = {
 };
 
 export const Catalog: Story = {
+  parameters: registryStoryParameters(
+    registrySource,
+    "The agent catalog lists the runtimes and agents available to the AI plugin."
+  ),
   render: (() => ({
     Component: PanelDemo,
     props: {

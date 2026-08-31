@@ -8,6 +8,15 @@ import {
   registryPanelApp,
   waitForRegistrySurface,
 } from "../_shared/registry/registry-story-helpers";
+import {
+  pluginWorkspaceSource,
+  registryStoryParameters,
+} from "../_shared/registry/registry-docs";
+
+const registrySource = pluginWorkspaceSource(
+  "@lapis-notes/graph",
+  "GraphPlugin"
+);
 
 const meta = {
   title: "Plugins/Graph/Registry Screenshots",
@@ -15,7 +24,13 @@ const meta = {
   tags: ["registry-media", "visual-pending"],
   parameters: {
     layout: "fullscreen",
-    docs: WORKSPACE_SHELL_DOCS_PARAMETERS,
+    docs: {
+      ...WORKSPACE_SHELL_DOCS_PARAMETERS,
+      description: {
+        component:
+          "App-backed global and local graph views showing linked notes in the Lapis workspace.",
+      },
+    },
   },
 } satisfies Meta<typeof PanelDemo>;
 
@@ -24,11 +39,14 @@ type Story = StoryObj<typeof meta>;
 
 function graphStory(
   kind: "graph" | "local-graph",
-  layout: "middle-top-tabs" | "right-sidebar"
+  layout: "middle-top-tabs" | "right-sidebar",
+  description: string
 ): Story {
   return {
-    parameters:
-      kind === "local-graph" ? { visualDelta: { delay: 250 } } : undefined,
+    parameters: {
+      ...registryStoryParameters(registrySource, description),
+      ...(kind === "local-graph" ? { visualDelta: { delay: 250 } } : {}),
+    },
     render: (() => ({
       Component: PanelDemo,
       props: {
@@ -83,13 +101,25 @@ function graphStory(
   };
 }
 
-const globalGraphStory = graphStory("graph", "middle-top-tabs");
+const globalGraphStory = graphStory(
+  "graph",
+  "middle-top-tabs",
+  "The global graph renders the complete seeded vault as an interactive canvas."
+);
 export const GlobalGraph = globalGraphStory;
-export const LocalGraph = graphStory("local-graph", "right-sidebar");
+export const LocalGraph = graphStory(
+  "local-graph",
+  "right-sidebar",
+  "The local graph focuses on links around the active note in the right sidebar."
+);
 
 export const Overview: Story = {
   ...globalGraphStory,
   name: "Overview",
+  parameters: registryStoryParameters(
+    registrySource,
+    "The overview combines the global graph with Explorer and the active note's local graph."
+  ),
   play: async (context) => {
     await globalGraphStory.play?.(context);
     const app = await registryPanelApp(context.canvasElement);

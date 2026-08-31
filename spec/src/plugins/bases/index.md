@@ -107,4 +107,5 @@ reads unbounded candidate sets in stable path pages. A fully lowered view limit
 uses one bounded sorted page; final PEaQL evaluation remains authoritative.
 
 Bases registry-media Autodocs use the shared full-workspace framing governed
-by LP-SPEC-044.
+by LP-SPEC-044, show public plugin setup under LP-SPEC-045, and provide
+component and story descriptions under LP-SPEC-046.

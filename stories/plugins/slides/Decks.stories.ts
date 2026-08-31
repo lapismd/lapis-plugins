@@ -7,6 +7,16 @@ import {
   expectSlidesTheme,
   openSlidesPresentation,
 } from "./slides-story";
+import {
+  pluginWorkspaceSource,
+  registryStoryParameters,
+} from "../_shared/registry/registry-docs";
+
+const deckSource = pluginWorkspaceSource(
+  "@lapis-notes/slides",
+  "SlidesPlugin",
+  "lapis-slides:start-presentation"
+);
 
 const meta = {
   title: "Plugins/Slides/Decks",
@@ -14,7 +24,13 @@ const meta = {
   tags: ["visual-pending", "test"],
   parameters: {
     layout: "fullscreen",
-    docs: WORKSPACE_SHELL_DOCS_PARAMETERS,
+    docs: {
+      ...WORKSPACE_SHELL_DOCS_PARAMETERS,
+      description: {
+        component:
+          "App-backed Slides decks demonstrating Markdown parsing and Reveal.js navigation.",
+      },
+    },
     visualDelta: { delay: 150 },
   },
 } satisfies Meta<typeof SlidesDemo>;
@@ -23,6 +39,13 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const VerticalDeck: Story = {
+  parameters: {
+    ...registryStoryParameters(
+      deckSource,
+      "A vertical slide stack moves from Parser Fidelity down to Live Updates."
+    ),
+    visualDelta: { delay: 150 },
+  },
   play: async ({ canvasElement, globals }) => {
     const { deck, deckCanvas } = await openSlidesPresentation(canvasElement);
     await expectSlidesTheme(

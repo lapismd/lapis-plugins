@@ -451,4 +451,5 @@ clean workspace builds the public `MarkdownEmbed` contract before AI's Svelte
 checks while released applications still own the shared peer.
 
 AI registry-media Autodocs use the shared full-workspace framing governed by
-LP-SPEC-044.
+LP-SPEC-044, show public plugin setup under LP-SPEC-045, and provide component
+and story descriptions under LP-SPEC-046.

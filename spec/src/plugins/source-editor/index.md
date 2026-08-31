@@ -35,4 +35,5 @@ plugin shares the host's App and framework identity.
 | LN-SRC-007 | The npm tarball and signed runtime archive MUST carry the same package version, runtime ID, manifest, source commit, and lifecycle CSS as the other extracted first-party plugins.                     |
 
 Source Editor registry-media Autodocs use the shared full-workspace framing
-governed by LP-SPEC-044.
+governed by LP-SPEC-044, show public plugin setup under LP-SPEC-045, and
+provide component and story descriptions under LP-SPEC-046.

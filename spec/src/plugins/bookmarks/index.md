@@ -78,4 +78,5 @@ uses registered commands. The canonical palette opener is
 `Bookmarks: Open Bookmarks` (`bookmarks:open-bookmarks`).
 
 Bookmarks registry-media Autodocs use the shared full-workspace framing
-governed by LP-SPEC-044.
+governed by LP-SPEC-044, show public plugin setup under LP-SPEC-045, and
+provide component and story descriptions under LP-SPEC-046.

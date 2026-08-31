@@ -9,6 +9,16 @@ import {
   waitForRegistrySurface,
 } from "../_shared/registry/registry-story-helpers";
 import { CompareCurrent } from "./Compare.stories";
+import { compareCurrentSource } from "./Compare.example-sources";
+import {
+  pluginWorkspaceSource,
+  registryStoryParameters,
+} from "../_shared/registry/registry-docs";
+
+const registrySource = pluginWorkspaceSource(
+  "@lapis-notes/history",
+  "HistoryPlugin"
+);
 
 const meta = {
   title: "Plugins/History/Registry Screenshots",
@@ -16,7 +26,13 @@ const meta = {
   tags: ["registry-media", "visual-pending"],
   parameters: {
     layout: "fullscreen",
-    docs: WORKSPACE_SHELL_DOCS_PARAMETERS,
+    docs: {
+      ...WORKSPACE_SHELL_DOCS_PARAMETERS,
+      description: {
+        component:
+          "App-backed History timelines and comparisons showing the public plugin inside the Lapis workspace.",
+      },
+    },
   },
 } satisfies Meta<typeof PanelDemo>;
 
@@ -24,6 +40,10 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const HistorySidebar: Story = {
+  parameters: registryStoryParameters(
+    registrySource,
+    "The History timeline lists seeded revisions for the active note in the right sidebar."
+  ),
   render: (() => ({
     Component: PanelDemo,
     props: {
@@ -43,11 +63,19 @@ export const HistorySidebar: Story = {
 
 export const Compare: Story = {
   name: "Compare",
+  parameters: registryStoryParameters(
+    compareCurrentSource,
+    "A one-way compare places the selected stored revision beside the current file."
+  ),
   render: CompareCurrent.render as Story["render"],
   play: CompareCurrent.play as Story["play"],
 };
 
 export const Overview: Story = {
+  parameters: registryStoryParameters(
+    compareCurrentSource,
+    "The overview combines Explorer, History, and a live-file comparison in one workspace."
+  ),
   render: (() => ({
     Component: PanelDemo,
     props: {
