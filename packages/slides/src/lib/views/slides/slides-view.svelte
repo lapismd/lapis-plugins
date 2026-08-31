@@ -242,7 +242,7 @@
   });
 </script>
 
-<div class="slides-overlay theme-dark" data-testid="slides-overlay">
+<div class="slides-overlay" data-testid="slides-overlay">
   <button
     type="button"
     class="slides-close-button"

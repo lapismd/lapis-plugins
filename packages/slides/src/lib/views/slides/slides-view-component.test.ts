@@ -86,7 +86,7 @@ describe("SlidesViewComponent", () => {
         setTimeout(() => {
           frames.delete(id);
           callback(performance.now());
-        }, 0),
+        }, 0)
       );
       return id;
     });
@@ -107,7 +107,7 @@ describe("SlidesViewComponent", () => {
 
   it("renders the recursive deck, refreshes live content, and retains Reveal indices", async () => {
     const editor = createEditor(
-      "# Start\n\n---\n\n## Goals\n\n- First\n\nNotes: Explain goals",
+      "# Start\n\n---\n\n## Goals\n\n- First\n\nNotes: Explain goals"
     );
     const onClose = vi.fn();
     const component = mount(SlidesViewComponent, {
@@ -122,20 +122,25 @@ describe("SlidesViewComponent", () => {
 
     await vi.waitFor(() => {
       expect(
-        target.querySelector('[data-testid="slides-deck"]')?.getAttribute(
-          "data-reveal-ready",
-        ),
+        target
+          .querySelector('[data-testid="slides-deck"]')
+          ?.getAttribute("data-reveal-ready")
       ).toBe("true");
     });
+    expect(
+      target
+        .querySelector('[data-testid="slides-overlay"]')
+        ?.classList.contains("theme-dark")
+    ).toBe(false);
     expect(target.textContent).toContain("## Goals");
     expect(target.querySelector("aside.notes")?.textContent).toContain(
-      "Explain goals",
+      "Explain goals"
     );
 
     const reveal = revealHarness.instances[0];
     reveal.slide.mockClear();
     editor.emit(
-      "# Start\n\n---\n\n## Updated goals\n\n- First\n- Second\n\nNotes: Explain goals",
+      "# Start\n\n---\n\n## Updated goals\n\n- First\n- Second\n\nNotes: Explain goals"
     );
 
     await vi.waitFor(() => {
@@ -144,7 +149,7 @@ describe("SlidesViewComponent", () => {
     });
 
     document.dispatchEvent(
-      new KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true })
     );
     expect(onClose).toHaveBeenCalledOnce();
 

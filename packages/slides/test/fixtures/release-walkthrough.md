@@ -20,6 +20,25 @@ Note: Speaker note for the goals slide.
 
 ---
 
+## Vertical Track
+
+Move down through the implementation details.
+
+----
+
+### Parser Fidelity
+
+- Blank-line separators build the deck tree.
+- Four dashes create vertical child slides.
+
+----
+
+### Live Updates
+
+Editor changes refresh the deck without losing its position.
+
+---
+
 ## Sample Code
 
 ```ts

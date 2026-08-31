@@ -5,14 +5,17 @@
   position: fixed;
   inset: 0;
   z-index: calc(var(--layer-modal, 50) + 10);
-  --slides-background: #191919;
-  --slides-foreground: #fff;
-  --slides-link-color: #42affa;
-  --slides-link-color-dark: #068de9;
-  --slides-link-color-hover: #8dcffc;
-  --slides-selection-background: #bee4fd;
-  --slides-selection-color: #fff;
-  --slides-blockquote-background: rgba(255, 255, 255, 0.05);
+  --slides-background: var(--background-primary, var(--background, #191919));
+  --slides-foreground: var(--text-normal, var(--foreground, #fff));
+  --slides-link-color: #068de9;
+  --slides-link-color-dark: #057ac7;
+  --slides-link-color-hover: #0468aa;
+  --slides-selection-background: var(--text-selection, #bee4fd);
+  --slides-selection-color: var(--text-normal, var(--foreground, #fff));
+  --slides-blockquote-background: var(
+    --background-secondary,
+    rgba(255, 255, 255, 0.05)
+  );
   background: var(--slides-background);
   --r-background-color: var(--slides-background);
   --r-main-font: Source Sans Pro, Helvetica, sans-serif;
@@ -38,6 +41,13 @@
   --r-link-color-hover: var(--slides-link-color-hover);
   --r-selection-background-color: var(--slides-selection-background);
   --r-selection-color: var(--slides-selection-color);
+}
+
+.dark .slides-overlay,
+.theme-dark .slides-overlay {
+  --slides-link-color: #42affa;
+  --slides-link-color-dark: #068de9;
+  --slides-link-color-hover: #8dcffc;
 }
 
 .slides-view {
