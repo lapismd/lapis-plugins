@@ -58,11 +58,12 @@ specifications.
 - Add a card for each materially different plugin view, up to five cards per
   plugin. Use realistic vault content, filenames, metadata, results, and
   relationships that present the feature at its best.
-- Give every plugin one fixed Overview story and use that settled state for its
-  banner and Overview media. Multi-panel plugins should use left, main, and
-  right surfaces to show meaningful variants. Sidebar-only plugins use the
-  primary left sidebar beside an empty main workspace with the opposite dock
-  closed. Word Count uses the complete shell with both sidebars closed.
+- Give every plugin one fixed banner story. Multi-panel plugins should use
+  left, main, and right surfaces to show meaningful variants. Sidebar-only
+  plugins use the primary left sidebar beside an empty main workspace with the
+  opposite dock closed. Word Count uses the complete shell with both sidebars
+  closed. Add Overview media only when a separate governed story provides a
+  materially different full-screen state; never repeat the banner there.
 - Express headline and description copy as allowlisted colour segments. Keep
   most description copy neutral and accent only phrases whose meaning benefits
   from the shared violet, cyan, green, amber, or rose palette.

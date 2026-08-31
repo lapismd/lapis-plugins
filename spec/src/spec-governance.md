@@ -31,9 +31,9 @@ Tracked registry-media guidance and the canonical registry-media chapter MUST
 stay aligned on story naming, capture density, authored data, generation
 commands, source-specific diagnostic isolation, production-compatible browser
 shims, final-state assertions, and baseline policy.
-They also stay aligned on required banner and Overview roles, two-theme
-capture, fixed diagonal composition, Word Count full-shell framing, and the
-four-output media contract.
+They also stay aligned on required banner and selective distinct Overview
+roles, two-theme capture, exact half-area diagonal composition, Word Count
+full-shell framing, and the four-output media contract.
 Shared full-shell framing changes MUST preserve the complete 3:2 source capture
 and prove both horizontal edges remain in the composed output. Every composed
 frame MUST preserve the shared dark right-edge gutter; subject-focused presets

@@ -33,27 +33,6 @@
         "storyId": "plugins-word-count-registry-screenshots--overview",
         "focus": "full-shell"
       }
-    },
-    "overview": {
-      "alt": "Lapis Word Count showing a simple Markdown document and populated status bar in the complete shell with both sidebars closed.",
-      "images": {
-        "preview": {
-          "path": "registry-assets/overview.preview.webp"
-        },
-        "full": {
-          "path": "registry-assets/overview.full.webp"
-        },
-        "light": {
-          "path": "registry-assets/overview.light.webp"
-        },
-        "dark": {
-          "path": "registry-assets/overview.dark.webp"
-        }
-      },
-      "capture": {
-        "storyId": "plugins-word-count-registry-screenshots--overview",
-        "focus": "full-shell"
-      }
     }
   },
   "gallery": [

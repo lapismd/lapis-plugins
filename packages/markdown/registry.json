@@ -35,7 +35,7 @@
       }
     },
     "overview": {
-      "alt": "Lapis Markdown with Backlinks on the left, Live Preview in the main workspace, and File Properties on the right.",
+      "alt": "Lapis Markdown Reading view rendering a richly structured project note in the full workspace.",
       "images": {
         "preview": {
           "path": "registry-assets/overview.preview.webp"
@@ -51,7 +51,7 @@
         }
       },
       "capture": {
-        "storyId": "plugins-markdown-registry-screenshots--overview",
+        "storyId": "plugins-markdown-registry-screenshots--reading",
         "focus": "full-shell"
       }
     }

@@ -153,21 +153,23 @@ for (const plugin of pluginPackages) {
 
 async function validateMedia(directory, packageRoot, media, paths) {
   if (!media || typeof media !== "object" || Array.isArray(media)) {
-    findings.push(`${directory}: media must define banner and overview`);
+    findings.push(`${directory}: media must define a banner`);
     return;
   }
   const keys = Object.keys(media);
   if (
-    keys.length !== 2 ||
     !keys.includes("banner") ||
-    !keys.includes("overview")
+    keys.length > 2 ||
+    keys.some((key) => !["banner", "overview"].includes(key))
   ) {
-    findings.push(`${directory}: media must define banner and overview only`);
+    findings.push(
+      `${directory}: media must define a banner and may define one overview`
+    );
   }
   const expectedStoryPrefix = `plugins-${storyIdPluginSegment(
     directory
   )}-registry-screenshots--`;
-  for (const role of ["banner", "overview"]) {
+  for (const role of keys) {
     const item = media[role];
     if (
       !item ||
@@ -205,10 +207,10 @@ async function validateMedia(directory, packageRoot, media, paths) {
   if (
     media.banner?.capture?.storyId &&
     media.overview?.capture?.storyId &&
-    media.banner.capture.storyId !== media.overview.capture.storyId
+    media.banner.capture.storyId === media.overview.capture.storyId
   ) {
     findings.push(
-      `${directory}: banner and overview must reuse the same Storybook story`
+      `${directory}: banner and overview must use different Storybook stories`
     );
   }
 }

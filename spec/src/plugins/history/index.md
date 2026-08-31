@@ -11,9 +11,9 @@ Compare preserves the complete full-shell capture, while History retains its
 declared sidebar-focused crop. Both frames retain the shared dark right-edge
 gutter. The manifest summary names revision browsing, comparison, and restore
 instead of the generic feature label.
-The fixed Overview state places Explorer left, Compare in the main area, and
-History right. Banner and Overview media reuse that settled state in split,
-light, and dark variants.
+The fixed banner state places Explorer left, Compare in the main area, and
+History right. The separate Overview image uses the full Compare story so the
+body does not repeat the hero.
 The sidebar capture MUST finish with the authored revision inventory visible
 rather than a transient loading or empty state.
 
@@ -30,19 +30,19 @@ plugin shares the host's App and framework identity.
 
 ## Requirements
 
-| ID | Requirement |
-| --- | --- |
-| LN-HIST-001 | The repo MUST ship `@lapis-notes/history` at `packages/history` as an independently versioned first-party external plugin. An application profile MAY enable it by default. It MUST NOT reuse AI conversation-history view types or commands. |
-| LN-HIST-002 | History MUST capture vault create, modify, rename, delete, and restore events into `AppDatabase` file-history tables only. It MUST NOT write snapshots into the vault, `.obsidian/`, or `.lapis/`. |
-| LN-HIST-003 | Tracking MUST skip internal `.lapis` paths, glob excludes, binaries, oversized files, and read failures. Defaults MUST be 256 KiB, 50 revisions, a 10s modify merge window, and the documented exclude globs. Empty include-glob and extension allowlists MUST track remaining UTF-8 text. |
-| LN-HIST-004 | The plugin MUST register the `history` view through `ViewAccess.command` with `open-file-history` / `Open file history`. The opener MUST reveal an existing instance wherever it was moved or create, activate, and reveal the default right sidebar. |
-| LN-HIST-005 | The plugin MUST register `history-compare` through `ViewAccess.internal` and reuse one main-area tab. Previous or selected-pair compares MUST use Design Core FileDiff. Live-file compare MUST use one-way MergeEditor. Restore and apply MUST write through the vault API, record a restore revision, and suppress the next matching-hash modify. |
-| LN-HIST-006 | Storybook MUST demonstrate the real History panel in all six governed placements and a compare story covering FileDiff, MergeEditor, select-for-compare, restore, and History-leaf preservation. Docs source MUST use public `@lapis-notes/history` imports. New visuals MUST stay `visual-pending`. |
-| LN-HIST-007 | Deno desktop, web, editor-demo, and audited Storybook hosts MUST register History as `enabledByDefault: true` and load it before metadata and layout restoration. |
-| LN-HIST-008 | The timeline context menu MUST offer Select for compare and Compare with selected. The anchored revision MUST show a compare icon until cleared or the focused file changes. Compare with selected MUST stay disabled until a different revision is anchored and MUST open FileDiff of that pair. |
-| LN-HIST-009 | The history-compare header MUST show a leading History breadcrumb plus parent-path segments of the compared file. The header title MUST be the filename and MUST NOT be editable. Selecting History MUST open or reveal the History panel for that file. |
+| ID          | Requirement                                                                                                                                                                                                                                                                                                                                                        |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| LN-HIST-001 | The repo MUST ship `@lapis-notes/history` at `packages/history` as an independently versioned first-party external plugin. An application profile MAY enable it by default. It MUST NOT reuse AI conversation-history view types or commands.                                                                                                                      |
+| LN-HIST-002 | History MUST capture vault create, modify, rename, delete, and restore events into `AppDatabase` file-history tables only. It MUST NOT write snapshots into the vault, `.obsidian/`, or `.lapis/`.                                                                                                                                                                 |
+| LN-HIST-003 | Tracking MUST skip internal `.lapis` paths, glob excludes, binaries, oversized files, and read failures. Defaults MUST be 256 KiB, 50 revisions, a 10s modify merge window, and the documented exclude globs. Empty include-glob and extension allowlists MUST track remaining UTF-8 text.                                                                         |
+| LN-HIST-004 | The plugin MUST register the `history` view through `ViewAccess.command` with `open-file-history` / `Open file history`. The opener MUST reveal an existing instance wherever it was moved or create, activate, and reveal the default right sidebar.                                                                                                              |
+| LN-HIST-005 | The plugin MUST register `history-compare` through `ViewAccess.internal` and reuse one main-area tab. Previous or selected-pair compares MUST use Design Core FileDiff. Live-file compare MUST use one-way MergeEditor. Restore and apply MUST write through the vault API, record a restore revision, and suppress the next matching-hash modify.                 |
+| LN-HIST-006 | Storybook MUST demonstrate the real History panel in all six governed placements and a compare story covering FileDiff, MergeEditor, select-for-compare, restore, and History-leaf preservation. Docs source MUST use public `@lapis-notes/history` imports. New visuals MUST stay `visual-pending`.                                                               |
+| LN-HIST-007 | Deno desktop, web, editor-demo, and audited Storybook hosts MUST register History as `enabledByDefault: true` and load it before metadata and layout restoration.                                                                                                                                                                                                  |
+| LN-HIST-008 | The timeline context menu MUST offer Select for compare and Compare with selected. The anchored revision MUST show a compare icon until cleared or the focused file changes. Compare with selected MUST stay disabled until a different revision is anchored and MUST open FileDiff of that pair.                                                                  |
+| LN-HIST-009 | The history-compare header MUST show a leading History breadcrumb plus parent-path segments of the compared file. The header title MUST be the filename and MUST NOT be editable. Selecting History MUST open or reveal the History panel for that file.                                                                                                           |
 | LN-HIST-010 | Storybook MUST provide `Plugins/History/Shell` Desktop and Mobile stories that boot a real App with Explorer on the left, a multi-section Welcome note plus its stored-pair compare in the main area, and History plus Search retained on the collapsed right. Docs source MUST use public `@lapis-notes/history` imports. New visuals MUST stay `visual-pending`. |
-| LN-HIST-011 | History MUST register a Design Core settings section titled History under core-plugins. The section MUST expose exclude globs, include globs, tracked extensions, retention, size cap, merge window, and debounce. Values MUST persist through plugin data and apply to capture. |
+| LN-HIST-011 | History MUST register a Design Core settings section titled History under core-plugins. The section MUST expose exclude globs, include globs, tracked extensions, retention, size cap, merge window, and debounce. Values MUST persist through plugin data and apply to capture.                                                                                   |
 
 ### LN-HIST-003 acceptance details
 

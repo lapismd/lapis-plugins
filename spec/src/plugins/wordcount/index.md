@@ -12,7 +12,7 @@ The capture MUST assert both the active editor content and the settled status
 item before declaring the registry surface ready.
 Its full-shell frame preserves both window edges before the shared dark
 right-edge gutter. The same settled state drives split, light, and dark banner
-and Overview media.
+media; Overview media is omitted because it would repeat the banner.
 
 Canonical daily notes use the same Markdown word-count pipeline as other
 notes. Word Count does not participate in daily-document resolution or Tasks
@@ -54,9 +54,9 @@ counting, or status-bar ownership.
 
 ## Requirements
 
-| ID | Requirement |
-| --- | --- |
+| ID        | Requirement                                                                                                                                                                                                 |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | LN-WC-001 | The repo MUST ship `@lapis-notes/wordcount` at `packages/wordcount` with runtime id `wordcount` as an independently versioned first-party external plugin. An application profile MAY enable it by default. |
-| LN-WC-002 | Word Count MUST report words and characters for the active `TextFileView`. A non-empty selection MUST replace the document count. Other leaves MUST hide the status item. |
-| LN-WC-003 | Word Count MUST update `app.statusBar` with optional segments and a reading-time command. Clicking the status item MUST show reading time. It MUST NOT use compatibility status DOM. |
-| LN-WC-004 | Deno desktop, web, editor-demo, and audited Storybook hosts MUST register Word Count as `enabledByDefault: true` and load it before metadata and layout restoration. |
+| LN-WC-002 | Word Count MUST report words and characters for the active `TextFileView`. A non-empty selection MUST replace the document count. Other leaves MUST hide the status item.                                   |
+| LN-WC-003 | Word Count MUST update `app.statusBar` with optional segments and a reading-time command. Clicking the status item MUST show reading time. It MUST NOT use compatibility status DOM.                        |
+| LN-WC-004 | Deno desktop, web, editor-demo, and audited Storybook hosts MUST register Word Count as `enabledByDefault: true` and load it before metadata and layout restoration.                                        |

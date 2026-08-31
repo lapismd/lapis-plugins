@@ -35,7 +35,7 @@
       }
     },
     "overview": {
-      "alt": "Lapis Bases showing a populated project cover-card view with real artwork and useful properties.",
+      "alt": "Lapis Bases grouped list view with populated project records and grouping controls open.",
       "images": {
         "preview": {
           "path": "registry-assets/overview.preview.webp"
@@ -51,7 +51,7 @@
         }
       },
       "capture": {
-        "storyId": "plugins-bases-registry-screenshots--overview",
+        "storyId": "plugins-bases-registry-screenshots--grouped-list",
         "focus": "full-shell"
       }
     }

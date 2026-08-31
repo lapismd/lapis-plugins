@@ -33,27 +33,6 @@
         "storyId": "plugins-bookmarks-registry-screenshots--overview",
         "focus": "left-sidebar"
       }
-    },
-    "overview": {
-      "alt": "Lapis Bookmarks in the primary left sidebar beside an empty main workspace.",
-      "images": {
-        "preview": {
-          "path": "registry-assets/overview.preview.webp"
-        },
-        "full": {
-          "path": "registry-assets/overview.full.webp"
-        },
-        "light": {
-          "path": "registry-assets/overview.light.webp"
-        },
-        "dark": {
-          "path": "registry-assets/overview.dark.webp"
-        }
-      },
-      "capture": {
-        "storyId": "plugins-bookmarks-registry-screenshots--overview",
-        "focus": "full-shell"
-      }
     }
   },
   "gallery": [

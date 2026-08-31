@@ -33,27 +33,6 @@
         "storyId": "plugins-source-editor-registry-screenshots--overview",
         "focus": "full-shell"
       }
-    },
-    "overview": {
-      "alt": "Lapis Source Editor showing a populated JSON document in the complete shell with both sidebars closed.",
-      "images": {
-        "preview": {
-          "path": "registry-assets/overview.preview.webp"
-        },
-        "full": {
-          "path": "registry-assets/overview.full.webp"
-        },
-        "light": {
-          "path": "registry-assets/overview.light.webp"
-        },
-        "dark": {
-          "path": "registry-assets/overview.dark.webp"
-        }
-      },
-      "capture": {
-        "storyId": "plugins-source-editor-registry-screenshots--overview",
-        "focus": "full-shell"
-      }
     }
   },
   "gallery": [

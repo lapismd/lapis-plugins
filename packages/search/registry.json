@@ -35,7 +35,7 @@
       }
     },
     "overview": {
-      "alt": "Lapis Search with populated indexed results in the primary left sidebar beside an empty main workspace.",
+      "alt": "Lapis Search with populated results and its filter and view settings open.",
       "images": {
         "preview": {
           "path": "registry-assets/overview.preview.webp"
@@ -51,7 +51,7 @@
         }
       },
       "capture": {
-        "storyId": "plugins-search-registry-screenshots--overview",
+        "storyId": "plugins-search-registry-screenshots--search-filters",
         "focus": "full-shell"
       }
     }

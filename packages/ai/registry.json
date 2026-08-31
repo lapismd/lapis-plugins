@@ -35,7 +35,7 @@
       }
     },
     "overview": {
-      "alt": "Lapis AI with conversation History on the left, a populated Chat in the main workspace, and the capability Catalog on the right.",
+      "alt": "Focused Lapis AI chat showing a completed tool call and its result in the full workspace.",
       "images": {
         "preview": {
           "path": "registry-assets/overview.preview.webp"
@@ -51,7 +51,7 @@
         }
       },
       "capture": {
-        "storyId": "plugins-ai-registry-screenshots--overview",
+        "storyId": "plugins-ai-registry-screenshots--chat-with-tool-activity",
         "focus": "full-shell"
       }
     }

@@ -35,7 +35,7 @@
       }
     },
     "overview": {
-      "alt": "Lapis Spell Check showing Harper errors and a populated Problems panel with both sidebars closed.",
+      "alt": "Lapis Spell Check showing a real editor diagnostic with its correction action popover open.",
       "images": {
         "preview": {
           "path": "registry-assets/overview.preview.webp"
@@ -51,7 +51,7 @@
         }
       },
       "capture": {
-        "storyId": "plugins-spell-check-registry-screenshots--overview",
+        "storyId": "plugins-spell-check-registry-screenshots--editor-action-popover",
         "focus": "full-shell"
       }
     }

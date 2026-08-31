@@ -33,27 +33,6 @@
         "storyId": "plugins-markdown-lint-registry-screenshots--overview",
         "focus": "full-shell"
       }
-    },
-    "overview": {
-      "alt": "Lapis Markdown Lint showing real editor diagnostics and a populated Problems panel with both sidebars closed.",
-      "images": {
-        "preview": {
-          "path": "registry-assets/overview.preview.webp"
-        },
-        "full": {
-          "path": "registry-assets/overview.full.webp"
-        },
-        "light": {
-          "path": "registry-assets/overview.light.webp"
-        },
-        "dark": {
-          "path": "registry-assets/overview.dark.webp"
-        }
-      },
-      "capture": {
-        "storyId": "plugins-markdown-lint-registry-screenshots--overview",
-        "focus": "full-shell"
-      }
     }
   },
   "gallery": [

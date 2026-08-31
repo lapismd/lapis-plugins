@@ -35,7 +35,7 @@
       }
     },
     "overview": {
-      "alt": "Lapis History with Explorer on the left, a revision comparison in the main workspace, and History on the right.",
+      "alt": "Lapis History Compare view showing changes between two revisions in the full workspace.",
       "images": {
         "preview": {
           "path": "registry-assets/overview.preview.webp"
@@ -51,7 +51,7 @@
         }
       },
       "capture": {
-        "storyId": "plugins-history-registry-screenshots--overview",
+        "storyId": "plugins-history-registry-screenshots--compare",
         "focus": "full-shell"
       }
     }

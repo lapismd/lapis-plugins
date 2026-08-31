@@ -35,7 +35,7 @@
       }
     },
     "overview": {
-      "alt": "Lapis Graph with Explorer on the left, a connected Global Graph in the main workspace, and Local Graph on the right.",
+      "alt": "Focused Lapis Global Graph showing connected notes, tags, attachments, and unresolved links.",
       "images": {
         "preview": {
           "path": "registry-assets/overview.preview.webp"
@@ -51,7 +51,7 @@
         }
       },
       "capture": {
-        "storyId": "plugins-graph-registry-screenshots--overview",
+        "storyId": "plugins-graph-registry-screenshots--global-graph",
         "focus": "full-shell"
       }
     }

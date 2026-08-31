@@ -190,7 +190,12 @@ async function readCaptures() {
     const packageRoot = path.resolve(root, "packages", plugin.directory);
     const registryPath = path.join(packageRoot, "registry.json");
     const source = JSON.parse(await readFile(registryPath, "utf8"));
-    for (const role of ["banner", "overview"]) {
+    if (!source.media?.banner?.capture?.storyId) {
+      throw new Error(
+        `${plugin.directory}: banner media has no Storybook capture.`
+      );
+    }
+    for (const role of Object.keys(source.media)) {
       const item = source.media?.[role];
       if (!item?.capture?.storyId) {
         throw new Error(

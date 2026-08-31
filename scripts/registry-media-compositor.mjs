@@ -9,10 +9,6 @@ export const REGISTRY_MEDIA_DIMENSIONS = Object.freeze({
 });
 
 export const REGISTRY_MEDIA_SCREENSHOT_RIGHT_GUTTER = 48;
-export const REGISTRY_MEDIA_SPLIT = Object.freeze({
-  topX: 1600,
-  bottomX: 960,
-});
 
 export const REGISTRY_MEDIA_TONES = Object.freeze({
   neutral: "#F7F5FA",
@@ -69,7 +65,11 @@ export async function composeRegistryMedia({
     description,
     fontPath,
   });
-  const full = await composeDiagonalSplit({ light, dark });
+  const full = await composeDiagonalSplit({
+    light,
+    dark,
+    bounds: resolveRegistryScreenshotBounds(focus),
+  });
   const preview = await createPreview(full);
 
   for (const [variant, bytes] of Object.entries({
@@ -137,6 +137,7 @@ async function composeRegistryCardTheme({
   pixels.width = Math.min(pixels.width, metadata.width - pixels.left);
   pixels.height = Math.min(pixels.height, metadata.height - pixels.top);
   const screenshotFrame = resolveRegistryScreenshotFrame(focus);
+  const screenshotBounds = resolveRegistryScreenshotBounds(focus);
   const coverScale = Math.max(
     screenshotFrame.width / pixels.width,
     screenshotFrame.height / pixels.height
@@ -149,12 +150,9 @@ async function composeRegistryCardTheme({
 
   const positions = {
     copyX: 80,
-    screenshotX:
-      CANVAS.width -
-      screenshotFrame.width -
-      REGISTRY_MEDIA_SCREENSHOT_RIGHT_GUTTER,
+    screenshotX: screenshotBounds.left,
   };
-  const screenshotY = Math.round((CANVAS.height - screenshotFrame.height) / 2);
+  const screenshotY = screenshotBounds.top;
 
   const screenshot = await sharp(source)
     .extract(pixels)
@@ -231,10 +229,21 @@ async function assertCapture(source, label) {
   return metadata;
 }
 
-async function composeDiagonalSplit({ light, dark }) {
+async function composeDiagonalSplit({
+  light,
+  dark,
+  bounds = {
+    left: 0,
+    top: 0,
+    width: REGISTRY_MEDIA_DIMENSIONS.full.width,
+    height: REGISTRY_MEDIA_DIMENSIONS.full.height,
+  },
+}) {
   const { width, height } = REGISTRY_MEDIA_DIMENSIONS.full;
+  const right = bounds.left + bounds.width;
+  const bottom = bounds.top + bounds.height;
   const mask = Buffer.from(
-    `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg"><polygon points="${REGISTRY_MEDIA_SPLIT.topX},0 ${width},0 ${width},${height} ${REGISTRY_MEDIA_SPLIT.bottomX},${height}" fill="#fff"/></svg>`
+    `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg"><polygon points="${right},${bounds.top} ${right},${bottom} ${bounds.left},${bottom}" fill="#fff"/></svg>`
   );
   const lightRegion = await sharp(light)
     .ensureAlpha()
@@ -294,6 +303,16 @@ export function resolveFocusCrop(focus) {
 
 export function resolveRegistryScreenshotFrame(focus) {
   return focus === "full-shell" ? FULL_SHELL_SCREENSHOT : FOCUSED_SCREENSHOT;
+}
+
+export function resolveRegistryScreenshotBounds(focus) {
+  const frame = resolveRegistryScreenshotFrame(focus);
+  return {
+    left: CANVAS.width - frame.width - REGISTRY_MEDIA_SCREENSHOT_RIGHT_GUTTER,
+    top: Math.round((CANVAS.height - frame.height) / 2),
+    width: frame.width,
+    height: frame.height,
+  };
 }
 
 export function validateRegistryCardCopy(card) {
