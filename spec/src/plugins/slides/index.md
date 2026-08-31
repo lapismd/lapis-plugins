@@ -3,9 +3,10 @@
 `@lapis-notes/slides` owns presentation mode for Markdown notes. The migration
 starts from legacy revision `8ec68e18`, preserves the rendered overlay, Reveal
 surface, recursive section markup, close-button SVG, semantic class names, and
-authored CSS, and adapts only repository structure, public imports, explicit
-application ownership, current lifecycle behavior, packaging, and non-visual
-acceptance attributes.
+authored CSS, and adapts repository structure, public imports, explicit
+application ownership, current lifecycle behavior, packaging, non-visual
+acceptance attributes, and the scoped token bridge required for the public
+Markdown embed to inherit Reveal typography and its transparent slide surface.
 
 The package is portable across web and desktop hosts. Markdown remains the
 authoritative source: Slides opens a separate file-backed view over the active
@@ -17,10 +18,10 @@ the explicit source leaf when the presentation closes.
 | ID            | Requirement |
 | ------------- | ----------- |
 | LN-SLIDES-001 | Slides MUST live at `packages/slides` as `@lapis-notes/slides@0.1.0`, retain runtime id `lapis-slides`, view type `slides`, command id `start-presentation`, and migration provenance revision `8ec68e18`. The legacy source and its separate release history MUST remain unchanged. |
-| LN-SLIDES-002 | The migrated presentation MUST preserve the legacy overlay, view and section DOM, recursive horizontal and vertical tree, semantic class names, close-button SVG, Source Sans Pro imports, Reveal variables, and authored CSS declarations. Adaptation MAY add only non-visual accessibility or test attributes to that markup. |
+| LN-SLIDES-002 | The migrated presentation MUST preserve the legacy overlay, view and section DOM, recursive horizontal and vertical tree, semantic class names, close-button SVG, Source Sans Pro imports, Reveal variables, and authored CSS declarations. Adaptation MAY add non-visual accessibility or test attributes to that markup and a Slides-scoped Markdown token bridge; it MUST NOT restyle the application outside the presentation. |
 | LN-SLIDES-003 | Blank-line `---` separators MUST start horizontal slides and blank-line `----` separators MUST create vertical children. Separators without the surrounding blank lines MUST remain Markdown content. Empty input MUST remain a valid one-slide deck. |
 | LN-SLIDES-004 | A leading YAML front matter block MUST configure Reveal through the fail-safe YAML schema. Missing, scalar, array, or malformed configuration MUST fall back without throwing; malformed YAML MUST leave the original Markdown available to render. |
-| LN-SLIDES-005 | Slides MUST preserve `notes:` and case-insensitive `note:` or `notes:` speaker-note labels, callout-style `>[!note]:` and `>[!notes]:` notes, `.element` attributes on the preceding element, and `.slide:` attributes on the owning section. Slide and note bodies MUST render through `@lapis-notes/markdown/embed` with syntax highlighting disabled. |
+| LN-SLIDES-005 | Slides MUST preserve `notes:` and case-insensitive `note:` or `notes:` speaker-note labels, callout-style `>[!note]:` and `>[!notes]:` notes, `.element` attributes on the preceding element, and `.slide:` attributes on the owning section. Slide and note bodies MUST render through `@lapis-notes/markdown/embed` with syntax highlighting disabled, inherit Reveal's main and heading typography, and keep the embedded Markdown surface transparent. |
 | LN-SLIDES-006 | The plugin MUST register `Start presentation` as both the `lapis-slides:start-presentation` command and a Markdown view-menu action. The menu action MUST use its owning Markdown leaf; the command MUST use the active leaf. A missing leaf or non-Markdown file MUST produce the legacy notice and MUST NOT open a presentation. |
 | LN-SLIDES-007 | Starting a valid presentation MUST create and activate a new tab, set file-backed Slides state with the Markdown path and explicit source-leaf id, retain workspace history, and request layout persistence. Closing through the visible X or Escape MUST close the Slides leaf and reactivate that explicit source leaf, with a sibling or active-leaf fallback only when it no longer exists. |
 | LN-SLIDES-008 | The view MUST track live editor changes. Every content or configuration update MUST synchronize and lay out Reveal, then restore its prior horizontal, vertical, and fragment indices. The deck MUST retain focus after initialization and use embedded, focused-keyboard Reveal behavior. |

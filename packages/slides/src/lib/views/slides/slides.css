@@ -241,6 +241,42 @@
   flex-direction: column;
   gap: 0;
   padding: 0 2rem;
+  --mira-preview-background: transparent;
+  --mira-foreground: var(--r-main-color);
+  --mira-link: var(--r-link-color);
+  --mira-font-sans: var(--r-main-font);
+  --mira-markdown-font-size: var(--r-main-font-size);
+  --mira-markdown-line-height: 1.3;
+  --mira-h1-color: var(--r-main-color);
+  --mira-h2-color: var(--r-main-color);
+  --mira-h3-color: var(--r-main-color);
+  --mira-h4-color: var(--r-main-color);
+  --mira-h5-color: var(--r-main-color);
+  --mira-h6-color: var(--r-main-color);
+  --mira-h1-font: var(--r-heading-font);
+  --mira-h2-font: var(--r-heading-font);
+  --mira-h3-font: var(--r-heading-font);
+  --mira-h4-font: var(--r-heading-font);
+  --mira-h5-font: var(--r-heading-font);
+  --mira-h6-font: var(--r-heading-font);
+  --mira-h1-size: var(--r-heading1-size);
+  --mira-h2-size: var(--r-heading2-size);
+  --mira-h3-size: var(--r-heading3-size);
+  --mira-h4-size: var(--r-heading4-size);
+  --mira-h5-size: var(--r-heading4-size);
+  --mira-h6-size: var(--r-heading4-size);
+  --mira-h1-line-height: var(--r-heading-line-height);
+  --mira-h2-line-height: var(--r-heading-line-height);
+  --mira-h3-line-height: var(--r-heading-line-height);
+  --mira-h4-line-height: var(--r-heading-line-height);
+  --mira-h5-line-height: var(--r-heading-line-height);
+  --mira-h6-line-height: var(--r-heading-line-height);
+  --mira-h1-weight: var(--r-heading-font-weight);
+  --mira-h2-weight: var(--r-heading-font-weight);
+  --mira-h3-weight: var(--r-heading-font-weight);
+  --mira-h4-weight: var(--r-heading-font-weight);
+  --mira-h5-weight: var(--r-heading-font-weight);
+  --mira-h6-weight: var(--r-heading-font-weight);
 }
 
 .slides-view .slides-markdown h1,

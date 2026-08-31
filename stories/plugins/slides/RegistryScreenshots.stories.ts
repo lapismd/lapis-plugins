@@ -65,15 +65,27 @@ export const Presentation: Story = {
     next.click();
 
     await waitFor(() => {
-      expect(
-        deckCanvas.getByRole("heading", { level: 2, name: "Goals" })
-      ).toBeVisible();
-      expect(
-        deckCanvas.getByText("Confirm markdown slide splitting.")
-      ).toBeVisible();
+      const heading = deckCanvas.getByRole("heading", {
+        level: 2,
+        name: "Goals",
+      });
+      const firstGoal = deckCanvas.getByText(
+        "Confirm markdown slide splitting."
+      );
+      expect(heading).toBeVisible();
+      expect(firstGoal).toBeVisible();
       expect(
         deckCanvas.getByText("Confirm lists, code, and notes render.")
       ).toBeVisible();
+      expect(
+        Number.parseFloat(getComputedStyle(heading).fontSize)
+      ).toBeGreaterThan(56);
+      expect(
+        Number.parseFloat(getComputedStyle(firstGoal).fontSize)
+      ).toBeGreaterThan(36);
+      const embed = heading.closest<HTMLElement>(".markdown-preview-surface");
+      expect(embed).not.toBeNull();
+      expect(getComputedStyle(embed!).backgroundColor).toBe("rgba(0, 0, 0, 0)");
     });
 
     await new Promise((resolve) => setTimeout(resolve, 300));

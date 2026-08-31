@@ -14,7 +14,7 @@ Use the Slides plugin to present this markdown deck.
 
 - Confirm markdown slide splitting.
 - Confirm lists, code, and notes render.
-- Link to [[plugin-tasks/TaskNotes/Tasks/Golden Release Checklist]].
+- Link to [[plugin-tasks/TaskNotes/Tasks/Golden Release Checklist|release checklist]].
 
 Note: Speaker note for the goals slide.
 
