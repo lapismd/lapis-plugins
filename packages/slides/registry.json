@@ -1,0 +1,45 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 1,
+  "categories": ["presentation", "markdown"],
+  "highlights": [
+    "Turn the active Markdown note into a full-screen Reveal.js presentation.",
+    "Build horizontal and vertical slide trees with speaker notes and attributes.",
+    "Keep the presentation synchronized with live editor changes."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/slides#readme",
+  "appearance": { "icon": "presentation", "accent": "#42AFFA" },
+  "gallery": [
+    {
+      "id": "presentation",
+      "alt": "Slides full-screen presentation showing the Goals slide from the Release Walkthrough Markdown fixture.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/presentation.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/presentation.full.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-slides-registry-screenshots--presentation",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          { "text": "Turn Markdown into presentations.", "tone": "neutral" }
+        ],
+        "description": [
+          {
+            "text": "Open the active note as a Reveal.js deck with horizontal, vertical, and speaker-note slides.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    }
+  ],
+  "content": {
+    "overview": "registry-content/overview.md",
+    "changelog": "CHANGELOG.md"
+  }
+}

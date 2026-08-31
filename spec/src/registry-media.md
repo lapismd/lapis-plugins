@@ -47,6 +47,7 @@ All sources live under `Plugins/<Plugin>/Registry Screenshots` and carry both
 | Markdown      | Live Preview with Outline, Source with Properties, Reading, Backlinks sidebar |
 | Markdown Lint | Editor diagnostics with Problems                                              |
 | Search        | Populated Search sidebar, Search filters                                      |
+| Slides        | Full-screen Goals presentation                                                |
 | Source Editor | Focused JSON editor                                                           |
 | Spell Check   | Suggestions and Problems, Editor action popover                               |
 | Word Count    | Complete shell with both sidebars closed and status bar                       |

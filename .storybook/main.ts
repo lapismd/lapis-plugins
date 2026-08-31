@@ -31,6 +31,8 @@ const packageAliases = [
   ["@lapis-notes/search/agent-tools", "packages/search/src/lib/agent-tools.ts"],
   ["@lapis-notes/search/styles.css", "packages/search/src/lib/styles.css"],
   ["@lapis-notes/search", "packages/search/src/lib/index.ts"],
+  ["@lapis-notes/slides/styles.css", "packages/slides/src/lib/views/slides/slides.css"],
+  ["@lapis-notes/slides", "packages/slides/src/lib/index.ts"],
   ["@lapis-notes/source-editor/styles.css", "packages/source-editor/src/styles.css"],
   ["@lapis-notes/source-editor", "packages/source-editor/src/index.ts"],
   ["@lapis-notes/spellcheck/styles.css", "packages/spellcheck/src/styles.css"],

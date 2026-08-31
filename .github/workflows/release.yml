@@ -43,6 +43,11 @@ on:
         required: true
         default: true
         type: boolean
+      plugin_slides:
+        description: Release @lapis-notes/slides
+        required: true
+        default: true
+        type: boolean
       plugin_source_editor:
         description: Release @lapis-notes/source-editor
         required: true
@@ -125,6 +130,7 @@ jobs:
             markdown
             markdown-lint
             search
+            slides
             source-editor
             spellcheck
             wordcount
@@ -138,6 +144,7 @@ jobs:
             "${{ inputs.plugin_markdown }}"
             "${{ inputs.plugin_markdown_lint }}"
             "${{ inputs.plugin_search }}"
+            "${{ inputs.plugin_slides }}"
             "${{ inputs.plugin_source_editor }}"
             "${{ inputs.plugin_spellcheck }}"
             "${{ inputs.plugin_wordcount }}"
@@ -195,7 +202,7 @@ jobs:
           pnpm plugin:verify
           pnpm release:plan -- --production
           jq -e --arg source "$GITHUB_SHA" \
-            '.production == true and .generatedFrom == $source and (.releases | length == 11) and all(.releases[]; .sourceCommit == $source)' \
+            '.production == true and .generatedFrom == $source and (.releases | length == 12) and all(.releases[]; .sourceCommit == $source)' \
             .release/release-plan.json >/dev/null
       - uses: actions/upload-artifact@v7
         with:
@@ -244,7 +251,7 @@ jobs:
           pnpm release:plan -- --production
           cmp "$candidate_plan" .release/release-plan.json
           jq -e --arg source "$GITHUB_SHA" \
-            '.production == true and .generatedFrom == $source and (.releases | length == 11) and all(.releases[]; .sourceCommit == $source)' \
+            '.production == true and .generatedFrom == $source and (.releases | length == 12) and all(.releases[]; .sourceCommit == $source)' \
             .release/release-plan.json >/dev/null
       - name: Create registry GitHub App token
         id: registry-app

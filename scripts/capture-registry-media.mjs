@@ -312,6 +312,7 @@ function registryStoryTitle(directory) {
     markdown: "Markdown",
     "markdown-lint": "Markdown Lint",
     search: "Search",
+    slides: "Slides",
     "source-editor": "Source Editor",
     spellcheck: "Spell Check",
     wordcount: "Word Count",

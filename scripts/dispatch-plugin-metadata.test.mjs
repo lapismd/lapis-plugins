@@ -26,7 +26,7 @@ test("metadata dispatch payload is minimal and exact-commit scoped", () => {
   );
 });
 
-test("metadata dispatch dry run covers all eleven packages without network access", async () => {
+test("metadata dispatch dry run covers all twelve packages without network access", async () => {
   const payloads = await dispatchPluginMetadata({
     sourceCommit,
     dryRun: true,
@@ -34,8 +34,20 @@ test("metadata dispatch dry run covers all eleven packages without network acces
       throw new Error("network should not be used");
     },
   });
-  assert.equal(payloads.length, 11);
-  assert.equal(new Set(payloads.map((item) => item.client_payload.plugin_id)).size, 11);
+  assert.equal(payloads.length, 12);
+  assert.equal(new Set(payloads.map((item) => item.client_payload.plugin_id)).size, 12);
+  assert.deepEqual(
+    payloads.find((item) => item.client_payload.plugin_id === "lapis-slides"),
+    {
+      event_type: "plugin_metadata",
+      client_payload: {
+        repository: "lapismd/lapis-plugins",
+        package_name: "@lapis-notes/slides",
+        plugin_id: "lapis-slides",
+        source_commit: sourceCommit,
+      },
+    },
+  );
 });
 
 test("metadata dispatch requires the scoped registry token before network access", async () => {

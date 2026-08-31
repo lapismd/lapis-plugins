@@ -84,6 +84,7 @@ test("offers explicit plugin checkboxes instead of a free-form selector", () => 
     "plugin_markdown",
     "plugin_markdown_lint",
     "plugin_search",
+    "plugin_slides",
     "plugin_source_editor",
     "plugin_spellcheck",
     "plugin_wordcount",

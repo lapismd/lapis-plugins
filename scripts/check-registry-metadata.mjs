@@ -39,6 +39,7 @@ const allowedIcons = new Set([
   "list-checks",
   "network",
   "package",
+  "presentation",
   "search",
   "sparkles",
   "spell-check-2",

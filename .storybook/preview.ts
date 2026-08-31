@@ -33,6 +33,7 @@ const preview: Preview = {
             "Source Editor",
             "Markdown",
             "Search",
+            "Slides",
             "Bookmarks",
             "Graph",
             "History",
