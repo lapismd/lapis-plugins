@@ -7,6 +7,8 @@ Registry identity and capture-backed gallery media remain package-owned under
 LP-SPEC-030 and LP-SPEC-031. The governed `Registry Screenshots` story covers
 the JSON editor filling a focused workspace and stays `visual-pending` until
 separate visual approval.
+Capture readiness MUST assert the populated JSON document and focused workspace
+instead of relying only on shell startup.
 
 `@lapis-notes/source-editor` owns host-neutral source editing policy. The API
 owns the generic editor and file-view contracts, while applications own the

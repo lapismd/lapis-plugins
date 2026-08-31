@@ -7,6 +7,8 @@ Registry identity and capture-backed gallery media remain package-owned under
 LP-SPEC-030 and LP-SPEC-031. Governed `Registry Screenshots` stories cover a
 focused chat with tool activity, History, and Catalog; all stay
 `visual-pending` until separate visual approval.
+Capture readiness keeps the completed tool activity visible and asserts the
+focused transcript state before media generation begins.
 
 `@lapis-notes/ai` owns the provider-agnostic agent runtime, session control,
 normalized events, and the movable chat panel. Domain plugins may register

@@ -8,6 +8,10 @@ LP-SPEC-030 and LP-SPEC-031. Governed `Registry Screenshots` stories cover a
 focused Global Graph with a richly connected note, tag, attachment, and
 unresolved-link network plus its populated Local Graph sidebar; both stay
 `visual-pending` until separate visual approval.
+Graph captures MUST wait for the loading status to clear, the canvas to be
+visible, and the deterministic node/link inventory to be populated. The Local
+Graph capture additionally waits for its final focused layout paint after
+debounced metadata rebuilds settle.
 
 The package consumes the published Design Core semver contract. Its public UI
 boundary MUST NOT require a sibling-repository path or workspace `link:`

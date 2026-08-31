@@ -8,6 +8,8 @@ LP-SPEC-030 and LP-SPEC-031. Governed `Registry Screenshots` stories cover real
 Harper errors with a populated Problems panel and a second focused editor with
 the diagnostic action popover held open; both hide the sidebars and stay
 `visual-pending` until separate visual approval.
+The shared registry fixture MUST preserve Harper diagnostics after provider
+settling, and the popover story MUST assert the authored open action state.
 
 Canonical daily notes use the same Markdown spellcheck pipeline as other
 notes. Spellcheck does not participate in daily-document resolution or Tasks

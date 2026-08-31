@@ -7,6 +7,8 @@ Registry identity and capture-backed gallery media remain package-owned under
 LP-SPEC-030 and LP-SPEC-031. The governed `Registry Screenshots` story covers
 real Markdownlint editor diagnostics with a populated Problems panel while both
 sidebars are hidden, and stays `visual-pending` until separate visual approval.
+The shared registry fixture MUST retain the source-specific editor and Problems
+diagnostics through settled capture readiness.
 
 `@lapis-notes/markdown-lint` adapts open Markdown document diagnostics into the
 shared Problems infrastructure. Language-service, Problems panel, desktop

@@ -21,6 +21,10 @@ function graphStory(
   layout: "middle-top-tabs" | "right-sidebar",
 ): Story {
   return {
+    parameters:
+      kind === "local-graph"
+        ? { visualDelta: { delay: 250 } }
+        : undefined,
     render: (() => ({
       Component: PanelDemo,
       props: {
@@ -58,6 +62,19 @@ function graphStory(
         },
         { timeout: 20_000 },
       );
+      if (kind === "local-graph") {
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        await waitFor(() => {
+          const panel = canvasElement.querySelector<HTMLElement>(
+            '[data-testid="local-graph-panel"]',
+          );
+          expect(panel?.querySelector('[data-ui-part="status"]')).toBeNull();
+          expect(panel?.querySelector("canvas")).toBeVisible();
+        });
+        await new Promise<void>((resolve) => {
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+        });
+      }
     },
   };
 }

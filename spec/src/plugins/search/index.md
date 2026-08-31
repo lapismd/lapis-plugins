@@ -8,6 +8,8 @@ LP-SPEC-030 and LP-SPEC-031. Governed `Registry Screenshots` stories cover a
 populated left Search sidebar and the same result set with its filter and view
 settings open; both hide the right sidebar and stay `visual-pending` until
 separate visual approval.
+The filter capture MUST leave its authored controls open and assert that final
+state before the media compositor reads the story.
 
 `@lapis-notes/search` owns vault search indexing, query presentation, result
 navigation, and the `search` workspace view. Query parsing and generated search

@@ -40,6 +40,10 @@ Plugin behavior corrections use an independent package patch changeset and
 retain focused owning-package checks plus real consumer Storybook acceptance as
 release evidence. Preparing that candidate does not authorize npm publication,
 public release assets, or registry dispatch.
+Registry media refinement MUST preserve the fixed story IDs and output
+dimensions while strengthening each story's final-state assertions. Shared
+fixtures MAY stabilize source-specific diagnostics after the real provider has
+produced them, but MUST keep the editor and Problems collections consistent.
 Applying that changeset to a release candidate MUST update the selected package
 metadata and each owning plugin chapter together, then pass the complete
 tarball, signed-archive, and clean-consumer preparation gate before approval.

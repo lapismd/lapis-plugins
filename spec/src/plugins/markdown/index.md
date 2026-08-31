@@ -7,6 +7,8 @@ Registry identity and capture-backed gallery media remain package-owned under
 LP-SPEC-030 and LP-SPEC-031. Governed `Registry Screenshots` stories cover Live
 Preview beside the right Outline, Source beside right File Properties, Reading,
 and Backlinks; all stay `visual-pending` until separate visual approval.
+Each capture MUST assert its final editor mode and adjacent panel before the
+shared readiness marker permits media generation.
 
 Daily notes remain ordinary authoritative Markdown documents. The Markdown
 plugin parses and edits them through its existing file surfaces while the
