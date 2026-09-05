@@ -52,6 +52,8 @@ Distribution and this governance chapter; each package-owned Overview remains
 mapped to its owning plugin chapter.
 Worker packaging changes require focused package checks plus a packed consumer
 development startup that exercises Vite dependency discovery.
+Release builds MUST keep emitted worker and asset URLs relative so a consuming
+host can mount each verified plugin beneath its own fingerprinted URL.
 Cross-plugin public imports retain runtime peer ownership while a matching
 semver development edge makes Turbo build the provider's package exports before
 a clean consumer check.

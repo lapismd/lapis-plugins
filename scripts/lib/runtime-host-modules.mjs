@@ -4,6 +4,11 @@ export const implicitRendererEsmHostModules = Object.freeze([
   "svelte/internal/disclose-version",
 ]);
 
+// Plugin runtimes are mounted beneath a host-owned, fingerprinted URL. Keep
+// Vite-emitted workers and assets relative to the importing chunk instead of
+// resolving them from the application origin.
+export const pluginRuntimeViteBase = "./";
+
 const exactVersionPattern = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/u;
 
 export function assertRendererCompilerVersion({ expected, actual }) {

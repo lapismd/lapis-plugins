@@ -6,6 +6,7 @@ import {
   implicitRendererEsmHostModules,
   isImplicitRendererEsmHostModule,
   isPluginSelfReference,
+  pluginRuntimeViteBase,
   rendererCompilerVersionFromLockfile,
 } from "./lib/runtime-host-modules.mjs";
 
@@ -44,6 +45,10 @@ test("externalizes only the exact compiler-emitted Svelte renderer ABI", () => {
     isImplicitRendererEsmHostModule("svelte/internal/server"),
     false
   );
+});
+
+test("emits plugin runtime assets relative to the importing chunk", () => {
+  assert.equal(pluginRuntimeViteBase, "./");
 });
 
 test("requires the installed compiler to match the frozen lockfile", () => {

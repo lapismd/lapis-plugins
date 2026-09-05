@@ -32,6 +32,7 @@ import {
   assertRendererCompilerVersion,
   isImplicitRendererEsmHostModule,
   isPluginSelfReference,
+  pluginRuntimeViteBase,
   rendererCompilerVersionFromLockfile,
 } from "./lib/runtime-host-modules.mjs";
 import { resolveWorkerLimit, runBoundedWorkers } from "./lib/concurrency.mjs";
@@ -155,6 +156,7 @@ async function buildRuntime(plugin, packageRoot, outDir) {
     : path.join(packageRoot, "src/index.ts");
   await viteBuild({
     root: packageRoot,
+    base: pluginRuntimeViteBase,
     configFile: false,
     publicDir: false,
     plugins: [
