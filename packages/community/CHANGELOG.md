@@ -4,4 +4,5 @@
 
 - Add the first-party Community workspace view with host-owned local and NIP-46
   signing.
-- Keep registry browsing and installation outside the plugin.
+- Show the host-configured registry and delegate verified installation to the
+  host plugin distribution manager.

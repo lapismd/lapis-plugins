@@ -537,8 +537,8 @@ and records repository-level extraction and release gates.
 | LP-SPEC-007 | spec-governance | Implemented | Repository specification, package-boundary checks, release-security tests, deterministic artifact verification, and shared Storybook build. |
 | LN-COM-001    | plugins/community | Implemented | package catalog, synchronized package and manifest metadata, package boundary audit, publint, and semver-only dependency declaration |
 | LN-COM-002    | plugins/community | Implemented | CommunityPlugin command, ribbon, main-leaf reuse and view registration |
-| LN-COM-003    | plugins/community | Implemented | CommunityPluginApplication mounts the public CommunityApplication without registryOptions; focused Storybook asserts Registry is absent |
-| LN-COM-004    | plugins/community | Implemented | WebSocket NIP-29 source, browser runtime and stores, public-room discovery, and configurable relay scope |
+| LN-COM-003    | plugins/community | Implemented | CommunityPluginApplication derives the preferred Nostr or HTTP registry source from app.pluginDistribution and delegates install requests to the host manager |
+| LN-COM-004    | plugins/community | Implemented | WebSocket NIP-29 community source plus the public registry sources retain host-pinned relay, curator, and quorum configuration without an authoritative database |
 | LN-COM-005    | plugins/community | Implemented | host identity provider units cover opaque saved accounts, NIP-44 delegation, NIP-46 invitation handoff, and session closure |
 | LN-COM-006    | plugins/community | Implemented | focused interaction and accessibility story covers signed-out browsing plus saved, created, and NIP-46 account choices without private-key import |
-| LN-COM-007    | plugins/community | Visual pending | real public component stories pass interaction and accessibility checks; human visual review remains |
+| LN-COM-007    | plugins/community | Visual pending | real public component stories open the deterministic registry destination and cover host-owned identity choices; human visual review remains |

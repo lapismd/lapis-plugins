@@ -4,6 +4,7 @@
   "categories": ["community", "communication"],
   "highlights": [
     "Browse and join Lapis community channels and forums.",
+    "Discover plugins through the host-configured verified registry.",
     "Create a Nostr profile whose key stays in the operating-system keychain.",
     "Connect a NIP-46 remote signer without exposing its credentials to the plugin."
   ],
@@ -14,7 +15,7 @@
   },
   "media": {
     "banner": {
-      "alt": "The Community plugin showing Lapis community channels and conversations.",
+      "alt": "The Community plugin showing the host-configured verified plugin registry.",
       "images": {
         "preview": { "path": "registry-assets/banner.preview.webp" },
         "full": { "path": "registry-assets/banner.full.webp" },
