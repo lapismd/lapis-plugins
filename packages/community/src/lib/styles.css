@@ -4,3 +4,14 @@
   min-height: 0;
   overflow: hidden;
 }
+
+[data-ui-part="leaf-content"]:has(
+    [data-ui-component="community-plugin-application"]
+  )
+  > [data-ui-component="workspace-view-header"],
+[data-ui-part="stacked-tab-content"]:has(
+    [data-ui-component="community-plugin-application"]
+  )
+  [data-ui-component="workspace-view-header"] {
+  display: none;
+}

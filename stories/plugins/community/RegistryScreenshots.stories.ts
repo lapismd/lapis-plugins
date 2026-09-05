@@ -18,6 +18,7 @@ import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, userEvent, waitFor, within } from "storybook/test";
 import { WORKSPACE_SHELL_DOCS_PARAMETERS } from "../../workspace/docs-parameters";
 import { registryStoryParameters } from "../_shared/registry/registry-docs";
+import CommunityNativeViewHarness from "./CommunityNativeViewHarness.svelte";
 
 const runtime = await createCommunityTestRuntime({
   namespace: "community-plugin-story",
@@ -173,7 +174,7 @@ const meta = {
     communityAppShell: true,
     docs: {
       ...WORKSPACE_SHELL_DOCS_PARAMETERS,
-      source: { language: "svelte", code: consumerSource },
+      source: { language: "svelte", code: consumerSource, type: "code" },
       description: {
         component:
           "The first-party Community workspace view mounts the public CommunityApplication with the host-configured registry and delegates identity and installation operations to the host.",
@@ -184,9 +185,14 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+const renderNativeView = ((args) => ({
+  Component: CommunityNativeViewHarness,
+  props: args,
+})) as Story["render"];
 
 export const Overview: Story = {
   args: { controller: runtime.controller },
+  render: renderNativeView,
   parameters: registryStoryParameters(
     consumerSource,
     "The full Community workspace presents NIP-29 conversations and the host-verified plugin registry."
@@ -198,6 +204,10 @@ export const Overview: Story = {
     if (!(application instanceof HTMLElement)) {
       throw new Error("Community application did not mount");
     }
+    const nativeHeader = canvasElement.querySelector(
+      '[data-testid="community-native-view-header"]'
+    );
+    await expect(nativeHeader).not.toBeVisible();
     await waitFor(
       () =>
         expect(application).toHaveAttribute(
@@ -208,6 +218,8 @@ export const Overview: Story = {
     );
     const registry = canvas.getByRole("button", { name: "Registry" });
     await expect(registry).toBeVisible();
+    await expect(canvas.getByRole("button", { name: "Back" })).toBeVisible();
+    await expect(canvas.getByRole("button", { name: "Forward" })).toBeVisible();
     await userEvent.click(registry);
     await expect(
       canvas.getByRole("heading", { name: "Make Lapis Notes yours." })
@@ -218,6 +230,7 @@ export const Overview: Story = {
 
 export const HostOwnedIdentity: Story = {
   args: { controller: anonymousController },
+  render: renderNativeView,
   parameters: registryStoryParameters(
     consumerSource,
     "Community offers saved profiles, local profile creation, and NIP-46 remote signers through the host-owned identity boundary."

@@ -135,6 +135,10 @@
   });
 </script>
 
-<div class="community-plugin-application" data-testid="community-plugin-application">
+<div
+  class="community-plugin-application"
+  data-ui-component="community-plugin-application"
+  data-testid="community-plugin-application"
+>
   <CommunityApplication {controller} {loginOptions} {registryOptions} />
 </div>
