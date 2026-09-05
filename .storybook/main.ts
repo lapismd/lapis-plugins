@@ -15,27 +15,45 @@ const packageAliases = [
   ["@lapis-notes/ai", "packages/ai/src/lib/index.ts"],
   ["@lapis-notes/bases/styles.css", "packages/bases/src/lib/styles.css"],
   ["@lapis-notes/bases", "packages/bases/src/lib/index.ts"],
-  ["@lapis-notes/bookmarks/styles.css", "packages/bookmarks/src/lib/styles.css"],
+  [
+    "@lapis-notes/bookmarks/styles.css",
+    "packages/bookmarks/src/lib/styles.css",
+  ],
   ["@lapis-notes/bookmarks", "packages/bookmarks/src/lib/index.ts"],
-  ["@lapis-notes/community/styles.css", "packages/community/src/lib/styles.css"],
+  [
+    "@lapis-notes/community/styles.css",
+    "packages/community/src/lib/styles.css",
+  ],
   ["@lapis-notes/community", "packages/community/src/lib/index.ts"],
   ["@lapis-notes/graph/embed", "packages/graph/src/lib/embed.ts"],
   ["@lapis-notes/graph/styles.css", "packages/graph/src/lib/styles.css"],
   ["@lapis-notes/graph", "packages/graph/src/lib/index.ts"],
   ["@lapis-notes/history/styles.css", "packages/history/src/lib/styles.css"],
   ["@lapis-notes/history", "packages/history/src/lib/index.ts"],
-  ["@lapis-notes/markdown/agent-tools", "packages/markdown/src/lib/agent-tools.ts"],
+  [
+    "@lapis-notes/markdown/agent-tools",
+    "packages/markdown/src/lib/agent-tools.ts",
+  ],
   ["@lapis-notes/markdown/embed", "packages/markdown/src/lib/embed.ts"],
   ["@lapis-notes/markdown/styles.css", "packages/markdown/src/lib/styles.css"],
   ["@lapis-notes/markdown", "packages/markdown/src/lib/index.ts"],
-  ["@lapis-notes/markdown-lint/styles.css", "packages/markdown-lint/src/styles.css"],
+  [
+    "@lapis-notes/markdown-lint/styles.css",
+    "packages/markdown-lint/src/styles.css",
+  ],
   ["@lapis-notes/markdown-lint", "packages/markdown-lint/src/index.ts"],
   ["@lapis-notes/search/agent-tools", "packages/search/src/lib/agent-tools.ts"],
   ["@lapis-notes/search/styles.css", "packages/search/src/lib/styles.css"],
   ["@lapis-notes/search", "packages/search/src/lib/index.ts"],
-  ["@lapis-notes/slides/styles.css", "packages/slides/src/lib/views/slides/slides.css"],
+  [
+    "@lapis-notes/slides/styles.css",
+    "packages/slides/src/lib/views/slides/slides.css",
+  ],
   ["@lapis-notes/slides", "packages/slides/src/lib/index.ts"],
-  ["@lapis-notes/source-editor/styles.css", "packages/source-editor/src/styles.css"],
+  [
+    "@lapis-notes/source-editor/styles.css",
+    "packages/source-editor/src/styles.css",
+  ],
   ["@lapis-notes/source-editor", "packages/source-editor/src/index.ts"],
   ["@lapis-notes/spellcheck/styles.css", "packages/spellcheck/src/styles.css"],
   ["@lapis-notes/spellcheck", "packages/spellcheck/src/index.ts"],
@@ -90,7 +108,7 @@ const config: StorybookConfig = {
     const nonSveltePlugins = plugins.filter(
       (plugin) =>
         !plugin?.name?.startsWith("vite-plugin-svelte") &&
-        plugin?.name !== "sveltekit-autoimport-configuration",
+        plugin?.name !== "sveltekit-autoimport-configuration"
     );
     viteConfig.plugins = [
       svelte({
@@ -116,7 +134,7 @@ const config: StorybookConfig = {
             find: /^harper\.js\/binaryInlined$/,
             replacement: path.join(
               repoRoot,
-              "packages/spellcheck/node_modules/harper.js/dist/binaryInlined.js",
+              "packages/spellcheck/node_modules/harper.js/dist/binaryInlined.js"
             ),
           },
           {
@@ -124,12 +142,17 @@ const config: StorybookConfig = {
             replacement: path.join(storybookDir, "harper-binary.ts"),
           },
           ...packageAliases.map(([find, replacement]) => ({
-            find: new RegExp(`^${find.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`),
+            find: new RegExp(
+              `^${find.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`
+            ),
             replacement: path.join(repoRoot, replacement),
           })),
           {
             find: /^\$lib(?:\/(.*))?$/,
-            replacement: `${path.join(repoRoot, "packages/markdown/src/lib")}/$1`,
+            replacement: `${path.join(
+              repoRoot,
+              "packages/markdown/src/lib"
+            )}/$1`,
           },
         ],
       },
@@ -161,6 +184,7 @@ const config: StorybookConfig = {
           "extend",
           "markdownlint",
           "markdownlint/sync",
+          "@lapismd/lapis-community > semver",
         ],
       },
       server: {

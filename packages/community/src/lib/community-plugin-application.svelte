@@ -36,7 +36,9 @@
 
   const ownsController = untrack(() => suppliedController === undefined);
   const hostRelayUrl = untrack(() =>
-    selectCommunityPluginRelayUrl(app.pluginDistribution.listSources()),
+    suppliedController === undefined
+      ? selectCommunityPluginRelayUrl(app.pluginDistribution.listSources())
+      : undefined,
   );
   const controller = untrack(
     () => suppliedController ?? createCommunityPluginController(hostRelayUrl),
