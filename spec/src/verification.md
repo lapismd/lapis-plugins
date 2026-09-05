@@ -42,6 +42,7 @@ and records repository-level extraction and release gates.
 | LP-SPEC-044 | spec-governance, distribution | Implemented | The shared full-workspace Docs parameters and scoped canvas stylesheet enforce an isolated 700px, padding-free story; the repository-local Storybook Docs audit inventories every governed family and fails omissions. |
 | LP-SPEC-045 | spec-governance, distribution | Implemented | The shared Storybook catalog validator inventories story-only demos, harnesses, and fixtures, requires complete explicit source metadata, and rejects snippets that expose internal render boundaries or Storybook args. |
 | LP-SPEC-046 | spec-governance, distribution | Implemented | The repository-local Storybook Docs audit requires non-empty component and story descriptions, verifies governed public component identities, and checks documented injected and public properties without exposing harness controls. |
+| LP-SPEC-047 | distribution | Implemented | Release-builder tests derive the root lockfile compiler version and reject missing, ranged, or mismatched installed Svelte before plugin output. |
 | LN-AI-001 | ai-plugin | Implemented | package location, runtime ID `ai`, bundled default-enabled registration |
 | LN-AI-002 | ai-plugin | Implemented | public exports expose AgentRuntime; vendor SDKs stay in adapters |
 | LN-AI-003 | ai-plugin | Implemented | Fake and ACP sessions block on respondToApproval |

@@ -29,14 +29,29 @@ import {
   pluginPackages,
 } from "./package-catalog.mjs";
 import {
+  assertRendererCompilerVersion,
   isImplicitRendererEsmHostModule,
   isPluginSelfReference,
+  rendererCompilerVersionFromLockfile,
 } from "./lib/runtime-host-modules.mjs";
 import { resolveWorkerLimit, runBoundedWorkers } from "./lib/concurrency.mjs";
 import { preparePluginReleaseRoot } from "./lib/release-output.mjs";
 import { resolveSourceCommit } from "./lib/source-commit.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const expectedRendererVersion = rendererCompilerVersionFromLockfile(
+  await readFile(path.join(root, "pnpm-lock.yaml"), "utf8")
+);
+const installedRenderer = JSON.parse(
+  await readFile(
+    path.join(root, "node_modules", "svelte", "package.json"),
+    "utf8"
+  )
+);
+assertRendererCompilerVersion({
+  expected: expectedRendererVersion,
+  actual: installedRenderer.version,
+});
 const options = parseOptions(process.argv.slice(2));
 const selected = options.plugin
   ? [requiredPlugin(options.plugin)]

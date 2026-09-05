@@ -25,6 +25,9 @@ Shared release tooling MAY treat only the three compiler-emitted Svelte
 renderer specifiers named by LP-SPEC-014 as an implicit host ABI. Focused tests
 MUST reject arbitrary Svelte subpaths and keep this ABI out of authored plugin
 manifest dependencies.
+Release compiler reproducibility is protected by LP-SPEC-047. The builder reads
+the root frozen lockfile and MUST reject installed Svelte drift before writing
+plugin output.
 Package registry metadata is protected by the same mapped spec-first rule. Each
 source file maps to its owning plugin chapter, while shared schema, audit, and
 dispatch tooling map to Distribution and this governance chapter.
