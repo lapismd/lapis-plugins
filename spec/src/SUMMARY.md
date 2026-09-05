@@ -7,6 +7,7 @@
   - [Plugins / AI](plugins/ai/index.md)
   - [Plugins / Bases](plugins/bases/index.md)
   - [Plugins / Bookmarks](plugins/bookmarks/index.md)
+  - [Plugins / Community](plugins/community/index.md)
   - [Plugins / Graph](plugins/graph/index.md)
   - [Plugins / History](plugins/history/index.md)
   - [Plugins / Markdown](plugins/markdown/index.md)

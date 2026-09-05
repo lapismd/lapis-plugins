@@ -18,6 +18,11 @@ on:
         required: true
         default: true
         type: boolean
+      plugin_community:
+        description: Release @lapis-notes/community
+        required: true
+        default: true
+        type: boolean
       plugin_graph:
         description: Release @lapis-notes/graph
         required: true
@@ -68,11 +73,6 @@ on:
         required: true
         default: false
         type: boolean
-      approval:
-        description: Enter FIRST_PUBLICATION_APPROVED after the manual gate
-        required: true
-        type: string
-
 permissions:
   contents: write
   id-token: write
@@ -100,7 +100,6 @@ jobs:
     steps:
       - name: Confirm the protected release gate
         env:
-          APPROVAL_INPUT: ${{ inputs.approval }}
           FRAMEWORK_PACKAGES_PUBLISHED: ${{ vars.FRAMEWORK_PACKAGES_PUBLISHED }}
           FIRST_PUBLICATION_APPROVED: ${{ vars.FIRST_PUBLICATION_APPROVED }}
         run: |
@@ -113,10 +112,6 @@ jobs:
             echo "The first-publication repository gate is closed." >&2
             exit 1
           fi
-          if [[ "$APPROVAL_INPUT" != "FIRST_PUBLICATION_APPROVED" ]]; then
-            echo "Enter FIRST_PUBLICATION_APPROVED to start protected validation." >&2
-            exit 1
-          fi
       - name: Resolve selected plugins
         id: selection
         run: |
@@ -125,6 +120,7 @@ jobs:
             ai
             bases
             bookmarks
+            community
             graph
             history
             markdown
@@ -139,6 +135,7 @@ jobs:
             "${{ inputs.plugin_ai }}"
             "${{ inputs.plugin_bases }}"
             "${{ inputs.plugin_bookmarks }}"
+            "${{ inputs.plugin_community }}"
             "${{ inputs.plugin_graph }}"
             "${{ inputs.plugin_history }}"
             "${{ inputs.plugin_markdown }}"
@@ -191,18 +188,17 @@ jobs:
         run: node scripts/report-turbo-cache.mjs --github-summary
       - name: Pack npm candidates from validated builds
         run: pnpm packages:pack -- --already-built
-      - name: Build production-signed candidates
+      - name: Bind release time to the source commit
+        run: echo "LAPIS_RELEASED_AT=$(git show -s --format=%cI "$GITHUB_SHA")" >> "$GITHUB_ENV"
+      - name: Build deterministic plugin payloads
         run: pnpm plugin:build
-        env:
-          LAPIS_PLUGIN_RELEASE_PRIVATE_KEY: ${{ secrets.LAPIS_PLUGIN_RELEASE_PRIVATE_KEY }}
-          LAPIS_PLUGIN_RELEASE_KEY_ID: ${{ secrets.LAPIS_PLUGIN_RELEASE_KEY_ID }}
       - name: Verify production candidate
         run: |
           set -euo pipefail
           pnpm plugin:verify
           pnpm release:plan -- --production
           jq -e --arg source "$GITHUB_SHA" \
-            '.production == true and .generatedFrom == $source and (.releases | length == 12) and all(.releases[]; .sourceCommit == $source)' \
+            '.production == true and .generatedFrom == $source and (.releases | length == 13) and all(.releases[]; .sourceCommit == $source)' \
             .release/release-plan.json >/dev/null
       - uses: actions/upload-artifact@v7
         with:
@@ -211,23 +207,23 @@ jobs:
             .release/npm/*.tgz
             .release/npm/*.sha256
             .release/npm/manifest.json
-            .release/plugins/**/*.lapis-plugin
+            .release/plugins/**/*.payload.zip
             .release/plugins/**/*.sha256
-            .release/plugin-release-public.pem
+            .release/plugins/**/release.json
+            .release/plugins/**/*.manifest.json
+            .release/plugins/**/*.publisher-request.json
             .release/release-plan.json
           if-no-files-found: error
           retention-days: 7
 
-  publish:
+  publisher-sign:
     needs:
       - selection
-      - validate
       - production-candidate
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    environment: first-publication
+    timeout-minutes: 15
     permissions:
-      contents: write
+      contents: read
       id-token: write
       packages: read
     container:
@@ -242,29 +238,117 @@ jobs:
         with:
           name: production-plugin-candidate-${{ github.run_id }}
           path: .release
+      - name: Reverify the publisher candidate
+        run: |
+          set -euo pipefail
+          candidate_plan="$RUNNER_TEMP/production-release-plan.json"
+          cp .release/release-plan.json "$candidate_plan"
+          LAPIS_RELEASED_AT="$(git show -s --format=%cI "$GITHUB_SHA")"
+          export LAPIS_RELEASED_AT
+          echo "LAPIS_RELEASED_AT=$LAPIS_RELEASED_AT" >> "$GITHUB_ENV"
+          pnpm plugin:verify
+          pnpm release:plan -- --production
+          cmp "$candidate_plan" .release/release-plan.json
+      - name: Request publisher Nostr signatures
+        run: pnpm release:nostr -- --role publisher --plugins "${{ needs.selection.outputs.plugins }}"
+        env:
+          LAPIS_NOSTR_SIGNER_URL: ${{ vars.LAPIS_NOSTR_SIGNER_URL }}
+          LAPIS_NOSTR_SIGNER_AUDIENCE: ${{ vars.LAPIS_NOSTR_SIGNER_AUDIENCE }}
+          LAPIS_NOSTR_PUBLISHER_PUBKEY: ${{ vars.LAPIS_NOSTR_PUBLISHER_PUBKEY }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: publisher-signed-plugin-candidate-${{ github.run_id }}
+          path: .release
+          if-no-files-found: error
+          retention-days: 7
+
+  curator-sign:
+    needs:
+      - selection
+      - publisher-sign
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: nostr-curation
+    permissions:
+      contents: read
+      id-token: write
+      packages: read
+    container:
+      image: ghcr.io/lapismd/lapis-plugins-ci@sha256:5c6a20bf2e9f28c59567661df08fef936a9ca62491c40b644ec60e53be019632
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/ci-setup
+      - uses: actions/download-artifact@v8
+        with:
+          name: publisher-signed-plugin-candidate-${{ github.run_id }}
+          path: .release
+      - name: Reverify the approved candidate
+        run: |
+          set -euo pipefail
+          candidate_plan="$RUNNER_TEMP/production-release-plan.json"
+          cp .release/release-plan.json "$candidate_plan"
+          LAPIS_RELEASED_AT="$(git show -s --format=%cI "$GITHUB_SHA")"
+          export LAPIS_RELEASED_AT
+          echo "LAPIS_RELEASED_AT=$LAPIS_RELEASED_AT" >> "$GITHUB_ENV"
+          pnpm plugin:verify
+          pnpm release:plan -- --production
+          cmp "$candidate_plan" .release/release-plan.json
+      - name: Request the curator decision
+        run: |
+          pnpm release:nostr -- --role curator --plugins "${{ needs.selection.outputs.plugins }}"
+          pnpm release:nostr:verify -- --plugins "${{ needs.selection.outputs.plugins }}"
+        env:
+          LAPIS_NOSTR_SIGNER_URL: ${{ vars.LAPIS_NOSTR_SIGNER_URL }}
+          LAPIS_NOSTR_SIGNER_AUDIENCE: ${{ vars.LAPIS_NOSTR_SIGNER_AUDIENCE }}
+          LAPIS_NOSTR_CURATOR_PUBKEY: ${{ vars.LAPIS_NOSTR_CURATOR_PUBKEY }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: curated-plugin-candidate-${{ github.run_id }}
+          path: .release
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    needs:
+      - selection
+      - validate
+      - curator-sign
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      id-token: write
+      packages: read
+    container:
+      image: ghcr.io/lapismd/lapis-plugins-ci@sha256:5c6a20bf2e9f28c59567661df08fef936a9ca62491c40b644ec60e53be019632
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/ci-setup
+      - uses: actions/download-artifact@v8
+        with:
+          name: curated-plugin-candidate-${{ github.run_id }}
+          path: .release
       - name: Reverify the downloaded production candidate
         run: |
           set -euo pipefail
           candidate_plan="$RUNNER_TEMP/production-release-plan.json"
           cp .release/release-plan.json "$candidate_plan"
+          LAPIS_RELEASED_AT="$(git show -s --format=%cI "$GITHUB_SHA")"
+          export LAPIS_RELEASED_AT
           pnpm plugin:verify
           pnpm release:plan -- --production
           cmp "$candidate_plan" .release/release-plan.json
+          pnpm release:nostr:verify -- --plugins "${{ needs.selection.outputs.plugins }}"
           jq -e --arg source "$GITHUB_SHA" \
-            '.production == true and .generatedFrom == $source and (.releases | length == 12) and all(.releases[]; .sourceCommit == $source)' \
+            '.production == true and .generatedFrom == $source and (.releases | length == 13) and all(.releases[]; .sourceCommit == $source)' \
             .release/release-plan.json >/dev/null
-      - name: Create registry GitHub App token
-        id: registry-app
-        uses: actions/create-github-app-token@7bd03711494f032dfa3be3558f7dc8787b0be333 # v3.1.0
-        with:
-          client-id: ${{ secrets.LAPIS_REGISTRY_APP_CLIENT_ID }}
-          private-key: ${{ secrets.LAPIS_REGISTRY_APP_PRIVATE_KEY }}
-          owner: lapismd
-          repositories: |
-            lapis-plugins
-            plugin-registry
-          permission-contents: write
-      - name: Publish npm, GitHub assets, and registry dispatch
+      - name: Publish npm and GitHub assets
         shell: bash
         run: |
           set -euo pipefail
@@ -278,4 +362,9 @@ jobs:
           LAPIS_PUBLICATION_APPROVED: "true"
           GITHUB_TOKEN: ${{ github.token }}
           GH_TOKEN: ${{ github.token }}
-          REGISTRY_GITHUB_TOKEN: ${{ steps.registry-app.outputs.token }}
+      - name: Publish signed events and wait for relay quorum
+        run: pnpm release:nostr -- --role publish --plugins "${{ needs.selection.outputs.plugins }}"
+        env:
+          LAPIS_NOSTR_SIGNER_URL: ${{ vars.LAPIS_NOSTR_SIGNER_URL }}
+          LAPIS_NOSTR_SIGNER_AUDIENCE: ${{ vars.LAPIS_NOSTR_SIGNER_AUDIENCE }}
+          LAPIS_NOSTR_RELAY_QUORUM: ${{ vars.LAPIS_NOSTR_RELAY_QUORUM }}

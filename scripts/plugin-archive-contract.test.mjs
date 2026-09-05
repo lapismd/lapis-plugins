@@ -5,12 +5,10 @@ import path from "node:path";
 import test from "node:test";
 
 import { assertSafePluginRelativePath } from "./lib/plugin-bundle.mjs";
-import { verifyPluginBundle } from "./lib/verify-plugin-release.mjs";
+import { verifyPluginPayload } from "./lib/verify-plugin-release.mjs";
 import {
-  buildSignedPluginBundle,
-  generateTestEd25519KeyPair,
+  buildPluginPayload,
   packageOfficialPlugin,
-  signReleaseManifest,
 } from "./plugin-release.mjs";
 
 test("rejects unsafe plugin archive paths", () => {
@@ -24,7 +22,7 @@ test("rejects unsafe plugin archive paths", () => {
   );
 });
 
-test("rejects files added after the release manifest is signed", async () => {
+test("rejects files added after the curated release manifest is created", async () => {
   const root = await mkdtemp(path.join(tmpdir(), "lapis-plugin-contract-"));
   const input = path.join(root, "input");
   const out = path.join(root, "out");
@@ -55,30 +53,19 @@ test("rejects files added after the release manifest is signed", async () => {
     inputDir: input,
     outDir: out,
   });
-  const keys = generateTestEd25519KeyPair();
-  const privateKeyFile = path.join(root, "private.pem");
-  const signedReleasePath = path.join(release.releaseDir, "release.signed.json");
-  await writeFile(privateKeyFile, keys.privateKey, { mode: 0o600 });
-  await signReleaseManifest({
-    input: release.releasePath,
-    out: signedReleasePath,
-    keyId: "test-only",
-    privateKeyFile,
-  });
   await writeFile(path.join(release.releaseDir, "files/unsigned.txt"), "unsigned");
-  const bundle = await buildSignedPluginBundle({
+  const bundle = await buildPluginPayload({
     pluginId: "contract-test",
     version: "0.1.0",
     releaseDir: release.releaseDir,
-    signedReleasePath,
   });
   const bundleBytes = await readFile(bundle.bundlePath);
 
   assert.throws(
     () =>
-      verifyPluginBundle({
+      verifyPluginPayload({
         bundleBytes,
-        publicKey: keys.publicKey,
+        releaseManifest: release.releaseManifest,
       }),
     /unsigned or missing files/,
   );

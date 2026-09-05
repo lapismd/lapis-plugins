@@ -26,7 +26,7 @@ test("metadata dispatch payload is minimal and exact-commit scoped", () => {
   );
 });
 
-test("metadata dispatch dry run covers all twelve packages without network access", async () => {
+test("metadata dispatch dry run covers all thirteen packages without network access", async () => {
   const payloads = await dispatchPluginMetadata({
     sourceCommit,
     dryRun: true,
@@ -34,8 +34,8 @@ test("metadata dispatch dry run covers all twelve packages without network acces
       throw new Error("network should not be used");
     },
   });
-  assert.equal(payloads.length, 12);
-  assert.equal(new Set(payloads.map((item) => item.client_payload.plugin_id)).size, 12);
+  assert.equal(payloads.length, 13);
+  assert.equal(new Set(payloads.map((item) => item.client_payload.plugin_id)).size, 13);
   assert.deepEqual(
     payloads.find((item) => item.client_payload.plugin_id === "lapis-slides"),
     {

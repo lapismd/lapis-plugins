@@ -3,10 +3,46 @@ import { Unzip, UnzipInflate } from "fflate";
 export const pluginBundleReleaseManifestPath = "release.signed.json";
 export const pluginBundleStoredMethod = 0;
 export const pluginBundleDeflateMethod = 8;
+export const nostrPluginProofPath = "release.nostr.json";
+export const nostrPluginPayloadPath = "payload.zip";
 
 export function parsePluginBundle(input) {
+  return parsePluginArchive(input, true);
+}
+
+export function parsePluginPayload(input) {
+  return parsePluginArchive(input, false);
+}
+
+export function parseNostrPluginBundle(input) {
+  const entries = parsePluginArchive(input, false);
+  const paths = [...entries.keys()];
+  if (
+    paths.length !== 2 ||
+    paths[0] !== nostrPluginProofPath ||
+    paths[1] !== nostrPluginPayloadPath
+  ) {
+    throw new Error(
+      ".lapis-plugin Nostr bundle must contain only release.nostr.json and payload.zip."
+    );
+  }
+  let proof;
+  try {
+    proof = JSON.parse(entries.get(nostrPluginProofPath).toString("utf8"));
+  } catch (error) {
+    throw new Error(".lapis-plugin release.nostr.json is invalid JSON.", {
+      cause: error,
+    });
+  }
+  return { proof, payload: entries.get(nostrPluginPayloadPath) };
+}
+
+function parsePluginArchive(input, requireSignedManifest) {
   const bytes = Buffer.isBuffer(input) ? input : Buffer.from(input);
-  const expectedEntries = inspectPluginBundleMetadata(bytes);
+  const expectedEntries = inspectPluginBundleMetadata(
+    bytes,
+    requireSignedManifest
+  );
   const entries = new Map();
   let seenFileCount = 0;
   let firstError = null;
@@ -18,7 +54,7 @@ export function parsePluginBundle(input) {
       seenFileCount += 1;
       if (!expectedEntry) {
         throw new Error(
-          `Unexpected file in .lapis-plugin bundle: ${file.name}`,
+          `Unexpected file in .lapis-plugin bundle: ${file.name}`
         );
       }
       if (
@@ -26,7 +62,7 @@ export function parsePluginBundle(input) {
         file.compression !== expectedEntry.compressionMethod
       ) {
         throw new Error(
-          `Plugin bundle local entry order or method is invalid: ${file.name}`,
+          `Plugin bundle local entry order or method is invalid: ${file.name}`
         );
       }
       assertBundlePath(file.name);
@@ -35,7 +71,7 @@ export function parsePluginBundle(input) {
       }
       if (!isSupportedCompressionMethod(file.compression)) {
         throw new Error(
-          `Unsupported plugin bundle compression method ${file.compression}: ${file.name}`,
+          `Unsupported plugin bundle compression method ${file.compression}: ${file.name}`
         );
       }
 
@@ -45,7 +81,7 @@ export function parsePluginBundle(input) {
         if (error) {
           firstError = new Error(
             `Unable to extract plugin bundle file: ${file.name}`,
-            { cause: error },
+            { cause: error }
           );
           return;
         }
@@ -75,17 +111,17 @@ export function parsePluginBundle(input) {
   for (const expectedEntry of expectedEntries) {
     if (!entries.has(expectedEntry.path)) {
       throw new Error(
-        `.lapis-plugin bundle did not extract ${expectedEntry.path}.`,
+        `.lapis-plugin bundle did not extract ${expectedEntry.path}.`
       );
     }
   }
-  if (!entries.has(pluginBundleReleaseManifestPath)) {
+  if (requireSignedManifest && !entries.has(pluginBundleReleaseManifestPath)) {
     throw new Error(".lapis-plugin bundle is missing release.signed.json.");
   }
   return entries;
 }
 
-function inspectPluginBundleMetadata(bytes) {
+function inspectPluginBundleMetadata(bytes, requireSignedManifest) {
   const eocdOffset = findEndOfCentralDirectory(bytes);
   const totalEntries = bytes.readUInt16LE(eocdOffset + 10);
   const centralDirectorySize = bytes.readUInt32LE(eocdOffset + 12);
@@ -109,7 +145,7 @@ function inspectPluginBundleMetadata(bytes) {
     centralDirectoryOffset,
     centralDirectorySize,
     bytes.byteLength,
-    "central directory",
+    "central directory"
   );
 
   const entries = [];
@@ -138,17 +174,17 @@ function inspectPluginBundleMetadata(bytes) {
     seenPaths.add(entryPath);
     if ((flags & 0x41) !== 0) {
       throw new Error(
-        `Encrypted plugin bundle file is not supported: ${entryPath}`,
+        `Encrypted plugin bundle file is not supported: ${entryPath}`
       );
     }
     if (!isSupportedCompressionMethod(compressionMethod)) {
       throw new Error(
-        `Unsupported plugin bundle compression method ${compressionMethod}: ${entryPath}`,
+        `Unsupported plugin bundle compression method ${compressionMethod}: ${entryPath}`
       );
     }
     if (compressedSize === 0xffffffff || uncompressedSize === 0xffffffff) {
       throw new Error(
-        `ZIP64 plugin bundle file metadata is not supported: ${entryPath}`,
+        `ZIP64 plugin bundle file metadata is not supported: ${entryPath}`
       );
     }
     entries.push(
@@ -158,7 +194,7 @@ function inspectPluginBundleMetadata(bytes) {
         localHeaderOffset,
         compressionMethod,
         flags,
-      }),
+      })
     );
     offset += 46 + nameLength + extraLength + commentLength;
   }
@@ -168,18 +204,27 @@ function inspectPluginBundleMetadata(bytes) {
   }
 
   const localOrder = [...entries].sort(
-    (left, right) => left.localHeaderOffset - right.localHeaderOffset,
+    (left, right) => left.localHeaderOffset - right.localHeaderOffset
   );
   const firstEntry = localOrder[0];
-  if (firstEntry?.path !== pluginBundleReleaseManifestPath) {
+  if (
+    requireSignedManifest &&
+    firstEntry?.path !== pluginBundleReleaseManifestPath
+  ) {
     throw new Error(
-      ".lapis-plugin bundle must store release.signed.json as the first entry.",
+      ".lapis-plugin bundle must store release.signed.json as the first entry."
     );
   }
-  if (firstEntry.compressionMethod !== pluginBundleStoredMethod) {
+  if (
+    requireSignedManifest &&
+    firstEntry.compressionMethod !== pluginBundleStoredMethod
+  ) {
     throw new Error(".lapis-plugin release.signed.json entry must be stored.");
   }
-  if (!seenPaths.has(pluginBundleReleaseManifestPath)) {
+  if (
+    requireSignedManifest &&
+    !seenPaths.has(pluginBundleReleaseManifestPath)
+  ) {
     throw new Error(".lapis-plugin bundle is missing release.signed.json.");
   }
   return localOrder;
@@ -203,7 +248,7 @@ function inspectLocalEntry({
     nameStart + nameLength,
     extraLength,
     bytes.byteLength,
-    "local entry extra",
+    "local entry extra"
   );
   const localPath = bytes
     .subarray(nameStart, nameStart + nameLength)
@@ -247,7 +292,7 @@ function findEndOfCentralDirectory(bytes) {
 function assertBundlePath(entryPath) {
   if (entryPath.endsWith("/")) {
     throw new Error(
-      `Plugin bundle directories are not supported: ${entryPath}`,
+      `Plugin bundle directories are not supported: ${entryPath}`
     );
   }
   if (entryPath === pluginBundleReleaseManifestPath) {

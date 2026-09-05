@@ -28,19 +28,20 @@ const publisher = await readFile(
 
 test("publishes npm packages through the protected OIDC workflow", () => {
   assert.match(workflow, /id-token:\s*write/);
-  assert.match(workflow, /environment:\s*first-publication/);
-  assert.match(
-    workflow,
-    /actions\/create-github-app-token@7bd03711494f032dfa3be3558f7dc8787b0be333/,
-  );
-  assert.match(workflow, /client-id:\s*\$\{\{ secrets\.LAPIS_REGISTRY_APP_CLIENT_ID \}\}/);
-  assert.doesNotMatch(workflow, /app-id:|LAPIS_REGISTRY_APP_ID/);
+  assert.match(workflow, /environment:\s*nostr-curation/);
+  assert.match(workflow, /^\s*publisher-sign:$/m);
+  assert.match(workflow, /^\s*curator-sign:$/m);
+  assert.match(workflow, /--role publisher/);
+  assert.match(workflow, /--role curator/);
+  assert.match(workflow, /--role publish/);
+  assert.doesNotMatch(workflow, /LAPIS_PLUGIN_RELEASE_PRIVATE_KEY/);
+  assert.doesNotMatch(workflow, /LAPIS_PLUGIN_RELEASE_KEY_ID/);
   assert.doesNotMatch(workflow, /NPM_TOKEN|NODE_AUTH_TOKEN/);
 });
 
 test("does not require a long-lived npm token at runtime", () => {
   assert.match(publisher, /GITHUB_TOKEN/);
-  assert.match(publisher, /REGISTRY_GITHUB_TOKEN/);
+  assert.doesNotMatch(publisher, /REGISTRY_GITHUB_TOKEN/);
   assert.doesNotMatch(publisher, /NPM_TOKEN|NODE_AUTH_TOKEN/);
 });
 
@@ -79,6 +80,7 @@ test("offers explicit plugin checkboxes instead of a free-form selector", () => 
     "plugin_ai",
     "plugin_bases",
     "plugin_bookmarks",
+    "plugin_community",
     "plugin_graph",
     "plugin_history",
     "plugin_markdown",

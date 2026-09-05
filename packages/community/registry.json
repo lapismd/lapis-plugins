@@ -1,0 +1,69 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 1,
+  "categories": ["community", "communication"],
+  "highlights": [
+    "Browse and join Lapis community channels and forums.",
+    "Create a Nostr profile whose key stays in the operating-system keychain.",
+    "Connect a NIP-46 remote signer without exposing its credentials to the plugin."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/community#readme",
+  "appearance": {
+    "icon": "network",
+    "accent": "#8B5CF6"
+  },
+  "media": {
+    "banner": {
+      "alt": "The Community plugin showing Lapis community channels and conversations.",
+      "images": {
+        "preview": { "path": "registry-assets/banner.preview.webp" },
+        "full": { "path": "registry-assets/banner.full.webp" },
+        "light": { "path": "registry-assets/banner.light.webp" },
+        "dark": { "path": "registry-assets/banner.dark.webp" }
+      },
+      "capture": {
+        "storyId": "plugins-community-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    }
+  },
+  "gallery": [
+    {
+      "id": "host-owned-identity",
+      "alt": "The Community sign-in dialog offering an existing profile, a new profile, or a remote signer.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/host-owned-identity.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/host-owned-identity.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/host-owned-identity.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/host-owned-identity.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-community-registry-screenshots--host-owned-identity",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          { "text": "Your identity stays", "tone": "neutral" },
+          { "text": "under your control", "tone": "violet" }
+        ],
+        "description": [
+          { "text": "Use the OS keychain or a", "tone": "neutral" },
+          { "text": "NIP-46 signer", "tone": "green" },
+          { "text": "through one host boundary.", "tone": "neutral" }
+        ]
+      }
+    }
+  ],
+  "content": {
+    "overview": "registry-content/overview.md",
+    "changelog": "CHANGELOG.md"
+  }
+}

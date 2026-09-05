@@ -27,10 +27,10 @@ export async function packageOfficialPlugin(options) {
   const pluginId = required(options.pluginId, "pluginId");
   const version = required(options.version, "version");
   const inputDir = path.resolve(
-    required(options.inputDir ?? options.input, "inputDir"),
+    required(options.inputDir ?? options.input, "inputDir")
   );
   const outDir = path.resolve(
-    required(options.outDir ?? options.out, "outDir"),
+    required(options.outDir ?? options.out, "outDir")
   );
   const packageName = options.packageName;
   const commit = options.commit;
@@ -44,23 +44,23 @@ export async function packageOfficialPlugin(options) {
   const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
   if (manifest.id !== pluginId) {
     throw new Error(
-      `Manifest id mismatch: expected ${pluginId}, got ${manifest.id}`,
+      `Manifest id mismatch: expected ${pluginId}, got ${manifest.id}`
     );
   }
   if (manifest.version !== version) {
     throw new Error(
-      `Manifest version mismatch: expected ${version}, got ${manifest.version}`,
+      `Manifest version mismatch: expected ${version}, got ${manifest.version}`
     );
   }
   const runtimeMetadata = releaseRuntimeMetadataFromManifest(
     manifest,
-    inputDir,
+    inputDir
   );
   const runtimeEntryFiles = runtimeEntryFilesFromManifest(manifest);
   assertOfficialEsmRuntime(manifest, pluginId);
   if (runtimeEntryFiles.length === 0) {
     throw new Error(
-      `Missing runtime entry for ${pluginId}: official plugin manifests must declare lapis.runtime.entries with an ESM workspace entry`,
+      `Missing runtime entry for ${pluginId}: official plugin manifests must declare lapis.runtime.entries with an ESM workspace entry`
     );
   }
 
@@ -84,7 +84,9 @@ export async function packageOfficialPlugin(options) {
     const target = path.join(filesDir, relativePath);
     const metadata = await copyFileAndHash(sourcePath, target);
     log(
-      `  [${index + 1}/${sourceFiles.length}] ${relativePath} (${formatByteSize(metadata.size)})`,
+      `  [${index + 1}/${sourceFiles.length}] ${relativePath} (${formatByteSize(
+        metadata.size
+      )})`
     );
     releaseFiles.push({
       path: relativePath,
@@ -94,7 +96,7 @@ export async function packageOfficialPlugin(options) {
   }
 
   const normalizedFiles = releaseFiles.sort((a, b) =>
-    a.path.localeCompare(b.path),
+    a.path.localeCompare(b.path)
   );
 
   const releaseManifest = {
@@ -137,18 +139,18 @@ function assertOfficialEsmRuntime(manifest, pluginId) {
   const entries = manifest?.lapis?.runtime?.entries;
   if (!isPlainObject(entries)) {
     throw new Error(
-      `Official plugin ${pluginId} must declare lapis.runtime.entries with an ESM workspace entry`,
+      `Official plugin ${pluginId} must declare lapis.runtime.entries with an ESM workspace entry`
     );
   }
   const workspaceEntry = entries.workspace;
   if (!isPlainObject(workspaceEntry)) {
     throw new Error(
-      `Official plugin ${pluginId} must declare lapis.runtime.entries.workspace`,
+      `Official plugin ${pluginId} must declare lapis.runtime.entries.workspace`
     );
   }
   if (workspaceEntry.format !== "esm") {
     throw new Error(
-      `Official plugin ${pluginId} workspace runtime entry must use format "esm"`,
+      `Official plugin ${pluginId} workspace runtime entry must use format "esm"`
     );
   }
   for (const field of runtimeEntryFields) {
@@ -158,12 +160,12 @@ function assertOfficialEsmRuntime(manifest, pluginId) {
     }
     if (entry.format === "commonjs") {
       throw new Error(
-        `Official plugin ${pluginId} runtime entry ${field} must be ESM-only; CommonJS is reserved for legacy Obsidian-compatible plugins`,
+        `Official plugin ${pluginId} runtime entry ${field} must be ESM-only; CommonJS is reserved for legacy Obsidian-compatible plugins`
       );
     }
     if (entry.fallbackPath !== undefined) {
       throw new Error(
-        `Official plugin ${pluginId} runtime entry ${field} must not declare fallbackPath; official external plugins are ESM-only`,
+        `Official plugin ${pluginId} runtime entry ${field} must not declare fallbackPath; official external plugins are ESM-only`
       );
     }
   }
@@ -181,13 +183,13 @@ function releaseRuntimeMetadataFromManifest(manifest, inputDir) {
     metadata.entries = entries;
   }
   const sharedDependencies = normalizeRuntimeSharedDependencies(
-    runtime.sharedDependencies,
+    runtime.sharedDependencies
   );
   if (sharedDependencies) {
     metadata.sharedDependencies = sharedDependencies;
   }
   const compatibilityOverrides = normalizeRuntimeCompatibilityOverrides(
-    runtime.compatibilityOverrides,
+    runtime.compatibilityOverrides
   );
   if (compatibilityOverrides) {
     metadata.compatibilityOverrides = compatibilityOverrides;
@@ -223,7 +225,7 @@ function normalizeRuntimeEntry(entry, field, inputDir) {
   }
   if (!runtimePathMatchesFormat(entry.path, entry.format)) {
     throw new Error(
-      `lapis.runtime.entries.${field}.path ${entry.path} does not match format ${entry.format}`,
+      `lapis.runtime.entries.${field}.path ${entry.path} does not match format ${entry.format}`
     );
   }
   assertRuntimeFileExists(inputDir, entry.path, field);
@@ -238,7 +240,7 @@ function normalizeRuntimeEntry(entry, field, inputDir) {
     }
     if (!commonJsRuntimePath(entry.fallbackPath)) {
       throw new Error(
-        `lapis.runtime.entries.${field}.fallbackPath ${entry.fallbackPath} must be a CommonJS .js or .cjs file`,
+        `lapis.runtime.entries.${field}.fallbackPath ${entry.fallbackPath} must be a CommonJS .js or .cjs file`
       );
     }
     assertRuntimeFileExists(inputDir, entry.fallbackPath, field);
@@ -247,7 +249,7 @@ function normalizeRuntimeEntry(entry, field, inputDir) {
   if (entry.sharedDependencies !== undefined) {
     if (!isStringArray(entry.sharedDependencies)) {
       throw new Error(
-        `Invalid lapis.runtime.entries.${field}.sharedDependencies`,
+        `Invalid lapis.runtime.entries.${field}.sharedDependencies`
       );
     }
     normalized.sharedDependencies = uniqueStrings(entry.sharedDependencies);
@@ -255,7 +257,7 @@ function normalizeRuntimeEntry(entry, field, inputDir) {
   if (entry.requiresReloadOnUpdate !== undefined) {
     if (typeof entry.requiresReloadOnUpdate !== "boolean") {
       throw new Error(
-        `Invalid lapis.runtime.entries.${field}.requiresReloadOnUpdate`,
+        `Invalid lapis.runtime.entries.${field}.requiresReloadOnUpdate`
       );
     }
     normalized.requiresReloadOnUpdate = entry.requiresReloadOnUpdate;
@@ -287,7 +289,7 @@ function normalizeRuntimeCompatibilityOverrides(overrides) {
     return undefined;
   }
   const deprecatedHostModules = normalizeRuntimeSharedDependencies(
-    overrides.deprecatedHostModules,
+    overrides.deprecatedHostModules
   );
   return deprecatedHostModules ? { deprecatedHostModules } : undefined;
 }
@@ -296,7 +298,7 @@ function assertRuntimeFileExists(inputDir, relativePath, field) {
   const absolutePath = path.join(inputDir, relativePath);
   if (!existsSync(absolutePath)) {
     throw new Error(
-      `lapis.runtime.entries.${field} references missing file: ${relativePath}`,
+      `lapis.runtime.entries.${field} references missing file: ${relativePath}`
     );
   }
 }
@@ -353,7 +355,7 @@ export async function signReleaseManifest(options) {
   const out = path.resolve(required(options.out, "out"));
   const keyId = required(options.keyId, "keyId");
   const privateKeyFile = path.resolve(
-    required(options.privateKeyFile, "privateKeyFile"),
+    required(options.privateKeyFile, "privateKeyFile")
   );
   const signed = JSON.parse(await readFile(input, "utf8"));
   const privateKey = createPrivateKey(await readFile(privateKeyFile, "utf8"));
@@ -373,10 +375,10 @@ export async function buildSignedPluginBundle(options) {
   const version = required(options.version, "version");
   const releaseDir = path.resolve(required(options.releaseDir, "releaseDir"));
   const signedReleasePath = path.resolve(
-    required(options.signedReleasePath, "signedReleasePath"),
+    required(options.signedReleasePath, "signedReleasePath")
   );
   const out = path.resolve(
-    options.out ?? path.join(releaseDir, `${pluginId}-${version}.lapis-plugin`),
+    options.out ?? path.join(releaseDir, `${pluginId}-${version}.lapis-plugin`)
   );
   const filesDir = path.join(releaseDir, "files");
   const log = typeof options.log === "function" ? options.log : () => {};
@@ -416,13 +418,101 @@ export async function buildSignedPluginBundle(options) {
   return { bundlePath: out, bundle };
 }
 
+/**
+ * Build the deterministic payload authenticated by the Nostr release manifest.
+ * The archive deliberately contains no embedded signature or trust metadata:
+ * publisher authorization and curator approval are carried by the portable
+ * Nostr proof that names this archive's exact SHA-256 and size.
+ */
+export async function buildPluginPayload(options) {
+  const pluginId = required(options.pluginId, "pluginId");
+  const version = required(options.version, "version");
+  const releaseDir = path.resolve(required(options.releaseDir, "releaseDir"));
+  const out = path.resolve(
+    options.out ?? path.join(releaseDir, `${pluginId}-${version}.payload.zip`)
+  );
+  const filesDir = path.join(releaseDir, "files");
+  const log = typeof options.log === "function" ? options.log : () => {};
+
+  if (!existsSync(filesDir)) {
+    throw new Error(`Missing release files directory: ${filesDir}`);
+  }
+
+  const entries = [];
+  for (const relativePath of await listFiles(filesDir)) {
+    assertReleasePath(relativePath);
+    entries.push({
+      path: relativePath,
+      sourcePath: path.join(filesDir, relativePath),
+      stored: false,
+    });
+  }
+  if (entries.length === 0) {
+    throw new Error(`Plugin payload has no files: ${filesDir}`);
+  }
+
+  log(
+    `Building Nostr-authenticated plugin payload from ${entries.length} file(s)...`
+  );
+  await writePluginBundleZip(entries, out);
+  const bundle = {
+    path: path.basename(out),
+    ...(await hashFile(out)),
+  };
+  log(`Wrote ${bundle.path} (${formatByteSize(bundle.size)}).`);
+  return { bundlePath: out, bundle };
+}
+
+/**
+ * Seal a deterministic payload and its portable Nostr proof into the manual
+ * installation artifact. The proof authenticates the inner payload; the outer
+ * archive is intentionally not part of the signed hash chain.
+ */
+export async function buildNostrPluginBundle(options) {
+  const pluginId = required(options.pluginId, "pluginId");
+  const version = required(options.version, "version");
+  const payloadPath = path.resolve(
+    required(options.payloadPath, "payloadPath")
+  );
+  const proofPath = path.resolve(required(options.proofPath, "proofPath"));
+  const out = path.resolve(
+    options.out ??
+      path.join(
+        path.dirname(payloadPath),
+        `${pluginId}-${version}.lapis-plugin`
+      )
+  );
+  const log = typeof options.log === "function" ? options.log : () => {};
+
+  for (const [label, filePath] of [
+    ["payload", payloadPath],
+    ["Nostr release proof", proofPath],
+  ]) {
+    if (!existsSync(filePath)) throw new Error(`Missing ${label}: ${filePath}`);
+  }
+
+  await writePluginBundleZip(
+    [
+      { path: "release.nostr.json", sourcePath: proofPath, stored: true },
+      { path: "payload.zip", sourcePath: payloadPath, stored: false },
+    ],
+    out
+  );
+  const bundle = {
+    path: path.basename(out),
+    ...(await hashFile(out)),
+  };
+  log(`Wrote offline ${bundle.path} (${formatByteSize(bundle.size)}).`);
+  return { bundlePath: out, bundle };
+}
+
 export async function verifySignedRelease(options) {
   const envelope = JSON.parse(
-    await readFile(path.resolve(required(options.input, "input")), "utf8"),
+    await readFile(path.resolve(required(options.input, "input")), "utf8")
   );
   const publicKey = await readFile(
     path.resolve(required(options.publicKeyFile, "publicKeyFile")),
-    "utf8",
+    "utf8"
   );
   const payload = textEncoder.encode(canonicalJson(envelope.signed));
   const signature = Buffer.from(envelope.signatures?.[0]?.sig ?? "", "base64");
@@ -566,7 +656,7 @@ async function hashFile(filePath) {
 
 async function listFiles(dir, prefix = "") {
   const entries = await import("node:fs/promises").then((fs) =>
-    fs.readdir(path.join(dir, prefix), { withFileTypes: true }),
+    fs.readdir(path.join(dir, prefix), { withFileTypes: true })
   );
   const files = [];
   for (const entry of entries.sort((a, b) => a.name.localeCompare(b.name))) {
@@ -627,6 +717,10 @@ async function main() {
   }
   if (command === "bundle") {
     await buildSignedPluginBundle(options);
+    return;
+  }
+  if (command === "payload") {
+    await buildPluginPayload(options);
     return;
   }
   throw new Error(`Unknown plugin release command: ${command ?? "(missing)"}`);

@@ -20,6 +20,7 @@ assert.ok(
 );
 
 const descriptions = new Map([
+  ["community", "Nostr community client with host-owned local and remote signing"],
   ["markdown-lint", "Markdown diagnostics for Lapis applications"],
   ["markdown", "Markdown editing, preview, metadata, and panels for Lapis applications"],
   ["source-editor", "Source editing for text, JSON, and YAML files"],
@@ -54,6 +55,7 @@ const sharedDependencies = new Map([
     ],
   ],
   ["bookmarks", ["@lapis-notes/api"]],
+  ["community", ["@lapis-notes/api"]],
   [
     "graph",
     [

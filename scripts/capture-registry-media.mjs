@@ -307,6 +307,7 @@ function registryStoryTitle(directory) {
     ai: "AI",
     bases: "Bases",
     bookmarks: "Bookmarks",
+    community: "Community",
     graph: "Graph",
     history: "History",
     markdown: "Markdown",

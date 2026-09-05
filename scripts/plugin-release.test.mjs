@@ -4,7 +4,8 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import {
-  buildSignedPluginBundle,
+  buildNostrPluginBundle,
+  buildPluginPayload,
   generateTestEd25519KeyPair,
   packageOfficialPlugin,
   parseArgs,
@@ -46,11 +47,11 @@ test("packages deterministic official plugin release manifest", async () => {
   assert.deepEqual(manifest.compatibility.platforms, ["web", "desktop"]);
   assert.deepEqual(
     manifest.files.map((file) => file.path),
-    ["main.mjs", "manifest.json", "styles.css"],
+    ["main.mjs", "manifest.json", "styles.css"]
   );
   assert.equal(
     manifest.files.some((file) => "url" in file),
-    false,
+    false
   );
   await rm(dir.root, { recursive: true, force: true });
 });
@@ -75,7 +76,7 @@ test("uses desktop as the only native compatibility platform", async () => {
   await rm(dir.root, { recursive: true, force: true });
 });
 
-test("builds deterministic signed .lapis-plugin bundles", async () => {
+test("builds deterministic rootless plugin payloads", async () => {
   const dir = await fixtureDir();
   await writePluginFiles(dir.input, {
     id: "lapis-test",
@@ -87,29 +88,53 @@ test("builds deterministic signed .lapis-plugin bundles", async () => {
     inputDir: dir.input,
     outDir: dir.out,
   });
-  const { privateKey } = generateTestEd25519KeyPair();
-  const privateKeyFile = path.join(dir.root, "private.pem");
-  await writeFile(privateKeyFile, privateKey);
-  const signedPath = path.join(release.releaseDir, "release.signed.json");
-  await signReleaseManifest({
-    input: release.releasePath,
-    out: signedPath,
-    keyId: "test-key",
-    privateKeyFile,
-  });
-
-  const first = await buildSignedPluginBundle({
+  const first = await buildPluginPayload({
     pluginId: "lapis-test",
     version: "1.0.0",
     releaseDir: release.releaseDir,
-    signedReleasePath: signedPath,
   });
   const firstBytes = await readFile(first.bundlePath);
-  const second = await buildSignedPluginBundle({
+  const second = await buildPluginPayload({
     pluginId: "lapis-test",
     version: "1.0.0",
     releaseDir: release.releaseDir,
-    signedReleasePath: signedPath,
+  });
+
+  assert.equal(first.bundle.path, "lapis-test-1.0.0.payload.zip");
+  assert.deepEqual(await readFile(second.bundlePath), firstBytes);
+  const entries = readZipEntries(firstBytes);
+  assert.deepEqual(
+    entries.map((entry) => entry.path),
+    ["main.mjs", "manifest.json", "styles.css"]
+  );
+  assert.deepEqual(
+    entries.map((entry) => entry.compressionMethod),
+    [8, 8, 8]
+  );
+  await rm(dir.root, { recursive: true, force: true });
+});
+
+test("seals a portable Nostr proof around the exact rootless payload", async () => {
+  const dir = await fixtureDir();
+  const payloadPath = path.join(dir.root, "payload.zip");
+  const proofPath = path.join(dir.root, "proof.json");
+  await Promise.all([
+    writeFile(payloadPath, "deterministic payload bytes"),
+    writeFile(proofPath, '{"schema":"lapis.plugin.release-proof/1"}\n'),
+  ]);
+
+  const first = await buildNostrPluginBundle({
+    pluginId: "lapis-test",
+    version: "1.0.0",
+    payloadPath,
+    proofPath,
+  });
+  const firstBytes = await readFile(first.bundlePath);
+  const second = await buildNostrPluginBundle({
+    pluginId: "lapis-test",
+    version: "1.0.0",
+    payloadPath,
+    proofPath,
   });
 
   assert.equal(first.bundle.path, "lapis-test-1.0.0.lapis-plugin");
@@ -117,16 +142,11 @@ test("builds deterministic signed .lapis-plugin bundles", async () => {
   const entries = readZipEntries(firstBytes);
   assert.deepEqual(
     entries.map((entry) => entry.path),
-    ["release.signed.json", "main.mjs", "manifest.json", "styles.css"],
+    ["release.nostr.json", "payload.zip"]
   );
-  assert.equal(entries[0].compressionMethod, 0);
   assert.deepEqual(
-    entries.slice(1).map((entry) => entry.compressionMethod),
-    [8, 8, 8],
-  );
-  assert.equal(
-    JSON.parse(entries[0].data.toString("utf8")).signed.pluginId,
-    "lapis-test",
+    entries.map((entry) => entry.compressionMethod),
+    [0, 8]
   );
   await rm(dir.root, { recursive: true, force: true });
 });
@@ -201,7 +221,7 @@ test("packages plugins that emit main.es.js as the ESM entry", async () => {
   });
   await writeFile(
     path.join(dir.input, "main.es.js"),
-    "export default class Test {};",
+    "export default class Test {};"
   );
 
   const release = await packageOfficialPlugin({
@@ -242,7 +262,7 @@ test("package fails when Lapis runtime entries reference missing files", async (
       inputDir: dir.input,
       outDir: dir.out,
     }),
-    /references missing file: missing\.mjs/,
+    /references missing file: missing\.mjs/
   );
   await rm(dir.root, { recursive: true, force: true });
 });
@@ -251,7 +271,7 @@ test("package fails when official runtime metadata is missing", async () => {
   const dir = await fixtureDir();
   await writeFile(
     path.join(dir.input, "manifest.json"),
-    JSON.stringify({ id: "lapis-test", version: "1.0.0" }),
+    JSON.stringify({ id: "lapis-test", version: "1.0.0" })
   );
 
   await assert.rejects(
@@ -261,7 +281,7 @@ test("package fails when official runtime metadata is missing", async () => {
       inputDir: dir.input,
       outDir: dir.out,
     }),
-    /must declare lapis\.runtime\.entries/,
+    /must declare lapis\.runtime\.entries/
   );
   await rm(dir.root, { recursive: true, force: true });
 });
@@ -293,7 +313,7 @@ test("package fails when official runtime metadata declares CommonJS fallback", 
       inputDir: dir.input,
       outDir: dir.out,
     }),
-    /must not declare fallbackPath/,
+    /must not declare fallbackPath/
   );
   await rm(dir.root, { recursive: true, force: true });
 });
@@ -312,7 +332,7 @@ test("package fails on manifest id or version mismatch", async () => {
       inputDir: dir.input,
       outDir: dir.out,
     }),
-    /Manifest id mismatch/,
+    /Manifest id mismatch/
   );
   await assert.rejects(
     packageOfficialPlugin({
@@ -321,7 +341,7 @@ test("package fails on manifest id or version mismatch", async () => {
       inputDir: dir.input,
       outDir: dir.out,
     }),
-    /Manifest version mismatch/,
+    /Manifest version mismatch/
   );
   await rm(dir.root, { recursive: true, force: true });
 });
@@ -355,7 +375,7 @@ test("sign writes a verifiable signed envelope", async () => {
   assert.equal(envelope.signatures[0].keyId, "test-key");
   assert.equal(
     await verifySignedRelease({ input: signedPath, publicKeyFile }),
-    true,
+    true
   );
   await rm(dir.root, { recursive: true, force: true });
 });
@@ -373,7 +393,7 @@ test("CLI parser accepts pnpm forwarded argument separator", () => {
     {
       command: "package",
       options: { pluginId: "lapis-docs", input: "dist" },
-    },
+    }
   );
 });
 
@@ -407,18 +427,18 @@ async function writePluginFiles(input, manifest) {
         runtime,
       },
       ...manifest,
-    }),
+    })
   );
   await writeFile(
     path.join(input, "main.mjs"),
-    "export default class Test {};",
+    "export default class Test {};"
   );
   await writeFile(path.join(input, "styles.css"), ".test { color: red; }");
 }
 
 async function mkdirp(dir) {
   await import("node:fs/promises").then((fs) =>
-    fs.mkdir(dir, { recursive: true }),
+    fs.mkdir(dir, { recursive: true })
   );
 }
 

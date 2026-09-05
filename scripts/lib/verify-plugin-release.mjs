@@ -1,6 +1,6 @@
 import { createHash, verify as cryptoVerify } from "node:crypto";
 
-import { parsePluginBundle } from "./plugin-bundle.mjs";
+import { parsePluginBundle, parsePluginPayload } from "./plugin-bundle.mjs";
 import { canonicalJson } from "../plugin-release.mjs";
 
 export function verifyPluginBundle({ bundleBytes, publicKey }) {
@@ -19,7 +19,19 @@ export function verifyPluginBundle({ bundleBytes, publicKey }) {
     throw new Error("Plugin release signature is invalid.");
   }
 
-  const signedFiles = envelope.signed.files;
+  const verified = verifyReleaseFiles(files, envelope.signed, {
+    ignoredPaths: ["release.signed.json"],
+  });
+  return { envelope, ...verified };
+}
+
+export function verifyPluginPayload({ bundleBytes, releaseManifest }) {
+  const files = parsePluginPayload(bundleBytes);
+  return verifyReleaseFiles(files, releaseManifest);
+}
+
+function verifyReleaseFiles(files, releaseManifest, options = {}) {
+  const signedFiles = releaseManifest.files;
   const signedPaths = signedFiles.map((file) => file.path);
   if (
     JSON.stringify(signedPaths) !==
@@ -29,9 +41,8 @@ export function verifyPluginBundle({ bundleBytes, publicKey }) {
   ) {
     throw new Error("Plugin signed file list is not sorted.");
   }
-  const archivePaths = [...files.keys()].filter(
-    (file) => file !== "release.signed.json",
-  );
+  const ignoredPaths = new Set(options.ignoredPaths ?? []);
+  const archivePaths = [...files.keys()].filter((file) => !ignoredPaths.has(file));
   if (JSON.stringify(archivePaths) !== JSON.stringify(signedPaths)) {
     throw new Error("Plugin archive includes unsigned or missing files.");
   }
@@ -44,13 +55,13 @@ export function verifyPluginBundle({ bundleBytes, publicKey }) {
   }
   const manifest = JSON.parse(files.get("manifest.json").toString("utf8"));
   if (
-    manifest.id !== envelope.signed.pluginId ||
-    manifest.version !== envelope.signed.version ||
-    envelope.signed.runtime?.entries?.workspace?.path !== "main.mjs" ||
+    manifest.id !== releaseManifest.pluginId ||
+    manifest.version !== releaseManifest.version ||
+    releaseManifest.runtime?.entries?.workspace?.path !== "main.mjs" ||
     !files.has("main.mjs") ||
     !files.has("styles.css")
   ) {
     throw new Error("Plugin runtime metadata is inconsistent.");
   }
-  return { envelope, files, manifest };
+  return { releaseManifest, files, manifest };
 }

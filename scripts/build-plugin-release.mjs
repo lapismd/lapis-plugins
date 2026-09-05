@@ -1,18 +1,15 @@
 #!/usr/bin/env node
-import { createHash, createPrivateKey, createPublicKey } from "node:crypto";
+import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import {
-  chmod,
   copyFile,
   mkdir,
-  mkdtemp,
   readFile,
   readdir,
   rename,
   rm,
   writeFile,
 } from "node:fs/promises";
-import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { svelte, vitePreprocess } from "@sveltejs/vite-plugin-svelte";
@@ -23,10 +20,8 @@ import {
 import { build as viteBuild } from "vite";
 
 import {
-  buildSignedPluginBundle,
-  generateTestEd25519KeyPair,
+  buildPluginPayload,
   packageOfficialPlugin,
-  signReleaseManifest,
 } from "./plugin-release.mjs";
 import {
   approvedWorkspaceHostModules,
@@ -48,7 +43,6 @@ const selected = options.plugin
   : pluginPackages;
 const releaseRoot = path.resolve(root, options.outDir ?? ".release/plugins");
 const runtimeRoot = path.resolve(root, ".release/runtime");
-const signing = await resolveSigningMaterial();
 const sourceCommit =
   options.commit ?? (await resolveSourceCommit({ cwd: root }));
 
@@ -57,23 +51,12 @@ await preparePluginReleaseRoot({
   clean: !options.plugin,
 });
 await mkdir(runtimeRoot, { recursive: true });
-await writeFile(
-  path.join(root, ".release/plugin-release-public.pem"),
-  signing.publicKey
-);
-
-try {
-  const workerLimit = resolveWorkerLimit("LAPIS_PLUGIN_BUILD_WORKERS", 2);
-  const results = await runBoundedWorkers(selected, workerLimit, buildPlugin);
-  for (const result of [...results].sort((left, right) =>
-    left.packageName.localeCompare(right.packageName)
-  )) {
-    console.log(result.log);
-  }
-} finally {
-  if (signing.temporaryDirectory) {
-    await rm(signing.temporaryDirectory, { recursive: true, force: true });
-  }
+const workerLimit = resolveWorkerLimit("LAPIS_PLUGIN_BUILD_WORKERS", 2);
+const results = await runBoundedWorkers(selected, workerLimit, buildPlugin);
+for (const result of [...results].sort((left, right) =>
+  left.packageName.localeCompare(right.packageName)
+)) {
+  console.log(result.log);
 }
 
 async function buildPlugin(plugin) {
@@ -114,29 +97,17 @@ async function buildPlugin(plugin) {
     packageName: plugin.packageName,
     commit: sourceCommit,
   });
-  const signedReleasePath = path.join(
-    packaged.releaseDir,
-    "release.signed.json"
-  );
-  await signReleaseManifest({
-    input: packaged.releasePath,
-    out: signedReleasePath,
-    keyId: signing.keyId,
-    privateKeyFile: signing.privateKeyFile,
-  });
-  const built = await buildSignedPluginBundle({
+  const built = await buildPluginPayload({
     pluginId: plugin.pluginId,
     version: packageJson.version,
     releaseDir: packaged.releaseDir,
-    signedReleasePath,
   });
 
   const reproductionPath = `${built.bundlePath}.reproduction`;
-  await buildSignedPluginBundle({
+  await buildPluginPayload({
     pluginId: plugin.pluginId,
     version: packageJson.version,
     releaseDir: packaged.releaseDir,
-    signedReleasePath,
     out: reproductionPath,
   });
   const [first, second] = await Promise.all([
@@ -269,41 +240,6 @@ async function scanBareImports(source) {
     }
   }
   return [...imports].sort();
-}
-
-async function resolveSigningMaterial() {
-  const temporaryDirectory = await mkdtemp(
-    path.join(tmpdir(), "lapis-plugin-signing-")
-  );
-  const privateKeyFile = path.join(temporaryDirectory, "private.pem");
-  const secret = process.env.LAPIS_PLUGIN_RELEASE_PRIVATE_KEY;
-  const keyId = process.env.LAPIS_PLUGIN_RELEASE_KEY_ID;
-  let privateKey;
-  let publicKey;
-  if (secret || keyId) {
-    if (!secret || !keyId) {
-      throw new Error(
-        "Both LAPIS_PLUGIN_RELEASE_PRIVATE_KEY and LAPIS_PLUGIN_RELEASE_KEY_ID are required."
-      );
-    }
-    privateKey = secret.replace(/\\n/g, "\n");
-    publicKey = createPublicKey(createPrivateKey(privateKey)).export({
-      type: "spki",
-      format: "pem",
-    });
-  } else {
-    const testKeys = generateTestEd25519KeyPair();
-    privateKey = testKeys.privateKey;
-    publicKey = testKeys.publicKey;
-  }
-  await writeFile(privateKeyFile, privateKey, { mode: 0o600 });
-  await chmod(privateKeyFile, 0o600);
-  return {
-    keyId: keyId ?? "lapis-plugin-release-test-only",
-    privateKeyFile,
-    publicKey,
-    temporaryDirectory,
-  };
 }
 
 function requiredPlugin(selector) {

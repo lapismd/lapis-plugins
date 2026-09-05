@@ -29,10 +29,7 @@ export async function main(args) {
   for (const release of releases) {
     await publishNpm(release);
     await publishGitHubRelease(release, options);
-    await dispatchRegistry(release);
-    console.log(
-      `Published and dispatched ${release.packageName}@${release.version}.`
-    );
+    console.log(`Published ${release.packageName}@${release.version}.`);
   }
 }
 
@@ -43,7 +40,7 @@ function requireApproval() {
   ) {
     throw new Error("The explicit first-publication approval gate is closed.");
   }
-  for (const name of ["GITHUB_TOKEN", "REGISTRY_GITHUB_TOKEN"]) {
+  for (const name of ["GITHUB_TOKEN"]) {
     if (!process.env[name]) throw new Error(`${name} is required.`);
   }
 }
@@ -93,8 +90,34 @@ async function npmIntegrity(release) {
 }
 
 async function publishGitHubRelease(release, options) {
-  const archive = path.join(root, release.archive.path);
-  const checksum = path.join(root, release.archive.checksumPath);
+  const payload = path.join(root, release.payload.path);
+  const payloadChecksum = path.join(root, release.payload.checksumPath);
+  const bundle = path.join(
+    root,
+    path.dirname(release.payload.path),
+    release.assetName
+  );
+  const bundleChecksum = `${bundle}.sha256`;
+  const releaseAssets = [
+    bundle,
+    bundleChecksum,
+    payload,
+    payloadChecksum,
+    path.join(root, release.nostr.manifest.path),
+    ...[
+      "release-event",
+      "publisher-authorization-event",
+      "decision-event",
+      "proof",
+      "curation",
+    ].map((suffix) =>
+      path.join(
+        root,
+        path.dirname(release.payload.path),
+        `${release.assetName}.${suffix}.json`
+      )
+    ),
+  ];
   const exists = await commandSucceeds("gh", [
     "release",
     "view",
@@ -107,8 +130,7 @@ async function publishGitHubRelease(release, options) {
         "release",
         "create",
         release.releaseTag,
-        archive,
-        checksum,
+        ...releaseAssets,
         "--target",
         release.sourceCommit,
         "--title",
@@ -125,15 +147,15 @@ async function publishGitHubRelease(release, options) {
     await assertRegistryDoesNotContainRelease(release);
     await execFileAsync(
       "gh",
-      ["release", "upload", release.releaseTag, archive, checksum, "--clobber"],
+      ["release", "upload", release.releaseTag, ...releaseAssets, "--clobber"],
       { cwd: root, env: process.env, maxBuffer: 20 * 1024 * 1024 }
     );
   }
 
-  await verifyGitHubReleaseAssets(release, archive, checksum);
+  await verifyGitHubReleaseAssets(release, releaseAssets);
 }
 
-async function verifyGitHubReleaseAssets(release, archive, checksum) {
+async function verifyGitHubReleaseAssets(release, releaseAssets) {
   const directory = await mkdtemp(path.join(tmpdir(), "lapis-release-assets-"));
   try {
     await execFileAsync(
@@ -141,7 +163,7 @@ async function verifyGitHubReleaseAssets(release, archive, checksum) {
       ["release", "download", release.releaseTag, "--dir", directory],
       { cwd: root, env: process.env, maxBuffer: 20 * 1024 * 1024 }
     );
-    for (const expected of [archive, checksum]) {
+    for (const expected of releaseAssets) {
       const remote = path.join(directory, path.basename(expected));
       const [expectedBytes, remoteBytes] = await Promise.all([
         readFile(expected),
@@ -193,40 +215,6 @@ export async function assertRegistryDoesNotContainRelease(
   ) {
     throw new Error(
       `${release.pluginId}@${release.version} is already registry-published; publish a fixed patch instead of replacing its GitHub assets.`
-    );
-  }
-}
-
-async function dispatchRegistry(release) {
-  const repository =
-    process.env.LAPIS_REGISTRY_REPOSITORY ?? "lapismd/plugin-registry";
-  const response = await fetch(
-    `https://api.github.com/repos/${repository}/dispatches`,
-    {
-      method: "POST",
-      headers: {
-        Accept: "application/vnd.github+json",
-        Authorization: `Bearer ${process.env.REGISTRY_GITHUB_TOKEN}`,
-        "X-GitHub-Api-Version": "2022-11-28",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        event_type: "plugin_release",
-        client_payload: {
-          repository: release.repository,
-          package_name: release.packageName,
-          plugin_id: release.pluginId,
-          version: release.version,
-          release_tag: release.releaseTag,
-          asset_name: release.assetName,
-          source_commit: release.sourceCommit,
-        },
-      }),
-    }
-  );
-  if (!response.ok) {
-    throw new Error(
-      `Registry dispatch failed: ${response.status} ${await response.text()}`
     );
   }
 }

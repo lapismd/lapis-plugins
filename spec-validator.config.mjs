@@ -8,6 +8,7 @@ const packages = [
   "ai",
   "bases",
   "bookmarks",
+  "community",
   "graph",
   "history",
   "markdown",

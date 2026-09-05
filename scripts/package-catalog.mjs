@@ -7,6 +7,11 @@ export const pluginPackages = [
     pluginId: "bookmarks",
   },
   {
+    directory: "community",
+    packageName: "@lapis-notes/community",
+    pluginId: "community",
+  },
+  {
     directory: "graph",
     packageName: "@lapis-notes/graph",
     pluginId: "lapis-graph",
