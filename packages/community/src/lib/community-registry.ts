@@ -28,6 +28,19 @@ export function selectCommunityPluginRegistrySource(
   );
 }
 
+/**
+ * Keep the Community workspace on the same relay as the host-selected Nostr
+ * registry. This is intentionally package-internal: hosts configure their
+ * registry source through the existing App distribution contract.
+ */
+export function selectCommunityPluginRelayUrl(
+  sources: readonly PluginRegistrySourceState[]
+): string | undefined {
+  const selected = selectCommunityPluginRegistrySource(sources)?.source;
+  if (selected?.kind !== "nostr") return undefined;
+  return selected.relays?.find((relay) => relay.trim() !== "")?.trim();
+}
+
 export function createCommunityPluginRegistrySource(
   app: App
 ): RegistryCatalogDataSource | undefined {

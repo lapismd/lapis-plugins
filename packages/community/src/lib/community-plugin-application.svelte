@@ -17,6 +17,7 @@
   import {
     createCommunityPluginRegistrySource,
     installCommunityRegistryPlugin,
+    selectCommunityPluginRelayUrl,
   } from "./community-registry";
   import { createCommunityPluginController } from "./community-runtime";
   import { CommunityHostIdentityProvider } from "./host-identity";
@@ -34,8 +35,11 @@
   } = $props();
 
   const ownsController = untrack(() => suppliedController === undefined);
+  const hostRelayUrl = untrack(() =>
+    selectCommunityPluginRelayUrl(app.pluginDistribution.listSources()),
+  );
   const controller = untrack(
-    () => suppliedController ?? createCommunityPluginController(),
+    () => suppliedController ?? createCommunityPluginController(hostRelayUrl),
   );
   const identityProvider = untrack(
     () => new CommunityHostIdentityProvider(app.nostr),

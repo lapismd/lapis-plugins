@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import {
   installCommunityRegistryPlugin,
+  selectCommunityPluginRelayUrl,
   selectCommunityPluginRegistrySource,
 } from "./community-registry";
 
@@ -58,6 +59,48 @@ describe("selectCommunityPluginRegistrySource", () => {
     expect(selectCommunityPluginRegistrySource([malformedNostr, http])).toBe(
       http
     );
+  });
+});
+
+describe("selectCommunityPluginRelayUrl", () => {
+  it("uses the selected host Nostr registry relay for Community", () => {
+    expect(
+      selectCommunityPluginRelayUrl([
+        sourceState({
+          id: "official-http",
+          name: "Official",
+          kind: "http",
+          url: "https://registry.example/v1/index.json",
+          trustTier: "official",
+          enabled: true,
+        }),
+        sourceState({
+          id: "nostr",
+          name: "Nostr",
+          kind: "nostr",
+          url: "nostr://plugins",
+          relays: [" ws://registry.localhost:8281 ", "wss://relay.example"],
+          curatorPubkeys: ["a".repeat(64)],
+          trustTier: "official",
+          enabled: true,
+        }),
+      ])
+    ).toBe("ws://registry.localhost:8281");
+  });
+
+  it("leaves HTTP-only hosts on the public Community default", () => {
+    expect(
+      selectCommunityPluginRelayUrl([
+        sourceState({
+          id: "official-http",
+          name: "Official",
+          kind: "http",
+          url: "https://registry.example/v1/index.json",
+          trustTier: "official",
+          enabled: true,
+        }),
+      ])
+    ).toBeUndefined();
   });
 });
 
