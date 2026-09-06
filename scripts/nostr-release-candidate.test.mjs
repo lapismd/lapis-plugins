@@ -74,6 +74,12 @@ test("binds a rootless payload and release manifest into a deterministic Nostr c
     releaseManifestPath,
     repository: "lapismd/lapis-plugins",
     releasedAt: "2026-09-05T00:00:00.000Z",
+    lineage: {
+      authorityEpoch: "official-2026-09",
+      releaseSequence: "2",
+      previousReleaseEventId: "b".repeat(64),
+      previousHeadReleases: [],
+    },
   };
 
   const first = await createNostrReleaseCandidate(options);
@@ -94,6 +100,10 @@ test("binds a rootless payload and release manifest into a deterministic Nostr c
     true
   );
   const nostrManifest = JSON.parse(firstManifest);
+  assert.equal(nostrManifest.schema, "lapis.registry.nip29-release/2");
+  assert.equal(nostrManifest.release.schema, "lapis.registry.release/2");
+  assert.equal(nostrManifest.release.releaseSequence, "2");
+  assert.equal(nostrManifest.release.previousReleaseEventId, "b".repeat(64));
   assert.equal(nostrManifest.release.artifact.sha256, "a".repeat(64));
   assert.equal(
     nostrManifest.release.artifact.url,

@@ -27,6 +27,7 @@
     "release:version": "changeset version && pnpm packages:sync",
     "release:plan": "node scripts/create-release-plan.mjs",
     "release:nostr": "node scripts/nostr-release.mjs",
+    "release:nostr:renew": "node scripts/renew-registry-heads.mjs",
     "release:nostr:verify": "node scripts/verify-nostr-release.mjs",
     "release:dispatch-metadata": "node scripts/dispatch-plugin-metadata.mjs",
     "release:publish-approved": "node scripts/publish-approved-release.mjs",

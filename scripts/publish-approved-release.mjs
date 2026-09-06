@@ -108,6 +108,7 @@ async function publishGitHubRelease(release, options) {
       "release-event",
       "publisher-authorization-event",
       "decision-event",
+      ...(release.nostr.lineage === undefined ? [] : ["head-event"]),
       "proof",
       "curation",
     ].map((suffix) =>

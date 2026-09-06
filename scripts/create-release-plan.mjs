@@ -6,6 +6,11 @@ import { fileURLToPath } from "node:url";
 
 import { verifyPluginPayload } from "./lib/verify-plugin-release.mjs";
 import { createNostrReleaseCandidate } from "./lib/nostr-release-candidate.mjs";
+import {
+  loadRegistryReleaseLineages,
+  registryReleaseEnvironment,
+  resolveRegistryReleaseLineage,
+} from "./lib/registry-release-lineage.mjs";
 import { pluginPackages } from "./package-catalog.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -23,6 +28,12 @@ if (!releasedAt) {
     "LAPIS_RELEASED_AT is required for deterministic Nostr candidates."
   );
 }
+const registryState = production
+  ? await loadRegistryReleaseLineages({
+      ...registryReleaseEnvironment(),
+      generatedAt: releasedAt,
+    })
+  : undefined;
 
 for (const plugin of pluginPackages) {
   const packageJson = JSON.parse(
@@ -120,6 +131,15 @@ for (const plugin of pluginPackages) {
     releaseManifestPath,
     repository: plannedRelease.repository,
     releasedAt,
+    ...(registryState === undefined
+      ? {}
+      : {
+          lineage: resolveRegistryReleaseLineage(
+            registryState,
+            plugin.pluginId,
+            packageJson.version
+          ),
+        }),
   });
   plannedRelease.nostr = {
     candidateId: nostr.candidateId,
@@ -129,6 +149,15 @@ for (const plugin of pluginPackages) {
       size: nostr.manifestSize,
     },
     publisherRequestPath: path.relative(root, nostr.requestPath),
+    ...(registryState === undefined
+      ? {}
+      : {
+          lineage: resolveRegistryReleaseLineage(
+            registryState,
+            plugin.pluginId,
+            packageJson.version
+          ),
+        }),
   };
   releases.push(plannedRelease);
 }

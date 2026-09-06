@@ -22,6 +22,10 @@ const publisher = await readFile(
   new URL("./publish-approved-release.mjs", import.meta.url),
   "utf8"
 );
+const renewalWorkflow = await readFile(
+  new URL("../.github/workflows/renew-registry-heads.yml", import.meta.url),
+  "utf8"
+);
 
 test("publishes npm packages through the protected OIDC workflow", () => {
   assert.match(workflow, /id-token:\s*write/);
@@ -36,6 +40,15 @@ test("publishes npm packages through the protected OIDC workflow", () => {
   assert.doesNotMatch(workflow, /NPM_TOKEN|NODE_AUTH_TOKEN/);
 });
 
+test("renews signed Registry heads through the protected OIDC signer", () => {
+  assert.match(renewalWorkflow, /^\s*schedule:$/m);
+  assert.match(renewalWorkflow, /environment:\s*nostr-curation/);
+  assert.match(renewalWorkflow, /id-token:\s*write/);
+  assert.match(renewalWorkflow, /release:nostr:renew/);
+  assert.match(renewalWorkflow, /LAPIS_NOSTR_AUTHORITY_EPOCH/);
+  assert.doesNotMatch(renewalWorkflow, /PRIVATE_KEY|NIP46|FROST/);
+});
+
 test("does not require a long-lived npm token at runtime", () => {
   assert.match(publisher, /GITHUB_TOKEN/);
   assert.doesNotMatch(publisher, /REGISTRY_GITHUB_TOKEN/);
@@ -46,7 +59,7 @@ test("builds release candidates from the committed dependency graph", () => {
   assert.match(lockfile, /^lockfileVersion:/m);
   assert.match(
     ciSetup,
-    /git config --global --add safe\.directory "\$\{GITHUB_WORKSPACE\}"/,
+    /git config --global --add safe\.directory "\$\{GITHUB_WORKSPACE\}"/
   );
   assert.match(ciSetup, /pnpm install --frozen-lockfile/);
   assert.match(workflow, /uses:\s*\.\/\.github\/actions\/ci-setup/);
@@ -63,12 +76,15 @@ test("reuses blocking CI and reverifies the downloaded production candidate", ()
   assert.match(workflow, /actions\/download-artifact@v8/);
   assert.match(workflow, /pnpm plugin:verify/g);
   assert.match(workflow, /pnpm release:plan -- --production/g);
-  assert.match(workflow, /cmp "\$candidate_plan" \.release\/release-plan\.json/);
+  assert.match(
+    workflow,
+    /cmp "\$candidate_plan" \.release\/release-plan\.json/
+  );
   assert.match(workflow, /\.generatedFrom == \$source/);
   assert.match(workflow, /\.sourceCommit == \$source/);
   assert.equal(
     workflow.match(/\$\{\{ needs\.image-pin\.outputs\.reference \}\}/g)?.length,
-    4,
+    4
   );
 });
 
@@ -100,12 +116,16 @@ test("GitHub workflows run Node 24 actions and Node 24 builds", () => {
   assert.match(workflow, /actions\/checkout@v7/);
   assert.match(workflow, /actions\/download-artifact@v8/);
   assert.match(workflow, /uses:\s*\.\/\.github\/actions\/ci-setup/);
-  assert.doesNotMatch(workflow, /pnpm\/action-setup|actions\/setup-node|taiki-e\/install-action/);
+  assert.doesNotMatch(
+    workflow,
+    /pnpm\/action-setup|actions\/setup-node|taiki-e\/install-action/
+  );
 
   assert.match(ciWorkflow, /actions\/checkout@v7/);
   assert.equal(
-    ciWorkflow.match(/\$\{\{ needs\.image-pin\.outputs\.reference \}\}/g)?.length,
-    6,
+    ciWorkflow.match(/\$\{\{ needs\.image-pin\.outputs\.reference \}\}/g)
+      ?.length,
+    6
   );
   assert.match(ciWorkflow, /jq -er .*\.ci\/images\.json/);
   assert.match(workflow, /jq -er .*\.ci\/images\.json/);
@@ -113,6 +133,9 @@ test("GitHub workflows run Node 24 actions and Node 24 builds", () => {
   assert.match(ciSetup, /10\.34\.5/);
   assert.match(ciSetup, /Version 1\.61\.1/);
   assert.match(ciSetup, /mdbook v0\.5\.4/);
-  assert.doesNotMatch(ciWorkflow + workflow + ciSetup, /node-version:\s*["']?20/);
+  assert.doesNotMatch(
+    ciWorkflow + workflow + ciSetup,
+    /node-version:\s*["']?20/
+  );
   assert.match(ciWorkflow, /actions\/upload-artifact@v7/);
 });
