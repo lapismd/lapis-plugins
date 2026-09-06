@@ -37,13 +37,28 @@ jobs:
             echo "Validation remains intentionally deferred until the framework package publication gate completes."
           fi
 
+  image-pin:
+    runs-on: ubuntu-latest
+    outputs:
+      reference: ${{ steps.image.outputs.reference }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Resolve the verified dependency image
+        id: image
+        run: |
+          set -euo pipefail
+          reference="$(jq -er '.dependencies | select(.image and (.digest | test("^sha256:[a-f0-9]{64}$"))) | .image + "@" + .digest' .ci/images.json)"
+          echo "reference=$reference" >> "$GITHUB_OUTPUT"
+
   build-cache:
-    needs: prerequisite
+    needs:
+      - prerequisite
+      - image-pin
     if: vars.FRAMEWORK_PACKAGES_PUBLISHED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     container:
-      image: ghcr.io/lapismd/lapis-plugins-ci@sha256:5c6a20bf2e9f28c59567661df08fef936a9ca62491c40b644ec60e53be019632
+      image: ${{ needs.image-pin.outputs.reference }}
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -56,11 +71,13 @@ jobs:
         run: node scripts/report-turbo-cache.mjs --github-summary
 
   quality:
-    needs: build-cache
+    needs:
+      - build-cache
+      - image-pin
     runs-on: ubuntu-latest
     timeout-minutes: 20
     container:
-      image: ghcr.io/lapismd/lapis-plugins-ci@sha256:5c6a20bf2e9f28c59567661df08fef936a9ca62491c40b644ec60e53be019632
+      image: ${{ needs.image-pin.outputs.reference }}
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -76,11 +93,13 @@ jobs:
         run: node scripts/report-turbo-cache.mjs --github-summary
 
   unit:
-    needs: build-cache
+    needs:
+      - build-cache
+      - image-pin
     runs-on: ubuntu-latest
     timeout-minutes: 25
     container:
-      image: ghcr.io/lapismd/lapis-plugins-ci@sha256:5c6a20bf2e9f28c59567661df08fef936a9ca62491c40b644ec60e53be019632
+      image: ${{ needs.image-pin.outputs.reference }}
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -94,11 +113,13 @@ jobs:
       - run: pnpm test:release
 
   storybook-static:
-    needs: build-cache
+    needs:
+      - build-cache
+      - image-pin
     runs-on: ubuntu-latest
     timeout-minutes: 20
     container:
-      image: ghcr.io/lapismd/lapis-plugins-ci@sha256:5c6a20bf2e9f28c59567661df08fef936a9ca62491c40b644ec60e53be019632
+      image: ${{ needs.image-pin.outputs.reference }}
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -112,11 +133,13 @@ jobs:
       - run: pnpm build-storybook
 
   storybook-interaction:
-    needs: build-cache
+    needs:
+      - build-cache
+      - image-pin
     runs-on: ubuntu-latest
     timeout-minutes: 25
     container:
-      image: ghcr.io/lapismd/lapis-plugins-ci@sha256:5c6a20bf2e9f28c59567661df08fef936a9ca62491c40b644ec60e53be019632
+      image: ${{ needs.image-pin.outputs.reference }}
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -130,11 +153,13 @@ jobs:
       - run: pnpm test:storybook
 
   release-artifacts:
-    needs: build-cache
+    needs:
+      - build-cache
+      - image-pin
     runs-on: ubuntu-latest
     timeout-minutes: 30
     container:
-      image: ghcr.io/lapismd/lapis-plugins-ci@sha256:5c6a20bf2e9f28c59567661df08fef936a9ca62491c40b644ec60e53be019632
+      image: ${{ needs.image-pin.outputs.reference }}
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -166,6 +191,7 @@ jobs:
     if: always()
     needs:
       - prerequisite
+      - image-pin
       - build-cache
       - quality
       - unit
@@ -177,6 +203,7 @@ jobs:
       - name: Aggregate blocking validation lanes
         env:
           PREREQUISITE: ${{ needs.prerequisite.result }}
+          IMAGE_PIN: ${{ needs.image-pin.result }}
           BUILD_CACHE: ${{ needs.build-cache.result }}
           QUALITY: ${{ needs.quality.result }}
           UNIT: ${{ needs.unit.result }}
@@ -187,6 +214,7 @@ jobs:
           set -euo pipefail
           results=(
             "$PREREQUISITE"
+            "$IMAGE_PIN"
             "$BUILD_CACHE"
             "$QUALITY"
             "$UNIT"

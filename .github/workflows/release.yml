@@ -160,6 +160,19 @@ jobs:
           echo "plugins=$plugin_list" >> "$GITHUB_OUTPUT"
           echo "Selected plugins: $plugin_list"
 
+  image-pin:
+    runs-on: ubuntu-latest
+    outputs:
+      reference: ${{ steps.image.outputs.reference }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Resolve the verified dependency image
+        id: image
+        run: |
+          set -euo pipefail
+          reference="$(jq -er '.dependencies | select(.image and (.digest | test("^sha256:[a-f0-9]{64}$"))) | .image + "@" + .digest' .ci/images.json)"
+          echo "reference=$reference" >> "$GITHUB_OUTPUT"
+
   validate:
     needs: selection
     uses: ./.github/workflows/ci.yml
@@ -169,13 +182,14 @@ jobs:
     needs:
       - selection
       - validate
+      - image-pin
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
       contents: read
       packages: read
     container:
-      image: ghcr.io/lapismd/lapis-plugins-ci@sha256:5c6a20bf2e9f28c59567661df08fef936a9ca62491c40b644ec60e53be019632
+      image: ${{ needs.image-pin.outputs.reference }}
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -220,6 +234,7 @@ jobs:
     needs:
       - selection
       - production-candidate
+      - image-pin
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -227,7 +242,7 @@ jobs:
       id-token: write
       packages: read
     container:
-      image: ghcr.io/lapismd/lapis-plugins-ci@sha256:5c6a20bf2e9f28c59567661df08fef936a9ca62491c40b644ec60e53be019632
+      image: ${{ needs.image-pin.outputs.reference }}
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -266,6 +281,7 @@ jobs:
     needs:
       - selection
       - publisher-sign
+      - image-pin
     runs-on: ubuntu-latest
     timeout-minutes: 15
     environment: nostr-curation
@@ -274,7 +290,7 @@ jobs:
       id-token: write
       packages: read
     container:
-      image: ghcr.io/lapismd/lapis-plugins-ci@sha256:5c6a20bf2e9f28c59567661df08fef936a9ca62491c40b644ec60e53be019632
+      image: ${{ needs.image-pin.outputs.reference }}
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -316,6 +332,7 @@ jobs:
       - selection
       - validate
       - curator-sign
+      - image-pin
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -323,7 +340,7 @@ jobs:
       id-token: write
       packages: read
     container:
-      image: ghcr.io/lapismd/lapis-plugins-ci@sha256:5c6a20bf2e9f28c59567661df08fef936a9ca62491c40b644ec60e53be019632
+      image: ${{ needs.image-pin.outputs.reference }}
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}

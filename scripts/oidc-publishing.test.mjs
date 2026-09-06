@@ -14,9 +14,6 @@ const ciSetup = await readFile(
   new URL("../.github/actions/ci-setup/action.yml", import.meta.url),
   "utf8"
 );
-const ciImages = JSON.parse(
-  await readFile(new URL("../.ci/images.json", import.meta.url), "utf8")
-);
 const lockfile = await readFile(
   new URL("../pnpm-lock.yaml", import.meta.url),
   "utf8"
@@ -69,9 +66,9 @@ test("reuses blocking CI and reverifies the downloaded production candidate", ()
   assert.match(workflow, /cmp "\$candidate_plan" \.release\/release-plan\.json/);
   assert.match(workflow, /\.generatedFrom == \$source/);
   assert.match(workflow, /\.sourceCommit == \$source/);
-  assert.match(
-    workflow,
-    new RegExp(`${ciImages.dependencies.image}@${ciImages.dependencies.digest}`, "g"),
+  assert.equal(
+    workflow.match(/\$\{\{ needs\.image-pin\.outputs\.reference \}\}/g)?.length,
+    4,
   );
 });
 
@@ -106,10 +103,12 @@ test("GitHub workflows run Node 24 actions and Node 24 builds", () => {
   assert.doesNotMatch(workflow, /pnpm\/action-setup|actions\/setup-node|taiki-e\/install-action/);
 
   assert.match(ciWorkflow, /actions\/checkout@v7/);
-  assert.match(
-    ciWorkflow,
-    new RegExp(`${ciImages.dependencies.image}@${ciImages.dependencies.digest}`),
+  assert.equal(
+    ciWorkflow.match(/\$\{\{ needs\.image-pin\.outputs\.reference \}\}/g)?.length,
+    6,
   );
+  assert.match(ciWorkflow, /jq -er .*\.ci\/images\.json/);
+  assert.match(workflow, /jq -er .*\.ci\/images\.json/);
   assert.match(ciSetup, /v24\.15\.0/);
   assert.match(ciSetup, /10\.34\.5/);
   assert.match(ciSetup, /Version 1\.61\.1/);

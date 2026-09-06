@@ -74,10 +74,10 @@ timer and Scroll Area resize-timer cancellation, so a lockfile update cannot
 silently restore the destroyed-effect reads.
 CI image and remote-cache changes are protected by LP-SPEC-036. The checked-in
 image manifest, dependency-only context generator, Dockerfile, publication
-workflow, atomic manifest and workflow pin updater, remote-cache configuration,
-and their focused tests map to Distribution and this governance chapter. Local
-credentials remain in the ignored root `.env`; the tracked `.env.example`
-documents names only.
+workflow, manifest pin updater, workflow pin resolvers, remote-cache
+configuration, and their focused tests map to Distribution and this governance
+chapter. Local credentials remain in the ignored root `.env`; the tracked
+`.env.example` documents names only.
 Turbo orchestration, bounded artifact workers, already-built packing, and the
 local container runner are protected by LP-SPEC-037. Their shared concurrency
 and container helpers require focused scheduling, failure-cancellation,
