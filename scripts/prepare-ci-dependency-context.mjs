@@ -17,7 +17,7 @@ export async function prepareCiDependencyContext({
   root = repositoryRoot,
   outDir = path.join(root, ".ci/dependency-context"),
 } = {}) {
-  const manifest = await validateCiImageManifest(root);
+  const manifest = await validateCiImageManifest(root, { requireCurrentLockfile: false });
   const lockfileSha256 = await sha256File(path.join(root, "pnpm-lock.yaml"));
 
   await rm(outDir, { recursive: true, force: true });

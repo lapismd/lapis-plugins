@@ -9,6 +9,7 @@ import {
   validateCiImageManifest,
 } from "./lib/ci-images.mjs";
 import { prepareCiDependencyContext } from "./prepare-ci-dependency-context.mjs";
+import { updateCiImageManifest } from "./update-ci-image-manifest.mjs";
 
 const digest = "a".repeat(64);
 
@@ -33,6 +34,54 @@ test("image manifest rejects a stale lockfile hash", async (t) => {
   t.after(() => rm(root, { recursive: true, force: true }));
   await writeFile(path.join(root, "pnpm-lock.yaml"), "changed\n");
   await assert.rejects(validateCiImageManifest(root), /stale/);
+});
+
+test("dependency context derives a new image tag while the checked-in pin is stale", async (t) => {
+  const root = await fixtureRepository();
+  const outDir = path.join(root, ".ci/context");
+  t.after(() => rm(root, { recursive: true, force: true }));
+  await writeFile(path.join(root, "pnpm-lock.yaml"), "changed\n");
+
+  const metadata = await prepareCiDependencyContext({ root, outDir });
+
+  assert.equal(metadata.tag, dependencyImageTag(metadata.lockfileSha256));
+});
+
+test("digest pinning updates the manifest and every consuming workflow", async (t) => {
+  const root = await fixtureRepository();
+  const oldDigest = `sha256:${digest}`;
+  const nextDigest = `sha256:${"b".repeat(64)}`;
+  const manifestPath = path.join(root, ".ci/images.json");
+  const workflowPaths = [
+    ".github/workflows/ci.yml",
+    ".github/workflows/release.yml",
+  ];
+  t.after(() => rm(root, { recursive: true, force: true }));
+
+  const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+  manifest.dependencies.digest = oldDigest;
+  await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+  for (const relativePath of workflowPaths) {
+    const workflowPath = path.join(root, relativePath);
+    await mkdir(path.dirname(workflowPath), { recursive: true });
+    await writeFile(workflowPath, `image: ${manifest.dependencies.image}@${oldDigest}\n`);
+  }
+  await writeFile(path.join(root, "pnpm-lock.yaml"), "changed\n");
+
+  const updated = await updateCiImageManifest({
+    root,
+    digest: nextDigest,
+    workflowPaths,
+  });
+
+  assert.equal(updated.dependencies.digest, nextDigest);
+  assert.equal(
+    updated.dependencies.tag,
+    dependencyImageTag(updated.dependencies.lockfileSha256),
+  );
+  for (const relativePath of workflowPaths) {
+    assert.match(await readFile(path.join(root, relativePath), "utf8"), new RegExp(nextDigest));
+  }
 });
 
 async function fixtureRepository() {

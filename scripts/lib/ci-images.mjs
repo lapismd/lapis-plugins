@@ -19,7 +19,10 @@ export async function loadCiImageManifest(root) {
   );
 }
 
-export async function validateCiImageManifest(root, { requireDependencyDigest = false } = {}) {
+export async function validateCiImageManifest(
+  root,
+  { requireDependencyDigest = false, requireCurrentLockfile = true } = {},
+) {
   const manifest = await loadCiImageManifest(root);
   if (manifest.schemaVersion !== 1) {
     throw new Error("CI image manifest schemaVersion must be 1.");
@@ -28,13 +31,15 @@ export async function validateCiImageManifest(root, { requireDependencyDigest = 
   assertImage(manifest.base, "base", true);
   assertImage(manifest.dependencies, "dependencies", requireDependencyDigest);
 
-  const lockfileSha256 = await sha256File(path.join(root, "pnpm-lock.yaml"));
-  if (manifest.dependencies.lockfileSha256 !== lockfileSha256) {
-    throw new Error("Dependency image manifest is stale for pnpm-lock.yaml.");
-  }
-  const expectedTag = dependencyImageTag(lockfileSha256);
-  if (manifest.dependencies.tag !== expectedTag) {
-    throw new Error(`Dependency image tag must be ${expectedTag}.`);
+  if (requireCurrentLockfile) {
+    const lockfileSha256 = await sha256File(path.join(root, "pnpm-lock.yaml"));
+    if (manifest.dependencies.lockfileSha256 !== lockfileSha256) {
+      throw new Error("Dependency image manifest is stale for pnpm-lock.yaml.");
+    }
+    const expectedTag = dependencyImageTag(lockfileSha256);
+    if (manifest.dependencies.tag !== expectedTag) {
+      throw new Error(`Dependency image tag must be ${expectedTag}.`);
+    }
   }
 
   return manifest;
