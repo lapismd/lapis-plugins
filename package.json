@@ -64,7 +64,7 @@
     "@lapis-notes/ui": "^0.1.0",
     "@lapis-notes/workspace": "^0.1.0",
     "@lapismd/ai-host": "^0.1.0",
-    "@lapismd/design-core": "^0.1.0",
+    "@lapismd/design-core": "^0.1.2",
     "@lapismd/lapis-community": "^0.1.0",
     "@lapismd/mira": "~0.0.1",
     "@lapismd/mira-editor": "^0.0.1",

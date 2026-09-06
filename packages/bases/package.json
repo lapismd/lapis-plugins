@@ -52,7 +52,7 @@
     "@dnd-kit/dom": "^0.4.0",
     "@dnd-kit/helpers": "^0.4.0",
     "@dnd-kit/svelte": "^0.4.0",
-    "@lapismd/design-core": "^0.1.0",
+    "@lapismd/design-core": "^0.1.2",
     "@lucide/svelte": "^0.523.0",
     "@tanstack/table-core": "^8.21.3",
     "js-yaml": "^4.1.0",

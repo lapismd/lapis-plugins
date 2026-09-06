@@ -1,5 +1,8 @@
 # AI Plugin
 
+AI presentation resolves Design Core through the repository's current published
+semver range and committed lockfile.
+
 The package-owned `registry.json` is the source for curated categories,
 highlights, and registry-only Overview content under LP-SPEC-021 and LP-SPEC-033. Manifest and package
 metadata remain authoritative for the fields defined by LP-SPEC-022.

@@ -76,7 +76,7 @@ importers:
         version: 0.1.0(dc4c22bba0e6438273aec462c0352a86)
       '@lapis-notes/ui':
         specifier: ^0.1.0
-        version: 0.1.0(@lapismd/design-core@0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)
+        version: 0.1.0(@lapismd/design-core@0.1.2(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)
       '@lapis-notes/workspace':
         specifier: ^0.1.0
         version: 0.1.0(4627ed715ddc5ac575e47ca98b4780f0)
@@ -84,8 +84,8 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0(zod@4.4.3)
       '@lapismd/design-core':
-        specifier: ^0.1.0
-        version: 0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
+        specifier: ^0.1.2
+        version: 0.1.2(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lapismd/mira':
         specifier: ~0.0.1
         version: 0.0.1(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.0)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.12.4)(@codemirror/legacy-modes@6.5.3)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.1)(@codemirror/state@6.7.1)(@codemirror/view@6.43.9)(@internationalized/date@3.12.3)(@lezer/common@1.5.2)(@lezer/highlight@1.2.3)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
@@ -229,10 +229,10 @@ importers:
         version: 0.1.0(6c20b451d3e45ebc99483189e5b02463)
       '@lapis-notes/ui':
         specifier: ^0.1.0
-        version: 0.1.0(@lapismd/design-core@0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)
+        version: 0.1.0(@lapismd/design-core@0.1.2(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)
       '@lapismd/design-core':
-        specifier: ^0.1.0
-        version: 0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
+        specifier: ^0.1.2
+        version: 0.1.2(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte':
         specifier: ^0.523.0
         version: 0.523.0(svelte@5.56.10)
@@ -310,8 +310,8 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0(6c20b451d3e45ebc99483189e5b02463)
       '@lapismd/design-core':
-        specifier: ^0.1.0
-        version: 0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
+        specifier: ^0.1.2
+        version: 0.1.2(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte':
         specifier: ^0.523.0
         version: 0.523.0(svelte@5.56.10)
@@ -377,8 +377,8 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0(6c20b451d3e45ebc99483189e5b02463)
       '@lapismd/design-core':
-        specifier: ^0.1.0
-        version: 0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
+        specifier: ^0.1.2
+        version: 0.1.2(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte':
         specifier: ^0.523.0
         version: 0.523.0(svelte@5.56.10)
@@ -417,8 +417,8 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0(6c20b451d3e45ebc99483189e5b02463)
       '@lapismd/design-core':
-        specifier: ^0.1.0
-        version: 0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
+        specifier: ^0.1.2
+        version: 0.1.2(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte':
         specifier: ^0.523.0
         version: 0.523.0(svelte@5.56.10)
@@ -466,8 +466,8 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0(6c20b451d3e45ebc99483189e5b02463)
       '@lapismd/design-core':
-        specifier: ^0.1.0
-        version: 0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
+        specifier: ^0.1.2
+        version: 0.1.2(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte':
         specifier: ^0.523.0
         version: 0.523.0(svelte@5.56.10)
@@ -519,10 +519,10 @@ importers:
         version: 0.1.0(6c20b451d3e45ebc99483189e5b02463)
       '@lapis-notes/ui':
         specifier: ^0.1.0
-        version: 0.1.0(@lapismd/design-core@0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)
+        version: 0.1.0(@lapismd/design-core@0.1.2(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)
       '@lapismd/design-core':
-        specifier: ^0.1.0
-        version: 0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
+        specifier: ^0.1.2
+        version: 0.1.2(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lapismd/mira':
         specifier: ~0.0.1
         version: 0.0.1(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.0)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.12.4)(@codemirror/legacy-modes@6.5.3)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.1)(@codemirror/state@6.7.1)(@codemirror/view@6.43.9)(@internationalized/date@3.12.3)(@lezer/common@1.5.2)(@lezer/highlight@1.2.3)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
@@ -613,8 +613,8 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0(6c20b451d3e45ebc99483189e5b02463)
       '@lapismd/design-core':
-        specifier: ^0.1.0
-        version: 0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
+        specifier: ^0.1.2
+        version: 0.1.2(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte':
         specifier: ^0.523.0
         version: 0.523.0(svelte@5.56.10)
@@ -708,8 +708,8 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0(dc4c22bba0e6438273aec462c0352a86)
       '@lapismd/design-core':
-        specifier: ^0.1.0
-        version: 0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
+        specifier: ^0.1.2
+        version: 0.1.2(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
     devDependencies:
       '@sveltejs/package':
         specifier: ^2.5.0
@@ -1681,8 +1681,8 @@ packages:
     engines: {node: '>=22'}
     hasBin: true
 
-  '@lapismd/design-core@0.1.0':
-    resolution: {integrity: sha512-iiEC9lyFjgFW/DQD2nieA2PLiq7RvcoTTvq1uXSRpJgUIhTOC8aCj/LlQmT0pYjQhYpwRjpsx2w7UjzaV/E7EQ==}
+  '@lapismd/design-core@0.1.2':
+    resolution: {integrity: sha512-kHMxtchFuowsqKZc71wVJyZtfroS/wyNagQyJjin3BxdelLqd2K1eT/i6roBHeg8bAbZrZngt5W7WymQOigyiA==}
     engines: {node: '>=22'}
     peerDependencies:
       svelte: ^5.0.0
@@ -6422,9 +6422,9 @@ snapshots:
       '@iconify-json/lucide': 1.2.126
       '@iconify/types': 2.0.0
       '@iconify/utils': 2.3.0
-      '@lapis-notes/ui': 0.1.0(@lapismd/design-core@0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)
+      '@lapis-notes/ui': 0.1.0(@lapismd/design-core@0.1.2(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)
       '@lapismd/ai-host': 0.1.0(zod@3.25.76)
-      '@lapismd/design-core': 0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
+      '@lapismd/design-core': 0.1.2(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lapismd/mira': 0.0.1(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.0)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.12.4)(@codemirror/legacy-modes@6.5.3)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.1)(@codemirror/state@6.7.1)(@codemirror/view@6.43.9)(@internationalized/date@3.12.3)(@lezer/common@1.5.2)(@lezer/highlight@1.2.3)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lezer/common': 1.5.2
       '@lezer/highlight': 1.2.3
@@ -6483,9 +6483,9 @@ snapshots:
       '@iconify-json/lucide': 1.2.126
       '@iconify/types': 2.0.0
       '@iconify/utils': 2.3.0
-      '@lapis-notes/ui': 0.1.0(@lapismd/design-core@0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)
+      '@lapis-notes/ui': 0.1.0(@lapismd/design-core@0.1.2(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)
       '@lapismd/ai-host': 0.1.0(zod@3.25.76)
-      '@lapismd/design-core': 0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
+      '@lapismd/design-core': 0.1.2(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lapismd/mira': 0.0.1(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.0)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.12.4)(@codemirror/legacy-modes@6.5.3)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.1)(@codemirror/state@6.7.1)(@codemirror/view@6.43.9)(@internationalized/date@3.12.3)(@lezer/common@1.5.2)(@lezer/highlight@1.2.3)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lezer/common': 1.5.2
       '@lezer/highlight': 1.2.3
@@ -6528,7 +6528,7 @@ snapshots:
   '@lapis-notes/file-explorer@0.1.0(4627ed715ddc5ac575e47ca98b4780f0)':
     dependencies:
       '@lapis-notes/api': 0.1.0(dc4c22bba0e6438273aec462c0352a86)
-      '@lapismd/design-core': 0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
+      '@lapismd/design-core': 0.1.2(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
       svelte: 5.56.10
     transitivePeerDependencies:
       - '@cfworker/json-schema'
@@ -6601,18 +6601,18 @@ snapshots:
       - tailwindcss
       - utf-8-validate
 
-  '@lapis-notes/ui@0.1.0(@lapismd/design-core@0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)':
+  '@lapis-notes/ui@0.1.0(@lapismd/design-core@0.1.2(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)':
     dependencies:
       '@dnd-kit/dom': 0.4.0
       '@dnd-kit/svelte': 0.4.0(svelte@5.56.10)
-      '@lapismd/design-core': 0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
+      '@lapismd/design-core': 0.1.2(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
       fuse.js: 7.5.0
       svelte: 5.56.10
 
   '@lapis-notes/workspace@0.1.0(4627ed715ddc5ac575e47ca98b4780f0)':
     dependencies:
       '@lapis-notes/api': 0.1.0(dc4c22bba0e6438273aec462c0352a86)
-      '@lapismd/design-core': 0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
+      '@lapismd/design-core': 0.1.2(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte': 0.523.0(svelte@5.56.10)
       svelte: 5.56.10
     transitivePeerDependencies:
@@ -6677,7 +6677,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@lapismd/design-core@0.1.0(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)':
+  '@lapismd/design-core@0.1.2(@codemirror/lang-markdown@6.5.2)(@codemirror/language-data@6.5.2)(@codemirror/search@6.7.1)(@lezer/markdown@1.7.2)(svelte@5.56.10)(tailwindcss@4.3.3)':
     dependencies:
       '@codemirror/autocomplete': 6.20.3
       '@codemirror/commands': 6.11.0
@@ -6701,6 +6701,7 @@ snapshots:
       '@lezer/highlight': 1.2.3
       '@lezer/lr': 1.4.10
       '@lucide/svelte': 1.35.0(svelte@5.56.10)
+      '@types/luxon': 3.7.5
       bits-ui: 2.19.0(patch_hash=248e4b269a350a0195aca52b2d94bc4de53f4daa2b1f6ce5730b8c718152a047)(@internationalized/date@3.12.3)(svelte@5.56.10)
       chrono-node: 2.10.1
       clsx: 2.1.1

@@ -1,5 +1,9 @@
 # Distribution and Releases
 
+First-party packages and their shared development host resolve Design Core from
+the current published npm semver range recorded in manifests and the committed
+lockfile.
+
 ## Requirements
 
 | ID          | Requirement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |

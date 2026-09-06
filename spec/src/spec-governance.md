@@ -1,5 +1,8 @@
 # Specification Governance
 
+Shared UI dependency refreshes advance portable package ranges and the committed
+lockfile together without adding checkout-specific package paths.
+
 ## Requirements
 
 | ID          | Requirement                                                                                                                                                                                                                     |
