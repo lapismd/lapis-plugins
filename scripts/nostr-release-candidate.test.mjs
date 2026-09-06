@@ -27,7 +27,7 @@ test("binds a rootless payload and release manifest into a deterministic Nostr c
   const packageJson = {
     name: "@lapis-notes/example",
     version: "1.2.3",
-    license: "AGPL-3.0-or-later",
+    license: "Apache-2.0",
     repository: "git+https://github.com/lapismd/lapis-plugins.git",
   };
   const registry = {

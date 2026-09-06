@@ -41,7 +41,9 @@
               "items": {
                 "type": "string"
               },
-              "default": ["MD013"]
+              "default": [
+                "MD013"
+              ]
             },
             "includeGlobs": {
               "type": "array",
@@ -50,7 +52,9 @@
               "items": {
                 "type": "string"
               },
-              "default": ["**/*.{md,markdown,mdown,mkd,mdwn,mdtxt,mdtext}"]
+              "default": [
+                "**/*.{md,markdown,mdown,mkd,mdwn,mdtxt,mdtext}"
+              ]
             },
             "excludeGlobs": {
               "type": "array",
@@ -76,7 +80,9 @@
         {
           "id": "markdown-lint",
           "service": "language-service",
-          "languages": ["markdown"],
+          "languages": [
+            "markdown"
+          ],
           "priority": 100,
           "capabilities": {
             "diagnostics": true,

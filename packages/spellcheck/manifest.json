@@ -95,7 +95,10 @@
               "items": {
                 "type": "string"
               },
-              "default": ["markdown", "plaintext"]
+              "default": [
+                "markdown",
+                "plaintext"
+              ]
             }
           }
         }
@@ -104,7 +107,10 @@
         {
           "id": "spellcheck",
           "service": "language-service",
-          "languages": ["markdown", "plaintext"],
+          "languages": [
+            "markdown",
+            "plaintext"
+          ],
           "priority": 90,
           "capabilities": {
             "diagnostics": true,

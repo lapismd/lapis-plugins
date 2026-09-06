@@ -17,7 +17,9 @@
         "workspace": {
           "path": "main.mjs",
           "format": "esm",
-          "sharedDependencies": ["@lapis-notes/api"],
+          "sharedDependencies": [
+            "@lapis-notes/api"
+          ],
           "requiresReloadOnUpdate": false
         }
       }

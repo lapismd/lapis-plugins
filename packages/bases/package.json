@@ -2,7 +2,7 @@
   "name": "@lapis-notes/bases",
   "version": "0.1.2",
   "description": "Lapis Notes Bases plugin",
-  "license": "AGPL-3.0-or-later",
+  "license": "Apache-2.0",
   "type": "module",
   "scripts": {
     "build": "pnpm run prepack",
