@@ -166,6 +166,7 @@ composer or writes back to the append-only source.
 | LN-AI-195 | When a session advertises model or thinking configuration, AI MUST configure and verify the active native session without switching bindings. Unsupported, failed, or unverifiable configuration MUST use a replacement binding and full handoff, while recording no successful configuration audit entry. |
 | LN-AI-196 | Optional handoff summaries MUST be produced outside the interactive switch by a restricted, pinned, no-tool processor. Each append-only summary MUST cover a verified transcript range and source hash; invalid or unavailable summaries MUST fall back to deterministic projection without sending a context-free prompt. |
 | LN-AI-197 | The enabled AI plugin MUST register `.jsonl` as a default file association through a file-only `ai-jsonl` view. The view MUST be read-only, render validated `transcript.jsonl` through the existing chat projection, render validated `agents.jsonl` as an agent-event timeline, retain a structured fallback for other JSONL, and surface malformed records plus interrupted-final-append warnings without adding a composer or mutating the file. |
+| LN-AI-198 | Generic AI tool input, output, and multiline failure detail MUST use Design Core's shared AI chat tool-detail renderer. Registered app-owned result views MAY replace that generic body while transcript payload storage remains unchanged. |
 
 The native implementation lives behind AI-owned `MemoryService` and
 `MemoryConsolidationProvider` contracts. `NativeMemoryService` projects exact
@@ -430,7 +431,8 @@ replacement chat (LN-AI-124).
 Application-tool names and arguments stay on the transcript item when ACP
 only reports a generic `tool call` title (LN-AI-125).
 Tool details unwrap envelope fields such as `output` and pick `json`, `bash`,
-or `plaintext` for the Design Core `CodeBlock` (LN-AI-133).
+or `plaintext` through the shared Design Core AI renderer; app-owned result
+views can replace that generic body (LN-AI-133, LN-AI-198).
 Assistant MarkdownEmbed content grows with that transcript instead of a nested
 scroller (LN-AI-122).
 AI registers its sidebar chat, history, and catalog views through

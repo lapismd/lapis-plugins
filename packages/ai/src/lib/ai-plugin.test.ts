@@ -45,7 +45,7 @@ describe("AiPlugin contracts", () => {
     expect(source).toContain('filenamePatterns: [".jsonl", "*.jsonl"]');
     expect(source).toContain('priority: "default"');
     expect(source).toContain(
-      'this.registerExtensions(["jsonl"], AiJsonlViewType)',
+      'this.registerExtensions(["jsonl"], AiJsonlViewType)'
     );
   });
 
@@ -62,7 +62,7 @@ describe("AiPlugin contracts", () => {
         ],
         enabledAppToolNames: [" story_word_count ", "story_word_count", ""],
         enabledCommunityToolPluginIds: ["zeta", " alpha ", "zeta", ""],
-      }),
+      })
     ).toMatchObject({
       appToolsEnabled: false,
       disabledAppToolNames: ["edit", "notes_search", "read"],
@@ -82,8 +82,8 @@ describe("AiPlugin contracts", () => {
               source: "community",
             },
           },
-        ],
-      ),
+        ]
+      )
     ).toMatchObject({
       enabledAppToolNames: ["story_word_count"],
       enabledCommunityToolPluginIds: ["missing"],
@@ -94,7 +94,7 @@ describe("AiPlugin contracts", () => {
     const source = readFileSync("src/lib/ai-plugin.ts", "utf8");
 
     expect(source).toMatch(
-      /constructor\(\s*app: App,[\s\S]*?super\(app, pluginManifest\)/u,
+      /constructor\(\s*app: App,[\s\S]*?super\(app, pluginManifest\)/u
     );
     expect(source).not.toContain("globalThis.app");
   });
@@ -103,7 +103,7 @@ describe("AiPlugin contracts", () => {
     const source = readFileSync("src/lib/ai-plugin.ts", "utf8");
     expect(source).toContain("hasHiddenApplicationSegment(path)");
     expect(source).not.toMatch(
-      /parts\[0\] !== "\.obsidian"[\s\S]*!parts\.includes\("\.lapis"\)/u,
+      /parts\[0\] !== "\.obsidian"[\s\S]*!parts\.includes\("\.lapis"\)/u
     );
   });
 
@@ -114,7 +114,7 @@ describe("AiPlugin contracts", () => {
     expect(panel).toContain('data-ai-part="model-badge"');
     expect(css).toContain('[data-ai-part="model-badge"]');
     expect(css).toContain(
-      "color-mix(in srgb, var(--foreground) 42%, var(--background))",
+      "color-mix(in srgb, var(--foreground) 42%, var(--background))"
     );
   });
 
@@ -135,7 +135,7 @@ describe("AiPlugin contracts", () => {
     expect(panel).toContain("MarkdownEmbed");
     expect(panel).toContain('htmlPolicy="safe"');
     expect(css).toContain(
-      '[data-ui-component="ai-chat-panel"] .ai-chat-panel__markdown',
+      '[data-ui-component="ai-chat-panel"] .ai-chat-panel__markdown'
     );
     expect(css).toContain("--mira-preview-background: transparent");
     const markdownCss = css.slice(css.indexOf(".ai-chat-panel__markdown"));
@@ -179,7 +179,7 @@ describe("AiPlugin contracts", () => {
     const panel = readFileSync("src/lib/chat/ai-chat-panel.svelte", "utf8");
     const controller = readFileSync(
       "src/lib/chat/chat-controller.svelte.ts",
-      "utf8",
+      "utf8"
     );
 
     expect(panel).toContain("isStopShown={controller.busy}");
@@ -200,17 +200,17 @@ describe("AiPlugin contracts", () => {
     const panel = readFileSync("src/lib/chat/ai-chat-panel.svelte", "utf8");
     const controller = readFileSync(
       "src/lib/chat/chat-controller.svelte.ts",
-      "utf8",
+      "utf8"
     );
 
     expect(panel).toContain("untrack(() => {");
     expect(panel).toContain("void controller.restore()");
     expect(panel).toContain(
-      "controller.items.length === 0 && !controller.busy",
+      "controller.items.length === 0 && !controller.busy"
     );
     expect(controller).toContain("this.items = [...this.items, userItem];");
     expect(controller).toMatch(
-      /this\.items = \[\.\.\.this\.items, userItem\];[\s\S]*this\.busy = true;[\s\S]*if \(this\.repository\) await this\.#ensureConversation\(\);/u,
+      /this\.items = \[\.\.\.this\.items, userItem\];[\s\S]*this\.busy = true;[\s\S]*if \(this\.repository\) await this\.#ensureConversation\(\);/u
     );
     const viewPanel = readFileSync("src/lib/chat/ai-view-panel.svelte", "utf8");
     const view = readFileSync("src/lib/chat/ai-view.ts", "utf8");
@@ -218,13 +218,13 @@ describe("AiPlugin contracts", () => {
     expect(view).toContain("if (!previous && next) return");
   });
 
-  it("groups adjacent tool calls and presents unwrapped CodeBlock details", () => {
+  it("groups adjacent tool calls and uses shared Design Core details", () => {
     const panel = readFileSync("src/lib/chat/ai-chat-panel.svelte", "utf8");
     const grouping = readFileSync("src/lib/chat/chat-time.ts", "utf8");
 
-    expect(panel).toContain('from "@lapismd/design-core/shadcn/code-block"');
+    expect(panel).toContain("<Chat.ToolCallDetail");
     expect(panel).toContain("presentToolPayload");
-    expect(panel).toContain("language={inputPayload.language}");
+    expect(panel).toContain("toolName={detail?.name ?? call.name}");
     expect(panel).toContain("defaultExpanded={false}");
     expect(panel).toContain('entry.kind === "tools"');
     expect(grouping).toContain('kind: "tools"');
@@ -241,13 +241,13 @@ describe("AiPlugin contracts", () => {
     const menuCss = css.slice(css.indexOf("conversation-menu"));
 
     expect(css).toContain(
-      '[data-ui-component="dropdown-menu"][data-ui-part="dropdown-menu-content"][data-ai-part="conversation-menu"]',
+      '[data-ui-component="dropdown-menu"][data-ui-part="dropdown-menu-content"][data-ai-part="conversation-menu"]'
     );
     expect(menuCss).toContain("width: max-content");
     expect(menuCss).toContain("min-width: max-content");
     expect(menuCss).toContain("overflow: visible");
     expect(menuCss).not.toMatch(
-      /\[data-ai-part="conversation-menu"\] \[data-ui-part="dropdown-menu-item"\]\s*\{[^}]*font-size/,
+      /\[data-ai-part="conversation-menu"\] \[data-ui-part="dropdown-menu-item"\]\s*\{[^}]*font-size/
     );
   });
 
@@ -290,7 +290,7 @@ describe("AiPlugin contracts", () => {
     const source = readFileSync("src/lib/history/ai-history-view.ts", "utf8");
     const panel = readFileSync(
       "src/lib/history/ai-history-panel.svelte",
-      "utf8",
+      "utf8"
     );
 
     expect(source).toContain("this.unload()");
@@ -304,7 +304,7 @@ describe("AiPlugin contracts", () => {
     const source = readFileSync("src/lib/catalog/ai-catalog-view.ts", "utf8");
     const panel = readFileSync(
       "src/lib/catalog/ai-catalog-panel.svelte",
-      "utf8",
+      "utf8"
     );
     const plugin = readFileSync("src/lib/ai-plugin.ts", "utf8");
 
@@ -320,7 +320,7 @@ describe("AiPlugin contracts", () => {
     expect(panel).toContain("nextSignature === groupsSignature");
     expect(plugin).toContain("scopeDir: this.currentConversationScope()");
     expect(plugin).not.toContain(
-      "scopeDir: this.createConversationInput().scopeDir",
+      "scopeDir: this.createConversationInput().scopeDir"
     );
     expect(panel).toContain("--ui-workspace-foreground");
     expect(panel).toContain("Enable ${tool.name} for the next chat");
@@ -348,7 +348,7 @@ describe("AiPlugin contracts", () => {
     expect(source).not.toContain('group: "AI"');
     expect(source).not.toContain("groupTitle");
     expect(source).not.toContain(
-      "getLeavesOfType(AiHistoryViewType)[0] ??\n      this.app.workspace.getLeavesOfType(AiViewType)[0]",
+      "getLeavesOfType(AiHistoryViewType)[0] ??\n      this.app.workspace.getLeavesOfType(AiViewType)[0]"
     );
   });
 });
