@@ -9,7 +9,10 @@
     type CommunityProjectsOptions,
     type RegistryBrowserOptions,
   } from "@lapismd/lapis-community/components";
-  import type { CommunityController } from "@lapismd/lapis-community/community";
+  import type {
+    CommunityApplicationExtensions,
+    CommunityController,
+  } from "@lapismd/lapis-community/community";
   import type {
     RegistryInstallAction,
     RegistryInstallRequest,
@@ -27,6 +30,10 @@
     communityRelayHttpOrigin,
     DEFAULT_COMMUNITY_RELAY_URL,
   } from "./community-runtime";
+  import {
+    createCommunityPluginExtensions,
+    watchCommunityPluginExtensionCommands,
+  } from "./host-extensions";
   import { CommunityHostIdentityProvider } from "./host-identity";
 
   let {
@@ -35,12 +42,14 @@
     loginOptions: suppliedLoginOptions,
     registryOptions: suppliedRegistryOptions,
     projectsOptions: suppliedProjectsOptions,
+    extensions: suppliedExtensions,
   }: {
     app: App;
     controller?: CommunityController;
     loginOptions?: CommunityApplicationLoginOptions;
     registryOptions?: RegistryBrowserOptions;
     projectsOptions?: CommunityProjectsOptions;
+    extensions?: CommunityApplicationExtensions;
   } = $props();
 
   const ownsController = untrack(() => suppliedController === undefined);
@@ -103,6 +112,10 @@
   const projectsOptions = $derived(
     suppliedProjectsOptions ?? ownedProjectsOptions,
   );
+  let hostExtensions = $state<CommunityApplicationExtensions>(
+    untrack(() => createCommunityPluginExtensions(app)),
+  );
+  const extensions = $derived(suppliedExtensions ?? hostExtensions);
 
   async function refreshInstallActions(): Promise<void> {
     try {
@@ -157,6 +170,12 @@
   }
 
   onMount(() => {
+    const disposeExtensionWatcher =
+      suppliedExtensions === undefined
+        ? watchCommunityPluginExtensionCommands(app, (available) => {
+            hostExtensions = available;
+          })
+        : undefined;
     controller.initialize();
     if (suppliedRegistryOptions === undefined) void refreshInstallActions();
     if (suppliedLoginOptions === undefined) {
@@ -165,6 +184,7 @@
       });
     }
     return () => {
+      disposeExtensionWatcher?.();
       if (ownsController) controller.dispose();
       ownedRegistrySource?.dispose?.();
       void identityProvider.close();
@@ -182,5 +202,6 @@
     {loginOptions}
     {registryOptions}
     {projectsOptions}
+    {extensions}
   />
 </div>
