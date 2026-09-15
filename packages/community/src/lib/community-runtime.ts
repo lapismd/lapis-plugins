@@ -33,6 +33,20 @@ export function communityRelayHttpOrigin(
   }
 }
 
+export function communityRelayAuthOrigin(
+  relayUrl = DEFAULT_COMMUNITY_RELAY_URL
+): string | undefined {
+  try {
+    const url = new URL(relayUrl);
+    if (url.hostname === "local-community.lapis.md") {
+      return "https://local-relay.lapis.md";
+    }
+  } catch {
+    return undefined;
+  }
+  return communityRelayHttpOrigin(relayUrl);
+}
+
 export function createCommunityPluginProjectsOptions(
   relayUrl = DEFAULT_COMMUNITY_RELAY_URL
 ): CommunityProjectsOptions {

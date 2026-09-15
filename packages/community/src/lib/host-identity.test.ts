@@ -53,6 +53,92 @@ describe("CommunityHostIdentityProvider", () => {
     ]);
   });
 
+  it("offers Keytr and static local methods when configured", async () => {
+    const provider = new CommunityHostIdentityProvider(
+      new NostrSignerHost(broker()),
+      {
+        keytr: {
+          method: {
+            id: "keytr",
+            kind: "keytr",
+            label: "Continue with Keytr",
+            description: "Use a passkey-protected Nostr key",
+          },
+          gateways: [],
+          relayUrls: [],
+          capabilities: vi.fn(),
+          connect: vi.fn(),
+        },
+      }
+    );
+
+    expect(provider.staticMethods().map((method) => method.id)).toEqual([
+      "keytr",
+      "create-account",
+      "private-key",
+      "remote-signer",
+    ]);
+    expect((await provider.methods()).map((method) => method.id)).toEqual([
+      "keytr",
+      "host-account:local-1",
+      "create-account",
+      "private-key",
+      "remote-signer",
+    ]);
+  });
+
+  it("keeps local sign-in methods available when saved accounts cannot be listed", async () => {
+    const signerBroker = broker();
+    vi.mocked(signerBroker.listAccounts).mockRejectedValueOnce(
+      new Error("keychain unavailable")
+    );
+    const provider = new CommunityHostIdentityProvider(
+      new NostrSignerHost(signerBroker)
+    );
+
+    expect((await provider.methods()).map((method) => method.id)).toEqual([
+      "create-account",
+      "private-key",
+      "remote-signer",
+    ]);
+  });
+
+  it("delegates Keytr login to the configured integration", async () => {
+    const connect = vi.fn(async () => ({
+      getPublicKey: vi.fn(async () => "f".repeat(64)),
+      signEvent: vi.fn(),
+    }));
+    const provider = new CommunityHostIdentityProvider(
+      new NostrSignerHost(broker()),
+      {
+        keytr: {
+          method: {
+            id: "keytr",
+            kind: "keytr",
+            label: "Continue with Keytr",
+            description: "Use a passkey-protected Nostr key",
+          },
+          gateways: [],
+          relayUrls: [],
+          capabilities: vi.fn(),
+          connect,
+        },
+      }
+    );
+
+    await provider.connect(
+      "keytr",
+      { keytr: { action: "login", gatewayId: "keytr.org" } },
+      { expectedPubkey: "f".repeat(64) }
+    );
+
+    expect(connect).toHaveBeenCalledWith(
+      "keytr",
+      { keytr: { action: "login", gatewayId: "keytr.org" } },
+      { expectedPubkey: "f".repeat(64) }
+    );
+  });
+
   it("adapts a stored account to opaque signer operations", async () => {
     const signerBroker = broker();
     const provider = new CommunityHostIdentityProvider(

@@ -1,6 +1,9 @@
 <script lang="ts">
   import type { App } from "@lapis-notes/api";
-  import { RelayAuthClient } from "@lapismd/lapis-community/auth";
+  import {
+    createCommunityKeytrLoginIntegration,
+    RelayAuthClient,
+  } from "@lapismd/lapis-community/auth";
   import {
     CommunityApplication,
     COMMUNITY_LOGIN_METHODS,
@@ -27,7 +30,7 @@
   import {
     createCommunityPluginController,
     createCommunityPluginProjectsOptions,
-    communityRelayHttpOrigin,
+    communityRelayAuthOrigin,
     DEFAULT_COMMUNITY_RELAY_URL,
   } from "./community-runtime";
   import {
@@ -35,6 +38,7 @@
     watchCommunityPluginExtensionCommands,
   } from "./host-extensions";
   import { CommunityHostIdentityProvider } from "./host-identity";
+  import { communityKeytrLibrary } from "./keytr-library";
 
   let {
     app,
@@ -66,9 +70,17 @@
       suppliedController ?? createCommunityPluginController(communityRelayUrl),
   );
   const identityProvider = untrack(
-    () => new CommunityHostIdentityProvider(app.nostr),
+    () =>
+      new CommunityHostIdentityProvider(app.nostr, {
+        keytr: createCommunityKeytrLoginIntegration({
+          library: communityKeytrLibrary,
+          relayUrls: [communityRelayUrl],
+          allowLocalKeyMethods: true,
+          clientName: "Lapis Notes Community",
+        }),
+      }),
   );
-  const authOrigin = untrack(() => communityRelayHttpOrigin(communityRelayUrl));
+  const authOrigin = untrack(() => communityRelayAuthOrigin(communityRelayUrl));
   const authClient = untrack(() =>
     authOrigin === undefined
       ? undefined
@@ -179,9 +191,14 @@
     controller.initialize();
     if (suppliedRegistryOptions === undefined) void refreshInstallActions();
     if (suppliedLoginOptions === undefined) {
-      void identityProvider.methods().then((available) => {
-        methods = available;
-      });
+      void identityProvider
+        .methods()
+        .then((available) => {
+          methods = available;
+        })
+        .catch(() => {
+          methods = identityProvider.staticMethods();
+        });
     }
     return () => {
       disposeExtensionWatcher?.();

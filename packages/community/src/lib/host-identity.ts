@@ -62,7 +62,7 @@ export class CommunityHostIdentityProvider {
 
   async methods(): Promise<readonly CommunityLoginMethodModel[]> {
     this.#accounts.clear();
-    for (const account of await this.#signer.listAccounts()) {
+    for (const account of await this.#listAccounts()) {
       this.#accounts.set(accountMethodId(account.id), account);
     }
     return [
@@ -76,6 +76,15 @@ export class CommunityHostIdentityProvider {
             ? "Saved NIP-46 remote signer"
             : "Profile secured by this device",
       })),
+      CREATE_ACCOUNT_METHOD,
+      PRIVATE_KEY_METHOD,
+      REMOTE_SIGNER_METHOD,
+    ];
+  }
+
+  staticMethods(): readonly CommunityLoginMethodModel[] {
+    return [
+      ...(this.#keytr === undefined ? [] : [this.#keytr.method]),
       CREATE_ACCOUNT_METHOD,
       PRIVATE_KEY_METHOD,
       REMOTE_SIGNER_METHOD,
@@ -143,6 +152,14 @@ export class CommunityHostIdentityProvider {
     const accountId = this.#activeAccountId;
     this.#activeAccountId = undefined;
     if (accountId) await this.#signer.close(accountId);
+  }
+
+  async #listAccounts(): Promise<readonly NostrSignerAccount[]> {
+    try {
+      return await this.#signer.listAccounts();
+    } catch {
+      return [];
+    }
   }
 }
 

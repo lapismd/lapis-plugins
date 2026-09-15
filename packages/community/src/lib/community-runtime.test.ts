@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  communityRelayAuthOrigin,
   communityRelayHttpOrigin,
   createCommunityPluginProjectsOptions,
 } from "./community-runtime";
@@ -11,6 +12,15 @@ describe("community plugin runtime options", () => {
       "http://local-community.lapis.md"
     );
     expect(communityRelayHttpOrigin("wss://community.lapis.md/nostr")).toBe(
+      "https://community.lapis.md"
+    );
+  });
+
+  it("uses the local relay auth origin for the local Community UI host", () => {
+    expect(communityRelayAuthOrigin("ws://local-community.lapis.md/")).toBe(
+      "https://local-relay.lapis.md"
+    );
+    expect(communityRelayAuthOrigin("wss://community.lapis.md/nostr")).toBe(
       "https://community.lapis.md"
     );
   });
