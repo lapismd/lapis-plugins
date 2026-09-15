@@ -45,41 +45,12 @@ describe("CommunityHostIdentityProvider", () => {
     const provider = new CommunityHostIdentityProvider(
       new NostrSignerHost(broker())
     );
-    expect((await provider.methods()).map((method) => method.id)).toEqual([
-      "host-account:local-1",
-      "create-account",
-      "private-key",
-      "remote-signer",
-    ]);
-  });
-
-  it("offers Keytr and static local methods when configured", async () => {
-    const provider = new CommunityHostIdentityProvider(
-      new NostrSignerHost(broker()),
-      {
-        keytr: {
-          method: {
-            id: "keytr",
-            kind: "keytr",
-            label: "Continue with Keytr",
-            description: "Use a passkey-protected Nostr key",
-          },
-          gateways: [],
-          relayUrls: [],
-          capabilities: vi.fn(),
-          connect: vi.fn(),
-        },
-      }
-    );
-
     expect(provider.staticMethods().map((method) => method.id)).toEqual([
-      "keytr",
       "create-account",
       "private-key",
       "remote-signer",
     ]);
     expect((await provider.methods()).map((method) => method.id)).toEqual([
-      "keytr",
       "host-account:local-1",
       "create-account",
       "private-key",
@@ -101,42 +72,6 @@ describe("CommunityHostIdentityProvider", () => {
       "private-key",
       "remote-signer",
     ]);
-  });
-
-  it("delegates Keytr login to the configured integration", async () => {
-    const connect = vi.fn(async () => ({
-      getPublicKey: vi.fn(async () => "f".repeat(64)),
-      signEvent: vi.fn(),
-    }));
-    const provider = new CommunityHostIdentityProvider(
-      new NostrSignerHost(broker()),
-      {
-        keytr: {
-          method: {
-            id: "keytr",
-            kind: "keytr",
-            label: "Continue with Keytr",
-            description: "Use a passkey-protected Nostr key",
-          },
-          gateways: [],
-          relayUrls: [],
-          capabilities: vi.fn(),
-          connect,
-        },
-      }
-    );
-
-    await provider.connect(
-      "keytr",
-      { keytr: { action: "login", gatewayId: "keytr.org" } },
-      { expectedPubkey: "f".repeat(64) }
-    );
-
-    expect(connect).toHaveBeenCalledWith(
-      "keytr",
-      { keytr: { action: "login", gatewayId: "keytr.org" } },
-      { expectedPubkey: "f".repeat(64) }
-    );
   });
 
   it("adapts a stored account to opaque signer operations", async () => {

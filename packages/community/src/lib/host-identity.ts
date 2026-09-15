@@ -4,10 +4,6 @@ import type {
   NostrSignerHost,
 } from "@lapis-notes/api";
 import type {
-  CommunityKeytrLoginIntegration,
-  RelayIdentityConnectContext,
-} from "@lapismd/lapis-community/auth";
-import type {
   CommunityApplicationAuthAdapter,
   CommunityApplicationLoginOptions,
   CommunityLoginCredentials,
@@ -35,9 +31,6 @@ const PRIVATE_KEY_METHOD = {
   description: "Store an existing nsec in the OS keychain",
 } as const satisfies CommunityLoginMethodModel;
 
-export interface CommunityHostIdentityProviderOptions {
-  keytr?: CommunityKeytrLoginIntegration;
-}
 
 interface PrivateKeyImportCapableSigner extends NostrPluginSigner {
   importPrivateKey?(request: {
@@ -48,16 +41,11 @@ interface PrivateKeyImportCapableSigner extends NostrPluginSigner {
 
 export class CommunityHostIdentityProvider {
   readonly #signer: PrivateKeyImportCapableSigner;
-  readonly #keytr: CommunityKeytrLoginIntegration | undefined;
   readonly #accounts = new Map<string, NostrSignerAccount>();
   #activeAccountId: string | undefined;
 
-  constructor(
-    host: NostrSignerHost,
-    options: CommunityHostIdentityProviderOptions = {}
-  ) {
+  constructor(host: NostrSignerHost) {
     this.#signer = host.forPlugin("community");
-    this.#keytr = options.keytr;
   }
 
   async methods(): Promise<readonly CommunityLoginMethodModel[]> {
@@ -66,7 +54,6 @@ export class CommunityHostIdentityProvider {
       this.#accounts.set(accountMethodId(account.id), account);
     }
     return [
-      ...(this.#keytr === undefined ? [] : [this.#keytr.method]),
       ...[...this.#accounts.entries()].map(([id, account]) => ({
         id,
         kind: "other" as const,
@@ -84,7 +71,6 @@ export class CommunityHostIdentityProvider {
 
   staticMethods(): readonly CommunityLoginMethodModel[] {
     return [
-      ...(this.#keytr === undefined ? [] : [this.#keytr.method]),
       CREATE_ACCOUNT_METHOD,
       PRIVATE_KEY_METHOD,
       REMOTE_SIGNER_METHOD,
@@ -114,12 +100,7 @@ export class CommunityHostIdentityProvider {
   async connect(
     methodId: string,
     credentials?: CommunityLoginCredentials,
-    context?: RelayIdentityConnectContext
   ): Promise<CommunityIdentity> {
-    const keytr = this.#keytr;
-    if (keytr !== undefined && methodId === keytr.method.id) {
-      return await keytr.connect(methodId, credentials, context);
-    }
     let account: NostrSignerAccount | undefined;
     if (methodId === CREATE_ACCOUNT_METHOD.id) {
       account = await this.#signer.requestProfileCreation();

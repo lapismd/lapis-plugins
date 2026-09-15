@@ -43,8 +43,7 @@
     "./registry.json": "./registry.json"
   },
   "dependencies": {
-    "@lapismd/lapis-community": "^0.1.0",
-    "@sovit.xyz/keytr": "^0.8.0"
+    "@lapismd/lapis-community": "^0.1.0"
   },
   "peerDependencies": {
     "@lapis-notes/api": "^0.1.0",

@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { App } from "@lapis-notes/api";
   import {
-    createCommunityKeytrLoginIntegration,
     RelayAuthClient,
   } from "@lapismd/lapis-community/auth";
   import {
@@ -38,7 +37,6 @@
     watchCommunityPluginExtensionCommands,
   } from "./host-extensions";
   import { CommunityHostIdentityProvider } from "./host-identity";
-  import { communityKeytrLibrary } from "./keytr-library";
 
   let {
     app,
@@ -70,15 +68,7 @@
       suppliedController ?? createCommunityPluginController(communityRelayUrl),
   );
   const identityProvider = untrack(
-    () =>
-      new CommunityHostIdentityProvider(app.nostr, {
-        keytr: createCommunityKeytrLoginIntegration({
-          library: communityKeytrLibrary,
-          relayUrls: [communityRelayUrl],
-          allowLocalKeyMethods: true,
-          clientName: "Lapis Notes Community",
-        }),
-      }),
+    () => new CommunityHostIdentityProvider(app.nostr),
   );
   const authOrigin = untrack(() => communityRelayAuthOrigin(communityRelayUrl));
   const authClient = untrack(() =>
@@ -86,8 +76,8 @@
       ? undefined
       : new RelayAuthClient({
           relayUrl: authOrigin,
-          connectIdentity: (methodId, credentials, context) =>
-            identityProvider.connect(methodId, credentials, context),
+          connectIdentity: (methodId, credentials) =>
+            identityProvider.connect(methodId, credentials),
         }),
   );
   const ownedRegistrySource = untrack(() =>

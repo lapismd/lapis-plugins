@@ -96,8 +96,7 @@ tests must prove the protected job consumes the validated candidate without
 rebuilding payloads and retains the explicit plugin and replacement inputs.
 Release dependency resolution is protected by LP-SPEC-024: the tracked root
 lockfile and frozen workflow installs are part of the reviewed release source,
-not runner-local state. A plugin-specific runtime dependency, such as the
-Community Keytr adapter implementation, must map to the package behavior it
+not runner-local state. A plugin-specific runtime dependency must map to the package behavior it
 enables and to the bundling rule that keeps it out of the host import allowlist.
 Manual publication controls, bounded GitHub-asset replacement, and workflow
 runtime and mdBook provisioning are protected by LP-SPEC-025 through
