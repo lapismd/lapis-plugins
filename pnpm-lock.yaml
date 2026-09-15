@@ -1735,14 +1735,14 @@ packages:
     hasBin: true
 
   '@lapismd/design-core@file:../design-core/.local/packages/lapismd-design-core-0.1.2.tgz':
-    resolution: {integrity: sha512-KJgS0Uy1V88Gs7t27r0oY+Xz7dsj+0Y/6kH6BWAdZyyS5k4djBonb54ABX3lwJ1hUwxxBbVWEmNfHxqRZl8AZA==, tarball: file:../design-core/.local/packages/lapismd-design-core-0.1.2.tgz}
+    resolution: {integrity: sha512-1ctvxPBvfbzEbTHLpF/ANyjDIsvmfkBoIuL7rH06qiRpAsdx/wiM9bjYtY6okNzA3AGA6yrDvczWc+A26UeEvA==, tarball: file:../design-core/.local/packages/lapismd-design-core-0.1.2.tgz}
     version: 0.1.2
     engines: {node: '>=22'}
     peerDependencies:
       svelte: ^5.0.0
 
   '@lapismd/lapis-community@file:../lapis-community/.local/packages/lapismd-lapis-community-0.1.0.tgz':
-    resolution: {integrity: sha512-dvBp/3EOBeFk1yfZjxxe5S56MA4s5xiCcfNAUUh0v3ZQw9z9yg5L3yOgaQ64rPWWR7uW3SAH91Om1IYlX7sj7A==, tarball: file:../lapis-community/.local/packages/lapismd-lapis-community-0.1.0.tgz}
+    resolution: {integrity: sha512-63Zr9zvZ3v43bVgSbhfzmjkwO1mdKH0x6oJMWuDRlGr3nuIPGgVNDtHukwSqseUJXGrGx/7BOYyJARz07ny6eQ==, tarball: file:../lapis-community/.local/packages/lapismd-lapis-community-0.1.0.tgz}
     version: 0.1.0
     engines: {node: '>=22'}
     peerDependencies:
@@ -5869,7 +5869,7 @@ snapshots:
     dependencies:
       '@codemirror/autocomplete': 6.20.3
       '@codemirror/language': 6.12.4
-      '@codemirror/state': 6.7.1
+      '@codemirror/state': 6.7.5
       '@lezer/common': 1.5.2
       '@lezer/go': 1.0.1
 
@@ -5905,8 +5905,8 @@ snapshots:
       '@codemirror/autocomplete': 6.20.3
       '@codemirror/lang-html': 6.4.12
       '@codemirror/language': 6.12.4
-      '@codemirror/state': 6.7.1
-      '@codemirror/view': 6.43.9
+      '@codemirror/state': 6.7.5
+      '@codemirror/view': 6.43.12
       '@lezer/common': 1.5.2
       '@lezer/highlight': 1.2.3
       '@lezer/lr': 1.4.10
@@ -5929,8 +5929,8 @@ snapshots:
       '@codemirror/autocomplete': 6.20.3
       '@codemirror/lang-html': 6.4.12
       '@codemirror/language': 6.12.4
-      '@codemirror/state': 6.7.1
-      '@codemirror/view': 6.43.9
+      '@codemirror/state': 6.7.5
+      '@codemirror/view': 6.43.12
       '@lezer/common': 1.5.2
       '@lezer/highlight': 1.2.3
       '@lezer/lr': 1.4.10
@@ -5949,7 +5949,7 @@ snapshots:
     dependencies:
       '@codemirror/lang-html': 6.4.12
       '@codemirror/language': 6.12.4
-      '@codemirror/state': 6.7.1
+      '@codemirror/state': 6.7.5
       '@lezer/common': 1.5.2
       '@lezer/php': 1.0.5
 
@@ -5970,7 +5970,7 @@ snapshots:
     dependencies:
       '@codemirror/lang-css': 6.3.1
       '@codemirror/language': 6.12.4
-      '@codemirror/state': 6.7.1
+      '@codemirror/state': 6.7.5
       '@lezer/common': 1.5.2
       '@lezer/sass': 1.1.0
 
@@ -6003,8 +6003,8 @@ snapshots:
     dependencies:
       '@codemirror/autocomplete': 6.20.3
       '@codemirror/language': 6.12.4
-      '@codemirror/state': 6.7.1
-      '@codemirror/view': 6.43.9
+      '@codemirror/state': 6.7.5
+      '@codemirror/view': 6.43.12
       '@lezer/common': 1.5.2
       '@lezer/xml': 1.0.6
 
