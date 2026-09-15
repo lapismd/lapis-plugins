@@ -1,10 +1,12 @@
 <script lang="ts">
   import type { App } from "@lapis-notes/api";
+  import { RelayAuthClient } from "@lapismd/lapis-community/auth";
   import {
     CommunityApplication,
     COMMUNITY_LOGIN_METHODS,
     type CommunityApplicationLoginOptions,
     type CommunityLoginMethodModel,
+    type CommunityProjectsOptions,
     type RegistryBrowserOptions,
   } from "@lapismd/lapis-community/components";
   import type { CommunityController } from "@lapismd/lapis-community/community";
@@ -19,7 +21,12 @@
     installCommunityRegistryPlugin,
     selectCommunityPluginRelayUrl,
   } from "./community-registry";
-  import { createCommunityPluginController } from "./community-runtime";
+  import {
+    createCommunityPluginController,
+    createCommunityPluginProjectsOptions,
+    communityRelayHttpOrigin,
+    DEFAULT_COMMUNITY_RELAY_URL,
+  } from "./community-runtime";
   import { CommunityHostIdentityProvider } from "./host-identity";
 
   let {
@@ -27,11 +34,13 @@
     controller: suppliedController,
     loginOptions: suppliedLoginOptions,
     registryOptions: suppliedRegistryOptions,
+    projectsOptions: suppliedProjectsOptions,
   }: {
     app: App;
     controller?: CommunityController;
     loginOptions?: CommunityApplicationLoginOptions;
     registryOptions?: RegistryBrowserOptions;
+    projectsOptions?: CommunityProjectsOptions;
   } = $props();
 
   const ownsController = untrack(() => suppliedController === undefined);
@@ -40,11 +49,25 @@
       ? selectCommunityPluginRelayUrl(app.pluginDistribution.listSources())
       : undefined,
   );
+  const communityRelayUrl = untrack(
+    () => hostRelayUrl ?? DEFAULT_COMMUNITY_RELAY_URL,
+  );
   const controller = untrack(
-    () => suppliedController ?? createCommunityPluginController(hostRelayUrl),
+    () =>
+      suppliedController ?? createCommunityPluginController(communityRelayUrl),
   );
   const identityProvider = untrack(
     () => new CommunityHostIdentityProvider(app.nostr),
+  );
+  const authOrigin = untrack(() => communityRelayHttpOrigin(communityRelayUrl));
+  const authClient = untrack(() =>
+    authOrigin === undefined
+      ? undefined
+      : new RelayAuthClient({
+          relayUrl: authOrigin,
+          connectIdentity: (methodId, credentials, context) =>
+            identityProvider.connect(methodId, credentials, context),
+        }),
   );
   const ownedRegistrySource = untrack(() =>
     suppliedRegistryOptions === undefined
@@ -56,7 +79,7 @@
     COMMUNITY_LOGIN_METHODS.remoteSigner,
   ]);
   const loginOptions = $derived(
-    suppliedLoginOptions ?? identityProvider.options(methods),
+    suppliedLoginOptions ?? identityProvider.options(methods, authClient),
   );
   let installActions = $state<
     Readonly<Record<string, RegistryInstallAction>>
@@ -71,6 +94,14 @@
         onInstall: installFromRegistry,
       };
     },
+  );
+  const ownedProjectsOptions = untrack(() =>
+    suppliedProjectsOptions === undefined
+      ? createCommunityPluginProjectsOptions(communityRelayUrl)
+      : undefined,
+  );
+  const projectsOptions = $derived(
+    suppliedProjectsOptions ?? ownedProjectsOptions,
   );
 
   async function refreshInstallActions(): Promise<void> {
@@ -146,5 +177,10 @@
   data-ui-component="community-plugin-application"
   data-testid="community-plugin-application"
 >
-  <CommunityApplication {controller} {loginOptions} {registryOptions} />
+  <CommunityApplication
+    {controller}
+    {loginOptions}
+    {registryOptions}
+    {projectsOptions}
+  />
 </div>

@@ -41,13 +41,14 @@ function broker(): NostrSignerBroker {
 }
 
 describe("CommunityHostIdentityProvider", () => {
-  it("offers stored, create-profile, and remote-signer methods", async () => {
+  it("offers stored, create-profile, private-key import, and remote-signer methods", async () => {
     const provider = new CommunityHostIdentityProvider(
       new NostrSignerHost(broker())
     );
     expect((await provider.methods()).map((method) => method.id)).toEqual([
       "host-account:local-1",
       "create-account",
+      "private-key",
       "remote-signer",
     ]);
   });
@@ -67,6 +68,27 @@ describe("CommunityHostIdentityProvider", () => {
       "f".repeat(64),
       "hello"
     );
+  });
+
+  it("imports a private key through a capable host-owned signer", async () => {
+    const signerBroker = broker();
+    const baseSigner = new NostrSignerHost(signerBroker).forPlugin("community");
+    const importPrivateKey = vi.fn(async () => ({
+      id: "imported-1",
+      label: "Imported Nostr key",
+      pubkey: "d".repeat(64),
+      kind: "local" as const,
+    }));
+    const provider = new CommunityHostIdentityProvider({
+      forPlugin: () => ({ ...baseSigner, importPrivateKey }),
+    } as unknown as NostrSignerHost);
+
+    await provider.connect("private-key", { privateKey: "nsec1example" });
+
+    expect(importPrivateKey).toHaveBeenCalledWith({
+      privateKey: "nsec1example",
+      label: "Imported Nostr key",
+    });
   });
 
   it("hands a NIP-46 invitation to the host and closes the session", async () => {

@@ -4,6 +4,11 @@ import type {
   NostrSignerHost,
 } from "@lapis-notes/api";
 import type {
+  CommunityKeytrLoginIntegration,
+  RelayIdentityConnectContext,
+} from "@lapismd/lapis-community/auth";
+import type {
+  CommunityApplicationAuthAdapter,
   CommunityApplicationLoginOptions,
   CommunityLoginCredentials,
   CommunityLoginMethodModel,
@@ -23,14 +28,36 @@ const REMOTE_SIGNER_METHOD = {
   label: "Remote signer",
   description: "NIP-46 — connect with a bunker URL",
 } as const satisfies CommunityLoginMethodModel;
+const PRIVATE_KEY_METHOD = {
+  id: "private-key",
+  kind: "private-key",
+  label: "Import a private key",
+  description: "Store an existing nsec in the OS keychain",
+} as const satisfies CommunityLoginMethodModel;
+
+export interface CommunityHostIdentityProviderOptions {
+  keytr?: CommunityKeytrLoginIntegration;
+}
+
+interface PrivateKeyImportCapableSigner extends NostrPluginSigner {
+  importPrivateKey?(request: {
+    privateKey: string;
+    label?: string;
+  }): Promise<NostrSignerAccount>;
+}
 
 export class CommunityHostIdentityProvider {
-  readonly #signer: NostrPluginSigner;
+  readonly #signer: PrivateKeyImportCapableSigner;
+  readonly #keytr: CommunityKeytrLoginIntegration | undefined;
   readonly #accounts = new Map<string, NostrSignerAccount>();
   #activeAccountId: string | undefined;
 
-  constructor(host: NostrSignerHost) {
+  constructor(
+    host: NostrSignerHost,
+    options: CommunityHostIdentityProviderOptions = {}
+  ) {
     this.#signer = host.forPlugin("community");
+    this.#keytr = options.keytr;
   }
 
   async methods(): Promise<readonly CommunityLoginMethodModel[]> {
@@ -39,6 +66,7 @@ export class CommunityHostIdentityProvider {
       this.#accounts.set(accountMethodId(account.id), account);
     }
     return [
+      ...(this.#keytr === undefined ? [] : [this.#keytr.method]),
       ...[...this.#accounts.entries()].map(([id, account]) => ({
         id,
         kind: "other" as const,
@@ -49,12 +77,14 @@ export class CommunityHostIdentityProvider {
             : "Profile secured by this device",
       })),
       CREATE_ACCOUNT_METHOD,
+      PRIVATE_KEY_METHOD,
       REMOTE_SIGNER_METHOD,
     ];
   }
 
   options(
-    methods: readonly CommunityLoginMethodModel[]
+    methods: readonly CommunityLoginMethodModel[],
+    auth?: CommunityApplicationAuthAdapter
   ): CommunityApplicationLoginOptions {
     return {
       methods,
@@ -63,17 +93,40 @@ export class CommunityHostIdentityProvider {
       description: "Use a host-owned Nostr identity",
       footnote:
         "Keys and remote-signer credentials stay in the operating-system keychain. Community receives only approved results.",
-      connect: (methodId, credentials) => this.connect(methodId, credentials),
+      ...(auth === undefined
+        ? {
+            connect: (methodId, credentials) =>
+              this.connect(methodId, credentials),
+          }
+        : { auth }),
     };
   }
 
   async connect(
     methodId: string,
-    credentials?: CommunityLoginCredentials
+    credentials?: CommunityLoginCredentials,
+    context?: RelayIdentityConnectContext
   ): Promise<CommunityIdentity> {
+    const keytr = this.#keytr;
+    if (keytr !== undefined && methodId === keytr.method.id) {
+      return await keytr.connect(methodId, credentials, context);
+    }
     let account: NostrSignerAccount | undefined;
     if (methodId === CREATE_ACCOUNT_METHOD.id) {
       account = await this.#signer.requestProfileCreation();
+    } else if (methodId === PRIVATE_KEY_METHOD.id) {
+      const privateKey = credentials?.privateKey?.trim();
+      if (!privateKey) throw new Error("A private key is required");
+      const importPrivateKey = this.#signer.importPrivateKey;
+      if (importPrivateKey === undefined) {
+        throw new Error(
+          "This Lapis host does not support private-key import yet"
+        );
+      }
+      account = await importPrivateKey.call(this.#signer, {
+        privateKey,
+        label: "Imported Nostr key",
+      });
     } else if (methodId === REMOTE_SIGNER_METHOD.id) {
       const bunkerUrl = credentials?.remoteSignerUrl?.trim();
       if (!bunkerUrl) throw new Error("A bunker URL is required");
