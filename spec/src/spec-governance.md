@@ -24,10 +24,10 @@ approved-release environment, and immutable-version patch rollback policy.
 Package-boundary verification also rejects bundled Lapis host packages and
 requires every externalized Lapis runtime module to resolve through a declared
 peer supplied by the consuming application.
-Shared release tooling MAY treat only the three compiler-emitted Svelte
-renderer specifiers named by LP-SPEC-014 as an implicit host ABI. Focused tests
-MUST reject arbitrary Svelte subpaths and keep this ABI out of authored plugin
-manifest dependencies.
+Shared release tooling MUST scan all emitted JavaScript runtime chunks for
+browser bare imports. Only declared Lapis host modules may remain external;
+Svelte, compiler internals, and other non-host imports stay bundled or relative
+so consuming hosts do not need plugin-specific import maps.
 Release compiler reproducibility is protected by LP-SPEC-047. The builder reads
 the root frozen lockfile and MUST reject installed Svelte drift before writing
 plugin output.

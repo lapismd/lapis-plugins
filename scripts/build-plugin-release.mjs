@@ -14,10 +14,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { svelte, vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 import {
-  init as initEsModuleLexer,
-  parse as parseModule,
-} from "es-module-lexer";
-import { build as viteBuild } from "vite";
+  build as viteBuild,
+} from "vite";
 
 import {
   buildPluginPayload,
@@ -30,12 +28,12 @@ import {
 } from "./package-catalog.mjs";
 import {
   assertRendererCompilerVersion,
-  isImplicitRendererEsmHostModule,
   isPluginSelfReference,
   pluginRuntimeViteBase,
   rendererCompilerVersionFromLockfile,
 } from "./lib/runtime-host-modules.mjs";
 import { resolveWorkerLimit, runBoundedWorkers } from "./lib/concurrency.mjs";
+import { scanRuntimeBareImports } from "./lib/plugin-runtime-imports.mjs";
 import { preparePluginReleaseRoot } from "./lib/release-output.mjs";
 import { resolveSourceCommit } from "./lib/source-commit.mjs";
 
@@ -97,7 +95,7 @@ async function buildPlugin(plugin) {
     `${plugin.pluginId}-${packageJson.version}`
   );
   await rm(runtimeDir, { recursive: true, force: true });
-  await buildRuntime(plugin, packageRoot, runtimeDir);
+  await buildRuntime(plugin, packageRoot, runtimeDir, manifest);
   await copyFile(
     path.join(packageRoot, "manifest.json"),
     path.join(runtimeDir, "manifest.json")
@@ -150,10 +148,13 @@ async function buildPlugin(plugin) {
   };
 }
 
-async function buildRuntime(plugin, packageRoot, outDir) {
+async function buildRuntime(plugin, packageRoot, outDir, manifest) {
   const sourceEntry = existsSync(path.join(packageRoot, "src/lib/index.ts"))
     ? path.join(packageRoot, "src/lib/index.ts")
     : path.join(packageRoot, "src/index.ts");
+  const declaredHostModules = new Set(
+    manifest.lapis.runtime.entries.workspace.sharedDependencies
+  );
   await viteBuild({
     root: packageRoot,
     base: pluginRuntimeViteBase,
@@ -192,8 +193,7 @@ async function buildRuntime(plugin, packageRoot, outDir) {
       rollupOptions: {
         external: (specifier) =>
           !isPluginSelfReference(plugin.packageName, specifier) &&
-          (isApprovedHostModule(specifier) ||
-            isImplicitRendererEsmHostModule(specifier)),
+          isApprovedHostModule(specifier),
         output: {
           entryFileNames: "main.mjs",
           chunkFileNames: "assets/[name]-[hash].mjs",
@@ -216,25 +216,19 @@ async function buildRuntime(plugin, packageRoot, outDir) {
       throw new Error(`${plugin.packageName} did not emit an ESM entry.`);
     await rename(path.join(outDir, candidate), mainPath);
   }
-  const bareImports = await scanBareImports(await readFile(mainPath, "utf8"));
-  const declared = new Set(
-    JSON.parse(
-      await readFile(path.join(packageRoot, "manifest.json"), "utf8")
-    ).lapis.runtime.entries.workspace.sharedDependencies
-  );
-  for (const specifier of bareImports) {
-    if (isImplicitRendererEsmHostModule(specifier)) {
-      continue;
-    }
-    if (!isApprovedHostModule(specifier)) {
-      throw new Error(
-        `${plugin.packageName} left non-host dependency ${specifier} external.`
-      );
-    }
-    if (!declared.has(specifier)) {
-      throw new Error(
-        `${plugin.packageName} did not declare host module ${specifier}.`
-      );
+  const bareImportsByFile = await scanRuntimeBareImports(outDir);
+  for (const [file, specifiers] of bareImportsByFile) {
+    for (const specifier of specifiers) {
+      if (!isApprovedHostModule(specifier)) {
+        throw new Error(
+          `${plugin.packageName} left non-host dependency ${specifier} external in ${file}. Plugin ESM runtime assets must bundle non-host dependencies or rewrite imports to relative URLs.`
+        );
+      }
+      if (!declaredHostModules.has(specifier)) {
+        throw new Error(
+          `${plugin.packageName} imported host module ${specifier} in ${file} without declaring it as a shared dependency.`
+        );
+      }
     }
   }
 }
@@ -243,20 +237,6 @@ function isApprovedHostModule(specifier) {
   return approvedWorkspaceHostModules.some((pattern) =>
     pattern.test(specifier)
   );
-}
-
-async function scanBareImports(source) {
-  await initEsModuleLexer;
-  const imports = new Set();
-  const [entries] = parseModule(source);
-  for (const entry of entries) {
-    const specifier = entry.n;
-    if (typeof specifier !== "string") continue;
-    if (!specifier.startsWith(".") && !specifier.startsWith("/")) {
-      imports.add(specifier);
-    }
-  }
-  return [...imports].sort();
 }
 
 function requiredPlugin(selector) {

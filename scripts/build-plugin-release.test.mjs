@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import test from "node:test";
 
+import {
+  scanBareImports,
+  scanRuntimeBareImports,
+} from "./lib/plugin-runtime-imports.mjs";
 import {
   assertRendererCompilerVersion,
   implicitRendererEsmHostModules,
@@ -31,7 +38,7 @@ test("bundles a plugin package's own manifest self-reference", () => {
   );
 });
 
-test("externalizes only the exact compiler-emitted Svelte renderer ABI", () => {
+test("tracks the exact compiler-emitted Svelte renderer ABI", () => {
   assert.deepEqual(implicitRendererEsmHostModules, [
     "svelte",
     "svelte/internal/client",
@@ -49,6 +56,29 @@ test("externalizes only the exact compiler-emitted Svelte renderer ABI", () => {
 
 test("emits plugin runtime assets relative to the importing chunk", () => {
   assert.equal(pluginRuntimeViteBase, "./");
+});
+
+test("detects browser bare imports in every emitted runtime chunk", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "lapis-plugin-runtime-"));
+  try {
+    await writeFile(
+      path.join(root, "main.mjs"),
+      'import "./assets/chunk.mjs";\nimport "/absolute/hosted.mjs";\nimport "https://example.invalid/remote.mjs";\n'
+    );
+    await writeFile(
+      path.join(root, "chunk.js"),
+      'import { mount } from "svelte";\nexport { Plugin } from "@lapis-notes/api";\n'
+    );
+
+    assert.deepEqual(await scanBareImports('import x from "svelte";'), [
+      "svelte",
+    ]);
+    assert.deepEqual([...await scanRuntimeBareImports(root)], [
+      ["chunk.js", ["@lapis-notes/api", "svelte"]],
+    ]);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
 });
 
 test("requires the installed compiler to match the frozen lockfile", () => {
