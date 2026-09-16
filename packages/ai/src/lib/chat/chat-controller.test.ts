@@ -27,6 +27,74 @@ import type {
 } from "../tools/desktop-app-tool-bridge";
 
 describe("AiChatController", () => {
+  it("defers shared-controller recall and reads fresh history without changing authored text", async () => {
+    const runtime = new FakeAgentRuntime();
+    const capabilities = runtime.capabilities();
+    runtime.capabilities = () => ({ ...capabilities, preparesContext: true });
+    const start = runtime.start.bind(runtime);
+    let dispatch!: () => Promise<void>;
+    runtime.start = async (request) => {
+      const session = await start(request);
+      const send = session.send.bind(session);
+      session.send = async (text, options) => {
+        dispatch = async () => {
+          expect(
+            await options?.authorizeContext?.(new AbortController().signal),
+          ).toBe(true);
+          const contextBlocks = await options?.prepareContext?.(
+            new AbortController().signal,
+          );
+          await send(text, { contextBlocks });
+        };
+      };
+      return session;
+    };
+    const repository = new ConversationRepository(new MemoryTranscriptStore());
+    const memoryRecall = { recall: vi.fn(async () => []) };
+    const controller = new AiChatController(runtime, null, [], {
+      repository,
+      createConversation: () => ({ scopeDir: "Notes" }),
+      memoryRecall,
+    });
+    try {
+      await controller.submit("Original message");
+      expect(controller.busy).toBe(true);
+      expect(memoryRecall.recall).not.toHaveBeenCalled();
+      await repository.appendTranscript(controller.location!, [
+        {
+          schemaVersion: CONVERSATION_SCHEMA_VERSION,
+          id: "intervening",
+          type: "message",
+          role: "assistant",
+          text: "History added while queued",
+          createdAt: new Date().toISOString(),
+        },
+      ]);
+      await dispatch();
+      await vi.waitFor(() => expect(controller.busy).toBe(false));
+      expect(memoryRecall.recall).toHaveBeenCalledTimes(1);
+      expect(runtime.sessions[0]?.prompts).toEqual(["Original message"]);
+      expect(runtime.sessions[0]?.contextBlocks[0]).toMatchObject([
+        {
+          kind: "conversation-handoff",
+          content: expect.stringContaining("History added while queued"),
+        },
+      ]);
+      await controller.submit("Next message");
+      await dispatch();
+      await vi.waitFor(() => expect(controller.busy).toBe(false));
+      expect(runtime.sessions[0]?.contextBlocks[1]).toEqual([]);
+      const snapshot = await repository.read(controller.location!);
+      expect(
+        snapshot.transcript
+          .filter((entry) => entry.type === "message" && entry.role === "user")
+          .map((entry) => (entry.type === "message" ? entry.text : "")),
+      ).toEqual(["Original message", "Next message"]);
+    } finally {
+      await controller.close();
+    }
+  });
+
   it("passes typed memory recall without polluting the authored transcript", async () => {
     const runtime = new FakeAgentRuntime();
     const repository = new ConversationRepository(new MemoryTranscriptStore());

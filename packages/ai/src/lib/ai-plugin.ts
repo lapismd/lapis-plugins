@@ -21,9 +21,8 @@ import type { ConversationLocation } from "./conversations/types";
 import { formatFileMention, searchVaultFiles } from "./chat/chat-mentions";
 import type { AgentRequest, AgentRuntime } from "./core/types";
 import { createHostAgentRuntimes } from "./host/create-host-runtimes";
-import { createAgentProcessHost } from "./host/desktop-process-host";
+import { ControllerConnectionPool } from "./host/controller-connection";
 import { resolveAgentWorkspace } from "./host/agent-workspace";
-import type { AgentProcessHost } from "./host/process-host";
 import { AcpModelProvider } from "./providers/acp-model-provider";
 import { ModelProviderRegistry } from "./providers/model-provider";
 import { selectAgentRuntime } from "./registry/select-runtime";
@@ -98,7 +97,7 @@ export class AiPlugin extends Plugin {
     settings: DEFAULT_AI_SETTINGS,
     source: {},
   };
-  readonly processHost: AgentProcessHost;
+  readonly controllerConnections = new ControllerConnectionPool();
   readonly registry: AgentRuntimeRegistry;
   readonly models: ModelProviderRegistry;
   readonly mcpServers = createMcpServerContributionRegistry();
@@ -156,7 +155,9 @@ export class AiPlugin extends Plugin {
     this.appToolHost = new AppToolHost(app.agentTools, () =>
       this.getSettings(),
     );
-    this.appToolBridge = new DesktopAppToolBridge(this.appToolHost);
+    this.appToolBridge = new DesktopAppToolBridge(this.appToolHost, () =>
+      this.controllerConnections.get(this.workspace),
+    );
     this.skillRegistry = new SkillRegistry({
       vault: app.vault,
       appSkills: app.agentSkills,
@@ -175,15 +176,19 @@ export class AiPlugin extends Plugin {
     this.register(() => {
       void this.appToolBridge.close().finally(() => this.appToolHost.close());
     });
-    this.processHost = createAgentProcessHost();
+    this.register(() => this.controllerConnections.close());
     const workspace = this.workspace;
     this.models = new ModelProviderRegistry([
-      new AcpModelProvider("codex", { workspace }),
-      new AcpModelProvider("cursor", { workspace }),
+      new AcpModelProvider("codex", {
+        connection: () => this.controllerConnections.get(workspace),
+      }),
+      new AcpModelProvider("cursor", {
+        connection: () => this.controllerConnections.get(workspace),
+      }),
     ]);
     this.registry = createAgentRuntimeRegistry([
       this.fakeRuntime,
-      ...createHostAgentRuntimes(),
+      ...createHostAgentRuntimes(this.controllerConnections),
     ]);
     this.memoryConsolidationProvider = new RuntimeMemoryConsolidationProvider({
       configuration: () => {
@@ -225,7 +230,9 @@ export class AiPlugin extends Plugin {
             : undefined;
         if (!runtime || !(await runtime.supports(request))) {
           throw new Error(
-            `Pinned handoff-summary runtime ${String(runtimeId)} is unavailable.`,
+            `Pinned handoff-summary runtime ${String(
+              runtimeId,
+            )} is unavailable.`,
           );
         }
         return runtime;
@@ -256,7 +263,9 @@ export class AiPlugin extends Plugin {
       this.memory,
       (operation, location, error) =>
         this.app.logger.warn(
-          `Unable to ${operation} AI memory${location ? ` for ${location.conversationId}` : ""}`,
+          `Unable to ${operation} AI memory${
+            location ? ` for ${location.conversationId}` : ""
+          }`,
           error,
         ),
     );
@@ -342,7 +351,7 @@ export class AiPlugin extends Plugin {
   }
 
   refreshHostRuntimes(): void {
-    for (const runtime of createHostAgentRuntimes()) {
+    for (const runtime of createHostAgentRuntimes(this.controllerConnections)) {
       this.registry.register(runtime);
     }
   }
@@ -586,7 +595,11 @@ export class AiPlugin extends Plugin {
           conversationMemoryScope(this.currentConversationScope()),
         );
         new Notice(
-          `${preview.proposals} memory proposal${preview.proposals === 1 ? "" : "s"} ready from ${preview.candidateIds.length} candidate${preview.candidateIds.length === 1 ? "" : "s"}`,
+          `${preview.proposals} memory proposal${
+            preview.proposals === 1 ? "" : "s"
+          } ready from ${preview.candidateIds.length} candidate${
+            preview.candidateIds.length === 1 ? "" : "s"
+          }`,
         );
       },
     });
@@ -598,7 +611,9 @@ export class AiPlugin extends Plugin {
           conversationMemoryScope(this.currentConversationScope()),
         );
         new Notice(
-          `Memory consolidation wrote ${result.written} revision${result.written === 1 ? "" : "s"}; ${result.needsReview} need review`,
+          `Memory consolidation wrote ${result.written} revision${
+            result.written === 1 ? "" : "s"
+          }; ${result.needsReview} need review`,
         );
       },
     });
@@ -612,7 +627,17 @@ export class AiPlugin extends Plugin {
           this.app.appDatabase.listMemoryJobs(),
         ]);
         new Notice(
-          `Memory: ${sources.length} conversation source${sources.length === 1 ? "" : "s"}, ${candidates.length} candidate${candidates.length === 1 ? "" : "s"}, ${jobs.filter((job) => job.status === "running").length} active job${jobs.filter((job) => job.status === "running").length === 1 ? "" : "s"}`,
+          `Memory: ${sources.length} conversation source${
+            sources.length === 1 ? "" : "s"
+          }, ${candidates.length} candidate${
+            candidates.length === 1 ? "" : "s"
+          }, ${
+            jobs.filter((job) => job.status === "running").length
+          } active job${
+            jobs.filter((job) => job.status === "running").length === 1
+              ? ""
+              : "s"
+          }`,
         );
       },
     });
@@ -688,7 +713,11 @@ export class AiPlugin extends Plugin {
         if (!(await confirmForgetDerivedMemory(this.app, preview))) return;
         const result = await this.memory.forgetConversation(location);
         new Notice(
-          `Forgot derived conversation memory and retracted ${result.retracted} record${result.retracted === 1 ? "" : "s"}; the transcript was preserved`,
+          `Forgot derived conversation memory and retracted ${
+            result.retracted
+          } record${
+            result.retracted === 1 ? "" : "s"
+          }; the transcript was preserved`,
         );
       },
     });
@@ -737,11 +766,9 @@ export class AiPlugin extends Plugin {
     this.register(() => this.memoryScheduler.dispose());
     this.memoryIngestionCoordinator.startCatchUp();
     this.memoryScheduler.start();
-    this.registerView(
-      AiJsonlViewType,
-      (leaf) => new AiJsonlView(leaf),
-      { kind: "file" },
-    );
+    this.registerView(AiJsonlViewType, (leaf) => new AiJsonlView(leaf), {
+      kind: "file",
+    });
     this.registerEditorView({
       id: AiJsonlViewType,
       viewType: AiJsonlViewType,

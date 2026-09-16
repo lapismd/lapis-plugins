@@ -466,12 +466,35 @@ The schema-1 memory policy and maintenance scheduler are supplied by
 AppDatabase and conversation evidence adapters, UI and domain tool grants.
 This extraction preserves stored paths, IDs, evidence hashes and exclusions;
 it does not enable a second execution or memory maintenance owner. The service
-migration will transfer automatic turn recall after its controller facade is
-validated. Until that switch, the compatibility facade preserves the existing
-single caller and its public MemoryService behavior.
+invokes the deferred preparation endpoint when a turn is eligible; the endpoint
+uses this shared policy with authorized vault adapters. The public MemoryService
+facade preserves existing callers and stored records.
 
 The compatibility extraction also uses the shared memory record codec, hashes,
 candidate extraction, scope-path policy and pinned-runtime consolidation provider.
 The vault adapter retains file access and immutable preimage writes. Its public
 conflict class is the shared class so consolidation observes storage conflicts
 consistently across the package boundary.
+
+Live session execution now belongs to the separate AI controller service and its
+shared browser SDK. The plugin owns conversation storage, App authorization,
+vault memory adapters, skill discovery and presentation. Desktop IPC supplies
+only a controller connection; browser hosts attach to the same authenticated
+protocol. Lapis registers app-tool and instruction endpoints and uses shared
+runtime event and transcript handoff contracts. Deferred turn preparation reads
+current authorized conversation and memory state at service dispatch time.
+Application tools retain their existing settings, grants, cancellation and
+owner-visible approval UI. External MCP launch configuration remains volatile.
+
+AI service acceptance uses the installed shared-controller SDK and retains App
+tool approval policy. Storybook applies the public Community Turso build helper
+to client and worker graphs so full static builds preserve the prebuilt WASM
+bundle while exercising AI alongside the other installed plugins.
+
+Legacy runtime adapter exports remain compatibility APIs for third-party callers.
+The first-party plugin factory, desktop host, web attach and Storybook live attach
+use the controller connection and never select those legacy execution paths.
+
+The Local Conversations interaction waits for the dismissed model menu to release
+pointer ownership before operating History, matching the existing waits around
+other closing menus. It must not bypass the browser pointer-interaction check.

@@ -40,7 +40,7 @@ describe("AiPlugin contracts", () => {
     const source = readFileSync("src/lib/ai-plugin.ts", "utf8");
 
     expect(source).toContain("new AiJsonlView(leaf)");
-    expect(source).toContain('{ kind: "file" }');
+    expect(source).toMatch(/\{\s*kind: "file",?\s*\}/u);
     expect(source).toContain('label: "AI JSONL"');
     expect(source).toContain('filenamePatterns: [".jsonl", "*.jsonl"]');
     expect(source).toContain('priority: "default"');

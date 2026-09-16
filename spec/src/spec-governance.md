@@ -124,3 +124,12 @@ The canonical Storybook catalog validator enforces the public Show Code
 boundary required by LP-SPEC-045. The repository-local Docs audit additionally
 enforces the component identity, explanatory copy, and public Properties
 contract required by LP-SPEC-046 because those semantics are repository-owned.
+
+The AI Controller migration covers AI's execution facade, domain tool endpoints and
+deferred context preparation. The shared Storybook build uses Community's public
+Turso helper in both client and worker graphs; full static-build and interaction
+acceptance accompanies that configuration change.
+
+The complete interaction lane runs four serial shards with a fresh browser for
+each shard. Files run sequentially within a shard to bound retained browser state
+and resource use; all stories and accessibility assertions remain selected.

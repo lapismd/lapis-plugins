@@ -59,3 +59,8 @@ Applying that changeset to a release candidate MUST update the selected package
 metadata and each owning plugin chapter together, then pass the complete
 tarball, rootless-payload, portable-proof, and clean-consumer preparation gate
 before approval.
+
+Shared Storybook imports Community's public `build/vite` helper for prebuilt Turso
+client and worker modules. The helper is shipped by its owning package; consumers
+do not copy its transform or rewrite dependency files. Local controller migration
+acceptance uses documented temporary tarballs until their approved registry releases.
