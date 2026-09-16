@@ -458,3 +458,20 @@ checks while released applications still own the shared peer.
 AI registry-media Autodocs use the shared full-workspace framing governed by
 LP-SPEC-044, show public plugin setup under LP-SPEC-045, and provide component
 and story descriptions under LP-SPEC-046.
+
+## Shared controller memory implementation
+
+The schema-1 memory policy and maintenance scheduler are supplied by
+`@lapismd/ai-controller/memory/lapis`. AI retains the vault record adapter,
+AppDatabase and conversation evidence adapters, UI and domain tool grants.
+This extraction preserves stored paths, IDs, evidence hashes and exclusions;
+it does not enable a second execution or memory maintenance owner. The service
+migration will transfer automatic turn recall after its controller facade is
+validated. Until that switch, the compatibility facade preserves the existing
+single caller and its public MemoryService behavior.
+
+The compatibility extraction also uses the shared memory record codec, hashes,
+candidate extraction, scope-path policy and pinned-runtime consolidation provider.
+The vault adapter retains file access and immutable preimage writes. Its public
+conflict class is the shared class so consolidation observes storage conflicts
+consistently across the package boundary.
