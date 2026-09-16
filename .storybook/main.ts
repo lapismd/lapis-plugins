@@ -122,6 +122,14 @@ const config: StorybookConfig = {
       ...nonSveltePlugins,
     ];
     return mergeConfig(viteConfig, {
+      define: {
+        "import.meta.env.LAPIS_AGENT_RUNTIME_URL": JSON.stringify(
+          process.env.LAPIS_AGENT_RUNTIME_URL ?? "",
+        ),
+        "import.meta.env.LAPIS_AGENT_RUNTIME_TOKEN": JSON.stringify(
+          process.env.LAPIS_AGENT_RUNTIME_TOKEN ?? "",
+        ),
+      },
       resolve: {
         dedupe: [
           "svelte",

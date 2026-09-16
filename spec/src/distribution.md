@@ -62,5 +62,9 @@ before approval.
 
 Shared Storybook imports Community's public `build/vite` helper for prebuilt Turso
 client and worker modules. The helper is shipped by its owning package; consumers
-do not copy its transform or rewrite dependency files. Local controller migration
-acceptance uses documented temporary tarballs until their approved registry releases.
+do not copy its transform or rewrite dependency files. Preview never starts
+`lapis-ai-controller`. When `LAPIS_AGENT_RUNTIME_URL` and
+`LAPIS_AGENT_RUNTIME_TOKEN` are set, it registers the same thin controller
+connection bridge Notes uses so live stories are not silently Fake. Local
+controller migration acceptance uses documented temporary tarballs until their
+approved registry releases.

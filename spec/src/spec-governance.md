@@ -126,7 +126,9 @@ enforces the component identity, explanatory copy, and public Properties
 contract required by LP-SPEC-046 because those semantics are repository-owned.
 
 The AI Controller migration covers AI's execution facade, domain tool endpoints and
-deferred context preparation. The shared Storybook build uses Community's public
+deferred context preparation. Shared Storybook preview publishes a controller
+connection bridge only when an explicit URL and token are configured; default
+stories stay Fake. The shared Storybook build uses Community's public
 Turso helper in both client and worker graphs; full static-build and interaction
 acceptance accompanies that configuration change.
 

@@ -7,12 +7,15 @@ conversation notes and memory Markdown/database adapters remain application-owne
 The memory extraction preceded this execution slice. Context handoff and transcript
 hashing now also use the shared package. Legacy exported runtime classes remain
 for compatibility; the first-party runtime factory exclusively uses the controller.
+Shared Storybook stays Fake by default. When URL and token are set, preview
+registers the same thin controller connection bridge Notes uses so live stories
+are not silently Fake.
 
 ## Development acceptance
 
 The ignored `.release/controller/pnpmfile.cjs` installs built sibling tarballs
-without changing registry-backed lockfile entries. The new controller is not yet
-published, so registry-only installation is a release gate. Compatible local peer
+without changing registry-backed lockfile entries. Registry publication and
+lockfile refresh remain a later approved release gate. Compatible local peer
 versions are pinned only in that validation hook. No node_modules source is edited.
 
 - AI: 364 tests across 74 files; type/Svelte checks, build, publint and npm pack pass.
