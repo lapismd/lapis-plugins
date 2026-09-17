@@ -226,6 +226,7 @@ export {
 } from "./tools/app-tool-host";
 export type {
   AppToolCall,
+  AppToolCapture,
   AppToolExecutionErrorCode,
   AppToolPolicySettings,
   CreateAppToolSessionInput,

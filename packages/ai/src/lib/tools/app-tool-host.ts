@@ -28,12 +28,31 @@ const DEFAULT_TIMEOUT_MS = 60_000;
 export type AppToolExecutionErrorCode =
   | "approval_denied"
   | "cancelled"
+  | "capture_unavailable"
   | "execution_failed"
   | "invalid_arguments"
   | "invalid_result"
   | "invalid_tool_schema"
   | "timed_out"
   | "tool_unavailable";
+
+export interface AppToolCapture {
+  begin(input: {
+    caller: string;
+    requestKey: string;
+    workspaceId: string;
+    captureMode: "cooperative" | "observed";
+    intent: string;
+    toolName: string;
+  }): Promise<{ spanId: string }>;
+  finish(input: {
+    caller: string;
+    requestKey: string;
+    workspaceId: string;
+    spanId: string;
+    outcome: "succeeded" | "failed" | "unknown";
+  }): Promise<void>;
+}
 
 export class AppToolExecutionError extends Error {
   constructor(
@@ -192,6 +211,7 @@ export class AppToolHost {
     private readonly registry: AppToolRegistry,
     private readonly settings: () => AppToolPolicySettings,
     private readonly timeoutMs = DEFAULT_TIMEOUT_MS,
+    private readonly capture?: AppToolCapture,
   ) {
     this.#registryChangeRef = registry.on("changed", (change) => {
       if (change.reason !== "unregistered") return;
@@ -303,12 +323,58 @@ export class AppToolHost {
         this.#grants.add(grantKey(session.descriptor, registered));
       }
 
-      const result = await raceWithAbort(
-        registered.tool.execute(call.input, context),
-        invocation.signal,
-      );
-      this.validateResult(registered, result);
-      return result;
+      let spanId: string | undefined;
+      if (this.capture && registered.tool.effect !== "read") {
+        try {
+          const span = await this.capture.begin({
+            caller: "app-tool-host",
+            requestKey: call.toolCallId,
+            workspaceId: session.descriptor.scopeDir,
+            captureMode: "cooperative",
+            intent: "tool",
+            toolName: call.name,
+          });
+          spanId = span.spanId;
+        } catch {
+          throw new AppToolExecutionError(
+            "capture_unavailable",
+            `Checkpoint capture is unavailable for app tool: ${call.name}`,
+          );
+        }
+      }
+
+      try {
+        const result = await raceWithAbort(
+          registered.tool.execute(call.input, context),
+          invocation.signal,
+        );
+        this.validateResult(registered, result);
+        if (spanId && this.capture) {
+          await this.capture.finish({
+            caller: "app-tool-host",
+            requestKey: `${call.toolCallId}:finish`,
+            workspaceId: session.descriptor.scopeDir,
+            spanId,
+            outcome: "succeeded",
+          });
+        }
+        return result;
+      } catch (error) {
+        if (spanId && this.capture) {
+          try {
+            await this.capture.finish({
+              caller: "app-tool-host",
+              requestKey: `${call.toolCallId}:failed`,
+              workspaceId: session.descriptor.scopeDir,
+              spanId,
+              outcome: "failed",
+            });
+          } catch {
+            // Preserve the original tool error.
+          }
+        }
+        throw error;
+      }
     } catch (error) {
       if (error instanceof AppToolExecutionError) {
         if (error.code === "cancelled" && invocation.timedOut()) {

@@ -365,4 +365,61 @@ describe("AppToolHost approvals", () => {
     await expect(pending).rejects.toMatchObject({ code: "tool_unavailable" });
     expect(execute).not.toHaveBeenCalled();
   });
+
+  it("wraps mutating tools with capture and fails closed when capture is unavailable", async () => {
+    const registry = new AppToolRegistry();
+    const settings: AppToolPolicySettings = {
+      appToolsEnabled: true,
+      disabledAppToolNames: [],
+      enabledAppToolNames: [],
+      enabledCommunityToolPluginIds: [],
+    };
+    const begins: string[] = [];
+    const finishes: string[] = [];
+    const capture = {
+      begin: vi.fn(async (input: { toolName: string; captureMode: string }) => {
+        begins.push(`${input.captureMode}:${input.toolName}`);
+        return { spanId: "span-1" };
+      }),
+      finish: vi.fn(async (input: { outcome: string }) => {
+        finishes.push(input.outcome);
+      }),
+    };
+    const host = new AppToolHost(registry, () => settings, 1_000, capture);
+    const execute = vi.fn(async () => ({
+      content: [{ type: "text" as const, text: "patched" }],
+    }));
+    registry.register(
+      bundledOwner,
+      createTool("notes_patch", { effect: "write", execute }),
+    );
+    createSession(host);
+    host.approvals.subscribe((request) => {
+      host.approvals.respond(request.id, "allow-once");
+    });
+    await invoke(host, "notes_patch");
+    expect(begins).toEqual(["cooperative:notes_patch"]);
+    expect(finishes).toEqual(["succeeded"]);
+    expect(execute).toHaveBeenCalledTimes(1);
+
+    const blocked = new AppToolHost(
+      registry,
+      () => settings,
+      1_000,
+      {
+        begin: async () => {
+          throw new Error("capture down");
+        },
+        finish: async () => {},
+      },
+    );
+    createSession(blocked, "binding-2");
+    blocked.approvals.subscribe((request) => {
+      blocked.approvals.respond(request.id, "allow-once");
+    });
+    await expect(invoke(blocked, "notes_patch", "binding-2")).rejects.toMatchObject({
+      code: "capture_unavailable",
+    });
+    expect(execute).toHaveBeenCalledTimes(1);
+  });
 });
