@@ -38,9 +38,10 @@ specifications.
 - Update the owning chapter under `spec/src/plugins` with behavior changes.
 - Use the single repository-level Storybook. Keep stories organized by their
   owning package; do not add per-package Storybook configurations.
-- Before committing a verified slice, run the focused package checks plus the
-  relevant specification, Storybook interaction/axe, build, publint, npm-pack,
-  archive reproduction, signature, and App-ownership gates.
+- Before committing a verified slice, run `pnpm audit` plus the focused package
+  checks and the relevant specification, Storybook interaction/axe, build,
+  publint, npm-pack, archive reproduction, signature, and App-ownership gates.
+  Do not skip the audit gate or add an unrecorded CVE ignore.
 - Do not create or replace visual baselines before explicit visual-parity
   approval.
 

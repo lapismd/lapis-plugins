@@ -91,7 +91,7 @@ const registryDetail: RegistryCatalogDetail = {
   latestVersion: registryEntry.latestVersion,
   owner: registryEntry.owner,
   appearance: registryEntry.appearance,
-  license: "AGPL-3.0-or-later",
+  license: "Apache-2.0",
   highlights: [
     "Draft and revise from the active note",
     "Keep agent sessions attached to the workspace",

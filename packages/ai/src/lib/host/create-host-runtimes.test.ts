@@ -1,24 +1,17 @@
-import { readFileSync } from "node:fs";
-import path from "node:path";
-import { describe, expect, it } from "vitest";
-import { hostLiveRuntimesEnabled } from "./host-runtime-availability";
-
-describe("host live runtime factory", () => {
-  it("returns no live runtimes when the desktop capability is unavailable", () => {
-    expect(hostLiveRuntimesEnabled(() => false)).toBe(false);
-    expect(hostLiveRuntimesEnabled(() => true)).toBe(true);
-  });
-
-  it("constructs ACP and Codex adapters only after the capability gate", () => {
-    const source = readFileSync(
-      path.resolve(import.meta.dirname, "create-host-runtimes.ts"),
-      "utf8",
-    );
-    expect(source).toContain("hostLiveRuntimesEnabled");
-    expect(source).toContain("AcpAgentRuntime");
-    expect(source).toContain("CodexNativeRuntime");
-    expect(source.indexOf("hostLiveRuntimesEnabled")).toBeLessThan(
-      source.indexOf("new AcpAgentRuntime"),
-    );
-  });
+import { expect, it, vi } from "vitest";
+import { createHostAgentRuntimes } from "./create-host-runtimes";
+import { ControllerConnectionPool } from "./controller-connection";
+const host = vi.hoisted(() => ({ available: false }));
+vi.mock("@lapis-notes/api/desktop-native", () => ({ hasNativeDesktopCapability: () => host.available, getNativeDesktopBridge: () => null }));
+it("gates live controller adapters on the host capability", async () => {
+  const pool = new ControllerConnectionPool();
+  try {
+    host.available = false;
+    expect(createHostAgentRuntimes(pool)).toEqual([]);
+    host.available = true;
+    const runtimes = createHostAgentRuntimes(pool);
+    expect(runtimes.map((runtime) => runtime.id)).toEqual(["acp", "codex-native"]);
+    expect(runtimes.every((runtime) => runtime.capabilities().preparesContext)).toBe(true);
+    expect(await runtimes[0]!.supports({ prompt: "" })).toBe(false);
+  } finally { pool.close(); }
 });

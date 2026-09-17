@@ -2,7 +2,7 @@
   "name": "@lapis-notes/slides",
   "version": "0.1.0",
   "description": "Presentation mode for Markdown notes",
-  "license": "AGPL-3.0-or-later",
+  "license": "Apache-2.0",
   "type": "module",
   "scripts": {
     "build": "pnpm run prepack",

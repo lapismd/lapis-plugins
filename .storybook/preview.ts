@@ -1,11 +1,28 @@
 import type { Preview } from "@storybook/svelte-vite";
 import { withThemeByDataAttribute } from "@storybook/addon-themes";
 import { syncCatalogStoryLayout } from "@lapismd/design-core/storybook/catalog-layout";
+import { createControllerConnectionBridge } from "./controller-connection-bridge";
 import "@lapismd/design-core/storybook.css";
 import "@lapismd/design-core/themes/lapis.css";
 import "@lapis-notes/ui/theme.css";
 import "@lapis-notes/ui/codemirror-autocomplete.css";
 import "../stories/workspace/docs.css";
+
+// Live controller attach is opt-in. Storybook never starts the host. Register
+// through the desktop-bridge global so preview does not import the API barrel.
+const controllerUrl = (
+  import.meta.env as { LAPIS_AGENT_RUNTIME_URL?: string }
+).LAPIS_AGENT_RUNTIME_URL;
+const controllerToken = (
+  import.meta.env as { LAPIS_AGENT_RUNTIME_TOKEN?: string }
+).LAPIS_AGENT_RUNTIME_TOKEN;
+const native = globalThis as { __LAPIS_NATIVE_DESKTOP__?: unknown };
+if (!native.__LAPIS_NATIVE_DESKTOP__ && controllerUrl && controllerToken) {
+  native.__LAPIS_NATIVE_DESKTOP__ = createControllerConnectionBridge({
+    url: controllerUrl,
+    token: controllerToken,
+  });
+}
 
 const preview: Preview = {
   tags: ["autodocs", "test"],

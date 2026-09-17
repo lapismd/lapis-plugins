@@ -5,7 +5,6 @@
   import * as Chat from "@lapismd/design-core/ai/chat";
   import { Reasoning } from "@lapismd/design-core/ai/experimental";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import { CodeBlock } from "@lapismd/design-core/shadcn/code-block";
   import * as CommandView from "@lapismd/design-core/shadcn/command-view";
   import * as DropdownMenu from "@lapismd/design-core/shadcn/dropdown-menu";
   import * as Empty from "@lapismd/design-core/shadcn/empty";
@@ -689,18 +688,8 @@
   {@const detail = call.data as
     | { input?: string; output?: string; error?: string; name?: string }
     | undefined}
-  {@const hint = {
-    toolName: detail?.name ?? call.name,
-    input: detail?.input,
-  }}
   {@const ResultView = resolveToolResultView(app, detail?.name ?? call.name)}
   {@const parsedOutput = parseToolResultPayload(detail?.output)}
-  {@const inputPayload = presentToolPayload(detail?.input)}
-  {@const outputPayload = presentToolPayload(detail?.output, hint)}
-  {@const errorPayload = presentToolPayload(detail?.error, hint)}
-  {@const showErrorBlock = Boolean(
-    errorPayload && !isOneLineAlert(errorPayload),
-  )}
   {#if ResultView && app && parsedOutput != null && !detail?.error}
     <ResultView
       {app}
@@ -711,41 +700,12 @@
       state="completed"
     />
   {:else}
-  <div class="ai-chat-panel__tool-detail">
-    {#if inputPayload}
-      <CodeBlock
-        code={inputPayload.code}
-        language={inputPayload.language}
-        title="Input"
-        size="sm"
-        width="full"
-        isWrapped
-        maxHeight="16rem"
-      />
-    {/if}
-    {#if outputPayload}
-      <CodeBlock
-        code={outputPayload.code}
-        language={outputPayload.language}
-        title="Output"
-        size="sm"
-        width="full"
-        isWrapped
-        maxHeight="16rem"
-      />
-    {/if}
-    {#if showErrorBlock && errorPayload}
-      <CodeBlock
-        code={errorPayload.code}
-        language={errorPayload.language}
-        title="Error"
-        size="sm"
-        width="full"
-        isWrapped
-        maxHeight="16rem"
-      />
-    {/if}
-  </div>
+    <Chat.ToolCallDetail
+      input={detail?.input}
+      output={detail?.output}
+      error={detail?.error}
+      toolName={detail?.name ?? call.name}
+    />
   {/if}
 {/snippet}
 

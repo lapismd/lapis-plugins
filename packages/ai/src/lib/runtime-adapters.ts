@@ -1,3 +1,6 @@
+export { ControllerConnectionPool } from "./host/controller-connection";
+export type { ControllerConnection } from "./host/controller-connection";
+export { ControllerAgentRuntime } from "./host/controller-runtime";
 export { createAgentProcessHost } from "./host/desktop-process-host";
 export { UnavailableAgentProcessHost } from "./host/process-host";
 export type {

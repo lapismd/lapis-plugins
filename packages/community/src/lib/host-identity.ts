@@ -4,6 +4,7 @@ import type {
   NostrSignerHost,
 } from "@lapis-notes/api";
 import type {
+  CommunityApplicationAuthAdapter,
   CommunityApplicationLoginOptions,
   CommunityLoginCredentials,
   CommunityLoginMethodModel,
@@ -23,9 +24,23 @@ const REMOTE_SIGNER_METHOD = {
   label: "Remote signer",
   description: "NIP-46 — connect with a bunker URL",
 } as const satisfies CommunityLoginMethodModel;
+const PRIVATE_KEY_METHOD = {
+  id: "private-key",
+  kind: "private-key",
+  label: "Import a private key",
+  description: "Store an existing nsec in the OS keychain",
+} as const satisfies CommunityLoginMethodModel;
+
+
+interface PrivateKeyImportCapableSigner extends NostrPluginSigner {
+  importPrivateKey?(request: {
+    privateKey: string;
+    label?: string;
+  }): Promise<NostrSignerAccount>;
+}
 
 export class CommunityHostIdentityProvider {
-  readonly #signer: NostrPluginSigner;
+  readonly #signer: PrivateKeyImportCapableSigner;
   readonly #accounts = new Map<string, NostrSignerAccount>();
   #activeAccountId: string | undefined;
 
@@ -35,7 +50,7 @@ export class CommunityHostIdentityProvider {
 
   async methods(): Promise<readonly CommunityLoginMethodModel[]> {
     this.#accounts.clear();
-    for (const account of await this.#signer.listAccounts()) {
+    for (const account of await this.#listAccounts()) {
       this.#accounts.set(accountMethodId(account.id), account);
     }
     return [
@@ -49,12 +64,22 @@ export class CommunityHostIdentityProvider {
             : "Profile secured by this device",
       })),
       CREATE_ACCOUNT_METHOD,
+      PRIVATE_KEY_METHOD,
+      REMOTE_SIGNER_METHOD,
+    ];
+  }
+
+  staticMethods(): readonly CommunityLoginMethodModel[] {
+    return [
+      CREATE_ACCOUNT_METHOD,
+      PRIVATE_KEY_METHOD,
       REMOTE_SIGNER_METHOD,
     ];
   }
 
   options(
-    methods: readonly CommunityLoginMethodModel[]
+    methods: readonly CommunityLoginMethodModel[],
+    auth?: CommunityApplicationAuthAdapter
   ): CommunityApplicationLoginOptions {
     return {
       methods,
@@ -63,17 +88,35 @@ export class CommunityHostIdentityProvider {
       description: "Use a host-owned Nostr identity",
       footnote:
         "Keys and remote-signer credentials stay in the operating-system keychain. Community receives only approved results.",
-      connect: (methodId, credentials) => this.connect(methodId, credentials),
+      ...(auth === undefined
+        ? {
+            connect: (methodId, credentials) =>
+              this.connect(methodId, credentials),
+          }
+        : { auth }),
     };
   }
 
   async connect(
     methodId: string,
-    credentials?: CommunityLoginCredentials
+    credentials?: CommunityLoginCredentials,
   ): Promise<CommunityIdentity> {
     let account: NostrSignerAccount | undefined;
     if (methodId === CREATE_ACCOUNT_METHOD.id) {
       account = await this.#signer.requestProfileCreation();
+    } else if (methodId === PRIVATE_KEY_METHOD.id) {
+      const privateKey = credentials?.privateKey?.trim();
+      if (!privateKey) throw new Error("A private key is required");
+      const importPrivateKey = this.#signer.importPrivateKey;
+      if (importPrivateKey === undefined) {
+        throw new Error(
+          "This Lapis host does not support private-key import yet"
+        );
+      }
+      account = await importPrivateKey.call(this.#signer, {
+        privateKey,
+        label: "Imported Nostr key",
+      });
     } else if (methodId === REMOTE_SIGNER_METHOD.id) {
       const bunkerUrl = credentials?.remoteSignerUrl?.trim();
       if (!bunkerUrl) throw new Error("A bunker URL is required");
@@ -90,6 +133,14 @@ export class CommunityHostIdentityProvider {
     const accountId = this.#activeAccountId;
     this.#activeAccountId = undefined;
     if (accountId) await this.#signer.close(accountId);
+  }
+
+  async #listAccounts(): Promise<readonly NostrSignerAccount[]> {
+    try {
+      return await this.#signer.listAccounts();
+    } catch {
+      return [];
+    }
   }
 }
 

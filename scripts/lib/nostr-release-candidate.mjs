@@ -45,8 +45,12 @@ export async function createNostrReleaseCandidate(options) {
     ? manifest.contributes
     : {};
 
+  const lineage = options.lineage;
   const nostrManifest = {
-    schema: "lapis.registry.nip29-release/1",
+    schema:
+      lineage === undefined
+        ? "lapis.registry.nip29-release/1"
+        : "lapis.registry.nip29-release/2",
     plugin: {
       schema: "lapis.registry.plugin/1",
       pluginId: manifest.id,
@@ -89,9 +93,28 @@ export async function createNostrReleaseCandidate(options) {
       },
     },
     release: {
-      schema: "lapis.registry.release/1",
+      schema:
+        lineage === undefined
+          ? "lapis.registry.release/1"
+          : "lapis.registry.release/2",
       pluginId: manifest.id,
       version: manifest.version,
+      ...(lineage === undefined
+        ? {}
+        : {
+            releaseSequence: requiredDecimal(
+              lineage.releaseSequence,
+              "release sequence"
+            ),
+            ...(lineage.previousReleaseEventId === undefined
+              ? {}
+              : {
+                  previousReleaseEventId: requiredEventId(
+                    lineage.previousReleaseEventId,
+                    "previous release event id"
+                  ),
+                }),
+          }),
       minAppVersion: manifest.minAppVersion,
       platforms,
       releasedAt,
@@ -141,6 +164,7 @@ export async function createNostrReleaseCandidate(options) {
     version: manifest.version,
     createdAt,
     attachment,
+    ...(lineage === undefined ? {} : { lineage }),
     message: `${manifest.name} ${manifest.version} is ready for curator review.`,
   };
   const expectedEventTemplate = createNip29ReleaseMessageTemplate(
@@ -168,6 +192,22 @@ export async function createNostrReleaseCandidate(options) {
     manifestSize: manifestBytes.byteLength,
     expectedEventTemplate,
   };
+}
+
+function requiredDecimal(value, label) {
+  const normalized = required(value, label);
+  if (!/^[1-9][0-9]*$/u.test(normalized)) {
+    throw new Error(`${label} must be a canonical positive decimal`);
+  }
+  return normalized;
+}
+
+function requiredEventId(value, label) {
+  const normalized = required(value, label);
+  if (!/^[0-9a-f]{64}$/u.test(normalized)) {
+    throw new Error(`${label} must be a 32-byte lowercase hex id`);
+  }
+  return normalized;
 }
 
 function digest(bytes) {

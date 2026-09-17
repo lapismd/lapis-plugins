@@ -160,6 +160,7 @@ export class AiChatController {
   }) => void;
   #refreshSkills = false;
   #activeRecallAbort?: AbortController;
+  readonly #controllerContextReady = new WeakSet<AgentSession>();
   readonly #pendingHandoffs = new WeakMap<
     AgentSession,
     ConversationContextHandoff
@@ -535,7 +536,9 @@ export class AiChatController {
     } catch (error) {
       await this.#closeAppToolBinding(activeBinding.id);
       this.session = null;
-      this.error = `Could not resume the previous agent session. Your local history is still available. ${error instanceof Error ? error.message : String(error)}`;
+      this.error = `Could not resume the previous agent session. Your local history is still available. ${
+        error instanceof Error ? error.message : String(error)
+      }`;
       await this.#interruptUnresumableInteractions();
     }
   }
@@ -640,34 +643,99 @@ export class AiChatController {
         if (this.error) return;
         throw new Error("Agent session did not start.");
       }
-      const recallAbort = new AbortController();
-      this.#activeRecallAbort?.abort();
-      this.#activeRecallAbort = recallAbort;
-      const recalledBlocks = await this.#memoryRecall
-        ?.recall(
-          text,
-          {
-            scopeDir: this.location?.scopeDir ?? this.directoryContext,
-            conversationId: this.location?.conversationId,
-            agentBindingId: this.#activeBindingId,
-            runId: `turn-${turnId}`,
-          },
-          recallAbort.signal,
-        )
-        .catch(() => []);
-      if (this.#activeRecallAbort === recallAbort) {
-        this.#activeRecallAbort = undefined;
+      const session = this.session;
+      const sharedPreparation =
+        this.runtime.capabilities().preparesContext === true;
+      const location = this.location ? { ...this.location } : null;
+      const bindingId = this.#activeBindingId;
+      const authorized = () =>
+        !this.#isAbandoned(turnId) &&
+        this.session === session &&
+        this.location?.conversationId === location?.conversationId;
+      const prepareContext = async (
+        signal: AbortSignal,
+      ): Promise<AgentContextBlock[]> => {
+        if (!authorized())
+          throw new Error("Conversation context is no longer active.");
+        const recallAbort = new AbortController();
+        const abort = () => recallAbort.abort();
+        if (signal.aborted) abort();
+        signal.addEventListener("abort", abort, { once: true });
+        this.#activeRecallAbort?.abort();
+        this.#activeRecallAbort = recallAbort;
+        try {
+          let handoff = this.#pendingHandoffs.get(session);
+          if (sharedPreparation && this.repository && location && bindingId) {
+            const current = await this.repository.read(location);
+            const bindings = reduceAgentBindings(current.agents);
+            const binding = bindings.find((item) => item.id === bindingId);
+            handoff = await buildConversationContextHandoff(
+              current.transcript,
+              {
+                conversationId: current.metadata.id,
+                targetBindingId: bindingId,
+                ...(this.#controllerContextReady.has(session) &&
+                binding?.context
+                  ? {
+                      after: {
+                        entryId: binding.context.throughEntryId,
+                        entryHash: binding.context.throughEntryHash,
+                      },
+                    }
+                  : {}),
+                bindings,
+                summaries: current.agents.filter(
+                  (record) => record.type === "handoff.summary.created",
+                ),
+              },
+            );
+            const context = this.#sessionContexts.get(session);
+            if (context) {
+              context.handoff = handoff;
+              if (context.pendingSwitch?.type === "agent.switch")
+                Object.assign(context.pendingSwitch, {
+                  handoffId: handoff?.handoffId,
+                  handoffMode: handoff?.mode,
+                  handoffThroughEntryId: handoff?.throughEntryId,
+                  omittedEntryCount: handoff?.omittedEntryCount,
+                });
+            }
+          }
+          const recalledBlocks = await this.#memoryRecall
+            ?.recall(
+              text,
+              {
+                scopeDir: location?.scopeDir ?? this.directoryContext,
+                conversationId: location?.conversationId,
+                agentBindingId: bindingId,
+                runId: `turn-${turnId}`,
+              },
+              recallAbort.signal,
+            )
+            .catch(() => []);
+          if (recallAbort.signal.aborted || !authorized())
+            throw new Error("Conversation preparation was cancelled.");
+          this.#pendingHandoffs.delete(session);
+          return [
+            ...(handoff ? [handoff.block] : []),
+            ...(recalledBlocks ?? []),
+          ];
+        } finally {
+          signal.removeEventListener("abort", abort);
+          if (this.#activeRecallAbort === recallAbort)
+            this.#activeRecallAbort = undefined;
+        }
+      };
+      if (sharedPreparation) {
+        await session.send(text, {
+          prepareContext,
+          authorizeContext: async () => authorized(),
+        });
+      } else {
+        const blocks = await prepareContext(new AbortController().signal);
+        if (this.#isAbandoned(turnId)) return;
+        await session.send(text, { contextBlocks: blocks });
       }
-      if (this.#isAbandoned(turnId)) return;
-      const handoff = this.#pendingHandoffs.get(this.session);
-      const contextBlocks: AgentContextBlock[] = [
-        ...(handoff ? [handoff.block] : []),
-        ...(recalledBlocks ?? []),
-      ];
-      await this.session.send(text, {
-        contextBlocks,
-      });
-      if (handoff) this.#pendingHandoffs.delete(this.session);
       if (!this.repository) await this.#persist();
     } catch (error) {
       if (this.#isAbandoned(turnId)) return;
@@ -987,6 +1055,8 @@ export class AiChatController {
     };
     try {
       for await (const event of session.events()) {
+        if (event.type === "completed")
+          this.#controllerContextReady.add(session);
         if (
           (event.type === "tool.start" || event.type === "tool.end") &&
           event.server === APP_TOOL_MCP_SERVER_NAME
@@ -1299,7 +1369,9 @@ export class AiChatController {
       return;
     }
     if (result.kind === "native") {
-      const text = `/${result.name}${result.arguments ? ` ${result.arguments}` : ""}`;
+      const text = `/${result.name}${
+        result.arguments ? ` ${result.arguments}` : ""
+      }`;
       await this.#recordCommandItem(
         result.name,
         "native-agent",
@@ -1758,10 +1830,10 @@ export class AiChatController {
     const followedScope = this.#followedScope ?? this.directoryContext;
     const input =
       this.#followedScope !== undefined || this.directoryContext
-        ? (this.#createConversation?.(followedScope) ?? {
+        ? this.#createConversation?.(followedScope) ?? {
             scopeDir: followedScope,
-          })
-        : (this.#createConversation?.() ?? { scopeDir: "" });
+          }
+        : this.#createConversation?.() ?? { scopeDir: "" };
     const created = await this.repository.create(input);
     this.location = created.location;
     this.conversationStatus = created.metadata.status;
@@ -1835,7 +1907,7 @@ export class AiChatController {
       this.appToolsUnavailableReason =
         descriptor.status === "runtime-unavailable" && runtime.id === "fake"
           ? null
-          : (descriptor.unavailableReason ?? null);
+          : descriptor.unavailableReason ?? null;
       return descriptor;
     } catch (error) {
       this.appToolsUnavailableReason = `Application tools are unavailable. ${
@@ -1877,8 +1949,8 @@ export class AiChatController {
       event.type === "permission.request"
         ? `approval-${event.request.id}`
         : event.type === "tool.start" || event.type === "tool.end"
-          ? event.id
-          : undefined;
+        ? event.id
+        : undefined;
     const item = itemId
       ? this.items.find(
           (candidate) =>
@@ -2113,6 +2185,16 @@ export class AiChatController {
             ...request,
             appToolSession,
             skillSnapshot,
+            metadata: {
+              ...request.metadata,
+              ...(await this.#sessionBootstrapMetadata(
+                snapshot.location.scopeDir,
+                snapshot.metadata.launchContext?.notePath,
+                snapshot.metadata.id,
+                appToolSession?.tools ?? [],
+                skillSnapshot?.skills ?? [],
+              )),
+            },
           },
         );
         const configured = await this.#configureBinding(

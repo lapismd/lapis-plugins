@@ -183,7 +183,7 @@ function normalizePackage(packageJson, manifest, plugin) {
     packageJson.description ??
     descriptions.get(plugin.directory) ??
     manifest.description;
-  normalized.license = "AGPL-3.0-or-later";
+  normalized.license = "Apache-2.0";
   normalized.type = "module";
   normalized.repository = {
     type: "git",

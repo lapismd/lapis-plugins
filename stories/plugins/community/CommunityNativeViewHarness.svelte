@@ -7,6 +7,8 @@
     controller,
     loginOptions,
     registryOptions,
+    projectsOptions,
+    extensions,
   }: ComponentProps<typeof CommunityPluginApplication> = $props();
 </script>
 
@@ -24,6 +26,8 @@
       {controller}
       {loginOptions}
       {registryOptions}
+      {projectsOptions}
+      {extensions}
     />
   </div>
 </div>

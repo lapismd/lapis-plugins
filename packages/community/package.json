@@ -2,7 +2,7 @@
   "name": "@lapis-notes/community",
   "version": "0.1.0",
   "description": "Nostr community client with host-owned local and remote signing",
-  "license": "AGPL-3.0-or-later",
+  "license": "Apache-2.0",
   "type": "module",
   "scripts": {
     "build": "pnpm run prepack",

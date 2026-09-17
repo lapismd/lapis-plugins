@@ -1,0 +1,58 @@
+name: Renew Registry freshness heads
+
+on:
+  schedule:
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  packages: read
+
+concurrency:
+  group: registry-head-renewal
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  image-pin:
+    runs-on: ubuntu-latest
+    outputs:
+      reference: ${{ steps.image.outputs.reference }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Resolve the verified dependency image
+        id: image
+        run: |
+          set -euo pipefail
+          reference="$(jq -er '.dependencies | select(.image and (.digest | test("^sha256:[a-f0-9]{64}$"))) | .image + "@" + .digest' .ci/images.json)"
+          echo "reference=$reference" >> "$GITHUB_OUTPUT"
+
+  renew:
+    needs: image-pin
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: nostr-curation
+    container:
+      image: ${{ needs.image-pin.outputs.reference }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/ci-setup
+      - name: Renew heads with seven days or less remaining
+        run: pnpm release:nostr:renew
+        env:
+          LAPIS_NOSTR_SIGNER_URL: ${{ vars.LAPIS_NOSTR_SIGNER_URL }}
+          LAPIS_NOSTR_SIGNER_AUDIENCE: ${{ vars.LAPIS_NOSTR_SIGNER_AUDIENCE }}
+          LAPIS_NOSTR_REGISTRY_RELAYS: ${{ vars.LAPIS_NOSTR_REGISTRY_RELAYS }}
+          LAPIS_NOSTR_RELAY_QUORUM: ${{ vars.LAPIS_NOSTR_RELAY_QUORUM }}
+          LAPIS_NOSTR_PUBLISHER_PUBKEYS: ${{ vars.LAPIS_NOSTR_PUBLISHER_PUBKEYS }}
+          LAPIS_NOSTR_CURATOR_PUBKEYS: ${{ vars.LAPIS_NOSTR_CURATOR_PUBKEYS }}
+          LAPIS_NOSTR_CURATOR_PUBKEY: ${{ vars.LAPIS_NOSTR_CURATOR_PUBKEY }}
+          LAPIS_NOSTR_AUTHORITY_EPOCH: ${{ vars.LAPIS_NOSTR_AUTHORITY_EPOCH }}

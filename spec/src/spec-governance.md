@@ -8,7 +8,7 @@ lockfile together without adding checkout-specific package paths.
 | ID          | Requirement                                                                                                                                                                                                                     |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | LP-SPEC-001 | `spec/src` MUST remain the canonical specification for this repository and MUST build with mdBook.                                                                                                                              |
-| LP-SPEC-002 | Protected package, Storybook, release, validation, and CI changes MUST update an owning canonical chapter in the same Jujutsu change.                                                                                           |
+| LP-SPEC-002 | Protected package, Storybook, release, validation, and CI changes MUST update an owning canonical chapter and exactly its verification row in the same Jujutsu change, including scheduled Registry-head renewal tooling.       |
 | LP-SPEC-003 | Every normative requirement ID MUST be unique and MUST have exactly one verification row with concrete evidence.                                                                                                                |
 | LP-SPEC-004 | Plugin behavior and plugin-owned Storybook verification MUST live in this repository. Framework profiles, installation UI, host persistence, Safe Mode, Workspace Trust, and signature policy MUST remain owned by Lapis Notes. |
 | LP-SPEC-005 | File Explorer MUST remain framework-owned in `lapis-notes`; this repository MUST NOT publish or specify it as one of the extracted plugins.                                                                                     |
@@ -24,10 +24,10 @@ approved-release environment, and immutable-version patch rollback policy.
 Package-boundary verification also rejects bundled Lapis host packages and
 requires every externalized Lapis runtime module to resolve through a declared
 peer supplied by the consuming application.
-Shared release tooling MAY treat only the three compiler-emitted Svelte
-renderer specifiers named by LP-SPEC-014 as an implicit host ABI. Focused tests
-MUST reject arbitrary Svelte subpaths and keep this ABI out of authored plugin
-manifest dependencies.
+Shared release tooling MUST scan all emitted JavaScript runtime chunks for
+browser bare imports. Only declared Lapis host modules may remain external;
+Svelte, compiler internals, and other non-host imports stay bundled or relative
+so consuming hosts do not need plugin-specific import maps.
 Release compiler reproducibility is protected by LP-SPEC-047. The builder reads
 the root frozen lockfile and MUST reject installed Svelte drift before writing
 plugin output.
@@ -85,7 +85,12 @@ ordering, cache-forwarding, and secretless-fallback tests before the complete
 package and release lanes run.
 The CI fan-out and stable aggregation gate are protected by LP-SPEC-038. The
 workflow, pinned setup composite, Turbo cache summary reporter, and workflow
-source tests map to Distribution and this chapter. Functional Storybook and
+source tests map to Distribution and this chapter. Validate must treat skipped
+functional lanes as the deferred success path until Community and the AI
+controller exist on the npm registry. Dependency auditing is
+protected by LP-SPEC-048: root `check`, `ci:release`, and the quality job run
+`pnpm audit` against the committed lockfile, and only recorded
+`auditConfig.ignoreCves` entries may suppress an unpatched advisory. Functional Storybook and
 axe failures remain blocking in their own lane; visual baselines do not become
 a deployment gate through this infrastructure change. Container setup marks
 the checked-out workspace as a trusted Git directory before specification
@@ -96,7 +101,8 @@ tests must prove the protected job consumes the validated candidate without
 rebuilding payloads and retains the explicit plugin and replacement inputs.
 Release dependency resolution is protected by LP-SPEC-024: the tracked root
 lockfile and frozen workflow installs are part of the reviewed release source,
-not runner-local state.
+not runner-local state. A plugin-specific runtime dependency must map to the package behavior it
+enables and to the bundling rule that keeps it out of the host import allowlist.
 Manual publication controls, bounded GitHub-asset replacement, and workflow
 runtime and mdBook provisioning are protected by LP-SPEC-025 through
 LP-SPEC-027. Their tests
@@ -123,3 +129,14 @@ The canonical Storybook catalog validator enforces the public Show Code
 boundary required by LP-SPEC-045. The repository-local Docs audit additionally
 enforces the component identity, explanatory copy, and public Properties
 contract required by LP-SPEC-046 because those semantics are repository-owned.
+
+The AI Controller migration covers AI's execution facade, domain tool endpoints and
+deferred context preparation. Shared Storybook preview publishes a controller
+connection bridge only when an explicit URL and token are configured; default
+stories stay Fake. The shared Storybook build uses Community's public
+Turso helper in both client and worker graphs; full static-build and interaction
+acceptance accompanies that configuration change.
+
+The complete interaction lane runs four serial shards with a fresh browser for
+each shard. Files run sequentially within a shard to bound retained browser state
+and resource use; all stories and accessibility assertions remain selected.

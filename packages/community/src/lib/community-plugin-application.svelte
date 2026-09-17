@@ -1,13 +1,20 @@
 <script lang="ts">
   import type { App } from "@lapis-notes/api";
   import {
+    RelayAuthClient,
+  } from "@lapismd/lapis-community/auth";
+  import {
     CommunityApplication,
     COMMUNITY_LOGIN_METHODS,
     type CommunityApplicationLoginOptions,
     type CommunityLoginMethodModel,
+    type CommunityProjectsOptions,
     type RegistryBrowserOptions,
   } from "@lapismd/lapis-community/components";
-  import type { CommunityController } from "@lapismd/lapis-community/community";
+  import type {
+    CommunityApplicationExtensions,
+    CommunityController,
+  } from "@lapismd/lapis-community/community";
   import type {
     RegistryInstallAction,
     RegistryInstallRequest,
@@ -19,7 +26,16 @@
     installCommunityRegistryPlugin,
     selectCommunityPluginRelayUrl,
   } from "./community-registry";
-  import { createCommunityPluginController } from "./community-runtime";
+  import {
+    createCommunityPluginController,
+    createCommunityPluginProjectsOptions,
+    communityRelayAuthOrigin,
+    DEFAULT_COMMUNITY_RELAY_URL,
+  } from "./community-runtime";
+  import {
+    createCommunityPluginExtensions,
+    watchCommunityPluginExtensionCommands,
+  } from "./host-extensions";
   import { CommunityHostIdentityProvider } from "./host-identity";
 
   let {
@@ -27,11 +43,15 @@
     controller: suppliedController,
     loginOptions: suppliedLoginOptions,
     registryOptions: suppliedRegistryOptions,
+    projectsOptions: suppliedProjectsOptions,
+    extensions: suppliedExtensions,
   }: {
     app: App;
     controller?: CommunityController;
     loginOptions?: CommunityApplicationLoginOptions;
     registryOptions?: RegistryBrowserOptions;
+    projectsOptions?: CommunityProjectsOptions;
+    extensions?: CommunityApplicationExtensions;
   } = $props();
 
   const ownsController = untrack(() => suppliedController === undefined);
@@ -40,11 +60,25 @@
       ? selectCommunityPluginRelayUrl(app.pluginDistribution.listSources())
       : undefined,
   );
+  const communityRelayUrl = untrack(
+    () => hostRelayUrl ?? DEFAULT_COMMUNITY_RELAY_URL,
+  );
   const controller = untrack(
-    () => suppliedController ?? createCommunityPluginController(hostRelayUrl),
+    () =>
+      suppliedController ?? createCommunityPluginController(communityRelayUrl),
   );
   const identityProvider = untrack(
     () => new CommunityHostIdentityProvider(app.nostr),
+  );
+  const authOrigin = untrack(() => communityRelayAuthOrigin(communityRelayUrl));
+  const authClient = untrack(() =>
+    authOrigin === undefined
+      ? undefined
+      : new RelayAuthClient({
+          relayUrl: authOrigin,
+          connectIdentity: (methodId, credentials) =>
+            identityProvider.connect(methodId, credentials),
+        }),
   );
   const ownedRegistrySource = untrack(() =>
     suppliedRegistryOptions === undefined
@@ -56,7 +90,7 @@
     COMMUNITY_LOGIN_METHODS.remoteSigner,
   ]);
   const loginOptions = $derived(
-    suppliedLoginOptions ?? identityProvider.options(methods),
+    suppliedLoginOptions ?? identityProvider.options(methods, authClient),
   );
   let installActions = $state<
     Readonly<Record<string, RegistryInstallAction>>
@@ -72,6 +106,18 @@
       };
     },
   );
+  const ownedProjectsOptions = untrack(() =>
+    suppliedProjectsOptions === undefined
+      ? createCommunityPluginProjectsOptions(communityRelayUrl)
+      : undefined,
+  );
+  const projectsOptions = $derived(
+    suppliedProjectsOptions ?? ownedProjectsOptions,
+  );
+  let hostExtensions = $state<CommunityApplicationExtensions>(
+    untrack(() => createCommunityPluginExtensions(app)),
+  );
+  const extensions = $derived(suppliedExtensions ?? hostExtensions);
 
   async function refreshInstallActions(): Promise<void> {
     try {
@@ -126,14 +172,26 @@
   }
 
   onMount(() => {
+    const disposeExtensionWatcher =
+      suppliedExtensions === undefined
+        ? watchCommunityPluginExtensionCommands(app, (available) => {
+            hostExtensions = available;
+          })
+        : undefined;
     controller.initialize();
     if (suppliedRegistryOptions === undefined) void refreshInstallActions();
     if (suppliedLoginOptions === undefined) {
-      void identityProvider.methods().then((available) => {
-        methods = available;
-      });
+      void identityProvider
+        .methods()
+        .then((available) => {
+          methods = available;
+        })
+        .catch(() => {
+          methods = identityProvider.staticMethods();
+        });
     }
     return () => {
+      disposeExtensionWatcher?.();
       if (ownsController) controller.dispose();
       ownedRegistrySource?.dispose?.();
       void identityProvider.close();
@@ -146,5 +204,11 @@
   data-ui-component="community-plugin-application"
   data-testid="community-plugin-application"
 >
-  <CommunityApplication {controller} {loginOptions} {registryOptions} />
+  <CommunityApplication
+    {controller}
+    {loginOptions}
+    {registryOptions}
+    {projectsOptions}
+    {extensions}
+  />
 </div>

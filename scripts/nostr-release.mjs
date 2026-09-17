@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import {
   canonicalJson,
   createNip29CuratorDecisionTemplate,
+  createNip29RegistryHeadTemplate,
   createNip29ReleaseMessageTemplate,
   parseNip29ReleaseEvent,
   verifyNostrReleaseProof,
@@ -88,14 +89,19 @@ export async function signCuratorDecision({
   oidcToken,
   fetchImpl,
 }) {
-  const [publisherRequest, releaseEvent, storedCuration, manifestContent, artifact] =
-    await Promise.all([
-      jsonFile(release.nostr.publisherRequestPath),
-      jsonFile(eventPath(release, "release-event")),
-      jsonFile(curationPath(release)),
-      readFile(path.join(root, release.nostr.manifest.path), "utf8"),
-      readFile(path.join(root, release.payload.path)),
-    ]);
+  const [
+    publisherRequest,
+    releaseEvent,
+    storedCuration,
+    manifestContent,
+    artifact,
+  ] = await Promise.all([
+    jsonFile(release.nostr.publisherRequestPath),
+    jsonFile(eventPath(release, "release-event")),
+    jsonFile(curationPath(release)),
+    readFile(path.join(root, release.nostr.manifest.path), "utf8"),
+    readFile(path.join(root, release.payload.path)),
+  ]);
   const curation = createCurationCandidate(release, releaseEvent);
   if (canonicalJson(storedCuration) !== canonicalJson(curation)) {
     throw new Error(
@@ -121,22 +127,6 @@ export async function signCuratorDecision({
     ),
   };
   const response = await postJson(endpoint, request, oidcToken, fetchImpl);
-  const proof = {
-    schema: "lapis.plugin.release-proof/1",
-    authorizationEvent: response.authorizationEvent,
-    releaseEvent,
-    decisionEvent: response.decisionEvent,
-    manifest: {
-      sha256: release.nostr.manifest.sha256,
-      size: Buffer.byteLength(manifestContent),
-      content: manifestContent,
-    },
-  };
-  const curatorPubkey = requiredEnv("LAPIS_NOSTR_CURATOR_PUBKEY");
-  verifyNostrReleaseProof(proof, {
-    artifact,
-    trustedCuratorPubkeys: new Set([curatorPubkey]),
-  });
   const expectedDecision = createNip29CuratorDecisionTemplate(
     releaseEvent.id,
     "approved",
@@ -147,6 +137,68 @@ export async function signCuratorDecision({
       `${release.pluginId}@${release.version}: signer returned a mismatched curator decision.`
     );
   }
+  const lineage = publisherRequest.lineage;
+  let headEvent;
+  if (lineage !== undefined) {
+    const headTemplate = createReleaseHeadTemplate({
+      release,
+      releaseEvent,
+      decisionEvent: response.decisionEvent,
+      lineage,
+      createdAt: Math.max(
+        request.createdAt,
+        response.decisionEvent.created_at,
+        (lineage.previousHeadEvent?.created_at ?? -1) + 1
+      ),
+    });
+    const headResponse = await postJson(
+      endpoint,
+      {
+        schema: "lapis.registry.head-signing-request/1",
+        purpose: "registry-head",
+        candidateId: curation.candidateId,
+        repository: release.repository,
+        sourceCommit: release.sourceCommit,
+        pluginId: release.pluginId,
+        expectedPreviousHeadEventId: lineage.previousHeadEvent?.id,
+        event: headTemplate,
+      },
+      oidcToken,
+      fetchImpl
+    );
+    headEvent = headResponse.event;
+    if (
+      !sameTemplate(headEvent, headTemplate) ||
+      headEvent?.pubkey !== requiredEnv("LAPIS_NOSTR_CURATOR_PUBKEY")
+    ) {
+      throw new Error(
+        `${release.pluginId}@${release.version}: signer returned a mismatched Registry head.`
+      );
+    }
+  }
+  const proof = {
+    schema:
+      headEvent === undefined
+        ? "lapis.plugin.release-proof/1"
+        : "lapis.plugin.release-proof/2",
+    authorizationEvent: response.authorizationEvent,
+    releaseEvent,
+    decisionEvent: response.decisionEvent,
+    ...(headEvent === undefined ? {} : { headEvent }),
+    manifest: {
+      sha256: release.nostr.manifest.sha256,
+      size: Buffer.byteLength(manifestContent),
+      content: manifestContent,
+    },
+  };
+  const curatorPubkey = requiredEnv("LAPIS_NOSTR_CURATOR_PUBKEY");
+  verifyNostrReleaseProof(proof, {
+    artifact,
+    trustedCuratorPubkeys: new Set([curatorPubkey]),
+    ...(lineage?.authorityEpoch === undefined
+      ? {}
+      : { authorityEpoch: lineage.authorityEpoch }),
+  });
   const proofPath = eventPath(release, "proof");
   await Promise.all([
     writeFile(
@@ -157,6 +209,14 @@ export async function signCuratorDecision({
       eventPath(release, "decision-event"),
       `${canonicalJson(response.decisionEvent)}\n`
     ),
+    ...(headEvent === undefined
+      ? []
+      : [
+          writeFile(
+            eventPath(release, "head-event"),
+            `${canonicalJson(headEvent)}\n`
+          ),
+        ]),
     writeFile(proofPath, `${canonicalJson(proof)}\n`),
   ]);
   const sealed = await buildNostrPluginBundle({
@@ -171,6 +231,48 @@ export async function signCuratorDecision({
     `${sealed.bundle.sha256}  ${sealed.bundle.path}\n`
   );
   console.log(`Curator approved ${curation.candidateId}.`);
+}
+
+export function createReleaseHeadTemplate({
+  release,
+  releaseEvent,
+  decisionEvent,
+  lineage,
+  createdAt,
+}) {
+  const headRevision = (
+    BigInt(lineage.previousHeadRevision ?? "0") + 1n
+  ).toString();
+  const releases = [
+    ...(lineage.previousHeadReleases ?? []),
+    {
+      releaseEventId: releaseEvent.id,
+      manifestSha256: release.nostr.manifest.sha256,
+      version: release.version,
+      releaseSequence: lineage.releaseSequence,
+      state: "approved",
+      decisionEventId: decisionEvent.id,
+    },
+  ];
+  const issuedAt = new Date(createdAt * 1_000).toISOString();
+  return createNip29RegistryHeadTemplate(
+    {
+      schema: "lapis.registry.plugin-head/1",
+      pluginId: release.pluginId,
+      authorityEpoch: lineage.authorityEpoch,
+      headRevision,
+      ...(lineage.previousHeadEvent === undefined
+        ? {}
+        : { previousHeadEventId: lineage.previousHeadEvent.id }),
+      activeReleaseEventId: releaseEvent.id,
+      releases,
+      issuedAt,
+      validUntil: new Date(
+        Date.parse(issuedAt) + 30 * 24 * 60 * 60 * 1_000
+      ).toISOString(),
+    },
+    createdAt
+  );
 }
 
 export async function publishProofs({
@@ -250,7 +352,7 @@ export async function requestOidcToken({ fetchImpl = fetch } = {}) {
   return body.value;
 }
 
-async function postJson(endpoint, body, oidcToken, fetchImpl) {
+export async function postJson(endpoint, body, oidcToken, fetchImpl) {
   const response = await fetchImpl(endpoint, {
     method: "POST",
     headers: {

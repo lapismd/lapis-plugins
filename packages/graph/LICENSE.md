@@ -1,8 +1,4 @@
-# License
+Apache-2.0
 
-Copyright (c) LapisMD contributors.
-
-This software is licensed under the GNU Affero General Public License, version
-3 or (at your option) any later version (`AGPL-3.0-or-later`). The complete
-license text is available from the
-[GNU Project](https://www.gnu.org/licenses/agpl-3.0.html).
+This project is licensed under the Apache License 2.0.
+See <https://www.apache.org/licenses/LICENSE-2.0>.

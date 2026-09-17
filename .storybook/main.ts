@@ -1,3 +1,4 @@
+import { tursoBundleBuildPlugin } from "@lapismd/lapis-community/build/vite";
 import type { StorybookConfig } from "@storybook/svelte-vite";
 import { svelte, vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 import tailwindcss from "@tailwindcss/vite";
@@ -111,6 +112,7 @@ const config: StorybookConfig = {
         plugin?.name !== "sveltekit-autoimport-configuration"
     );
     viteConfig.plugins = [
+      tursoBundleBuildPlugin(),
       svelte({
         preprocess: vitePreprocess(),
         emitCss: false,
@@ -120,6 +122,14 @@ const config: StorybookConfig = {
       ...nonSveltePlugins,
     ];
     return mergeConfig(viteConfig, {
+      define: {
+        "import.meta.env.LAPIS_AGENT_RUNTIME_URL": JSON.stringify(
+          process.env.LAPIS_AGENT_RUNTIME_URL ?? "",
+        ),
+        "import.meta.env.LAPIS_AGENT_RUNTIME_TOKEN": JSON.stringify(
+          process.env.LAPIS_AGENT_RUNTIME_TOKEN ?? "",
+        ),
+      },
       resolve: {
         dedupe: [
           "svelte",
@@ -158,6 +168,7 @@ const config: StorybookConfig = {
       },
       esbuild: { target: "esnext" },
       worker: {
+        plugins: () => [tursoBundleBuildPlugin()],
         format: "es",
         rollupOptions: { output: { inlineDynamicImports: true } },
       },

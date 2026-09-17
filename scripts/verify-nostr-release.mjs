@@ -38,10 +38,7 @@ for (const release of selectReleases(plan.releases, selectors)) {
       "utf8"
     )
   );
-  const expectedCuration = createCurationCandidate(
-    release,
-    proof.releaseEvent
-  );
+  const expectedCuration = createCurationCandidate(release, proof.releaseEvent);
   if (canonicalJson(curation) !== canonicalJson(expectedCuration)) {
     throw new Error(
       `${release.pluginId}@${release.version}: curation candidate differs.`
@@ -51,6 +48,9 @@ for (const release of selectReleases(plan.releases, selectors)) {
   const verified = verifyNostrReleaseProof(proof, {
     artifact,
     trustedCuratorPubkeys: new Set([curatorPubkey]),
+    ...(proof.schema === "lapis.plugin.release-proof/2"
+      ? { authorityEpoch: requiredEnv("LAPIS_NOSTR_AUTHORITY_EPOCH") }
+      : {}),
   });
   if (
     verified.pluginId !== release.pluginId ||
@@ -80,4 +80,10 @@ for (const release of selectReleases(plan.releases, selectors)) {
     throw new Error(`${release.assetName}: offline bundle checksum differs.`);
   }
   console.log(`Verified Nostr proof for ${release.nostr.candidateId}.`);
+}
+
+function requiredEnv(name) {
+  const value = process.env[name]?.trim();
+  if (!value) throw new Error(`${name} is required.`);
+  return value;
 }
