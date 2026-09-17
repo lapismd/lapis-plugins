@@ -85,7 +85,9 @@ ordering, cache-forwarding, and secretless-fallback tests before the complete
 package and release lanes run.
 The CI fan-out and stable aggregation gate are protected by LP-SPEC-038. The
 workflow, pinned setup composite, Turbo cache summary reporter, and workflow
-source tests map to Distribution and this chapter. Dependency auditing is
+source tests map to Distribution and this chapter. Validate must treat skipped
+functional lanes as the deferred success path until Community and the AI
+controller exist on the npm registry. Dependency auditing is
 protected by LP-SPEC-048: root `check`, `ci:release`, and the quality job run
 `pnpm audit` against the committed lockfile, and only recorded
 `auditConfig.ignoreCves` entries may suppress an unpatched advisory. Functional Storybook and

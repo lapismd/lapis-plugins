@@ -68,6 +68,9 @@ test("audits the committed dependency graph on every quality change", async () =
 
 test("builds release candidates from the committed dependency graph", () => {
   assert.match(lockfile, /^lockfileVersion:/m);
+  assert.doesNotMatch(lockfile, /^pnpmfileChecksum:/m);
+  assert.doesNotMatch(lockfile, /specifier: file:\//);
+  assert.doesNotMatch(lockfile, /\/Users\//);
   assert.match(
     ciSetup,
     /git config --global --add safe\.directory "\$\{GITHUB_WORKSPACE\}"/
@@ -75,6 +78,20 @@ test("builds release candidates from the committed dependency graph", () => {
   assert.match(ciSetup, /pnpm install --frozen-lockfile/);
   assert.match(workflow, /uses:\s*\.\/\.github\/actions\/ci-setup/);
   assert.doesNotMatch(workflow, /pnpm exec playwright install/);
+});
+
+test("defers functional CI lanes until unpublished framework packages exist", () => {
+  assert.match(ciWorkflow, /id: gate/);
+  assert.match(ciWorkflow, /framework_ready/);
+  assert.match(ciWorkflow, /npm view @lapismd\/lapis-community version/);
+  assert.match(ciWorkflow, /npm view @lapismd\/ai-controller version/);
+  assert.match(
+    ciWorkflow,
+    /if: needs\.prerequisite\.outputs\.framework_ready == 'true'/
+  );
+  assert.match(ciWorkflow, /FRAMEWORK_READY:/);
+  assert.match(ciWorkflow, /if \[ "\$FRAMEWORK_READY" != "true" \]; then/);
+  assert.match(ciWorkflow, /A deferred CI lane finished with:/);
 });
 
 test("reuses blocking CI and reverifies the downloaded production candidate", () => {

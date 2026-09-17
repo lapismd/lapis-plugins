@@ -13,9 +13,11 @@ are not silently Fake.
 
 ## Development acceptance
 
-The ignored `.release/controller/pnpmfile.cjs` installs built sibling tarballs
-without changing registry-backed lockfile entries. Registry publication and
-lockfile refresh remain a later approved release gate. Compatible local peer
+The ignored `.release/controller/pnpmfile.cjs` and root `.pnpmfile.cjs` install
+built sibling tarballs without changing registry-backed lockfile entries.
+Registry publication and lockfile refresh remain a later approved release gate;
+CI defers functional lanes until `@lapismd/ai-controller` and
+`@lapismd/lapis-community` exist on the npm registry. Compatible local peer
 versions are pinned only in that validation hook. No node_modules source is edited.
 
 - AI: 364 tests across 74 files; type/Svelte checks, build, publint and npm pack pass.

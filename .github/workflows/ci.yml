@@ -28,13 +28,25 @@ env:
 jobs:
   prerequisite:
     runs-on: ubuntu-latest
+    outputs:
+      framework_ready: ${{ steps.gate.outputs.framework_ready }}
     steps:
-      - name: Report framework publication prerequisite
+      - name: Resolve framework publication prerequisite
+        id: gate
         run: |
+          set -euo pipefail
+          ready=false
           if [ "${{ vars.FRAMEWORK_PACKAGES_PUBLISHED }}" = "true" ]; then
+            if npm view @lapismd/lapis-community version >/dev/null \
+              && npm view @lapismd/ai-controller version >/dev/null; then
+              ready=true
+            fi
+          fi
+          echo "framework_ready=${ready}" >> "$GITHUB_OUTPUT"
+          if [ "${ready}" = true ]; then
             echo "Published framework packages are available."
           else
-            echo "Validation remains intentionally deferred until the framework package publication gate completes."
+            echo "Validation remains intentionally deferred until @lapismd/lapis-community and @lapismd/ai-controller are on the npm registry."
           fi
 
   image-pin:
@@ -54,7 +66,7 @@ jobs:
     needs:
       - prerequisite
       - image-pin
-    if: vars.FRAMEWORK_PACKAGES_PUBLISHED == 'true'
+    if: needs.prerequisite.outputs.framework_ready == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     container:
@@ -203,6 +215,7 @@ jobs:
     steps:
       - name: Aggregate blocking validation lanes
         env:
+          FRAMEWORK_READY: ${{ needs.prerequisite.outputs.framework_ready }}
           PREREQUISITE: ${{ needs.prerequisite.result }}
           IMAGE_PIN: ${{ needs.image-pin.result }}
           BUILD_CACHE: ${{ needs.build-cache.result }}
@@ -213,9 +226,11 @@ jobs:
           RELEASE_ARTIFACTS: ${{ needs.release-artifacts.result }}
         run: |
           set -euo pipefail
-          results=(
-            "$PREREQUISITE"
-            "$IMAGE_PIN"
+          if [ "$PREREQUISITE" != "success" ] || [ "$IMAGE_PIN" != "success" ]; then
+            echo "A required CI lane finished with: ${PREREQUISITE} / ${IMAGE_PIN}" >&2
+            exit 1
+          fi
+          functional_results=(
             "$BUILD_CACHE"
             "$QUALITY"
             "$UNIT"
@@ -223,7 +238,17 @@ jobs:
             "$STORYBOOK_INTERACTION"
             "$RELEASE_ARTIFACTS"
           )
-          for result in "${results[@]}"; do
+          if [ "$FRAMEWORK_READY" != "true" ]; then
+            for result in "${functional_results[@]}"; do
+              if [ "$result" != "skipped" ]; then
+                echo "A deferred CI lane finished with: $result" >&2
+                exit 1
+              fi
+            done
+            echo "Blocking Lapis Plugins validation is deferred until framework packages are published."
+            exit 0
+          fi
+          for result in "${functional_results[@]}"; do
             if [ "$result" != "success" ]; then
               echo "A required CI lane finished with: $result" >&2
               exit 1
