@@ -8,7 +8,7 @@ lockfile together without adding checkout-specific package paths.
 | ID          | Requirement                                                                                                                                                                                                                     |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | LP-SPEC-001 | `spec/src` MUST remain the canonical specification for this repository and MUST build with mdBook.                                                                                                                              |
-| LP-SPEC-002 | Protected package, Storybook, release, validation, and CI changes MUST update an owning canonical chapter and exactly its verification row in the same Jujutsu change, including scheduled Registry-head renewal tooling. |
+| LP-SPEC-002 | Protected package, Storybook, release, validation, and CI changes MUST update an owning canonical chapter and exactly its verification row in the same Jujutsu change, including scheduled Registry-head renewal tooling.       |
 | LP-SPEC-003 | Every normative requirement ID MUST be unique and MUST have exactly one verification row with concrete evidence.                                                                                                                |
 | LP-SPEC-004 | Plugin behavior and plugin-owned Storybook verification MUST live in this repository. Framework profiles, installation UI, host persistence, Safe Mode, Workspace Trust, and signature policy MUST remain owned by Lapis Notes. |
 | LP-SPEC-005 | File Explorer MUST remain framework-owned in `lapis-notes`; this repository MUST NOT publish or specify it as one of the extracted plugins.                                                                                     |
@@ -85,7 +85,10 @@ ordering, cache-forwarding, and secretless-fallback tests before the complete
 package and release lanes run.
 The CI fan-out and stable aggregation gate are protected by LP-SPEC-038. The
 workflow, pinned setup composite, Turbo cache summary reporter, and workflow
-source tests map to Distribution and this chapter. Functional Storybook and
+source tests map to Distribution and this chapter. Dependency auditing is
+protected by LP-SPEC-048: root `check`, `ci:release`, and the quality job run
+`pnpm audit` against the committed lockfile, and only recorded
+`auditConfig.ignoreCves` entries may suppress an unpatched advisory. Functional Storybook and
 axe failures remain blocking in their own lane; visual baselines do not become
 a deployment gate through this infrastructure change. Container setup marks
 the checked-out workspace as a trusted Git directory before specification

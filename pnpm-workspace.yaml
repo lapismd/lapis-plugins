@@ -1,5 +1,10 @@
 packages:
   - "packages/*"
+auditConfig:
+  ignoreCves:
+    # adm-zip GHSA-vwc7-r8mq-g2x9 remains unpatched on leftover 0.5 paths;
+    # resolvable copies are overridden to >=0.6.0.
+    - CVE-2026-76845
 
 linkWorkspacePackages: true
 
@@ -7,7 +12,10 @@ onlyBuiltDependencies:
   - esbuild
 
 overrides:
+  adm-zip@<0.6.0: ">=0.6.0"
   aria-query: "5.3.2"
+  qs@>=2.2.5 <6.16.0: ">=6.16.0"
+  qs@>=6.14.2 <=6.15.3: ">=6.16.0"
   sharp: ">=0.35.0"
 patchedDependencies:
   bits-ui@2.18.1: patches/bits-ui@2.18.1.patch

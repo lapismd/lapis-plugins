@@ -84,6 +84,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/ci-setup
+      - run: pnpm audit
       - run: pnpm packages:check
       - run: pnpm spec:check
       - run: pnpm check:no-tailwind

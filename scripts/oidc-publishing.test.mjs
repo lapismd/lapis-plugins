@@ -55,6 +55,17 @@ test("does not require a long-lived npm token at runtime", () => {
   assert.doesNotMatch(publisher, /NPM_TOKEN|NODE_AUTH_TOKEN/);
 });
 
+test("audits the committed dependency graph on every quality change", async () => {
+  const pkg = await readFile(
+    new URL("../package.json", import.meta.url),
+    "utf8"
+  );
+  assert.match(pkg, /"audit": "pnpm audit"/);
+  assert.match(pkg, /"check": "pnpm audit &&/);
+  assert.match(pkg, /"ci:release": "pnpm audit &&/);
+  assert.match(ciWorkflow, /^\s*- run: pnpm audit$/m);
+});
+
 test("builds release candidates from the committed dependency graph", () => {
   assert.match(lockfile, /^lockfileVersion:/m);
   assert.match(

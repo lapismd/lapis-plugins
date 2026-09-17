@@ -12,7 +12,8 @@
   "scripts": {
     "build": "node --env-file-if-exists=.env scripts/run-turbo.mjs build",
     "changeset": "changeset",
-    "check": "pnpm packages:check && pnpm check:app-ownership && pnpm check:no-tailwind && node --env-file-if-exists=.env scripts/run-turbo.mjs check",
+    "audit": "pnpm audit",
+    "check": "pnpm audit && pnpm packages:check && pnpm check:app-ownership && pnpm check:no-tailwind && node --env-file-if-exists=.env scripts/run-turbo.mjs check",
     "check:app-ownership": "node scripts/check-app-ownership.mjs",
     "check:no-tailwind": "node scripts/check-no-tailwind.mjs",
     "packages:check": "node scripts/sync-package-metadata.mjs --check && node scripts/sync-package-docs.mjs --check && node scripts/check-package-boundaries.mjs && node scripts/check-registry-metadata.mjs",
@@ -32,7 +33,7 @@
     "release:dispatch-metadata": "node scripts/dispatch-plugin-metadata.mjs",
     "release:publish-approved": "node scripts/publish-approved-release.mjs",
     "ci:packages": "node --env-file-if-exists=.env scripts/run-turbo.mjs build check test",
-    "ci:release": "pnpm packages:check && pnpm spec:check && pnpm check:no-tailwind && pnpm test:release && pnpm ci:packages && pnpm packages:pack -- --already-built && pnpm plugin:build && pnpm plugin:verify && pnpm build-storybook",
+    "ci:release": "pnpm audit && pnpm packages:check && pnpm spec:check && pnpm check:no-tailwind && pnpm test:release && pnpm ci:packages && pnpm packages:pack -- --already-built && pnpm plugin:build && pnpm plugin:verify && pnpm build-storybook",
     "ci:container": "node --env-file-if-exists=.env scripts/run-ci-container.mjs",
     "release:prepare": "pnpm ci:release",
     "storybook": "storybook dev -p 6006 --no-open",
