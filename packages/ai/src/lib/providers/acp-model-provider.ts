@@ -20,7 +20,7 @@ export class AcpModelProvider implements ModelProvider {
   readonly id: string;
   constructor(
     id: string,
-    readonly options: { connection(): Promise<ControllerConnection> }
+    readonly options: { connection(): Promise<ControllerConnection>; providerIds?: string[] }
   ) {
     this.id = id;
   }
@@ -28,10 +28,22 @@ export class AcpModelProvider implements ModelProvider {
   async listModels(): Promise<ModelRef[]> {
     if (!hasNativeDesktopCapability("agent-runtime")) return [];
     const connection = await this.options.connection();
-    const catalog = await connection.client.request<AcpModelCatalog>(
-      "providers.models",
-      { provider: this.id, workspace: connection.workspace }
-    );
+    let catalog: AcpModelCatalog | undefined;
+    let firstError: unknown;
+    for (const provider of this.options.providerIds ?? [this.id]) {
+      try {
+        const current = await connection.client.request<AcpModelCatalog>(
+          "providers.models",
+          { provider, workspace: connection.workspace },
+        );
+        catalog = current;
+        if (current.models?.length) break;
+      } catch (error) {
+        firstError ??= error;
+      }
+    }
+    if (!catalog && firstError) throw firstError;
+    catalog ??= { agent: this.id, models: [] };
     const current = catalog.currentModel?.trim();
     const entries = new Map(
       (catalog.entries ?? []).map((entry) => [entry.id, entry])

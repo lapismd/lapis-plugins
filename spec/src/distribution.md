@@ -69,3 +69,5 @@ do not copy its transform or rewrite dependency files. Preview never starts
 connection bridge Notes uses so live stories are not silently Fake. Local
 controller migration acceptance uses documented temporary tarballs until their
 approved registry releases.
+The AI Chat catalog also exercises the two OpenCode harness choices through its
+public composer while keeping the Storybook execution fixture deterministic.

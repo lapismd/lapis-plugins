@@ -10,7 +10,7 @@ it("gates live controller adapters on the host capability", async () => {
     expect(createHostAgentRuntimes(pool)).toEqual([]);
     host.available = true;
     const runtimes = createHostAgentRuntimes(pool);
-    expect(runtimes.map((runtime) => runtime.id)).toEqual(["acp", "codex-native"]);
+    expect(runtimes.map((runtime) => runtime.id)).toEqual(["acp", "codex-native", "opencode-native"]);
     expect(runtimes.every((runtime) => runtime.capabilities().preparesContext)).toBe(true);
     expect(await runtimes[0]!.supports({ prompt: "" })).toBe(false);
   } finally { pool.close(); }

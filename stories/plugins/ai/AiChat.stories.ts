@@ -130,6 +130,30 @@ export const AutomaticMemoryRecall: Story = {
   },
 };
 
+export const OpenCodeHarnessChoices: Story = {
+  render: () => ({
+    Component: AiChatDemo,
+    props: {
+      showRuntimeSelection: true,
+      models: [{ provider: "opencode", model: "anthropic/claude-sonnet-4-5" }],
+    },
+  }),
+  parameters: {
+    ...workspaceCatalogParameters("plugins-ai-chat-opencode-harnesses"),
+    docs: { description: { story: "The composer offers OpenCode ACP and OpenCode Native independently." } },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(document.body);
+    await userEvent.click(canvas.getByRole("button", { name: "Effort and model" }));
+    await userEvent.click(body.getByTestId("ai-chat-agent"));
+    await expect(body.getByText("OpenCode ACP")).toBeVisible();
+    await userEvent.click(body.getByText("OpenCode Native"));
+    await expect(canvas.getByTestId("ai-chat-demo")).toHaveAttribute("data-selected-runtime", "opencode-native");
+    await expect(canvas.getByTestId("ai-chat-demo")).toHaveAttribute("data-selected-agent", "opencode");
+  },
+};
+
 export const SkillsAndSlash: Story = {
   render: () => ({
     Component: AiChatDemo,

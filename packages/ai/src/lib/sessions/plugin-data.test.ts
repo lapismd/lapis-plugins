@@ -9,7 +9,7 @@ describe("AI plugin data", () => {
       settings: {
         defaultRuntime: "fake",
         acpAgent: "codex",
-        defaultModels: { codex: "gpt-5.6-sol", cursor: "" },
+        defaultModels: { codex: "gpt-5.6-sol", cursor: "", opencode: "" },
         defaultModel: "gpt-5.6-sol",
         thinking: "medium",
         memoryAutomaticRecall: false,
@@ -63,7 +63,7 @@ describe("AI plugin data", () => {
   it("migrates legacy models and preserves independent provider choices", () => {
     expect(
       parseAiPluginData({ defaultModel: "gpt-legacy" }).settings.defaultModels,
-    ).toEqual({ codex: "gpt-legacy", cursor: "" });
+    ).toEqual({ codex: "gpt-legacy", cursor: "", opencode: "" });
     const cursor = parseAiPluginData({
       acpAgent: "cursor",
       defaultModel: "ignored-active-alias",

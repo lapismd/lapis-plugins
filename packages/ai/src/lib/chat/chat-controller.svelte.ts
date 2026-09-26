@@ -156,7 +156,7 @@ export class AiChatController {
   readonly #handoffSummaries?: Pick<HandoffSummaryCoordinator, "afterTerminal">;
   readonly #onComposerDefaults?: (next: {
     agent: AcpAgentId;
-    runtimePreference: "acp" | "codex-native" | "fake";
+    runtimePreference: "acp" | "codex-native" | "opencode-native" | "fake";
   }) => void;
   #refreshSkills = false;
   #activeRecallAbort?: AbortController;
@@ -195,7 +195,7 @@ export class AiChatController {
       handoffSummaries?: Pick<HandoffSummaryCoordinator, "afterTerminal">;
       onComposerDefaults?: (next: {
         agent: AcpAgentId;
-        runtimePreference: "acp" | "codex-native" | "fake";
+        runtimePreference: "acp" | "codex-native" | "opencode-native" | "fake";
       }) => void;
     } = {},
   ) {

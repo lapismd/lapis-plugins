@@ -2,7 +2,7 @@ import type { AcpAgentId } from "../settings/acp-agents";
 
 export type ComposerAgentSelection = {
   agent: AcpAgentId;
-  runtimePreference: "acp" | "codex-native" | "fake";
+  runtimePreference: "acp" | "codex-native" | "opencode-native" | "fake";
   label: string;
 };
 
@@ -29,6 +29,9 @@ const KNOWN: Record<string, ComposerAgentSelection> = {
     runtimePreference: "codex-native",
     label: "Codex Native",
   },
+  opencode: { agent: "opencode", runtimePreference: "acp", label: "OpenCode ACP" },
+  "opencode-acp": { agent: "opencode", runtimePreference: "acp", label: "OpenCode ACP" },
+  "opencode-native": { agent: "opencode", runtimePreference: "opencode-native", label: "OpenCode Native" },
   fake: { agent: "codex", runtimePreference: "fake", label: "Fake" },
 };
 
@@ -38,7 +41,8 @@ export function composerAgentLabel(
 ): string {
   if (runtimePreference === "fake") return "Fake";
   if (runtimePreference === "codex-native") return "Codex Native";
-  return agent === "cursor" ? "Cursor ACP" : "Codex ACP";
+  if (runtimePreference === "opencode-native") return "OpenCode Native";
+  return agent === "cursor" ? "Cursor ACP" : agent === "opencode" ? "OpenCode ACP" : "Codex ACP";
 }
 
 export function parseAgentCommand(

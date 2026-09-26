@@ -109,7 +109,7 @@ describe("AI view bootstrap", () => {
       defaultModel: "gpt-5.6-sol",
       thinking: "high",
     });
-    expect(prepared.models).toHaveLength(2);
+    expect(prepared.models).toHaveLength(3);
     expect(selectRuntime).toHaveBeenCalledWith(
       expect.objectContaining({
         agent: "codex",
@@ -131,6 +131,32 @@ describe("AI view bootstrap", () => {
 
     expect(prepared.runtime.id).toBe("fake");
     expect(prepared.unavailableReason).toBeNull();
+  });
+
+  it("restores the OpenCode Native runtime and agent from a durable binding", async () => {
+    const { host, repository, selectRuntime } = createHost();
+    const location = { scopeDir: "Notes", conversationId: ID };
+    await repository.create({ id: ID, scopeDir: "Notes", now: CREATED_AT });
+    await repository.appendAgentRecords(location, [{
+      schemaVersion: CONVERSATION_SCHEMA_VERSION,
+      type: "binding.created",
+      id: "binding-opencode",
+      createdAt: CREATED_AT,
+      runtime: "opencode-native",
+      agent: "opencode",
+      model: { provider: "opencode", model: "anthropic/claude-sonnet-4-5" },
+      thinking: "high",
+    }]);
+
+    const prepared = await prepareAiViewBootstrap(host, location, []);
+
+    expect(prepared.settings).toMatchObject({
+      defaultRuntime: "opencode-native", acpAgent: "opencode",
+      defaultModel: "anthropic/claude-sonnet-4-5",
+    });
+    expect(selectRuntime).toHaveBeenCalledWith(expect.objectContaining({
+      agent: "opencode", metadata: { runtime: "opencode-native" },
+    }));
   });
 
   it("keeps a saved Cursor default when the flat catalog omits that model", async () => {

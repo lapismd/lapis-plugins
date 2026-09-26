@@ -2,7 +2,9 @@ import type { AiThinkingLevel } from "../core/types";
 import {
   DEFAULT_ACP_AGENT,
   normalizeAcpAgent,
+  normalizeProcessorAgent,
   type AcpAgentId,
+  type ProcessorAgentId,
 } from "./acp-agents";
 
 export type AppToolEnablementOwner = {
@@ -16,7 +18,7 @@ export type AppToolEnablementRef = {
 };
 
 export type AiPluginSettings = {
-  defaultRuntime: "auto" | "acp" | "codex-native" | "fake";
+  defaultRuntime: "auto" | "acp" | "codex-native" | "opencode-native" | "fake";
   acpAgent: AcpAgentId;
   defaultModels: Record<AcpAgentId, string>;
   /** Active-agent compatibility alias. Persisted model ownership lives in defaultModels. */
@@ -25,11 +27,11 @@ export type AiPluginSettings = {
   memoryAutomaticRecall: boolean;
   memoryConsolidationEnabled: boolean;
   memoryConsolidationRuntime: "acp" | "codex-native";
-  memoryConsolidationAgent: AcpAgentId;
+  memoryConsolidationAgent: ProcessorAgentId;
   memoryConsolidationModel: string;
   handoffSummariesEnabled: boolean;
   handoffSummaryRuntime: "acp" | "codex-native";
-  handoffSummaryAgent: AcpAgentId;
+  handoffSummaryAgent: ProcessorAgentId;
   handoffSummaryModel: string;
   appToolsEnabled: boolean;
   disabledAppToolNames: string[];
@@ -48,6 +50,7 @@ export const DEFAULT_AI_SETTINGS: AiPluginSettings = {
   defaultModels: {
     codex: "gpt-5.6-sol",
     cursor: "",
+    opencode: "",
   },
   defaultModel: "gpt-5.6-sol",
   thinking: "medium",
@@ -196,6 +199,7 @@ export function mergeAiSettings(
       legacyModel ||
       DEFAULT_AI_SETTINGS.defaultModels.codex,
     cursor: storedModels?.cursor?.trim() || "",
+    opencode: storedModels?.opencode?.trim() || "",
   };
   const thinking = value?.thinking;
   const merged: AiPluginSettings = {
@@ -213,7 +217,7 @@ export function mergeAiSettings(
       value?.memoryConsolidationRuntime === "codex-native"
         ? "codex-native"
         : "acp",
-    memoryConsolidationAgent: normalizeAcpAgent(
+    memoryConsolidationAgent: normalizeProcessorAgent(
       value?.memoryConsolidationAgent,
     ),
     memoryConsolidationModel:
@@ -222,7 +226,7 @@ export function mergeAiSettings(
     handoffSummariesEnabled: value?.handoffSummariesEnabled === true,
     handoffSummaryRuntime:
       value?.handoffSummaryRuntime === "codex-native" ? "codex-native" : "acp",
-    handoffSummaryAgent: normalizeAcpAgent(value?.handoffSummaryAgent),
+    handoffSummaryAgent: normalizeProcessorAgent(value?.handoffSummaryAgent),
     handoffSummaryModel:
       value?.handoffSummaryModel?.trim() ||
       DEFAULT_AI_SETTINGS.handoffSummaryModel,

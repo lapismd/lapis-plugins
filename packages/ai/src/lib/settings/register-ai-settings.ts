@@ -3,7 +3,9 @@ import { getWorkspaceHostBinding } from "@lapis-notes/api/workspace-host";
 import type { AiPlugin } from "../ai-plugin";
 import {
   ACP_AGENT_IDS,
+  PROCESSOR_AGENT_IDS,
   normalizeAcpAgent,
+  normalizeProcessorAgent,
   type AcpAgentId,
 } from "./acp-agents";
 import {
@@ -137,6 +139,7 @@ export function registerAiSettings(plugin: AiPlugin & Plugin): void {
           { value: "auto", label: "Automatic" },
           { value: "acp", label: "ACP" },
           { value: "codex-native", label: "Codex native" },
+          { value: "opencode-native", label: "OpenCode native" },
           { value: "fake", label: "Fake (tests)" },
         ],
       },
@@ -148,7 +151,7 @@ export function registerAiSettings(plugin: AiPlugin & Plugin): void {
         default: DEFAULT_AI_SETTINGS.acpAgent,
         options: ACP_AGENT_IDS.map((value) => ({
           value,
-          label: value === "cursor" ? "Cursor" : "Codex",
+          label: value === "cursor" ? "Cursor" : value === "opencode" ? "OpenCode" : "Codex",
         })),
       },
       {
@@ -207,7 +210,7 @@ export function registerAiSettings(plugin: AiPlugin & Plugin): void {
         title: "Memory processor agent",
         description: "Pinned independently from the interactive chat agent.",
         default: DEFAULT_AI_SETTINGS.memoryConsolidationAgent,
-        options: ACP_AGENT_IDS.map((value) => ({
+        options: PROCESSOR_AGENT_IDS.map((value) => ({
           value,
           label: value === "cursor" ? "Cursor" : "Codex",
         })),
@@ -245,7 +248,7 @@ export function registerAiSettings(plugin: AiPlugin & Plugin): void {
         title: "Handoff summary agent",
         description: "Pinned independently from the interactive chat agent.",
         default: DEFAULT_AI_SETTINGS.handoffSummaryAgent,
-        options: ACP_AGENT_IDS.map((value) => ({
+        options: PROCESSOR_AGENT_IDS.map((value) => ({
           value,
           label: value === "cursor" ? "Cursor" : "Codex",
         })),
@@ -411,7 +414,7 @@ export function registerAiSettings(plugin: AiPlugin & Plugin): void {
     }
     if (event.id === FIELD_IDS.memoryConsolidationAgent) {
       void plugin.updateSettings({
-        memoryConsolidationAgent: normalizeAcpAgent(
+        memoryConsolidationAgent: normalizeProcessorAgent(
           values[FIELD_IDS.memoryConsolidationAgent],
         ),
       });
@@ -443,7 +446,7 @@ export function registerAiSettings(plugin: AiPlugin & Plugin): void {
     }
     if (event.id === FIELD_IDS.handoffSummaryAgent) {
       void plugin.updateSettings({
-        handoffSummaryAgent: normalizeAcpAgent(
+        handoffSummaryAgent: normalizeProcessorAgent(
           values[FIELD_IDS.handoffSummaryAgent],
         ),
       });

@@ -44,13 +44,15 @@ export async function prepareAiViewBootstrap(
         record.id === snapshot.metadata.activeAgentBindingId,
     );
     if (binding?.type === "binding.created") {
-      const agent = binding.agent === "cursor" ? "cursor" : "codex";
+      const agent = binding.agent === "cursor" ? "cursor" : binding.agent === "opencode" ? "opencode" : "codex";
       settings = {
         ...settings,
         acpAgent: agent,
         defaultRuntime:
           binding.runtime === "codex-native"
             ? "codex-native"
+            : binding.runtime === "opencode-native"
+              ? "opencode-native"
             : binding.runtime === "fake"
               ? "fake"
               : "acp",

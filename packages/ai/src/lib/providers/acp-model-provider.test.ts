@@ -20,3 +20,16 @@ it("keeps unconfigured hosts unavailable and reports provider discovery failures
   host.available = true;
   expect(await provider.authStatus()).toEqual({ authenticated: false, label: "cursor", detail: "Provider discovery failed" });
 });
+
+it("uses OpenCode Native models when the ACP instance is absent", async () => {
+  const request = vi.fn(async (_method: string, input: { provider: string }) => {
+    if (input.provider === "opencode") throw new Error("Provider is not configured");
+    return { agent: "opencode-native", models: ["anthropic/claude-sonnet-4-5"], entries: [{ id: "anthropic/claude-sonnet-4-5", label: "Sonnet" }] };
+  });
+  const provider = new AcpModelProvider("opencode", {
+    connection: async () => ({ workspace: "vault", client: { request } as unknown as ControllerClient }),
+    providerIds: ["opencode", "opencode-native"],
+  });
+  expect(await provider.listModels()).toMatchObject([{ provider: "opencode", model: "anthropic/claude-sonnet-4-5", displayName: "Sonnet" }]);
+  expect(request).toHaveBeenCalledTimes(2);
+});

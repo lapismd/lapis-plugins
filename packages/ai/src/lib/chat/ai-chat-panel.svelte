@@ -217,7 +217,7 @@
   );
   let draft = $state("");
   let localAgent = $state<AcpAgentId | null>(null);
-  let localRuntime = $state<"acp" | "codex-native" | "fake" | null>(null);
+  let localRuntime = $state<"acp" | "codex-native" | "opencode-native" | "fake" | null>(null);
   let localModel = $state<string | null>(null);
   let localThinking = $state<AiThinkingLevel | null>(null);
   let attachments = $state<{ path: string; name: string }[]>([]);
@@ -242,6 +242,8 @@
     localRuntime ??
       (settings?.defaultRuntime === "codex-native"
         ? "codex-native"
+        : settings?.defaultRuntime === "opencode-native"
+          ? "opencode-native"
         : settings?.defaultRuntime === "fake"
           ? "fake"
           : "acp"),
@@ -304,8 +306,12 @@
         const label =
           binding.runtime === "codex-native"
             ? "Codex Native"
+            : binding.runtime === "opencode-native"
+              ? "OpenCode Native"
             : binding.agent === "cursor"
               ? "Cursor ACP"
+              : binding.agent === "opencode"
+                ? "OpenCode ACP"
               : "Codex ACP";
         return [
           binding.id,
@@ -405,7 +411,7 @@
 
   function persistComposerDefaults(
     agent: AcpAgentId,
-    runtimePreference: "acp" | "codex-native" | "fake",
+    runtimePreference: "acp" | "codex-native" | "opencode-native" | "fake",
     model: string | null,
     thinking: AiThinkingLevel,
   ): void {
@@ -419,7 +425,7 @@
 
   function changeAgent(
     agent: AcpAgentId,
-    runtimePreference: "acp" | "codex-native",
+    runtimePreference: "acp" | "codex-native" | "opencode-native",
   ): void {
     localAgent = agent;
     localRuntime = runtimePreference;
@@ -998,6 +1004,14 @@
                         value="codex-native:codex"
                         onclick={() => changeAgent("codex", "codex-native")}
                       >Codex Native</DropdownMenu.RadioItem>
+                      <DropdownMenu.RadioItem
+                        value="acp:opencode"
+                        onclick={() => changeAgent("opencode", "acp")}
+                      >OpenCode ACP</DropdownMenu.RadioItem>
+                      <DropdownMenu.RadioItem
+                        value="opencode-native:opencode"
+                        onclick={() => changeAgent("opencode", "opencode-native")}
+                      >OpenCode Native</DropdownMenu.RadioItem>
                     </DropdownMenu.RadioGroup>
                   </DropdownMenu.SubContent>
                 </DropdownMenu.Sub>

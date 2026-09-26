@@ -16,7 +16,7 @@ describe("AiPlugin contracts", () => {
     expect(mergeAiSettings(null)).toEqual({
       defaultRuntime: "auto",
       acpAgent: "codex",
-      defaultModels: { codex: "gpt-5.6-sol", cursor: "" },
+      defaultModels: { codex: "gpt-5.6-sol", cursor: "", opencode: "" },
       defaultModel: "gpt-5.6-sol",
       thinking: "medium",
       memoryAutomaticRecall: false,

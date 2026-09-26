@@ -226,6 +226,13 @@ export const workspaceCatalog = [
     storyId: "plugins-ai-chat--send-and-complete",
   },
   {
+    id: "plugins-ai-chat-opencode-harnesses",
+    title: "AI Chat: OpenCode Harness Choices",
+    spec: "spec/src/plugins/ai/index.md",
+    publicSurface: "@lapis-notes/ai",
+    storyId: "plugins-ai-chat--open-code-harness-choices",
+  },
+  {
     id: "plugins-ai-chat-validation",
     title: "AI Chat: Validation And Empty State",
     spec: "spec/src/plugins/ai/index.md",

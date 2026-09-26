@@ -10,5 +10,6 @@ export function createHostAgentRuntimes(
   return [
     new ControllerAgentRuntime("acp", connections),
     new ControllerAgentRuntime("codex-native", connections),
+    new ControllerAgentRuntime("opencode-native", connections),
   ];
 }

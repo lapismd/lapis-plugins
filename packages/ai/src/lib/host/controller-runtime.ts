@@ -17,7 +17,7 @@ export class ControllerAgentRuntime implements AgentRuntime {
   readonly #runtimes = new WeakMap<ControllerConnection, ControllerRuntime>();
   #last?: ControllerRuntime;
   constructor(
-    readonly id: "acp" | "codex-native",
+    readonly id: "acp" | "codex-native" | "opencode-native",
     readonly connections: ControllerConnectionPool,
   ) {}
   capabilities(): AgentCapabilities {
@@ -69,6 +69,8 @@ export class ControllerAgentRuntime implements AgentRuntime {
         provider: (request) =>
           this.id === "codex-native"
             ? "codex-native"
+            : this.id === "opencode-native"
+              ? "opencode-native"
             : request.agent ?? "codex",
         workspace: () => connection.workspace,
         prepare: async (request, threadId) => {

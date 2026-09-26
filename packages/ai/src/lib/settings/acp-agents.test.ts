@@ -5,6 +5,7 @@ describe("ACP agents", () => {
   it("keeps known agents and falls unknown values back to codex", () => {
     expect(normalizeAcpAgent("codex")).toBe("codex");
     expect(normalizeAcpAgent("cursor")).toBe("cursor");
+    expect(normalizeAcpAgent("opencode")).toBe("opencode");
     expect(normalizeAcpAgent("claude")).toBe("codex");
     expect(normalizeAcpAgent("")).toBe("codex");
   });

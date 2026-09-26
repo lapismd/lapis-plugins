@@ -48,6 +48,7 @@
     enableSearchResult = false,
     enableMemoryRecall = false,
     enableMarkdown = false,
+    showRuntimeSelection = false,
   }: {
     requireApproval?: boolean;
     requireQuestion?: boolean;
@@ -63,6 +64,7 @@
     enableSearchResult?: boolean;
     enableMemoryRecall?: boolean;
     enableMarkdown?: boolean;
+    showRuntimeSelection?: boolean;
   } = $props();
   let openedTick = $state(0);
   let recallCalls = $state(0);
@@ -203,12 +205,14 @@
   let settings = $state<
     Pick<
       AiPluginSettings,
-      "defaultModel" | "thinking" | "memoryAutomaticRecall"
+      "defaultModel" | "thinking" | "memoryAutomaticRecall" | "defaultRuntime" | "acpAgent"
     >
   >({
     defaultModel: "gpt-5.6-sol",
     thinking: "medium",
     memoryAutomaticRecall: untrack(() => enableMemoryRecall),
+    defaultRuntime: "acp",
+    acpAgent: "codex",
   });
   const memoryRecall = {
     async recall() {
@@ -245,6 +249,8 @@
   data-testid="ai-chat-demo"
   data-opened-paths={openedTick >= 0 ? openedPaths.join(",") : ""}
   data-memory-recall-calls={recallCalls}
+  data-selected-runtime={settings.defaultRuntime}
+  data-selected-agent={settings.acpAgent}
 >
   {#if enableSkills}
     <button
@@ -259,6 +265,7 @@
   <AiChatPanel
     app={panelApp}
     {runtime}
+    selectRuntime={showRuntimeSelection ? async () => runtime : undefined}
     {sessionStore}
     skills={skillHarness?.skills}
     slashRouter={skillHarness?.slashRouter}

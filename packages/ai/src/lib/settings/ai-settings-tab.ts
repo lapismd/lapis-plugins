@@ -6,7 +6,7 @@ import {
 } from "@lapis-notes/api";
 import type { AiPlugin } from "../ai-plugin";
 import type { AiThinkingLevel } from "../core/types";
-import { ACP_AGENT_IDS, type AcpAgentId } from "./acp-agents";
+import { ACP_AGENT_IDS, PROCESSOR_AGENT_IDS, normalizeProcessorAgent, type AcpAgentId } from "./acp-agents";
 import { applyAppToolEnablement, type AiPluginSettings } from "./ai-settings";
 import {
   listAppToolSettingRows,
@@ -16,6 +16,7 @@ import {
 const ACP_AGENT_LABELS: Record<AcpAgentId, string> = {
   codex: "Codex",
   cursor: "Cursor",
+  opencode: "OpenCode",
 };
 
 const THINKING_OPTIONS: Array<{ id: AiThinkingLevel; label: string }> = [
@@ -51,6 +52,7 @@ export class AiSettingsTab extends PluginSettingTab {
           .addOption("auto", "Automatic")
           .addOption("acp", "ACP")
           .addOption("codex-native", "Codex native")
+          .addOption("opencode-native", "OpenCode native")
           .addOption("fake", "Fake (tests)")
           .setValue(settings.defaultRuntime)
           .onChange((value) => {
@@ -151,14 +153,14 @@ export class AiSettingsTab extends PluginSettingTab {
       .setName("Memory processor agent")
       .setDesc("Pinned independently from the interactive chat agent.")
       .addDropdown((dropdown) => {
-        for (const id of ACP_AGENT_IDS) {
+        for (const id of PROCESSOR_AGENT_IDS) {
           dropdown.addOption(id, ACP_AGENT_LABELS[id]);
         }
         dropdown
           .setValue(settings.memoryConsolidationAgent)
           .onChange((value) => {
             void this.aiPlugin.updateSettings({
-              memoryConsolidationAgent: value as AcpAgentId,
+              memoryConsolidationAgent: normalizeProcessorAgent(value),
             });
           });
       });
@@ -207,12 +209,12 @@ export class AiSettingsTab extends PluginSettingTab {
       .setName("Handoff summary agent")
       .setDesc("Pinned independently from the interactive chat agent.")
       .addDropdown((dropdown) => {
-        for (const id of ACP_AGENT_IDS) {
+        for (const id of PROCESSOR_AGENT_IDS) {
           dropdown.addOption(id, ACP_AGENT_LABELS[id]);
         }
         dropdown.setValue(settings.handoffSummaryAgent).onChange((value) => {
           void this.aiPlugin.updateSettings({
-            handoffSummaryAgent: value as AcpAgentId,
+            handoffSummaryAgent: normalizeProcessorAgent(value),
           });
         });
       });

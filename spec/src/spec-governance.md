@@ -63,6 +63,8 @@ a clean consumer check.
 Shared real-App Storybook helpers retain a bounded readiness wait so concurrent
 catalog startup does not turn healthy plugin initialization into a timing-only
 failure while real boot errors still fail closed.
+The shared catalog entry for OpenCode harness selection maps to the owning AI
+plugin requirement and its browser interaction evidence.
 Shared Storybook test setup also fails closed on Svelte `derived_inert`
 diagnostics. The classifier is deliberately narrow so unrelated warnings keep
 their existing behavior while destroyed-effect reads cannot leave an

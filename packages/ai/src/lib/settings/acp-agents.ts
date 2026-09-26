@@ -1,6 +1,8 @@
-export const ACP_AGENT_IDS = ["codex", "cursor"] as const;
+export const ACP_AGENT_IDS = ["codex", "cursor", "opencode"] as const;
 
 export type AcpAgentId = (typeof ACP_AGENT_IDS)[number];
+export const PROCESSOR_AGENT_IDS = ["codex", "cursor"] as const;
+export type ProcessorAgentId = (typeof PROCESSOR_AGENT_IDS)[number];
 
 export const DEFAULT_ACP_AGENT: AcpAgentId = "codex";
 
@@ -10,6 +12,10 @@ export function isAcpAgentId(value: unknown): value is AcpAgentId {
 
 export function normalizeAcpAgent(value: unknown): AcpAgentId {
   return isAcpAgentId(value) ? value : DEFAULT_ACP_AGENT;
+}
+
+export function normalizeProcessorAgent(value: unknown): ProcessorAgentId {
+  return PROCESSOR_AGENT_IDS.find((id) => id === value) ?? "codex";
 }
 
 export function catalogModelsForAgent<T extends { provider?: string }>(
