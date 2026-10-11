@@ -41,19 +41,24 @@ was explicitly approved; font readiness retains fail-closed checks.
 
 The remaining broader release gates are:
 
-- Notes Storybook has 211 passes and 1 failure: AI Shell / Local Conversations
-  clicks a temporarily noninteractive conversation-options trigger. A fresh
-  focused run reproduces that failure.
-- Web acceptance has 5 passes and 1 timeout in the retained bundled-Bases
-  scenario. The successful vault and reload scenarios verify the four-plugin
-  profile.
-- Packaged desktop acceptance cannot run yet. Building the local ad-hoc-signed
-  app stops at Deno's 24-hour dependency-age policy for the newly published
-  AI Controller package. The policy was not weakened, and the inherited
-  `deno.lock` was preserved.
-- The shared Community library's previously reproduced 38 baseline browser
-  failures remain separate from parking the Community plugin.
+- Web Bases acceptance still assumes a bundled plugin. Replace that assumption
+  with a real signed registry install and prove query, editing, and restart.
+- Packaged desktop builds using the explicitly approved ignored Deno
+  dependency-age override. Its acceptance retry reaches the instance endpoint
+  but times out on workspace readiness; diagnose the host startup boundary.
+- App installation and defining behavior remain unverified for the signed
+  12-plugin fixture. Complete the Web and desktop installation matrix.
+- Portable npm consumers still need the shared registry schema library and
+  framework prerequisites to be published through the release approval gate.
+
+Notes AI qualification is now complete: the cold target and all 212
+interaction/accessibility stories pass. Community application, registry-editor,
+timeline, and browser repair work is explicitly descoped by the user. Its
+historical UI failures are not gates for the other plugins. Community must remain
+absent from the registry, active tests, release selection, and the desktop default
+profile. Retaining the shared registry schema dependency does not reactivate the
+Community application or its feature qualification.
 
 No production signing, publication, registry deployment, relay event, analytics
-activation or visual-baseline update occurred. The broader Plugins and Notes
-candidates remain uncommitted while their required qualification is unresolved.
+activation or visual-baseline update occurred. Verified repairs and qualification records are committed. The broader release
+candidates remain unpublished while active-host qualification is unresolved.

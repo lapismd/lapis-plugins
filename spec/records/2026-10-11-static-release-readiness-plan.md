@@ -31,10 +31,10 @@ deferred.
   authorized for local verification. Production dependency policy is retained.
   Packaging now succeeds, but packaged acceptance still fails: the retry creates
   its instance endpoint and then times out waiting for workspace readiness.
-- Community's schema candidate still requires full browser qualification and
-  safe consolidation of its divergent Jujutsu change. Its shared library is
-  needed even while the Community plugin is parked.
-  Fresh Inbox/Skeleton targets reproduce two failures before any new repair.
+- Community application, editor, timeline, and browser repair work is descoped.
+  Its historical UI failures are not gates for these 12 plugins. The shared
+  registry schema library remains a necessary dependency; only its registry
+  contract, build, and publication prerequisites belong to this release scope.
 - The production V1 endpoint returns signed JSON with 11 entries. The V2 URL
   currently returns HTML with HTTP 200; that response is not a deployed V2
   catalog. Existing framework/first-publication variables are true, but these
@@ -44,11 +44,12 @@ deferred.
 
 ## Ordered work
 
-1. **Repair qualification blockers in their owners.** Finish the Notes AI story
-   regression, replace the stale bundled-Bases assumption with a real installed
-   plugin, and diagnose Community's restoring/skeleton browser failures at a
-   cold target. Run the complete affected browser/accessibility lanes and source
-   check/test/build/spec lanes. Do not waive the reproduced Community baseline.
+1. **Repair active-host qualification blockers in their owners.** Notes AI story
+   qualification is complete. Replace the stale bundled-Bases assumption with
+   a real installed plugin and diagnose packaged desktop startup. Keep Community
+   out of the default app profile. Run the affected host and active-plugin
+   browser/accessibility lanes and source check/test/build/spec lanes. Community
+   application/browser qualification is parked and does not block this matrix.
 2. **Build a local signed release fixture.** Bind all 12 npm tarballs and runtime
    bundles to one full source commit and their package versions. Use ephemeral
    fixture keys; verify signatures, exact file lists, checksums, reproduction,
@@ -68,13 +69,14 @@ deferred.
    that bundled plugin updates use the installed release where applicable.
    Run a combined all-active-plugin scenario to expose interaction conflicts.
 5. **Consolidate and prepare portable source releases.** Commit verified slices
-   in Community, Notes, Plugins, and Registry with Jujutsu; preserve inherited
-   controller work, `deno.lock`, and unrelated primary-checkout edits. Resolve
-   Community divergence deliberately. Select valid new versions where npm
-   content already exists, update Changesets/release notes, and rebuild packs
-   and archives from the final commits. Correct stale release documentation.
+   in Notes, Plugins, and Registry with Jujutsu; preserve inherited controller
+   work, `deno.lock`, and unrelated primary-checkout edits. Keep Community feature
+   changes outside these releases. If the shared registry library must be
+   published, isolate and qualify only its required registry contracts. Select
+   valid new versions where npm content already exists, update release notes,
+   and rebuild packs and archives from the final commits.
 6. **Publish prerequisites, then requalify registry installs.** Present the
-   exact Community/schema and Notes API/Workspace publication candidates for
+   exact shared-registry-schema and Notes API/Workspace publication candidates for
    the release gate. After approval and publication, refresh semver lockfiles
    from npm, remove temporary acceptance redirects, and prove frozen clean
    registry-only Web and Deno consumers. A temporary tarball pass cannot
