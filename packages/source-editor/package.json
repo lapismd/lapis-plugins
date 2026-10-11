@@ -6,7 +6,7 @@
   "scripts": {
     "build": "pnpm run prepack",
     "check": "pnpm check:types",
-    "check:types": "svelte-check --tsconfig ./tsconfig.json --fail-on-warnings --output human",
+    "check:types": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "prepack": "svelte-package --input src --output dist --tsconfig tsconfig.json && publint",
     "publint": "publint",

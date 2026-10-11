@@ -2,6 +2,7 @@ import type { Preview } from "@storybook/svelte-vite";
 import { withThemeByDataAttribute } from "@storybook/addon-themes";
 import { syncCatalogStoryLayout } from "@lapismd/design-core/storybook/catalog-layout";
 import { createControllerConnectionBridge } from "./controller-connection-bridge";
+import { waitForCatalogFonts } from "./catalog-fonts.mjs";
 import "@lapismd/design-core/storybook.css";
 import "@lapismd/design-core/themes/lapis.css";
 import "@lapis-notes/ui/theme.css";
@@ -10,9 +11,8 @@ import "../stories/workspace/docs.css";
 
 // Live controller attach is opt-in. Storybook never starts the host. Register
 // through the desktop-bridge global so preview does not import the API barrel.
-const controllerUrl = (
-  import.meta.env as { LAPIS_AGENT_RUNTIME_URL?: string }
-).LAPIS_AGENT_RUNTIME_URL;
+const controllerUrl = (import.meta.env as { LAPIS_AGENT_RUNTIME_URL?: string })
+  .LAPIS_AGENT_RUNTIME_URL;
 const controllerToken = (
   import.meta.env as { LAPIS_AGENT_RUNTIME_TOKEN?: string }
 ).LAPIS_AGENT_RUNTIME_TOKEN;
@@ -80,26 +80,17 @@ const preview: Preview = {
   beforeEach: async () => {
     if (typeof document === "undefined" || document.fonts == null) return;
 
-    const requiredFonts = [
-      '16px "DM Sans Variable"',
-      '16px "Source Code Pro Variable"',
-    ];
-    await Promise.all(requiredFonts.map((font) => document.fonts.load(font)));
-    await document.fonts.ready;
+    await waitForCatalogFonts(document.fonts);
 
     const rootStyles = getComputedStyle(document.documentElement);
     const sansFamily = rootStyles.getPropertyValue("--font-sans");
     const monoFamily = rootStyles.getPropertyValue("--studio-font-mono");
-    const missingFonts = requiredFonts.filter(
-      (font) => !document.fonts.check(font),
-    );
     if (
       !sansFamily.includes("DM Sans Variable") ||
-      !monoFamily.includes("Source Code Pro Variable") ||
-      missingFonts.length > 0
+      !monoFamily.includes("Source Code Pro Variable")
     ) {
       throw new Error(
-        `Storybook catalog fonts are unresolved (sans=${JSON.stringify(sansFamily)}, mono=${JSON.stringify(monoFamily)}, missing=${missingFonts.join(", ") || "none"}).`,
+        `Storybook catalog font tokens are unresolved (sans=${JSON.stringify(sansFamily)}, mono=${JSON.stringify(monoFamily)}).`,
       );
     }
   },

@@ -75,9 +75,16 @@ their existing behavior while destroyed-effect reads cannot leave an
 interaction run falsely green.
 Until the affected Bits UI releases provide equivalent lifecycle cleanup, the
 root dependency graph applies reviewed pnpm patches to every resolved version.
-Release verification checks both patch mappings and the Link Preview selection
-timer and Scroll Area resize-timer cancellation, so a lockfile update cannot
-silently restore the destroyed-effect reads.
+Release verification inventories the versions actually resolved in the frozen
+lockfile and checks their patch mappings, hashes and Link Preview selection-timer
+cleanup, so a dependency refresh cannot silently restore destroyed-effect reads.
+Older versions also require Scroll Area resize-timer cancellation; 2.19.5 uses
+the upstream synchronous resize path. The user approved the scoped 2.19.5
+lifecycle-patch exception while an upstream fixed release remains unavailable.
+Shared catalog font readiness must request actual font faces within a fixed
+timeout and retain download, missing-face and token failures. Focused tests
+cover late face registration and fallback-only availability; a shared readiness
+change requires the complete four-shard interaction/accessibility lane.
 CI image and remote-cache changes are protected by LP-SPEC-036. The checked-in
 image manifest, dependency-only context generator, Dockerfile, publication
 workflow, manifest pin updater, workflow pin resolvers, remote-cache

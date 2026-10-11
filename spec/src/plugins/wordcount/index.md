@@ -64,3 +64,8 @@ counting, or status-bar ownership.
 Word Count registry-media Autodocs use the shared full-workspace framing
 governed by LP-SPEC-044, show public plugin setup under LP-SPEC-045, and
 provide component and story descriptions under LP-SPEC-046.
+
+Registry metadata uses the shared V2 presentation contract under LP-SPEC-021; static archive publication follows LP-SPEC-012–018 while Nostr publication remains deferred.
+
+The TypeScript-only package uses `tsc -p tsconfig.json --noEmit` for its
+`check:types` gate. Svelte component checks apply to packages with Svelte source.

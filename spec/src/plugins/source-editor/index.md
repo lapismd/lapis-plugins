@@ -43,3 +43,6 @@ plugin shares the host's App and framework identity.
 Source Editor registry-media Autodocs use the shared full-workspace framing
 governed by LP-SPEC-044, show public plugin setup under LP-SPEC-045, and
 provide component and story descriptions under LP-SPEC-046.
+
+The TypeScript-only package uses `tsc -p tsconfig.json --noEmit` for its
+`check:types` gate. Svelte component checks apply to packages with Svelte source.

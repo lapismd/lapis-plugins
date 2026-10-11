@@ -7,6 +7,20 @@ First-party packages and their shared development host resolve Design Core from
 the current published npm semver range recorded in manifests and the committed
 lockfile.
 
+Development checks must resolve compatible host peers consistently across
+plugins that exchange API classes through public exports. The frozen lockfile
+must deduplicate compatible CodeMirror peer versions; a type cast or alias is
+not a substitute for a coherent dependency graph. Audit exceptions for
+unpatched advisories must record dependency paths, input exposure and removal
+conditions in `spec/records` alongside their CVE entries.
+
+The shared Storybook font gate must wait for actual catalog font faces within a
+fixed timeout, including faces registered during story startup. It must reject
+fallback-only availability, failed downloads and missing font tokens. Every
+resolved Bits UI version must retain its qualified lifecycle patch and locked
+hash until an upstream release fixes the teardown defect; the user approved the
+scoped 2.19.5 patch exception for this qualification.
+
 ## Requirements
 
 | ID          | Requirement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |

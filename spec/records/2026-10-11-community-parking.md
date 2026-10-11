@@ -20,7 +20,7 @@ diagnostics. The review server remains on port 4323.
 ## Qualification evidence
 
 - Plugin selection regressions: 3 failures before parking, 3 passes afterward.
-- Release tooling: 92 passes; metadata and package-boundary checks cover 12
+- Release tooling: 95 passes; metadata and package-boundary checks cover 12
   active packages. Packing produces exactly 12 npm candidates.
 - All 12 active packages build and pass their unit suites (772 tests). Four
   TypeScript-only packages use TypeScript's checker rather than invoking
@@ -33,12 +33,14 @@ diagnostics. The review server remains on port 4323.
 
 These are unresolved gates, not accepted nonblocking failures:
 
-- Plugins' audit retains 27 findings: 1 critical, 11 high, 11 moderate, 4 low.
-- AI and Graph checks resolve two API peer contexts and report nominal type
-  incompatibilities. Final checks pass 11 of 13 tasks after correcting the
-  TypeScript-only check commands; those two package checks remain failed.
-- Plugins Storybook shard 1 has 49 passing stories and 18 fatal
-  `derived_inert` errors from Bits UI Link Preview. Later shards did not run.
+Plugins' test blockers are resolved in the separate
+[qualification record](2026-10-11-plugin-test-unblock.md): all 13 check tasks,
+772 unit tests, 95 release tests and 175 Storybook stories pass. The audit exits
+zero with recorded unpatched CVE exceptions. The scoped Bits UI patch exception
+was explicitly approved; font readiness retains fail-closed checks.
+
+The remaining broader release gates are:
+
 - Notes Storybook has 211 passes and 1 failure: AI Shell / Local Conversations
   clicks a temporarily noninteractive conversation-options trigger. A fresh
   focused run reproduces that failure.
