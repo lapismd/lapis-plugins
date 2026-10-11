@@ -1,6 +1,6 @@
 {
   "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "categories": ["editor", "source"],
   "highlights": [
     "Edit text, JSON, and YAML files with syntax-aware source views.",
@@ -84,9 +84,5 @@
         ]
       }
     }
-  ],
-  "content": {
-    "overview": "registry-content/overview.md",
-    "changelog": "CHANGELOG.md"
-  }
+  ]
 }

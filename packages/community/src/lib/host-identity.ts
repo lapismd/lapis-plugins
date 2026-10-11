@@ -31,16 +31,8 @@ const PRIVATE_KEY_METHOD = {
   description: "Store an existing nsec in the OS keychain",
 } as const satisfies CommunityLoginMethodModel;
 
-
-interface PrivateKeyImportCapableSigner extends NostrPluginSigner {
-  importPrivateKey?(request: {
-    privateKey: string;
-    label?: string;
-  }): Promise<NostrSignerAccount>;
-}
-
 export class CommunityHostIdentityProvider {
-  readonly #signer: PrivateKeyImportCapableSigner;
+  readonly #signer: NostrPluginSigner;
   readonly #accounts = new Map<string, NostrSignerAccount>();
   #activeAccountId: string | undefined;
 
@@ -70,16 +62,12 @@ export class CommunityHostIdentityProvider {
   }
 
   staticMethods(): readonly CommunityLoginMethodModel[] {
-    return [
-      CREATE_ACCOUNT_METHOD,
-      PRIVATE_KEY_METHOD,
-      REMOTE_SIGNER_METHOD,
-    ];
+    return [CREATE_ACCOUNT_METHOD, PRIVATE_KEY_METHOD, REMOTE_SIGNER_METHOD];
   }
 
   options(
     methods: readonly CommunityLoginMethodModel[],
-    auth?: CommunityApplicationAuthAdapter
+    auth?: CommunityApplicationAuthAdapter,
   ): CommunityApplicationLoginOptions {
     return {
       methods,
@@ -110,7 +98,7 @@ export class CommunityHostIdentityProvider {
       const importPrivateKey = this.#signer.importPrivateKey;
       if (importPrivateKey === undefined) {
         throw new Error(
-          "This Lapis host does not support private-key import yet"
+          "This Lapis host does not support private-key import yet",
         );
       }
       account = await importPrivateKey.call(this.#signer, {
@@ -146,7 +134,7 @@ export class CommunityHostIdentityProvider {
 
 export function identityFor(
   signer: NostrPluginSigner,
-  accountId: string
+  accountId: string,
 ): CommunityIdentity {
   return {
     getPublicKey: () => signer.getPublicKey(accountId),

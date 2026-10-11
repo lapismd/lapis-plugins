@@ -1,6 +1,6 @@
 {
   "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "categories": ["navigation", "productivity"],
   "highlights": [
     "Bookmark files, folders, searches, and grouped destinations.",
@@ -76,9 +76,5 @@
         ]
       }
     }
-  ],
-  "content": {
-    "overview": "registry-content/overview.md",
-    "changelog": "CHANGELOG.md"
-  }
+  ]
 }

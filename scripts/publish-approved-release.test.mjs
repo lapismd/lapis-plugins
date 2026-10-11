@@ -1,10 +1,15 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { createHash } from "node:crypto";
+import { mkdtemp, writeFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 
 import {
   assertRegistryDoesNotContainRelease,
   parseOptions,
   selectReleases,
+  verifyApprovedArtifacts,
 } from "./publish-approved-release.mjs";
 
 const releases = [
@@ -32,6 +37,53 @@ test("parses the workflow's explicit comma-separated plugin selection", () => {
     selectReleases(releases, ["lapis-graph", "@lapis-notes/ai"]),
     releases
   );
+});
+
+test("rejects altered approved npm and bundle bytes before any publication", async () => {
+  const directory = await mkdtemp(path.join(tmpdir(), "lapis-publication-"));
+  try {
+    const bytes = Buffer.from("approved");
+    const sha256 = createHash("sha256").update(bytes).digest("hex");
+    await writeFile(path.join(directory, "npm.tgz"), bytes);
+    await writeFile(path.join(directory, "plugin.lapis-plugin"), bytes);
+    const release = {
+      pluginId: "example",
+      npm: { path: "npm.tgz", sha256, size: bytes.length },
+      bundle: { path: "plugin.lapis-plugin", sha256, size: bytes.length },
+    };
+    await verifyApprovedArtifacts(release, directory);
+    await writeFile(path.join(directory, "plugin.lapis-plugin"), "altered");
+    await assert.rejects(
+      verifyApprovedArtifacts(release, directory),
+      /checksum or size mismatch/
+    );
+    await writeFile(path.join(directory, "plugin.lapis-plugin"), bytes);
+    await writeFile(path.join(directory, "npm.tgz"), "altered");
+    await assert.rejects(
+      verifyApprovedArtifacts(release, directory),
+      /checksum or size mismatch/
+    );
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("replacement safety checks the archived V1 and current V2 catalogs", async () => {
+  const requests = [];
+  await assert.rejects(
+    assertRegistryDoesNotContainRelease(releases[1], {
+      fetchImpl: async (url) => {
+        requests.push(url);
+        return url.includes("/v1/")
+          ? new Response("missing", { status: 404 })
+          : Response.json({ versions: { "0.1.2": {} } });
+      },
+    }),
+    /already registry-published/
+  );
+  assert.equal(requests.length, 2);
+  assert.match(requests[0], /\/v1\//);
+  assert.match(requests[1], /\/v2\//);
 });
 
 test("replacement requires an explicit plugin selection", () => {

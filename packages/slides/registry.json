@@ -1,6 +1,6 @@
 {
   "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "categories": ["presentation", "markdown"],
   "highlights": [
     "Turn the active Markdown note into a full-screen Reveal.js presentation.",
@@ -8,7 +8,10 @@
     "Keep the presentation synchronized with live editor changes."
   ],
   "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/slides#readme",
-  "appearance": { "icon": "presentation", "accent": "#42AFFA" },
+  "appearance": {
+    "icon": "presentation",
+    "accent": "#42AFFA"
+  },
   "media": {
     "banner": {
       "alt": "Slides full-screen presentation showing the Goals slide from the Release Walkthrough Markdown fixture.",
@@ -56,7 +59,10 @@
       },
       "card": {
         "headline": [
-          { "text": "Turn Markdown into presentations.", "tone": "neutral" }
+          {
+            "text": "Turn Markdown into presentations.",
+            "tone": "neutral"
+          }
         ],
         "description": [
           {
@@ -66,9 +72,5 @@
         ]
       }
     }
-  ],
-  "content": {
-    "overview": "registry-content/overview.md",
-    "changelog": "CHANGELOG.md"
-  }
+  ]
 }

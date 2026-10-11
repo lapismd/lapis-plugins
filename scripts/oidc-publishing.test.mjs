@@ -3,29 +3,50 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 const workflow = await readFile(
-  new URL("../.github/workflows/release.yml", import.meta.url),
-  "utf8"
+  new URL("../.github/workflows/release-nostr.yml", import.meta.url),
+  "utf8",
 );
 const ciWorkflow = await readFile(
   new URL("../.github/workflows/ci.yml", import.meta.url),
-  "utf8"
+  "utf8",
 );
 const ciSetup = await readFile(
   new URL("../.github/actions/ci-setup/action.yml", import.meta.url),
-  "utf8"
+  "utf8",
 );
 const lockfile = await readFile(
   new URL("../pnpm-lock.yaml", import.meta.url),
-  "utf8"
+  "utf8",
 );
 const publisher = await readFile(
   new URL("./publish-approved-release.mjs", import.meta.url),
-  "utf8"
+  "utf8",
 );
 const renewalWorkflow = await readFile(
   new URL("../.github/workflows/renew-registry-heads.yml", import.meta.url),
-  "utf8"
+  "utf8",
 );
+
+test("keeps every release and renewal job disabled until explicitly enabled", () => {
+  for (const [name, source] of [
+    ["release", workflow],
+    ["renewal", renewalWorkflow],
+  ]) {
+    const jobs = source.split(/^jobs:\s*$/m)[1];
+    assert.ok(jobs, `${name} workflow declares jobs`);
+    const blocks = [
+      ...jobs.matchAll(/^  ([\w-]+):\n([\s\S]*?)(?=^  [\w-]+:|$(?![\s\S]))/gm),
+    ];
+    assert.ok(blocks.length > 0, `${name} workflow has jobs`);
+    for (const [, job, body] of blocks) {
+      assert.match(
+        body,
+        /^    if: vars\.NOSTR_RELEASE_ENABLED == 'true'$/m,
+        `${name}/${job} requires explicit activation`,
+      );
+    }
+  }
+});
 
 test("publishes npm packages through the protected OIDC workflow", () => {
   assert.match(workflow, /id-token:\s*write/);
@@ -58,7 +79,7 @@ test("does not require a long-lived npm token at runtime", () => {
 test("audits the committed dependency graph on every quality change", async () => {
   const pkg = await readFile(
     new URL("../package.json", import.meta.url),
-    "utf8"
+    "utf8",
   );
   assert.match(pkg, /"audit": "pnpm audit"/);
   assert.match(pkg, /"check": "pnpm audit &&/);
@@ -73,7 +94,7 @@ test("builds release candidates from the committed dependency graph", () => {
   assert.doesNotMatch(lockfile, /\/Users\//);
   assert.match(
     ciSetup,
-    /git config --global --add safe\.directory "\$\{GITHUB_WORKSPACE\}"/
+    /git config --global --add safe\.directory "\$\{GITHUB_WORKSPACE\}"/,
   );
   assert.match(ciSetup, /pnpm install --frozen-lockfile/);
   assert.match(workflow, /uses:\s*\.\/\.github\/actions\/ci-setup/);
@@ -87,7 +108,7 @@ test("defers functional CI lanes until unpublished framework packages exist", ()
   assert.match(ciWorkflow, /npm view @lapismd\/ai-controller version/);
   assert.match(
     ciWorkflow,
-    /if: needs\.prerequisite\.outputs\.framework_ready == 'true'/
+    /if: needs\.prerequisite\.outputs\.framework_ready == 'true'/,
   );
   assert.match(ciWorkflow, /FRAMEWORK_READY:/);
   assert.match(ciWorkflow, /if \[ "\$FRAMEWORK_READY" != "true" \]; then/);
@@ -106,13 +127,13 @@ test("reuses blocking CI and reverifies the downloaded production candidate", ()
   assert.match(workflow, /pnpm release:plan -- --production/g);
   assert.match(
     workflow,
-    /cmp "\$candidate_plan" \.release\/release-plan\.json/
+    /cmp "\$candidate_plan" \.release\/release-plan\.json/,
   );
   assert.match(workflow, /\.generatedFrom == \$source/);
   assert.match(workflow, /\.sourceCommit == \$source/);
   assert.equal(
     workflow.match(/\$\{\{ needs\.image-pin\.outputs\.reference \}\}/g)?.length,
-    4
+    4,
   );
 });
 
@@ -121,7 +142,6 @@ test("offers explicit plugin checkboxes instead of a free-form selector", () => 
     "plugin_ai",
     "plugin_bases",
     "plugin_bookmarks",
-    "plugin_community",
     "plugin_graph",
     "plugin_history",
     "plugin_markdown",
@@ -146,14 +166,14 @@ test("GitHub workflows run Node 24 actions and Node 24 builds", () => {
   assert.match(workflow, /uses:\s*\.\/\.github\/actions\/ci-setup/);
   assert.doesNotMatch(
     workflow,
-    /pnpm\/action-setup|actions\/setup-node|taiki-e\/install-action/
+    /pnpm\/action-setup|actions\/setup-node|taiki-e\/install-action/,
   );
 
   assert.match(ciWorkflow, /actions\/checkout@v7/);
   assert.equal(
     ciWorkflow.match(/\$\{\{ needs\.image-pin\.outputs\.reference \}\}/g)
       ?.length,
-    6
+    6,
   );
   assert.match(ciWorkflow, /jq -er .*\.ci\/images\.json/);
   assert.match(workflow, /jq -er .*\.ci\/images\.json/);
@@ -163,7 +183,7 @@ test("GitHub workflows run Node 24 actions and Node 24 builds", () => {
   assert.match(ciSetup, /mdbook v0\.5\.4/);
   assert.doesNotMatch(
     ciWorkflow + workflow + ciSetup,
-    /node-version:\s*["']?20/
+    /node-version:\s*["']?20/,
   );
   assert.match(ciWorkflow, /actions\/upload-artifact@v7/);
 });

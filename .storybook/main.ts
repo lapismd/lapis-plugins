@@ -7,6 +7,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { mergeConfig, searchForWorkspaceRoot } from "vite";
 
+import { pluginPackages } from "../scripts/package-catalog.mjs";
+
 const storybookDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(storybookDir, "..");
 
@@ -21,11 +23,6 @@ const packageAliases = [
     "packages/bookmarks/src/lib/styles.css",
   ],
   ["@lapis-notes/bookmarks", "packages/bookmarks/src/lib/index.ts"],
-  [
-    "@lapis-notes/community/styles.css",
-    "packages/community/src/lib/styles.css",
-  ],
-  ["@lapis-notes/community", "packages/community/src/lib/index.ts"],
   ["@lapis-notes/graph/embed", "packages/graph/src/lib/embed.ts"],
   ["@lapis-notes/graph/styles.css", "packages/graph/src/lib/styles.css"],
   ["@lapis-notes/graph", "packages/graph/src/lib/index.ts"],
@@ -82,7 +79,10 @@ const linkedWorkspaceRoots = [
 ];
 
 const config: StorybookConfig = {
-  stories: ["../stories/plugins/**/*.stories.@(js|ts|svelte)"],
+  stories: pluginPackages.map(
+    (plugin) =>
+      `../stories/plugins/${plugin.directory}/**/*.stories.@(js|ts|svelte)`,
+  ),
   addons: [
     "@storybook/addon-docs",
     "@storybook/addon-a11y",
@@ -109,7 +109,7 @@ const config: StorybookConfig = {
     const nonSveltePlugins = plugins.filter(
       (plugin) =>
         !plugin?.name?.startsWith("vite-plugin-svelte") &&
-        plugin?.name !== "sveltekit-autoimport-configuration"
+        plugin?.name !== "sveltekit-autoimport-configuration",
     );
     viteConfig.plugins = [
       tursoBundleBuildPlugin(),
@@ -144,7 +144,7 @@ const config: StorybookConfig = {
             find: /^harper\.js\/binaryInlined$/,
             replacement: path.join(
               repoRoot,
-              "packages/spellcheck/node_modules/harper.js/dist/binaryInlined.js"
+              "packages/spellcheck/node_modules/harper.js/dist/binaryInlined.js",
             ),
           },
           {
@@ -153,7 +153,7 @@ const config: StorybookConfig = {
           },
           ...packageAliases.map(([find, replacement]) => ({
             find: new RegExp(
-              `^${find.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`
+              `^${find.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
             ),
             replacement: path.join(repoRoot, replacement),
           })),
@@ -161,7 +161,7 @@ const config: StorybookConfig = {
             find: /^\$lib(?:\/(.*))?$/,
             replacement: `${path.join(
               repoRoot,
-              "packages/markdown/src/lib"
+              "packages/markdown/src/lib",
             )}/$1`,
           },
         ],

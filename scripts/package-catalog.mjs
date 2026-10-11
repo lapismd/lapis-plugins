@@ -1,4 +1,6 @@
-export const pluginPackages = [
+import { readFileSync } from "node:fs";
+
+const allPluginPackages = [
   { directory: "ai", packageName: "@lapis-notes/ai", pluginId: "ai" },
   { directory: "bases", packageName: "@lapis-notes/bases", pluginId: "bases" },
   {
@@ -57,6 +59,42 @@ export const pluginPackages = [
     pluginId: "wordcount",
   },
 ];
+
+// The standard npm private flag is the authoritative parked-package marker.
+export const parkedPluginPackages = allPluginPackages.filter(
+  (plugin) =>
+    JSON.parse(
+      readFileSync(
+        new URL(
+          `../packages/${plugin.directory}/package.json`,
+          import.meta.url,
+        ),
+        "utf8",
+      ),
+    ).private === true,
+);
+export const pluginPackages = allPluginPackages.filter(
+  (plugin) => !parkedPluginPackages.includes(plugin),
+);
+
+export function assertReleaseIsActive(release) {
+  if (
+    parkedPluginPackages.some((plugin) =>
+      [
+        release.packageName,
+        release.pluginId,
+        release.releaseTag?.split("@")[0],
+      ].some((selector) =>
+        [plugin.packageName, plugin.pluginId, plugin.directory].includes(
+          selector,
+        ),
+      ),
+    )
+  )
+    throw new Error(
+      "Selected plugin is parked; reactivate it before releasing.",
+    );
+}
 
 export const packageNames = new Set(
   pluginPackages.map((plugin) => plugin.packageName),

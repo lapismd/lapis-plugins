@@ -1,6 +1,6 @@
 {
   "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "categories": ["data", "database", "editor"],
   "highlights": [
     "Create structured views over notes and front matter.",
@@ -181,9 +181,5 @@
         ]
       }
     }
-  ],
-  "content": {
-    "overview": "registry-content/overview.md",
-    "changelog": "CHANGELOG.md"
-  }
+  ]
 }

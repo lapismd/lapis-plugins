@@ -24,12 +24,14 @@ export async function createNostrReleaseCandidate(options) {
     json(path.join(packageRoot, "registry.json")),
     json(path.resolve(options.releaseManifestPath)),
   ]);
+  if (packageJson.private === true)
+    throw new Error("Private plugin is parked and cannot be released.");
   const sourceCommit = required(lapisRelease.source?.commit, "source commit");
   const repository = required(options.repository, "repository");
   const releaseTag = required(release.releaseTag, "release tag");
   const payloadName = required(release.payloadName, "payload name");
   const releaseBase = `https://github.com/${repository}/releases/download/${encodeURIComponent(
-    releaseTag
+    releaseTag,
   )}/`;
   const artifactUrl = new URL(payloadName, releaseBase).toString();
   const manifestName = `${payloadName}.manifest.json`;
@@ -104,14 +106,14 @@ export async function createNostrReleaseCandidate(options) {
         : {
             releaseSequence: requiredDecimal(
               lineage.releaseSequence,
-              "release sequence"
+              "release sequence",
             ),
             ...(lineage.previousReleaseEventId === undefined
               ? {}
               : {
                   previousReleaseEventId: requiredEventId(
                     lineage.previousReleaseEventId,
-                    "previous release event id"
+                    "previous release event id",
                   ),
                 }),
           }),
@@ -152,7 +154,7 @@ export async function createNostrReleaseCandidate(options) {
     manifestSize: manifestBytes.byteLength,
   };
   const candidateId = digest(
-    textEncoder.encode(canonicalJson(candidateCoordinates))
+    textEncoder.encode(canonicalJson(candidateCoordinates)),
   );
   const signingRequest = {
     schema: "lapis.registry.publisher-signing-request/1",
@@ -171,14 +173,14 @@ export async function createNostrReleaseCandidate(options) {
     manifest.id,
     attachment,
     createdAt,
-    signingRequest.message
+    signingRequest.message,
   );
 
   const releaseDirectory = path.dirname(options.releaseManifestPath);
   const manifestPath = path.join(releaseDirectory, manifestName);
   const requestPath = path.join(
     releaseDirectory,
-    `${payloadName}.publisher-request.json`
+    `${payloadName}.publisher-request.json`,
   );
   await Promise.all([
     writeFile(manifestPath, manifestContent),
@@ -228,7 +230,7 @@ function links(packageJson, registry) {
         typeof packageJson.bugs === "string"
           ? packageJson.bugs
           : packageJson.bugs?.url,
-    }).filter(([, value]) => typeof value === "string" && value.length > 0)
+    }).filter(([, value]) => typeof value === "string" && value.length > 0),
   );
 }
 

@@ -3,6 +3,50 @@
 Each plugin has an independent version and package-scoped Git tag such as
 `graph@0.1.0`. Changesets has no fixed or linked package groups.
 
+The first implementation publishes the signed static catalog at
+`https://registry.lapis.md/v2/index.json`. `release.yml` is the static route;
+`release-nostr.yml` retains the deferred relay route. Both activation gates
+remain closed until explicitly approved.
+
+Changesets sets the selected package versions. CI builds npm tarballs and runtime
+payloads from the same commit, signs deterministic archives with the existing
+app-pinned Ed25519 release key, reproduces them, and writes
+`.release/release-plan.json`. All approved artifact checksums are verified before
+publication starts. The workflow uses the digest-pinned blocking CI environment.
+
+After approval, npm publishes through OIDC, GitHub receives the exact package-tagged
+archive and checksum, and a scoped GitHub App dispatches the selected coordinates
+to `lapismd/plugin-registry`. The registry verifies the assets and pinned source
+metadata and opens a review PR. After the first V2 cutover approval, validated
+registry PR merges deploy Astro and the signed catalog automatically. V1 remains
+archived.
+
+V2 `registry.json` contains presentation and media fields without README or
+Markdown references. Structured version notes use the exact Changesets
+`CHANGELOG.md` section or a validated `releases[version].changelog` override
+with title, description and tags. Notes are never silently truncated.
+
+## Parked Community plugin
+
+`@lapis-notes/community` is parked for this release. Its package manifest has
+`private: true`, the authoritative parking marker. The active package catalog
+excludes private plugins from build artifacts, packing, media capture, metadata
+checks and dispatch. The pnpm workspace excludes `packages/community` from
+recursive build/check/test and Changesets; Storybook selects active directories.
+Both release workflows omit Community, and publication rejects stale plans
+containing its coordinates. The local registry excludes private source packages.
+Lapis Notes omits its constructor, styles and dependency from the shared profile.
+
+Source and prior test evidence remain retained. The shared
+`@lapismd/lapis-community` library and registry schema remain active dependencies.
+
+To re-enable Community, remove its private flag and workspace exclusion, restore
+the two workflow selections and the app profile
+integration, and update the parking regression expectations and specifications.
+Then complete its package, browser/accessibility and release-artifact gates and
+review its registry metadata before including it in a release. Do not treat
+historical passing evidence as current release qualification.
+
 ## Artifacts
 
 One verified source commit and version produce:
@@ -75,3 +119,18 @@ version first, prove that its public tarball works in a clean registry-only
 consumer, and then deprecate the affected bad version with a message pointing
 to the replacement. Delete a GitHub release or package-scoped tag only when it
 represents the bad artifact and no published registry entry depends on it.
+
+## Deferred publication
+
+The operator has deferred the Plugins release and Nostr registry renewal.
+Both `release.yml` and `renew-registry-heads.yml` remain in source, with every
+job requiring `NOSTR_RELEASE_ENABLED=true`. The repository variable is false,
+and both workflows are manually disabled in GitHub Actions.
+
+To resume, configure the public OIDC signer URL and audience, relay URLs and
+quorum, publisher and curator public keys, and authority epoch. Complete the
+existing framework-publication, audit, consumer, artifact and protected
+curation gates, then obtain approval to set the variable to true and enable
+both workflows. npm publication, signed archives and registry events remain
+part of the same full release path. Specification Pages deployments remain
+independent of this release gate.

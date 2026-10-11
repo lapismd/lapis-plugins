@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { registryChangelogFromMarkdown } from "@lapismd/lapis-community/registry/schema";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -29,7 +30,7 @@ const allowedKeys = new Set([
   "appearance",
   "media",
   "gallery",
-  "content",
+  "releases",
 ]);
 const allowedIcons = new Set([
   "bookmark",
@@ -77,8 +78,8 @@ for (const plugin of pluginPackages) {
     if (!allowedKeys.has(key))
       findings.push(`${plugin.directory}: unsupported registry field ${key}`);
   }
-  if (source.schemaVersion !== 1) {
-    findings.push(`${plugin.directory}: registry schemaVersion must be 1`);
+  if (source.schemaVersion !== 2) {
+    findings.push(`${plugin.directory}: registry schemaVersion must be 2`);
   }
   validateStringList(plugin.directory, "categories", source.categories, {
     maxItems: 8,
@@ -102,52 +103,22 @@ for (const plugin of pluginPackages) {
     source.gallery,
     mediaPaths
   );
-  const contentKeys = Object.keys(source.content ?? {});
-  if (
-    contentKeys.length !== 2 ||
-    !contentKeys.includes("overview") ||
-    !contentKeys.includes("changelog")
-  ) {
+  if (source.content !== undefined)
     findings.push(
-      `${plugin.directory}: content must define overview and changelog only`
+      `${plugin.directory}: V2 source metadata must not contain Markdown references`
     );
-  }
-  if (source.content?.overview !== registryOverviewPath) {
-    findings.push(
-      `${plugin.directory}: overview must use ${registryOverviewPath}`
-    );
-  }
-  for (const [kind, relativePath] of Object.entries(source.content ?? {})) {
-    if (!isSafeMarkdownPath(relativePath)) {
-      findings.push(
-        `${plugin.directory}: unsafe ${kind} Markdown path ${String(
-          relativePath
-        )}`
-      );
-      continue;
-    }
+  for (const [version, release] of Object.entries(source.releases ?? {})) {
     try {
-      const file = await stat(path.join(packageRoot, relativePath));
-      if (!file.isFile())
-        findings.push(`${plugin.directory}: ${relativePath} is not a file`);
-      if (file.size > maxMarkdownBytes) {
-        findings.push(
-          `${plugin.directory}: ${relativePath} exceeds ${maxMarkdownBytes} bytes`
-        );
-      }
-      if (kind === "overview") {
-        const markdown = await readFile(
-          path.join(packageRoot, relativePath),
-          "utf8"
-        );
-        if (packageInstallInstruction.test(markdown)) {
-          findings.push(
-            `${plugin.directory}: registry overview contains package installation instructions`
-          );
-        }
-      }
-    } catch {
-      findings.push(`${plugin.directory}: missing ${relativePath}`);
+      registryChangelogFromMarkdown(
+        plugin.pluginId,
+        version,
+        "",
+        release.changelog
+      );
+    } catch (error) {
+      findings.push(
+        `${plugin.directory}: invalid release notes for ${version}: ${error.message}`
+      );
     }
   }
 }

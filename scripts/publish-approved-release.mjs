@@ -7,6 +7,8 @@ import path from "node:path";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 
+import { assertReleaseIsActive } from "./package-catalog.mjs";
+
 const execFileAsync = promisify(execFile);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const scriptPath = fileURLToPath(import.meta.url);
@@ -19,17 +21,49 @@ export async function main(args) {
   const options = parseOptions(args);
   requireApproval();
   const plan = JSON.parse(
-    await readFile(path.join(root, ".release/release-plan.json"), "utf8")
+    await readFile(path.join(root, ".release/release-plan.json"), "utf8"),
   );
   if (!plan.production) {
     throw new Error("Refusing to publish a non-production release plan.");
   }
   const releases = selectReleases(plan.releases, options.selectors);
+  for (const release of releases) await verifyApprovedArtifacts(release);
 
   for (const release of releases) {
     await publishNpm(release);
     await publishGitHubRelease(release, options);
     console.log(`Published ${release.packageName}@${release.version}.`);
+  }
+}
+
+export async function verifyApprovedArtifacts(release, directory = root) {
+  const references = [
+    release.npm,
+    release.bundle,
+    release.payload,
+    release.nostr?.manifest,
+  ].filter(Boolean);
+  for (const reference of references) {
+    const bytes = await readFile(path.resolve(directory, reference.path));
+    if (
+      createHash("sha256").update(bytes).digest("hex") !== reference.sha256 ||
+      bytes.byteLength !== reference.size
+    ) {
+      throw new Error(
+        `${release.pluginId}: approved artifact checksum or size mismatch: ${reference.path}`,
+      );
+    }
+    if (reference.checksumPath) {
+      const checksum = await readFile(
+        path.resolve(directory, reference.checksumPath),
+        "utf8",
+      );
+      if (
+        checksum.trim() !==
+        `${reference.sha256}  ${path.basename(reference.path)}`
+      )
+        throw new Error("Approved checksum sidecar mismatch.");
+    }
   }
 }
 
@@ -55,18 +89,18 @@ async function publishNpm(release) {
   if (existing) {
     if (existing !== expectedIntegrity) {
       throw new Error(
-        `${release.packageName}@${release.version} exists with different npm integrity.`
+        `${release.packageName}@${release.version} exists with different npm integrity.`,
       );
     }
     console.log(
-      `${release.packageName}@${release.version} already matches npm.`
+      `${release.packageName}@${release.version} already matches npm.`,
     );
     return;
   }
   await execFileAsync(
     "npm",
     ["publish", tarball, "--access", "public", "--provenance"],
-    { cwd: root, env: process.env, maxBuffer: 20 * 1024 * 1024 }
+    { cwd: root, env: process.env, maxBuffer: 20 * 1024 * 1024 },
   );
 }
 
@@ -80,7 +114,7 @@ async function npmIntegrity(release) {
         "dist.integrity",
         "--json",
       ],
-      { cwd: root, env: process.env }
+      { cwd: root, env: process.env },
     );
     return JSON.parse(stdout);
   } catch (error) {
@@ -90,12 +124,26 @@ async function npmIntegrity(release) {
 }
 
 async function publishGitHubRelease(release, options) {
+  if (release.trust === "static-ed25519") {
+    const bundle = path.join(root, release.bundle.path);
+    const bytes = await readFile(bundle);
+    if (
+      createHash("sha256").update(bytes).digest("hex") !==
+        release.bundle.sha256 ||
+      bytes.byteLength !== release.bundle.size
+    )
+      throw new Error("Static archive does not match the approved plan.");
+    return publishGitHubAssets(release, options, [
+      bundle,
+      path.join(root, release.bundle.checksumPath),
+    ]);
+  }
   const payload = path.join(root, release.payload.path);
   const payloadChecksum = path.join(root, release.payload.checksumPath);
   const bundle = path.join(
     root,
-    path.dirname(release.payload.path),
-    release.assetName
+    path.dirname((release.bundle ?? release.payload).path),
+    release.assetName,
   );
   const bundleChecksum = `${bundle}.sha256`;
   const releaseAssets = [
@@ -115,14 +163,20 @@ async function publishGitHubRelease(release, options) {
       path.join(
         root,
         path.dirname(release.payload.path),
-        `${release.assetName}.${suffix}.json`
-      )
+        `${release.assetName}.${suffix}.json`,
+      ),
     ),
   ];
+  return publishGitHubAssets(release, options, releaseAssets);
+}
+
+async function publishGitHubAssets(release, options, releaseAssets) {
   const exists = await commandSucceeds("gh", [
     "release",
     "view",
     release.releaseTag,
+    "--repo",
+    release.repository,
   ]);
   if (!exists) {
     await execFileAsync(
@@ -131,6 +185,8 @@ async function publishGitHubRelease(release, options) {
         "release",
         "create",
         release.releaseTag,
+        "--repo",
+        release.repository,
         ...releaseAssets,
         "--target",
         release.sourceCommit,
@@ -139,7 +195,7 @@ async function publishGitHubRelease(release, options) {
         "--notes",
         `First-party Lapis plugin ${release.pluginId} ${release.version}.`,
       ],
-      { cwd: root, env: process.env, maxBuffer: 20 * 1024 * 1024 }
+      { cwd: root, env: process.env, maxBuffer: 20 * 1024 * 1024 },
     );
     return;
   }
@@ -148,8 +204,16 @@ async function publishGitHubRelease(release, options) {
     await assertRegistryDoesNotContainRelease(release);
     await execFileAsync(
       "gh",
-      ["release", "upload", release.releaseTag, ...releaseAssets, "--clobber"],
-      { cwd: root, env: process.env, maxBuffer: 20 * 1024 * 1024 }
+      [
+        "release",
+        "upload",
+        release.releaseTag,
+        ...releaseAssets,
+        "--clobber",
+        "--repo",
+        release.repository,
+      ],
+      { cwd: root, env: process.env, maxBuffer: 20 * 1024 * 1024 },
     );
   }
 
@@ -161,8 +225,16 @@ async function verifyGitHubReleaseAssets(release, releaseAssets) {
   try {
     await execFileAsync(
       "gh",
-      ["release", "download", release.releaseTag, "--dir", directory],
-      { cwd: root, env: process.env, maxBuffer: 20 * 1024 * 1024 }
+      [
+        "release",
+        "download",
+        release.releaseTag,
+        "--dir",
+        directory,
+        "--repo",
+        release.repository,
+      ],
+      { cwd: root, env: process.env, maxBuffer: 20 * 1024 * 1024 },
     );
     for (const expected of releaseAssets) {
       const remote = path.join(directory, path.basename(expected));
@@ -173,8 +245,8 @@ async function verifyGitHubReleaseAssets(release, releaseAssets) {
       if (!expectedBytes.equals(remoteBytes)) {
         throw new Error(
           `${release.releaseTag} has a different ${path.basename(
-            expected
-          )} asset.`
+            expected,
+          )} asset.`,
         );
       }
     }
@@ -187,36 +259,43 @@ export async function assertRegistryDoesNotContainRelease(
   release,
   {
     fetchImpl = fetch,
-    baseUrl = process.env.LAPIS_REGISTRY_SOURCE_BASE_URL ??
-      "https://raw.githubusercontent.com/lapismd/plugin-registry/main/generated/v1/plugins",
-  } = {}
+    baseUrl = process.env.LAPIS_REGISTRY_SOURCE_BASE_URL,
+  } = {},
 ) {
-  const response = await fetchImpl(
-    `${baseUrl.replace(/\/$/, "")}/${encodeURIComponent(
-      release.pluginId
-    )}.json`,
-    { headers: { Accept: "application/json" } }
-  );
-  if (response.status === 404) return;
-  if (!response.ok) {
-    throw new Error(
-      `Cannot verify registry replacement safety for ${release.pluginId}: ${response.status}.`
+  const baseUrls = baseUrl
+    ? [baseUrl]
+    : ["v1", "v2"].map(
+        (version) =>
+          `https://raw.githubusercontent.com/lapismd/plugin-registry/main/generated/${version}/plugins`,
+      );
+  for (const baseUrl of baseUrls) {
+    const response = await fetchImpl(
+      `${baseUrl.replace(/\/$/, "")}/${encodeURIComponent(
+        release.pluginId,
+      )}.json`,
+      { headers: { Accept: "application/json" } },
     );
-  }
-  const detail = await response.json();
-  if (!detail || typeof detail !== "object" || Array.isArray(detail)) {
-    throw new Error(
-      `Cannot verify registry replacement safety for ${release.pluginId}: invalid detail metadata.`
-    );
-  }
-  if (
-    detail.versions &&
-    typeof detail.versions === "object" &&
-    Object.hasOwn(detail.versions, release.version)
-  ) {
-    throw new Error(
-      `${release.pluginId}@${release.version} is already registry-published; publish a fixed patch instead of replacing its GitHub assets.`
-    );
+    if (response.status === 404) continue;
+    if (!response.ok) {
+      throw new Error(
+        `Cannot verify registry replacement safety for ${release.pluginId}: ${response.status}.`,
+      );
+    }
+    const detail = await response.json();
+    if (!detail || typeof detail !== "object" || Array.isArray(detail)) {
+      throw new Error(
+        `Cannot verify registry replacement safety for ${release.pluginId}: invalid detail metadata.`,
+      );
+    }
+    if (
+      detail.versions &&
+      typeof detail.versions === "object" &&
+      Object.hasOwn(detail.versions, release.version)
+    ) {
+      throw new Error(
+        `${release.pluginId}@${release.version} is already registry-published; publish a fixed patch instead of replacing its GitHub assets.`,
+      );
+    }
   }
 }
 
@@ -247,7 +326,7 @@ export function parseOptions(args) {
         ...value
           .split(",")
           .map((selector) => selector.trim())
-          .filter(Boolean)
+          .filter(Boolean),
       );
       options.pluginsExplicit = true;
     } else if (arg === "--replace-github-assets") {
@@ -262,13 +341,14 @@ export function parseOptions(args) {
   }
   if (options.replaceGithubAssets && !options.pluginsExplicit) {
     throw new Error(
-      "--replace-github-assets requires an explicit --plugins selection."
+      "--replace-github-assets requires an explicit --plugins selection.",
     );
   }
   return options;
 }
 
 export function selectReleases(releases, selectors) {
+  for (const release of releases) assertReleaseIsActive(release);
   if (selectors.length === 1 && selectors[0] === "all") return releases;
   const selected = new Set();
   for (const selector of selectors) {
@@ -277,7 +357,7 @@ export function selectReleases(releases, selectors) {
         release.packageName,
         release.pluginId,
         release.releaseTag.split("@")[0],
-      ].includes(selector)
+      ].includes(selector),
     );
     if (!match) throw new Error(`No release matches ${selector}.`);
     selected.add(match);

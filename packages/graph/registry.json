@@ -1,6 +1,6 @@
 {
   "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "categories": ["graph", "visualization"],
   "highlights": [
     "Explore global and local relationships across notes, tags, and attachments.",
@@ -145,9 +145,5 @@
         ]
       }
     }
-  ],
-  "content": {
-    "overview": "registry-content/overview.md",
-    "changelog": "CHANGELOG.md"
-  }
+  ]
 }

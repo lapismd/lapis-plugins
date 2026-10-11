@@ -8,6 +8,7 @@ storybook-static/
 **/.svelte-kit/
 **/.cursor/
 .release/
+.local/
 spec/book/
 .visual-delta/cache/
 *.tsbuildinfo
