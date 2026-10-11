@@ -13,9 +13,7 @@ import {
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { svelte, vitePreprocess } from "@sveltejs/vite-plugin-svelte";
-import {
-  build as viteBuild,
-} from "vite";
+import { build as viteBuild } from "vite";
 
 import {
   buildPluginPayload,
@@ -28,8 +26,13 @@ import {
 } from "./package-catalog.mjs";
 import {
   assertRendererCompilerVersion,
+  assertRendererHostVersion,
+  rendererHostExternalizationPlugin,
+  assertWorkspaceHostDependencies,
   isPluginSelfReference,
   pluginRuntimeViteBase,
+  pluginRuntimeBrowserDefines,
+  pluginRuntimeEntryBuildOptions,
   rendererCompilerVersionFromLockfile,
 } from "./lib/runtime-host-modules.mjs";
 import { resolveWorkerLimit, runBoundedWorkers } from "./lib/concurrency.mjs";
@@ -39,13 +42,13 @@ import { resolveSourceCommit } from "./lib/source-commit.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const expectedRendererVersion = rendererCompilerVersionFromLockfile(
-  await readFile(path.join(root, "pnpm-lock.yaml"), "utf8")
+  await readFile(path.join(root, "pnpm-lock.yaml"), "utf8"),
 );
 const installedRenderer = JSON.parse(
   await readFile(
     path.join(root, "node_modules", "svelte", "package.json"),
-    "utf8"
-  )
+    "utf8",
+  ),
 );
 assertRendererCompilerVersion({
   expected: expectedRendererVersion,
@@ -68,7 +71,7 @@ await mkdir(runtimeRoot, { recursive: true });
 const workerLimit = resolveWorkerLimit("LAPIS_PLUGIN_BUILD_WORKERS", 2);
 const results = await runBoundedWorkers(selected, workerLimit, buildPlugin);
 for (const result of [...results].sort((left, right) =>
-  left.packageName.localeCompare(right.packageName)
+  left.packageName.localeCompare(right.packageName),
 )) {
   console.log(result.log);
 }
@@ -76,29 +79,39 @@ for (const result of [...results].sort((left, right) =>
 async function buildPlugin(plugin) {
   const packageRoot = path.join(root, "packages", plugin.directory);
   const packageJson = JSON.parse(
-    await readFile(path.join(packageRoot, "package.json"), "utf8")
+    await readFile(path.join(packageRoot, "package.json"), "utf8"),
   );
   const manifest = JSON.parse(
-    await readFile(path.join(packageRoot, "manifest.json"), "utf8")
+    await readFile(path.join(packageRoot, "manifest.json"), "utf8"),
   );
   if (
     packageJson.version !== manifest.version ||
     manifest.id !== plugin.pluginId
   ) {
     throw new Error(
-      `${plugin.packageName} package and runtime metadata differ.`
+      `${plugin.packageName} package and runtime metadata differ.`,
     );
   }
 
+  assertWorkspaceHostDependencies(
+    packageJson,
+    manifest.lapis.runtime.entries.workspace.sharedDependencies,
+  );
+
+  assertRendererHostVersion(
+    manifest.lapis.runtime.entries.workspace.sharedDependencies,
+    expectedRendererVersion,
+  );
+
   const runtimeDir = path.join(
     runtimeRoot,
-    `${plugin.pluginId}-${packageJson.version}`
+    `${plugin.pluginId}-${packageJson.version}`,
   );
   await rm(runtimeDir, { recursive: true, force: true });
   await buildRuntime(plugin, packageRoot, runtimeDir, manifest);
   await copyFile(
     path.join(packageRoot, "manifest.json"),
-    path.join(runtimeDir, "manifest.json")
+    path.join(runtimeDir, "manifest.json"),
   );
   const stylesPath = path.join(runtimeDir, "styles.css");
   if (!existsSync(stylesPath)) await writeFile(stylesPath, "");
@@ -131,19 +144,19 @@ async function buildPlugin(plugin) {
   await rm(reproductionPath, { force: true });
   if (!first.equals(second)) {
     throw new Error(
-      `${plugin.pluginId} bundle reproduction was not deterministic.`
+      `${plugin.pluginId} bundle reproduction was not deterministic.`,
     );
   }
   const checksum = createHash("sha256").update(first).digest("hex");
   await writeFile(
     `${built.bundlePath}.sha256`,
-    `${checksum}  ${path.basename(built.bundlePath)}\n`
+    `${checksum}  ${path.basename(built.bundlePath)}\n`,
   );
   return {
     packageName: plugin.packageName,
     log: `${plugin.packageName}@${packageJson.version}: ${path.relative(
       root,
-      built.bundlePath
+      built.bundlePath,
     )} ${checksum}`,
   };
 }
@@ -153,14 +166,17 @@ async function buildRuntime(plugin, packageRoot, outDir, manifest) {
     ? path.join(packageRoot, "src/lib/index.ts")
     : path.join(packageRoot, "src/index.ts");
   const declaredHostModules = new Set(
-    manifest.lapis.runtime.entries.workspace.sharedDependencies
+    manifest.lapis.runtime.entries.workspace.sharedDependencies,
   );
+  const entryBuildOptions = pluginRuntimeEntryBuildOptions(sourceEntry);
   await viteBuild({
     root: packageRoot,
     base: pluginRuntimeViteBase,
+    define: pluginRuntimeBrowserDefines,
     configFile: false,
     publicDir: false,
     plugins: [
+      rendererHostExternalizationPlugin(expectedRendererVersion),
       svelte({
         preprocess: vitePreprocess(),
         compilerOptions: { runes: undefined },
@@ -177,6 +193,7 @@ async function buildRuntime(plugin, packageRoot, outDir, manifest) {
     },
     worker: { format: "es" },
     build: {
+      ...entryBuildOptions,
       outDir,
       emptyOutDir: true,
       copyPublicDir: false,
@@ -184,13 +201,8 @@ async function buildRuntime(plugin, packageRoot, outDir, manifest) {
       sourcemap: false,
       minify: false,
       target: "es2022",
-      lib: {
-        entry: sourceEntry,
-        formats: ["es"],
-        fileName: () => "main.mjs",
-        cssFileName: "styles",
-      },
       rollupOptions: {
+        ...entryBuildOptions.rollupOptions,
         external: (specifier) =>
           !isPluginSelfReference(plugin.packageName, specifier) &&
           isApprovedHostModule(specifier),
@@ -210,32 +222,34 @@ async function buildRuntime(plugin, packageRoot, outDir, manifest) {
   const mainPath = path.join(outDir, "main.mjs");
   if (!existsSync(mainPath)) {
     const candidate = (await readdir(outDir)).find((file) =>
-      file.endsWith(".mjs")
+      file.endsWith(".mjs"),
     );
     if (!candidate)
       throw new Error(`${plugin.packageName} did not emit an ESM entry.`);
     await rename(path.join(outDir, candidate), mainPath);
   }
   const bareImportsByFile = await scanRuntimeBareImports(outDir);
+  const findings = [];
   for (const [file, specifiers] of bareImportsByFile) {
     for (const specifier of specifiers) {
       if (!isApprovedHostModule(specifier)) {
-        throw new Error(
-          `${plugin.packageName} left non-host dependency ${specifier} external in ${file}. Plugin ESM runtime assets must bundle non-host dependencies or rewrite imports to relative URLs.`
+        findings.push(
+          `${plugin.packageName} left non-host dependency ${specifier} external in ${file}. Plugin ESM runtime assets must bundle non-host dependencies or rewrite imports to relative URLs.`,
         );
       }
       if (!declaredHostModules.has(specifier)) {
-        throw new Error(
-          `${plugin.packageName} imported host module ${specifier} in ${file} without declaring it as a shared dependency.`
+        findings.push(
+          `${plugin.packageName} imported host module ${specifier} in ${file} without declaring it as a shared dependency.`,
         );
       }
     }
   }
+  if (findings.length) throw new Error([...new Set(findings)].join("\n"));
 }
 
 function isApprovedHostModule(specifier) {
   return approvedWorkspaceHostModules.some((pattern) =>
-    pattern.test(specifier)
+    pattern.test(specifier),
   );
 }
 

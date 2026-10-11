@@ -1,3 +1,4 @@
+import { rendererHostModulePattern } from "./lib/svelte-runtime-contract.mjs";
 import { readFileSync } from "node:fs";
 
 const allPluginPackages = [
@@ -103,12 +104,31 @@ export const packageNames = new Set(
 export const frameworkPackageVersions = new Map([
   ["@lapis-notes/api", "^0.1.0"],
   ["@lapis-notes/file-explorer", "^0.1.0"],
-  ["@lapis-notes/language-service", "^0.1.0"],
+  ["@lapis-notes/language-service", "^0.1.1"],
   ["@lapis-notes/ui", "^0.1.0"],
   ["@lapis-notes/workspace", "^0.1.0"],
 ]);
 
+// These editor runtimes exchange class instances, facets and parser node props
+// with API editor helpers. Grammar packages remain plugin-local bundles.
+export const sharedEditorHostModules = new Map([
+  ["@codemirror/autocomplete", "^6.18.6"],
+  ["@codemirror/commands", "^6.8.1"],
+  ["@codemirror/language", "^6.11.3"],
+  ["@codemirror/lint", "^6.8.5"],
+  ["@codemirror/search", "^6.5.11"],
+  ["@codemirror/state", "^6.6.0"],
+  ["@codemirror/view", "^6.42.1"],
+  ["@lezer/common", "^1.5.2"],
+  ["@lezer/highlight", "^1.2.3"],
+  ["@lezer/lr", "^1.4.2"],
+]);
+
 export const approvedWorkspaceHostModules = [
+  rendererHostModulePattern,
+  ...[...sharedEditorHostModules.keys()].map(
+    (specifier) => new RegExp(`^${specifier.replaceAll("/", "\\/")}$`),
+  ),
   /^@lapis-notes\/api(?:\/.*)?$/,
   /^@lapis-notes\/markdown(?:\/.*)?$/,
 ];

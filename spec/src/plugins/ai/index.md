@@ -505,3 +505,13 @@ use the controller connection and never select those legacy execution paths.
 The Local Conversations interaction waits for the dismissed model menu to release
 pointer ownership before operating History, matching the existing waits around
 other closing menus. It must not bypass the browser pointer-interaction check.
+
+LP-SPEC-014 governs the signed runtime editor boundary. This package declares
+`@codemirror/autocomplete`, `@codemirror/commands`, `@codemirror/language`, `@codemirror/state`, `@codemirror/view`, `@lezer/common`, `@lezer/highlight`, `@lezer/lr`
+as shared host modules and portable npm peers. Its bundled language grammars
+reuse these host-owned editor and parser core instances.
+
+The signed runtime declares its compiled Svelte imports through the exact
+compiler-versioned renderer contracts in LP-SPEC-014 and LP-SPEC-047. Host-owned
+components and archived components share that renderer graph; npm package peers
+remain portable.

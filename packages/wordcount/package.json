@@ -23,11 +23,9 @@
     "./styles.css": "./styles.css",
     "./registry.json": "./registry.json"
   },
-  "dependencies": {
-    "@codemirror/state": "^6.4.1",
-    "@codemirror/view": "^6.35.0"
-  },
   "peerDependencies": {
+    "@codemirror/state": "^6.6.0",
+    "@codemirror/view": "^6.42.1",
     "@lapis-notes/api": "^0.1.0"
   },
   "devDependencies": {

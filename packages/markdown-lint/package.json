@@ -25,7 +25,7 @@
   },
   "peerDependencies": {
     "@lapis-notes/api": "^0.1.0",
-    "@lapis-notes/language-service": "^0.1.0"
+    "@lapis-notes/language-service": "^0.1.1"
   },
   "devDependencies": {
     "@sveltejs/package": "^2.5.0",

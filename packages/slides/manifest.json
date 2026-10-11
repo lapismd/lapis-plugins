@@ -20,7 +20,10 @@
           "format": "esm",
           "sharedDependencies": [
             "@lapis-notes/api",
-            "@lapis-notes/markdown/embed"
+            "@lapis-notes/markdown/embed",
+            "svelte/renderer/5.56.10",
+            "svelte/renderer/5.56.10/internal/client",
+            "svelte/renderer/5.56.10/internal/disclose-version"
           ],
           "requiresReloadOnUpdate": false
         }

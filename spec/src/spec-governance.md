@@ -26,12 +26,12 @@ workflow, and repository files map to [Distribution and releases](distribution.m
 and this chapter. Release-security tests cover the tokenless npm workflow,
 approved-release environment, and immutable-version patch rollback policy.
 Package-boundary verification also rejects bundled Lapis host packages and
-requires every externalized Lapis runtime module to resolve through a declared
+requires every externalized Lapis or approved singleton editor runtime module to resolve through a declared
 peer supplied by the consuming application.
 Shared release tooling MUST scan all emitted JavaScript runtime chunks for
-browser bare imports. Only declared Lapis host modules may remain external;
-Svelte, compiler internals, and other non-host imports stay bundled or relative
-so consuming hosts do not need plugin-specific import maps.
+browser bare imports. Only declared Lapis, approved CodeMirror/Lezer and versioned Svelte renderer host modules may remain external;
+Compiler-emitted Svelte imports bind the locked renderer ABI through host-owned
+import maps. Other non-host imports stay bundled or relative.
 Release compiler reproducibility is protected by LP-SPEC-047. The builder reads
 the root frozen lockfile and MUST reject installed Svelte drift before writing
 plugin output.
@@ -160,3 +160,6 @@ including selection, validation and image resolution. The operator state and
 resumption requirements are recorded in `RELEASING.md`; disabling publication
 does not change package versions, relax release checks, or block independently
 published canonical specification sites.
+
+The browser archive producer fixes the production environment constant at build
+time. Emitted dependencies must not require a host-installed Node process shim.

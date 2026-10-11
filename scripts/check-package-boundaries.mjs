@@ -3,7 +3,11 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { pluginPackages } from "./package-catalog.mjs";
+import {
+  pluginPackages,
+  approvedWorkspaceHostModules,
+  sharedEditorHostModules,
+} from "./package-catalog.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const invalidProtocol = /^(?:workspace|link|file):/;
@@ -24,7 +28,8 @@ for (const plugin of pluginPackages) {
     await readFile(path.join(packageRoot, "manifest.json"), "utf8"),
   );
 
-  if (packageJson.private) findings.push(`${plugin.directory}: package is private`);
+  if (packageJson.private)
+    findings.push(`${plugin.directory}: package is private`);
   if (packageJson.name !== plugin.packageName) {
     findings.push(`${plugin.directory}: package name mismatch`);
   }
@@ -35,7 +40,9 @@ for (const plugin of pluginPackages) {
     findings.push(`${plugin.directory}: runtime plugin ID changed`);
   }
   if (typeof manifest.isDesktopOnly !== "boolean") {
-    findings.push(`${plugin.directory}: isDesktopOnly must be an explicit boolean`);
+    findings.push(
+      `${plugin.directory}: isDesktopOnly must be an explicit boolean`,
+    );
   }
   if (packageJson.publishConfig?.access !== "public") {
     findings.push(`${plugin.directory}: package is not configured public`);
@@ -52,7 +59,7 @@ for (const plugin of pluginPackages) {
       }
       if (
         (field === "dependencies" || field === "optionalDependencies") &&
-        name.startsWith("@lapis-notes/")
+        (name.startsWith("@lapis-notes/") || sharedEditorHostModules.has(name))
       ) {
         findings.push(
           `${plugin.directory}: ${field}.${name} must be a peer dependency supplied by the host`,
@@ -60,9 +67,18 @@ for (const plugin of pluginPackages) {
       }
     }
   }
-  for (const sharedDependency of
-    manifest.lapis?.runtime?.entries?.workspace?.sharedDependencies ?? []) {
-    if (!sharedDependency.startsWith("@lapis-notes/")) continue;
+  for (const sharedDependency of manifest.lapis?.runtime?.entries?.workspace
+    ?.sharedDependencies ?? []) {
+    if (
+      !approvedWorkspaceHostModules.some((pattern) =>
+        pattern.test(sharedDependency),
+      )
+    ) {
+      findings.push(
+        `${plugin.directory}: runtime module ${sharedDependency} is not an approved host contract`,
+      );
+      continue;
+    }
     const hostPackage = packageNameFromImport(sharedDependency);
     if (!packageJson.peerDependencies?.[hostPackage]) {
       findings.push(
@@ -82,7 +98,9 @@ for (const plugin of pluginPackages) {
   }
   const runtimeEntry = manifest.lapis?.runtime?.entries?.workspace;
   if (runtimeEntry?.path !== "main.mjs" || runtimeEntry?.format !== "esm") {
-    findings.push(`${plugin.directory}: missing official ESM workspace runtime`);
+    findings.push(
+      `${plugin.directory}: missing official ESM workspace runtime`,
+    );
   }
 }
 
@@ -90,5 +108,7 @@ if (findings.length) {
   console.error(findings.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log(`Verified ${pluginPackages.length} public plugin package boundaries.`);
+  console.log(
+    `Verified ${pluginPackages.length} public plugin package boundaries.`,
+  );
 }

@@ -167,3 +167,13 @@ database.
 Markdown registry-media Autodocs use the shared full-workspace framing
 governed by LP-SPEC-044, show public plugin setup under LP-SPEC-045, and
 provide component and story descriptions under LP-SPEC-046.
+
+LP-SPEC-014 governs the signed runtime editor boundary. This package declares
+`@codemirror/autocomplete`, `@codemirror/commands`, `@codemirror/language`, `@codemirror/lint`, `@codemirror/search`, `@codemirror/state`, `@codemirror/view`, `@lezer/common`, `@lezer/highlight`, `@lezer/lr`
+as shared host modules and portable npm peers. Its bundled language grammars
+reuse these host-owned editor and parser core instances.
+
+The signed runtime declares its compiled Svelte imports through the exact
+compiler-versioned renderer contracts in LP-SPEC-014 and LP-SPEC-047. Host-owned
+components and archived components share that renderer graph; npm package peers
+remain portable.

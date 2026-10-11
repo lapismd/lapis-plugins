@@ -20,7 +20,22 @@
           "sharedDependencies": [
             "@lapis-notes/api",
             "@lapis-notes/api/agent-skills",
-            "@lapis-notes/api/agent-tools"
+            "@lapis-notes/api/agent-tools",
+            "@codemirror/autocomplete",
+            "@codemirror/commands",
+            "@codemirror/language",
+            "@codemirror/state",
+            "@codemirror/view",
+            "@lezer/common",
+            "@lezer/highlight",
+            "@lezer/lr",
+            "svelte/renderer/5.56.10",
+            "svelte/renderer/5.56.10/attachments",
+            "svelte/renderer/5.56.10/events",
+            "svelte/renderer/5.56.10/internal/client",
+            "svelte/renderer/5.56.10/internal/disclose-version",
+            "svelte/renderer/5.56.10/internal/flags/legacy",
+            "svelte/renderer/5.56.10/reactivity"
           ],
           "requiresReloadOnUpdate": false
         }

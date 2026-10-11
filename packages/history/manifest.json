@@ -19,7 +19,14 @@
           "format": "esm",
           "sharedDependencies": [
             "@lapis-notes/api",
-            "@lapis-notes/api/workspace-host"
+            "@lapis-notes/api/workspace-host",
+            "svelte/renderer/5.56.10",
+            "svelte/renderer/5.56.10/attachments",
+            "svelte/renderer/5.56.10/events",
+            "svelte/renderer/5.56.10/internal/client",
+            "svelte/renderer/5.56.10/internal/disclose-version",
+            "svelte/renderer/5.56.10/reactivity",
+            "svelte/renderer/5.56.10/store"
           ],
           "requiresReloadOnUpdate": false
         }

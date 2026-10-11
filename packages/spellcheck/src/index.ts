@@ -56,6 +56,10 @@ export class SpellcheckPlugin extends Plugin {
       callback: () => this.forgetIgnored(),
     });
     const provider = createSpellcheckProviderForApp(this.app);
+    let active = true;
+    this.register(() => {
+      active = false;
+    });
     this.registerLapisServiceProvider({
       id: SPELLCHECK_PROVIDER_ID,
       service: "language-service",
@@ -68,12 +72,22 @@ export class SpellcheckPlugin extends Plugin {
         capabilities: { diagnostics: true, codeActions: true },
       },
     });
-    void provider.warmup().catch((error) => {
-      this.app.languageServices.reportProviderFailure(
-        `${SPELLCHECK_PLUGIN_ID}:${SPELLCHECK_PROVIDER_ID}`,
-        error,
-      );
-    });
+    void provider
+      .warmup()
+      .then(() => {
+        if (active) {
+          this.app.languageServices.invalidateDiagnostics(
+            `${SPELLCHECK_PLUGIN_ID}:${SPELLCHECK_PROVIDER_ID}`,
+          );
+        }
+      })
+      .catch((error) => {
+        if (!active) return;
+        this.app.languageServices.reportProviderFailure(
+          `${SPELLCHECK_PLUGIN_ID}:${SPELLCHECK_PROVIDER_ID}`,
+          error,
+        );
+      });
     this.refreshStatus();
     this.register(() => this.status.hide());
     this.registerEvent(
@@ -127,11 +141,7 @@ export class SpellcheckPlugin extends Plugin {
   showStatusMenu(): void {
     const settings = readSpellcheckSettings(this.app);
     const menu = new Menu().dropdown();
-    this.status.appendMenu(
-      menu,
-      settings.dialect,
-      settings.automaticChecking,
-    );
+    this.status.appendMenu(menu, settings.dialect, settings.automaticChecking);
     const host =
       typeof document === "undefined"
         ? null

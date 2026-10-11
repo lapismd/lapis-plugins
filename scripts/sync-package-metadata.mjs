@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import {
   frameworkPackageVersions,
   pluginPackages,
+  sharedEditorHostModules,
 } from "./package-catalog.mjs";
 
 const repositoryRoot = path.resolve(
@@ -19,10 +20,98 @@ assert.ok(
   "Usage: sync-package-metadata.mjs --check|--write",
 );
 
+import { versionedRendererHostSpecifier } from "./lib/svelte-runtime-contract.mjs";
+import { rendererCompilerVersionFromLockfile } from "./lib/runtime-host-modules.mjs";
+const rendererVersion = rendererCompilerVersionFromLockfile(
+  await readFile(path.join(repositoryRoot, "pnpm-lock.yaml"), "utf8"),
+);
+const rendererSharedDependencies = new Map(
+  Object.entries({
+    ai: [
+      "svelte",
+      "svelte/attachments",
+      "svelte/events",
+      "svelte/internal/client",
+      "svelte/internal/disclose-version",
+      "svelte/internal/flags/legacy",
+      "svelte/reactivity",
+      "svelte/store",
+    ],
+    bases: [
+      "svelte",
+      "svelte/attachments",
+      "svelte/events",
+      "svelte/internal/client",
+      "svelte/internal/disclose-version",
+      "svelte/internal/flags/legacy",
+      "svelte/reactivity",
+    ],
+    bookmarks: [
+      "svelte",
+      "svelte/attachments",
+      "svelte/events",
+      "svelte/internal/client",
+      "svelte/internal/disclose-version",
+      "svelte/internal/flags/legacy",
+      "svelte/reactivity",
+    ],
+    graph: [
+      "svelte",
+      "svelte/attachments",
+      "svelte/events",
+      "svelte/internal/client",
+      "svelte/internal/disclose-version",
+      "svelte/internal/flags/legacy",
+      "svelte/reactivity",
+    ],
+    history: [
+      "svelte",
+      "svelte/attachments",
+      "svelte/events",
+      "svelte/internal/client",
+      "svelte/internal/disclose-version",
+      "svelte/reactivity",
+      "svelte/store",
+    ],
+    markdown: [
+      "svelte",
+      "svelte/attachments",
+      "svelte/events",
+      "svelte/internal/client",
+      "svelte/internal/disclose-version",
+      "svelte/reactivity",
+    ],
+    "markdown-lint": [],
+    search: [
+      "svelte",
+      "svelte/attachments",
+      "svelte/events",
+      "svelte/internal/client",
+      "svelte/internal/disclose-version",
+      "svelte/internal/flags/legacy",
+      "svelte/reactivity",
+    ],
+    slides: [
+      "svelte",
+      "svelte/internal/client",
+      "svelte/internal/disclose-version",
+    ],
+    "source-editor": [],
+    spellcheck: [],
+    wordcount: [],
+  }),
+);
+
 const descriptions = new Map([
-  ["community", "Nostr community client with host-owned local and remote signing"],
+  [
+    "community",
+    "Nostr community client with host-owned local and remote signing",
+  ],
   ["markdown-lint", "Markdown diagnostics for Lapis applications"],
-  ["markdown", "Markdown editing, preview, metadata, and panels for Lapis applications"],
+  [
+    "markdown",
+    "Markdown editing, preview, metadata, and panels for Lapis applications",
+  ],
   ["source-editor", "Source editing for text, JSON, and YAML files"],
   ["slides", "Presentation mode for Markdown notes"],
   ["spellcheck", "Harper grammar and spelling diagnostics for open notes"],
@@ -108,6 +197,84 @@ const sharedDependencies = new Map([
   ["wordcount", ["@lapis-notes/api"]],
 ]);
 
+const editorSharedDependencies = new Map(
+  Object.entries({
+    ai: [
+      "@codemirror/autocomplete",
+      "@codemirror/commands",
+      "@codemirror/language",
+      "@codemirror/state",
+      "@codemirror/view",
+      "@lezer/common",
+      "@lezer/highlight",
+      "@lezer/lr",
+    ],
+    bases: [
+      "@codemirror/autocomplete",
+      "@codemirror/language",
+      "@codemirror/state",
+      "@codemirror/view",
+      "@lezer/common",
+      "@lezer/highlight",
+      "@lezer/lr",
+    ],
+    bookmarks: [
+      "@codemirror/autocomplete",
+      "@codemirror/commands",
+      "@codemirror/language",
+      "@codemirror/state",
+      "@codemirror/view",
+      "@lezer/common",
+      "@lezer/highlight",
+      "@lezer/lr",
+    ],
+    graph: [
+      "@codemirror/autocomplete",
+      "@codemirror/commands",
+      "@codemirror/language",
+      "@codemirror/lint",
+      "@codemirror/state",
+      "@codemirror/view",
+      "@lezer/common",
+      "@lezer/highlight",
+      "@lezer/lr",
+    ],
+    history: [],
+    markdown: [
+      "@codemirror/autocomplete",
+      "@codemirror/commands",
+      "@codemirror/language",
+      "@codemirror/lint",
+      "@codemirror/search",
+      "@codemirror/state",
+      "@codemirror/view",
+      "@lezer/common",
+      "@lezer/highlight",
+      "@lezer/lr",
+    ],
+    "markdown-lint": [],
+    search: [
+      "@codemirror/autocomplete",
+      "@codemirror/commands",
+      "@codemirror/language",
+      "@codemirror/state",
+      "@codemirror/view",
+      "@lezer/common",
+      "@lezer/highlight",
+      "@lezer/lr",
+    ],
+    slides: [],
+    "source-editor": [
+      "@codemirror/language",
+      "@lezer/common",
+      "@lezer/highlight",
+      "@lezer/lr",
+    ],
+    spellcheck: [],
+    wordcount: ["@codemirror/state", "@codemirror/view"],
+  }),
+);
+
 const findings = [];
 for (const plugin of pluginPackages) {
   const packageRoot = path.join(repositoryRoot, "packages", plugin.directory);
@@ -142,8 +309,18 @@ if (findings.length) {
 }
 
 function normalizeManifest(manifest, plugin, packageVersion) {
-  const packageSharedDependencies = sharedDependencies.get(plugin.directory);
-  assert.ok(packageSharedDependencies, `Missing host modules for ${plugin.directory}`);
+  const declared = sharedDependencies.get(plugin.directory);
+  const editor = editorSharedDependencies.get(plugin.directory);
+  assert.ok(declared && editor, `Missing host modules for ${plugin.directory}`);
+  const packageSharedDependencies = [
+    ...declared,
+    ...editor,
+    ...rendererSharedDependencies
+      .get(plugin.directory)
+      .map((specifier) =>
+        versionedRendererHostSpecifier(specifier, rendererVersion),
+      ),
+  ];
   const lapis = manifest.lapis ?? {};
   return {
     ...manifest,
@@ -213,6 +390,11 @@ function normalizePackage(packageJson, manifest, plugin) {
   normalized.exports = normalizeExports(normalized.exports);
   normalized.scripts = normalizeScripts(packageJson.scripts ?? {});
   moveHostPackagesToPeers(normalized);
+  for (const specifier of editorSharedDependencies.get(plugin.directory) ??
+    []) {
+    normalized.peerDependencies[specifier] =
+      sharedEditorHostModules.get(specifier);
+  }
   for (const field of [
     "dependencies",
     "optionalDependencies",
@@ -231,7 +413,11 @@ function moveHostPackagesToPeers(packageJson) {
   for (const field of ["dependencies", "optionalDependencies"]) {
     const dependencies = { ...(packageJson[field] ?? {}) };
     for (const [name, version] of Object.entries(dependencies)) {
-      if (!name.startsWith("@lapis-notes/")) continue;
+      if (
+        !name.startsWith("@lapis-notes/") &&
+        !sharedEditorHostModules.has(name)
+      )
+        continue;
       peerDependencies[name] = version;
       delete dependencies[name];
     }
@@ -272,11 +458,10 @@ function normalizeScripts(scripts) {
   normalized.publint = "publint";
   normalized.pack = "pnpm pack --pack-destination ../../.release/npm";
   if (normalized.check?.includes("packages/plugins/")) {
-    normalized.check = normalized.check
-      .replace(
-        /pnpm --dir \.\.\/\.\.\/\.\. check:no-tailwind packages\/plugins\/plugin-[^ ]+\/src && /,
-        "",
-      );
+    normalized.check = normalized.check.replace(
+      /pnpm --dir \.\.\/\.\.\/\.\. check:no-tailwind packages\/plugins\/plugin-[^ ]+\/src && /,
+      "",
+    );
   }
   return normalized;
 }
@@ -286,8 +471,7 @@ function normalizeDependencies(dependencies) {
   for (const [name, version] of Object.entries(dependencies).sort(([a], [b]) =>
     a.localeCompare(b),
   )) {
-    normalized[name] = frameworkPackageVersions.get(name) ??
-      version;
+    normalized[name] = frameworkPackageVersions.get(name) ?? version;
   }
   return normalized;
 }

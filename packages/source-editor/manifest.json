@@ -21,7 +21,11 @@
           "sharedDependencies": [
             "@lapis-notes/api",
             "@lapis-notes/api/editor",
-            "@lapis-notes/api/workspace-host"
+            "@lapis-notes/api/workspace-host",
+            "@codemirror/language",
+            "@lezer/common",
+            "@lezer/highlight",
+            "@lezer/lr"
           ],
           "requiresReloadOnUpdate": false
         }

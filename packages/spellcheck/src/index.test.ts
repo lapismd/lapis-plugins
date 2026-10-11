@@ -105,6 +105,7 @@ function createMockApp() {
       },
       languageServices: {
         reportProviderFailure: vi.fn(),
+        invalidateDiagnostics: vi.fn(),
       },
     },
   };
@@ -113,6 +114,49 @@ function createMockApp() {
 describe("SpellcheckPlugin", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  it("invalidates open-document diagnostics when Harper finishes warming", async () => {
+    const { createSpellcheckProviderForApp } = await import("./provider");
+    let ready!: () => void;
+    const warmup = new Promise<void>((resolve) => {
+      ready = resolve;
+    });
+    const mocked = vi.mocked(createSpellcheckProviderForApp);
+    mocked.mockReturnValueOnce({
+      metadata: { id: "spellcheck", languages: ["markdown", "plaintext"] },
+      warmup: () => warmup,
+    } as never);
+    const { app } = createMockApp();
+    const plugin = new SpellcheckPlugin(app as never);
+    await plugin.onload();
+    expect(app.languageServices.invalidateDiagnostics).not.toHaveBeenCalled();
+    ready();
+    await vi.waitFor(() => {
+      expect(app.languageServices.invalidateDiagnostics).toHaveBeenCalledWith(
+        "spellcheck:spellcheck",
+      );
+    });
+  });
+
+  it("does not invalidate diagnostics when Harper finishes after unload", async () => {
+    const { createSpellcheckProviderForApp } = await import("./provider");
+    let ready!: () => void;
+    const warmup = new Promise<void>((resolve) => {
+      ready = resolve;
+    });
+    vi.mocked(createSpellcheckProviderForApp).mockReturnValueOnce({
+      metadata: { id: "spellcheck", languages: ["markdown", "plaintext"] },
+      warmup: () => warmup,
+    } as never);
+    const { app } = createMockApp();
+    const plugin = new SpellcheckPlugin(app as never);
+    await plugin.onload();
+    plugin.unload();
+    ready();
+    await warmup;
+    await Promise.resolve();
+    expect(app.languageServices.invalidateDiagnostics).not.toHaveBeenCalled();
   });
 
   it("registers the language-service provider and status item by default", async () => {
@@ -139,9 +183,8 @@ describe("SpellcheckPlugin", () => {
       "updated",
       expect.any(Function),
     );
-    const onUpdated = vi.mocked(app.configuration.on).mock.calls[0]?.[1] as (
-      event: { key: string },
-    ) => void;
+    const onUpdated = vi.mocked(app.configuration.on).mock
+      .calls[0]?.[1] as (event: { key: string }) => void;
     const refreshStatus = vi.spyOn(plugin, "refreshStatus");
     onUpdated({ key: "spellcheck.dialect" });
     expect(refreshStatus).toHaveBeenCalledOnce();

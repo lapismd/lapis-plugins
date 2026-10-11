@@ -21,6 +21,9 @@ sidecar, and host lifecycle requirements remain defined by their owning
 chapters.
 Lapis API and Language Service host modules are peer-provided by the
 application so the packed plugin shares the host's App and framework identity.
+The portable Language Service peer and release-tool dependency require at least
+published version 0.1.1, whose emitted module-worker constructor replaces the
+older inline worker.
 
 ## Requirements
 

@@ -26,7 +26,23 @@
             "@lapis-notes/api/path",
             "@lapis-notes/api/vault",
             "@lapis-notes/api/workspace-host",
-            "@lapis-notes/markdown/embed"
+            "@lapis-notes/markdown/embed",
+            "@codemirror/autocomplete",
+            "@codemirror/commands",
+            "@codemirror/language",
+            "@codemirror/state",
+            "@codemirror/view",
+            "@lezer/common",
+            "@lezer/highlight",
+            "@lezer/lr",
+            "svelte/renderer/5.56.10",
+            "svelte/renderer/5.56.10/attachments",
+            "svelte/renderer/5.56.10/events",
+            "svelte/renderer/5.56.10/internal/client",
+            "svelte/renderer/5.56.10/internal/disclose-version",
+            "svelte/renderer/5.56.10/internal/flags/legacy",
+            "svelte/renderer/5.56.10/reactivity",
+            "svelte/renderer/5.56.10/store"
           ],
           "requiresReloadOnUpdate": false
         }

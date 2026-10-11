@@ -129,3 +129,8 @@ section for exclude/include globs, tracked extensions, and capture caps.
 
 History registry-media Autodocs use the shared full-workspace framing governed
 by LP-SPEC-044.
+
+The signed runtime declares its compiled Svelte imports through the exact
+compiler-versioned renderer contracts in LP-SPEC-014 and LP-SPEC-047. Host-owned
+components and archived components share that renderer graph; npm package peers
+remain portable.

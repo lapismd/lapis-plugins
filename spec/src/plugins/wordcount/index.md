@@ -69,3 +69,8 @@ Registry metadata uses the shared V2 presentation contract under LP-SPEC-021; st
 
 The TypeScript-only package uses `tsc -p tsconfig.json --noEmit` for its
 `check:types` gate. Svelte component checks apply to packages with Svelte source.
+
+LP-SPEC-014 governs the signed runtime editor boundary. This package declares
+`@codemirror/state`, `@codemirror/view`
+as shared host modules and portable npm peers. Its bundled language grammars
+reuse these host-owned editor and parser core instances.

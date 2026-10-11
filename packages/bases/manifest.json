@@ -24,7 +24,21 @@
             "@lapis-notes/api/editor/core",
             "@lapis-notes/api/editor/extensions/class-highlighter",
             "@lapis-notes/api/icon",
-            "@lapis-notes/api/metadata-value"
+            "@lapis-notes/api/metadata-value",
+            "@codemirror/autocomplete",
+            "@codemirror/language",
+            "@codemirror/state",
+            "@codemirror/view",
+            "@lezer/common",
+            "@lezer/highlight",
+            "@lezer/lr",
+            "svelte/renderer/5.56.10",
+            "svelte/renderer/5.56.10/attachments",
+            "svelte/renderer/5.56.10/events",
+            "svelte/renderer/5.56.10/internal/client",
+            "svelte/renderer/5.56.10/internal/disclose-version",
+            "svelte/renderer/5.56.10/internal/flags/legacy",
+            "svelte/renderer/5.56.10/reactivity"
           ],
           "requiresReloadOnUpdate": false
         }

@@ -62,3 +62,8 @@ Clean Lapis Notes consumer acceptance remains a release gate, not a reason to
 statically bundle Slides into the host application.
 
 Registry metadata uses the shared V2 presentation contract under LP-SPEC-021; static archive publication follows LP-SPEC-012–018 while Nostr publication remains deferred.
+
+The signed runtime declares its compiled Svelte imports through the exact
+compiler-versioned renderer contracts in LP-SPEC-014 and LP-SPEC-047. Host-owned
+components and archived components share that renderer graph; npm package peers
+remain portable.

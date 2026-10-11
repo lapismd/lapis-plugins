@@ -18,7 +18,9 @@
           "path": "main.mjs",
           "format": "esm",
           "sharedDependencies": [
-            "@lapis-notes/api"
+            "@lapis-notes/api",
+            "@codemirror/state",
+            "@codemirror/view"
           ],
           "requiresReloadOnUpdate": false
         }

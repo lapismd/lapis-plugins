@@ -46,3 +46,8 @@ provide component and story descriptions under LP-SPEC-046.
 
 The TypeScript-only package uses `tsc -p tsconfig.json --noEmit` for its
 `check:types` gate. Svelte component checks apply to packages with Svelte source.
+
+LP-SPEC-014 governs the signed runtime editor boundary. This package declares
+`@codemirror/language`, `@lezer/common`, `@lezer/highlight`, `@lezer/lr`
+as shared host modules and portable npm peers. Its bundled language grammars
+reuse these host-owned editor and parser core instances.
