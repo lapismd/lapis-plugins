@@ -18,15 +18,23 @@ deferred.
   Markdown, and Search. Its existing host lane does not verify all 12 release
   archives. Bases acceptance assumes a bundled plugin despite LN-WEB-011
   requiring installed-plugin persistence; its focused test times out.
-- A fresh Notes AI Local Conversations target reproduces one pointer-readiness
-  failure. Waiting for menu teardown repairs the target; complete qualification
-  is running separately.
+- Notes AI Local Conversations is repaired and committed as `d90222f1`: its
+  cold target and all 212 interaction/accessibility stories pass. Root check,
+  unit, build, specification, and static Storybook build lanes pass.
+- An ignored local fixture now contains 12 signed, reproduced archives and a
+  signed schema-valid V2 catalog with source-owned media. The Notes API verifies
+  its catalog, all 12 details, and every archive signature, hash, and file list.
+  This is metadata/artifact acceptance; app installation and behavior remain
+  unverified. See [fixture evidence](2026-10-11-local-signed-registry-fixture.md).
 - Desktop verification uses an ignored Deno wrapper with
   `--minimum-dependency-age 0` and a separate ignored lockfile, explicitly
   authorized for local verification. Production dependency policy is retained.
+  Packaging now succeeds, but packaged acceptance still fails: the retry creates
+  its instance endpoint and then times out waiting for workspace readiness.
 - Community's schema candidate still requires full browser qualification and
   safe consolidation of its divergent Jujutsu change. Its shared library is
   needed even while the Community plugin is parked.
+  Fresh Inbox/Skeleton targets reproduce two failures before any new repair.
 - The production V1 endpoint returns signed JSON with 11 entries. The V2 URL
   currently returns HTML with HTTP 200; that response is not a deployed V2
   catalog. Existing framework/first-publication variables are true, but these
