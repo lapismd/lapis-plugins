@@ -140,3 +140,10 @@ acceptance accompanies that configuration change.
 The complete interaction lane runs four serial shards with a fresh browser for
 each shard. Files run sequentially within a shard to bound retained browser state
 and resource use; all stories and accessibility assertions remain selected.
+
+Deferred publication retains the release and renewal workflows in source.
+The workflow regression test MUST verify explicit activation on every job,
+including selection, validation and image resolution. The operator state and
+resumption requirements are recorded in `RELEASING.md`; disabling publication
+does not change package versions, relax release checks, or block independently
+published canonical specification sites.

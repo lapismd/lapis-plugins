@@ -27,6 +27,27 @@ const renewalWorkflow = await readFile(
   "utf8"
 );
 
+test("keeps every release and renewal job disabled until explicitly enabled", () => {
+  for (const [name, source] of [
+    ["release", workflow],
+    ["renewal", renewalWorkflow],
+  ]) {
+    const jobs = source.split(/^jobs:\s*$/m)[1];
+    assert.ok(jobs, `${name} workflow declares jobs`);
+    const blocks = [
+      ...jobs.matchAll(/^  ([\w-]+):\n([\s\S]*?)(?=^  [\w-]+:|$(?![\s\S]))/gm),
+    ];
+    assert.ok(blocks.length > 0, `${name} workflow has jobs`);
+    for (const [, job, body] of blocks) {
+      assert.match(
+        body,
+        /^    if: vars\.NOSTR_RELEASE_ENABLED == 'true'$/m,
+        `${name}/${job} requires explicit activation`
+      );
+    }
+  }
+});
+
 test("publishes npm packages through the protected OIDC workflow", () => {
   assert.match(workflow, /id-token:\s*write/);
   assert.match(workflow, /environment:\s*nostr-curation/);

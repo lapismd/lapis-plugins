@@ -100,6 +100,7 @@ env:
 
 jobs:
   selection:
+    if: vars.NOSTR_RELEASE_ENABLED == 'true'
     runs-on: ubuntu-latest
     outputs:
       plugins: ${{ steps.selection.outputs.plugins }}
@@ -167,6 +168,7 @@ jobs:
           echo "Selected plugins: $plugin_list"
 
   image-pin:
+    if: vars.NOSTR_RELEASE_ENABLED == 'true'
     runs-on: ubuntu-latest
     outputs:
       reference: ${{ steps.image.outputs.reference }}
@@ -180,11 +182,13 @@ jobs:
           echo "reference=$reference" >> "$GITHUB_OUTPUT"
 
   validate:
+    if: vars.NOSTR_RELEASE_ENABLED == 'true'
     needs: selection
     uses: ./.github/workflows/ci.yml
     secrets: inherit
 
   production-candidate:
+    if: vars.NOSTR_RELEASE_ENABLED == 'true'
     needs:
       - selection
       - validate
@@ -237,6 +241,7 @@ jobs:
           retention-days: 7
 
   publisher-sign:
+    if: vars.NOSTR_RELEASE_ENABLED == 'true'
     needs:
       - selection
       - production-candidate
@@ -284,6 +289,7 @@ jobs:
           retention-days: 7
 
   curator-sign:
+    if: vars.NOSTR_RELEASE_ENABLED == 'true'
     needs:
       - selection
       - publisher-sign
@@ -334,6 +340,7 @@ jobs:
           retention-days: 7
 
   publish:
+    if: vars.NOSTR_RELEASE_ENABLED == 'true'
     needs:
       - selection
       - validate

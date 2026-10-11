@@ -20,6 +20,7 @@ defaults:
 
 jobs:
   image-pin:
+    if: vars.NOSTR_RELEASE_ENABLED == 'true'
     runs-on: ubuntu-latest
     outputs:
       reference: ${{ steps.image.outputs.reference }}
@@ -33,6 +34,7 @@ jobs:
           echo "reference=$reference" >> "$GITHUB_OUTPUT"
 
   renew:
+    if: vars.NOSTR_RELEASE_ENABLED == 'true'
     needs: image-pin
     runs-on: ubuntu-latest
     timeout-minutes: 15
