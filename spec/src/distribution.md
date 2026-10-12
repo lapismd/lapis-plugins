@@ -127,3 +127,8 @@ in the static CI dependency graph. No Community publication is a static prerequi
 The AI harness catalog repair carries an independent AI patch changeset. Its
 npm package and locally signed review archive must retain identical source and
 version coordinates; local review does not activate publication.
+
+History's comparison-toolbar layout repair carries an independent patch
+Changeset. It changes packaged component markup and CSS, with no host-module,
+manifest, dependency-range or signing-contract change. Local review consumes
+the rebuilt public package; production publication remains separately gated.

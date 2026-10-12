@@ -148,139 +148,146 @@
   aria-label="File history comparison"
 >
   <div class="history-compare__chrome" data-ui-part="chrome">
-    {#if model}
-      <div class="history-compare__revision">
-        <span>{model.beforeLabel} → {model.afterLabel}</span>
+    <div class="history-compare__revision">
+      <span
+        >{#if model}{model.beforeLabel} → {model.afterLabel}{/if}</span
+      >
+      <Tooltip.Provider delayDuration={0}>
+        <div class="history-compare__toolbar" data-ui-part="toolbar">
+          <Tooltip.Root>
+            <Tooltip.Trigger>
+              {#snippet child({ props })}
+                <Button
+                  {...props}
+                  variant="ghost"
+                  size="icon-sm"
+                  class="history-compare__toolbar-action"
+                  aria-label="Compare with current"
+                  aria-pressed={model?.compareMode === "current"}
+                  onclick={() => openMode("current")}
+                >
+                  <GitCompare aria-hidden="true" />
+                </Button>
+              {/snippet}
+            </Tooltip.Trigger>
+            <Tooltip.Content side="bottom">Compare with current</Tooltip.Content
+            >
+          </Tooltip.Root>
+          <Tooltip.Root>
+            <Tooltip.Trigger>
+              {#snippet child({ props })}
+                <Button
+                  {...props}
+                  variant="ghost"
+                  size="icon-sm"
+                  class="history-compare__toolbar-action"
+                  aria-label="Compare with previous"
+                  aria-pressed={model?.compareMode === "previous"}
+                  disabled={!model?.previousRevision}
+                  onclick={() => openMode("previous")}
+                >
+                  <GitCompareArrows aria-hidden="true" />
+                </Button>
+              {/snippet}
+            </Tooltip.Trigger>
+            <Tooltip.Content side="bottom"
+              >Compare with previous</Tooltip.Content
+            >
+          </Tooltip.Root>
+          {#if model?.compareMode !== "current"}
+            <Tooltip.Root>
+              <Tooltip.Trigger>
+                {#snippet child({ props })}
+                  <Button
+                    {...props}
+                    variant="ghost"
+                    size="icon-sm"
+                    class="history-compare__toolbar-action"
+                    data-testid="history-compare-view-mode"
+                    data-view-mode={viewMode}
+                    aria-label={viewModeLabel}
+                    onclick={() =>
+                      (viewMode = viewMode === "split" ? "unified" : "split")}
+                  >
+                    {#if viewMode === "split"}
+                      <Columns2 aria-hidden="true" />
+                    {:else}
+                      <Rows2 aria-hidden="true" />
+                    {/if}
+                  </Button>
+                {/snippet}
+              </Tooltip.Trigger>
+              <Tooltip.Content side="bottom">{viewModeLabel}</Tooltip.Content>
+            </Tooltip.Root>
+          {/if}
+          <Tooltip.Root>
+            <Tooltip.Trigger>
+              {#snippet child({ props })}
+                <Button
+                  {...props}
+                  variant="ghost"
+                  size="icon-sm"
+                  class="history-compare__toolbar-action"
+                  data-testid="history-compare-wrap"
+                  aria-label="Wrap text"
+                  aria-pressed={wrap ? "true" : "false"}
+                  onclick={() => (wrap = !wrap)}
+                >
+                  <WrapText aria-hidden="true" />
+                </Button>
+              {/snippet}
+            </Tooltip.Trigger>
+            <Tooltip.Content side="bottom">Wrap text</Tooltip.Content>
+          </Tooltip.Root>
+          {#if model?.compareMode === "current"}
+            <Tooltip.Root>
+              <Tooltip.Trigger>
+                {#snippet child({ props })}
+                  <Button
+                    {...props}
+                    variant="ghost"
+                    size="icon-sm"
+                    class="history-compare__toolbar-action"
+                    aria-label="Apply"
+                    disabled={pendingContent == null}
+                    onclick={() => void applyMerged()}
+                  >
+                    <Check aria-hidden="true" />
+                  </Button>
+                {/snippet}
+              </Tooltip.Trigger>
+              <Tooltip.Content side="bottom">Apply</Tooltip.Content>
+            </Tooltip.Root>
+          {/if}
+          <Tooltip.Root>
+            <Tooltip.Trigger>
+              {#snippet child({ props })}
+                <Button
+                  {...props}
+                  variant="ghost"
+                  size="icon-sm"
+                  class="history-compare__toolbar-action"
+                  aria-label="Restore this revision"
+                  onclick={() => void restoreSelected()}
+                >
+                  <ArchiveRestore aria-hidden="true" />
+                </Button>
+              {/snippet}
+            </Tooltip.Trigger>
+            <Tooltip.Content side="bottom"
+              >Restore this revision</Tooltip.Content
+            >
+          </Tooltip.Root>
+        </div>
+      </Tooltip.Provider>
+      {#if model}
         <FileChangeStats
           additions={stats.additions}
           deletions={stats.deletions}
           showZero
         />
-      </div>
-    {/if}
-    <Tooltip.Provider delayDuration={0}>
-      <div class="history-compare__toolbar" data-ui-part="toolbar">
-        <Tooltip.Root>
-          <Tooltip.Trigger>
-            {#snippet child({ props })}
-              <Button
-                {...props}
-                variant="ghost"
-                size="icon-sm"
-                class="history-compare__toolbar-action"
-                aria-label="Compare with current"
-                aria-pressed={model?.compareMode === "current"}
-                onclick={() => openMode("current")}
-              >
-                <GitCompare aria-hidden="true" />
-              </Button>
-            {/snippet}
-          </Tooltip.Trigger>
-          <Tooltip.Content side="bottom">Compare with current</Tooltip.Content>
-        </Tooltip.Root>
-        <Tooltip.Root>
-          <Tooltip.Trigger>
-            {#snippet child({ props })}
-              <Button
-                {...props}
-                variant="ghost"
-                size="icon-sm"
-                class="history-compare__toolbar-action"
-                aria-label="Compare with previous"
-                aria-pressed={model?.compareMode === "previous"}
-                disabled={!model?.previousRevision}
-                onclick={() => openMode("previous")}
-              >
-                <GitCompareArrows aria-hidden="true" />
-              </Button>
-            {/snippet}
-          </Tooltip.Trigger>
-          <Tooltip.Content side="bottom">Compare with previous</Tooltip.Content>
-        </Tooltip.Root>
-        {#if model?.compareMode !== "current"}
-          <Tooltip.Root>
-            <Tooltip.Trigger>
-              {#snippet child({ props })}
-                <Button
-                  {...props}
-                  variant="ghost"
-                  size="icon-sm"
-                  class="history-compare__toolbar-action"
-                  data-testid="history-compare-view-mode"
-                  data-view-mode={viewMode}
-                  aria-label={viewModeLabel}
-                  onclick={() =>
-                    (viewMode = viewMode === "split" ? "unified" : "split")}
-                >
-                  {#if viewMode === "split"}
-                    <Columns2 aria-hidden="true" />
-                  {:else}
-                    <Rows2 aria-hidden="true" />
-                  {/if}
-                </Button>
-              {/snippet}
-            </Tooltip.Trigger>
-            <Tooltip.Content side="bottom">{viewModeLabel}</Tooltip.Content>
-          </Tooltip.Root>
-        {/if}
-        <Tooltip.Root>
-          <Tooltip.Trigger>
-            {#snippet child({ props })}
-              <Button
-                {...props}
-                variant="ghost"
-                size="icon-sm"
-                class="history-compare__toolbar-action"
-                data-testid="history-compare-wrap"
-                aria-label="Wrap text"
-                aria-pressed={wrap ? "true" : "false"}
-                onclick={() => (wrap = !wrap)}
-              >
-                <WrapText aria-hidden="true" />
-              </Button>
-            {/snippet}
-          </Tooltip.Trigger>
-          <Tooltip.Content side="bottom">Wrap text</Tooltip.Content>
-        </Tooltip.Root>
-        {#if model?.compareMode === "current"}
-          <Tooltip.Root>
-            <Tooltip.Trigger>
-              {#snippet child({ props })}
-                <Button
-                  {...props}
-                  variant="ghost"
-                  size="icon-sm"
-                  class="history-compare__toolbar-action"
-                  aria-label="Apply"
-                  disabled={pendingContent == null}
-                  onclick={() => void applyMerged()}
-                >
-                  <Check aria-hidden="true" />
-                </Button>
-              {/snippet}
-            </Tooltip.Trigger>
-            <Tooltip.Content side="bottom">Apply</Tooltip.Content>
-          </Tooltip.Root>
-        {/if}
-        <Tooltip.Root>
-          <Tooltip.Trigger>
-            {#snippet child({ props })}
-              <Button
-                {...props}
-                variant="ghost"
-                size="icon-sm"
-                class="history-compare__toolbar-action"
-                aria-label="Restore this revision"
-                onclick={() => void restoreSelected()}
-              >
-                <ArchiveRestore aria-hidden="true" />
-              </Button>
-            {/snippet}
-          </Tooltip.Trigger>
-          <Tooltip.Content side="bottom">Restore this revision</Tooltip.Content>
-        </Tooltip.Root>
-      </div>
-    </Tooltip.Provider>
+      {/if}
+    </div>
   </div>
   <div class="history-compare__body">
     {#if error}
@@ -299,7 +306,7 @@
         path={model.filePath}
         syncHorizontalScroll
         {wrap}
-        onResolvedChange={onResolvedChange}
+        {onResolvedChange}
       />
     {:else}
       <FileDiff

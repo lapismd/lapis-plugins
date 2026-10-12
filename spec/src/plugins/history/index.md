@@ -116,9 +116,11 @@ it omits an in-panel title and file path. Timeline markers use
 consumes `--ui-workspace-view-*` so ungrouped sidebars keep panel paint.
 Compare FileDiff and MergeEditor keep Design Core typography: chrome
 inherits the view font, and code uses `--ui-diff-mono` bound to
-`--studio-font-mono`. The compare chrome lists the selected revision on
-its own row with File Change Stats on the trailing edge, then an
-Explorer-style icon toolbar. It omits the file path
+`--studio-font-mono`. The compare chrome arranges revision timestamps in
+the leading column, a centered Explorer-style icon toolbar, and File Change
+Stats at the trailing edge on one row. Below 40rem of owning-pane width, the
+toolbar wraps onto a centered second row while timestamps and stats remain
+above. It omits the file path
 and close control, keeps the chrome bottom border, and flushes Diff card
 radius. The compare tab header shows `History` plus parent-path
 segments and the filename title; History opens or reveals the History
