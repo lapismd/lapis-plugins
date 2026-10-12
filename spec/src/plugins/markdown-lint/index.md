@@ -1,5 +1,9 @@
 # Markdown Lint Plugin
 
+Release qualification uses `@lapis-notes/api@^0.1.1` for the shared renderer,
+diagnostics invalidation and selected metadata fingerprint contracts. Portable
+consumers must resolve this prerequisite from npm before plugin publication.
+
 The package-owned `registry.json` is the source for curated categories,
 highlights, and registry-only Overview content under LP-SPEC-021 and LP-SPEC-033. Manifest and package
 metadata remain authoritative for the fields defined by LP-SPEC-022.

@@ -1,6 +1,6 @@
 {
   "name": "@lapis-notes/bases",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Lapis Notes Bases plugin",
   "license": "Apache-2.0",
   "type": "module",
@@ -61,7 +61,7 @@
     "@codemirror/language": "^6.11.3",
     "@codemirror/state": "^6.6.0",
     "@codemirror/view": "^6.42.1",
-    "@lapis-notes/api": "^0.1.0",
+    "@lapis-notes/api": "^0.1.1",
     "@lezer/common": "^1.5.2",
     "@lezer/highlight": "^1.2.3",
     "@lezer/lr": "^1.4.2",

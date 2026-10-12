@@ -1,5 +1,13 @@
 # Markdown changelog
 
+## 0.1.5
+
+### Patch Changes
+
+- Refresh File Properties when the followed file receives a same-path metadata revision.
+
+- Add official author avatars and deterministic split, light, and dark registry media for plugin banners, overviews, and galleries.
+
 ## 0.1.4
 
 ### Patch Changes

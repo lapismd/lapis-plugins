@@ -1,5 +1,13 @@
 # Spell Check changelog
 
+## 0.1.3
+
+### Patch Changes
+
+- Fall back to Harper's local WASM linter when a browser-like host does not expose workers.
+
+- Add official author avatars and deterministic split, light, and dark registry media for plugin banners, overviews, and galleries.
+
 ## 0.1.2
 
 ### Patch Changes

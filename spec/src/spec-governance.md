@@ -1,5 +1,10 @@
 # Specification Governance
 
+Release version preparation updates each active plugin's mapped chapter and
+the shared framework floor catalog. Generated manifests and documentation must
+agree with the selected independent Changesets versions; parked packages must
+remain excluded.
+
 Checkpoint repairs require owning API regressions and plugin regressions for
 both invalidation and warm reuse. Release intent must name the affected plugin
 and retain prerequisite API version qualification. Static publication and the
