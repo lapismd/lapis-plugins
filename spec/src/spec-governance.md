@@ -176,3 +176,7 @@ time. Emitted dependencies must not require a host-installed Node process shim.
 
 Static release qualification consumes API-owned schema/build exports and excludes
 the retained deferred Nostr test lane under LP-SPEC-049.
+
+AI model discovery and readiness changes map to LN-AI-201 through LN-AI-203. The associated patch
+changeset retains focused catalog and mounted-composer regressions, followed by
+the shared interaction/accessibility, packaging and signature gates.

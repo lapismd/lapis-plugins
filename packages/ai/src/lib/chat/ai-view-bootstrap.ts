@@ -1,6 +1,9 @@
-import type { AgentRuntime, ModelRef, McpServerContribution } from "../core/types";
+import type {
+  AgentRuntime,
+  ModelRef,
+  McpServerContribution,
+} from "../core/types";
 import type { ConversationLocation } from "../conversations/types";
-import { ACP_AGENT_IDS } from "../settings/acp-agents";
 import type { AiPluginSettings } from "../settings/ai-settings";
 import type { AiViewHost } from "./ai-view";
 
@@ -31,11 +34,7 @@ export async function prepareAiViewBootstrap(
   const conversation = initialLocation
     ? host.conversations.read(initialLocation)
     : Promise.resolve(null);
-  const catalogs = ACP_AGENT_IDS.map((agent) => host.models.listModels(agent));
-  const [snapshot, settledCatalogs] = await Promise.all([
-    conversation.catch(() => null),
-    Promise.allSettled(catalogs),
-  ]);
+  const snapshot = await conversation.catch(() => null);
 
   if (snapshot) {
     const binding = snapshot.agents.find(
@@ -44,7 +43,12 @@ export async function prepareAiViewBootstrap(
         record.id === snapshot.metadata.activeAgentBindingId,
     );
     if (binding?.type === "binding.created") {
-      const agent = binding.agent === "cursor" ? "cursor" : binding.agent === "opencode" ? "opencode" : "codex";
+      const agent =
+        binding.agent === "cursor"
+          ? "cursor"
+          : binding.agent === "opencode"
+            ? "opencode"
+            : "codex";
       settings = {
         ...settings,
         acpAgent: agent,
@@ -53,21 +57,21 @@ export async function prepareAiViewBootstrap(
             ? "codex-native"
             : binding.runtime === "opencode-native"
               ? "opencode-native"
-            : binding.runtime === "fake"
-              ? "fake"
-              : "acp",
+              : binding.runtime === "fake"
+                ? "fake"
+                : "acp",
         defaultModel: binding.model?.model ?? settings.defaultModels[agent],
         thinking: binding.thinking ?? settings.thinking,
       };
     }
   }
 
-  const models = settledCatalogs.flatMap((catalog) =>
-    catalog.status === "fulfilled" ? catalog.value : [],
-  );
+  const [selectedCatalog] = await Promise.allSettled([
+    host.models.listModels(settings.acpAgent, settings.defaultRuntime),
+  ]);
+  const models =
+    selectedCatalog?.status === "fulfilled" ? selectedCatalog.value : [];
   let modelCatalogError: string | null = null;
-  const selectedCatalog =
-    settledCatalogs[ACP_AGENT_IDS.indexOf(settings.acpAgent)];
   const agentModels = models.filter(
     (model) => model.provider === settings.acpAgent,
   );
@@ -89,6 +93,7 @@ export async function prepareAiViewBootstrap(
   try {
     runtime = await host.selectRuntime({
       prompt: "",
+      workspace: host.workspace,
       mcpServers,
       agent: settings.acpAgent,
       model: { provider: settings.acpAgent, model: settings.defaultModel },
@@ -118,4 +123,26 @@ export async function prepareAiViewBootstrap(
 
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
+}
+
+export function applyAiViewSettingsPatch(
+  settings: AiPluginSettings,
+  patch: Partial<AiPluginSettings>,
+  current: AiPluginSettings,
+): AiPluginSettings {
+  const acpAgent = patch.acpAgent ?? settings.acpAgent;
+  const defaultModels = { ...settings.defaultModels, ...patch.defaultModels };
+  if (patch.defaultModel !== undefined)
+    defaultModels[acpAgent] = patch.defaultModel;
+  return {
+    ...settings,
+    ...patch,
+    acpAgent,
+    defaultModels,
+    defaultModel:
+      patch.defaultModel ??
+      (patch.acpAgent !== undefined
+        ? current.defaultModels[acpAgent]
+        : (patch.defaultModels?.[acpAgent] ?? settings.defaultModel)),
+  };
 }

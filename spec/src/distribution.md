@@ -123,3 +123,7 @@ implementation used by Bases. No process or environment shim is installed.
 The static release uses `@lapis-notes/api/registry/schema` for structured notes.
 Community protocol tooling and its tests remain deferred and do not participate
 in the static CI dependency graph. No Community publication is a static prerequisite.
+
+The AI harness catalog repair carries an independent AI patch changeset. Its
+npm package and locally signed review archive must retain identical source and
+version coordinates; local review does not activate publication.

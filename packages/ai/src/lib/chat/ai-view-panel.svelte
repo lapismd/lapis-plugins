@@ -6,6 +6,7 @@
   import type { AiViewHost } from "./ai-view";
   import {
     initialAiViewBootstrap,
+    applyAiViewSettingsPatch,
     prepareAiViewBootstrap,
     type AiViewBootstrap,
   } from "./ai-view-bootstrap";
@@ -34,6 +35,17 @@
 
   onMount(() => {
     let disposed = false;
+    const unsubscribe = host.subscribeSettings?.((patch) => {
+      if (disposed || !preparedBootstrap) return;
+      preparedBootstrap = {
+        ...preparedBootstrap,
+        settings: applyAiViewSettingsPatch(
+          preparedBootstrap.settings,
+          patch,
+          host.getSettings(),
+        ),
+      };
+    });
     void prepareAiViewBootstrap(host, initialLocation, mcpServers)
       .then((prepared) => {
         if (disposed) return;
@@ -51,6 +63,7 @@
       });
     return () => {
       disposed = true;
+      unsubscribe?.();
     };
   });
 </script>
@@ -83,6 +96,7 @@
   {workspaceLeaf}
   fileSearch={host.searchVaultFiles}
   models={bootstrap.models}
+  loadModels={(agent, runtime) => host.models.listModels(agent, runtime)}
   modelCatalogError={bootstrap.modelCatalogError}
   settings={bootstrap.settings}
   onSettingsChange={(patch) => host.updateSettings(patch)}

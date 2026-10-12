@@ -13,7 +13,17 @@ export interface ModelProvider {
 }
 
 export interface AgentModelCatalog {
-  listModels(provider: string): Promise<ModelRef[]>;
+  listModels(provider: string, runtime?: string): Promise<ModelRef[]>;
+}
+
+export function modelCatalogProviderId(
+  provider: string,
+  runtime?: string,
+): string {
+  if (provider === "codex" && runtime === "codex-native") return "codex-native";
+  if (provider === "opencode" && runtime === "opencode-native")
+    return "opencode-native";
+  return provider;
 }
 
 export class ModelProviderRegistry implements AgentModelCatalog {
@@ -24,8 +34,13 @@ export class ModelProviderRegistry implements AgentModelCatalog {
       this.#providers.set(provider.id, provider);
   }
 
-  async listModels(provider: string): Promise<ModelRef[]> {
-    return (await this.#providers.get(provider)?.listModels()) ?? [];
+  async listModels(provider: string, runtime?: string): Promise<ModelRef[]> {
+    if (runtime === "fake") return [];
+    const id = modelCatalogProviderId(provider, runtime);
+    const models = (await this.#providers.get(id)?.listModels()) ?? [];
+    return id === provider
+      ? models
+      : models.map((model) => ({ ...model, provider }));
   }
 }
 

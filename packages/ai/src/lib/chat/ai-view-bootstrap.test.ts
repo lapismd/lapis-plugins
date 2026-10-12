@@ -9,6 +9,7 @@ import type { AiViewHost } from "./ai-view";
 import { LIVE_RUNTIME_UNAVAILABLE_REASON } from "./live-runtime-unavailable";
 import {
   initialAiViewBootstrap,
+  applyAiViewSettingsPatch,
   prepareAiViewBootstrap,
 } from "./ai-view-bootstrap";
 
@@ -81,7 +82,7 @@ describe("AI view bootstrap", () => {
   });
 
   it("prepares the exact durable binding after the shell is available", async () => {
-    const { host, repository, selectRuntime } = createHost();
+    const { host, repository, selectRuntime, listModels } = createHost();
     const location = { scopeDir: "Notes", conversationId: ID };
     await repository.create({
       id: ID,
@@ -109,7 +110,8 @@ describe("AI view bootstrap", () => {
       defaultModel: "gpt-5.6-sol",
       thinking: "high",
     });
-    expect(prepared.models).toHaveLength(3);
+    expect(prepared.models).toHaveLength(1);
+    expect(listModels).toHaveBeenCalledExactlyOnceWith("codex", "codex-native");
     expect(selectRuntime).toHaveBeenCalledWith(
       expect.objectContaining({
         agent: "codex",
@@ -137,26 +139,32 @@ describe("AI view bootstrap", () => {
     const { host, repository, selectRuntime } = createHost();
     const location = { scopeDir: "Notes", conversationId: ID };
     await repository.create({ id: ID, scopeDir: "Notes", now: CREATED_AT });
-    await repository.appendAgentRecords(location, [{
-      schemaVersion: CONVERSATION_SCHEMA_VERSION,
-      type: "binding.created",
-      id: "binding-opencode",
-      createdAt: CREATED_AT,
-      runtime: "opencode-native",
-      agent: "opencode",
-      model: { provider: "opencode", model: "anthropic/claude-sonnet-4-5" },
-      thinking: "high",
-    }]);
+    await repository.appendAgentRecords(location, [
+      {
+        schemaVersion: CONVERSATION_SCHEMA_VERSION,
+        type: "binding.created",
+        id: "binding-opencode",
+        createdAt: CREATED_AT,
+        runtime: "opencode-native",
+        agent: "opencode",
+        model: { provider: "opencode", model: "anthropic/claude-sonnet-4-5" },
+        thinking: "high",
+      },
+    ]);
 
     const prepared = await prepareAiViewBootstrap(host, location, []);
 
     expect(prepared.settings).toMatchObject({
-      defaultRuntime: "opencode-native", acpAgent: "opencode",
+      defaultRuntime: "opencode-native",
+      acpAgent: "opencode",
       defaultModel: "anthropic/claude-sonnet-4-5",
     });
-    expect(selectRuntime).toHaveBeenCalledWith(expect.objectContaining({
-      agent: "opencode", metadata: { runtime: "opencode-native" },
-    }));
+    expect(selectRuntime).toHaveBeenCalledWith(
+      expect.objectContaining({
+        agent: "opencode",
+        metadata: { runtime: "opencode-native" },
+      }),
+    );
   });
 
   it("keeps a saved Cursor default when the flat catalog omits that model", async () => {
@@ -195,4 +203,48 @@ describe("AI view bootstrap", () => {
     expect(prepared.runtime.id).toBe("fake");
     expect(prepared.unavailableReason).toBe(LIVE_RUNTIME_UNAVAILABLE_REASON);
   });
+});
+
+it("passes the owning vault to desktop runtime readiness", async () => {
+  const { host } = createHost();
+  host.workspace = "/tmp/lapis-review-vault";
+  const selected = new FakeAgentRuntime();
+  host.selectRuntime = async (request) => {
+    if (request.workspace !== host.workspace)
+      throw new Error(
+        "An absolute vault workspace is required for the AI controller",
+      );
+    return selected;
+  };
+  const prepared = await prepareAiViewBootstrap(host, null, []);
+  expect(prepared.unavailableReason).toBeNull();
+  expect(prepared.runtime).toBe(selected);
+});
+
+it("preserves durable composer defaults during unrelated Settings notifications", () => {
+  const current = mergeAiSettings(DEFAULT_AI_SETTINGS);
+  const restored = {
+    ...current,
+    acpAgent: "cursor" as const,
+    defaultRuntime: "acp" as const,
+    defaultModel: "durable-cursor-model",
+    thinking: "high" as const,
+  };
+  const updated = applyAiViewSettingsPatch(
+    restored,
+    { memoryAutomaticRecall: true },
+    { ...current, memoryAutomaticRecall: true },
+  );
+  expect(updated).toMatchObject({
+    acpAgent: "cursor",
+    defaultModel: "durable-cursor-model",
+    thinking: "high",
+    memoryAutomaticRecall: true,
+  });
+  const changed = applyAiViewSettingsPatch(
+    restored,
+    { acpAgent: "codex" },
+    current,
+  );
+  expect(changed.defaultModel).toBe(current.defaultModels.codex);
 });

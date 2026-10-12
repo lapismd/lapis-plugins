@@ -187,7 +187,12 @@ export class AiPlugin extends Plugin {
       }),
       new AcpModelProvider("opencode", {
         connection: () => this.controllerConnections.get(workspace),
-        providerIds: ["opencode", "opencode-native"],
+      }),
+      new AcpModelProvider("codex-native", {
+        connection: () => this.controllerConnections.get(workspace),
+      }),
+      new AcpModelProvider("opencode-native", {
+        connection: () => this.controllerConnections.get(workspace),
       }),
     ]);
     this.registry = createAgentRuntimeRegistry([
