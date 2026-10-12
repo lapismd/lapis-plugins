@@ -558,6 +558,14 @@ export class SearchManager {
 
   private currentReconcileFingerprint(): string {
     const fingerprint = new StreamingManifestFingerprint();
+    fingerprint.add(
+      [
+        "metadata",
+        this.app.metadataCache.getReconciliationFingerprint((file) =>
+          Boolean(this.app.searchDocumentProviders.resolve(file)),
+        ),
+      ].join("\u0000"),
+    );
     const providers = this.app.searchDocumentProviders
       .getAll()
       .sort((left, right) => left.id.localeCompare(right.id));

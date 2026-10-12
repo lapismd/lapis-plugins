@@ -7,6 +7,12 @@ First-party packages and their shared development host resolve Design Core from
 the current published npm semver range recorded in manifests and the committed
 lockfile.
 
+The Search checkpoint repair carries independent patch release intent and
+requires the API's filtered metadata fingerprint contract. Release preparation
+must establish that prerequisite version before setting the plugin API floor
+and qualifying portable consumers. The static publication gate is independent
+of the deferred Nostr release and registry-head renewal gates.
+
 Signed runtime bundles share the allowlisted CodeMirror editor and Lezer core
 modules with the host. Plugin-local language grammars remain bundled. Host import
 maps and signed shared-dependency metadata bind these singleton contracts, whose

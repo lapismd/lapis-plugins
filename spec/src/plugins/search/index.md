@@ -169,3 +169,9 @@ The signed runtime declares its compiled Svelte imports through the exact
 compiler-versioned renderer contracts in LP-SPEC-014 and LP-SPEC-047. Host-owned
 components and archived components share that renderer graph; npm package peers
 remain portable.
+
+Startup checkpoint validity includes the API metadata reconciliation fingerprint
+filtered to files accepted by registered Search providers under LN-SRCH-003.
+Selected metadata parser or provider changes invalidate Search even when file
+statistics and Search provider versions remain unchanged. Metadata inputs for
+files without a Search provider do not invalidate the checkpoint.

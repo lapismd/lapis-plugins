@@ -122,15 +122,16 @@ represents the bad artifact and no published registry entry depends on it.
 
 ## Deferred publication
 
-The operator has deferred the Plugins release and Nostr registry renewal.
-Both `release.yml` and `renew-registry-heads.yml` remain in source, with every
-job requiring `NOSTR_RELEASE_ENABLED=true`. The repository variable is false,
-and both workflows are manually disabled in GitHub Actions.
+Static publication remains behind `STATIC_RELEASE_ENABLED=true` in
+`release.yml` and the explicit release approval gate. The deferred relay route
+uses `release-nostr.yml` and `renew-registry-heads.yml`, guarded by
+`NOSTR_RELEASE_ENABLED=true`. Static publication does not require activating
+Nostr publication or registry-head renewal.
 
-To resume, configure the public OIDC signer URL and audience, relay URLs and
+To resume the relay route, configure the public OIDC signer URL and audience, relay URLs and
 quorum, publisher and curator public keys, and authority epoch. Complete the
 existing framework-publication, audit, consumer, artifact and protected
 curation gates, then obtain approval to set the variable to true and enable
-both workflows. npm publication, signed archives and registry events remain
-part of the same full release path. Specification Pages deployments remain
+both relay workflows. npm publication, signed archives and registry events remain
+part of that full release path. Specification Pages deployments remain
 independent of this release gate.

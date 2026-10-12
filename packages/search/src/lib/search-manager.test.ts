@@ -1,5 +1,7 @@
 import {
   type App,
+  MemoryAppDatabase,
+  MetadataCache,
   type CachedMetadata,
   type SearchDocumentProvider,
   SearchDocumentProviderRegistry,
@@ -97,6 +99,134 @@ function providers(
 }
 
 describe("SearchManager", () => {
+  it("reuses the checkpoint after non-provider metadata inputs change", async () => {
+    const note = file("Review.md");
+    const other = file("Other.json", "json");
+    const database = new MemoryAppDatabase("search-scoped-metadata");
+    await database.open();
+    const cachedRead = vi.fn(async () => "Second slide");
+    const app = {
+      searchDocumentProviders: providers({
+        id: "search:markdown",
+        provider: MARKDOWN_SEARCH_DOCUMENT_PROVIDER,
+      }),
+      vault: {
+        getFiles: () => [note, other],
+        iterateFiles: function* () {
+          yield note;
+          yield other;
+        },
+        cachedRead,
+        on: vi.fn(),
+        off: vi.fn(),
+      },
+      notifications: {
+        withProgress: async (
+          _options: unknown,
+          run: (progress: unknown) => unknown,
+        ) => run({ report() {}, throwIfCancellationRequested() {} }),
+      },
+      logger: { warn: vi.fn() },
+      appDatabase: database,
+    } as unknown as App;
+    const metadataCache = new MetadataCache(app);
+    app.metadataCache = metadataCache;
+    const processor = { read: async () => ({}), write: () => "" };
+    metadataCache.addProcessor("md", processor);
+    metadataCache.addProcessor("json", processor);
+    vi.spyOn(metadataCache, "getFileCacheAsync").mockResolvedValue({});
+    await database.upsertIndexedFile({
+      file: {
+        path: note.path,
+        normalizedPath: note.path,
+        extension: note.extension,
+        mtime: note.stat.mtime,
+        size: note.stat.size,
+        hash: md5("Second slide"),
+        indexed: true,
+      },
+      metadata: {
+        path: note.path,
+        hash: md5("Second slide"),
+        parserVersion: "metadata-cache-v2:md:1",
+        metadata: {},
+      },
+      links: [],
+      tags: [],
+      properties: [],
+    });
+    const manifest = vi.spyOn(database, "listSearchDocumentManifest");
+    try {
+      await new SearchManager(app).reconcileStartup();
+      expect(await database.listSearchDocuments()).toHaveLength(1);
+      cachedRead.mockClear();
+      manifest.mockClear();
+      const full = metadataCache.getReconciliationFingerprint();
+      other.stat.mtime += 1;
+      metadataCache.addProcessor("json", { ...processor });
+      expect(metadataCache.getReconciliationFingerprint()).not.toBe(full);
+
+      await new SearchManager(app).reconcileStartup();
+
+      expect(cachedRead).not.toHaveBeenCalled();
+      expect(manifest).not.toHaveBeenCalled();
+      expect(await database.listSearchDocuments()).toHaveLength(1);
+    } finally {
+      await metadataCache.dispose();
+      await database.close();
+    }
+  });
+
+  it("rebuilds cleared documents when the metadata fingerprint changes", async () => {
+    const note = file("Review.md");
+    const database = new MemoryAppDatabase("search-metadata-fingerprint");
+    await database.open();
+    let metadataFingerprint = "metadata-with-markdown";
+    const cachedRead = vi.fn(async () => "Second slide");
+    const app = {
+      searchDocumentProviders: providers({
+        id: "search:markdown",
+        provider: MARKDOWN_SEARCH_DOCUMENT_PROVIDER,
+      }),
+      vault: { getFiles: () => [note], cachedRead },
+      metadataCache: {
+        processors: new Map(),
+        getReconciliationFingerprint: () => metadataFingerprint,
+        getFileCacheAsync: async () => ({}),
+      },
+      notifications: {
+        withProgress: async (
+          _options: unknown,
+          run: (progress: unknown) => unknown,
+        ) => run({ report() {}, throwIfCancellationRequested() {} }),
+      },
+      logger: { warn: vi.fn() },
+      appDatabase: database,
+    } as unknown as App;
+    try {
+      await new SearchManager(app).reconcileStartup();
+      expect(await database.listSearchDocuments()).toHaveLength(1);
+      const checkpoint = await database.getMeta(
+        "search.reconcile-checkpoint.v1",
+      );
+      // Native metadata removal also removes its derived Search document.
+      await database.deleteSearchDocument(note.path);
+      metadataFingerprint = "metadata-without-markdown";
+      expect(await database.getMeta("search.reconcile-checkpoint.v1")).toEqual(
+        checkpoint,
+      );
+      cachedRead.mockClear();
+      const warm = new SearchManager(app);
+      await warm.reconcileStartup();
+      expect(cachedRead).toHaveBeenCalledOnce();
+      expect(await database.listSearchDocuments()).toHaveLength(1);
+      const results = await warm.query({ term: "Second slide" });
+      expect(results.hits.map((hit) => hit.document.path)).toEqual([note.path]);
+    } finally {
+      await database.close();
+    }
+  });
+
   it("indexes Markdown with metadata through the API database contract", async () => {
     const upsertSearchDocument = vi.fn(async () => undefined);
     const app = {
@@ -238,6 +368,7 @@ describe("SearchManager", () => {
         cachedRead: vi.fn(async () => "cv: {}"),
       },
       metadataCache: {
+        getReconciliationFingerprint: () => "metadata-fixture",
         processors: new Map(),
         getFileCacheAsync: async () => ({}),
       },
@@ -417,6 +548,7 @@ describe("SearchManager", () => {
         cachedRead: vi.fn(async () => "# Welcome"),
       },
       metadataCache: {
+        getReconciliationFingerprint: () => "metadata-fixture",
         processors: new Map(),
         getFileCacheAsync: async () => ({}),
       },
@@ -536,6 +668,7 @@ describe("SearchManager", () => {
         offref: vi.fn(),
       },
       metadataCache: {
+        getReconciliationFingerprint: () => "metadata-fixture",
         processors: new Map([["md", new Set([vi.fn()])]]),
         getFileCacheAsync,
         on: vi.fn((event: string, callback: (...args: any[]) => void) => {
@@ -647,7 +780,10 @@ describe("SearchManager", () => {
     const app = {
       searchDocumentProviders: providers(),
       vault: { getFiles: () => [] },
-      metadataCache: { processors: new Map() },
+      metadataCache: {
+        getReconciliationFingerprint: () => "metadata-fixture",
+        processors: new Map(),
+      },
       notifications: {
         withProgress: async (
           _options: unknown,
@@ -747,6 +883,7 @@ describe("SearchManager", () => {
         }),
       },
       metadataCache: {
+        getReconciliationFingerprint: () => "metadata-fixture",
         processors: new Map(),
         getFileCacheAsync: vi.fn(async () => ({})),
       },
@@ -823,7 +960,10 @@ describe("SearchManager", () => {
     const app = {
       searchDocumentProviders: providers(),
       vault: { getFiles: () => [] },
-      metadataCache: { processors: new Map() },
+      metadataCache: {
+        getReconciliationFingerprint: () => "metadata-fixture",
+        processors: new Map(),
+      },
       notifications: {
         withProgress: async (
           _options: unknown,
@@ -905,6 +1045,7 @@ describe("SearchManager", () => {
         offref: vi.fn(),
       },
       metadataCache: {
+        getReconciliationFingerprint: () => "metadata-fixture",
         processors: new Map([["md", new Set([vi.fn()])]]),
         getFileCacheAsync: vi.fn(async () => ({})),
         on: vi.fn((event: string, callback: (...args: any[]) => void) => {
