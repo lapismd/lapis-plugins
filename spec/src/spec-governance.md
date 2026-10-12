@@ -1,5 +1,9 @@
 # Specification Governance
 
+Shared Storybook diagnostics now cover formatted Svelte warnings, diagnostic URLs
+and Error objects, and retain caught teardown failures for after-story and final
+cleanup checks. Dependency-originated diagnostics remain fatal under LP-SPEC-034.
+
 Release version preparation updates each active plugin's mapped chapter and
 the shared framework floor catalog. Generated manifests and documentation must
 agree with the selected independent Changesets versions; parked packages must
