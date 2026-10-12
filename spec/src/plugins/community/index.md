@@ -23,7 +23,8 @@ plugin screen as the installation surface available before Community loads.
 
 Community is parked under LP-SPEC-049. Its runtime requirements describe
 retained behavior for future reactivation, not an active release or test gate.
-The shared `@lapismd/lapis-community` schema library remains active.
+The shared registry schema is owned by `@lapis-notes/api/registry/schema`.
+The Community library is needed only when parked Community or relay work resumes.
 
 ## Runtime flow
 

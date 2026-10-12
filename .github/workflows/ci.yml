@@ -37,7 +37,7 @@ jobs:
           set -euo pipefail
           ready=false
           if [ "${{ vars.FRAMEWORK_PACKAGES_PUBLISHED }}" = "true" ]; then
-            if npm view @lapismd/lapis-community version >/dev/null \
+            if npm view @lapis-notes/api@0.1.1 version >/dev/null \
               && npm view @lapismd/ai-controller version >/dev/null; then
               ready=true
             fi
@@ -46,7 +46,7 @@ jobs:
           if [ "${ready}" = true ]; then
             echo "Published framework packages are available."
           else
-            echo "Validation remains intentionally deferred until @lapismd/lapis-community and @lapismd/ai-controller are on the npm registry."
+            echo "Validation remains intentionally deferred until @lapis-notes/api@0.1.1 and @lapismd/ai-controller are on the npm registry."
           fi
 
   image-pin:

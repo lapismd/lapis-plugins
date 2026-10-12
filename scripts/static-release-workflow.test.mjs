@@ -39,3 +39,23 @@ test("static publication requires activation, protected approval and the pinned 
     /NOSTR_RELEASE|NPM_TOKEN|NODE_AUTH_TOKEN|--role publisher|relay/
   );
 });
+
+test("static qualification has no Community dependency and retains relay tests separately", async () => {
+  const pkg = JSON.parse(
+    await readFile(new URL("../package.json", import.meta.url), "utf8")
+  );
+  assert.equal(pkg.devDependencies["@lapismd/lapis-community"], undefined);
+  assert.equal(
+    pkg.scripts["test:release:nostr"],
+    "node --test scripts/deferred-nostr-tests/*.test.mjs"
+  );
+  for (const file of [
+    "../.storybook/main.ts",
+    "./check-registry-metadata.mjs",
+    "./lib/static-release-candidate.mjs",
+  ]) {
+    const source = await readFile(new URL(file, import.meta.url), "utf8");
+    assert.doesNotMatch(source, /@lapismd\/lapis-community/);
+    assert.match(source, /@lapis-notes\/api\/(?:registry\/schema|build\/vite)/);
+  }
+});

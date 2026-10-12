@@ -173,3 +173,6 @@ published canonical specification sites.
 
 The browser archive producer fixes the production environment constant at build
 time. Emitted dependencies must not require a host-installed Node process shim.
+
+Static release qualification consumes API-owned schema/build exports and excludes
+the retained deferred Nostr test lane under LP-SPEC-049.

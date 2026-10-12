@@ -1,4 +1,4 @@
-import { tursoBundleBuildPlugin } from "@lapismd/lapis-community/build/vite";
+import { tursoBundleBuildPlugin } from "@lapis-notes/api/build/vite";
 import type { StorybookConfig } from "@storybook/svelte-vite";
 import { svelte, vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 import tailwindcss from "@tailwindcss/vite";
@@ -65,7 +65,6 @@ const linkedPackages = [
   "@lapis-notes/language-service",
   "@lapis-notes/ui",
   "@lapis-notes/workspace",
-  "@lapismd/lapis-community",
   "@lapismd/design-core",
   "@lapismd/mira",
   "@lapismd/mira-editor",
@@ -178,7 +177,6 @@ const config: StorybookConfig = {
           "@lapis-notes/api",
           "@lapis-notes/language-service",
           "@lapismd/design-core",
-          "@lapismd/lapis-community",
         ],
         esbuildOptions: { target: "esnext" },
         include: [
@@ -195,7 +193,6 @@ const config: StorybookConfig = {
           "extend",
           "markdownlint",
           "markdownlint/sync",
-          "@lapismd/lapis-community > semver",
         ],
       },
       server: {

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { registryChangelogFromMarkdown } from "@lapismd/lapis-community/registry/schema";
+import { registryChangelogFromMarkdown } from "@lapis-notes/api/registry/schema";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";

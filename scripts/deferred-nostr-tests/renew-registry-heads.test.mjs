@@ -4,7 +4,7 @@ import test from "node:test";
 import {
   createRenewedHeadTemplate,
   headNeedsRenewal,
-} from "./renew-registry-heads.mjs";
+} from "../renew-registry-heads.mjs";
 
 test("renews only heads within the seven day freshness window", () => {
   const now = new Date("2026-09-06T00:00:00.000Z");
