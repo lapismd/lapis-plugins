@@ -27,7 +27,7 @@
     "harper.js": "^2.7.0"
   },
   "peerDependencies": {
-    "@lapis-notes/api": "^0.1.1"
+    "@lapis-notes/api": "^0.1.2"
   },
   "devDependencies": {
     "@sveltejs/package": "^2.5.0",

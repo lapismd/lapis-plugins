@@ -1,10 +1,13 @@
 # AI Plugin
 
-Release qualification uses `@lapis-notes/api@^0.1.1` for the shared renderer,
+This candidate consumes published API 0.1.2 through its portable peer range.
+Shared shell qualification uses UI and File Explorer 0.1.2 and Workspace 0.2.0.
+
+Release qualification uses `@lapis-notes/api@^0.1.2` for the shared renderer,
 diagnostics invalidation and selected metadata fingerprint contracts. Portable
 consumers must resolve this prerequisite from npm before plugin publication.
 
-Dependency acceptance now uses published Design Core `0.3.1` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
+Dependency acceptance now uses published Design Core `0.3.2` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
 unchanged; local overrides for these released packages are retired.
 
 AI presentation resolves Design Core through the repository's current published
@@ -522,3 +525,8 @@ The signed runtime declares its compiled Svelte imports through the exact
 compiler-versioned renderer contracts in LP-SPEC-014 and LP-SPEC-047. Host-owned
 components and archived components share that renderer graph; npm package peers
 remain portable.
+
+Harness model-refresh acceptance checks the preference trigger's expanded state
+before opening it. Submenu dismissal must not accidentally toggle an already
+open parent closed. Plays retain pointer-hover, checked-default and old-model
+absence assertions for both Native and Cursor catalogs.

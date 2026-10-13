@@ -26,11 +26,11 @@
   "dependencies": {
     "@codemirror/lang-json": "^6.0.2",
     "@codemirror/lang-yaml": "^6.1.2",
-    "@lapismd/design-core": "^0.3.1"
+    "@lapismd/design-core": "^0.3.2"
   },
   "peerDependencies": {
     "@codemirror/language": "^6.11.3",
-    "@lapis-notes/api": "^0.1.1",
+    "@lapis-notes/api": "^0.1.2",
     "@lezer/common": "^1.5.2",
     "@lezer/highlight": "^1.2.3",
     "@lezer/lr": "^1.4.2"

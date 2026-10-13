@@ -43,11 +43,11 @@
     "./registry.json": "./registry.json"
   },
   "dependencies": {
-    "@lapismd/design-core": "^0.3.1",
+    "@lapismd/design-core": "^0.3.2",
     "@lucide/svelte": "^0.523.0"
   },
   "peerDependencies": {
-    "@lapis-notes/api": "^0.1.1",
+    "@lapis-notes/api": "^0.1.2",
     "svelte": "^5.0.0"
   },
   "devDependencies": {

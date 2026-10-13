@@ -59,3 +59,12 @@ test("static qualification has no Community dependency and retains relay tests s
     assert.match(source, /@lapis-notes\/api\/(?:registry\/schema|build\/vite)/);
   }
 });
+
+test("CI plans verified static candidates without invoking deferred Nostr tooling", async () => {
+  const ci = await readFile(
+    new URL("../.github/workflows/ci.yml", import.meta.url),
+    "utf8"
+  );
+  assert.match(ci, /node scripts\/create-registry-acceptance-fixture\.mjs/);
+  assert.doesNotMatch(ci, /run: pnpm release:plan/);
+});

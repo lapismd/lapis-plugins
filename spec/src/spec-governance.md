@@ -112,9 +112,9 @@ ordering, cache-forwarding, and secretless-fallback tests before the complete
 package and release lanes run.
 The CI fan-out and stable aggregation gate are protected by LP-SPEC-038. The
 workflow, pinned setup composite, Turbo cache summary reporter, and workflow
-source tests map to Distribution and this chapter. Validate must treat skipped
-functional lanes as the deferred success path until Community and the AI
-controller exist on the npm registry. Dependency auditing is
+source tests map to Distribution and this chapter. The prerequisite checks every declared framework range and AI Controller on npm.
+Validate rejects skipped, cancelled or failed lanes; publication variables cannot
+turn missing acceptance into a successful aggregate. Community is not a CI prerequisite. Dependency auditing is
 protected by LP-SPEC-048: root `check`, `ci:release`, and the quality job run
 `pnpm audit` against the committed lockfile, and only recorded
 `auditConfig.ignoreCves` entries may suppress an unpatched advisory. Functional Storybook and
@@ -190,3 +190,7 @@ narrow pane produced through the workspace renderer's sidebar sizing contract.
 It verifies centered actions between timestamps and stats, then centered wrapping
 below them, and restores the layout after testing. Changed visuals remain
 `visual-pending` until human review.
+
+The registry-acceptance fixture maps to Distribution and the static candidate
+security gates. Exact frozen source candidates supply signed runtime artifacts
+for Web acceptance without replacing committed npm ranges.

@@ -101,19 +101,10 @@ test("builds release candidates from the committed dependency graph", () => {
   assert.doesNotMatch(workflow, /pnpm exec playwright install/);
 });
 
-test("defers functional CI lanes until unpublished framework packages exist", () => {
-  assert.match(ciWorkflow, /id: gate/);
-  assert.match(ciWorkflow, /framework_ready/);
-  assert.match(ciWorkflow, /npm view @lapis-notes\/api@0\.1\.1 version/);
-  assert.match(ciWorkflow, /npm view @lapismd\/ai-controller version/);
+test("requires published framework ranges without a deferred success path", () => {
+  assert.match(ciWorkflow, /node scripts\/check-framework-publication\.mjs/);
   assert.doesNotMatch(ciWorkflow, /npm view @lapismd\/lapis-community/);
-  assert.match(
-    ciWorkflow,
-    /if: needs\.prerequisite\.outputs\.framework_ready == 'true'/
-  );
-  assert.match(ciWorkflow, /FRAMEWORK_READY:/);
-  assert.match(ciWorkflow, /if \[ "\$FRAMEWORK_READY" != "true" \]; then/);
-  assert.match(ciWorkflow, /A deferred CI lane finished with:/);
+  assert.doesNotMatch(ciWorkflow, /framework_ready|FRAMEWORK_READY|deferred/);
 });
 
 test("reuses blocking CI and reverifies the downloaded production candidate", () => {

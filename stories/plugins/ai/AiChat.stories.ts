@@ -1220,17 +1220,27 @@ export const HarnessModelRefresh: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
-    await userEvent.click(
-      await canvas.findByRole("button", { name: "Effort and model" }),
-    );
+    const openPreferences = async () => {
+      const trigger = await canvas.findByRole("button", {
+        name: "Effort and model",
+      });
+      if (trigger.getAttribute("aria-expanded") !== "true")
+        await userEvent.click(trigger);
+      await expect(trigger).toHaveAttribute("aria-expanded", "true");
+    };
+    await openPreferences();
     await userEvent.hover(await body.findByTestId("ai-chat-agent"));
     await userEvent.click(
       await body.findByRole("menuitemradio", { name: "Codex Native" }),
     );
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Effort and model" }),
-    );
+    await openPreferences();
     await userEvent.hover(await body.findByTestId("ai-chat-model"));
+    await waitFor(() =>
+      expect(body.getByTestId("ai-chat-model")).toHaveAttribute(
+        "data-state",
+        "open",
+      ),
+    );
     await expect(
       await body.findByRole("menuitemradio", { name: "Native fixture model" }),
     ).toHaveAttribute("data-state", "checked");
@@ -1238,17 +1248,19 @@ export const HarnessModelRefresh: Story = {
       body.queryByRole("menuitemradio", { name: "gpt-5.6-sol" }),
     ).toBeNull();
     await userEvent.keyboard("{Escape}");
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Effort and model" }),
-    );
+    await openPreferences();
     await userEvent.hover(await body.findByTestId("ai-chat-agent"));
     await userEvent.click(
       await body.findByRole("menuitemradio", { name: "Cursor ACP" }),
     );
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Effort and model" }),
-    );
+    await openPreferences();
     await userEvent.hover(await body.findByTestId("ai-chat-model"));
+    await waitFor(() =>
+      expect(body.getByTestId("ai-chat-model")).toHaveAttribute(
+        "data-state",
+        "open",
+      ),
+    );
     await expect(
       await body.findByRole("menuitemradio", { name: "Cursor fixture model" }),
     ).toHaveAttribute("data-state", "checked");
