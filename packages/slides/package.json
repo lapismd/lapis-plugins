@@ -48,7 +48,7 @@
     "reveal.js": "^5.2.1"
   },
   "peerDependencies": {
-    "@lapis-notes/api": "^0.1.0",
+    "@lapis-notes/api": "^0.1.2",
     "@lapis-notes/markdown": "^0.1.2",
     "svelte": "^5.0.0"
   },

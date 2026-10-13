@@ -1,6 +1,13 @@
 # AI Plugin
 
-Dependency acceptance now uses published Design Core `0.3.1` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
+This candidate consumes published API 0.1.2 through its portable peer range.
+Shared shell qualification uses UI and File Explorer 0.1.2 and Workspace 0.2.0.
+
+Release qualification uses `@lapis-notes/api@^0.1.2` for the shared renderer,
+diagnostics invalidation and selected metadata fingerprint contracts. Portable
+consumers must resolve this prerequisite from npm before plugin publication.
+
+Dependency acceptance now uses published Design Core `0.3.2` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
 unchanged; local overrides for these released packages are retired.
 
 AI presentation resolves Design Core through the repository's current published
@@ -237,6 +244,9 @@ unreviewed durable mutation.
 | LN-AI-088 | Read app tools MAY execute under the fixed scope policy. Write and external tools MUST block on the existing approval surface with allow-once, allow-for-binding, and deny choices. Approval details MUST list every scoped path and a readable multiline before/after diff, including concatenated hunks. Binding grants MUST remain memory-only and expire on binding close, switch, plugin unload, or scope change. |
 | LN-AI-199 | When an optional capture port is configured, `AppToolHost.invoke` MUST begin a cooperative span after approval and before execute for write or external tools. Capture unavailability MUST fail closed with `capture_unavailable` and MUST NOT invoke the tool. The plugin MUST NOT take a hard `jj-checkpoint` dependency. |
 | LN-AI-200 | Interactive agent selection MUST expose OpenCode ACP and OpenCode Native as distinct choices. The selected runtime and OpenCode agent identity MUST survive composer defaults and conversation resume. The host MUST route OpenCode Native to its separately registered controller provider, and model discovery MUST fall back to that provider when OpenCode ACP is unavailable. Background processor choices MUST remain limited to their supported agents. |
+| LN-AI-201 | Unrelated Settings changes MUST preserve durable composer defaults. Changing the harness through the composer or Settings MUST refresh its model catalog, expose loading and failure states, and ignore late responses from previous selections or disposed views. Successful refresh MUST select a valid saved model or the returned default; failure MUST preserve that harness's saved value without retaining another harness's options. |
+| LN-AI-203 | Initial runtime selection MUST pass the owning host workspace to controller readiness so desktop startup uses the same absolute vault boundary as model discovery and submitted turns. |
+| LN-AI-202 | Native Codex and OpenCode model discovery MUST use their native controller provider identities. ACP catalogs MUST remain distinct. Model references passed to the conversation MUST retain the canonical agent identity, and Settings MUST use the same harness-aware discovery contract. |
 | LN-AI-089 | AI settings MUST provide one master application-tools switch and persist per-tool enablement by tool name. Bundled tools MUST default on and community tools MUST default off. Changing enablement MUST NOT mutate an active native binding's frozen tool list. |
 | LN-AI-090 | AI MUST project application tool starts, results, failures, and approvals into the normalized transcript with binding and run provenance. It MUST suppress duplicate runtime events for the reserved app-tool MCP server and MUST NOT persist bridge tokens, environments, stacks, or unbounded payloads. |
 | LN-AI-091 | External MCP server contributions MUST remain distinct from application tools and use an explicitly named `McpServerContribution` request field. The app bridge MUST reserve `lapis-tools`, reject collisions, and keep application tool implementations independent of MCP, ACP, acpx, and vendor SDKs. |
@@ -515,3 +525,8 @@ The signed runtime declares its compiled Svelte imports through the exact
 compiler-versioned renderer contracts in LP-SPEC-014 and LP-SPEC-047. Host-owned
 components and archived components share that renderer graph; npm package peers
 remain portable.
+
+Harness model-refresh acceptance checks the preference trigger's expanded state
+before opening it. Submenu dismissal must not accidentally toggle an already
+open parent closed. Plays retain pointer-hover, checked-default and old-model
+absence assertions for both Native and Cursor catalogs.

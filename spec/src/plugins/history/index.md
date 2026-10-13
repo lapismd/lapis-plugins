@@ -1,6 +1,13 @@
 # History Plugin
 
-Dependency acceptance now uses published Design Core `0.3.1` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
+This candidate consumes published API 0.1.2 through its portable peer range.
+Shared shell qualification uses UI and File Explorer 0.1.2 and Workspace 0.2.0.
+
+Release qualification uses `@lapis-notes/api@^0.1.2` for the shared renderer,
+diagnostics invalidation and selected metadata fingerprint contracts. Portable
+consumers must resolve this prerequisite from npm before plugin publication.
+
+Dependency acceptance now uses published Design Core `0.3.2` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
 unchanged; local overrides for these released packages are retired.
 
 History presentation resolves Design Core through the repository's current
@@ -112,9 +119,11 @@ it omits an in-panel title and file path. Timeline markers use
 consumes `--ui-workspace-view-*` so ungrouped sidebars keep panel paint.
 Compare FileDiff and MergeEditor keep Design Core typography: chrome
 inherits the view font, and code uses `--ui-diff-mono` bound to
-`--studio-font-mono`. The compare chrome lists the selected revision on
-its own row with File Change Stats on the trailing edge, then an
-Explorer-style icon toolbar. It omits the file path
+`--studio-font-mono`. The compare chrome arranges revision timestamps in
+the leading column, a centered Explorer-style icon toolbar, and File Change
+Stats at the trailing edge on one row. Below 40rem of owning-pane width, the
+toolbar wraps onto a centered second row while timestamps and stats remain
+above. It omits the file path
 and close control, keeps the chrome bottom border, and flushes Diff card
 radius. The compare tab header shows `History` plus parent-path
 segments and the filename title; History opens or reveals the History

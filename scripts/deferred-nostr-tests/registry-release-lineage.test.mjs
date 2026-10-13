@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { resolveRegistryReleaseLineage } from "./lib/registry-release-lineage.mjs";
+import { resolveRegistryReleaseLineage } from "../lib/registry-release-lineage.mjs";
 
 const event = (id, content) => ({ id, created_at: 1, content: "", tags: [] });
 

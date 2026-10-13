@@ -1,5 +1,14 @@
 # Specification Governance
 
+Shared Storybook diagnostics now cover formatted Svelte warnings, diagnostic URLs
+and Error objects, and retain caught teardown failures for after-story and final
+cleanup checks. Dependency-originated diagnostics remain fatal under LP-SPEC-034.
+
+Release version preparation updates each active plugin's mapped chapter and
+the shared framework floor catalog. Generated manifests and documentation must
+agree with the selected independent Changesets versions; parked packages must
+remain excluded.
+
 Checkpoint repairs require owning API regressions and plugin regressions for
 both invalidation and warm reuse. Release intent must name the affected plugin
 and retain prerequisite API version qualification. Static publication and the
@@ -103,9 +112,9 @@ ordering, cache-forwarding, and secretless-fallback tests before the complete
 package and release lanes run.
 The CI fan-out and stable aggregation gate are protected by LP-SPEC-038. The
 workflow, pinned setup composite, Turbo cache summary reporter, and workflow
-source tests map to Distribution and this chapter. Validate must treat skipped
-functional lanes as the deferred success path until Community and the AI
-controller exist on the npm registry. Dependency auditing is
+source tests map to Distribution and this chapter. The prerequisite checks every declared framework range and AI Controller on npm.
+Validate rejects skipped, cancelled or failed lanes; publication variables cannot
+turn missing acceptance into a successful aggregate. Community is not a CI prerequisite. Dependency auditing is
 protected by LP-SPEC-048: root `check`, `ci:release`, and the quality job run
 `pnpm audit` against the committed lockfile, and only recorded
 `auditConfig.ignoreCves` entries may suppress an unpatched advisory. Functional Storybook and
@@ -168,3 +177,20 @@ published canonical specification sites.
 
 The browser archive producer fixes the production environment constant at build
 time. Emitted dependencies must not require a host-installed Node process shim.
+
+Static release qualification consumes API-owned schema/build exports and excludes
+the retained deferred Nostr test lane under LP-SPEC-049.
+
+AI model discovery and readiness changes map to LN-AI-201 through LN-AI-203. The associated patch
+changeset retains focused catalog and mounted-composer regressions, followed by
+the shared interaction/accessibility, packaging and signature gates.
+
+History toolbar acceptance checks the actual Desktop shell geometry and a
+narrow pane produced through the workspace renderer's sidebar sizing contract.
+It verifies centered actions between timestamps and stats, then centered wrapping
+below them, and restores the layout after testing. Changed visuals remain
+`visual-pending` until human review.
+
+The registry-acceptance fixture maps to Distribution and the static candidate
+security gates. Exact frozen source candidates supply signed runtime artifacts
+for Web acceptance without replacing committed npm ranges.

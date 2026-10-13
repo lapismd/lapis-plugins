@@ -4,7 +4,7 @@ import test from "node:test";
 import {
   createCurationCandidate,
   createReleaseHeadTemplate,
-} from "./nostr-release.mjs";
+} from "../nostr-release.mjs";
 
 const release = {
   repository: "lapismd/lapis-plugins",

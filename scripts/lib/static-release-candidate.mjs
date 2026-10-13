@@ -1,7 +1,7 @@
 import { createHash, createPublicKey } from "node:crypto";
 import { readFile, writeFile, rm } from "node:fs/promises";
 import path from "node:path";
-import { registryChangelogFromMarkdown } from "@lapismd/lapis-community/registry/schema";
+import { registryChangelogFromMarkdown } from "@lapis-notes/api/registry/schema";
 import {
   signReleaseManifest,
   buildSignedPluginBundle,
@@ -20,7 +20,7 @@ export async function prepareStaticReleaseCandidate({
 }) {
   const packageRoot = path.join(root, "packages", plugin.directory);
   const packageJson = JSON.parse(
-    await readFile(path.join(packageRoot, "package.json"), "utf8"),
+    await readFile(path.join(packageRoot, "package.json"), "utf8")
   );
   if (packageJson.private === true)
     throw new Error("Private plugin is parked and cannot be released.");
@@ -37,7 +37,7 @@ export async function prepareStaticReleaseCandidate({
   const directory = path.join(
     root,
     ".release/plugins",
-    `${plugin.pluginId}-${packageJson.version}`,
+    `${plugin.pluginId}-${packageJson.version}`
   );
   const releasePath = path.join(directory, "release.json");
   const releaseManifest = JSON.parse(await readFile(releasePath, "utf8"));
@@ -48,7 +48,7 @@ export async function prepareStaticReleaseCandidate({
     releaseManifest.pluginId !== plugin.pluginId
   )
     throw new Error(
-      "Static candidate coordinates do not match the selected source.",
+      "Static candidate coordinates do not match the selected source."
     );
   const signedReleasePath = path.join(directory, "release.signed.json");
   await signReleaseManifest({
@@ -80,19 +80,19 @@ export async function prepareStaticReleaseCandidate({
   verifyPluginBundle({ bundleBytes: first, publicKey });
   await writeFile(
     `${built.bundlePath}.sha256`,
-    `${digest(first)}  ${path.basename(built.bundlePath)}\n`,
+    `${digest(first)}  ${path.basename(built.bundlePath)}\n`
   );
   const registry = JSON.parse(
-    await readFile(path.join(packageRoot, "registry.json"), "utf8"),
+    await readFile(path.join(packageRoot, "registry.json"), "utf8")
   );
   const manifest = JSON.parse(
-    await readFile(path.join(directory, "files/manifest.json"), "utf8"),
+    await readFile(path.join(directory, "files/manifest.json"), "utf8")
   );
   const changelog = registryChangelogFromMarkdown(
     manifest.name,
     packageJson.version,
     await readFile(path.join(packageRoot, "CHANGELOG.md"), "utf8"),
-    registry.releases?.[packageJson.version]?.changelog,
+    registry.releases?.[packageJson.version]?.changelog
   );
   return {
     repository: "lapismd/lapis-plugins",

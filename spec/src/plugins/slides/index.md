@@ -1,5 +1,12 @@
 # Slides Plugin
 
+This candidate consumes published API 0.1.2 through its portable peer range.
+Shared shell qualification uses UI and File Explorer 0.1.2 and Workspace 0.2.0.
+
+Release qualification uses `@lapis-notes/api@^0.1.2` for the shared renderer,
+diagnostics invalidation and selected metadata fingerprint contracts. Portable
+consumers must resolve this prerequisite from npm before plugin publication.
+
 `@lapis-notes/slides` owns presentation mode for Markdown notes. The migration
 starts from legacy revision `8ec68e18`, preserves the rendered overlay, Reveal
 surface, recursive section markup, close-button SVG, semantic class names, and

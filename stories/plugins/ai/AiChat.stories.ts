@@ -5,6 +5,7 @@ import { workspaceCatalogParameters } from "../../catalog/catalog.mjs";
 import {
   aiChatApprovalExampleSource,
   aiChatExampleSource,
+  aiChatHarnessModelsExampleSource,
   aiChatSkillsExampleSource,
   aiChatFailureExampleSource,
   aiChatMentionsExampleSource,
@@ -126,7 +127,9 @@ export const AutomaticMemoryRecall: Story = {
         canvas.getByRole("article", { name: "Message from assistant" }),
       ).toHaveTextContent("Draft the Atlas summary");
     });
-    expect(canvas.queryByText("Use compact headings in Atlas notes.")).toBeNull();
+    expect(
+      canvas.queryByText("Use compact headings in Atlas notes."),
+    ).toBeNull();
   },
 };
 
@@ -140,17 +143,30 @@ export const OpenCodeHarnessChoices: Story = {
   }),
   parameters: {
     ...workspaceCatalogParameters("plugins-ai-chat-opencode-harnesses"),
-    docs: { description: { story: "The composer offers OpenCode ACP and OpenCode Native independently." } },
+    docs: {
+      description: {
+        story:
+          "The composer offers OpenCode ACP and OpenCode Native independently.",
+      },
+    },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(document.body);
-    await userEvent.click(canvas.getByRole("button", { name: "Effort and model" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Effort and model" }),
+    );
     await userEvent.click(body.getByTestId("ai-chat-agent"));
     await expect(body.getByText("OpenCode ACP")).toBeVisible();
     await userEvent.click(body.getByText("OpenCode Native"));
-    await expect(canvas.getByTestId("ai-chat-demo")).toHaveAttribute("data-selected-runtime", "opencode-native");
-    await expect(canvas.getByTestId("ai-chat-demo")).toHaveAttribute("data-selected-agent", "opencode");
+    await expect(canvas.getByTestId("ai-chat-demo")).toHaveAttribute(
+      "data-selected-runtime",
+      "opencode-native",
+    );
+    await expect(canvas.getByTestId("ai-chat-demo")).toHaveAttribute(
+      "data-selected-agent",
+      "opencode",
+    );
   },
 };
 
@@ -984,9 +1000,7 @@ export const AgentTrace: Story = {
       ).not.toBeNull();
       expect(
         canvasElement.querySelector('[data-ui-part="reasoning-content-inner"]'),
-      ).toHaveTextContent(
-        "I will read the mentioned note, then summarize it.",
-      );
+      ).toHaveTextContent("I will read the mentioned note, then summarize it.");
       expect(canvas.getByText("vault.read")).toBeVisible();
       expect(
         canvas.getByRole("article", { name: "Message from assistant" }),
@@ -1166,5 +1180,142 @@ export const ScrollRecovery: Story = {
       expect(latestBox.bottom).toBeLessThanOrEqual(viewBox.bottom + 16);
       expect(latestBox.top).toBeGreaterThanOrEqual(viewBox.top - 16);
     });
+  },
+};
+
+export const HarnessModelRefresh: Story = {
+  render: () => ({
+    Component: AiChatDemo,
+    props: {
+      showRuntimeSelection: true,
+      loadModels: fn(async (agent: string, runtime: string) => [
+        {
+          provider: agent,
+          model:
+            runtime === "codex-native"
+              ? "native-only-model"
+              : "cursor-only-model",
+          displayName:
+            runtime === "codex-native"
+              ? "Native fixture model"
+              : "Cursor fixture model",
+          isDefault: true,
+        },
+      ]),
+    },
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Changing the harness reloads its catalog and replaces the prior harness model selection.",
+      },
+      source: {
+        code: aiChatHarnessModelsExampleSource,
+        language: "tsx",
+        type: "code",
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const openPreferences = async () => {
+      const trigger = await canvas.findByRole("button", {
+        name: "Effort and model",
+      });
+      if (trigger.getAttribute("aria-expanded") !== "true")
+        await userEvent.click(trigger);
+      await expect(trigger).toHaveAttribute("aria-expanded", "true");
+    };
+    await openPreferences();
+    await userEvent.hover(await body.findByTestId("ai-chat-agent"));
+    await userEvent.click(
+      await body.findByRole("menuitemradio", { name: "Codex Native" }),
+    );
+    await openPreferences();
+    await userEvent.hover(await body.findByTestId("ai-chat-model"));
+    await waitFor(() =>
+      expect(body.getByTestId("ai-chat-model")).toHaveAttribute(
+        "data-state",
+        "open",
+      ),
+    );
+    await expect(
+      await body.findByRole("menuitemradio", { name: "Native fixture model" }),
+    ).toHaveAttribute("data-state", "checked");
+    expect(
+      body.queryByRole("menuitemradio", { name: "gpt-5.6-sol" }),
+    ).toBeNull();
+    await userEvent.keyboard("{Escape}");
+    await openPreferences();
+    await userEvent.hover(await body.findByTestId("ai-chat-agent"));
+    await userEvent.click(
+      await body.findByRole("menuitemradio", { name: "Cursor ACP" }),
+    );
+    await openPreferences();
+    await userEvent.hover(await body.findByTestId("ai-chat-model"));
+    await waitFor(() =>
+      expect(body.getByTestId("ai-chat-model")).toHaveAttribute(
+        "data-state",
+        "open",
+      ),
+    );
+    await expect(
+      await body.findByRole("menuitemradio", { name: "Cursor fixture model" }),
+    ).toHaveAttribute("data-state", "checked");
+    expect(
+      body.queryByRole("menuitemradio", { name: "Native fixture model" }),
+    ).toBeNull();
+    await userEvent.keyboard("{Escape}");
+  },
+};
+
+export const SettingsHarnessModelRefresh: Story = {
+  render: () => ({
+    Component: AiChatDemo,
+    props: {
+      showRuntimeSelection: true,
+      showSettingsSelection: true,
+      loadModels: async (agent: string) => [
+        {
+          provider: agent,
+          model: "cursor-settings-model",
+          displayName: "Cursor settings model",
+          isDefault: true,
+        },
+      ],
+    },
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Changing the harness in Settings updates a mounted composer's catalog and checked model.",
+      },
+      source: {
+        code: aiChatHarnessModelsExampleSource,
+        language: "tsx",
+        type: "code",
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Choose Cursor in Settings" }),
+    );
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Effort and model" }),
+    );
+    await userEvent.hover(await body.findByTestId("ai-chat-model"));
+    await expect(
+      await body.findByRole("menuitemradio", { name: "Cursor settings model" }),
+    ).toHaveAttribute("data-state", "checked");
+    expect(
+      body.queryByRole("menuitemradio", { name: "gpt-5.6-sol" }),
+    ).toBeNull();
+    await userEvent.keyboard("{Escape}");
   },
 };

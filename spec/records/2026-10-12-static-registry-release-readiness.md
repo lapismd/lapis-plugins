@@ -53,23 +53,50 @@ verifies every locally signed detail and archive. The temporary API tarball
 provides the new optional fingerprint predicate; portable publication requires
 the API 0.1.1 prerequisite and an updated plugin API floor.
 
+## Versioned candidates
+
+Changesets prepares AI 0.1.4; Bases, Bookmarks, Graph, History and Search 0.1.3;
+Markdown 0.1.5; Markdown Lint, Source Editor and Word Count 0.1.2; Spellcheck
+0.1.3; and Slides initial 0.1.0. The shared package catalog raises API, UI,
+Workspace and File Explorer floors to 0.1.1. All 17 selected plugin, framework
+and schema coordinates return npm 404; no existing version will be overwritten.
+
+Notes prepares four framework 0.1.1 tarballs with 30 passing package tasks and
+18 passing root check tasks. The shared schema is isolated from pending
+Community application changes: seven focused schema tests, all 56 registry tests,
+strict schema types, build and publint pass. Its complete check/spec lanes still
+report the same two parked application architecture failures reproduced on its
+exact parent. Those failures are retained and require explicit release-scope
+acceptance; this work does not repair or suppress them.
+
+The versioned Plugin candidates pass all 36 package tasks, 13 root check
+tasks, 102 release-tooling tests, 175 cold interaction/accessibility scenarios
+and the static Storybook build. Their 12 npm packs and reproduced test-signed
+archives pass the real Notes verifier. A generated registry preview contains
+eleven version additions and one initial Slides entry. The refreshed 0.1.1
+framework app passes all nine Web scenarios, the three native bundled
+lifecycles, the combined nine-plugin native scenario and the rebuilt packaged
+WebKit smoke. The release-version slice awaits registry-only lock refresh and
+qualification after prerequisite publication.
+
+Local npm authentication returns E401. Initial shared-schema and Slides npm
+publication needs an authenticated bootstrap session; production publication
+is not authorized by these local fixture signatures. The static workflow
+remains manually disabled, both static activation variables are unset, and
+Nostr remains false. The GitHub release environments currently have no reviewer
+protection rules; activation remains subject to the explicit operator gate.
+
 ## Remaining release work
 
-- Prepare unpublished framework versions for the new API/renderer contract and
-  the changed UI, Workspace and File Explorer peers. Publish the unchanged
-  shared registry schema prerequisite when approved. Published language-service
-  0.1.1 already provides the stable emitted worker and is now the minimum range.
-- Set plugin dependency floors for the new API contract, including diagnostics
-  invalidation, after the prerequisite version is established. Refresh portable
-  registry-only lockfiles and rerun their frozen-install acceptance.
-- Apply the queued package-scoped version changes and check every candidate
-  against npm. Current Bases, Bookmarks, Graph, History, Markdown Lint, Search,
-  Source Editor and Word Count versions already exist publicly and cannot be
-  overwritten. Slides has no npm release yet; AI, Markdown and Spellcheck have
-  unpublished current versions but still need consistent release-intent review.
-- Rebuild final packs, archives and site metadata from those committed release
-  versions. Complete production signing/configuration checks, then obtain the
-  user's explicit approval for publication and registry deployment.
+- Rebuild final packs, archives and site metadata from the committed candidate
+  versions and complete production signing/configuration evidence.
+- Obtain approval for the unpublished framework and shared schema prerequisites.
+  Published language-service 0.1.1 already supplies the stable emitted worker.
+- Once prerequisites exist on npm, refresh portable registry lockfiles and
+  complete frozen-install Web and Deno consumer qualification.
+- Obtain approval for plugin publication and the first static registry cutover,
+  publish the verified artifacts, deploy the registry and prove production
+  installation. Nostr publication remains deferred.
 
 No npm package, plugin GitHub release asset or production registry was published
 by this qualification. Source push remains distinct from the guarded release

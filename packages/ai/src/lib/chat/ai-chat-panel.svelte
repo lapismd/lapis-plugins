@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, untrack } from "svelte";
+  import { onDestroy, onMount, untrack } from "svelte";
   import type { App, WorkspaceLeaf } from "@lapis-notes/api";
   import { MarkdownEmbed } from "@lapis-notes/markdown/embed";
   import * as Chat from "@lapismd/design-core/ai/chat";
@@ -91,6 +91,11 @@
   import type { AutomaticMemoryRecall } from "../memory/types";
   import type { HandoffSummaryCoordinator } from "../conversations/handoff-summary";
 
+  import {
+    ComposerModelCatalog,
+    type ComposerModelCatalogState,
+  } from "./composer-model-catalog";
+
   let {
     app,
     runtime,
@@ -121,6 +126,7 @@
     fileSearch,
     models = [],
     modelCatalogError = null,
+    loadModels,
     settings,
     onSettingsChange,
   }: {
@@ -157,6 +163,10 @@
     fileSearch?: ComposerSearchSource;
     models?: ModelRef[];
     modelCatalogError?: string | null;
+    loadModels?: (
+      agent: AcpAgentId,
+      runtime: AiPluginSettings["defaultRuntime"],
+    ) => Promise<ModelRef[]>;
     settings?: Partial<AiPluginSettings>;
     onSettingsChange?: (
       patch: Partial<AiPluginSettings>,
@@ -195,7 +205,9 @@
         skillSnapshots,
         slashRouter,
         appToolHost,
-        memoryRecall: settings?.memoryAutomaticRecall ? memoryRecall : undefined,
+        memoryRecall: settings?.memoryAutomaticRecall
+          ? memoryRecall
+          : undefined,
         handoffSummaries,
         skillContext,
         readVaultText: app
@@ -206,18 +218,52 @@
           : undefined,
         onComposerDefaults: ({ agent, runtimePreference }) => {
           if (runtimePreference === "fake") {
+            catalog.cancel();
+            catalogState = {
+              agent,
+              runtime: "fake",
+              models: [],
+              model: localModel ?? "",
+              loading: false,
+              error: null,
+            };
             localAgent = agent;
             localRuntime = "fake";
-            persistComposerDefaults(agent, "fake", localModel, selectedThinking);
+            persistComposerDefaults(
+              agent,
+              "fake",
+              localModel,
+              selectedThinking,
+            );
             return;
           }
           changeAgent(agent, runtimePreference);
         },
       }),
   );
+  let catalogState = $state<ComposerModelCatalogState | null>(null);
+  const catalog = new ComposerModelCatalog(
+    (agent, runtime) => loadModels?.(agent, runtime) ?? Promise.resolve([]),
+    (state) => {
+      catalogState = state;
+      if (!state.loading && !state.error) {
+        localModel = state.model;
+        persistComposerDefaults(
+          state.agent,
+          state.runtime === "auto" ? "acp" : state.runtime,
+          state.model,
+          selectedThinking,
+        );
+      }
+    },
+  );
+  onDestroy(() => catalog.cancel());
+  const catalogModels = $derived(catalogState?.models ?? models);
   let draft = $state("");
   let localAgent = $state<AcpAgentId | null>(null);
-  let localRuntime = $state<"acp" | "codex-native" | "opencode-native" | "fake" | null>(null);
+  let localRuntime = $state<
+    "acp" | "codex-native" | "opencode-native" | "fake" | null
+  >(null);
   let localModel = $state<string | null>(null);
   let localThinking = $state<AiThinkingLevel | null>(null);
   let attachments = $state<{ path: string; name: string }[]>([]);
@@ -244,9 +290,9 @@
         ? "codex-native"
         : settings?.defaultRuntime === "opencode-native"
           ? "opencode-native"
-        : settings?.defaultRuntime === "fake"
-          ? "fake"
-          : "acp"),
+          : settings?.defaultRuntime === "fake"
+            ? "fake"
+            : "acp"),
   );
   const selectedModel = $derived(
     localModel ?? settings?.defaultModel ?? DEFAULT_AI_SETTINGS.defaultModel,
@@ -254,8 +300,63 @@
   const selectedThinking = $derived(
     localThinking ?? settings?.thinking ?? DEFAULT_AI_SETTINGS.thinking,
   );
+  // Settings notifications also reach a mounted composer. Own menu updates
+  // already match the local harness and must not trigger a second discovery.
+  let observedDefaults: {
+    agent: AcpAgentId;
+    runtime: typeof selectedRuntime;
+    model: string;
+    thinking: AiThinkingLevel;
+  } | null = null;
+  $effect(() => {
+    if (initializing) return;
+    const next = {
+      agent: normalizeAcpAgent(settings?.acpAgent),
+      runtime:
+        settings?.defaultRuntime === "codex-native"
+          ? ("codex-native" as const)
+          : settings?.defaultRuntime === "opencode-native"
+            ? ("opencode-native" as const)
+            : settings?.defaultRuntime === "fake"
+              ? ("fake" as const)
+              : ("acp" as const),
+      model: settings?.defaultModel ?? DEFAULT_AI_SETTINGS.defaultModel,
+      thinking: settings?.thinking ?? DEFAULT_AI_SETTINGS.thinking,
+    };
+    untrack(() => {
+      const previous = observedDefaults;
+      observedDefaults = next;
+      if (!previous) return;
+      const harnessChanged =
+        previous.agent !== next.agent || previous.runtime !== next.runtime;
+      if (
+        harnessChanged &&
+        ((localAgent ?? previous.agent) !== next.agent ||
+          (localRuntime ?? previous.runtime) !== next.runtime)
+      ) {
+        localAgent = next.agent;
+        localRuntime = next.runtime;
+        localModel = next.model;
+        catalog.cancel();
+        if (next.runtime === "fake") {
+          catalogState = {
+            ...next,
+            runtime: "fake",
+            models: [],
+            loading: false,
+            error: null,
+          };
+        } else if (loadModels) {
+          void catalog.refresh(next.agent, next.runtime, next.model);
+        }
+      } else if (previous.model !== next.model) {
+        localModel = next.model;
+      }
+      if (previous.thinking !== next.thinking) localThinking = next.thinking;
+    });
+  });
   const modelOptions = $derived.by<ModelRef[]>(() => {
-    const available = catalogModelsForAgent(selectedAgent, models);
+    const available = catalogModelsForAgent(selectedAgent, catalogModels);
     if (
       selectedModel &&
       !available.some((model) => model.model === selectedModel)
@@ -300,25 +401,26 @@
     }
     return triggers;
   });
-  const agentLabels = $derived.by(() =>
-    new Map(
-      controller.bindings.map((binding) => {
-        const label =
-          binding.runtime === "codex-native"
-            ? "Codex Native"
-            : binding.runtime === "opencode-native"
-              ? "OpenCode Native"
-            : binding.agent === "cursor"
-              ? "Cursor ACP"
-              : binding.agent === "opencode"
-                ? "OpenCode ACP"
-              : "Codex ACP";
-        return [
-          binding.id,
-          binding.model?.model ? `${label} · ${binding.model.model}` : label,
-        ] as const;
-      }),
-    ),
+  const agentLabels = $derived.by(
+    () =>
+      new Map(
+        controller.bindings.map((binding) => {
+          const label =
+            binding.runtime === "codex-native"
+              ? "Codex Native"
+              : binding.runtime === "opencode-native"
+                ? "OpenCode Native"
+                : binding.agent === "cursor"
+                  ? "Cursor ACP"
+                  : binding.agent === "opencode"
+                    ? "OpenCode ACP"
+                    : "Codex ACP";
+          return [
+            binding.id,
+            binding.model?.model ? `${label} · ${binding.model.model}` : label,
+          ] as const;
+        }),
+      ),
   );
   const timeline = $derived(
     groupChatItemsByDate(controller.items, new Date(), agentLabels),
@@ -345,8 +447,9 @@
   );
   const composerError = $derived(
     controller.error ??
-      modelCatalogError ??
-      unavailableReason ??
+      (catalogState
+        ? catalogState.error
+        : (modelCatalogError ?? unavailableReason)) ??
       controller.appToolsUnavailableReason,
   );
   const composerStatus = $derived<ComposerStatus | undefined>(
@@ -384,8 +487,8 @@
   });
 
   async function submit(prompt: string): Promise<void> {
-    if (initializing) return;
-    const selected = catalogModelsForAgent(selectedAgent, models).find(
+    if (initializing || catalogState?.loading) return;
+    const selected = catalogModelsForAgent(selectedAgent, catalogModels).find(
       (model) => model.model === selectedModel,
     );
     const extra = attachments.map((file) => file.path);
@@ -435,13 +538,19 @@
       catalogModelsForAgent(agent, models).find((model) => model.isDefault)
         ?.model ||
       catalogModelsForAgent(agent, models)[0]?.model ||
-      null;
+      "";
     persistComposerDefaults(
       agent,
       runtimePreference,
       localModel,
       selectedThinking,
     );
+    if (loadModels)
+      void catalog.refresh(
+        agent,
+        runtimePreference,
+        configured ?? localModel ?? "",
+      );
   }
 
   function changeModel(value: string): void {
@@ -554,7 +663,9 @@
   function toolCallProps(item: AiChatToolItem) {
     const hint = { toolName: item.name, input: item.input };
     const presentedError =
-      item.state === "error" ? presentToolPayload(item.output, hint) : undefined;
+      item.state === "error"
+        ? presentToolPayload(item.output, hint)
+        : undefined;
     return {
       id: item.toolId,
       name: item.name,
@@ -720,6 +831,7 @@
   data-ui-component="ai-chat-panel"
   data-testid="ai-chat-panel"
   data-initializing={initializing}
+  data-model-catalog-loading={catalogState?.loading ?? false}
 >
   <Chat.Layout density="compact" {isEmpty} aria-label="AI chat">
     {#snippet emptyState()}
@@ -752,7 +864,9 @@
       <Chat.Composer
         bind:value={draft}
         placeholder="Ask anything…"
-        disabled={initializing || controller.busy}
+        disabled={initializing ||
+          Boolean(catalogState?.loading) ||
+          controller.busy}
         interactiveDrawerWhenDisabled={Boolean(pendingInteraction)}
         isStopShown={controller.busy}
         status={composerStatus}
@@ -856,7 +970,9 @@
                         value={`${item.label} ${item.id}`}
                         onSelect={() => addAttachment(item)}
                       >
-                        <CommandView.ItemLabel>{item.label}</CommandView.ItemLabel>
+                        <CommandView.ItemLabel
+                          >{item.label}</CommandView.ItemLabel
+                        >
                       </CommandView.Item>
                     {/each}
                   </CommandView.List>
@@ -995,23 +1111,29 @@
                       <DropdownMenu.RadioItem
                         value="acp:codex"
                         onclick={() => changeAgent("codex", "acp")}
-                      >Codex ACP</DropdownMenu.RadioItem>
+                        >Codex ACP</DropdownMenu.RadioItem
+                      >
                       <DropdownMenu.RadioItem
                         value="acp:cursor"
                         onclick={() => changeAgent("cursor", "acp")}
-                      >Cursor ACP</DropdownMenu.RadioItem>
+                        >Cursor ACP</DropdownMenu.RadioItem
+                      >
                       <DropdownMenu.RadioItem
                         value="codex-native:codex"
                         onclick={() => changeAgent("codex", "codex-native")}
-                      >Codex Native</DropdownMenu.RadioItem>
+                        >Codex Native</DropdownMenu.RadioItem
+                      >
                       <DropdownMenu.RadioItem
                         value="acp:opencode"
                         onclick={() => changeAgent("opencode", "acp")}
-                      >OpenCode ACP</DropdownMenu.RadioItem>
+                        >OpenCode ACP</DropdownMenu.RadioItem
+                      >
                       <DropdownMenu.RadioItem
                         value="opencode-native:opencode"
-                        onclick={() => changeAgent("opencode", "opencode-native")}
-                      >OpenCode Native</DropdownMenu.RadioItem>
+                        onclick={() =>
+                          changeAgent("opencode", "opencode-native")}
+                        >OpenCode Native</DropdownMenu.RadioItem
+                      >
                     </DropdownMenu.RadioGroup>
                   </DropdownMenu.SubContent>
                 </DropdownMenu.Sub>
@@ -1021,7 +1143,13 @@
                   Model
                 </DropdownMenu.SubTrigger>
                 <DropdownMenu.SubContent>
-                  {#if modelOptions.length > 0}
+                  {#if catalogState?.loading}
+                    <DropdownMenu.Group
+                      ><DropdownMenu.Item disabled
+                        >Loading models…</DropdownMenu.Item
+                      ></DropdownMenu.Group
+                    >
+                  {:else if modelOptions.length > 0}
                     <DropdownMenu.RadioGroup value={selectedModel}>
                       {#each modelOptions as option (option.model)}
                         <DropdownMenu.RadioItem
@@ -1128,8 +1256,7 @@
           <Chat.ToolCalls
             calls={entry.items.map((item) => ({
               ...toolCallProps(item),
-              detail:
-                item.input || item.output ? toolDetail : undefined,
+              detail: item.input || item.output ? toolDetail : undefined,
             }))}
             defaultExpanded={false}
           />
@@ -1229,8 +1356,7 @@
               </Chat.MessageMetadata>
             {/snippet}
           </Chat.Message>
-        {:else if entry.item.type === "status" &&
-          entry.item.layout === "inventory"}
+        {:else if entry.item.type === "status" && entry.item.layout === "inventory"}
           <div
             class="ai-chat-panel__command-notice"
             data-testid="ai-chat-command-notice"

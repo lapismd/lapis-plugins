@@ -1,5 +1,14 @@
 # AI changelog
 
+## 0.1.4
+
+### Patch Changes
+
+- Add official author avatars and deterministic split, light, and dark registry media for plugin banners, overviews, and galleries.
+
+- Updated dependencies []:
+  - @lapis-notes/markdown@0.1.5
+
 ## 0.1.3
 
 ### Patch Changes

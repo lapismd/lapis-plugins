@@ -34,6 +34,7 @@
     trace = "echo",
     seedItems = [],
     modelCatalogError = null,
+    loadModels,
     models = [
       { provider: "codex", model: "gpt-5.6-sol" },
       { provider: "codex", model: "gpt-5.4-medium" },
@@ -49,6 +50,7 @@
     enableMemoryRecall = false,
     enableMarkdown = false,
     showRuntimeSelection = false,
+    showSettingsSelection = false,
   }: {
     requireApproval?: boolean;
     requireQuestion?: boolean;
@@ -56,6 +58,7 @@
     trace?: FakeAgentTrace;
     seedItems?: AiChatItem[];
     modelCatalogError?: string | null;
+    loadModels?: (agent: string, runtime: string) => Promise<ModelRef[]>;
     models?: ModelRef[];
     files?: VaultFileRef[];
     preservePending?: boolean;
@@ -65,6 +68,7 @@
     enableMemoryRecall?: boolean;
     enableMarkdown?: boolean;
     showRuntimeSelection?: boolean;
+    showSettingsSelection?: boolean;
   } = $props();
   let openedTick = $state(0);
   let recallCalls = $state(0);
@@ -205,7 +209,11 @@
   let settings = $state<
     Pick<
       AiPluginSettings,
-      "defaultModel" | "thinking" | "memoryAutomaticRecall" | "defaultRuntime" | "acpAgent"
+      | "defaultModel"
+      | "thinking"
+      | "memoryAutomaticRecall"
+      | "defaultRuntime"
+      | "acpAgent"
     >
   >({
     defaultModel: "gpt-5.6-sol",
@@ -262,6 +270,19 @@
       Unload extension command
     </button>
   {/if}
+  {#if showSettingsSelection}
+    <button
+      type="button"
+      onclick={() => {
+        settings = {
+          ...settings,
+          acpAgent: "cursor",
+          defaultRuntime: "acp",
+          defaultModel: "",
+        };
+      }}>Choose Cursor in Settings</button
+    >
+  {/if}
   <AiChatPanel
     app={panelApp}
     {runtime}
@@ -272,6 +293,7 @@
     {fileSearch}
     {models}
     {modelCatalogError}
+    {loadModels}
     {settings}
     memoryRecall={enableMemoryRecall ? memoryRecall : undefined}
     onSettingsChange={(patch) => {

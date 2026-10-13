@@ -6,7 +6,12 @@ import {
 } from "@lapis-notes/api";
 import type { AiPlugin } from "../ai-plugin";
 import type { AiThinkingLevel } from "../core/types";
-import { ACP_AGENT_IDS, PROCESSOR_AGENT_IDS, normalizeProcessorAgent, type AcpAgentId } from "./acp-agents";
+import {
+  ACP_AGENT_IDS,
+  PROCESSOR_AGENT_IDS,
+  normalizeProcessorAgent,
+  type AcpAgentId,
+} from "./acp-agents";
 import { applyAppToolEnablement, type AiPluginSettings } from "./ai-settings";
 import {
   listAppToolSettingRows,
@@ -268,7 +273,10 @@ export class AiSettingsTab extends PluginSettingTab {
     setting: Setting,
   ): Promise<void> {
     try {
-      const models = await this.aiPlugin.models.listModels(settings.acpAgent);
+      const models = await this.aiPlugin.models.listModels(
+        settings.acpAgent,
+        settings.defaultRuntime,
+      );
       if (models.length === 0) {
         setting.setDesc(
           `The ${settings.acpAgent} provider returned no model catalog; keeping the saved selection.`,

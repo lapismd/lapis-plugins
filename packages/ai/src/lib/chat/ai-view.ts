@@ -52,7 +52,9 @@ export type AiViewHost = {
   subscribeSettings?(
     listener: (patch: Partial<AiPluginSettings>) => void,
   ): () => void;
-  models: { listModels(provider: string): Promise<ModelRef[]> };
+  models: {
+    listModels(provider: string, runtime?: string): Promise<ModelRef[]>;
+  };
   workspace?: string;
 };
 

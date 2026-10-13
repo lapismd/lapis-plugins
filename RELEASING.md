@@ -37,8 +37,11 @@ Both release workflows omit Community, and publication rejects stale plans
 containing its coordinates. The local registry excludes private source packages.
 Lapis Notes omits its constructor, styles and dependency from the shared profile.
 
-Source and prior test evidence remain retained. The shared
-`@lapismd/lapis-community` library and registry schema remain active dependencies.
+Source and prior test evidence remain retained. Static release tooling consumes
+`@lapis-notes/api/registry/schema`; Storybook uses `@lapis-notes/api/build/vite`.
+Neither requires Community. Relay-only tooling and its unchanged assertions
+remain in the deferred `test:release:nostr` lane. Before re-enabling Nostr, restore
+the Community protocol dependency and qualify that lane and relay acceptance.
 
 To re-enable Community, remove its private flag and workspace exclusion, restore
 the two workflow selections and the app profile

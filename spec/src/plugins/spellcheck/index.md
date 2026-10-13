@@ -1,5 +1,12 @@
 # Spell Check Plugin
 
+This candidate consumes published API 0.1.2 through its portable peer range.
+Shared shell qualification uses UI and File Explorer 0.1.2 and Workspace 0.2.0.
+
+Release qualification uses `@lapis-notes/api@^0.1.2` for the shared renderer,
+diagnostics invalidation and selected metadata fingerprint contracts. Portable
+consumers must resolve this prerequisite from npm before plugin publication.
+
 The package-owned `registry.json` is the source for curated categories,
 highlights, and registry-only Overview content under LP-SPEC-021 and LP-SPEC-033. Manifest and package
 metadata remain authoritative for the fields defined by LP-SPEC-022.
@@ -51,8 +58,7 @@ status-bar ownership.
 | LN-SPL-008 | Spell Check MUST start Harper during plugin load and MUST surface setup failure through LN-WS-077. It MUST prefer Harper's worker linter when the renderer provides `Worker`, then fall back to the local WASM linter when `Worker` is unavailable, cannot construct the worker linter, rejects setup, or does not become ready within a bounded startup window. Cleanup of a failed worker MUST be best-effort and MUST NOT delay the local fallback. Open-document diagnostics requested while Harper is still warming MUST complete with no Spell Check diagnostics instead of timing out. It MUST NOT fail plugin enablement. |
 | LN-SPL-009 | An open misspelled Markdown note on the web host MUST publish a Harper Problems row beside Markdownlint after Spell Check starts. The manager timeout row MUST NOT remain once setup succeeds.                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | LN-SPL-010 | Spell Check code actions MUST use cspell-style titles: bare suggestion text, `Add: "<word>" to dictionary`, and `Ignore: "<word>"`. Ignore this suggestion MUST remain last. User, folder, and cspell.json targets MUST NOT appear.                                                                                                                                                                                                                                                                                                                                                                                               |
-| LN-SPL-011 | When Harper warmup completes successfully, Spell Check MUST invalidate its registered language-service diagnostics through the public API so already-open notes are checked without editing. Warmup completion or failure after plugin teardown MUST NOT update host diagnostics. |
-
+| LN-SPL-011 | When Harper warmup completes successfully, Spell Check MUST invalidate its registered language-service diagnostics through the public API so already-open notes are checked without editing. Warmup completion or failure after plugin teardown MUST NOT update host diagnostics.                                                                                                                                                                                                                                                                                                                                                 |
 
 ### LN-SPL-003 acceptance details
 

@@ -42,7 +42,8 @@
     "spec:first": "spec-validator first",
     "spec:check": "spec-validator check && pnpm check:app-ownership",
     "spec:sync-verification": "node scripts/sync-spec-verification.mjs",
-    "spec:validate": "spec-validator validate"
+    "spec:validate": "spec-validator validate",
+    "test:release:nostr": "node --test scripts/deferred-nostr-tests/*.test.mjs"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.7.0",
@@ -60,13 +61,12 @@
     "@fontsource-variable/dm-sans": "5.3.0",
     "@fontsource-variable/inter": "5.3.0",
     "@fontsource-variable/source-code-pro": "5.3.0",
-    "@lapis-notes/api": "^0.1.0",
-    "@lapis-notes/file-explorer": "^0.1.0",
+    "@lapis-notes/api": "^0.1.2",
+    "@lapis-notes/file-explorer": "^0.1.2",
     "@lapis-notes/language-service": "^0.1.1",
-    "@lapis-notes/ui": "^0.1.0",
-    "@lapis-notes/workspace": "^0.1.0",
-    "@lapismd/design-core": "^0.3.1",
-    "@lapismd/lapis-community": "^0.1.0",
+    "@lapis-notes/ui": "^0.1.2",
+    "@lapis-notes/workspace": "^0.2.0",
+    "@lapismd/design-core": "^0.3.2",
     "@lapismd/mira": "~0.0.3",
     "@lapismd/mira-editor": "~0.0.2",
     "@lapismd/mira-plugin-ai": "~0.0.2",

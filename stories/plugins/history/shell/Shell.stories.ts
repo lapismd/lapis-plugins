@@ -1,4 +1,5 @@
 import type { App } from "@lapis-notes/api";
+import { getWorkspaceHostBinding } from "@lapis-notes/api/workspace-host";
 import {
   DEFAULT_HISTORY_SETTINGS,
   HISTORY_SETTING_IDS,
@@ -119,6 +120,38 @@ export const Desktop: Story = {
       ).not.toBeNull();
       return panel!;
     });
+    const revision = compare.querySelector<HTMLElement>(
+      ".history-compare__revision",
+    )!;
+    const toolbar = compare.querySelector<HTMLElement>(
+      '[data-ui-part="toolbar"]',
+    )!;
+    const stats = compare.querySelector<HTMLElement>(
+      '[data-ui-component="file-change-stats"]',
+    )!;
+    expect(revision).not.toBeNull();
+    expect(toolbar).not.toBeNull();
+    expect(stats).not.toBeNull();
+    const revisionBox = revision.getBoundingClientRect();
+    const toolbarBox = toolbar.getBoundingClientRect();
+    const statsBox = stats.getBoundingClientRect();
+    expect(
+      Math.abs(
+        toolbarBox.top +
+          toolbarBox.height / 2 -
+          statsBox.top -
+          statsBox.height / 2,
+      ),
+    ).toBeLessThan(2);
+    expect(
+      Math.abs(
+        toolbarBox.left +
+          toolbarBox.width / 2 -
+          revisionBox.left -
+          revisionBox.width / 2,
+      ),
+    ).toBeLessThan(2);
+    expect(toolbarBox.right).toBeLessThan(statsBox.left);
     const diffText = compare.textContent ?? "";
     for (const section of HISTORY_SHELL_SECTIONS) {
       expect(diffText).toContain(`## ${section}`);
@@ -149,6 +182,24 @@ export const Desktop: Story = {
       expect(panel).toBeVisible();
       return panel!;
     });
+    const renderer = getWorkspaceHostBinding(app.workspace).controller.renderer;
+    const originalSize = renderer.getLayout().right.size;
+    try {
+      renderer.setSidebarSize("right", 480);
+      await waitFor(() => {
+        const pane = compare.getBoundingClientRect();
+        expect(pane.width).toBeLessThanOrEqual(640);
+        const actions = toolbar.getBoundingClientRect();
+        const count = stats.getBoundingClientRect();
+        const row = revision.getBoundingClientRect();
+        expect(actions.top).toBeGreaterThanOrEqual(count.bottom);
+        expect(Math.abs(actions.left + actions.width / 2 - row.left - row.width / 2)).toBeLessThan(2);
+        expect(actions.left).toBeGreaterThanOrEqual(row.left);
+        expect(actions.right).toBeLessThanOrEqual(row.right);
+      });
+    } finally {
+      renderer.setSidebarSize("right", originalSize);
+    }
     expect(
       within(historyPanel).getByRole("list", { name: "File history" }),
     ).toBeVisible();

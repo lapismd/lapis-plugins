@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-import { createNostrReleaseCandidate } from "./lib/nostr-release-candidate.mjs";
+import { createNostrReleaseCandidate } from "../lib/nostr-release-candidate.mjs";
 
 test("binds a rootless payload and release manifest into a deterministic Nostr candidate", async () => {
   const root = await mkdtemp(path.join(tmpdir(), "lapis-nostr-candidate-"));

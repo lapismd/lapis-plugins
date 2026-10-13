@@ -440,3 +440,24 @@ const sessionStore = createMemorySessionStore([
 
 <AiChatPanel runtime={runtime} sessionStore={sessionStore} />
 `;
+
+export const aiChatHarnessModelsExampleSource = `<script lang="ts">
+  import { AiChatPanel, FakeAgentRuntime, type ModelRef, type AiPluginSettings } from "@lapis-notes/ai";
+  import "@lapis-notes/ai/styles.css";
+
+  const runtime = new FakeAgentRuntime();
+  let settings = $state<Partial<AiPluginSettings>>({ acpAgent: "codex", defaultRuntime: "acp", defaultModel: "" });
+  // Replace these example catalogs with your host's discovery API.
+  async function loadModels(agent: string, harness: string): Promise<ModelRef[]> {
+    return [{ provider: agent, model: harness === "codex-native" ? "native-model" : "acp-model", isDefault: true }];
+  }
+</script>
+
+<AiChatPanel
+  {runtime}
+  {settings}
+  {loadModels}
+  selectRuntime={async () => runtime}
+  onSettingsChange={(patch) => { settings = { ...settings, ...patch }; }}
+/>
+`;

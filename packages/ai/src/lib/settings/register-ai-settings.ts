@@ -1,3 +1,4 @@
+import { modelCatalogProviderId } from "../providers/model-provider";
 import type { Plugin } from "@lapis-notes/api";
 import { getWorkspaceHostBinding } from "@lapis-notes/api/workspace-host";
 import type { AiPlugin } from "../ai-plugin";
@@ -43,7 +44,8 @@ export function registerAiSettings(plugin: AiPlugin & Plugin): void {
   if (!binding) return;
   const controller = binding.controller;
   const settings = plugin.getSettings();
-  const modelSourceId = (provider: AcpAgentId) => `ai.models.${provider}`;
+  const modelSourceId = (provider: AcpAgentId, runtime?: string) =>
+    `ai.models.${modelCatalogProviderId(provider, runtime)}`;
   const persistLegacyToolMigration = () => {
     const current = plugin.getSettings();
     const migrated = migrateLegacyCommunityToolOptIns(
@@ -63,14 +65,18 @@ export function registerAiSettings(plugin: AiPlugin & Plugin): void {
       enabledCommunityToolPluginIds: migrated.enabledCommunityToolPluginIds,
     });
   };
-  for (const provider of ACP_AGENT_IDS) {
+  for (const { provider, runtime } of [
+    ...ACP_AGENT_IDS.map((provider) => ({ provider, runtime: "acp" })),
+    { provider: "codex" as const, runtime: "codex-native" },
+    { provider: "opencode" as const, runtime: "opencode-native" },
+  ]) {
     const dispose = controller.configuration.optionSources.register({
-      id: modelSourceId(provider),
+      id: modelSourceId(provider, runtime),
       load: async () => {
         const current = plugin.getSettings();
         const saved = current.defaultModels[provider];
         try {
-          const models = await plugin.models.listModels(provider);
+          const models = await plugin.models.listModels(provider, runtime);
           if (models.length === 0) {
             return saved
               ? [
@@ -151,7 +157,12 @@ export function registerAiSettings(plugin: AiPlugin & Plugin): void {
         default: DEFAULT_AI_SETTINGS.acpAgent,
         options: ACP_AGENT_IDS.map((value) => ({
           value,
-          label: value === "cursor" ? "Cursor" : value === "opencode" ? "OpenCode" : "Codex",
+          label:
+            value === "cursor"
+              ? "Cursor"
+              : value === "opencode"
+                ? "OpenCode"
+                : "Codex",
         })),
       },
       {
@@ -161,7 +172,7 @@ export function registerAiSettings(plugin: AiPlugin & Plugin): void {
         description:
           "Model reported by the selected agent provider and sent on the next request.",
         default: current.defaultModel,
-        optionsSource: modelSourceId(current.acpAgent),
+        optionsSource: modelSourceId(current.acpAgent, current.defaultRuntime),
         allowUnknownOptions: false,
       },
       {
@@ -377,11 +388,14 @@ export function registerAiSettings(plugin: AiPlugin & Plugin): void {
       return;
     }
     if (event.id === FIELD_IDS.defaultRuntime) {
-      void plugin.updateSettings({
-        defaultRuntime: values[FIELD_IDS.defaultRuntime] as
-          | AiPluginSettings["defaultRuntime"]
-          | undefined,
-      });
+      void (async () => {
+        await plugin.updateSettings({
+          defaultRuntime: values[
+            FIELD_IDS.defaultRuntime
+          ] as AiPluginSettings["defaultRuntime"],
+        });
+        refreshSection(plugin.getSettings());
+      })();
       return;
     }
     if (event.id === FIELD_IDS.thinking) {

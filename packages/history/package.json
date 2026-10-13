@@ -1,6 +1,6 @@
 {
   "name": "@lapis-notes/history",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Lapis Notes file history plugin",
   "license": "Apache-2.0",
   "type": "module",
@@ -43,11 +43,11 @@
     "./registry.json": "./registry.json"
   },
   "dependencies": {
-    "@lapismd/design-core": "^0.3.1",
+    "@lapismd/design-core": "^0.3.2",
     "@lucide/svelte": "^0.523.0"
   },
   "peerDependencies": {
-    "@lapis-notes/api": "^0.1.0",
+    "@lapis-notes/api": "^0.1.2",
     "svelte": "^5.0.0"
   },
   "devDependencies": {

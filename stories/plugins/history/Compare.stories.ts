@@ -203,7 +203,34 @@ function expectFlushedCompare(compare: HTMLElement) {
   );
   expect(revision).not.toBeNull();
   expect(stats).not.toBeNull();
-  expect(getComputedStyle(revision!).justifyContent).toBe("space-between");
+  const toolbar = revision!.querySelector<HTMLElement>(
+    '[data-ui-part="toolbar"]',
+  );
+  expect(toolbar).not.toBeNull();
+  const revisionBox = revision!.getBoundingClientRect();
+  const toolbarBox = toolbar!.getBoundingClientRect();
+  const statsBox = stats!.getBoundingClientRect();
+  expect(
+    Math.abs(
+      toolbarBox.left +
+        toolbarBox.width / 2 -
+        revisionBox.left -
+        revisionBox.width / 2,
+    ),
+  ).toBeLessThan(2);
+  if (compare.getBoundingClientRect().width > 640) {
+    expect(
+      Math.abs(
+        toolbarBox.top +
+          toolbarBox.height / 2 -
+          statsBox.top -
+          statsBox.height / 2,
+      ),
+    ).toBeLessThan(2);
+    expect(toolbarBox.right).toBeLessThan(statsBox.left);
+  } else {
+    expect(toolbarBox.top).toBeGreaterThanOrEqual(statsBox.bottom);
+  }
   expect(stats!.getBoundingClientRect().left).toBeGreaterThan(
     revision!.getBoundingClientRect().left +
       revision!.getBoundingClientRect().width / 2,

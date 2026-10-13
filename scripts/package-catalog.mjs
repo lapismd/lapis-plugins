@@ -102,11 +102,11 @@ export const packageNames = new Set(
 );
 
 export const frameworkPackageVersions = new Map([
-  ["@lapis-notes/api", "^0.1.0"],
-  ["@lapis-notes/file-explorer", "^0.1.0"],
+  ["@lapis-notes/api", "^0.1.2"],
+  ["@lapis-notes/file-explorer", "^0.1.2"],
   ["@lapis-notes/language-service", "^0.1.1"],
-  ["@lapis-notes/ui", "^0.1.0"],
-  ["@lapis-notes/workspace", "^0.1.0"],
+  ["@lapis-notes/ui", "^0.1.2"],
+  ["@lapis-notes/workspace", "^0.2.0"],
 ]);
 
 // These editor runtimes exchange class instances, facets and parser node props
