@@ -277,7 +277,7 @@ importers:
         version: 2.9.0
     devDependencies:
       "@lapis-notes/markdown":
-        specifier: ^0.1.5
+        specifier: ^0.1.6
         version: link:../markdown
       "@sveltejs/package":
         specifier: ^2.5.0
