@@ -9,6 +9,6 @@
     "image": "ghcr.io/lapismd/lapis-plugins-ci",
     "tag": "lock-214942663decb915",
     "lockfileSha256": "214942663decb915f099cbbb1bcedf128f8ffe7b3eeef3da94b1e978afbb30a8",
-    "digest": "sha256:57eaef59ee108a4daf38545318e75754c436df4ce989be5547e75411b6229a70"
+    "digest": "sha256:69fa5bc254c9d2c0a02d0816512d3e71bd0f0c68ca72e694781dd3a8295c2885"
   }
 }
