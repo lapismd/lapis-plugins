@@ -1,5 +1,9 @@
 # History Plugin
 
+Version 0.1.4 includes the responsive comparison toolbar layout. Its generated
+manifest, README installation coordinate and Changesets changelog agree on
+the independent release version.
+
 This candidate consumes published API 0.1.2 through its portable peer range.
 Shared shell qualification uses UI and File Explorer 0.1.2 and Workspace 0.2.0.
 

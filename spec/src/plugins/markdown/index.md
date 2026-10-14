@@ -1,5 +1,9 @@
 # Markdown Plugin
 
+Version 0.1.6 requires released Mira 0.0.4 for safe pending-overlay teardown.
+Its generated manifest, README installation coordinate and authentic Changesets
+changelog agree on the independent release version.
+
 This candidate consumes published API 0.1.2 through its portable peer range.
 Shared shell qualification uses UI and File Explorer 0.1.2 and Workspace 0.2.0.
 

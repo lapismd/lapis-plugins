@@ -5,6 +5,12 @@ The static release uses published API, UI and File Explorer 0.1.2, Workspace
 plugin candidates must retain matching npm, runtime manifest and changelog
 coordinates. Slides remains an initial 0.1.0 candidate; Community stays parked.
 
+The final static candidate prepares AI 0.1.5, History 0.1.4 and Markdown 0.1.6
+from their independent Changesets. AI's Markdown peer and development edges
+advance together to `^0.1.6`; unchanged plugin versions retain their existing
+release coordinates. Full package, Storybook, pack and deterministic archive
+qualification runs on the exact version PR in CI before release approval.
+
 Dependency acceptance now uses published Design Core `0.3.2` and Mira `0.0.4` through portable npm ranges. Source ownership and public contracts remain
 unchanged; local overrides for these released packages are retired.
 

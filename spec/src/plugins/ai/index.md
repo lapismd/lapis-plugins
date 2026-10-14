@@ -1,5 +1,9 @@
 # AI Plugin
 
+Version 0.1.5 includes the harness catalog refresh and vault-scoped controller
+readiness fixes. Its Markdown peer and development dependency both require
+`^0.1.6`; generated metadata and changelog notes retain those coordinates.
+
 This candidate consumes published API 0.1.2 through its portable peer range.
 Shared shell qualification uses UI and File Explorer 0.1.2 and Workspace 0.2.0.
 

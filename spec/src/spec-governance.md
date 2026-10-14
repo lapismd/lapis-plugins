@@ -9,6 +9,12 @@ the shared framework floor catalog. Generated manifests and documentation must
 agree with the selected independent Changesets versions; parked packages must
 remain excluded.
 
+The final version batch records AI 0.1.5, History 0.1.4 and Markdown 0.1.6 in
+their manifests, generated documentation and authentic Changesets changelogs.
+The committed lockfile retains the qualified dependency graph and advances AI's
+local Markdown development edge with its public peer. CI owns the complete
+verification lanes for this candidate; publication remains separately approved.
+
 Checkpoint repairs require owning API regressions and plugin regressions for
 both invalidation and warm reuse. Release intent must name the affected plugin
 and retain prerequisite API version qualification. Static publication and the

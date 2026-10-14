@@ -1,5 +1,12 @@
 # Markdown changelog
 
+## 0.1.6
+
+### Patch Changes
+
+- [#9](https://github.com/lapismd/lapis-plugins/pull/9) [`cafe5b0`](https://github.com/lapismd/lapis-plugins/commit/cafe5b084ff6579948b99226048691bf36fc7276) Thanks [@stevejuma](https://github.com/stevejuma)! - Require Mira 0.0.4 so replacing or disposing File Properties cancels pending
+  overlay registration and focus work without reading destroyed Svelte effects.
+
 ## 0.1.5
 
 ### Patch Changes
