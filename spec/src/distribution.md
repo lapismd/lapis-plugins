@@ -99,6 +99,7 @@ scoped 2.19.5 patch exception for this qualification.
 
 | LP-SPEC-050 | Release runtime builds MUST preserve exported plugin entrypoints and emit resolvable module workers with their required chunks inside the signed archive. Worker dynamic imports MUST remain relative to an emitted worker file and MUST preserve initialization order. A worker MUST NOT import a relative chunk from a blob or data URL. |
 | LP-SPEC-051 | Dependency-image publication MUST reuse only an open pull request for its exact automation head and main base. A previously closed or merged pull request MUST result in a new review PR for the fresh digest. |
+| LP-SPEC-052 | Production CI MUST retain the release plan, npm tarballs and checksums, and signed archives and checksums before publication. Artifact discovery MUST enumerate those public release files and fail closed on an empty upload; temporary private signing keys MUST remain outside the retained paths. |
 
 Plugin behavior corrections use an independent package patch changeset and
 retain focused owning-package checks plus real consumer Storybook acceptance as

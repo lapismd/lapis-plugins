@@ -210,7 +210,14 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           name: signed-static-candidate-${{ github.run_id }}
-          path: .release
+          path: |
+            .release/npm/*.tgz
+            .release/npm/*.sha256
+            .release/npm/manifest.json
+            .release/plugins/**/*.lapis-plugin
+            .release/plugins/**/*.lapis-plugin.sha256
+            .release/release-plan.json
+          if-no-files-found: error
           retention-days: 7
       - name: Publish approved npm and GitHub artifacts
         run: |
