@@ -1,8 +1,10 @@
 # Lapis Sync incremental delivery plan
 
-Status: stage 0A complete; stage 0B's Design Core checkpoint is complete with
-0.3.3 published and verified, 14 October 2026. Stop for review before the separate
-Mira release checkpoint. See the [Design Core checkpoint](2026-10-14-sync-stage-0b-design-core-release.md).
+Status: stage 0A complete; stage 0B's Design Core and Mira checkpoints are
+complete with 0.3.3 and 0.0.5 published and verified, 14 October 2026. Stop for
+review before the separate Notes release checkpoint. See the
+[Design Core checkpoint](2026-10-14-sync-stage-0b-design-core-release.md) and
+[Mira checkpoint](2026-10-14-sync-stage-0b-mira-release.md).
 See the [reconciliation record](2026-10-14-sync-stage-0a-reconciliation.md).
 Stage 0 precedes all feature slices.
 This record replaces the delivery sequence and per-slice test scope in the
@@ -106,8 +108,10 @@ conflict resolutions that change behavior; no Sync feature work in this step.
 
 Design Core is complete in the
 [0.3.3 release record](2026-10-14-sync-stage-0b-design-core-release.md).
-Mira's editing-session release and the required Notes public-package release
-remain pending. Stage 0B as a whole is not complete.
+Mira's editing-session capability is complete in the
+[0.0.5 release record](2026-10-14-sync-stage-0b-mira-release.md).
+The required Notes public-package release remains pending. Stage 0B as a whole
+is not complete.
 
 For a required change in `design-core`, `mira-mde`, or another independently
 consumed shared package, prepare a focused upstream PR against its updated
@@ -288,8 +292,9 @@ Keep the handoff short and concrete:
 - **Next slice:** one proposed outcome. Wait for the user's review and request
   to continue before implementation.
 
-The immediate next execution, after review, is **stage 0B: prepare PRs and
-release the required shared-package changes**. Stage 0A is complete. Feature
+The immediate next execution, after review, is **stage 0B's Notes public-package
+release checkpoint**. Stage 0A and the Design Core/Mira release checkpoints are
+complete. Feature
 slice 1, real Deno connection in the existing app UI, starts from main only
 after the remaining stage-0 checkpoints are complete and reviewed.
 
