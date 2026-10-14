@@ -528,5 +528,8 @@ remain portable.
 
 Harness model-refresh acceptance checks the preference trigger's expanded state
 before opening it. Submenu dismissal must not accidentally toggle an already
-open parent closed. Plays retain pointer-hover, checked-default and old-model
-absence assertions for both Native and Cursor catalogs.
+open parent closed. It waits for the selected harness and completed model-catalog
+loading before opening its models. Escape dismissal waits for the focused menu
+to unmount, closes any remaining parent and observes restored pointer ownership
+before the next selection or story. Plays retain pointer-hover, checked-default
+and old-model absence assertions for both Native and Cursor catalogs.

@@ -43,6 +43,50 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+async function dismissHarnessPreferences(canvasElement: HTMLElement) {
+  const canvas = within(canvasElement);
+  const trigger = canvas.getByRole("button", { name: "Effort and model" });
+  if (trigger.getAttribute("aria-expanded") === "true") {
+    const activeMenu =
+      canvasElement.ownerDocument.activeElement?.closest('[role="menu"]');
+    await userEvent.keyboard("{Escape}");
+    if (activeMenu)
+      await waitFor(() => expect(activeMenu).not.toBeInTheDocument());
+    if (trigger.getAttribute("aria-expanded") === "true")
+      await userEvent.keyboard("{Escape}");
+  }
+  await waitFor(() => {
+    expect(
+      canvas.getByRole("button", { name: "Effort and model" }),
+    ).toHaveAttribute("aria-expanded", "false");
+    expect(
+      getComputedStyle(canvasElement.ownerDocument.body).pointerEvents,
+    ).not.toBe("none");
+  });
+}
+
+async function waitForHarnessCatalog(
+  canvasElement: HTMLElement,
+  agent: string,
+  runtime: string,
+) {
+  const canvas = within(canvasElement);
+  await waitFor(() => {
+    expect(canvas.getByTestId("ai-chat-demo")).toHaveAttribute(
+      "data-selected-agent",
+      agent,
+    );
+    expect(canvas.getByTestId("ai-chat-demo")).toHaveAttribute(
+      "data-selected-runtime",
+      runtime,
+    );
+    expect(canvas.getByTestId("ai-chat-panel")).toHaveAttribute(
+      "data-model-catalog-loading",
+      "false",
+    );
+  });
+}
+
 export const SendAndComplete: Story = {
   render: () => ({
     Component: AiChatDemo,
@@ -1224,8 +1268,14 @@ export const HarnessModelRefresh: Story = {
       const trigger = await canvas.findByRole("button", {
         name: "Effort and model",
       });
-      if (trigger.getAttribute("aria-expanded") !== "true")
+      if (trigger.getAttribute("aria-expanded") !== "true") {
+        await waitFor(() =>
+          expect(
+            getComputedStyle(canvasElement.ownerDocument.body).pointerEvents,
+          ).not.toBe("none"),
+        );
         await userEvent.click(trigger);
+      }
       await expect(trigger).toHaveAttribute("aria-expanded", "true");
     };
     await openPreferences();
@@ -1233,6 +1283,8 @@ export const HarnessModelRefresh: Story = {
     await userEvent.click(
       await body.findByRole("menuitemradio", { name: "Codex Native" }),
     );
+    await dismissHarnessPreferences(canvasElement);
+    await waitForHarnessCatalog(canvasElement, "codex", "codex-native");
     await openPreferences();
     await userEvent.hover(await body.findByTestId("ai-chat-model"));
     await waitFor(() =>
@@ -1247,12 +1299,14 @@ export const HarnessModelRefresh: Story = {
     expect(
       body.queryByRole("menuitemradio", { name: "gpt-5.6-sol" }),
     ).toBeNull();
-    await userEvent.keyboard("{Escape}");
+    await dismissHarnessPreferences(canvasElement);
     await openPreferences();
     await userEvent.hover(await body.findByTestId("ai-chat-agent"));
     await userEvent.click(
       await body.findByRole("menuitemradio", { name: "Cursor ACP" }),
     );
+    await dismissHarnessPreferences(canvasElement);
+    await waitForHarnessCatalog(canvasElement, "cursor", "acp");
     await openPreferences();
     await userEvent.hover(await body.findByTestId("ai-chat-model"));
     await waitFor(() =>
@@ -1267,7 +1321,7 @@ export const HarnessModelRefresh: Story = {
     expect(
       body.queryByRole("menuitemradio", { name: "Native fixture model" }),
     ).toBeNull();
-    await userEvent.keyboard("{Escape}");
+    await dismissHarnessPreferences(canvasElement);
   },
 };
 
@@ -1306,6 +1360,7 @@ export const SettingsHarnessModelRefresh: Story = {
     await userEvent.click(
       canvas.getByRole("button", { name: "Choose Cursor in Settings" }),
     );
+    await waitForHarnessCatalog(canvasElement, "cursor", "acp");
     await userEvent.click(
       canvas.getByRole("button", { name: "Effort and model" }),
     );
@@ -1316,6 +1371,6 @@ export const SettingsHarnessModelRefresh: Story = {
     expect(
       body.queryByRole("menuitemradio", { name: "gpt-5.6-sol" }),
     ).toBeNull();
-    await userEvent.keyboard("{Escape}");
+    await dismissHarnessPreferences(canvasElement);
   },
 };
