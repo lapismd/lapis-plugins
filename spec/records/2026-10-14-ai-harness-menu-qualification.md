@@ -51,3 +51,36 @@ processes (49/62/37/29). Root check/test/build pass 13/13, 13/13 and 12/12;
 audit, spec and App ownership, 105 release-tool tests, static Storybook and
 twelve npm packs pass. GitHub qualification at the updated head remains the
 merge gate.
+
+## Linux actionability follow-up
+
+PR 8's updated run 38538436172 still records two failures: the Native model
+submenu stays closed and Settings inherits a pointer lock. PR 8 merged as
+`14c4cf393465e96e803ce4b9eae0962ebc7299a9` before that failed check was
+respected; this is not source release qualification. GitHub main protection
+now requires all nine real CI checks and applies to administrators.
+
+The pinned Linux CI container reproduces the exact original shard with 60
+passes and two failures. Synthetic pointer coordinates can be correct for an
+option's visible but still-animating position, while the submenu intent corridor
+hit-tests a later position. The plays now wait for ancestor animations to settle
+and verify that the rendered center hit-tests to the actual control. Dismissal
+also observes removal of root and submenu portals before reopening. The two
+exact harness stories pass on a fresh Linux container process. Full shard,
+catalog and GitHub checks remain required before the follow-up merges.
+
+The repaired Linux shard passes 62/62 after the original 60-pass/two-failure
+reproduction. A complete run then exposes the independent File Properties /
+Left Sidebar destroyed-effect warning in Mira's pinned Bits UI 2.18.1 dependency
+(36 passes, one failure and one unhandled diagnostic in shard 3). The fatal
+runtime guard is retained. Mira source PR 10 fixes its portable dependency
+declaration through the already published Bits UI 2.19.5 release and passes all
+three required CI jobs; version PR 11 prepares Mira 0.0.4 for the production gate.
+
+A separate disposable Plugins workspace installs the packed Mira candidate
+through an ignored local dependency hook while preserving published npm ranges.
+The original File Properties case changes to one pass, and the complete Linux
+interaction/accessibility catalog passes 177/177 (49/62/37/29), including both
+harness cases, with no unhandled runtime errors. This is provider acceptance;
+the public lockfile must still resolve released Mira 0.0.4 and pass clean GitHub
+CI before the consumer follow-up merges. No new dependency patch is introduced.

@@ -95,6 +95,10 @@ cleanup, so a dependency refresh cannot silently restore destroyed-effect reads.
 Older versions also require Scroll Area resize-timer cancellation; 2.19.5 uses
 the upstream synchronous resize path. The user approved the scoped 2.19.5
 lifecycle-patch exception while an upstream fixed release remains unavailable.
+Mira 0.0.4 supplies pending-overlay registration and focus teardown through its
+published Bits UI 2.19.5 dependency. The consumer floor and frozen lockfile must
+retain that provider; unused older patch declarations are retired without
+altering the fatal diagnostic guard or the resolved-version patch inventory.
 Shared catalog font readiness must request actual font faces within a fixed
 timeout and retain download, missing-face and token failures. Focused tests
 cover late face registration and fallback-only availability; a shared readiness

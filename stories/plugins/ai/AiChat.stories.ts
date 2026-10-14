@@ -44,14 +44,35 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 async function hoverHarnessControl(element: HTMLElement) {
-  await expect(element).toBeVisible();
-  const rect = element.getBoundingClientRect();
-  expect(rect.width).toBeGreaterThan(0);
-  expect(rect.height).toBeGreaterThan(0);
-  const coords = {
-    clientX: rect.left + rect.width / 2,
-    clientY: rect.top + rect.height / 2,
-  };
+  let coords = { clientX: 0, clientY: 0 };
+  await waitFor(() => {
+    expect(element).toBeVisible();
+    // Match browser pointer actionability: an entering ancestor menu can
+    // still move the option after it becomes visible to a role query.
+    for (
+      let ancestor: HTMLElement | null = element;
+      ancestor;
+      ancestor = ancestor.parentElement
+    ) {
+      expect(
+        ancestor
+          .getAnimations()
+          .some((animation) => animation.playState === "running")
+      ).toBe(false);
+    }
+    const rect = element.getBoundingClientRect();
+    expect(rect.width).toBeGreaterThan(0);
+    expect(rect.height).toBeGreaterThan(0);
+    coords = {
+      clientX: rect.left + rect.width / 2,
+      clientY: rect.top + rect.height / 2,
+    };
+    expect(
+      element.contains(
+        element.ownerDocument.elementFromPoint(coords.clientX, coords.clientY)
+      )
+    ).toBe(true);
+  });
   // The menu's pointer corridor hit-tests coordinates against the real DOM.
   // userEvent.hover/click otherwise keep synthetic (0, 0) or stale coordinates.
   await userEvent.pointer({ target: element, coords });
@@ -98,6 +119,12 @@ async function dismissHarnessPreferences(canvasElement: HTMLElement) {
     expect(
       getComputedStyle(canvasElement.ownerDocument.body).pointerEvents
     ).not.toBe("none");
+    expect(
+      canvasElement.ownerDocument.querySelector(
+        '[data-ui-part="dropdown-menu-content"], [data-ui-part="dropdown-menu-sub-content"]'
+      ),
+      "Dismissal must finish removing preference portals before reopening"
+    ).toBeNull();
   });
 }
 

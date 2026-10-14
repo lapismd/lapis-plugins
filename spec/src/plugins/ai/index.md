@@ -539,3 +539,9 @@ control. The submenu intent corridor performs DOM geometry hit-testing, so
 synthetic `(0, 0)` or stale coordinates do not represent a valid selection.
 The plays assert the pointer-down coordinates as well as the persisted harness,
 completed catalog, checked default and removal of the previous model.
+
+Before a harness pointer action, its menu ancestors MUST finish their entrance
+animations and the rendered control center MUST hit-test to that control.
+Preference dismissal MUST await removal of every root/submenu portal before
+reopening. Visibility and restored body pointer events alone do not prove
+geometry and menu lifecycle readiness.

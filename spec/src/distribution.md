@@ -5,8 +5,12 @@ The static release uses published API, UI and File Explorer 0.1.2, Workspace
 plugin candidates must retain matching npm, runtime manifest and changelog
 coordinates. Slides remains an initial 0.1.0 candidate; Community stays parked.
 
-Dependency acceptance now uses published Design Core `0.3.2` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
+Dependency acceptance now uses published Design Core `0.3.2` and Mira `0.0.4` through portable npm ranges. Source ownership and public contracts remain
 unchanged; local overrides for these released packages are retired.
+
+Markdown's Mira floor includes the upstream pending-overlay teardown repair.
+The frozen graph resolves Bits UI 2.19.5 through that released provider, while
+retaining its already qualified Link Preview selection cleanup patch.
 
 First-party packages and their shared development host resolve Design Core from
 the current published npm semver range recorded in manifests and the committed
