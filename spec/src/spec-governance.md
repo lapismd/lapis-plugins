@@ -213,3 +213,5 @@ below them, and restores the layout after testing. Changed visuals remain
 The registry-acceptance fixture maps to Distribution and the static candidate
 security gates. Exact frozen source candidates supply signed runtime artifacts
 for Web acceptance without replacing committed npm ranges.
+
+Production release retention maps the explicit public candidate file globs and empty-upload gate to Distribution and its verification evidence. Private signing keys remain temporary CI inputs outside the retained release directory.
