@@ -5,6 +5,9 @@ complete with 0.3.3 and 0.0.5 published and verified, 14 October 2026. Stop for
 review before the separate Notes release checkpoint. See the
 [Design Core checkpoint](2026-10-14-sync-stage-0b-design-core-release.md) and
 [Mira checkpoint](2026-10-14-sync-stage-0b-mira-release.md).
+The [Notes source checkpoint](2026-10-14-sync-stage-0b-notes-source.md) now has
+draft PR #28 and a focused codec repair; hosted verification and lifecycle/ARM
+findings remain open. No Notes release has been completed.
 See the [reconciliation record](2026-10-14-sync-stage-0a-reconciliation.md).
 Stage 0 precedes all feature slices.
 This record replaces the delivery sequence and per-slice test scope in the
@@ -112,6 +115,12 @@ Mira's editing-session capability is complete in the
 [0.0.5 release record](2026-10-14-sync-stage-0b-mira-release.md).
 The required Notes public-package release remains pending. Stage 0B as a whole
 is not complete.
+
+The Notes source candidate and bounded CI follow-up are recorded in the
+[source checkpoint](2026-10-14-sync-stage-0b-notes-source.md). Keep its source
+qualification, version PR and actual npm publication visibly distinct. Complete
+the recorded CI/lifecycle findings before merge; then review the version and
+publication as the next release checkpoint rather than extending this session.
 
 For a required change in `design-core`, `mira-mde`, or another independently
 consumed shared package, prepare a focused upstream PR against its updated
@@ -292,8 +301,8 @@ Keep the handoff short and concrete:
 - **Next slice:** one proposed outcome. Wait for the user's review and request
   to continue before implementation.
 
-The immediate next execution, after review, is **stage 0B's Notes public-package
-release checkpoint**. Stage 0A and the Design Core/Mira release checkpoints are
+The immediate next execution, after review, is **finish the focused Notes source
+qualification gates**, then its version/publication checkpoint. Stage 0A and the Design Core/Mira release checkpoints are
 complete. Feature
 slice 1, real Deno connection in the existing app UI, starts from main only
 after the remaining stage-0 checkpoints are complete and reviewed.
