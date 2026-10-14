@@ -43,6 +43,86 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+async function hoverHarnessControl(element: HTMLElement) {
+  await expect(element).toBeVisible();
+  const rect = element.getBoundingClientRect();
+  expect(rect.width).toBeGreaterThan(0);
+  expect(rect.height).toBeGreaterThan(0);
+  const coords = {
+    clientX: rect.left + rect.width / 2,
+    clientY: rect.top + rect.height / 2,
+  };
+  // The menu's pointer corridor hit-tests coordinates against the real DOM.
+  // userEvent.hover/click otherwise keep synthetic (0, 0) or stale coordinates.
+  await userEvent.pointer({ target: element, coords });
+  return coords;
+}
+
+async function clickHarnessControl(element: HTMLElement) {
+  const coords = await hoverHarnessControl(element);
+  let pointerDown: PointerEvent | undefined;
+  element.addEventListener(
+    "pointerdown",
+    (event) => {
+      pointerDown = event;
+    },
+    { once: true }
+  );
+  await userEvent.pointer({ target: element, coords, keys: "[MouseLeft]" });
+  expect(
+    pointerDown?.clientX,
+    "Menu selection must point inside its rendered option"
+  ).toBe(coords.clientX);
+  expect(
+    pointerDown?.clientY,
+    "Menu selection must point inside its rendered option"
+  ).toBe(coords.clientY);
+}
+
+async function dismissHarnessPreferences(canvasElement: HTMLElement) {
+  const canvas = within(canvasElement);
+  const trigger = canvas.getByRole("button", { name: "Effort and model" });
+  if (trigger.getAttribute("aria-expanded") === "true") {
+    const activeMenu =
+      canvasElement.ownerDocument.activeElement?.closest('[role="menu"]');
+    await userEvent.keyboard("{Escape}");
+    if (activeMenu)
+      await waitFor(() => expect(activeMenu).not.toBeInTheDocument());
+    if (trigger.getAttribute("aria-expanded") === "true")
+      await userEvent.keyboard("{Escape}");
+  }
+  await waitFor(() => {
+    expect(
+      canvas.getByRole("button", { name: "Effort and model" })
+    ).toHaveAttribute("aria-expanded", "false");
+    expect(
+      getComputedStyle(canvasElement.ownerDocument.body).pointerEvents
+    ).not.toBe("none");
+  });
+}
+
+async function waitForHarnessCatalog(
+  canvasElement: HTMLElement,
+  agent: string,
+  runtime: string
+) {
+  const canvas = within(canvasElement);
+  await waitFor(() => {
+    expect(canvas.getByTestId("ai-chat-demo")).toHaveAttribute(
+      "data-selected-agent",
+      agent
+    );
+    expect(canvas.getByTestId("ai-chat-demo")).toHaveAttribute(
+      "data-selected-runtime",
+      runtime
+    );
+    expect(canvas.getByTestId("ai-chat-panel")).toHaveAttribute(
+      "data-model-catalog-loading",
+      "false"
+    );
+  });
+}
+
 export const SendAndComplete: Story = {
   render: () => ({
     Component: AiChatDemo,
@@ -73,23 +153,23 @@ export const SendAndComplete: Story = {
     const canvas = within(canvasElement);
     const panel = await canvas.findByTestId("ai-chat-panel");
     const dock = panel.querySelector(
-      '[data-ui-part="composer-dock"]',
+      '[data-ui-part="composer-dock"]'
     ) as HTMLElement | null;
     const shell = panel.querySelector(
-      '[data-ui-part="scroll-shell"]',
+      '[data-ui-part="scroll-shell"]'
     ) as HTMLElement | null;
     expect(dock).not.toBeNull();
     expect(shell).not.toBeNull();
     expect(getComputedStyle(dock!).position).toBe("relative");
     expect(shell!.getBoundingClientRect().bottom).toBeLessThanOrEqual(
-      dock!.getBoundingClientRect().top + 2,
+      dock!.getBoundingClientRect().top + 2
     );
     const input = await canvas.findByRole("combobox", { name: "Message" });
     await userEvent.type(input, "Summarize this note");
     await userEvent.keyboard("{Enter}");
     await waitFor(() => {
       expect(
-        canvas.getByRole("article", { name: "Message from assistant" }),
+        canvas.getByRole("article", { name: "Message from assistant" })
       ).toHaveTextContent("Summarize this note");
     });
   },
@@ -118,17 +198,17 @@ export const AutomaticMemoryRecall: Story = {
     await waitFor(() => {
       expect(canvas.getByTestId("ai-chat-demo")).toHaveAttribute(
         "data-memory-recall-calls",
-        "1",
+        "1"
       );
       expect(
-        canvas.getByRole("article", { name: "Message from user" }),
+        canvas.getByRole("article", { name: "Message from user" })
       ).toHaveTextContent("Draft the Atlas summary");
       expect(
-        canvas.getByRole("article", { name: "Message from assistant" }),
+        canvas.getByRole("article", { name: "Message from assistant" })
       ).toHaveTextContent("Draft the Atlas summary");
     });
     expect(
-      canvas.queryByText("Use compact headings in Atlas notes."),
+      canvas.queryByText("Use compact headings in Atlas notes.")
     ).toBeNull();
   },
 };
@@ -154,18 +234,18 @@ export const OpenCodeHarnessChoices: Story = {
     const canvas = within(canvasElement);
     const body = within(document.body);
     await userEvent.click(
-      canvas.getByRole("button", { name: "Effort and model" }),
+      canvas.getByRole("button", { name: "Effort and model" })
     );
     await userEvent.click(body.getByTestId("ai-chat-agent"));
     await expect(body.getByText("OpenCode ACP")).toBeVisible();
     await userEvent.click(body.getByText("OpenCode Native"));
     await expect(canvas.getByTestId("ai-chat-demo")).toHaveAttribute(
       "data-selected-runtime",
-      "opencode-native",
+      "opencode-native"
     );
     await expect(canvas.getByTestId("ai-chat-demo")).toHaveAttribute(
       "data-selected-agent",
-      "opencode",
+      "opencode"
     );
   },
 };
@@ -207,7 +287,7 @@ export const SkillsAndSlash: Story = {
     await userEvent.keyboard("{Enter}");
     await waitFor(() => {
       const inventory = canvasElement.querySelector(
-        '[data-ui-component="ai-inventory-result"]',
+        '[data-ui-component="ai-inventory-result"]'
       );
       expect(inventory).toBeVisible();
       expect(inventory).toHaveAttribute("data-kind", "skills");
@@ -223,7 +303,7 @@ export const SkillsAndSlash: Story = {
     await userEvent.keyboard("{Enter}");
     await waitFor(() => {
       expect(
-        canvas.getAllByText(/Unknown command: \/open-daily-note/u).length,
+        canvas.getAllByText(/Unknown command: \/open-daily-note/u).length
       ).toBeGreaterThan(0);
     });
   },
@@ -265,7 +345,7 @@ export const SearchToolHits: Story = {
     await waitFor(() => {
       expect(canvas.getByTestId("ai-chat-demo")).toHaveAttribute(
         "data-opened-paths",
-        "Projects/auth.md",
+        "Projects/auth.md"
       );
     });
     await expect(canvas.getByTestId("ai-chat-panel")).toBeVisible();
@@ -307,22 +387,22 @@ export const ValidationAndEmptyState: Story = {
     const panel = await canvas.findByTestId("ai-chat-panel");
     const alert = canvas.getByRole("alert");
     await expect(alert).toHaveTextContent(
-      "Agent runtime socket closed unexpectedly.",
+      "Agent runtime socket closed unexpectedly."
     );
     expect(alert).toHaveAttribute("data-ui-part", "status");
     expect(alert).toHaveAttribute("data-position", "top");
 
     const layout = panel.querySelector(
-      '[data-ui-component="ai-chat-layout"]',
+      '[data-ui-component="ai-chat-layout"]'
     ) as HTMLElement | null;
     const shell = panel.querySelector(
-      '[data-ui-part="scroll-shell"]',
+      '[data-ui-part="scroll-shell"]'
     ) as HTMLElement | null;
     const empty = panel.querySelector(
-      '[data-ui-part="empty-state"]',
+      '[data-ui-part="empty-state"]'
     ) as HTMLElement | null;
     const dock = panel.querySelector(
-      '[data-ui-part="composer-dock"]',
+      '[data-ui-part="composer-dock"]'
     ) as HTMLElement | null;
     expect(layout).not.toBeNull();
     expect(shell).not.toBeNull();
@@ -334,24 +414,24 @@ export const ValidationAndEmptyState: Story = {
     const dockBox = dock!.getBoundingClientRect();
     expect(layoutBox.height).toBeGreaterThan(400);
     expect(shellBox.height).toBeGreaterThanOrEqual(
-      layoutBox.height - dockBox.height - 2,
+      layoutBox.height - dockBox.height - 2
     );
     expect(emptyBox.height).toBeGreaterThan(shellBox.height * 0.7);
     expect(shellBox.bottom).toBeLessThanOrEqual(dockBox.top + 2);
     expect(dockBox.bottom).toBeLessThanOrEqual(layoutBox.bottom + 2);
     await expect(canvas.getByTestId("ai-chat-scope-path")).toHaveTextContent(
-      "Vault",
+      "Vault"
     );
 
     await userEvent.click(
-      canvas.getByRole("button", { name: "Effort and model" }),
+      canvas.getByRole("button", { name: "Effort and model" })
     );
     const menu = canvasElement.ownerDocument
       .querySelector('[data-testid="ai-chat-model"]')
       ?.closest('[role="menu"]') as HTMLElement | null;
     expect(menu).not.toBeNull();
     expect(
-      within(menu!).queryByText("Agent runtime socket closed unexpectedly."),
+      within(menu!).queryByText("Agent runtime socket closed unexpectedly.")
     ).toBeNull();
   },
 };
@@ -391,14 +471,14 @@ export const PermissionRequested: Story = {
     await userEvent.keyboard("{Enter}");
     const allow = await canvas.findByRole("button", { name: /Allow once/ });
     const drawer = allow.closest(
-      '[data-ui-component="ai-chat-composer-drawer"]',
+      '[data-ui-component="ai-chat-composer-drawer"]'
     );
     expect(drawer).not.toBeNull();
     expect(
-      canvas.queryByTestId("ai-approval-card")?.closest("article"),
+      canvas.queryByTestId("ai-approval-card")?.closest("article")
     ).toBeNull();
     await expect(canvas.getByTestId("ai-chat-working")).toHaveTextContent(
-      "Agent is working…",
+      "Agent is working…"
     );
   },
 };
@@ -482,10 +562,10 @@ export const QuestionAsked: Story = {
       name: /Make the smallest change/,
     });
     expect(
-      option.closest('[data-ui-component="ai-chat-composer-drawer"]'),
+      option.closest('[data-ui-component="ai-chat-composer-drawer"]')
     ).not.toBeNull();
     await expect(canvas.getByTestId("ai-chat-working")).toHaveTextContent(
-      "Agent is working…",
+      "Agent is working…"
     );
   },
 };
@@ -575,10 +655,10 @@ export const ToolRunning: Story = {
       name: "Show details for shell.execute",
     });
     await expect(
-      trigger.querySelector('[data-ui-part="detail-chevron"]'),
+      trigger.querySelector('[data-ui-part="detail-chevron"]')
     ).toHaveAttribute("data-direction", "right");
     const status = canvasElement.querySelector(
-      '[data-ui-part="call-status"][data-status="running"]',
+      '[data-ui-part="call-status"][data-status="running"]'
     );
     expect(status).not.toBeNull();
     await expect(status).toHaveTextContent("Running");
@@ -623,7 +703,7 @@ export const SuccessfulToolCall: Story = {
     await userEvent.click(trigger);
     await expect(chevron).toHaveAttribute("data-direction", "down");
     await expect(
-      canvasElement.querySelector('[data-ui-part="code-block-line"]'),
+      canvasElement.querySelector('[data-ui-part="code-block-line"]')
     ).toHaveTextContent("pnpm --filter @lapis-notes/ai test");
     await expect(canvas.getByText("121 tests passed")).toBeVisible();
   },
@@ -695,10 +775,10 @@ export const AppToolPatchApproval: Story = {
     await expect(await canvas.findByText("Notes/alpha.md")).toBeVisible();
     await expect(canvas.getByText(/--- before/)).toBeVisible();
     await expect(
-      canvas.getByRole("button", { name: /Allow once/ }),
+      canvas.getByRole("button", { name: /Allow once/ })
     ).toBeVisible();
     await expect(
-      canvas.getByRole("button", { name: /Allow for this session/ }),
+      canvas.getByRole("button", { name: /Allow for this session/ })
     ).toBeVisible();
     await expect(canvas.getByRole("button", { name: /Deny/ })).toBeVisible();
   },
@@ -731,10 +811,10 @@ export const AppToolSessionGrant: Story = {
     const canvas = within(canvasElement);
     await expect(await canvas.findByText(/Approval approved/)).toBeVisible();
     await userEvent.click(
-      canvas.getByRole("button", { name: "Expand 2 tool calls" }),
+      canvas.getByRole("button", { name: "Expand 2 tool calls" })
     );
     expect(
-      canvas.getAllByRole("button", { name: "Show details for edit" }),
+      canvas.getAllByRole("button", { name: "Show details for edit" })
     ).toHaveLength(2);
     expect(canvas.queryByRole("button", { name: /Allow once/ })).toBeNull();
   },
@@ -768,7 +848,7 @@ export const AppToolHostUpgradeRequired: Story = {
   },
   play: async ({ canvasElement }) => {
     await expect(
-      await within(canvasElement).findByRole("alert"),
+      await within(canvasElement).findByRole("alert")
     ).toHaveTextContent("protocol v3");
   },
 };
@@ -807,16 +887,14 @@ export const FailedToolCall: Story = {
       name: "Show details for shell.execute",
     });
     await expect(
-      trigger.querySelector(
-        '[data-ui-part="call-status"][data-status="error"]',
-      ),
+      trigger.querySelector('[data-ui-part="call-status"][data-status="error"]')
     ).toHaveTextContent("Error");
     const chevron = trigger.querySelector('[data-ui-part="detail-chevron"]');
     await expect(chevron).toHaveAttribute("data-direction", "right");
     await userEvent.click(trigger);
     await expect(chevron).toHaveAttribute("data-direction", "down");
     await expect(
-      canvasElement.querySelector('[data-ui-part="code-block-line"]'),
+      canvasElement.querySelector('[data-ui-part="code-block-line"]')
     ).toHaveTextContent("pnpm --filter @lapis-notes/ai test");
     await expect(canvas.getByText("Process exited with code 1")).toBeVisible();
     const output = canvas.getAllByText(/FAIL ai-chat-panel\.test\.ts/);
@@ -875,8 +953,8 @@ export const FileMentions: Story = {
       });
       expect(
         userMessage.querySelector(
-          '[data-ui-component="ai-chat-tokenized-text"]',
-        ),
+          '[data-ui-component="ai-chat-tokenized-text"]'
+        )
       ).not.toBeNull();
       expect(userMessage).toHaveTextContent("Notes/alpha.md");
     });
@@ -919,29 +997,29 @@ export const AgentTrace: Story = {
     });
     await expect(canvas.getByText("Ask anything…")).toBeVisible();
     await userEvent.click(
-      canvas.getByRole("button", { name: "Effort and model" }),
+      canvas.getByRole("button", { name: "Effort and model" })
     );
     const modelMenu = body.getByTestId("ai-chat-model");
     await expect(modelMenu).toBeVisible();
     await userEvent.hover(modelMenu);
     await expect(
-      await body.findByRole("menuitemradio", { name: "gpt-5.6-sol" }),
+      await body.findByRole("menuitemradio", { name: "gpt-5.6-sol" })
     ).toHaveAttribute("data-state", "checked");
     await userEvent.hover(body.getByTestId("ai-chat-thinking"));
     await expect(
-      await body.findByRole("menuitemradio", { name: "Medium" }),
+      await body.findByRole("menuitemradio", { name: "Medium" })
     ).toHaveAttribute("data-state", "checked");
     await userEvent.keyboard("{Escape}");
     await userEvent.click(canvas.getByRole("button", { name: "Attach file" }));
     const attachSearch = await body.findByPlaceholderText("Search vault files");
     const attachPopover = attachSearch.closest(
-      '[data-ui-component="popover"][data-ai-part="attach-popover"]',
+      '[data-ui-component="popover"][data-ai-part="attach-popover"]'
     ) as HTMLElement | null;
     expect(attachPopover).not.toBeNull();
     expect(
       attachPopover!.querySelector(
-        '[data-ui-component="command-view"][data-ui-part="root"]',
-      ),
+        '[data-ui-component="command-view"][data-ui-part="root"]'
+      )
     ).not.toBeNull();
     const attachChrome = getComputedStyle(attachPopover!);
     expect(attachChrome.borderTopWidth).not.toBe("0px");
@@ -949,10 +1027,10 @@ export const AgentTrace: Story = {
     expect(attachChrome.boxShadow).not.toBe("none");
     await userEvent.click(await body.findByText("alpha"));
     await expect(
-      canvas.getByRole("button", { name: "Remove alpha" }),
+      canvas.getByRole("button", { name: "Remove alpha" })
     ).toBeVisible();
     const drawer = canvasElement.querySelector(
-      '[data-ui-component="ai-chat-composer-drawer"]',
+      '[data-ui-component="ai-chat-composer-drawer"]'
     ) as HTMLElement | null;
     const attachment = canvas
       .getByRole("button", { name: "Remove alpha" })
@@ -967,12 +1045,12 @@ export const AgentTrace: Story = {
     expect(
       canvas
         .getByRole("button", { name: "Remove alpha" })
-        .getBoundingClientRect().height,
+        .getBoundingClientRect().height
     ).toBeLessThanOrEqual(attachment!.getBoundingClientRect().height);
     await userEvent.click(canvas.getByRole("button", { name: "Attach file" }));
     const openSearch = await body.findByPlaceholderText("Search vault files");
     const openPopover = openSearch.closest(
-      '[data-ui-component="popover"][data-ai-part="attach-popover"]',
+      '[data-ui-component="popover"][data-ai-part="attach-popover"]'
     ) as HTMLElement | null;
     expect(openPopover).not.toBeNull();
     const popoverBox = openPopover!.getBoundingClientRect();
@@ -983,7 +1061,7 @@ export const AgentTrace: Story = {
     expect(
       canvasElement.ownerDocument
         .elementFromPoint(sampleX, sampleY)
-        ?.closest('[data-ai-part="attach-popover"]'),
+        ?.closest('[data-ai-part="attach-popover"]')
     ).not.toBeNull();
     await userEvent.keyboard("{Escape}");
     const input = await canvas.findByRole("combobox", { name: "Message" });
@@ -992,30 +1070,30 @@ export const AgentTrace: Story = {
     await waitFor(() => {
       expect(
         canvasElement.querySelector(
-          '[data-ui-component="ai-chat-system-message"][data-variant="divider"]',
-        ),
+          '[data-ui-component="ai-chat-system-message"][data-variant="divider"]'
+        )
       ).toHaveTextContent("Today");
       expect(
-        canvasElement.querySelector('[data-ui-component="ai-chat-reasoning"]'),
+        canvasElement.querySelector('[data-ui-component="ai-chat-reasoning"]')
       ).not.toBeNull();
       expect(
-        canvasElement.querySelector('[data-ui-part="reasoning-content-inner"]'),
+        canvasElement.querySelector('[data-ui-part="reasoning-content-inner"]')
       ).toHaveTextContent("I will read the mentioned note, then summarize it.");
       expect(canvas.getByText("vault.read")).toBeVisible();
       expect(
-        canvas.getByRole("article", { name: "Message from assistant" }),
+        canvas.getByRole("article", { name: "Message from assistant" })
       ).toHaveTextContent("Summary");
       expect(
-        canvas.getByRole("article", { name: "Message from assistant" }),
+        canvas.getByRole("article", { name: "Message from assistant" })
       ).toHaveTextContent("TODO");
       expect(
         canvasElement.querySelector(
-          '[data-ui-component="ai-chat-message-metadata"] [data-ui-part="timestamp"]',
-        ),
+          '[data-ui-component="ai-chat-message-metadata"] [data-ui-part="timestamp"]'
+        )
       ).not.toBeNull();
       expect(canvas.getByText("Context")).toBeVisible();
       expect(
-        canvas.getByRole("progressbar", { name: "Context window usage" }),
+        canvas.getByRole("progressbar", { name: "Context window usage" })
       ).toHaveAttribute("value", "12920");
       expect(canvas.queryByText("session updated")).toBeNull();
       expect(canvas.queryByText("available commands updated (75)")).toBeNull();
@@ -1029,29 +1107,29 @@ export const AgentTrace: Story = {
     await expect(readCall).toHaveTextContent("Notes/alpha.md");
     await expect(readCall).toHaveTextContent("heading: Notes");
     await userEvent.click(
-      canvas.getByRole("button", { name: "Copy response" }),
+      canvas.getByRole("button", { name: "Copy response" })
     );
     await expect(writeText).toHaveBeenCalledWith(
-      expect.stringContaining("## Summary"),
+      expect.stringContaining("## Summary")
     );
     const panel = canvas.getByTestId("ai-chat-panel");
     const dock = panel.querySelector(
-      '[data-ui-part="composer-dock"]',
+      '[data-ui-part="composer-dock"]'
     ) as HTMLElement | null;
     const viewport = panel.querySelector(
-      '[data-ui-part="scroll-area-viewport"]',
+      '[data-ui-part="scroll-area-viewport"]'
     ) as HTMLElement | null;
     const assistant = canvas.getByRole("article", {
       name: "Message from assistant",
     });
     const bubble = assistant.querySelector(
-      '[data-ui-component="ai-chat-message-bubble"]',
+      '[data-ui-component="ai-chat-message-bubble"]'
     ) as HTMLElement | null;
     expect(dock).not.toBeNull();
     expect(viewport).not.toBeNull();
     expect(bubble).not.toBeNull();
     expect(viewport!.getBoundingClientRect().bottom).toBeLessThanOrEqual(
-      dock!.getBoundingClientRect().top + 2,
+      dock!.getBoundingClientRect().top + 2
     );
     expect(getComputedStyle(viewport!).overflowY).toMatch(/auto|scroll/);
     const bubbleStyles = getComputedStyle(bubble!);
@@ -1099,14 +1177,14 @@ export const FailedMessageAndRetry: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const failure = await canvas.findByText(
-      "The agent connection closed before the response completed.",
+      "The agent connection closed before the response completed."
     );
     const message = failure.closest(
-      '[data-ui-component="ai-chat-message"]',
+      '[data-ui-component="ai-chat-message"]'
     ) as HTMLElement | null;
     expect(message).not.toBeNull();
     await expect(
-      within(message!).getByRole("alert", { name: "Failed to send" }),
+      within(message!).getByRole("alert", { name: "Failed to send" })
     ).toBeVisible();
     const retry = within(message!).getByRole("button", {
       name: "Retry message",
@@ -1148,7 +1226,7 @@ export const ScrollRecovery: Story = {
     const canvas = within(canvasElement);
     await canvas.findByText("Latest seeded message");
     const viewport = canvasElement.querySelector(
-      '[data-ui-part="scroll-area-viewport"]',
+      '[data-ui-part="scroll-area-viewport"]'
     ) as HTMLElement | null;
     expect(viewport).not.toBeNull();
     await waitFor(() => {
@@ -1156,19 +1234,19 @@ export const ScrollRecovery: Story = {
     });
     await waitFor(() => {
       viewport!.dispatchEvent(
-        new WheelEvent("wheel", { deltaY: -120, bubbles: true }),
+        new WheelEvent("wheel", { deltaY: -120, bubbles: true })
       );
       viewport!.scrollTop = 0;
       viewport!.dispatchEvent(new Event("scroll"));
       expect(viewport!.scrollTop).toBe(0);
       expect(
         canvasElement.querySelector(
-          '[data-ui-component="ai-chat-layout-scroll-button"][data-visible="true"]',
-        ),
+          '[data-ui-component="ai-chat-layout-scroll-button"][data-visible="true"]'
+        )
       ).not.toBeNull();
     });
     const scrollButton = canvasElement.querySelector(
-      '[data-ui-component="ai-chat-layout-scroll-button"][data-visible="true"] button',
+      '[data-ui-component="ai-chat-layout-scroll-button"][data-visible="true"] button'
     ) as HTMLButtonElement | null;
     expect(scrollButton).not.toBeNull();
     expect(scrollButton).toHaveAttribute("aria-label", "Scroll to latest");
@@ -1224,50 +1302,60 @@ export const HarnessModelRefresh: Story = {
       const trigger = await canvas.findByRole("button", {
         name: "Effort and model",
       });
-      if (trigger.getAttribute("aria-expanded") !== "true")
-        await userEvent.click(trigger);
+      if (trigger.getAttribute("aria-expanded") !== "true") {
+        await waitFor(() =>
+          expect(
+            getComputedStyle(canvasElement.ownerDocument.body).pointerEvents
+          ).not.toBe("none")
+        );
+        await clickHarnessControl(trigger);
+      }
       await expect(trigger).toHaveAttribute("aria-expanded", "true");
     };
     await openPreferences();
-    await userEvent.hover(await body.findByTestId("ai-chat-agent"));
-    await userEvent.click(
-      await body.findByRole("menuitemradio", { name: "Codex Native" }),
+    await hoverHarnessControl(await body.findByTestId("ai-chat-agent"));
+    await clickHarnessControl(
+      await body.findByRole("menuitemradio", { name: "Codex Native" })
     );
+    await dismissHarnessPreferences(canvasElement);
+    await waitForHarnessCatalog(canvasElement, "codex", "codex-native");
     await openPreferences();
-    await userEvent.hover(await body.findByTestId("ai-chat-model"));
+    await hoverHarnessControl(await body.findByTestId("ai-chat-model"));
     await waitFor(() =>
       expect(body.getByTestId("ai-chat-model")).toHaveAttribute(
         "data-state",
-        "open",
-      ),
+        "open"
+      )
     );
     await expect(
-      await body.findByRole("menuitemradio", { name: "Native fixture model" }),
+      await body.findByRole("menuitemradio", { name: "Native fixture model" })
     ).toHaveAttribute("data-state", "checked");
     expect(
-      body.queryByRole("menuitemradio", { name: "gpt-5.6-sol" }),
+      body.queryByRole("menuitemradio", { name: "gpt-5.6-sol" })
     ).toBeNull();
-    await userEvent.keyboard("{Escape}");
+    await dismissHarnessPreferences(canvasElement);
     await openPreferences();
-    await userEvent.hover(await body.findByTestId("ai-chat-agent"));
-    await userEvent.click(
-      await body.findByRole("menuitemradio", { name: "Cursor ACP" }),
+    await hoverHarnessControl(await body.findByTestId("ai-chat-agent"));
+    await clickHarnessControl(
+      await body.findByRole("menuitemradio", { name: "Cursor ACP" })
     );
+    await dismissHarnessPreferences(canvasElement);
+    await waitForHarnessCatalog(canvasElement, "cursor", "acp");
     await openPreferences();
-    await userEvent.hover(await body.findByTestId("ai-chat-model"));
+    await hoverHarnessControl(await body.findByTestId("ai-chat-model"));
     await waitFor(() =>
       expect(body.getByTestId("ai-chat-model")).toHaveAttribute(
         "data-state",
-        "open",
-      ),
+        "open"
+      )
     );
     await expect(
-      await body.findByRole("menuitemradio", { name: "Cursor fixture model" }),
+      await body.findByRole("menuitemradio", { name: "Cursor fixture model" })
     ).toHaveAttribute("data-state", "checked");
     expect(
-      body.queryByRole("menuitemradio", { name: "Native fixture model" }),
+      body.queryByRole("menuitemradio", { name: "Native fixture model" })
     ).toBeNull();
-    await userEvent.keyboard("{Escape}");
+    await dismissHarnessPreferences(canvasElement);
   },
 };
 
@@ -1303,19 +1391,20 @@ export const SettingsHarnessModelRefresh: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Choose Cursor in Settings" }),
+    await clickHarnessControl(
+      canvas.getByRole("button", { name: "Choose Cursor in Settings" })
     );
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Effort and model" }),
+    await waitForHarnessCatalog(canvasElement, "cursor", "acp");
+    await clickHarnessControl(
+      canvas.getByRole("button", { name: "Effort and model" })
     );
-    await userEvent.hover(await body.findByTestId("ai-chat-model"));
+    await hoverHarnessControl(await body.findByTestId("ai-chat-model"));
     await expect(
-      await body.findByRole("menuitemradio", { name: "Cursor settings model" }),
+      await body.findByRole("menuitemradio", { name: "Cursor settings model" })
     ).toHaveAttribute("data-state", "checked");
     expect(
-      body.queryByRole("menuitemradio", { name: "gpt-5.6-sol" }),
+      body.queryByRole("menuitemradio", { name: "gpt-5.6-sol" })
     ).toBeNull();
-    await userEvent.keyboard("{Escape}");
+    await dismissHarnessPreferences(canvasElement);
   },
 };
