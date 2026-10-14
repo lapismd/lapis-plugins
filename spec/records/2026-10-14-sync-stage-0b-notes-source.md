@@ -1,10 +1,11 @@
 # Sync stage 0B: Notes source qualification
 
-Status: source PR prepared; Notes release incomplete, 14 October 2026.
-Stop for review at this bounded checkpoint. Versioning, publication, consumer
-refresh and stage 0C landing remain pending.
+Status: source PR #28 merged and all required CI passed, updated 15 October 2026. Version PR #30 is also merged. The separate
+[Notes release checkpoint](2026-10-15-sync-stage-0b-notes-release.md) records
+completed API 0.1.4 publication and registry verification; consumer refresh and stage 0C landing
+remain subsequent work. Earlier candidate findings below are historical.
 
-## Working now
+## Source checkpoint history
 
 Lapis Notes was fetched from both remotes and reconciled onto current main
 `9fed4f1577a6beb27168d0b83b9ea42408d4f1b1`, including Homebrew PR #26. A final
@@ -46,33 +47,35 @@ navigation, other workspaces and ordinary development data remain preserved.
   bridge and 296 desktop cases pass on Node 24; frozen Deno, desktop check/build
   and root check/test/build pass again. No timeout, size, assertion or baseline
   is weakened.
-- Fresh [Lapis CI](https://github.com/lapismd/lapis-notes/actions/runs/38642790140)
-  and [desktop CI](https://github.com/lapismd/lapis-notes/actions/runs/38642790099)
-  are running at the new head. Hosted timeout repair is not yet confirmed.
-- The initial Linux ARM native lane separately fails its compiled AI-controller
-  integration: no completed event within the existing 20-second poll. Root
-  cause remains open; no controller workaround was added.
-- The aggregate Catalog shard logs five caught line-range errors on the
-  candidate while all 65 cases pass. Its exact six-story Catalog family is
-  clean; refreshed main plus the audit commits runs the same 65-case shard
-  without those diagnostics. This candidate-dependent lifecycle issue needs
-  focused diagnosis before publication.
+- Final source [Lapis CI](https://github.com/lapismd/lapis-notes/actions/runs/38650480704)
+  passes all required jobs. Final
+  [desktop CI](https://github.com/lapismd/lapis-notes/actions/runs/38650480732)
+  passes all three native targets, confirming the codec repair and clearing
+  the earlier Linux ARM integration failure without a controller workaround.
+- The complete Catalog still logs caught line-range diagnostics while all
+  249 interaction/accessibility cases pass. The user explicitly directed moving
+  on because no CI test fails. The unmerged diagnostic prototype is retained
+  at `local/parked-catalog-diagnostics-20261015` (change `wvkppryo`, commit
+  `2b97e925`) and is excluded from the released candidate. Diagnostic-free
+  operation is not claimed.
 
-Current public framework versions are already on npm. Source-stage package
-planning therefore selects no tarballs; this is not packed-artifact acceptance.
-Nine API patch Changesets await the version PR. Actual new artifact, provenance
-and registry-only consumer checks follow versioning. No Notes package, Sync
-plugin or registry update was published in this checkpoint.
+Source-stage package planning selected no tarballs because its package versions
+were already on npm; that was not packed-artifact acceptance. The nine API patch
+Changesets are now consumed by version PR #30, changing only API 0.1.3 to 0.1.4.
+Actual artifact, provenance and registry-only consumer evidence belongs to the
+separate release record. No Sync plugin or registry update is authorized here.
 
 ## Review and next piece
 
-Review [PR #28](https://github.com/lapismd/lapis-notes/pull/28) and the owning
-`lapis-notes/spec/records/2026-10-14-sync-host-release.md` record. The default
-Notes checkout is clean on the source branch; remote main remains its ancestor.
-The PR stays draft while CI and lifecycle findings are unresolved.
+Source [PR #28](https://github.com/lapismd/lapis-notes/pull/28) merged at
+`967a92fb123c9cb66fca976c689fafdd00aa65b6`. Version
+[PR #30](https://github.com/lapismd/lapis-notes/pull/30) passed all 12 required
+checks and merged at `ecb193a9493d5749f063ffe430d8eed30d153bf4`. The default
+Notes workspace is clean on that updated main. Original temporary workspaces,
+unqualified navigation and development data remain preserved.
 
-Next, verify hosted codec results and diagnose the aggregate Catalog lifecycle
-issue as a focused piece. Resolve the Linux ARM controller gate separately if
-it persists. After the source PR qualifies, merge it under the user's existing
-authorization, then take the version/publication checkpoint. Stage 0B and 0C
-remain incomplete; no live Sync activation or temporary-workspace cleanup occurs.
+The separate Notes publication checkpoint is now complete. Stop for review
+before stage 0C; live Sync activation and temporary-workspace cleanup remain
+later work. The historical Notes source record retains the initial CI findings;
+the current disposition and completed publication gate are recorded here and
+in the release record.

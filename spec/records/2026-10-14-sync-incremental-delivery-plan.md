@@ -1,13 +1,15 @@
 # Lapis Sync incremental delivery plan
 
-Status: stage 0A complete; stage 0B's Design Core and Mira checkpoints are
-complete with 0.3.3 and 0.0.5 published and verified, 14 October 2026. Stop for
-review before the separate Notes release checkpoint. See the
+Status: stages 0A and 0B complete, 15 October 2026. Design Core 0.3.3,
+Mira 0.0.5 and Notes API 0.1.4 are published and verified. Stage 0C landing
+remains pending; stop for review before starting it. See the
 [Design Core checkpoint](2026-10-14-sync-stage-0b-design-core-release.md) and
 [Mira checkpoint](2026-10-14-sync-stage-0b-mira-release.md).
-The [Notes source checkpoint](2026-10-14-sync-stage-0b-notes-source.md) now has
-draft PR #28 and a focused codec repair; hosted verification and lifecycle/ARM
-findings remain open. No Notes release has been completed.
+The [Notes source checkpoint](2026-10-14-sync-stage-0b-notes-source.md) and
+version PR #30 are merged with all required checks passing. The
+[Notes release checkpoint](2026-10-15-sync-stage-0b-notes-release.md) records
+publication and passing clean registry-consumer verification. The caught Catalog
+diagnostic is explicitly deferred by the user because it fails no CI tests.
 See the [reconciliation record](2026-10-14-sync-stage-0a-reconciliation.md).
 Stage 0 precedes all feature slices.
 This record replaces the delivery sequence and per-slice test scope in the
@@ -113,14 +115,17 @@ Design Core is complete in the
 [0.3.3 release record](2026-10-14-sync-stage-0b-design-core-release.md).
 Mira's editing-session capability is complete in the
 [0.0.5 release record](2026-10-14-sync-stage-0b-mira-release.md).
-The required Notes public-package release remains pending. Stage 0B as a whole
-is not complete.
+Notes API 0.1.4 publication and registry verification are complete in the
+[release record](2026-10-15-sync-stage-0b-notes-release.md). Stage 0B is complete;
+consumer refresh and temporary Sync-stack landing belong to stage 0C.
 
 The Notes source candidate and bounded CI follow-up are recorded in the
 [source checkpoint](2026-10-14-sync-stage-0b-notes-source.md). Keep its source
-qualification, version PR and actual npm publication visibly distinct. Complete
-the recorded CI/lifecycle findings before merge; then review the version and
-publication as the next release checkpoint rather than extending this session.
+qualification, version PR and actual npm publication visibly distinct. Hosted
+codec and native checks now pass; source PR #28 and version PR #30 are merged.
+The user accepted deferring the caught diagnostic after confirming that all
+12 required checks and 249 Catalog cases pass. Its unmerged prototype remains
+parked separately and is excluded from the release.
 
 For a required change in `design-core`, `mira-mde`, or another independently
 consumed shared package, prepare a focused upstream PR against its updated
