@@ -1,5 +1,10 @@
 # Distribution and Releases
 
+The shared CI toolchain is `lapis-ci:2026.10.14.1`, pinned by immutable digest.
+Its checksum-verified GitHub CLI 2.102.0 supports package release records and
+registry dispatch. The lockfile-specific dependency image must be rebuilt over
+that base before the production release workflow uses it.
+
 The static release uses published API, UI and File Explorer 0.1.2, Workspace
 0.2.0 and Language Service 0.1.1 through the shared package catalog. Independently versioned
 plugin candidates must retain matching npm, runtime manifest and changelog

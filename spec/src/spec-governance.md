@@ -1,5 +1,10 @@
 # Specification Governance
 
+The verified shared CI image refresh maps its base pin, dependency-only build
+context and generated dependency digest to this chapter and Distribution.
+GitHub CLI is supplied by the upstream image; no consumer installs or patches
+the tool at job runtime. Publication remains independently approved.
+
 Shared Storybook diagnostics now cover formatted Svelte warnings, diagnostic URLs
 and Error objects, and retain caught teardown failures for after-story and final
 cleanup checks. Dependency-originated diagnostics remain fatal under LP-SPEC-034.
