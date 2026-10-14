@@ -1,6 +1,8 @@
 # Lapis Sync incremental delivery plan
 
-Status: stage 0A complete, 14 October 2026; stopped for review before stage 0B.
+Status: stage 0A complete; stage 0B's Design Core checkpoint is complete with
+0.3.3 published and verified, 14 October 2026. Stop for review before the separate
+Mira release checkpoint. See the [Design Core checkpoint](2026-10-14-sync-stage-0b-design-core-release.md).
 See the [reconciliation record](2026-10-14-sync-stage-0a-reconciliation.md).
 Stage 0 precedes all feature slices.
 This record replaces the delivery sequence and per-slice test scope in the
@@ -101,6 +103,11 @@ app must still launch, open a note and save it. Run focused regressions for
 conflict resolutions that change behavior; no Sync feature work in this step.
 
 ### 0B. Release required shared-package changes
+
+Design Core is complete in the
+[0.3.3 release record](2026-10-14-sync-stage-0b-design-core-release.md).
+Mira's editing-session release and the required Notes public-package release
+remain pending. Stage 0B as a whole is not complete.
 
 For a required change in `design-core`, `mira-mde`, or another independently
 consumed shared package, prepare a focused upstream PR against its updated
