@@ -1,5 +1,9 @@
 # Specification Governance
 
+Dependency-image automation follows LP-SPEC-051: terminal PR states never
+absorb a new digest update. The executable workflow regressions cover merged,
+closed and open reviews without changing the normal required CI gates.
+
 The verified shared CI image refresh maps its base pin, dependency-only build
 context and generated dependency digest to this chapter and Distribution.
 GitHub CLI is supplied by the upstream image; no consumer installs or patches
