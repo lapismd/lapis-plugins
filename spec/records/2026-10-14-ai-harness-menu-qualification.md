@@ -30,3 +30,24 @@ retained; recurrence in the repaired full lane must be investigated separately.
 This slice changes the acceptance plays and their governing evidence. Plugin
 runtime code, package versions and visual baselines are unchanged. The private
 Sync workspace and its local main bookmark remain separate from GitHub main.
+
+## Pointer geometry follow-up
+
+[PR 8 run 38535351390](https://github.com/lapismd/lapis-plugins/actions/runs/38535351390)
+passed every other lane but recorded 61 passes and one Harness Model Refresh
+failure in Storybook shard 2: the persisted runtime remained ACP after the
+synthetic Native click. Settings Harness Model Refresh passed.
+
+A cold exact local run also reproduced a closed model submenu (one failure).
+Source tracing found no startup default writer, and model discovery already
+rejects stale generations. A new pointer-coordinate assertion then fails
+deterministically: `userEvent.click` sends x=0 to an option whose left edge is
+x=376. The submenu intent corridor hit-tests real coordinates. Both harness
+plays now move and click at each rendered control's center, retaining the
+coordinate regression assertion. The two exact stories pass on a cold run.
+This is a test-infrastructure repair; plugin runtime and versions are unchanged.
+All 23 Chat stories and 177 full interaction/accessibility stories pass on fresh
+processes (49/62/37/29). Root check/test/build pass 13/13, 13/13 and 12/12;
+audit, spec and App ownership, 105 release-tool tests, static Storybook and
+twelve npm packs pass. GitHub qualification at the updated head remains the
+merge gate.

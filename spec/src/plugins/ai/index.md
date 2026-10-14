@@ -533,3 +533,9 @@ loading before opening its models. Escape dismissal waits for the focused menu
 to unmount, closes any remaining parent and observes restored pointer ownership
 before the next selection or story. Plays retain pointer-hover, checked-default
 and old-model absence assertions for both Native and Cursor catalogs.
+
+Harness acceptance pointer events MUST carry coordinates inside the rendered
+control. The submenu intent corridor performs DOM geometry hit-testing, so
+synthetic `(0, 0)` or stale coordinates do not represent a valid selection.
+The plays assert the pointer-down coordinates as well as the persisted harness,
+completed catalog, checked default and removal of the previous model.
