@@ -43,6 +43,8 @@ Shared specification tooling resolves `@lapismd/spec-validator@0.1.4` from npm.
 
 Shared UI dependency refreshes advance portable package ranges and the committed
 lockfile together without adding checkout-specific package paths.
+The Sync Settings layout regression is qualified against released Design Core
+0.3.4 rather than a consumer CSS override or local source remap.
 
 ## Requirements
 
