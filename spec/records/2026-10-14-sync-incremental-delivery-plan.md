@@ -1,8 +1,9 @@
 # Lapis Sync incremental delivery plan
 
-Status: stages 0A and 0B complete, 15 October 2026. Design Core 0.3.3,
-Mira 0.0.5 and Notes API 0.1.4 are published and verified. Stage 0C landing
-remains pending; stop for review before starting it. See the
+Status: stage 0 complete, 15 October 2026. Design Core 0.3.3, Mira 0.0.5
+and Notes API 0.1.4 are published and consumed from npm. Qualified Sync sources
+are landed in main and superseded temporary workspaces are removed after
+recovery preservation. Stop for review before feature slice 1. See the
 [Design Core checkpoint](2026-10-14-sync-stage-0b-design-core-release.md) and
 [Mira checkpoint](2026-10-14-sync-stage-0b-mira-release.md).
 The [Notes source checkpoint](2026-10-14-sync-stage-0b-notes-source.md) and
@@ -11,6 +12,8 @@ version PR #30 are merged with all required checks passing. The
 publication and passing clean registry-consumer verification. The caught Catalog
 diagnostic is explicitly deferred by the user because it fails no CI tests.
 See the [reconciliation record](2026-10-14-sync-stage-0a-reconciliation.md).
+The [main landing record](2026-10-15-sync-stage-0c-main-landing.md) records the
+source revisions, focused checks, runnable reviews and recovery archives.
 Stage 0 precedes all feature slices.
 This record replaces the delivery sequence and per-slice test scope in the
 [original plan](2026-10-12-lapis-sync-deno-plan.md) and
@@ -65,7 +68,9 @@ primitives where integration is smaller. Do not build a second engine or
 provider framework merely to start the Deno path. Choose the smallest adapter
 against public contracts, and record that choice in its slice handoff.
 
-Preserve these existing workspaces and their evidence:
+The following table records the historical temporary inputs at plan creation.
+Their named Jujutsu changes and ignored evidence are preserved under the stage
+0C recovery record; the three superseded directories are now removed.
 
 | Workspace                    | Recorded qualified parent | Pending state at plan creation                                   |
 | ---------------------------- | ------------------------- | ---------------------------------------------------------------- |
@@ -73,11 +78,10 @@ Preserve these existing workspaces and their evidence:
 | `lapis-notes-sync-runtime`   | `5f672a5a`                | Five uncommitted navigation/spec files; unqualified as a whole   |
 | `mira-sync-runtime`          | `4cddcaf3`                | Last recorded portable editing-session slice; recheck before use |
 
-The unfinished navigation change needs an explicit disposition in stage 0:
-qualify and land it if ready, or retain a recoverable named change and report
-it as pending. Do not discard it, claim it is qualified or automatically fold
-it into a shared-package release. Preserve unrelated main/release work and
-`.local/dev-demo`; do not reset development data.
+The unfinished navigation change remains parked at
+`local/sync-navigation-pending-20261014` and in the recovery archive. It is not
+qualified or included in main. Unrelated main/release work and ordinary
+development data remain preserved.
 
 ## Stage 0: reconcile remotes, release dependencies and land into main
 
@@ -88,7 +92,8 @@ pipeline or conflict-resolution effort must not become a hidden long run.
 ### 0A. Fetch and reconcile the participating repositories
 
 Completed in the [reconciliation record](2026-10-14-sync-stage-0a-reconciliation.md).
-The main workspaces are current; feature stacks remain preserved for 0B/0C.
+The historical source inputs remain recoverable; stage 0C now completes their
+qualified landing into current main workspaces.
 
 1. Read each owning tracked guide. Inventory the main and temporary workspaces
    for `lapis-plugins`, `lapis-notes`, `mira-mde` and any other shared source
@@ -159,6 +164,12 @@ focused consumer check against those released packages. Allow separate review
 stops per shared repository; do not bundle several releases into one long run.
 
 ### 0C. Rebase, land and switch to main
+
+Completed in the [main landing record](2026-10-15-sync-stage-0c-main-landing.md).
+Main uses the released prerequisites, the Sync source/UI checks and cold
+application save/reload check pass, and the three superseded workspaces are
+removed after recovery preservation. Commits stay local for this review;
+complete CI and feature slice 1 remain deferred.
 
 Recheck remotes before landing, since 0B may have advanced them. Rebase the
 temporary Sync changes onto the updated owning main lines using Jujutsu, resolve
