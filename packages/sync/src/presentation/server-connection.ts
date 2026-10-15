@@ -1,7 +1,8 @@
-import { validateSyncDestination } from "./settings";
+import { validateSyncDestination, validateSyncServerUrl } from "./settings";
 import {
   createDisconnectedSnapshot,
   type SyncAction,
+  type ManagedVault,
   type SyncRuntime,
   type SyncSettings,
   type SyncSnapshot,
@@ -45,12 +46,12 @@ export class ServerConnectionRuntime implements SyncRuntime {
   #notify(): void {
     if (!this.#disposed) for (const listener of this.#listeners) listener();
   }
-  async #query(
+  async #query<T = Record<string, unknown>>(
     base: URL,
     procedure: string,
     signal: AbortSignal,
     input?: unknown,
-  ): Promise<Record<string, unknown>> {
+  ): Promise<T> {
     const url = new URL(
       `${base.pathname.replace(/\/$/, "")}/api/trpc/${procedure}`,
       base,
@@ -125,11 +126,67 @@ export class ServerConnectionRuntime implements SyncRuntime {
       );
     }
     const data = envelope?.result?.data;
-    if (!data || typeof data !== "object" || Array.isArray(data))
+    if (!data || typeof data !== "object")
       throw new ConnectionError(
         "Lapis Server returned an invalid connection response.",
       );
-    return data as Record<string, unknown>;
+    return data as T;
+  }
+  async listManagedVaults(
+    settings: Readonly<SyncSettings>,
+    signal: AbortSignal,
+  ): Promise<ManagedVault[]> {
+    if (this.#disposed) throw new Error("The connection runtime is disposed.");
+    const invalid = validateSyncServerUrl(settings.serverUrl, this.options);
+    if (invalid) throw new Error(invalid);
+    const deadline = AbortSignal.timeout(this.options.timeoutMs ?? 10_000);
+    const combined = AbortSignal.any([signal, this.#abort.signal, deadline]);
+    try {
+      const base = new URL(settings.serverUrl);
+      const info = await this.#query(base, "system.info", combined);
+      if (info.protocolMajor !== 1)
+        throw new ConnectionError(
+          "This Lapis Server uses an unsupported protocol version.",
+        );
+      const rows = await this.#query<unknown[]>(base, "vault.list", combined, {
+        includeArchived: false,
+      });
+      if (!Array.isArray(rows))
+        throw new ConnectionError(
+          "Lapis Server returned an invalid managed vault list.",
+        );
+      const vaults: ManagedVault[] = [];
+      const seen = new Set<string>();
+      for (const entry of rows) {
+        const row = entry as
+          | (Partial<ManagedVault> & { archivedAt?: unknown })
+          | null;
+        if (
+          !row ||
+          typeof row.id !== "string" ||
+          !/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(row.id) ||
+          typeof row.name !== "string" ||
+          !row.name.trim() ||
+          row.name.length > 256 ||
+          !["owner", "editor", "viewer"].includes(row.role ?? "") ||
+          seen.has(row.id)
+        )
+          throw new ConnectionError(
+            "Lapis Server returned an invalid managed vault list.",
+          );
+        seen.add(row.id);
+        if (row.archivedAt == null)
+          vaults.push({ id: row.id, name: row.name, role: row.role! });
+      }
+      combined.throwIfAborted();
+      return vaults;
+    } catch (cause) {
+      if (cause instanceof ConnectionError || combined.aborted) throw cause;
+      throw new ConnectionError(
+        "Unable to load managed vaults. Check the server address and connection.",
+        "offline",
+      );
+    }
   }
   async execute(
     action: SyncAction,

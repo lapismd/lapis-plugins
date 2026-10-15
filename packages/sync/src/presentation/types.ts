@@ -123,6 +123,12 @@ export type SyncSnapshot = {
   security: SyncSecurity;
   destination: SyncDestination;
 };
+export type ManagedVault = {
+  id: string;
+  name: string;
+  role: "owner" | "editor" | "viewer";
+};
+
 export type SyncSettings = {
   provider: "lapis-server";
   serverUrl: string;
@@ -160,6 +166,10 @@ export type SyncAction =
 /** Endpoint integrations own encryption, authority, durable drafts and guarded I/O. */
 export interface SyncRuntime {
   readonly actions: readonly SyncAction["type"][];
+  listManagedVaults?(
+    settings: Readonly<SyncSettings>,
+    signal: AbortSignal,
+  ): Promise<ManagedVault[]>;
   snapshot(): SyncSnapshot;
   subscribe(listener: () => void): () => void;
   execute(

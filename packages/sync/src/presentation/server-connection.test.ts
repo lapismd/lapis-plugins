@@ -263,3 +263,59 @@ describe("real server connection runtime", () => {
     expect(runtime.snapshot().destination.status).toBe("offline");
   });
 });
+
+describe("managed vault discovery", () => {
+  it("lists the signed-in account's active vaults without requiring a selected ID", async () => {
+    const request = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(json({ protocolMajor: 1 }))
+      .mockResolvedValueOnce(
+        json([
+          { id: settings.managedVaultId, name: "Atlas", role: "owner" },
+          {
+            id: "22222222-2222-4222-8222-222222222222",
+            name: "Shared research",
+            role: "viewer",
+          },
+          {
+            id: "33333333-3333-4333-8333-333333333333",
+            name: "Archived",
+            role: "editor",
+            archivedAt: 1,
+          },
+        ]),
+      );
+    const runtime = new ServerConnectionRuntime({ request });
+    const vaults = await runtime.listManagedVaults(
+      { ...settings, managedVaultId: "" },
+      new AbortController().signal,
+    );
+    expect(vaults.map((v) => v.name)).toEqual(["Atlas", "Shared research"]);
+    expect(new URL(String(request.mock.calls[1][0])).pathname).toBe(
+      "/api/trpc/vault.list",
+    );
+    expect(
+      JSON.parse(
+        new URL(String(request.mock.calls[1][0])).searchParams.get("input")!,
+      ),
+    ).toEqual({ includeArchived: false });
+    expect(runtime.snapshot().destination.authorized).toBe(false);
+  });
+  it("requires sign-in and rejects malformed discovery responses", async () => {
+    for (const response of [
+      new Response(null, { status: 401 }),
+      json({ wrong: [] }),
+      json([{ id: "invalid", name: "Atlas", role: "owner" }]),
+    ]) {
+      const request = vi
+        .fn<typeof fetch>()
+        .mockResolvedValueOnce(json({ protocolMajor: 1 }))
+        .mockResolvedValueOnce(response);
+      const runtime = new ServerConnectionRuntime({ request });
+      await expect(
+        runtime.listManagedVaults(settings, new AbortController().signal),
+      ).rejects.toThrow();
+      expect(runtime.snapshot().destination.authorized).toBe(false);
+    }
+  });
+});

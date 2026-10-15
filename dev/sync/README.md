@@ -17,7 +17,9 @@ packages. Notes and plugin settings persist in the browser's OPFS storage at
    with Tailwind after the Svelte transform, matching the main application's
    plugin order. Fonts come from that shared stylesheet.
 4. Sign in at `http://localhost:8797/` and create a managed vault. Enter that
-   URL and vault UUID in **Settings → Lapis Sync**, then **Test connection**.
+   URL in **Settings → Lapis Sync**, select the managed vault by name, then
+   **Test connection**. Use the refresh icon to reload the list; the UUID below
+   the picker copies its full value.
 5. Stop Deno and test again to see the unavailable state. Restart it and retry.
    Reload the client to check saved settings and note content.
 

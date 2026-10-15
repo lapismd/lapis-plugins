@@ -2,9 +2,13 @@ import type {
   PluginSettingsDefinition,
   WorkspaceActionSetting,
 } from "@lapis-notes/api";
-import type { PairingSettingsFieldDefinition } from "./field-values";
+import type {
+  PairingSettingsFieldDefinition,
+  ManagedVaultSettingsFieldDefinition,
+} from "./field-values";
 import type { SyncAction } from "../presentation/types";
 import type { SyncSettingsSource } from "./source";
+import ManagedVaultSettingsField from "../ui/ManagedVaultSettingsField.svelte";
 import PairingSettingsField from "../ui/PairingSettingsField.svelte";
 import RecoverySettingsField from "../ui/RecoverySettingsField.svelte";
 
@@ -30,6 +34,15 @@ export function createSyncSettingsDefinition(
     isBusy: () => session.busy,
     run,
   });
+  const managedVaultField: ManagedVaultSettingsFieldDefinition = {
+    id: "sync.managedVaultId",
+    type: "custom",
+    title: "Managed vault",
+    description: "Choose a vault available to your signed-in server account.",
+    adapter: "sync.managed-vault",
+    refresh: () => source.refreshManagedVaults(),
+    cancel: () => source.cancelManagedVaultDiscovery(),
+  };
   const pairingField: PairingSettingsFieldDefinition = {
     id: "sync.pairing",
     type: "custom",
@@ -58,6 +71,7 @@ export function createSyncSettingsDefinition(
     source,
     adapters: [
       { id: "sync.pairing", component: PairingSettingsField },
+      { id: "sync.managed-vault", component: ManagedVaultSettingsField },
       { id: "sync.recovery", component: RecoverySettingsField },
     ],
     section: {
@@ -105,15 +119,7 @@ export function createSyncSettingsDefinition(
               placeholder: "https://sync.example.com",
               maxLength: 2048,
             },
-            {
-              id: "sync.managedVaultId",
-              type: "string",
-              title: "Managed vault ID",
-              description:
-                "The managed vault you are authorized to synchronize.",
-              default: "",
-              maxLength: 256,
-            },
+            managedVaultField,
             action(
               "test-connection",
               "Remote access",

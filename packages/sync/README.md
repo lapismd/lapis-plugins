@@ -78,8 +78,8 @@ and temporary dependency limits. Licensed under [Apache-2.0](LICENSE.md); see
 Run `pnpm dev:sync` from this repository after building Source Editor and
 Markdown. This opens a persistent local vault at `http://localhost:6080/`.
 Start the existing Notes Deno server at `http://localhost:8797/`, sign in there,
-and create a managed vault. In Sync Settings enter that URL and vault UUID,
-then choose **Test connection**. The localhost HTTP exception is host-only and
+and create a managed vault. In Sync Settings enter that URL, choose the managed vault by name,
+then choose **Test connection**. The selected UUID has a truncated copy control. The localhost HTTP exception is host-only and
 never saved in plugin configuration. No content is sent.
 
 The private host proxies control-plane reads to that exact loopback origin;
