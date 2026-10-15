@@ -1,4 +1,5 @@
 <script lang="ts">
+  const commandListId = $props.id();
   import * as Popover from "@lapismd/design-core/shadcn/popover";
   import * as Command from "@lapismd/design-core/shadcn/command";
   import * as DropdownMenu from "@lapismd/design-core/shadcn/dropdown-menu";
@@ -220,7 +221,7 @@
             <DropdownMenu.Root>
               <DropdownMenu.Trigger>
                 {#snippet child({ props }: { props: Record<string, unknown> })}
-                  <Button {...props} size="sm" variant="ghost"
+                  <Button {...props} size="sm" variant="ghost" aria-label={`${name} property actions`}
                     ><Ellipsis /></Button
                   >
                 {/snippet}
@@ -324,9 +325,11 @@
         </div>
       </Command.Root>
     {:else}
-      <Command.Root>
-        <Command.Input placeholder="Find or create" />
-        <Command.List class="bases-style-p-1-eb6a3c">
+      <Command.Root label="Filter properties">
+        <Command.Input aria-controls={commandListId} aria-haspopup="grid" placeholder="Find or create" />
+        <Command.List id={commandListId} class="bases-style-p-1-eb6a3c">
+          {#snippet child({ props })}
+          <div {...props} role="grid" aria-label="Properties">
           <Command.Empty>No results found.</Command.Empty>
           {#each sortedColumns as column (column.id)}
             <Command.Item
@@ -334,33 +337,58 @@
                 controller.toggleVisibility(column.id);
               }}
             >
-              <div
-                data-ui-part="bases-option-indicator"
-                data-selected={controller.isVisible(column.id)}
-                class={cn(
-                  "bases-style-mr-2-d2347e bases-style-flex-60fbb7 bases-style-size-4-f7b5fa bases-style-items-center-3960ff bases-style-justify-center-86843c bases-style-rounded-sm-36d446 border bases-style-border-var-interactive-accent-f46c93",
-                  controller.isVisible(column.id)
-                    ? "bases-style-ring-ring-3e1868 bases-style-border-none-4a5f0e bases-style-bg-var-interactive-accent-c58cc0 bases-style-text-var-text-on-accent-22b2b1 hover:ring bases-style-hover-ring-2-8a0edf"
-                    : "bases-style-opacity-50-0b8c50 [&_svg]:invisible",
-                )}
-              >
-                <CheckIcon class="bases-style-size-4-f7b5fa" />
+              {#snippet child({ props })}
+              <div {...props} role="row">
+              <div role="gridcell" class="bases-property-picker__visibility">
+                <button
+                  type="button"
+                  class="bases-property-picker__toggle"
+                  aria-label={`Toggle ${column.displayName ?? normalizeName(column.id)} visibility`}
+                  aria-pressed={controller.isVisible(column.id)}
+                  onkeydown={(event) => event.stopPropagation()}
+                  onclick={(event) => {
+                    event.stopPropagation();
+                    controller.toggleVisibility(column.id);
+                  }}
+                >
+                  <div
+                    data-ui-part="bases-option-indicator"
+                    data-selected={controller.isVisible(column.id)}
+                    class={cn(
+                      "bases-style-mr-2-d2347e bases-style-flex-60fbb7 bases-style-size-4-f7b5fa bases-style-items-center-3960ff bases-style-justify-center-86843c bases-style-rounded-sm-36d446 border bases-style-border-var-interactive-accent-f46c93",
+                      controller.isVisible(column.id)
+                        ? "bases-style-ring-ring-3e1868 bases-style-border-none-4a5f0e bases-style-bg-var-interactive-accent-c58cc0 bases-style-text-var-text-on-accent-22b2b1 hover:ring bases-style-hover-ring-2-8a0edf"
+                        : "bases-style-opacity-50-0b8c50 [&_svg]:invisible",
+                    )}
+                  >
+                    <CheckIcon class="bases-style-size-4-f7b5fa" />
+                  </div>
+                  <Icon name={[column.icon ?? "lucide-info"]} />
+                  <span
+                    class={cn({ "bases-style-text-muted-foreground-bfa603": !controller.isVisible(column.id) })}
+                    >{column.displayName ?? normalizeName(column.id)}</span
+                  >
+                </button>
               </div>
-              <Icon name={[column.icon ?? "lucide-info"]} />
-              <span
-                class={cn({ "bases-style-opacity-40-2a2db4": !controller.isVisible(column.id) })}
-                >{column.displayName ?? normalizeName(column.id)}</span
-              >
+              <div role="gridcell">
               <Command.Shortcut>
                 <button
                   class="bases-style-hover-bg-border-2e3f11 bases-style-rounded-sm-36d446 bases-style-p-1-eb6a3c"
+                  type="button"
+                  aria-label={`Edit ${column.displayName ?? normalizeName(column.id)}`}
+                  onkeydown={(event) => event.stopPropagation()}
                   onclick={(evt) => editColumn(evt, column)}
                 >
                   <ChevronRight />
                 </button>
               </Command.Shortcut>
+              </div>
+              </div>
+              {/snippet}
             </Command.Item>
           {/each}
+          </div>
+          {/snippet}
         </Command.List>
       </Command.Root>
     {/if}
@@ -386,3 +414,24 @@
     {/if}
   </Popover.Content>
 </Popover.Root>
+
+<style>
+  .bases-property-picker__visibility {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .bases-property-picker__toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing, 0.25rem);
+    width: 100%;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+</style>

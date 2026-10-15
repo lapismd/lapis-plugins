@@ -1,4 +1,5 @@
 <script lang="ts">
+  const commandListId = $props.id();
   import { DragDropProvider } from "@dnd-kit/svelte";
   import type { DragEndEvent } from "@dnd-kit/dom";
   import { arrayMove } from "@dnd-kit/helpers";
@@ -144,8 +145,8 @@
           </Popover.Trigger>
           <Popover.Content class="bases-style-w-max-2f935d bases-style-p-0-8a539c" align="start">
             <Command.Root>
-              <Command.Input placeholder="Group by property" />
-              <Command.List class="bases-style-p-1-eb6a3c">
+              <Command.Input aria-controls={commandListId} placeholder="Group by property" />
+              <Command.List id={commandListId} class="bases-style-p-1-eb6a3c">
                 <Command.Empty>No results found.</Command.Empty>
                 {#each controller.getAllColumns() as column (column.id)}
                   <Command.Item onSelect={() => setGroupBy(column.id)}>

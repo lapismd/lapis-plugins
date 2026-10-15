@@ -92,6 +92,45 @@ async function waitForWorkflow(canvasElement: HTMLElement, type: string) {
   return { canvas, body: within(canvasElement.ownerDocument.body) };
 }
 
+export const PropertyPickerAccessibility: Story = {
+  parameters: workflowParameters(
+    "query-controls",
+    "The open property picker exposes a named search and independent visibility and edit actions without nested interactive controls.",
+  ),
+  render: renderScenario("query-controls"),
+  play: async ({ canvasElement }) => {
+    const { canvas, body } = await waitForWorkflow(canvasElement, "table");
+    await userEvent.click(canvas.getByRole("button", { name: "Properties" }));
+    const search = await body.findByRole("combobox", {
+      name: "Filter properties",
+    });
+    await waitFor(() => expect(search).toBeVisible());
+    const listId = search.getAttribute("aria-controls");
+    expect(listId).toBeTruthy();
+    const grid = canvasElement.ownerDocument.getElementById(listId!);
+    expect(grid).toBeVisible();
+    expect(grid).toHaveAttribute("role", "grid");
+    expect(search).toHaveAttribute("aria-haspopup", "grid");
+    const visibility = body.getByRole("button", {
+      name: "Toggle Status visibility",
+    });
+    expect(visibility).toHaveAttribute("aria-pressed", "true");
+    visibility.focus();
+    await userEvent.keyboard("{Enter}");
+    await waitFor(() => expect(visibility).toHaveAttribute("aria-pressed", "false"));
+    await userEvent.keyboard("{Enter}");
+    await waitFor(() => expect(visibility).toHaveAttribute("aria-pressed", "true"));
+    body.getByRole("button", { name: "Edit Status", exact: true }).focus();
+    await userEvent.keyboard("{Enter}");
+    await waitFor(() => expect(body.getByLabelText("Display name")).toHaveValue("Status"));
+    await userEvent.click(body.getByRole("button", { name: "Edit Status", exact: true }));
+    await waitFor(() =>
+      expect(body.getByRole("button", { name: "Toggle Status visibility" })).toHaveAttribute("aria-pressed", "true"),
+    );
+    // Leave the picker open so automatic axe checks its actual controls.
+  },
+};
+
 export const QueryControls: Story = {
   parameters: workflowParameters(
     "query-controls",
@@ -124,7 +163,9 @@ export const QueryControls: Story = {
     await waitFor(() => expect(view.sort).toHaveLength(2));
     const groupProperty = body.getAllByRole("button", { name: /Property/ })[0]!;
     await userEvent.click(groupProperty);
-    expect(body.getByPlaceholderText("Group by property")).toBeVisible();
+    await waitFor(() =>
+      expect(body.getByPlaceholderText("Group by property")).toBeVisible(),
+    );
     await userEvent.click(body.getAllByText("Status").at(-1)!);
     await waitFor(() =>
       expect(view.groupBy).toMatchObject({ property: "note.status" }),
@@ -148,11 +189,13 @@ export const QueryControls: Story = {
     );
 
     await userEvent.click(canvas.getByRole("button", { name: /2 results/ }));
-    expect(body.getByRole("button", { name: "Copy to clipboard" })).toBeVisible();
-    expect(body.getByRole("button", { name: "Export CSV..." })).toBeVisible();
-    expect(canvas.getByRole("button", { name: "New" })).toBeVisible();
     // Keep the results menu open so axe checks its label and numeric input.
-    await expect(body.getByText("Limit number of results", { exact: true })).toBeVisible();
+    await waitFor(() => {
+      expect(body.getByRole("button", { name: "Copy to clipboard" })).toBeVisible();
+      expect(body.getByRole("button", { name: "Export CSV..." })).toBeVisible();
+      expect(canvas.getByRole("button", { name: "New" })).toBeVisible();
+      expect(body.getByText("Limit number of results", { exact: true })).toBeVisible();
+    });
     await expect(body.getByLabelText("Limit number of results")).toHaveValue(2);
   },
 };
@@ -244,6 +287,13 @@ export const SchemaAndViewSettings: Story = {
       expect(canvasElement.querySelector('[data-type="table"]')).toBeVisible(),
     );
     await userEvent.click(canvas.getByRole("button", { name: "Properties" }));
+    const propertiesSearch = body.getByRole("combobox", { name: "Filter properties" });
+    await waitFor(() => expect(propertiesSearch).toBeVisible());
+    const propertiesListId = propertiesSearch.getAttribute("aria-controls");
+    expect(propertiesListId).toBeTruthy();
+    expect(
+      canvasElement.ownerDocument.getElementById(propertiesListId!),
+    ).toBeVisible();
     await userEvent.click(body.getByRole("button", { name: "Add formula" }));
     await waitFor(() => expect(document.formulas).toHaveProperty("Untitled"));
 
@@ -263,6 +313,9 @@ export const SchemaAndViewSettings: Story = {
     )!;
     await waitFor(() => expect(portfolio.order).not.toContain("note.status"));
     await userEvent.click(canvas.getByRole("button", { name: "Properties" }));
+    await waitFor(() =>
+      expect(body.queryByRole("combobox", { name: "Filter properties" })).toBeNull(),
+    );
 
     expect(
       document.views.some(

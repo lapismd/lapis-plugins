@@ -1,5 +1,11 @@
 # Distribution and Releases
 
+
+The independent Bases 0.1.4 candidate includes pending result-limit contrast and
+picker accessibility fixes on the existing published dependency graph. It can
+ship ahead of the Design Core 0.4.0 consumer refresh to avoid a framework/plugin
+release dependency cycle. Publication still requires explicit approval.
+
 The private persistent Sync review host retains the Notes application's Turso
 0.7.2 compatibility pair: `@napi-rs/wasm-runtime@1.0.7` resolves both emnapi core
 and runtime to registry version 1.8.1. This confines the compatibility pins to
