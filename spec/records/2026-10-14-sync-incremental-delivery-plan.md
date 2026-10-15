@@ -11,8 +11,11 @@ lifecycle** next, before endpoint enrollment. Plugins PRs
 [#16](https://github.com/lapismd/lapis-plugins/pull/16) and
 [#17](https://github.com/lapismd/lapis-plugins/pull/17) are merged; each passed
 all nine CI jobs. The server authorization checkpoint and private Sync Settings
-sign-in UI are implemented for review. The user prioritized the visible flow
-before protected persistence; production host integration remains pending.
+sign-in UI are implemented; [PR #21](https://github.com/lapismd/lapis-plugins/pull/21)
+merged after all nine checks passed. Protected native account persistence now
+has its own review checkpoint. Production host integration remains pending;
+the browser review app still keeps its session in memory. See the
+[native account checkpoint](2026-10-15-sync-slice-1b-native-account.md).
 See the [1B checkpoint record](2026-10-15-sync-slice-1b-server-authorization.md) and the
 [Design Core checkpoint](2026-10-14-sync-stage-0b-design-core-release.md) and
 [Mira checkpoint](2026-10-14-sync-stage-0b-mira-release.md).
@@ -279,10 +282,13 @@ Deliver 1B in separate review stops rather than expanding one run across hosts:
    named vaults, test connection and sign out in the real private app. The host
    keeps credentials in memory; reload requires another sign-in. See the
    [UI checkpoint](2026-10-15-sync-slice-1b-sign-in-ui.md).
-3. **1B-B, protected host session lifecycle:** pending. Persist the credential
-   through the owning host, bind it to the configured destination, and prove
-   restart, server change, stale-result exclusion, expiry and revocation cleanup.
-   Release any required shared host contract before plugin integration.
+3. **1B-B, protected native session lifecycle:** implemented for native review.
+   Notes' private desktop service retains account credentials in a separate OS
+   namespace bound to local profile, exact server origin and client origin.
+   Fresh Deno processes prove restart, origin/profile isolation, sign-out and
+   revocation cleanup. Offline and stale-result cases have focused regressions.
+   This adds no public host API or renderer activation. See the
+   [native account checkpoint](2026-10-15-sync-slice-1b-native-account.md).
 4. **1B-C, production host integration:** pending. Reuse the reviewed Settings UI and that host
    transport for sign-in/sign-out, explicit account/session state, connection
    checks and named vault discovery. Review the real installed-client journey
@@ -381,11 +387,11 @@ Keep the handoff short and concrete:
 - **Next slice:** one proposed outcome. Wait for the user's review and request
   to continue before implementation.
 
-The immediate next execution, after review, is **finish the focused Notes source
-qualification gates**, then its version/publication checkpoint. Stage 0A and the Design Core/Mira release checkpoints are
-complete. Feature
-slice 1, real Deno connection in the existing app UI, starts from main only
-after the remaining stage-0 checkpoints are complete and reviewed.
+The next execution, after review, is **1B-C production host integration**:
+connect native account custody to admitted profile lifecycle, browser approval
+and Sync Settings, then review the actual client's sign-in/restart/sign-out
+journey. Qualify and release any required public host contract before consumer
+integration. Keep enrollment and encrypted content transfer in their later slices.
 
 Broader qualification may be scheduled after the first approved manual round
 trip; it need not wait for every follow-on feature. Choose its scope explicitly
