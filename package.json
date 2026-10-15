@@ -37,6 +37,7 @@
     "ci:container": "node --env-file-if-exists=.env scripts/run-ci-container.mjs",
     "release:prepare": "pnpm ci:release",
     "storybook": "storybook dev -p 6006 --no-open",
+    "dev:sync": "pnpm --dir packages/sync build && vite --config dev/sync/vite.config.mjs",
     "build-storybook": "storybook build",
     "test:storybook": "vitest run --project storybook --no-file-parallelism --shard=1/4 && vitest run --project storybook --no-file-parallelism --shard=2/4 && vitest run --project storybook --no-file-parallelism --shard=3/4 && vitest run --project storybook --no-file-parallelism --shard=4/4",
     "spec:first": "spec-validator first",

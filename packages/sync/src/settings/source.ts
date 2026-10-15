@@ -3,7 +3,7 @@ import type {
   WorkspaceActionResult,
 } from "@lapis-notes/api";
 import type { SyncPlugin } from "../sync-plugin";
-import type { SyncAction } from "../presentation/types";
+import type { SyncAction, ManagedVault } from "../presentation/types";
 import type {
   PairingSettingsValue,
   RecoverySettingsValue,
@@ -19,9 +19,27 @@ export class SyncSettingsSource implements WorkspaceSettingsSource {
   #cameraError: string | null = null;
   #file: File | null = null;
   #lastOperation: string | null = null;
+  #vaults: ManagedVault[] = [];
+  #vaultLoading = false;
+  #vaultLoaded = false;
+  #vaultError: string | null = null;
+  #vaultRequest: AbortController | null = null;
+  #vaultServerUrl: string;
   #choices: RecoverySettingsValue["choices"] = {};
   constructor(readonly plugin: SyncPlugin) {
-    this.#unsubscribe = plugin.session.subscribe(() => this.notify());
+    this.#vaultServerUrl = plugin.settings.serverUrl;
+    this.#unsubscribe = plugin.session.subscribe(() => {
+      if (this.#vaultServerUrl !== plugin.settings.serverUrl) {
+        this.#vaultRequest?.abort();
+        this.#vaultRequest = null;
+        this.#vaultServerUrl = plugin.settings.serverUrl;
+        this.#vaults = [];
+        this.#vaultLoading = false;
+        this.#vaultLoaded = false;
+        this.#vaultError = null;
+      }
+      this.notify();
+    });
   }
   get(fieldId: string): unknown {
     const snapshot = this.plugin.session.snapshot(),
@@ -32,7 +50,14 @@ export class SyncSettingsSource implements WorkspaceSettingsSource {
       case "serverUrl":
         return settings.serverUrl;
       case "managedVaultId":
-        return settings.managedVaultId;
+        return {
+          selectedId: settings.managedVaultId,
+          serverUrl: settings.serverUrl,
+          vaults: this.#vaults.map((v) => ({ ...v })),
+          loading: this.#vaultLoading,
+          loaded: this.#vaultLoaded,
+          error: this.#vaultError,
+        };
       case "enabled":
         return settings.enabled;
       case "indexFileTags":
@@ -81,9 +106,24 @@ export class SyncSettingsSource implements WorkspaceSettingsSource {
   async set(id: string, value: unknown): Promise<unknown> {
     if (this.#disposed) return;
     const key = id.replace(/^sync\./, "");
+    if (key === "managedVaultId" && value && typeof value === "object") {
+      const id = (value as { selectedId?: unknown }).selectedId;
+      if (
+        typeof id !== "string" ||
+        !this.#vaults.some((v) => v.id === id && v.role !== "viewer")
+      )
+        throw new Error(
+          "Choose an available vault with editor or owner access.",
+        );
+      value = id;
+    }
     if (key === "serverUrl" || key === "managedVaultId")
       await this.plugin.updateSettings({
         [key]: String(value ?? "").trim(),
+        ...(key === "serverUrl" &&
+        String(value ?? "").trim() !== this.plugin.settings.serverUrl
+          ? { managedVaultId: "" }
+          : {}),
         enabled: false,
       });
     else if (key === "enabled") {
@@ -137,8 +177,7 @@ export class SyncSettingsSource implements WorkspaceSettingsSource {
     };
     const message = success
       ? completed[action.type]
-      : (this.plugin.session.snapshot().lastError ??
-        "Sync action unavailable.");
+      : this.plugin.session.snapshot().lastError ?? "Sync action unavailable.";
     this.#lastOperation = message;
     if (success && action.type === "cancel-pairing") {
       this.#invitation = "";
@@ -147,6 +186,51 @@ export class SyncSettingsSource implements WorkspaceSettingsSource {
     }
     this.notify();
     return { tone: success ? "success" : "error", message };
+  }
+  cancelManagedVaultDiscovery(): void {
+    this.#vaultRequest?.abort();
+    this.#vaultRequest = null;
+    this.#vaultLoading = false;
+    this.notify();
+  }
+  async refreshManagedVaults(): Promise<void> {
+    if (this.#disposed) return;
+    this.#vaultRequest?.abort();
+    const request = new AbortController();
+    this.#vaultRequest = request;
+    const settings = this.plugin.settings;
+    this.#vaults = [];
+    this.#vaultLoading = true;
+    this.#vaultLoaded = false;
+    this.#vaultError = null;
+    this.notify();
+    try {
+      const runtime = this.plugin.session.runtime;
+      if (!runtime?.listManagedVaults)
+        throw new Error(
+          "Managed vault discovery is unavailable in this runtime.",
+        );
+      const vaults = await runtime.listManagedVaults(settings, request.signal);
+      if (
+        this.#disposed ||
+        request.signal.aborted ||
+        settings.serverUrl !== this.plugin.settings.serverUrl
+      )
+        return;
+      this.#vaults = vaults;
+      this.#vaultLoaded = true;
+    } catch (error) {
+      if (this.#disposed || request.signal.aborted) return;
+      this.#vaultError =
+        error instanceof Error
+          ? error.message
+          : "Unable to load managed vaults.";
+    } finally {
+      if (this.#vaultRequest === request && !this.#disposed) {
+        this.#vaultLoading = false;
+        this.notify();
+      }
+    }
   }
   acceptPairing(): Promise<WorkspaceActionResult> {
     return this.action({
@@ -211,6 +295,9 @@ export class SyncSettingsSource implements WorkspaceSettingsSource {
   }
   dispose(): void {
     this.#disposed = true;
+    this.#vaultRequest?.abort();
+    this.#vaultRequest = null;
+    this.#vaults = [];
     this.#unsubscribe();
     this.#listeners.clear();
     this.#file = null;

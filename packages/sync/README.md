@@ -5,13 +5,13 @@ an injectable runtime, plus a headless Nostr-compatible protocol foundation for
 Lapis Server. End-to-end encryption is mandatory; only enrolled endpoints may
 read or mutate synchronized content.
 
-The package is private and parked. Its production default is disconnected,
-with no demo history or simulated successful connection. Deno durable event and
-object storage, authenticated routes and enrolled server participation remain
-future implementation slices.
+The package remains private. Its default runtime checks real Deno protocol
+and account access through the existing authenticated control plane. It never
+claims that connection success means content is synchronized. Enrollment,
+checkpoints, transfer and scheduling remain subsequent implementation slices.
 
 `SyncPlugin` owns the workspace commands, status bar and declarative settings.
-Hosts provide a `SyncRuntime` through `SyncPluginOptions.createRuntime`; the
+Hosts can provide a complete `SyncRuntime` through `SyncPluginOptions.createRuntime`; the
 session checks endpoint authority, encryption and destination binding before
 delegating actions. Ordinary plugin data stores only versioned provider
 configuration, never keys, plaintext snapshots or recovery bundles.
@@ -62,7 +62,7 @@ not activate Sync for installation, packaging or release, and does not approve
 visual baselines.
 
 Use `pnpm check`, `pnpm test` and `pnpm build` in this package for the focused
-lanes. The shared catalog uses published API 0.1.4, Design Core 0.3.3 and
+lanes. The shared catalog uses published API 0.1.4, Design Core 0.3.4 and
 Mira 0.0.5. Sync remains excluded from recursive workspace tasks; install its
 own registry dependencies with `pnpm --ignore-workspace install --ignore-pnpmfile
 --lockfile-dir ../../.release/sync-dependencies`. This separate registry install
@@ -72,3 +72,16 @@ Svelte pin matches the API renderer contract.
 See [qualification evidence](../../docs/sync-ui-qualification.md) for validation
 and temporary dependency limits. Licensed under [Apache-2.0](LICENSE.md); see
 [source attribution](NOTICE.md).
+
+## Private connection review
+
+Run `pnpm dev:sync` from this repository after building Source Editor and
+Markdown. This opens a persistent local vault at `http://localhost:6080/`.
+Start the existing Notes Deno server at `http://localhost:8797/`, sign in there,
+and create a managed vault. In Sync Settings enter that URL, choose the managed vault by name,
+then choose **Test connection**. The selected UUID has a truncated copy control. The localhost HTTP exception is host-only and
+never saved in plugin configuration. No content is sent.
+
+The private host proxies control-plane reads to that exact loopback origin;
+account cookies stay HTTP-only. Normal deployments require HTTPS and an
+authenticated host transport through `SyncPluginOptions.connection.request`.

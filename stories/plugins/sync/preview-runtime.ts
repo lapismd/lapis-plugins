@@ -276,11 +276,17 @@ export class PreviewSyncRuntime implements SyncRuntime {
   #snapshot: SyncSnapshot;
   #sequence = 16;
   disposed = false;
-  constructor(
-    readonly app: App,
-    state: SyncStoryState,
-  ) {
+  constructor(readonly app: App, state: SyncStoryState) {
     this.#snapshot = createPreviewSnapshot(state);
+  }
+  async listManagedVaults() {
+    return [
+      {
+        id: "atlas-server",
+        name: "Atlas Knowledge Vault",
+        role: "owner" as const,
+      },
+    ];
   }
   snapshot(): SyncSnapshot {
     return this.#snapshot;
@@ -354,10 +360,10 @@ export class PreviewSyncRuntime implements SyncRuntime {
           resolution.choice === "resolved"
             ? resolution.content
             : resolution.choice === "right"
-              ? conflict.right
-              : resolution.choice === "base"
-                ? conflict.base
-                : conflict.left;
+            ? conflict.right
+            : resolution.choice === "base"
+            ? conflict.base
+            : conflict.left;
         if (file && resolution.choice === "delete")
           await this.app.vault.delete(file);
         else if (file && content !== null)

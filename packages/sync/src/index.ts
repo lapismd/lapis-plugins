@@ -6,6 +6,10 @@ export {
 } from "./sync-plugin";
 export { SyncSession } from "./presentation/session";
 export {
+  ServerConnectionRuntime,
+  type ServerConnectionOptions,
+} from "./presentation/server-connection";
+export {
   DEFAULT_SYNC_SETTINGS,
   readSyncSettings,
   validateSyncDestination,

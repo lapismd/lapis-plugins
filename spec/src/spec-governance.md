@@ -16,6 +16,11 @@ assertion; casts, aliases and relaxed assertions do not qualify the graph.
 AI, Bases and History mobile shell stories qualify the published count-bearing
 dock label by opening and closing the actual workspace tab chooser.
 
+Registry dependency acceptance bypasses pre-existing local pnpm hooks with
+`--ignore-pnpmfile`; local hook files remain outside the verified diff. The
+private Sync review record includes its separate registry install command and
+the released Design Core floor before controlled header integration.
+
 The registry metadata audit enforces the manifest-owned SHA-256 Gravatar for
 `dev@lapis.md` under LP-SPEC-041, including image size and initials fallback.
 
@@ -241,6 +246,11 @@ security gates. Exact frozen source candidates supply signed runtime artifacts
 for Web acceptance without replacing committed npm ranges.
 
 Production release retention maps the explicit public candidate file globs and empty-upload gate to Distribution and its verification evidence. Private signing keys remain temporary CI inputs outside the retained release directory.
+
+The private `pnpm dev:sync` review host uses built plugin entrypoints and
+released host packages with persistent browser storage. Its loopback-only
+control-plane proxy supports connection acceptance without activating Sync
+publication, enrollment or content transfer (LN-SYNC-042).
 
 The static catalog build has a bounded 6144 MiB Node heap. The default 4 GiB
 heap exhausts while compiling the complete catalog with private Sync enabled;

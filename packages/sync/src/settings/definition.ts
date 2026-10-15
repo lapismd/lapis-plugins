@@ -2,10 +2,15 @@ import type {
   PluginSettingsDefinition,
   WorkspaceActionSetting,
 } from "@lapis-notes/api";
-import type { PairingSettingsFieldDefinition } from "./field-values";
+import type {
+  PairingSettingsFieldDefinition,
+  ManagedVaultSettingsFieldDefinition,
+} from "./field-values";
 import type { SyncAction } from "../presentation/types";
 import type { SyncSettingsSource } from "./source";
+import ManagedVaultSettingsField from "../ui/ManagedVaultSettingsField.svelte";
 import PairingSettingsField from "../ui/PairingSettingsField.svelte";
+import PairingInvitationActions from "../ui/PairingInvitationActions.svelte";
 import RecoverySettingsField from "../ui/RecoverySettingsField.svelte";
 
 export function createSyncSettingsDefinition(
@@ -30,6 +35,15 @@ export function createSyncSettingsDefinition(
     isBusy: () => session.busy,
     run,
   });
+  const managedVaultField: ManagedVaultSettingsFieldDefinition = {
+    id: "sync.managedVaultId",
+    type: "custom",
+    title: "Managed vault",
+    description: "Choose a vault available to your signed-in server account.",
+    adapter: "sync.managed-vault",
+    refresh: () => source.refreshManagedVaults(),
+    cancel: () => source.cancelManagedVaultDiscovery(),
+  };
   const pairingField: PairingSettingsFieldDefinition = {
     id: "sync.pairing",
     type: "custom",
@@ -57,7 +71,8 @@ export function createSyncSettingsDefinition(
   return {
     source,
     adapters: [
-      { id: "sync.pairing", component: PairingSettingsField },
+      { id: "sync.pairing", component: PairingSettingsField, headerComponent: PairingInvitationActions },
+      { id: "sync.managed-vault", component: ManagedVaultSettingsField },
       { id: "sync.recovery", component: RecoverySettingsField },
     ],
     section: {
@@ -105,15 +120,7 @@ export function createSyncSettingsDefinition(
               placeholder: "https://sync.example.com",
               maxLength: 2048,
             },
-            {
-              id: "sync.managedVaultId",
-              type: "string",
-              title: "Managed vault ID",
-              description:
-                "The managed vault you are authorized to synchronize.",
-              default: "",
-              maxLength: 256,
-            },
+            managedVaultField,
             action(
               "test-connection",
               "Remote access",
@@ -134,7 +141,7 @@ export function createSyncSettingsDefinition(
               description:
                 "Requires an authorized server connection and an enrolled, unlocked device.",
               default: false,
-              disabled: !session.runtime,
+              disabled: !session.runtime?.actions.includes("sync"),
             },
             {
               id: "sync.indexFileTags",
@@ -273,7 +280,7 @@ export function createSyncSettingsDefinition(
             action(
               "export-recovery",
               "Owner recovery",
-              "Export encrypted recovery bundle",
+              "Export recovery bundle",
               "download",
               () => source.action({ type: "export-recovery" }),
             ),

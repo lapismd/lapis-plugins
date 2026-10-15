@@ -11,6 +11,10 @@ import {
 import manifestSpec from "../manifest.json";
 import { SyncSession } from "./presentation/session";
 import {
+  ServerConnectionRuntime,
+  type ServerConnectionOptions,
+} from "./presentation/server-connection";
+import {
   readSyncSettings,
   DEFAULT_SYNC_SETTINGS,
 } from "./presentation/settings";
@@ -24,6 +28,7 @@ import { SYNC_VIEW_TYPES, type SyncPaneKind } from "./view-state.svelte";
 
 export const SYNC_PLUGIN_ID = "sync";
 export type SyncPluginOptions = {
+  connection?: ServerConnectionOptions;
   createRuntime?: (
     app: App,
     settings: Readonly<SyncSettings>,
@@ -55,8 +60,11 @@ export class SyncPlugin extends Plugin {
     );
     await this.session.dispose();
     this.session = new SyncSession(
-      (await this.options.createRuntime?.(this.app, this.settings)) ?? null,
+      this.options.createRuntime
+        ? await this.options.createRuntime(this.app, this.settings)
+        : new ServerConnectionRuntime(this.options.connection),
       () => this.settings,
+      this.options.connection,
     );
     for (const kind of ["sync", "history", "file-history"] as const) {
       const command = {
@@ -65,8 +73,8 @@ export class SyncPlugin extends Plugin {
           kind === "sync"
             ? "Sync"
             : kind === "history"
-              ? "Sync history"
-              : "Sync file history"
+            ? "Sync history"
+            : "Sync file history"
         }`,
         callback: () => void this.openPane(kind),
       } as const;

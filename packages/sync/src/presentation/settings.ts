@@ -33,12 +33,25 @@ export function readSyncSettings(value: unknown): SyncSettings {
 }
 export function validateSyncDestination(
   settings: Pick<SyncSettings, "serverUrl" | "managedVaultId">,
+  policy: { allowLoopbackHttp?: boolean } = {},
 ): string | null {
   if (!settings.serverUrl || !settings.managedVaultId)
     return "Enter the Lapis Server URL and managed vault ID.";
+  return validateSyncServerUrl(settings.serverUrl, policy);
+}
+export function validateSyncServerUrl(
+  serverUrl: string,
+  policy: { allowLoopbackHttp?: boolean } = {},
+): string | null {
+  if (!serverUrl) return "Enter the Lapis Server URL to load managed vaults.";
   try {
-    const url = new URL(settings.serverUrl);
-    if (url.protocol !== "https:") return "Lapis Server requires HTTPS.";
+    const url = new URL(serverUrl);
+    const localHttp =
+      policy.allowLoopbackHttp === true &&
+      url.protocol === "http:" &&
+      ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname);
+    if (url.protocol !== "https:" && !localHttp)
+      return "Lapis Server requires HTTPS.";
     if (url.username || url.password || url.search || url.hash)
       return "Use a server URL without credentials, query parameters or fragments.";
   } catch {

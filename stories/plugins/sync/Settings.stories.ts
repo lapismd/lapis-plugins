@@ -64,7 +64,7 @@ export const Member = settings("member", async ({ canvas }) => {
     canvas.getByRole("button", { name: "Create pairing invitation" }),
   ).toBeDisabled();
   expect(
-    canvas.getByRole("button", { name: "Export encrypted recovery bundle" }),
+    canvas.getByRole("button", { name: "Export recovery bundle" }),
   ).toBeDisabled();
 });
 export const InvitationQR = settings("qr", async ({ canvas }) => {
@@ -187,6 +187,13 @@ export const PairingControls = settings(
     const group = canvas.getByRole("group", {
       name: "Pairing invitation actions",
     });
+    const heading = canvas.getByText("Pairing invitation", { exact: true });
+    const create = canvas.getByRole("button", { name: "Create pairing invitation" });
+    const labelRect = heading.getBoundingClientRect();
+    const actionRect = create.getBoundingClientRect();
+    expect(actionRect.top).toBeLessThan(labelRect.bottom);
+    expect(actionRect.bottom).toBeGreaterThan(labelRect.top);
+    expect(actionRect.left).toBeGreaterThan(labelRect.right);
     expect(canvas.queryByRole("button", { name: "Cancel pairing" })).toBeNull();
     await userEvent.click(
       canvas.getByRole("button", { name: "Create pairing invitation" }),
@@ -228,6 +235,9 @@ export const InlineFields = settings("dirty", async ({ canvas }) => {
     const labelRect = label.getBoundingClientRect();
     const controlRect = control.getBoundingClientRect();
     expect(controlRect.left).toBeGreaterThan(labelRect.right);
+    if (name === "Invitation URL") {
+      expect(controlRect.right).toBeCloseTo(control.closest("label")!.getBoundingClientRect().right, 0);
+    }
     expect(labelRect.bottom).toBeGreaterThan(controlRect.top);
     expect(labelRect.top).toBeLessThan(controlRect.bottom);
     expect(getComputedStyle(label).fontSize).toBe(
@@ -237,6 +247,9 @@ export const InlineFields = settings("dirty", async ({ canvas }) => {
   }
   const file = canvas.getByLabelText("Recovery bundle");
   expect(file).toHaveAttribute("data-ui-component", "input");
+  const fileStyle = getComputedStyle(file);
+  const fileButton = getComputedStyle(file, "::file-selector-button");
+  expect(parseFloat(fileButton.height) + parseFloat(fileStyle.paddingTop) + parseFloat(fileStyle.paddingBottom) + parseFloat(fileStyle.borderTopWidth) + parseFloat(fileStyle.borderBottomWidth)).toBeLessThanOrEqual(file.getBoundingClientRect().height + 1);
   expect(getComputedStyle(file, "::file-selector-button").borderWidth).toBe(
     "0px",
   );
@@ -276,3 +289,166 @@ export const LabelSpace = settings("dirty", async ({ canvas }) => {
   ).toBeGreaterThanOrEqual(row.clientWidth * 0.5);
   expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth + 1);
 });
+
+export const RealConnectionAdapter = settings(
+  "setup",
+  async ({ canvas, plugin }) => {
+    const original = globalThis.fetch;
+    const vaultId = "11111111-1111-4111-8111-111111111111";
+    const calls: string[] = [];
+    globalThis.fetch = async (input, init) => {
+      const url = new URL(String(input));
+      if (url.origin !== "https://connection.example.test")
+        return original(input, init);
+      calls.push(url.pathname);
+      return Response.json({
+        result: {
+          data: url.pathname.endsWith("system.info")
+            ? { protocolMajor: 1 }
+            : url.pathname.endsWith("vault.list")
+            ? [
+                { id: vaultId, name: "Research notes", role: "editor" },
+                {
+                  id: "22222222-2222-4222-8222-222222222222",
+                  name: "Read-only archive",
+                  role: "viewer",
+                },
+              ]
+            : { vaultId, role: "editor" },
+        },
+      });
+    };
+    try {
+      const server = canvas.getByRole("textbox", { name: "Server URL" });
+      await userEvent.type(server, "https://connection.example.test");
+      await userEvent.tab();
+      await waitFor(() =>
+        expect(plugin.settings.serverUrl).toBe(
+          "https://connection.example.test",
+        ),
+      );
+      const picker = canvas.getByRole("combobox", {
+        name: "Managed vault",
+        exact: true,
+      });
+      const refresh = canvas.getByRole("button", {
+        name: "Refresh managed vaults",
+      });
+      expect(refresh).toHaveAttribute("data-variant", "ghost");
+      expect(refresh.getBoundingClientRect().height).toBe(
+        picker.getBoundingClientRect().height,
+      );
+      await userEvent.click(picker);
+      const body = within(document.body);
+      const option = await body.findByRole("option", {
+        name: "Research notes",
+      });
+      const readOnly = body.getByRole("option", { name: /Read-only archive/ });
+      expect(readOnly).toHaveAttribute("data-disabled");
+      await expect(userEvent.click(readOnly)).rejects.toThrow(/pointer-events/);
+      expect(plugin.settings.managedVaultId).toBe("");
+      await userEvent.click(option);
+      await waitFor(() => expect(plugin.settings.managedVaultId).toBe(vaultId));
+      expect(picker).toHaveTextContent("Research notes");
+      await waitFor(() => expect(body.queryByRole("listbox")).toBeNull());
+      const test = canvas.getByRole("button", { name: "Test connection" });
+      await waitFor(() => expect(test).toBeEnabled());
+      await waitFor(() =>
+        expect(getComputedStyle(test).pointerEvents).not.toBe("none"),
+      );
+      await userEvent.click(test);
+      await waitFor(() =>
+        expect(plugin.session.snapshot().destination.status).toBe("healthy"),
+      );
+      expect(
+        canvas.getByText(
+          /Connected to Lapis Server\. Account access confirmed/,
+        ),
+      ).toBeVisible();
+      expect(calls).toEqual([
+        "/api/trpc/system.info",
+        "/api/trpc/vault.list",
+        "/api/trpc/system.info",
+        "/api/trpc/vault.open",
+      ]);
+      const copy = canvas.getByRole("button", {
+        name: new RegExp(`^Copy full managed vault ID: ${vaultId}`),
+      });
+      expect(copy.textContent).not.toContain(vaultId);
+      const clipboard = navigator.clipboard;
+      const originalWrite = clipboard.writeText;
+      let copied = "";
+      clipboard.writeText = async (text) => {
+        copied = text;
+      };
+      try {
+        await userEvent.click(copy);
+        await waitFor(() =>
+          expect(copy).toHaveAttribute("data-copied", "true"),
+        );
+        expect(copied).toBe(vaultId);
+      } finally {
+        clipboard.writeText = originalWrite;
+      }
+      expect(plugin.session.can("sync")).toBe(false);
+      expect(plugin.session.can("checkpoint")).toBe(false);
+      expect(
+        canvas.getByRole("switch", { name: "Enable sync" }),
+      ).toBeDisabled();
+      expect(
+        canvas.getByRole("button", { name: "Create pairing invitation" }),
+      ).toBeDisabled();
+    } finally {
+      globalThis.fetch = original;
+    }
+  },
+);
+
+export const VaultDiscoveryFailureAndRetry = settings(
+  "setup",
+  async ({ canvas, plugin }) => {
+    const original = globalThis.fetch;
+    let retry = false;
+    let finish!: (response: Response) => void;
+    globalThis.fetch = async (input, init) => {
+      const url = new URL(String(input));
+      if (url.origin !== "https://vaults.example.test")
+        return original(input, init);
+      if (url.pathname.endsWith("system.info"))
+        return Response.json({ result: { data: { protocolMajor: 1 } } });
+      if (!retry) return new Response(null, { status: 401 });
+      return new Promise((resolve) => {
+        finish = resolve;
+      });
+    };
+    try {
+      await userEvent.type(
+        canvas.getByRole("textbox", { name: "Server URL" }),
+        "https://vaults.example.test",
+      );
+      await userEvent.tab();
+      await waitFor(() =>
+        expect(plugin.settings.serverUrl).toBe("https://vaults.example.test"),
+      );
+      const refresh = canvas.getByRole("button", {
+        name: "Refresh managed vaults",
+      });
+      await userEvent.click(refresh);
+      expect(await canvas.findByRole("alert")).toHaveTextContent(/Sign in/);
+      retry = true;
+      await userEvent.click(refresh);
+      expect(await canvas.findByText("Loading managed vaults…")).toBeVisible();
+      await waitFor(() => expect(finish).toBeTypeOf("function"));
+      finish(Response.json({ result: { data: [] } }));
+      expect(
+        await canvas.findByText(
+          "No active managed vaults are available to this account.",
+        ),
+      ).toBeVisible();
+      expect(plugin.settings.managedVaultId).toBe("");
+      expect(plugin.session.can("sync")).toBe(false);
+    } finally {
+      globalThis.fetch = original;
+    }
+  },
+);

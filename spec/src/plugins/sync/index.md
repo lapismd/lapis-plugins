@@ -85,6 +85,21 @@ full-width action-feedback layout through its public npm exports.
 | LN-SYNC-040 | Checkpoint and incoming acceptance MUST reject a changed membership generation or key epoch between planning and durable commit. Rejection MUST preserve prior history, queued publication and working files.                                                                                                                                                                                           |
 | LN-SYNC-041 | State commits, guarded mutations and receipt recovery MUST forward the operation's captured vault, device, key epoch and membership generation to the host. Asynchronous admission MUST NOT upgrade that authority. Apply progress commits MUST retain the same captured authority as their mutation/recovery operation. These fences MUST remain outside signed events and encrypted protocol objects. |
 
+## Connection-only runtime
+
+| ID          | Requirement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| LN-SYNC-042 | The private plugin MUST verify the real Deno protocol and account-authorized managed-vault access without claiming enrollment or synchronized content. Owner or editor access is required. Connection checks MUST use deadlines, reject redirects and stale or disposed results, distinguish access denial from an unavailable server, and never persist credentials. HTTPS is required by default; a private development host MAY explicitly allow HTTP on literal loopback hosts without persisting that policy. |
+
+## Managed vault selection
+
+| ID          | Requirement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| LN-SYNC-043 | Sync Settings MUST discover active managed vaults through the configured server's authenticated vault-list query and display their names in a dropdown while persisting only the selected vault ID. Viewer-only vaults MUST be unavailable for selection. Loading, empty, sign-in and request failures MUST remain visible. Changing servers or disposing Settings MUST cancel pending discovery and discard stale results. Discovery MUST NOT grant content authority or silently select a vault. |
+| LN-SYNC-044 | The selected managed-vault UUID MUST remain available through the shared truncated copy control. Copying MUST use the complete UUID and show success or failure feedback. The vault picker MUST retain the selected vault name when closed and reload names from the configured server after reopening Settings. Its refresh control MUST use the shared Settings control height and a transparent idle appearance.                                                                                |
+| LN-SYNC-045 | Pairing invitation actions MUST share the invitation label row, aligned to its trailing edge. Generated invitation details MUST remain below that row, and the Invitation URL input MUST align to its row's trailing edge where inline layout fits. |
+| LN-SYNC-046 | The recovery export action MUST be labelled Export recovery bundle. Its file picker MUST use the shared Settings Input geometry without consumer paint overrides. |
+
 ## Delivery status
 
 The foundation implements protocol codecs, event filtering and replaceable
@@ -124,8 +139,9 @@ and network pairing delivery remain required before production runtime activatio
 The native kernel durably upgrades supported legacy roots to indexed journal
 format 2 before access; actual earlier kernels reject that format in Node and
 Deno acceptance. This does not activate application or server synchronization.
-The production default is disconnected; it has no
-simulated history or success path. Deno event/object storage, enrollment and
+The private default now checks real Deno protocol and account access through
+the existing control plane. It starts disconnected and exposes only connection
+testing; success does not grant enrollment or content authority. Deno event/object storage, enrollment and
 server capture/apply remain subsequent slices in the saved implementation plan.
 
 The owning API also qualifies registered/protected asynchronous document loads
