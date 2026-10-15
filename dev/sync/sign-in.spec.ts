@@ -37,16 +37,28 @@ test("Sync Settings signs into real Deno, discovers vaults and signs out across 
   const status = settings.getByRole("status", {
     name: "Server account status",
   });
+  const cancelledPopupEvent = context.waitForEvent("page");
   await settings.getByRole("button", { name: "Sign in", exact: true }).click();
+  const cancelledPopup = await cancelledPopupEvent;
   await expect(
     settings.getByRole("button", { name: "Open server sign-in" })
   ).toBeVisible();
+  const approvalLink = settings.getByRole("link", {
+    name: "Server sign-in link",
+  });
+  await expect(approvalLink).toHaveAttribute("href", /authorize_client=/);
+  await expect(
+    settings.getByRole("button", { name: "Copy sign-in link" })
+  ).toBeVisible();
+  await page.screenshot({ path: "/tmp/lapis-sync-sign-in-approval.png" });
   await settings.getByRole("button", { name: "Cancel sign-in" }).click();
   await expect(status).toHaveText("Sign-in cancelled.");
-  await settings.getByRole("button", { name: "Sign in", exact: true }).click();
+  if (!cancelledPopup.isClosed()) await cancelledPopup.close();
   const popupEvent = context.waitForEvent("page");
-  await settings.getByRole("button", { name: "Open server sign-in" }).click();
+  await settings.getByRole("button", { name: "Sign in", exact: true }).click();
   const popup = await popupEvent;
+  await expect(approvalLink).toHaveAttribute("href", /authorize_client=/);
+  await expect(popup).toHaveURL((await approvalLink.getAttribute("href"))!);
   await expect(popup.getByRole("heading", { name: "Sign in" })).toBeVisible();
   await popup.getByLabel("Username").fill("owner");
   await popup.getByLabel("Password").fill(password);

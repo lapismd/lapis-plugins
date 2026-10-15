@@ -50,6 +50,7 @@ export const AccountSignIn: Story = {
     const picker = canvas.getByRole("combobox", { name: "Managed vault", exact: true });
     expect(picker).toBeDisabled();
     await userEvent.click(canvas.getByRole("button", { name: "Sign in", exact: true }));
+    expect(account.calls).toEqual(["signIn", "openSignIn"]);
     expect(await canvas.findByRole("status", { name: "Server account status" })).toHaveTextContent(/Waiting for approval/);
     await userEvent.click(canvas.getByRole("button", { name: "Open server sign-in" }));
     expect(account.calls).toContain("openSignIn");
@@ -70,9 +71,22 @@ export const AccountWaiting: Story = {
   play: async ({ canvasElement }) => {
     const { canvas } = await ready(canvasElement);
     expect(canvas.getByRole("button", { name: "Open server sign-in" })).toBeEnabled();
+    const link = canvas.getByRole("link", { name: "Server sign-in link" });
+    expect(link).toHaveAttribute("href", "https://sync.example.test/?authorize_client=review");
+    const clipboard = canvasElement.ownerDocument.defaultView!.navigator.clipboard;
+    const originalWrite = clipboard.writeText;
+    let copied = "";
+    clipboard.writeText = async (value) => { copied = value; };
+    try {
+      const copy = canvas.getByRole("button", { name: "Copy sign-in link" });
+      await userEvent.click(copy);
+      await waitFor(() => expect(copy).toHaveAttribute("data-copied", "true"));
+      expect(copied).toBe(link.getAttribute("href"));
+    } finally { clipboard.writeText = originalWrite; }
     await userEvent.click(canvas.getByRole("button", { name: "Cancel sign-in" }));
     await waitFor(() => expect(canvas.getByRole("status", { name: "Server account status" })).toHaveTextContent("cancelled"));
     expect(canvas.getByRole("button", { name: "Sign in", exact: true })).toBeEnabled();
+    expect(canvas.queryByRole("link", { name: "Server sign-in link" })).toBeNull();
   },
 };
 export const AccountExpired: Story = {

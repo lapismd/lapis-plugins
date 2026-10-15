@@ -8,7 +8,9 @@ afterEach(async () => {
 const origin = "https://sync.example.test";
 const requestId = "r".repeat(43),
   token = "t".repeat(43);
-function fixture() {
+function fixture(
+  openWindow?: ConstructorParameters<typeof MemoryServerAccount>[1]
+) {
   let approved = false,
     deny = false;
   const request = vi.fn<typeof fetch>(async (input, init) => {
@@ -43,7 +45,7 @@ function fixture() {
     }
     return Response.json({ ok: true });
   });
-  const account = new MemoryServerAccount(request);
+  const account = new MemoryServerAccount(request, openWindow);
   accounts.push(account);
   account.configure(origin);
   return {
@@ -57,6 +59,34 @@ function fixture() {
     },
   };
 }
+it("opens a window synchronously before preparing sign-in, then navigates to the verified link", async () => {
+  const popup = {
+    opener: {} as unknown,
+    closed: false,
+    location: { replace: vi.fn() },
+    close: vi.fn(),
+  };
+  const openWindow = vi.fn(() => popup);
+  const f = fixture(openWindow);
+  const pending = f.account.signIn();
+  expect(openWindow).toHaveBeenCalledTimes(1);
+  expect(popup.opener).toBeNull();
+  expect(popup.location.replace).not.toHaveBeenCalled();
+  await pending;
+  expect(popup.location.replace).toHaveBeenCalledWith(
+    `${origin}/?authorize_client=${requestId}`
+  );
+  await f.account.cancel();
+  expect(popup.close).toHaveBeenCalledTimes(1);
+});
+it("retains a usable approval link when the browser blocks the new window", async () => {
+  const f = fixture(() => null);
+  await f.account.signIn();
+  expect(f.account.snapshot()).toMatchObject({
+    status: "signing-in",
+    verificationUrl: `${origin}/?authorize_client=${requestId}`,
+  });
+});
 it("keeps credentials outside presentation and uses the granted session for account requests and sign-out", async () => {
   const f = fixture();
   f.approve();
@@ -162,13 +192,19 @@ it("revokes a grant cancelled while its account details are still loading", asyn
   const normal = f.request.getMockImplementation()!;
   f.request.mockImplementation((input, init) =>
     String(input).endsWith("auth.current")
-      ? new Promise<Response>(resolve => { finish = resolve; })
-      : normal(input, init),
+      ? new Promise<Response>((resolve) => {
+          finish = resolve;
+        })
+      : normal(input, init)
   );
   await f.account.signIn();
   await vi.waitFor(() => expect(finish).toBeTypeOf("function"));
   await f.account.cancel();
   finish(Response.json({ result: { data: { user: { username: "owner" } } } }));
-  await vi.waitFor(() => expect(f.account.snapshot().status).toBe("signed-out"));
-  expect((await f.account.request(`${origin}/api/trpc/auth.current`)).status).toBe(401);
+  await vi.waitFor(() =>
+    expect(f.account.snapshot().status).toBe("signed-out")
+  );
+  expect(
+    (await f.account.request(`${origin}/api/trpc/auth.current`)).status
+  ).toBe(401);
 });

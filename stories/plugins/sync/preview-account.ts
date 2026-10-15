@@ -42,12 +42,12 @@ export class PreviewAccountHost implements SyncAccountHost {
     this.#listeners.forEach((listener) => listener());
   }
   async signIn() {
-    this.calls.push("signIn");
+    this.calls.push("signIn", "openSignIn");
     this.#set({
       status: "signing-in",
       verificationUrl: `${this.#state.serverUrl}/?authorize_client=review`,
       message:
-        "Open server sign-in, approve Lapis Notes Sync, then return here. Waiting for approval…",
+        "Complete server sign-in in the opened window or use the link below, then return here. Waiting for approval…",
     });
   }
   openSignIn() {

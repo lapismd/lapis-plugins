@@ -4,6 +4,12 @@ import type {
 } from "@lapis-notes/lapis-plugin-sync";
 
 type Proof = { requestId: string; verifier: string };
+type ApprovalWindow = {
+  opener: unknown;
+  closed: boolean;
+  location: { replace(url: string): void };
+  close(): void;
+};
 const proofPattern = /^[A-Za-z0-9_-]{43}$/u;
 const base64url = (bytes: Uint8Array) =>
   btoa(String.fromCharCode(...bytes))
@@ -26,9 +32,23 @@ export class MemoryServerAccount implements SyncAccountHost {
   #credential?: { origin: string; token: string };
   #timer?: ReturnType<typeof setTimeout>;
   #disposed = false;
+  #approvalWindow?: ApprovalWindow;
   constructor(
-    private readonly fetchImpl: typeof fetch = globalThis.fetch.bind(globalThis)
+    private readonly fetchImpl: typeof fetch = globalThis.fetch.bind(
+      globalThis
+    ),
+    private readonly openWindow: () => ApprovalWindow | null = () =>
+      globalThis.window?.open("about:blank", "_blank") ?? null
   ) {}
+  #closeApprovalWindow(): void {
+    const popup = this.#approvalWindow;
+    this.#approvalWindow = undefined;
+    try {
+      popup?.close();
+    } catch {
+      /* The browser may have severed the cross-origin window handle. */
+    }
+  }
   snapshot(): SyncAccountState {
     return { ...this.#state };
   }
@@ -97,6 +117,7 @@ export class MemoryServerAccount implements SyncAccountHost {
     }
     this.#generation++;
     clearTimeout(this.#timer);
+    this.#closeApprovalWindow();
     this.#proof = this.#credential = undefined;
     this.#set({
       serverUrl,
@@ -125,6 +146,14 @@ export class MemoryServerAccount implements SyncAccountHost {
     });
     try {
       const origin = this.#origin();
+      // Reserve the window within the click's user activation, before any await.
+      try {
+        const popup = this.openWindow();
+        if (popup) popup.opener = null;
+        this.#approvalWindow = popup ?? undefined;
+      } catch {
+        /* The visible approval link remains available when popups are blocked. */
+      }
       const verifier = base64url(crypto.getRandomValues(new Uint8Array(32)));
       const codeChallenge = base64url(
         new Uint8Array(
@@ -159,20 +188,28 @@ export class MemoryServerAccount implements SyncAccountHost {
         return;
       }
       this.#proof = proof;
+      try {
+        if (this.#approvalWindow && !this.#approvalWindow.closed)
+          this.#approvalWindow.location.replace(verification.href);
+      } catch {
+        /* The user can open or copy the approval link in Settings. */
+      }
       this.#set({
         verificationUrl: verification.href,
         message:
-          "Open server sign-in, approve Lapis Notes Sync, then return here. Waiting for approval…",
+          "Complete server sign-in in the opened window or use the link below, then return here. Waiting for approval…",
       });
       void this.#poll(current, origin, proof, value.expiresAt);
     } catch {
-      if (current === this.#generation)
+      if (current === this.#generation) {
+        this.#closeApprovalWindow();
         this.#set({
           status: "error",
           verificationUrl: null,
           message:
             "Unable to start sign-in. Check the server address and connection, then retry.",
         });
+      }
     }
   }
   openSignIn(): void {
@@ -224,6 +261,7 @@ export class MemoryServerAccount implements SyncAccountHost {
       )
         throw new Error();
       if (current !== this.#generation || this.#disposed) return;
+      this.#approvalWindow = undefined;
       this.#set({
         status: "signed-in",
         username: user.username,
@@ -235,6 +273,7 @@ export class MemoryServerAccount implements SyncAccountHost {
       const credential = this.#credential;
       this.#credential = undefined;
       this.#proof = undefined;
+      this.#closeApprovalWindow();
       if (credential) void this.#revoke(credential).catch(() => {});
       const reason = cause instanceof Error ? cause.message : "";
       this.#set({
@@ -256,6 +295,7 @@ export class MemoryServerAccount implements SyncAccountHost {
     const origin = this.#origin();
     this.#generation++;
     clearTimeout(this.#timer);
+    this.#closeApprovalWindow();
     try {
       if (credential) await this.#revoke(credential);
       if (proof) {
@@ -345,6 +385,7 @@ export class MemoryServerAccount implements SyncAccountHost {
     this.#disposed = true;
     this.#generation++;
     clearTimeout(this.#timer);
+    this.#closeApprovalWindow();
     this.#credential = this.#proof = undefined;
     this.#listeners.clear();
     if (credential) await this.#revoke(credential).catch(() => {});

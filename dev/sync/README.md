@@ -28,7 +28,9 @@ while avoiding development tarball remaps during registry validation.
    with Tailwind after the Svelte transform, matching the main application's
    plugin order. Fonts come from that shared stylesheet.
 4. Enter the server URL in **Settings → Lapis Sync**. In **Server account**,
-   choose **Sign in**, then **Open server sign-in**. Sign into the server and
+   choose **Sign in** to open server sign-in immediately. If the browser blocks
+   the new window, open or copy the approval link shown underneath the account
+   guidance, or use **Open server sign-in**. Sign into the server and
    explicitly approve **Lapis Notes Sync** for the displayed client origin.
    Return to Settings to see the signed-in account and accessible vaults.
    Choose a vault by name, then **Test connection**. The server needs at least

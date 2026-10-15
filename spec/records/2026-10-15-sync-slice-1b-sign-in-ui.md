@@ -7,8 +7,10 @@ sign-in and session lifecycle remains incomplete.
 ## Working now
 
 The built private Sync plugin shows **Server account** in Settings. Sign in
-starts an authorization request; **Open server sign-in** opens the configured
-Deno server's existing login and explicit client consent. The client then shows
+opens an approval window immediately and starts an authorization request. It
+navigates that window to the validated server approval link, retaining the
+visible link, copy action and **Open server sign-in** fallback in Settings.
+The Deno server uses its existing login and explicit client consent. The client then shows
 the account, discovers named managed vaults and allows **Test connection**.
 Waiting requests can be cancelled; signed-in accounts can sign out. Expiry,
 rejection, offline and unavailable-host states explain the next action.
@@ -38,7 +40,7 @@ Use the main `lapis-plugins` workspace and its existing private OPFS app at
 `dev/sync/README.md`.
 
 1. Open **Settings → Lapis Sync**, set the server URL, and choose **Sign in**.
-2. Open server sign-in, use the existing account, and review/approve the named
+2. In the opened server window, use the existing account and review/approve the named
    client and origin. Return to Sync Settings to see the account and vault names.
 3. Choose a vault and test the connection. Enable sync remains disabled.
 4. Sign out: vault access and connection health clear. Alternatively cancel a
@@ -54,9 +56,11 @@ registry assets changed.
 - Exact new account-source regression: one failure before the fix, zero after.
   `pnpm --dir packages/sync test` passes 200 tests in 17 files, including stale
   connection invalidation and account discovery/presentation regressions.
-- `pnpm exec vitest run --config dev/sync/vitest.config.ts` passes five private
-  host tests: bearer isolation, cancellation/late grants, failed revocation,
-  server changes and account-detail loading cancellation.
+- `pnpm exec vitest run --config dev/sync/vitest.config.ts` passes seven private
+  host tests: bearer isolation, cancellation/late grants, URL validation/offline
+  failure, server changes, account-detail loading cancellation, immediate window opening
+  before asynchronous work and a usable fallback when the browser blocks it.
+  The immediate-opening regression moves from one failure to zero.
 - All eight Sync story families pass: 57 interactions/accessibility checks.
   The first concurrent run had two startup timeouts; both exact reruns and the
   complete serial run pass. The three account stories also pass independently.
