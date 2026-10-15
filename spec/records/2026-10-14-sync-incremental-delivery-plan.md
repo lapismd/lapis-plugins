@@ -10,8 +10,9 @@ the next feature slice. The user selected **1B. Remote sign-in and session
 lifecycle** next, before endpoint enrollment. Plugins PRs
 [#16](https://github.com/lapismd/lapis-plugins/pull/16) and
 [#17](https://github.com/lapismd/lapis-plugins/pull/17) are merged; each passed
-all nine CI jobs. The first 1B server authorization checkpoint is implemented
-for private review; protected host storage and plugin integration remain pending.
+all nine CI jobs. The server authorization checkpoint and private Sync Settings
+sign-in UI are implemented for review. The user prioritized the visible flow
+before protected persistence; production host integration remains pending.
 See the [1B checkpoint record](2026-10-15-sync-slice-1b-server-authorization.md) and the
 [Design Core checkpoint](2026-10-14-sync-stage-0b-design-core-release.md) and
 [Mira checkpoint](2026-10-14-sync-stage-0b-mira-release.md).
@@ -273,11 +274,16 @@ Deliver 1B in separate review stops rather than expanding one run across hosts:
    A separate-origin client requests approval, opens server sign-in/consent,
    receives an origin-bound account session, discovers vaults and signs out.
    Denial, cancellation, expiry, replay and revocation have focused regressions.
-2. **1B-B, protected host session lifecycle:** pending. Persist the credential
+2. **1B-UI, private Sync Settings:** implemented for review at the user's request
+   before persistence. Sign in, open server consent, cancel or approve, discover
+   named vaults, test connection and sign out in the real private app. The host
+   keeps credentials in memory; reload requires another sign-in. See the
+   [UI checkpoint](2026-10-15-sync-slice-1b-sign-in-ui.md).
+3. **1B-B, protected host session lifecycle:** pending. Persist the credential
    through the owning host, bind it to the configured destination, and prove
    restart, server change, stale-result exclusion, expiry and revocation cleanup.
    Release any required shared host contract before plugin integration.
-3. **1B-C, installed Sync Settings integration:** pending. Reuse that host
+4. **1B-C, production host integration:** pending. Reuse the reviewed Settings UI and that host
    transport for sign-in/sign-out, explicit account/session state, connection
    checks and named vault discovery. Review the real installed-client journey
    and affected Settings interaction/accessibility before slice 2.

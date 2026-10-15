@@ -17,6 +17,21 @@ function transport(role = "editor") {
 }
 
 describe("real server connection runtime", () => {
+  it("clears health and rejects an in-flight result when account access is invalidated", async () => {
+    let finish!: (response: Response) => void;
+    const request = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(json({ protocolMajor: 1 }))
+      .mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+    const runtime = new ServerConnectionRuntime({ request });
+    const pending = runtime.execute({ type: "test-connection" }, settings, new AbortController().signal);
+    const rejected = expect(pending).rejects.toThrow();
+    await vi.waitFor(() => expect(finish).toBeTypeOf("function"));
+    runtime.invalidateConnection();
+    finish(json({ vaultId: settings.managedVaultId, role: "owner" }));
+    await rejected;
+    expect(runtime.snapshot().destination).toMatchObject({ authenticated: false, authorized: false, status: "unconfigured" });
+    runtime.dispose();
+  });
   it("checks the protocol and authenticated vault without granting content authority", async () => {
     const request = transport();
     const runtime = new ServerConnectionRuntime({ request });

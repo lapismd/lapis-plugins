@@ -12,6 +12,9 @@ import ManagedVaultSettingsField from "../ui/ManagedVaultSettingsField.svelte";
 import PairingSettingsField from "../ui/PairingSettingsField.svelte";
 import PairingInvitationActions from "../ui/PairingInvitationActions.svelte";
 import RecoverySettingsField from "../ui/RecoverySettingsField.svelte";
+import AccountSettingsField from "../ui/AccountSettingsField.svelte";
+import AccountSettingsActions from "../ui/AccountSettingsActions.svelte";
+import type { AccountSettingsFieldDefinition } from "./field-values";
 
 export function createSyncSettingsDefinition(
   source: SyncSettingsSource,
@@ -44,6 +47,15 @@ export function createSyncSettingsDefinition(
     refresh: () => source.refreshManagedVaults(),
     cancel: () => source.cancelManagedVaultDiscovery(),
   };
+  const accountField: AccountSettingsFieldDefinition = {
+    id: "sync.account", type: "custom", title: "Server account",
+    description: "Account access is separate from encrypted device enrollment.",
+    adapter: "sync.account", presentation: "full-width",
+    signIn: () => source.accountAction("signIn"),
+    openSignIn: () => source.openAccountSignIn(),
+    cancel: () => source.accountAction("cancel"),
+    signOut: () => source.accountAction("signOut"),
+  };
   const pairingField: PairingSettingsFieldDefinition = {
     id: "sync.pairing",
     type: "custom",
@@ -71,6 +83,7 @@ export function createSyncSettingsDefinition(
   return {
     source,
     adapters: [
+      { id: "sync.account", component: AccountSettingsField, headerComponent: AccountSettingsActions },
       { id: "sync.pairing", component: PairingSettingsField, headerComponent: PairingInvitationActions },
       { id: "sync.managed-vault", component: ManagedVaultSettingsField },
       { id: "sync.recovery", component: RecoverySettingsField },
@@ -120,6 +133,7 @@ export function createSyncSettingsDefinition(
               placeholder: "https://sync.example.com",
               maxLength: 2048,
             },
+            accountField,
             managedVaultField,
             action(
               "test-connection",
@@ -127,6 +141,7 @@ export function createSyncSettingsDefinition(
               "Test connection",
               "radio",
               () => source.action({ type: "test-connection" }),
+              () => !session.can("test-connection") || (Boolean(source.plugin.options?.account) && source.account.status !== "signed-in"),
             ),
             {
               id: "sync.connection",

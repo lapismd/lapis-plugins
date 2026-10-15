@@ -1,5 +1,10 @@
 # Distribution and Releases
 
+The private persistent Sync review host retains the Notes application's Turso
+0.7.2 compatibility pair: `@napi-rs/wasm-runtime@1.0.7` resolves both emnapi core
+and runtime to registry version 1.8.1. This confines the compatibility pins to
+that driver chain; other native/WASM runtimes retain their existing resolutions.
+
 Bases carries independent patch release intent for result-limit label contrast.
 The component retains Design Core typography and color; the CI repair does not
 activate package publication or change plugin host contracts.

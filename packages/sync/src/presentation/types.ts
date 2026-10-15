@@ -165,6 +165,7 @@ export type SyncAction =
 
 /** Endpoint integrations own encryption, authority, durable drafts and guarded I/O. */
 export interface SyncRuntime {
+  invalidateConnection?(): void;
   readonly actions: readonly SyncAction["type"][];
   listManagedVaults?(
     settings: Readonly<SyncSettings>,

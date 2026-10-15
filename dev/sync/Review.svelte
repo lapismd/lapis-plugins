@@ -11,7 +11,7 @@
       const opened = await createVaultSession(adapter);
       if (canceled) await opened.close();
       else session = opened;
-    })().catch(error => { failure = error instanceof Error ? error.message : String(error); });
+    })().catch(error => { console.error(error); failure = error instanceof Error ? error.message : String(error); });
     return () => { canceled = true; };
   });
 </script>

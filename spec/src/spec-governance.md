@@ -1,5 +1,10 @@
 # Specification Governance
 
+Private Sync sign-in acceptance records its isolated host's real Deno journey
+separately from Storybook fixtures. A host dependency compatibility repair keeps
+the frozen registry graph and startup evidence explicit; it does not waive
+normal CI, packaging or publication gates.
+
 Bases query-controls acceptance keeps the results menu visible for axe, covering
 its limit label and input. A reproduced contrast failure is fixed in the owning
 component; the accessibility threshold and visual baselines are unchanged.

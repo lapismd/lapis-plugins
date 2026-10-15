@@ -100,6 +100,13 @@ full-width action-feedback layout through its public npm exports.
 | LN-SYNC-045 | Pairing invitation actions MUST share the invitation label row, aligned to its trailing edge. Generated invitation details MUST remain below that row, and the Invitation URL input MUST align to its row's trailing edge where inline layout fits. |
 | LN-SYNC-046 | The recovery export action MUST be labelled Export recovery bundle. Its file picker MUST use the shared Settings Input geometry without consumer paint overrides. |
 
+## Remote account presentation
+
+| ID | Requirement |
+| --- | --- |
+| LN-SYNC-047 | Sync Settings MUST expose host-backed sign-in, browser approval, cancellation and sign-out with explicit account, waiting, unavailable and failure states. Account actions MUST pair relevant icons with their text labels. Account guidance MUST use shared smaller, muted settings-description styling; errors MUST remain distinct. Credentials MUST remain host-owned and MUST NOT enter Settings values or plugin persistence. Account sign-in MUST NOT enable enrollment or content operations. The private review host MAY keep its account session in memory until protected persistence is delivered. |
+| LN-SYNC-048 | Account changes and sign-out MUST invalidate connection health and cached vault discovery, abort pending discovery, and reject stale results. Changing the server MUST cancel the previous handoff and prevent credentials or results from crossing destinations. The review host MUST use direct cross-origin bearer requests without its earlier cookie proxy. |
+
 ## Delivery status
 
 The foundation implements protocol codecs, event filtering and replaceable
