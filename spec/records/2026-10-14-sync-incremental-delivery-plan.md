@@ -7,9 +7,12 @@ recovery preservation. Feature slice 1 now provides real Deno account/vault
 connection checks in a persistent private development app; see the
 [slice 1 handoff](2026-10-15-sync-slice-1-connection.md). Stop for review before
 the next feature slice. The user selected **1B. Remote sign-in and session
-lifecycle** next, before endpoint enrollment. First repair the blocking CI
-failures in stacked Plugins PRs #16 and #17; do not start authentication
-implementation while those prerequisites are failing. See the
+lifecycle** next, before endpoint enrollment. Plugins PRs
+[#16](https://github.com/lapismd/lapis-plugins/pull/16) and
+[#17](https://github.com/lapismd/lapis-plugins/pull/17) are merged; each passed
+all nine CI jobs. The first 1B server authorization checkpoint is implemented
+for private review; protected host storage and plugin integration remain pending.
+See the [1B checkpoint record](2026-10-15-sync-slice-1b-server-authorization.md) and the
 [Design Core checkpoint](2026-10-14-sync-stage-0b-design-core-release.md) and
 [Mira checkpoint](2026-10-14-sync-stage-0b-mira-release.md).
 The [Notes source checkpoint](2026-10-14-sync-stage-0b-notes-source.md) and
@@ -231,7 +234,8 @@ excluded change is accounted for. Stop for review before feature slice 1.
 ## Runnable slices
 
 Feature slice 1 is complete for private review. Remote sign-in and session
-lifecycle (1B) is next; slices 2–14 remain pending. Each row has its own review stop and
+lifecycle (1B) has its server checkpoint ready for review; the whole slice and
+slices 2–14 remain pending. Each row has its own review stop and
 runs from main. The first seven build the manual round trip; later rows fill
 specific gaps without replacing it.
 
@@ -260,6 +264,27 @@ Slice 7 proves manual bidirectional synchronization. Slice 9 adds normal
 automatic operation. These are distinct milestones, not interchangeable claims.
 
 ## Boundaries for the first manual milestone
+
+### 1B delivery checkpoints
+
+Deliver 1B in separate review stops rather than expanding one run across hosts:
+
+1. **1B-A, server authorization handoff:** implemented for private review.
+   A separate-origin client requests approval, opens server sign-in/consent,
+   receives an origin-bound account session, discovers vaults and signs out.
+   Denial, cancellation, expiry, replay and revocation have focused regressions.
+2. **1B-B, protected host session lifecycle:** pending. Persist the credential
+   through the owning host, bind it to the configured destination, and prove
+   restart, server change, stale-result exclusion, expiry and revocation cleanup.
+   Release any required shared host contract before plugin integration.
+3. **1B-C, installed Sync Settings integration:** pending. Reuse that host
+   transport for sign-in/sign-out, explicit account/session state, connection
+   checks and named vault discovery. Review the real installed-client journey
+   and affected Settings interaction/accessibility before slice 2.
+
+The development probe in 1B-A keeps credentials in memory and is not the final
+plugin UI or a completed session-persistence implementation. Encryption keys,
+endpoint membership and content transfer remain outside account sign-in.
 
 ### Remote sign-in boundary
 
