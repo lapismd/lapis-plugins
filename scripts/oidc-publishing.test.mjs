@@ -165,7 +165,7 @@ test("GitHub workflows run Node 24 actions and Node 24 builds", () => {
   assert.equal(
     ciWorkflow.match(/\$\{\{ needs\.image-pin\.outputs\.reference \}\}/g)
       ?.length,
-    6
+    7
   );
   assert.match(ciWorkflow, /jq -er .*\.ci\/images\.json/);
   assert.match(workflow, /jq -er .*\.ci\/images\.json/);

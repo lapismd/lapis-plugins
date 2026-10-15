@@ -26,7 +26,24 @@ env:
   TURBO_REMOTE_CACHE_SIGNATURE_KEY: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      spec_only: ${{ steps.changes.outputs.spec_only }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Classify the complete pull-request diff
+        id: changes
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: node scripts/classify-ci-changes.mjs
+
   prerequisite:
+    needs: changes
+    if: needs.changes.outputs.spec_only == 'false'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -48,8 +65,10 @@ jobs:
 
   build-cache:
     needs:
+      - changes
       - prerequisite
       - image-pin
+    if: needs.changes.outputs.spec_only == 'false'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     container:
@@ -67,8 +86,10 @@ jobs:
 
   quality:
     needs:
+      - changes
       - build-cache
       - image-pin
+    if: needs.changes.outputs.spec_only == 'false'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     container:
@@ -91,8 +112,10 @@ jobs:
 
   unit:
     needs:
+      - changes
       - build-cache
       - image-pin
+    if: needs.changes.outputs.spec_only == 'false'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     container:
@@ -111,8 +134,10 @@ jobs:
 
   storybook-static:
     needs:
+      - changes
       - build-cache
       - image-pin
+    if: needs.changes.outputs.spec_only == 'false'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     container:
@@ -133,8 +158,10 @@ jobs:
 
   storybook-interaction:
     needs:
+      - changes
       - build-cache
       - image-pin
+    if: needs.changes.outputs.spec_only == 'false'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     container:
@@ -153,8 +180,10 @@ jobs:
 
   release-artifacts:
     needs:
+      - changes
       - build-cache
       - image-pin
+    if: needs.changes.outputs.spec_only == 'false'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     container:
@@ -186,9 +215,28 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+  specification:
+    needs:
+      - changes
+      - image-pin
+    if: needs.changes.outputs.spec_only == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    container:
+      image: ${{ needs.image-pin.outputs.reference }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/ci-setup
+      - run: pnpm spec:check
+
   validate:
     if: always()
     needs:
+      - changes
+      - specification
       - prerequisite
       - image-pin
       - build-cache
@@ -201,6 +249,9 @@ jobs:
     steps:
       - name: Aggregate blocking validation lanes
         env:
+          CHANGES: ${{ needs.changes.result }}
+          SPEC_ONLY: ${{ needs.changes.outputs.spec_only }}
+          SPECIFICATION: ${{ needs.specification.result }}
           PREREQUISITE: ${{ needs.prerequisite.result }}
           IMAGE_PIN: ${{ needs.image-pin.result }}
           BUILD_CACHE: ${{ needs.build-cache.result }}
@@ -211,11 +262,12 @@ jobs:
           RELEASE_ARTIFACTS: ${{ needs.release-artifacts.result }}
         run: |
           set -euo pipefail
-          if [ "$PREREQUISITE" != "success" ] || [ "$IMAGE_PIN" != "success" ]; then
-            echo "A required CI lane finished with: ${PREREQUISITE} / ${IMAGE_PIN}" >&2
+          if [ "$CHANGES" != "success" ] || [ "$IMAGE_PIN" != "success" ]; then
+            echo "CI routing or image resolution failed: ${CHANGES} / ${IMAGE_PIN}" >&2
             exit 1
           fi
           functional_results=(
+            "$PREREQUISITE"
             "$BUILD_CACHE"
             "$QUALITY"
             "$UNIT"
@@ -223,6 +275,16 @@ jobs:
             "$STORYBOOK_INTERACTION"
             "$RELEASE_ARTIFACTS"
           )
+          if [ "$SPEC_ONLY" = "true" ]; then
+            test "$SPECIFICATION" = "success"
+            for result in "${functional_results[@]}"; do
+              test "$result" = "skipped"
+            done
+            echo "Spec-only pull request: all specification checks passed."
+            exit 0
+          fi
+          test "$SPEC_ONLY" = "false"
+          test "$SPECIFICATION" = "skipped"
           for result in "${functional_results[@]}"; do
             if [ "$result" != "success" ]; then
               echo "A required CI lane finished with: $result" >&2
