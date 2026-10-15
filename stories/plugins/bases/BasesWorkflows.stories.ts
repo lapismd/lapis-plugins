@@ -151,7 +151,9 @@ export const QueryControls: Story = {
     expect(body.getByRole("button", { name: "Copy to clipboard" })).toBeVisible();
     expect(body.getByRole("button", { name: "Export CSV..." })).toBeVisible();
     expect(canvas.getByRole("button", { name: "New" })).toBeVisible();
-    await userEvent.click(canvas.getByRole("button", { name: /2 results/ }));
+    // Keep the results menu open so axe checks its label and numeric input.
+    await expect(body.getByText("Limit number of results", { exact: true })).toBeVisible();
+    await expect(body.getByLabelText("Limit number of results")).toHaveValue(2);
   },
 };
 

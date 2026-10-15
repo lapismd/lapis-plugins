@@ -1,7 +1,13 @@
 # Bases Plugin
 
+The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
+with size 256 and initials fallback, as governed by LP-SPEC-041.
+
 This candidate consumes published API 0.1.2 through its portable peer range.
 Shared shell qualification uses UI and File Explorer 0.1.2 and Workspace 0.2.0.
+Mobile shell acceptance uses the published count-bearing dock label, opens the
+workspace tab chooser and returns with Done. It retains real-App plugin and
+collapsed-sidebar assertions; this repairs a stale story selector.
 
 Release qualification uses `@lapis-notes/api@^0.1.2` for the shared renderer,
 diagnostics invalidation and selected metadata fingerprint contracts. Portable
@@ -12,6 +18,9 @@ unchanged; local overrides for these released packages are retired.
 
 Bases presentation resolves Design Core through the repository's current
 published semver range and committed lockfile.
+
+The result-limit label retains Design Core Label typography and theme color;
+plugin opacity must not reduce its accessible contrast.
 
 The package-owned `registry.json` is the source for curated categories,
 highlights, and registry-only Overview content under LP-SPEC-021 and LP-SPEC-033. Manifest and package

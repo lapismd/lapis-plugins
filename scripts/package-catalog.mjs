@@ -59,6 +59,11 @@ const allPluginPackages = [
     packageName: "@lapis-notes/wordcount",
     pluginId: "wordcount",
   },
+  {
+    directory: "sync",
+    packageName: "@lapis-notes/lapis-plugin-sync",
+    pluginId: "sync",
+  },
 ];
 
 // The standard npm private flag is the authoritative parked-package marker.

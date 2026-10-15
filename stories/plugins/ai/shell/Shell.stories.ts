@@ -475,8 +475,18 @@ export const Mobile: Story = {
     expect(app.plugins.isPluginEnabled("search")).toBe(true);
     expect(app.workspace.rightSplit.collapsed).toBe(true);
     await expect(canvas.getByTestId("ai-chat-panel")).toBeVisible();
+    const dock = within(
+      canvas.getByRole("navigation", { name: "Mobile workspace dock" }),
+    );
+    const openTabs = dock.getByRole("button", { name: /^Open [1-9]\d* tabs$/u });
+    await expect(openTabs).toBeVisible();
+    await userEvent.click(openTabs);
+    const tabs = canvas.getByRole("region", { name: "Open workspace tabs" });
+    await expect(tabs).toBeVisible();
+    await userEvent.click(within(tabs).getByRole("button", { name: "Done" }));
     await expect(
-      canvas.getByRole("button", { name: /Open tabs/u }),
+      within(canvas.getByRole("navigation", { name: "Mobile workspace dock" }))
+        .getByRole("button", { name: /^Open [1-9]\d* tabs$/u }),
     ).toBeVisible();
   },
 };

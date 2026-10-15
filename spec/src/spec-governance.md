@@ -1,5 +1,29 @@
 # Specification Governance
 
+Bases query-controls acceptance keeps the results menu visible for axe, covering
+its limit label and input. A reproduced contrast failure is fixed in the owning
+component; the accessibility threshold and visual baselines are unchanged.
+
+Clean CI catalog acceptance includes the parked Sync package's frozen registry
+install, with local hooks bypassed. Its dependency lock does not activate the
+package for installation or publication. The parked-plugin workflow regression
+covers this setup and its separate dependency audit.
+
+Dependency-graph repair consumes the upstream UI 0.1.3 release before
+reconciling compatible API, CodeMirror and Lezer resolutions. Qualification
+retains the exact Graph/AI type checks and Bases Editable Cells highlighting
+assertion; casts, aliases and relaxed assertions do not qualify the graph.
+AI, Bases and History mobile shell stories qualify the published count-bearing
+dock label by opening and closing the actual workspace tab chooser.
+
+The registry metadata audit enforces the manifest-owned SHA-256 Gravatar for
+`dev@lapis.md` under LP-SPEC-041, including image size and initials fallback.
+
+Lapis Sync maps `packages/sync` to `plugins/sync/index.md`. Its direct package
+checks and explicit shared-catalog stories remain separate from installation
+and release selection. The retained source inventory records the Apache-2.0
+correction in the owning Nostr Sync repository before extraction.
+
 Dependency-image automation follows LP-SPEC-051: terminal PR states never
 absorb a new digest update. The executable workflow regressions cover merged,
 closed and open reviews without changing the normal required CI gates.
@@ -35,6 +59,8 @@ Shared specification tooling resolves `@lapismd/spec-validator@0.1.4` from npm.
 
 Shared UI dependency refreshes advance portable package ranges and the committed
 lockfile together without adding checkout-specific package paths.
+The Sync Settings layout regression is qualified against released Design Core
+0.3.4 rather than a consumer CSS override or local source remap.
 
 ## Requirements
 
@@ -215,3 +241,7 @@ security gates. Exact frozen source candidates supply signed runtime artifacts
 for Web acceptance without replacing committed npm ranges.
 
 Production release retention maps the explicit public candidate file globs and empty-upload gate to Distribution and its verification evidence. Private signing keys remain temporary CI inputs outside the retained release directory.
+
+The static catalog build has a bounded 6144 MiB Node heap. The default 4 GiB
+heap exhausts while compiling the complete catalog with private Sync enabled;
+the build budget does not alter interaction, accessibility or artifact gates.

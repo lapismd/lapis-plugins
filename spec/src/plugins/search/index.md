@@ -1,5 +1,8 @@
 # Search Plugin
 
+The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
+with size 256 and initials fallback, as governed by LP-SPEC-041.
+
 This candidate consumes published API 0.1.2 through its portable peer range.
 Shared shell qualification uses UI and File Explorer 0.1.2 and Workspace 0.2.0.
 

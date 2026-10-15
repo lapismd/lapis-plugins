@@ -80,6 +80,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/ci-setup
       - run: pnpm audit
+      - run: pnpm --dir packages/sync audit --ignore-workspace
       - run: pnpm packages:check
       - run: pnpm spec:check
       - run: pnpm check:no-tailwind
@@ -127,6 +128,8 @@ jobs:
       - name: Report cache restoration
         run: node scripts/report-turbo-cache.mjs --github-summary
       - run: pnpm build-storybook
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
 
   storybook-interaction:
     needs:

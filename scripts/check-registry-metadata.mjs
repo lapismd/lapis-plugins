@@ -5,7 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
-import { pluginPackages } from "./package-catalog.mjs";
+import { registryMediaPlugins } from "./registry-media-catalog.mjs";
 import {
   REGISTRY_MEDIA_TONES,
   resolveFocusCrop,
@@ -18,7 +18,7 @@ const maxLogoBytes = 512 * 1024;
 const maxGalleryBytes = 5 * 1024 * 1024;
 const registryOverviewPath = "registry-content/overview.md";
 const officialAuthorAvatarUrl =
-  "https://www.gravatar.com/avatar/1df68d9ff087b0dd72fd8626056fca7f?s=128&d=404";
+  "https://gravatar.com/avatar/f7226d5f9cf07af2a6a60d3ab11413abb9d2e2eb60f2d5cce17356845a166155?size=256&d=initials";
 const packageInstallInstruction =
   /\b(?:pnpm|npm|yarn|bun)\s+(?:add|install)\b|install for static composition/i;
 const allowedKeys = new Set([
@@ -41,6 +41,7 @@ const allowedIcons = new Set([
   "network",
   "package",
   "presentation",
+  "refresh-cw",
   "search",
   "sparkles",
   "spell-check-2",
@@ -49,7 +50,7 @@ const allowedIcons = new Set([
 ]);
 const findings = [];
 
-for (const plugin of pluginPackages) {
+for (const plugin of registryMediaPlugins) {
   const packageRoot = path.join(root, "packages", plugin.directory);
   const sourcePath = path.join(packageRoot, "registry.json");
   const manifestPath = path.join(packageRoot, "manifest.json");
@@ -58,7 +59,7 @@ for (const plugin of pluginPackages) {
     source = JSON.parse(await readFile(sourcePath, "utf8"));
   } catch (error) {
     findings.push(
-      `${plugin.directory}: registry.json is missing or invalid (${error.message})`
+      `${plugin.directory}: registry.json is missing or invalid (${error.message})`,
     );
     continue;
   }
@@ -66,12 +67,12 @@ for (const plugin of pluginPackages) {
     const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
     if (manifest.authorAvatarUrl !== officialAuthorAvatarUrl) {
       findings.push(
-        `${plugin.directory}: manifest authorAvatarUrl must use the official Lapis Gravatar`
+        `${plugin.directory}: manifest authorAvatarUrl must use the official Lapis Gravatar`,
       );
     }
   } catch (error) {
     findings.push(
-      `${plugin.directory}: manifest.json is missing or invalid (${error.message})`
+      `${plugin.directory}: manifest.json is missing or invalid (${error.message})`,
     );
   }
   for (const key of Object.keys(source)) {
@@ -101,11 +102,11 @@ for (const plugin of pluginPackages) {
     plugin.directory,
     packageRoot,
     source.gallery,
-    mediaPaths
+    mediaPaths,
   );
   if (source.content !== undefined)
     findings.push(
-      `${plugin.directory}: V2 source metadata must not contain Markdown references`
+      `${plugin.directory}: V2 source metadata must not contain Markdown references`,
     );
   for (const [version, release] of Object.entries(source.releases ?? {})) {
     try {
@@ -113,11 +114,11 @@ for (const plugin of pluginPackages) {
         plugin.pluginId,
         version,
         "",
-        release.changelog
+        release.changelog,
       );
     } catch (error) {
       findings.push(
-        `${plugin.directory}: invalid release notes for ${version}: ${error.message}`
+        `${plugin.directory}: invalid release notes for ${version}: ${error.message}`,
       );
     }
   }
@@ -135,11 +136,11 @@ async function validateMedia(directory, packageRoot, media, paths) {
     keys.some((key) => !["banner", "overview"].includes(key))
   ) {
     findings.push(
-      `${directory}: media must define a banner and may define one overview`
+      `${directory}: media must define a banner and may define one overview`,
     );
   }
   const expectedStoryPrefix = `plugins-${storyIdPluginSegment(
-    directory
+    directory,
   )}-registry-screenshots--`;
   for (const role of keys) {
     const item = media[role];
@@ -149,11 +150,11 @@ async function validateMedia(directory, packageRoot, media, paths) {
       Array.isArray(item) ||
       Object.keys(item).length !== 3 ||
       Object.keys(item).some(
-        (key) => !["alt", "images", "capture"].includes(key)
+        (key) => !["alt", "images", "capture"].includes(key),
       )
     ) {
       findings.push(
-        `${directory}: ${role} media must define alt, images, and capture only`
+        `${directory}: ${role} media must define alt, images, and capture only`,
       );
       continue;
     }
@@ -163,7 +164,7 @@ async function validateMedia(directory, packageRoot, media, paths) {
       item.alt.length > 240
     ) {
       findings.push(
-        `${directory}: ${role} alt text must contain 1-240 characters`
+        `${directory}: ${role} alt text must contain 1-240 characters`,
       );
     }
     await validateImageVariants(
@@ -172,7 +173,7 @@ async function validateMedia(directory, packageRoot, media, paths) {
       item.images,
       `registry-assets/${role}`,
       paths,
-      role
+      role,
     );
     validateCapture(directory, item.capture, expectedStoryPrefix);
   }
@@ -182,7 +183,7 @@ async function validateMedia(directory, packageRoot, media, paths) {
     media.banner.capture.storyId === media.overview.capture.storyId
   ) {
     findings.push(
-      `${directory}: banner and overview must use different Storybook stories`
+      `${directory}: banner and overview must use different Storybook stories`,
     );
   }
 }
@@ -210,7 +211,7 @@ async function validateAppearance(directory, packageRoot, appearance) {
     !/^#[A-Fa-f0-9]{6}$/.test(appearance.accent)
   ) {
     findings.push(
-      `${directory}: appearance.accent must be a six-digit hex colour`
+      `${directory}: appearance.accent must be a six-digit hex colour`,
     );
   }
   if (appearance.logo !== undefined) {
@@ -219,14 +220,14 @@ async function validateAppearance(directory, packageRoot, appearance) {
       typeof appearance.logo !== "object" ||
       Array.isArray(appearance.logo) ||
       Object.keys(appearance.logo).some(
-        (key) => !["path", "alt"].includes(key)
+        (key) => !["path", "alt"].includes(key),
       ) ||
       typeof appearance.logo.alt !== "string" ||
       !appearance.logo.alt.trim() ||
       appearance.logo.alt.length > 120
     ) {
       findings.push(
-        `${directory}: appearance.logo must contain only a safe path and bounded alt text`
+        `${directory}: appearance.logo must contain only a safe path and bounded alt text`,
       );
       return;
     }
@@ -249,7 +250,7 @@ async function validateGallery(directory, packageRoot, gallery, paths) {
   const ids = new Set();
   const storyIds = new Set();
   const expectedStoryPrefix = `plugins-${storyIdPluginSegment(
-    directory
+    directory,
   )}-registry-screenshots--`;
   for (const item of gallery) {
     if (!item || typeof item !== "object" || Array.isArray(item)) {
@@ -284,7 +285,7 @@ async function validateGallery(directory, packageRoot, gallery, paths) {
       item.alt.length > 240
     ) {
       findings.push(
-        `${directory}: gallery alt text must contain 1-240 characters`
+        `${directory}: gallery alt text must contain 1-240 characters`,
       );
     }
     await validateImageVariants(
@@ -293,7 +294,7 @@ async function validateGallery(directory, packageRoot, gallery, paths) {
       item.images,
       `registry-assets/gallery/${item.id}`,
       paths,
-      "gallery"
+      "gallery",
     );
     validateCapture(directory, item.capture, expectedStoryPrefix, storyIds);
     validateCard(directory, item.card);
@@ -306,7 +307,7 @@ async function validateImageVariants(
   images,
   expectedBasePath,
   paths,
-  role
+  role,
 ) {
   const variants = ["preview", "full", "light", "dark"];
   const imageKeys = Object.keys(images ?? {});
@@ -315,7 +316,7 @@ async function validateImageVariants(
     variants.some((variant) => !imageKeys.includes(variant))
   ) {
     findings.push(
-      `${directory}: ${role} images must define preview, full, light, and dark only`
+      `${directory}: ${role} images must define preview, full, light, and dark only`,
     );
   }
   for (const variant of variants) {
@@ -339,7 +340,7 @@ async function validateImageVariants(
     }
     if (paths.has(reference.path)) {
       findings.push(
-        `${directory}: duplicate registry media path ${reference.path}`
+        `${directory}: duplicate registry media path ${reference.path}`,
       );
     }
     paths.add(reference.path);
@@ -363,7 +364,7 @@ function validateCapture(directory, capture, expectedStoryPrefix, storyIds) {
     Object.keys(capture).length !== 2
   ) {
     findings.push(
-      `${directory}: gallery capture must define storyId and focus only`
+      `${directory}: gallery capture must define storyId and focus only`,
     );
     return;
   }
@@ -372,7 +373,7 @@ function validateCapture(directory, capture, expectedStoryPrefix, storyIds) {
     !capture.storyId.startsWith(expectedStoryPrefix)
   ) {
     findings.push(
-      `${directory}: gallery storyId must start with ${expectedStoryPrefix}`
+      `${directory}: gallery storyId must start with ${expectedStoryPrefix}`,
     );
   } else if (storyIds?.has(capture.storyId)) {
     findings.push(`${directory}: duplicate gallery storyId ${capture.storyId}`);
@@ -395,7 +396,7 @@ function validateCard(directory, card) {
     Object.keys(card).some((key) => !["headline", "description"].includes(key))
   ) {
     findings.push(
-      `${directory}: gallery card must define headline and description only`
+      `${directory}: gallery card must define headline and description only`,
     );
     return;
   }
@@ -471,7 +472,7 @@ function storyIdPluginSegment(directory) {
 async function validateImage(directory, packageRoot, relativePath, options) {
   if (!isSafeAssetPath(relativePath)) {
     findings.push(
-      `${directory}: unsafe ${options.label} path ${String(relativePath)}`
+      `${directory}: unsafe ${options.label} path ${String(relativePath)}`,
     );
     return;
   }
@@ -486,7 +487,7 @@ async function validateImage(directory, packageRoot, relativePath, options) {
   }
   if (file.size < 1 || file.size > options.maxBytes) {
     findings.push(
-      `${directory}: ${relativePath} exceeds the ${options.label} size limit`
+      `${directory}: ${relativePath} exceeds the ${options.label} size limit`,
     );
     return;
   }
@@ -499,13 +500,13 @@ async function validateImage(directory, packageRoot, relativePath, options) {
     }).metadata();
   } catch (error) {
     findings.push(
-      `${directory}: cannot decode ${relativePath} (${error.message})`
+      `${directory}: cannot decode ${relativePath} (${error.message})`,
     );
     return;
   }
   if (metadata.format !== extension) {
     findings.push(
-      `${directory}: ${relativePath} extension does not match its image content`
+      `${directory}: ${relativePath} extension does not match its image content`,
     );
   }
   if (metadata.format === "svg") {
@@ -515,7 +516,7 @@ async function validateImage(directory, packageRoot, relativePath, options) {
       const source = await readFile(sourcePath, "utf8");
       if (containsUnsafeSvg(source)) {
         findings.push(
-          `${directory}: ${relativePath} contains unsafe SVG content`
+          `${directory}: ${relativePath} contains unsafe SVG content`,
         );
       }
     }
@@ -530,7 +531,7 @@ if (findings.length) {
   process.exitCode = 1;
 } else {
   console.log(
-    `Verified ${pluginPackages.length} plugin registry metadata sources.`
+    `Verified ${registryMediaPlugins.length} plugin registry metadata sources.`,
   );
 }
 
@@ -541,7 +542,7 @@ function validateStringList(directory, label, value, options) {
     value.length > options.maxItems
   ) {
     findings.push(
-      `${directory}: ${label} must contain 1-${options.maxItems} unique values`
+      `${directory}: ${label} must contain 1-${options.maxItems} unique values`,
     );
     return;
   }

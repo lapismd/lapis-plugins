@@ -13,6 +13,12 @@ const storybookDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(storybookDir, "..");
 
 const packageAliases = [
+  [
+    "@lapis-notes/lapis-plugin-sync/components",
+    "packages/sync/src/components.ts",
+  ],
+  ["@lapis-notes/lapis-plugin-sync/styles.css", "packages/sync/src/styles.css"],
+  ["@lapis-notes/lapis-plugin-sync", "packages/sync/src/index.ts"],
   ["@lapis-notes/ai/runtimes", "packages/ai/src/lib/runtime-adapters.ts"],
   ["@lapis-notes/ai/styles.css", "packages/ai/src/lib/styles.css"],
   ["@lapis-notes/ai", "packages/ai/src/lib/index.ts"],
@@ -78,10 +84,14 @@ const linkedWorkspaceRoots = [
 ];
 
 const config: StorybookConfig = {
-  stories: pluginPackages.map(
-    (plugin) =>
-      `../stories/plugins/${plugin.directory}/**/*.stories.@(js|ts|svelte)`,
-  ),
+  stories: [
+    ...pluginPackages.map(
+      (plugin) =>
+        `../stories/plugins/${plugin.directory}/**/*.stories.@(js|ts|svelte)`,
+    ),
+    // Private UI qualification; this does not activate Sync or release selection.
+    "../stories/plugins/sync/**/*.stories.@(js|ts|svelte)",
+  ],
   addons: [
     "@storybook/addon-docs",
     "@storybook/addon-a11y",
