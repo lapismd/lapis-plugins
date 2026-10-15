@@ -18,7 +18,7 @@ const maxLogoBytes = 512 * 1024;
 const maxGalleryBytes = 5 * 1024 * 1024;
 const registryOverviewPath = "registry-content/overview.md";
 const officialAuthorAvatarUrl =
-  "https://www.gravatar.com/avatar/1df68d9ff087b0dd72fd8626056fca7f?s=128&d=404";
+  "https://gravatar.com/avatar/f7226d5f9cf07af2a6a60d3ab11413abb9d2e2eb60f2d5cce17356845a166155?size=256&d=initials";
 const packageInstallInstruction =
   /\b(?:pnpm|npm|yarn|bun)\s+(?:add|install)\b|install for static composition/i;
 const allowedKeys = new Set([

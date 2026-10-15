@@ -1,5 +1,8 @@
 # History Plugin
 
+The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
+with size 256 and initials fallback, as governed by LP-SPEC-041.
+
 Version 0.1.4 includes the responsive comparison toolbar layout. Its generated
 manifest, README installation coordinate and Changesets changelog agree on
 the independent release version.

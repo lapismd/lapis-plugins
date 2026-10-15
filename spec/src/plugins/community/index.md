@@ -1,5 +1,8 @@
 # Community Plugin
 
+The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
+with size 256 and initials fallback, as governed by LP-SPEC-041.
+
 `@lapis-notes/community` is the first-party Lapis Notes workspace integration
 for the public `CommunityApplication` from `@lapismd/lapis-community`. The
 plugin adds the registry as a Community destination while retaining the host

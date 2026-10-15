@@ -1,5 +1,8 @@
 # Lapis Sync
 
+The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
+with size 256 and initials fallback, as governed by LP-SPEC-041.
+
 Lapis Sync starts with the headless Nostr-compatible protocol foundation.
 The package remains private and parked until the Deno destination, endpoint
 security and consumer acceptance are complete. The UI may be previewed in the

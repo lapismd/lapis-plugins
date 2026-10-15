@@ -1,5 +1,8 @@
 # AI Plugin
 
+The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
+with size 256 and initials fallback, as governed by LP-SPEC-041.
+
 Version 0.1.5 includes the harness catalog refresh and vault-scoped controller
 readiness fixes. Its Markdown peer and development dependency both require
 `^0.1.6`; generated metadata and changelog notes retain those coordinates.

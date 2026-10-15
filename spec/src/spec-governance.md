@@ -1,5 +1,8 @@
 # Specification Governance
 
+The registry metadata audit enforces the manifest-owned SHA-256 Gravatar for
+`dev@lapis.md` under LP-SPEC-041, including image size and initials fallback.
+
 Lapis Sync maps `packages/sync` to `plugins/sync/index.md`. Its direct package
 checks and explicit shared-catalog stories remain separate from installation
 and release selection. The retained source inventory records the Apache-2.0
