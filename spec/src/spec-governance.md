@@ -1,5 +1,10 @@
 # Specification Governance
 
+Lapis Sync maps `packages/sync` to `plugins/sync/index.md`. Its direct package
+checks and explicit shared-catalog stories remain separate from installation
+and release selection. The retained source inventory records the Apache-2.0
+correction in the owning Nostr Sync repository before extraction.
+
 Dependency-image automation follows LP-SPEC-051: terminal PR states never
 absorb a new digest update. The executable workflow regressions cover merged,
 closed and open reviews without changing the normal required CI gates.

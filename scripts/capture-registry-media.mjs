@@ -14,7 +14,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { captureSubjectWithBrowser } from "@lapismd/storybook-addon-visual-delta/node";
 
-import { pluginPackageBySelector, pluginPackages } from "./package-catalog.mjs";
+import {
+  registryMediaPluginBySelector,
+  registryMediaPlugins,
+} from "./registry-media-catalog.mjs";
 import {
   composeRegistryMedia,
   composeRegistryProductMedia,
@@ -25,13 +28,13 @@ import {
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const options = parseOptions(process.argv.slice(2));
 const selectedPlugin = options.plugin
-  ? pluginPackageBySelector(options.plugin)
+  ? registryMediaPluginBySelector(options.plugin)
   : undefined;
 if (options.plugin && !selectedPlugin) {
   throw new Error(`Unknown plugin selector ${options.plugin}.`);
 }
 const temporaryRoot = await mkdtemp(
-  path.join(os.tmpdir(), "lapis-registry-media-")
+  path.join(os.tmpdir(), "lapis-registry-media-"),
 );
 const storybookDirectory =
   options.storybookDirectory ?? path.join(temporaryRoot, "storybook");
@@ -56,7 +59,7 @@ try {
     await captureAll(`http://127.0.0.1:${address.port}`);
   } finally {
     await new Promise((resolve, reject) =>
-      server.close((error) => (error ? reject(error) : resolve()))
+      server.close((error) => (error ? reject(error) : resolve())),
     );
   }
 } finally {
@@ -83,17 +86,17 @@ async function captureAll(baseUrl) {
       capture,
       "light",
       baseUrl,
-      storyThemeCaptures
+      storyThemeCaptures,
     );
     const darkSource = await captureStoryTheme(
       capture,
       "dark",
       baseUrl,
-      storyThemeCaptures
+      storyThemeCaptures,
     );
     if (lightSource.equals(darkSource)) {
       throw new Error(
-        `${capture.pluginId}: ${capture.storyId} produced identical light and dark captures.`
+        `${capture.pluginId}: ${capture.storyId} produced identical light and dark captures.`,
       );
     }
     const composed =
@@ -127,12 +130,12 @@ async function captureAll(baseUrl) {
         .map((value) => `- ${value}`)
         .join("\n")}\nRun pnpm registry:media:capture${
         options.plugin ? ` -- --plugin ${options.plugin}` : ""
-      }.`
+      }.`,
     );
   }
   if (options.check) {
     process.stdout.write(
-      `Verified ${captures.length} deterministic registry media items.\n`
+      `Verified ${captures.length} deterministic registry media items.\n`,
     );
   }
 }
@@ -160,10 +163,10 @@ async function captureStoryTheme(capture, theme, baseUrl, cache) {
               process.stdout.write(
                 `${options.check ? "Checking" : "Capturing"} ${
                   capture.storyId
-                } (${theme}): ${progress.label}\n`
+                } (${theme}): ${progress.label}\n`,
               );
             }
-          }
+          },
         );
         if (!result.ok) {
           throw new Error(`${capture.pluginId}: ${result.error}`);
@@ -173,11 +176,11 @@ async function captureStoryTheme(capture, theme, baseUrl, cache) {
           result.height !== REGISTRY_MEDIA_DIMENSIONS.capture.height
         ) {
           throw new Error(
-            `${capture.pluginId}: captured ${result.width}x${result.height}; expected 2400x1600.`
+            `${capture.pluginId}: captured ${result.width}x${result.height}; expected 2400x1600.`,
           );
         }
         return Buffer.from(result.pngBase64, "base64");
-      })()
+      })(),
     );
   }
   return cache.get(cacheKey);
@@ -185,21 +188,21 @@ async function captureStoryTheme(capture, theme, baseUrl, cache) {
 
 async function readCaptures() {
   const captures = [];
-  const selected = selectedPlugin ? [selectedPlugin] : pluginPackages;
+  const selected = selectedPlugin ? [selectedPlugin] : registryMediaPlugins;
   for (const plugin of selected) {
     const packageRoot = path.resolve(root, "packages", plugin.directory);
     const registryPath = path.join(packageRoot, "registry.json");
     const source = JSON.parse(await readFile(registryPath, "utf8"));
     if (!source.media?.banner?.capture?.storyId) {
       throw new Error(
-        `${plugin.directory}: banner media has no Storybook capture.`
+        `${plugin.directory}: banner media has no Storybook capture.`,
       );
     }
     for (const role of Object.keys(source.media)) {
       const item = source.media?.[role];
       if (!item?.capture?.storyId) {
         throw new Error(
-          `${plugin.directory}: ${role} media has no Storybook capture.`
+          `${plugin.directory}: ${role} media has no Storybook capture.`,
         );
       }
       captures.push(
@@ -208,13 +211,13 @@ async function readCaptures() {
           packageRoot,
           role,
           item,
-        })
+        }),
       );
     }
     for (const item of source.gallery ?? []) {
       if (!item.capture?.storyId) {
         throw new Error(
-          `${plugin.directory}: gallery item ${item.id} has no Storybook capture.`
+          `${plugin.directory}: gallery item ${item.id} has no Storybook capture.`,
         );
       }
       captures.push(
@@ -223,7 +226,7 @@ async function readCaptures() {
           packageRoot,
           role: "gallery",
           item,
-        })
+        }),
       );
     }
   }
@@ -250,9 +253,9 @@ function registryCapture({ plugin, packageRoot, role, item }) {
           packageRoot,
           item.images?.[variant]?.path,
           plugin.directory,
-          `${basePath}.${variant}.webp`
+          `${basePath}.${variant}.webp`,
         ),
-      ])
+      ]),
     ),
   };
 }
@@ -262,17 +265,17 @@ function resolveOutput(packageRoot, relativePath, directory, expectedPath) {
     typeof relativePath !== "string" ||
     relativePath !== expectedPath ||
     !/^registry-assets\/(?:gallery\/[a-z0-9][a-z0-9-]*\.|(?:banner|overview)\.)(?:preview|full|light|dark)\.webp$/.test(
-      relativePath
+      relativePath,
     )
   ) {
     throw new Error(
-      `${directory}: unsafe registry media output ${relativePath}.`
+      `${directory}: unsafe registry media output ${relativePath}.`,
     );
   }
   const outputPath = path.resolve(packageRoot, relativePath);
   if (!outputPath.startsWith(`${packageRoot}${path.sep}`)) {
     throw new Error(
-      `${directory}: unsafe registry media output ${relativePath}.`
+      `${directory}: unsafe registry media output ${relativePath}.`,
     );
   }
   return {
@@ -285,18 +288,18 @@ function validateCatalogEntry(catalog, capture) {
   const story = catalog.entries?.[capture.storyId];
   if (!story || story.type !== "story") {
     throw new Error(
-      `${capture.pluginDirectory}: Storybook story ${capture.storyId} is missing.`
+      `${capture.pluginDirectory}: Storybook story ${capture.storyId} is missing.`,
     );
   }
   if (story.title !== capture.expectedTitle) {
     throw new Error(
-      `${capture.pluginDirectory}: ${capture.storyId} belongs to ${story.title}, expected ${capture.expectedTitle}.`
+      `${capture.pluginDirectory}: ${capture.storyId} belongs to ${story.title}, expected ${capture.expectedTitle}.`,
     );
   }
   for (const tag of ["registry-media", "visual-pending"]) {
     if (!story.tags?.includes(tag)) {
       throw new Error(
-        `${capture.pluginDirectory}: ${capture.storyId} requires tag ${tag}.`
+        `${capture.pluginDirectory}: ${capture.storyId} requires tag ${tag}.`,
       );
     }
   }
@@ -316,6 +319,7 @@ function registryStoryTitle(directory) {
     slides: "Slides",
     "source-editor": "Source Editor",
     spellcheck: "Spell Check",
+    sync: "Sync",
     wordcount: "Word Count",
   };
   return `Plugins/${labels[directory]}/Registry Screenshots`;
@@ -384,7 +388,9 @@ function run(command, args) {
     child.once("exit", (code) =>
       code === 0
         ? resolve()
-        : reject(new Error(`${command} ${args.join(" ")} exited with ${code}.`))
+        : reject(
+            new Error(`${command} ${args.join(" ")} exited with ${code}.`),
+          ),
     );
   });
 }

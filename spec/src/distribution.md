@@ -1,5 +1,10 @@
 # Distribution and Releases
 
+Lapis Sync remains private and parked under LP-SPEC-049. Its explicit shared
+Storybook entry and media-only registry catalog permit UI review without
+installation, publication or registry dispatch. Direct package checks qualify
+its engine and UI; Deno runtime integration remains pending.
+
 The shared CI toolchain is `lapis-ci:2026.10.14.1`, pinned by immutable digest.
 Its checksum-verified GitHub CLI 2.102.0 supports package release records and
 registry dispatch. The lockfile-specific dependency image must be rebuilt over

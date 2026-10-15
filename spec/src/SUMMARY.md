@@ -24,5 +24,6 @@
   - [Plugins / Slides](plugins/slides/index.md)
   - [Plugins / Source Editor](plugins/source-editor/index.md)
   - [Plugins / Spell Check](plugins/spellcheck/index.md)
+  - [Plugins / Sync](plugins/sync/index.md)
   - [Plugins / Word Count](plugins/wordcount/index.md)
 - [Verification](verification.md)

@@ -17,6 +17,7 @@ const packages = [
   "slides",
   "source-editor",
   "spellcheck",
+  "sync",
   "wordcount",
 ];
 
@@ -71,7 +72,8 @@ export default defineConfig(tableRequirements(), {
     },
     specFirst: {
       mode: "mapped",
-      canonicalPattern: "^spec/src/(?!SUMMARY\\.md$|verification\\.md$).+\\.md$",
+      canonicalPattern:
+        "^spec/src/(?!SUMMARY\\.md$|verification\\.md$).+\\.md$",
       ignore: [
         "(^|/)node_modules/",
         "(^|/)(?:dist|build|storybook-static|\\.svelte-kit|\\.turbo|\\.release)/",
@@ -94,7 +96,8 @@ export default defineConfig(tableRequirements(), {
           chapters: ["spec/src/distribution.md", "spec/src/spec-governance.md"],
         },
         {
-          pattern: "^(?:package\\.json$|pnpm-|turbo\\.json$|svelte\\.config\\.js$|vitest\\.config\\.ts$|\\.storybook/|\\.changeset/|\\.github/|scripts/|README\\.md$|RELEASING\\.md$|AGENTS\\.md$|spec-validator\\.config\\.mjs$)",
+          pattern:
+            "^(?:package\\.json$|pnpm-|turbo\\.json$|svelte\\.config\\.js$|vitest\\.config\\.ts$|\\.storybook/|\\.changeset/|\\.github/|scripts/|README\\.md$|RELEASING\\.md$|AGENTS\\.md$|spec-validator\\.config\\.mjs$)",
           chapters: ["spec/src/distribution.md", "spec/src/spec-governance.md"],
         },
       ],

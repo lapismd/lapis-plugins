@@ -1,33 +1,46 @@
 # Lapis Sync implementation plan
 
-Status: proposed implementation plan, 12 October 2026. This record plans work;
-it does not register a plugin, change runtime behavior, or authorize a release.
+Status: proposed implementation plan, updated 13 October 2026. This record
+plans work; it does not register a plugin, change runtime behavior, or authorize
+a release.
 
 Build **Lapis Sync** in this repository, with **Lapis Server** as its first
 destination provider, implemented by the Deno server. Preserve the change,
 history, comparison, merge, and status experience from `lapis-plugin-nostr-sync`.
 Local devices and the server each retain an editable vault and synchronize
-through shared revision and reconciliation rules. Nostr and S3 follow later.
+through the existing Nostr sync protocol and reconciliation rules. Deno acts
+as a minimal sync relay and encrypted object destination through its existing
+authenticated APIs. No external relay or Blossom service is required.
+End-to-end encryption is mandatory for every provider, with Deno explicitly
+enrolled as an authorized endpoint. External Nostr/Blossom and S3 providers
+follow later.
 
 ## Product decisions
 
-| Decision                 | Planned choice                                                                     |
-| ------------------------ | ---------------------------------------------------------------------------------- |
-| Display name             | Lapis Sync                                                                         |
-| Package                  | `@lapis-notes/lapis-plugin-sync`                                                   |
-| Repository and directory | `lapis-plugins`, `packages/sync`                                                   |
-| Runtime identity         | New plugin ID `sync`; retain existing `nostr-sync` identity                        |
-| First provider           | Provider ID `lapis-server`, displayed as Lapis Server                              |
-| First server mode        | Trusted participant with a readable managed vault                                  |
-| First topology           | One configured destination per local vault; multiple devices may connect           |
-| Installation             | Optional plugin, disabled by default; host owns installation and profiles          |
-| UI foundation            | Existing Nostr Sync composition and interactions, using public Design Core exports |
-| History model            | Immutable snapshots and revision ancestry, device tips, three-way reconciliation   |
-| Later providers          | Nostr with Blossom, then S3-compatible object storage                              |
+| Decision                 | Planned choice                                                                            |
+| ------------------------ | ----------------------------------------------------------------------------------------- |
+| Display name             | Lapis Sync                                                                                |
+| Package                  | `@lapis-notes/lapis-plugin-sync`                                                          |
+| Repository and directory | `lapis-plugins`, `packages/sync`                                                          |
+| Runtime identity         | New plugin ID `sync`; retain existing `nostr-sync` identity                               |
+| First provider           | Provider ID `lapis-server`, displayed as Lapis Server                                     |
+| Protocol                 | Existing signed Nostr events, attestation envelopes, encrypted objects and query filters  |
+| Deno transport           | Existing authenticated API and tracked subscriptions; no Nostr WebSocket endpoint in v1   |
+| Signing identities       | Independent device keys plus the existing shared vault Sync Identity for outer signatures |
+| First server mode        | Trusted participant with a readable managed vault                                         |
+| Encryption               | Mandatory end-to-end encryption; Deno is explicitly enrolled as an authorized endpoint    |
+| First topology           | One configured destination per local vault; multiple devices may connect                  |
+| Installation             | Optional plugin, disabled by default; host owns installation and profiles                 |
+| UI foundation            | Existing Nostr Sync composition and interactions, using public Design Core exports        |
+| History model            | Immutable snapshots and revision ancestry, device tips, three-way reconciliation          |
+| Later providers          | Nostr with Blossom, then S3-compatible object storage                                     |
 
-The server trust mode and single-destination scope are proposed defaults for
-the first implementation. Adding Lapis Sync does not rename, overwrite, or
-silently migrate Nostr Sync. Registry namespace availability and view/command
+The server trust mode, authenticated Deno API and current shared outer identity
+are confirmed choices. Deno is an authorized endpoint that can decrypt and edit
+the vault. End-to-end encryption has no plaintext mode or
+automatic downgrade. The first implementation uses one destination per vault.
+Adding Lapis Sync does not rename, overwrite, or silently migrate Nostr Sync.
+Registry namespace availability and view/command
 collisions are checked before scaffolding.
 
 ## Scope and completion criteria
@@ -56,10 +69,10 @@ server-mode Web client remains an online client of the server vault.
 
 The Nostr Sync package supplies the journal, incremental object graph, stable
 file bindings, revision DAG, merge/recovery models, history UI, and autosave
-policy. Its transport interface and persisted revisions still expose Nostr
-events, and its settings and host security capabilities contain Nostr-specific
-identity, enrollment, and signing concepts. Extraction needs explicit contracts
-and compatibility tests.
+policy. Its Nostr event formats, cryptographic design, identity, enrollment and
+signing concepts remain the shared protocol. Extract the destination adapter
+boundary without replacing the revision format or event identity. Compatibility
+fixtures must cover the existing signed records and encrypted objects.
 
 The Deno server supplies managed vaults, account roles, serialized managed
 mutations, conditional replacement with ETags, direct byte routes, and tracked
@@ -70,16 +83,16 @@ establish offline convergence or crash-safe multi-file application.
 
 ## Ownership and package boundaries
 
-| Owner                                     | Planned responsibilities                                                                                                                              |
-| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `lapis-plugins/packages/sync`             | Plugin lifecycle, sync engine, neutral revision/object codecs, provider contract, Deno client provider, history/merge UI, settings and plugin stories |
-| Plugin `./engine` export                  | Headless engine and public types usable by a server; no Svelte, DOM, ambient App, or UI imports                                                       |
-| `lapis-notes/packages/api`                | Generic file identity, guarded I/O, origin, durable sync-storage and secret capabilities; public protocol contracts where host-owned                  |
-| `lapis-notes/packages/server-deno`        | Authenticated sync routes, vault authorization, durable server storage, server participant, managed-file integration and lifecycle                    |
-| `lapis-notes/packages/deno-host-services` | Reusable Deno filesystem/watch primitives where needed                                                                                                |
-| `lapis-notes` desktop/Web hosts           | Credential custody, enrollment integration, installation and consumer acceptance                                                                      |
-| `design-core`                             | Generic UI defects or missing public primitives discovered during reuse                                                                               |
-| `lapis-plugin-nostr-sync`                 | Existing provider behavior and compatibility until a separately planned migration                                                                     |
+| Owner                                     | Planned responsibilities                                                                                                                                     |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `lapis-plugins/packages/sync`             | Plugin lifecycle, sync engine, existing Nostr revision/object codecs, provider contract, Deno client provider, history/merge UI, settings and plugin stories |
+| Plugin `./engine` export                  | Headless engine and public types usable by a server; no Svelte, DOM, ambient App, or UI imports                                                              |
+| `lapis-notes/packages/api`                | Generic file identity, guarded I/O, origin, durable sync-storage and secret capabilities; public protocol contracts where host-owned                         |
+| `lapis-notes/packages/server-deno`        | Authenticated sync routes, vault authorization, durable server storage, server participant, managed-file integration and lifecycle                           |
+| `lapis-notes/packages/deno-host-services` | Reusable Deno filesystem/watch primitives where needed                                                                                                       |
+| `lapis-notes` desktop/Web hosts           | Credential custody, enrollment integration, installation and consumer acceptance                                                                             |
+| `design-core`                             | Generic UI defects or missing public primitives discovered during reuse                                                                                      |
+| `lapis-plugin-nostr-sync`                 | Existing provider behavior and compatibility until a separately planned migration                                                                            |
 
 Start with one plugin package and a deliberately headless subpath export. Prove
 that the server can import that export without executing plugin/UI modules. A
@@ -91,11 +104,12 @@ documented temporary packed consumer for development qualification. Missing
 host facilities are implemented upstream and consumed through public contracts.
 Do not copy host persistence into the plugin or conceal gaps with wrappers.
 
-Before transferring source, record its ownership, attribution and license. The
-Nostr Sync package currently declares AGPL-3.0-or-later while this workspace
-declares Apache-2.0. Establish a compatible package/extraction arrangement and
-preserve required notices; do not silently relabel copied code. This is a
-source-transfer prerequisite, not a reason to redesign the requested UI.
+The user requested Apache-2.0 for Nostr Sync and the new Lapis Sync package.
+Source commit `665cf7f4` corrects the owning Nostr Sync package declaration and
+adds complete Apache license text before extraction. Lapis Sync retains
+Apache-2.0, the source inventory and required attribution in `NOTICE.md`, and
+third-party license notices in bundled output. This resolves the previous
+source-transfer licensing prerequisite.
 
 ## Common synchronization model
 
@@ -104,13 +118,20 @@ path, server vault ID, provider instance ID, and endpoint URL. Persist explicit
 bindings between those identities. Files retain protocol IDs across renames;
 each host maps those IDs to its local stable file identities.
 
-A revision contains a versioned canonical payload with its vault ID, immutable
-revision ID, parent IDs, object-tree root, author/device identity, checkpoint
-reason, message, and applicable encryption and authority versions. Provider
-envelopes and locators do not determine the logical revision ID. Specify the
-canonical encoding, hash and signature rules before implementing transports.
-Define the hash input without a self-referential ID field, bind signatures to
-that canonical content, and keep provider transport IDs as separate locators.
+Preserve the existing `SignedNostrEvent` fields: `id`, `pubkey`, `created_at`,
+`kind`, `tags`, `content` and `sig`. Keep the current canonical encoding,
+signatures, event IDs, encrypted revision/HEAD payloads and object formats.
+Revision parents retain their `eventId` and `archiveHash`; HEADs retain their
+revision event ID and archive hash. Do not introduce a separate logical revision
+ID or rewrite events for a destination. Providers store and return original
+signed records without reconstructing or re-signing them.
+
+Current revisions and HEADs contain a device-signed event inside the
+`lapis-sync-device-attestation` envelope, signed externally by the vault Sync
+Identity. Membership uses the corresponding `lapis-sync-root-attestation`
+envelope with an owner-signed inner event. Preserve envelope schema 1, revision
+payload schema 2 and protocol version 3. Keep existing legacy readers, including
+direct device-authored events, within their existing authority/cutoff rules.
 
 Preserve independent participant tips. Reconciliation removes ancestor tips,
 fast-forwards when safe, and merges incomparable histories from their common
@@ -125,57 +146,164 @@ line merging beyond the verified source behavior. Keep the single merge-base
 restriction and sequential resolution of more than two tips explicit.
 
 Local checkpoint creation is independent of network availability. Flush editor
-state, persist all referenced objects and the revision locally, then enqueue
-publication. The outbox survives process termination. Retain the 20-second
-quiet period and five-minute maximum checkpoint attempt, with single-flight
-execution and bounded retry. Offline operation must still produce local history.
+state, encrypt and persist all referenced objects and the signed revision
+locally, then enqueue publication. Retries reuse the persisted encrypted records
+and immutable IDs rather than encrypting them again. The outbox survives
+process termination. Retain the 20-second quiet period and five-minute maximum
+checkpoint attempt, with single-flight execution and bounded retry. Offline
+operation must still produce local history.
 
-The engine distinguishes local durability, remote acceptance, server working-copy
-application, and pending conflicts. A successful upload does not imply the
-server has finished applying the revision, and a local checkpoint does not imply
-remote replication. Reflect these distinctions in existing status surfaces.
+The engine distinguishes local durability, remote staging, validated acceptance,
+server working-copy application, and pending conflicts. A successful upload
+does not imply the server has finished applying the revision, and a local
+checkpoint does not imply remote replication. Reflect these distinctions in
+existing status surfaces.
 
 ## Provider contract
 
-| Capability             | Required behavior                                                                                |
-| ---------------------- | ------------------------------------------------------------------------------------------------ |
-| Describe connection    | Protocol version, remote identity, authorization and supported capabilities                      |
-| Store/read objects     | Immutable content-addressed bytes, integrity checks, bounded streaming and idempotent retry      |
-| Publish/read revisions | Immutable canonical records with stable IDs and ancestry retrieval                               |
-| Publish/discover tips  | Authenticated participant records; prevent accepted tip regression or silent lost updates        |
-| Reconcile              | Bounded discovery with an explicit reset/snapshot fallback                                       |
-| Notify                 | Optional live hints; polling and durable reconciliation remain sufficient                        |
-| Report status          | Authentication, authorization, connectivity, quota and recoverable failures with stable meanings |
-| Dispose                | Cancel requests and release subscriptions without losing pending work                            |
+| Capability            | Required behavior                                                                                 |
+| --------------------- | ------------------------------------------------------------------------------------------------- |
+| Describe connection   | Protocol version, remote identity, authorization and supported capabilities                       |
+| Store/read objects    | Immutable content-addressed bytes, integrity checks, bounded streaming and idempotent retry       |
+| Publish/read events   | Original signed Nostr records with stable event IDs, attestation envelopes and ancestry retrieval |
+| Publish/discover tips | Authenticated participant records; prevent accepted tip regression or silent lost updates         |
+| Query events          | Existing Nostr filters with bounded paging outside signed records and filters                     |
+| Reconcile             | Bounded discovery with an explicit reset/snapshot fallback                                        |
+| Notify                | Optional live hints; polling and durable reconciliation remain sufficient                         |
+| Report status         | Authentication, authorization, connectivity, quota and recoverable failures with stable meanings  |
+| Dispose               | Cancel requests and release subscriptions without losing pending work                             |
 
-Define a small mandatory contract plus advertised optional capabilities. The
-engine must not branch on NIP numbers, event kinds, S3 paths, or tRPC types.
+Start from the current `RevisionTransport` and `BlobStore` capabilities. Keep
+the shared protocol Nostr-specific; it owns event kinds, tags, envelopes and
+cryptographic validation. Destination adapters own HTTP, subscriptions and
+storage details. Keep S3 paths and Deno/tRPC types outside the shared engine.
+Add bounded paging, resumable discovery, membership-history retrieval and
+staged/accepted/applied status through adapter request/response metadata,
+without modifying signed records. Advertise actual capabilities rather than
+claiming general relay or unsupported NIP compliance.
+
+Encryption is mandatory at the shared engine/host boundary before provider
+calls. Provider object and revision operations carry authenticated encrypted
+records; encryption, decryption, signing, enrollment, rotation and recovery
+remain public host capabilities. Providers never receive raw private keys.
 Do not require every provider to offer a server-side atomic transaction across
 objects, revisions and tips. Preserve safety through immutable staging and
 publishing a discoverable tip only after its dependencies are durable.
 
-The Deno provider uses conditional tip updates and idempotency keys. Future
-providers must prove equivalent convergence and replay behavior through a shared
-conformance suite. Provider registration is explicit application/plugin wiring
-for this release, without dynamically loading arbitrary provider code.
+Event IDs and ciphertext hashes provide publication idempotency. Deno guards
+accepted tip and merge updates; request preconditions live outside signed
+events. Future providers must prove equivalent convergence and replay behavior
+through a shared conformance suite. Provider registration is explicit
+application/plugin wiring for this release, without dynamically loading
+arbitrary provider code.
+
+### Supported events and filters
+
+| Kind    | Purpose                     | Deno behavior                                                                    |
+| ------- | --------------------------- | -------------------------------------------------------------------------------- |
+| `78`    | Immutable revisions         | Persist and retrieve by event ID and vault filters                               |
+| `30078` | Per-device HEADs            | Maintain current replaceable records and retain historical events                |
+| `30079` | Owner-authorized membership | Maintain current membership and its historical chain                             |
+| `24134` | Pairing messages            | Temporary session-scoped delivery with expiration, excluded from durable history |
+
+Preserve `lapis-sync-v1:<vaultId>` scope tags, current per-device HEAD `d`
+addresses, the common HEAD `v` tag, membership addresses and pairing session
+tags. Discover HEADs through the union of current `#v` and legacy `#d` queries.
+File-index tags remain disabled by default.
+
+Keep `NostrEventFilter` unchanged for v1: `ids`, `authors`, `kinds`, `#d`, `#p`,
+`#v` and inclusive `since`. Fields combine with AND, values within a field with
+OR, and multiple filters with OR; deduplicate the union by event ID. IDs and
+authors match exactly, without prefix expansion. Match the first `d` tag and
+any matching `p` or `v` tag. An explicitly empty value list matches nothing.
+`ids` and `authors` refer to the outer event; inner device identity determines
+authority. A query filter never expands the authenticated vault scope.
+
+Paging and resume cursors belong to the Deno request/response envelope, outside
+the filter and signed event. Unsupported filters fail explicitly. Full-text
+search, arbitrary tag queries, additional time bounds and general relay
+extensions are outside v1. Reconciliation uses bounded ordinary queries and
+does not advertise or report NIP-77 negentropy support.
+
+Use one replaceable-event comparator in extracted readers and adapters: newest
+`created_at`, then lowest lexical event ID on a tie, within the same kind,
+outer author and `d` address. Preserve superseded history separately. Resolve
+the current source's inconsistent membership tie ordering through conformance
+fixtures rather than copying it. Timestamp ordering must not decide between
+independent device tips or replace ancestry-based reconciliation.
 
 ## Deno server design
 
-The Deno server owns a durable revision/object repository and a headless
+The Deno server owns a durable encrypted revision/object repository and a headless
 participant for each connected managed vault. It runs independently of browser
 tabs, has a distinct device identity, and records the revision currently applied
 to the server working copy. Idle shutdown persists work and startup resumes it.
+Keep the encrypted repository separate from the readable managed working vault
+and generated indexes. The server participant decrypts, reconciles and applies
+through host capabilities; its storage-provider operations still receive only
+encrypted records and scoped requests.
 
 Use the existing typed control plane for bounded metadata and direct Fetch
 routes for streamed objects. Add protocol negotiation, repository binding,
-discovery, revision publication, conditional tip publication, apply status and
-subscription operations. Every operation checks account membership and vault
-scope. The headless engine is shared with the client; HTTP and storage policy
-remain server-owned.
+event publication/query, membership-history retrieval, guarded tip publication,
+apply status and subscription operations. This is event/filter compatibility
+over the Deno API; implementing Nostr WebSocket `EVENT`/`REQ`/`CLOSE`, NIP-42
+or Blossom HTTP endpoints is not required. Every operation checks account
+authorization and vault or enrollment-session scope. The headless engine is
+shared with the client; HTTP and storage policy remain server-owned.
 
-1. A client stages immutable objects and publishes its revision.
-2. The server validates scope, authority, dependencies and publication guards,
-   then durably accepts the participant tip and pending apply work.
+### Durable event and object storage
+
+Store original signed records in a dedicated durable Turso/SQLite sync database,
+separate from disposable application/search indexes. Index authenticated vault
+scope, event ID, outer author, kind, timestamp, supported tags and a durable
+arrival sequence. Keep current replaceable-event indexes alongside immutable
+event history. Normal replaceable queries return current records; explicit
+history retrieval returns superseded records required for recovery.
+
+Index attested membership root-event IDs separately so predecessor references
+can retrieve original outer envelopes without changing `ids` filter semantics.
+Keep the membership chain needed to ingest consecutive generations and validate
+authority. Retain revisions, superseded HEADs and membership events
+conservatively; replacing a current record does not delete historical evidence.
+
+Replace Blossom's storage role with authenticated, vault-scoped encrypted
+object storage addressed by SHA-256 of ciphertext. Provide existence checks,
+idempotent uploads and streamed downloads, verifying size and hash before an
+upload is durably acknowledged. Object bytes remain in dedicated sync storage,
+outside readable content and disposable indexes. No external Blossom service
+is needed. Object hashes alone do not grant cross-vault read access.
+
+### Publication validation and catch-up
+
+The event service checks supported shape/kind, event ID, signatures, matching
+envelope metadata, scope and account access. Verify both signatures for wrapped
+events and the direct signature for pairing or supported legacy events. The
+enrolled participant checks encrypted membership generations, revocation cutoffs,
+ancestry and referenced durable object dependencies. The storage layer cannot
+infer encrypted references from public tags. Stage records awaiting participant
+validation outside accepted queries and feeds; they cannot advance accepted
+HEADs. Persist validation work across locked keys and restarts, and report
+staged, accepted and applied states separately.
+
+Commit accepted events and their durable arrival records before acknowledging
+acceptance or notifying subscribers. Repeated event IDs are idempotent and
+must not manufacture another revision or arrival. Publish immutable objects
+and revisions before advancing a discoverable HEAD.
+
+Query pages use a stable snapshot boundary. Catch-up uses durable arrival
+sequence, not an event timestamp watermark, so a late event with an older
+`created_at` is still delivered. Tie snapshot retrieval to subscription resume
+without a gap, deduplicate retries, and recheck authorization when access
+changes. Invalid or unavailable cursors require bounded full reconciliation.
+The existing in-memory event hub may wake clients, but it is not the sync log.
+
+### Server participant and working vault
+
+1. A client stages immutable encrypted objects and publishes its signed,
+   encrypted revision.
+2. The event service and enrolled participant perform their respective checks,
+   then durably accept the participant tip and pending apply work.
 3. The server participant compares that history with its own captured changes.
 4. Compatible updates apply through a recoverable plan; divergence is preserved
    and either resolved deterministically or exposed as a merge requirement.
@@ -185,6 +313,8 @@ Managed Web/API writes enter the same per-vault capture/serialization boundary.
 Capture server changes before applying an incoming revision so outstanding
 server edits retain their ancestry. Imported revisions retain their identity;
 only actual server-authored changes produce a new server revision.
+Encrypt and sign those changes before publication, using the same mandatory
+format and host capabilities as local devices.
 Record the authenticated user or service responsible for managed edits as
 provenance without treating every browser tab as an independent sync device.
 
@@ -216,17 +346,71 @@ and host-owned keys; a database rebuild cannot erase unpublished user history.
 Initially retain history conservatively. Garbage collection needs a later,
 explicit policy for offline devices and reachable revisions.
 
+Event-store queries search public routing metadata only. Filename and content
+search use the authorized server's separate decrypted working-vault index.
+Rebuilding that index must not remove event history, encrypted objects or
+unpublished work.
+
+## Mandatory end-to-end encryption
+
+Every provider uses the common encrypted object format. There is no plaintext
+sync mode, optional-encryption setting, or automatic downgrade. Reuse the
+existing host cryptographic foundation: XChaCha20-Poly1305 authenticated
+encryption with fresh random nonces, HKDF-SHA-256 purpose separation, and signed
+revisions. Bind authenticated records to the intended vault, purpose, version
+and encryption epoch; verify them before materialization or application.
+
+Keep NIP-44 for pairwise key envelopes and pairing. It does not replace the
+existing object cipher suite. Preserve encrypted object bytes, hashes and
+cryptographic compatibility vectors across providers.
+
+Encrypt file chunks, file and directory manifests, paths, revision messages,
+history payloads and private tip payloads before provider transport or remote
+storage. Allow only the minimum routing and authorization metadata in public
+envelopes: opaque vault/object identifiers, outer and attested public identities,
+event kinds, tags, timestamps, protocol versions and required transport metadata.
+The outer attestation envelope remains structured JSON around an encrypted
+inner payload; do not claim the entire outer `content` field is ciphertext.
+Document visible object sizes and traffic timing; encryption does not conceal
+those observations.
+
+Production Deno connections also require HTTPS. Reject unsupported
+cryptographic versions, invalid signatures, cross-vault substitutions,
+corrupted ciphertext and authentication failures without plaintext fallback.
+Retain Nostr cryptographic compatibility vectors without silently migrating
+existing Nostr Sync vaults.
+
 ## Authentication and content access
 
-Lapis Server is a trusted participant: it can read the managed vault and needs
-host-owned access to any content keys required by the common object format.
-Account authorization, device identity, and content-key access are separate
-contracts. Login credentials never become vault encryption keys.
+Lapis Server is an explicitly enrolled, authorized endpoint: it can decrypt and
+edit the managed vault. End-to-end encryption protects sync data between
+authorized endpoints and in the remote object repository; it does not hide
+content from that enrolled server. Readable working files and generated
+indexes are endpoint data and are not claimed to be encrypted by this protocol.
+The existing server-mode Web session accesses that trusted server over HTTPS;
+it is not a separate key-holding sync device solely because it edits a file.
 
-Prefer the common encrypted object format with explicit server enrollment so
-later storage providers can use the same objects. Document what the server can
-read and retain. Nostr/S3 storage providers can remain opaque stores; enrolling
-a readable server expands the vault's trust boundary.
+Owner-authorized enrollment binds the server device identity to the intended
+vault and transfers key material through the authenticated, encrypted host
+enrollment mechanism. Enroll the server as a distinct member device with the
+keys needed to read and publish, without automatically granting owner or
+recovery authority. Account login alone never transfers vault keys.
+
+Each endpoint generates and retains its own device signing key. Preserve the
+additional shared vault Sync Identity key that signs outer envelopes; keeping
+device keys separate does not make that transport identity independent per
+device. Host enrollment delivers the Sync Identity and vault epoch keys using
+the existing encrypted transfer and per-device NIP-44 envelopes. Raw private
+keys never enter plugin or provider memory. Owner and recovery keys remain with
+their respective authorities.
+
+Keep account credentials, transport credentials, device signing keys and vault
+encryption keys separate. Login credentials never become vault encryption
+keys. Private material remains in protected host custody, with server keys
+wrapped at rest using a separately protected host wrapping secret. Only the
+authorized host participant invokes decryption; provider APIs do not expose raw
+keys. Future Nostr and S3 storage providers remain opaque stores unless
+independently enrolled as authorized endpoints.
 
 Define desktop and locally backed Web authentication deliberately. The existing
 same-origin cookie/CSRF flow is not automatically a cross-origin sync login.
@@ -234,10 +418,29 @@ Use host-mediated enrollment and scoped, revocable credentials; preserve the
 existing server browser session protections. Keep secrets out of plugin data,
 vault files, URLs, logs and generated state. Hosts own durable key custody.
 
+Pairing kind `24134` uses temporary authenticated enrollment sessions that are
+scoped to the intended vault and session, expire, and grant only pairing
+delivery. A joining device can complete enrollment before acquiring general
+vault membership. General event/object access requires established vault
+authorization; pairing messages do not become durable sync history.
+
 Map viewer/editor/owner roles to read, publication and administrative operations.
 Recheck authorization for publication and subscription lifetime; possession of
 a device signature alone does not grant account membership. Revocation blocks
-new operations without claiming to erase already obtained content.
+new publication by the revoked participant and rotates to a fresh random
+encryption epoch key distributed only to remaining authorized endpoints.
+Validate the attested device and its membership generation even when a revoked
+device retains a valid shared outer signing key. A valid Sync Identity signature
+alone never grants publication authority. Preserve root-authorized transport
+identity rotation and its historical generation/cutoff bounds.
+Historical keys remain available where needed for history and restore.
+Revocation cannot erase previously obtained plaintext or historical keys;
+reused historical objects retain their original epoch and protection limits.
+
+Recovery uses owner-controlled encrypted bundles. Account password reset does
+not grant decryption access. Locked or unavailable keys pause operations that
+require those keys and preserve pending work; neither lost keys nor a failed
+unlock enables plaintext recovery, publication, or a silent vault reset.
 
 ## Connection and recovery behavior
 
@@ -284,10 +487,16 @@ adapt only provider-specific setup, identity and connection details.
 | Copyable identifiers | Existing shortened display/full-value copying through CopyableValue                                                                     |
 
 Deno setup displays server address, account/access state and managed vault.
-Do not expose Nostr npub registration, relay/Blossom configuration or transport
-key rotation controls for Deno. Preserve the enrollment/recovery placement and
-interaction patterns while implementing the provider's actual authorization
+Do not require external npub registration or relay/Blossom configuration for
+Deno. Preserve the enrollment/recovery placement and interaction patterns while
+implementing the provider's actual authorization
 flow; do not render nonfunctional QR or camera controls to imitate a capability.
+Within the same settings and status surfaces, cover explicit server enrollment,
+locked/unavailable keys, content-key rotation and encrypted recovery. Explain
+that the enrolled server can read content. Mandatory encryption has no toggle;
+content-key rotation is distinct from shared Sync Identity rotation. Existing
+owner identity actions use Deno authorization preflight rather than requiring
+external relay or Blossom probes.
 
 Use proposed view IDs `sync`, `sync-history`, `sync-file-history`, and internal
 `sync-compare`, subject to collision checks. Qualify titles where necessary so
@@ -303,14 +512,14 @@ baseline update or excuse functional failures.
 
 ## Delivery sequence
 
-| Slice                                    | Deliverable                                                                                                                                                                   | Exit evidence                                                                                                                |
-| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| 1. Contracts and source transfer         | Resolve naming/license, record source inventory, define canonical plugin/host/server requirements, provider and revision codecs, inclusion policy and auth/storage boundaries | Reviewed contracts, planned verification rows, compatibility vectors and public API ownership map                            |
-| 2. Shared engine and local durability    | Headless engine export, local immutable store/outbox, checkpoint/history/merge models, memory provider                                                                        | Offline history survives restart; deterministic merge/restore and provider conformance tests pass                            |
-| 3. Deno durable destination              | Authorized streaming object/revision routes, discovery, guarded tips, durable publication and status                                                                          | Real server accepts retry/restart/fault scenarios without lost or duplicate logical revisions                                |
-| 4. Server participant and reconciliation | Capture managed/external edits, apply journal, origin suppression, server identity and recovery                                                                               | Server edits propagate with no browser open; concurrent local/server changes and interrupted applies preserve both histories |
-| 5. Plugin and retained UI                | Enrollment/settings, connection lifecycle, existing Sync/History/File History/Compare/Merge/status composition                                                                | Root Storybook interaction/axe and six-placement coverage; real two-device shell acceptance                                  |
-| 6. Consumer and release qualification    | Desktop/server Web flows, supported local Web flow, portable dependencies, package/archive outputs                                                                            | Cold native and real Deno/Web acceptance, frozen registry-only installs, package and release verification                    |
+| Slice                                    | Deliverable                                                                                                                                                        | Exit evidence                                                                                                                |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| 1. Contracts and source transfer         | Resolve naming/license, record source inventory, specify retained Nostr protocol/fixtures, provider APIs, inclusion policy and host/server auth/storage boundaries | Reviewed contracts, event/encryption compatibility vectors, filter semantics and public API ownership map                    |
+| 2. Shared engine and local durability    | Headless engine export, existing Nostr codecs, encrypted local store/outbox, checkpoint/history/merge models, memory provider                                      | Offline history survives restart; IDs/ciphertext remain stable; merge/restore and provider conformance pass                  |
+| 3. Deno durable destination              | Durable event database, encrypted object routes, query/filter indexes, membership history, snapshot paging, resumable subscriptions and guarded publication        | Real server passes filter/ordering, enrollment, retry/restart and catch-up fault scenarios                                   |
+| 4. Server participant and reconciliation | Capture managed/external edits, apply journal, origin suppression, server identity and recovery                                                                    | Server edits propagate with no browser open; concurrent local/server changes and interrupted applies preserve both histories |
+| 5. Plugin and retained UI                | Enrollment/settings, connection lifecycle, existing Sync/History/File History/Compare/Merge/status composition                                                     | Root Storybook interaction/axe and six-placement coverage; real two-device shell acceptance                                  |
+| 6. Consumer and release qualification    | Desktop/server Web flows, supported local Web flow, portable dependencies, package/archive outputs                                                                 | Cold native and real Deno/Web acceptance, frozen registry-only installs, package and release verification                    |
 
 Each slice updates its canonical specification before protected implementation,
 runs the exact affected regression first, and commits separately in each owning
@@ -318,6 +527,12 @@ repository after required checks. Add `packages/sync` to repository metadata,
 specification mapping and release/catalog tooling as part of scaffolding, not
 this planning change. Host capabilities ship before plugin integration that
 depends on them. Source publication remains separate from approved releases.
+The first contracts slice makes encryption mandatory in plugin, host and server
+requirements. Shared-engine qualification includes cryptographic compatibility
+vectors, unchanged event/envelope fixtures and encrypted offline storage.
+Deno qualification verifies filters, durable catch-up, enrollment, wrapped key
+custody and encrypted publication in both directions. UI and final
+consumer qualification include locked-key, rotation and recovery states.
 
 ## Acceptance matrix
 
@@ -340,6 +555,45 @@ depends on them. Source publication remains separate from approved releases.
 | Plugin disable/unload/re-enable         | Bounded flush attempt, disposed resources and resumed durable work                                             |
 | Legacy plugin coexistence               | Exclusive apply ownership prevents simultaneous sync writers; no implicit migration                            |
 
+Protocol and Deno storage acceptance add the following blocking scenarios.
+Conformance fixtures define intended behavior; the current memory adapter's
+ordering and subscription shortcuts are not an authority for production behavior.
+
+| Protocol/storage scenario                   | Required result                                                                                                                             |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Existing event and object fixtures          | Round-trip preserves event IDs, signatures, envelopes, encrypted payloads, ancestry references and ciphertext hashes                        |
+| Supported and combined filters              | Every supported field, AND/OR combination, empty array, inclusive timestamp boundary and union deduplication matches the specified contract |
+| Outer author and legacy HEAD discovery      | Author/ID filters match outer records; current and legacy HEAD queries resolve the intended independent tips                                |
+| Unsupported query feature                   | Explicit rejection; no silent widening or claim of full relay/NIP-77 support                                                                |
+| Replaceable ordering and history            | Same-address timestamp ties use the lowest event ID; superseded records remain retrievable without replacing independent device tips        |
+| Membership-chain catch-up                   | An offline device retrieves each missing generation through attested predecessor IDs and validates original signed envelopes                |
+| Duplicate publication and lost response     | One immutable record and accepted arrival; retry reports current status without another revision                                            |
+| Late arrival and concurrent paging          | Snapshot pages and arrival cursors avoid omissions even when old-timestamp events arrive during retrieval                                   |
+| Subscription gap, restart or expired cursor | Durable replay or explicit bounded reconciliation restores history without inferred deletions                                               |
+| Locked participant or missing dependency    | Staged records survive restart but remain outside accepted queries/feeds and cannot advance a HEAD                                          |
+| Pairing expiry and permission changes       | Temporary session access cannot read general history; expiry/revocation terminates unauthorized delivery                                    |
+| Cross-vault event or object access          | Filters, event IDs and ciphertext hashes cannot bypass vault authorization                                                                  |
+| Rebuilt application/search index            | Durable events, objects, membership history and pending work remain intact                                                                  |
+
+Encryption adds the following blocking acceptance cases to every applicable
+provider and consumer lane. Inspect provider requests before TLS encryption,
+the encrypted object repository and provider logs, separately from authorized
+endpoint working files and indexes.
+
+| Encryption scenario                      | Required result                                                                                                                             |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Known plaintext fixture                  | File content, filenames and revision messages are absent from provider requests, encrypted storage and provider logs                        |
+| Authorized and unenrolled endpoints      | Enrolled clients and Deno decrypt successfully; an unenrolled endpoint cannot                                                               |
+| Tampered or substituted records          | Invalid signatures, modified ciphertext, cross-vault substitutions and unsupported suites fail closed                                       |
+| Downgrade attempt                        | Plaintext records and negotiated plaintext fallback are rejected                                                                            |
+| Server credentials without vault keys    | Account/transport credentials alone cannot unlock encrypted sync data                                                                       |
+| Revocation and rotation                  | Revoked endpoints cannot decrypt newly encrypted next-epoch content or publish accepted revisions; historical access limits remain explicit |
+| Revoked member retaining shared identity | A valid outer signature cannot authorize a revoked device attestation                                                                       |
+| Offline checkpoint and repeated upload   | Local objects/outbox remain encrypted; restart and retries preserve IDs and ciphertext                                                      |
+| Merge, restore and server edit           | Authorized endpoints produce encrypted, signed forward revisions and retain bidirectional behavior                                          |
+| Locked or missing keys                   | Work is retained, key-dependent operations pause, and no plaintext fallback or silent reset occurs                                          |
+| Encrypted recovery                       | A valid owner-controlled bundle restores access; account password reset alone does not                                                      |
+
 Tests use one provider conformance suite plus Deno integration cases. Record
 functional and accessibility before/after counts. Follow the workspace test
 scope ladder for shared engine, UI and host changes, including cold runs and
@@ -348,12 +602,21 @@ Storybook interaction/axe/static build, publint, pack and archive/signature gate
 where applicable. A memory-provider pass alone does not qualify Deno or native
 credential and filesystem behavior.
 
+This planning-record revision changes no runtime or canonical requirements.
+Validate the document with its formatter and any checker that consumes it,
+then run the repository audit before a scoped Jujutsu commit. Runtime and
+consumer suites apply to the implementation slices above, not this record-only
+change. Keep unrelated work and local configuration out of the commit; source
+pushes and public package/release publication remain distinct operations.
+
 ## Deferred work
 
 - Nostr provider integration and explicit migration of existing `nostr-sync`
   history, settings and identities; retain legacy readers until migration is
   specified and verified.
 - S3 provider, tested conditional-write semantics and polling discovery.
+- A general/public relay, Nostr WebSocket endpoint, Blossom HTTP compatibility,
+  arbitrary tag/full-text event queries and NIP-77 negentropy.
 - Simultaneous heterogeneous destinations, destination switching and backfill.
 - Live character collaboration, multi-process server coordination, selective
   sync, advanced retention/garbage collection and production server automation.
@@ -367,9 +630,14 @@ Paths outside this repository are sibling source references, not dependencies.
 - `../lapis-plugin-nostr-sync/spec/src/plugins/nostr-sync/{architecture,protocol,runtime,ui}.md`
   defines the current behavior and detailed UI reference.
 - `../lapis-plugin-nostr-sync/src/lib/sync/{coordinator,autosave,merge,rebind}.ts`
-  contains orchestration and reconciliation to extract behind neutral contracts.
+  contains shared orchestration and reconciliation to extract behind destination
+  adapters while retaining the Nostr protocol.
 - `../lapis-plugin-nostr-sync/src/lib/{objects,revisions,transport,ui}` and
   `src/stories` identify the object, protocol, provider and presentation sources.
+- `../lapis-plugin-nostr-sync/src/lib/transport/{types,memory,nostr,authority-envelope}.ts`
+  and `src/lib/revisions/revision.ts` define current event/filter types,
+  attestation envelopes, IDs and ancestry references; conformance tests must
+  resolve existing adapter ordering differences.
 - `../lapis-notes/packages/api/src/lib/sync-host.ts` and
   `sync-host-security.ts` own the public host-capability foundations.
 - `../lapis-notes/spec/src/server-deno-host.md` and
