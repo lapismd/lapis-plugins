@@ -242,6 +242,11 @@ for Web acceptance without replacing committed npm ranges.
 
 Production release retention maps the explicit public candidate file globs and empty-upload gate to Distribution and its verification evidence. Private signing keys remain temporary CI inputs outside the retained release directory.
 
+The private `pnpm dev:sync` review host uses built plugin entrypoints and
+released host packages with persistent browser storage. Its loopback-only
+control-plane proxy supports connection acceptance without activating Sync
+publication, enrollment or content transfer (LN-SYNC-042).
+
 The static catalog build has a bounded 6144 MiB Node heap. The default 4 GiB
 heap exhausts while compiling the complete catalog with private Sync enabled;
 the build budget does not alter interaction, accessibility or artifact gates.

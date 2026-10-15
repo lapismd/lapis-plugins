@@ -1,9 +1,12 @@
 # Lapis Sync incremental delivery plan
 
-Status: stage 0 complete, 15 October 2026. Design Core 0.3.3, Mira 0.0.5
+Status: stage 0 complete, 15 October 2026. Design Core 0.3.4, Mira 0.0.5
 and Notes API 0.1.4 are published and consumed from npm. Qualified Sync sources
 are landed in main and superseded temporary workspaces are removed after
-recovery preservation. Stop for review before feature slice 1. See the
+recovery preservation. Feature slice 1 now provides real Deno account/vault
+connection checks in a persistent private development app; see the
+[slice 1 handoff](2026-10-15-sync-slice-1-connection.md). Stop for review before
+feature slice 2. See the
 [Design Core checkpoint](2026-10-14-sync-stage-0b-design-core-release.md) and
 [Mira checkpoint](2026-10-14-sync-stage-0b-mira-release.md).
 The [Notes source checkpoint](2026-10-14-sync-stage-0b-notes-source.md) and
@@ -18,8 +21,8 @@ Stage 0 precedes all feature slices.
 This record replaces the delivery sequence and per-slice test scope in the
 [original plan](2026-10-12-lapis-sync-deno-plan.md) and
 continuation ledger retained in `lapis-plugins-sync-runtime/spec/records/`.
-That historical ledger will transfer with the runtime stack in stage 0C. This record does not start
-the next implementation slice or declare unfinished requirements complete.
+That historical ledger will transfer with the runtime stack in stage 0C. This record does not authorize subsequent implementation slices or declare
+unfinished requirements complete.
 
 The user requested independently verifiable pieces, a functional app after
 each piece, short execution sessions, and targeted testing until a working
@@ -224,7 +227,7 @@ excluded change is accounted for. Stop for review before feature slice 1.
 
 ## Runnable slices
 
-All feature rows are pending and follow stage 0. Each row has its own review stop and
+Feature slice 1 is complete for private review; slices 2–14 remain pending. Each row has its own review stop and
 runs from main. The first seven build the manual round trip; later rows fill
 specific gaps without replacing it.
 

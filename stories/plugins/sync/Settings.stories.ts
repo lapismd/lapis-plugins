@@ -276,3 +276,55 @@ export const LabelSpace = settings("dirty", async ({ canvas }) => {
   ).toBeGreaterThanOrEqual(row.clientWidth * 0.5);
   expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth + 1);
 });
+
+export const RealConnectionAdapter = settings(
+  "setup",
+  async ({ canvas, plugin }) => {
+    const original = globalThis.fetch;
+    const vaultId = "11111111-1111-4111-8111-111111111111";
+    const calls: string[] = [];
+    globalThis.fetch = async (input, init) => {
+      const url = new URL(String(input));
+      if (url.origin !== "https://connection.example.test")
+        return original(input, init);
+      calls.push(url.pathname);
+      return Response.json({
+        result: {
+          data: url.pathname.endsWith("system.info")
+            ? { protocolMajor: 1 }
+            : { vaultId, role: "editor" },
+        },
+      });
+    };
+    try {
+      const server = canvas.getByRole("textbox", { name: "Server URL" });
+      await userEvent.type(server, "https://connection.example.test");
+      await userEvent.tab();
+      const vault = canvas.getByRole("textbox", { name: "Managed vault ID" });
+      await userEvent.type(vault, vaultId);
+      await userEvent.tab();
+      const test = canvas.getByRole("button", { name: "Test connection" });
+      await waitFor(() => expect(test).toBeEnabled());
+      await userEvent.click(test);
+      await waitFor(() =>
+        expect(plugin.session.snapshot().destination.status).toBe("healthy"),
+      );
+      expect(
+        canvas.getByText(
+          /Connected to Lapis Server\. Account access confirmed/,
+        ),
+      ).toBeVisible();
+      expect(calls).toEqual(["/api/trpc/system.info", "/api/trpc/vault.open"]);
+      expect(plugin.session.can("sync")).toBe(false);
+      expect(plugin.session.can("checkpoint")).toBe(false);
+      expect(
+        canvas.getByRole("switch", { name: "Enable sync" }),
+      ).toBeDisabled();
+      expect(
+        canvas.getByRole("button", { name: "Create pairing invitation" }),
+      ).toBeDisabled();
+    } finally {
+      globalThis.fetch = original;
+    }
+  },
+);

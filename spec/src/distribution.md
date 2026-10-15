@@ -177,6 +177,11 @@ frozen install so clean Storybook jobs receive its icons and QR dependencies.
 Sync remains excluded from recursive workspace tasks and release selection.
 The review graph consumes the already released Design Core 0.3.5 Settings fixes.
 
+The private `pnpm dev:sync` review host uses built plugin entrypoints and
+released host packages with persistent browser storage. Its loopback-only
+control-plane proxy supports connection acceptance without activating Sync
+publication, enrollment or content transfer (LN-SYNC-042).
+
 The static catalog build has a bounded 6144 MiB Node heap. The default 4 GiB
 heap exhausts while compiling the complete catalog with private Sync enabled;
 the build budget does not alter interaction, accessibility or artifact gates.

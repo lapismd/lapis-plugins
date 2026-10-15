@@ -134,7 +134,7 @@ export function createSyncSettingsDefinition(
               description:
                 "Requires an authorized server connection and an enrolled, unlocked device.",
               default: false,
-              disabled: !session.runtime,
+              disabled: !session.runtime?.actions.includes("sync"),
             },
             {
               id: "sync.indexFileTags",

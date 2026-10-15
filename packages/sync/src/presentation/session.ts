@@ -36,6 +36,7 @@ export class SyncSession {
   constructor(
     readonly runtime: SyncRuntime | null,
     readonly settings: () => Readonly<SyncSettings>,
+    readonly destinationPolicy: { allowLoopbackHttp?: boolean } = {},
   ) {
     this.#unsubscribe = runtime?.subscribe(() => this.notify()) ?? null;
   }
@@ -43,6 +44,18 @@ export class SyncSession {
     const next = structuredClone(
       this.runtime?.snapshot() ?? createDisconnectedSnapshot(),
     );
+    if (
+      next.destination.url !== this.settings().serverUrl ||
+      next.destination.managedVaultId !== this.settings().managedVaultId
+    ) {
+      next.destination = {
+        ...createDisconnectedSnapshot().destination,
+        url: this.settings().serverUrl,
+        managedVaultId: this.settings().managedVaultId,
+        message:
+          "Test the configured Lapis Server connection. Endpoint enrollment and content synchronization remain unavailable.",
+      };
+    }
     if (
       next.security.state !== "unlocked" ||
       !next.security.encrypted ||
@@ -86,7 +99,10 @@ export class SyncSession {
     if (type === "sync" || type === "publish-merge")
       return this.authorized() && this.settings().enabled;
     if (type === "test-connection")
-      return validateSyncDestination(this.settings()) === null;
+      return (
+        validateSyncDestination(this.settings(), this.destinationPolicy) ===
+        null
+      );
     if (type === "confirm-pairing")
       return state.pairing.stage === "sas" && state.pairing.session !== null;
     if (type === "apply-recovery") return state.recoveryPreview !== null;
@@ -96,7 +112,7 @@ export class SyncSession {
     const state = this.snapshot(),
       settings = this.settings();
     return (
-      validateSyncDestination(settings) === null &&
+      validateSyncDestination(settings, this.destinationPolicy) === null &&
       state.security.encrypted &&
       state.security.enrolled &&
       state.security.state === "unlocked" &&
@@ -166,11 +182,16 @@ export class SyncSession {
     this.#error = null;
     this.notify();
     try {
-      await this.runtime!.execute(
-        action,
-        { ...this.settings() },
-        this.#abort.signal,
-      );
+      const capturedSettings = { ...this.settings() };
+      await this.runtime!.execute(action, capturedSettings, this.#abort.signal);
+      if (
+        action.type === "test-connection" &&
+        (capturedSettings.serverUrl !== this.settings().serverUrl ||
+          capturedSettings.managedVaultId !== this.settings().managedVaultId)
+      )
+        throw new Error(
+          "The destination changed during the connection check. Test the current destination again.",
+        );
       return !this.#disposed;
     } catch (error) {
       if (!this.#disposed)

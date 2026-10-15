@@ -85,6 +85,12 @@ full-width action-feedback layout through its public npm exports.
 | LN-SYNC-040 | Checkpoint and incoming acceptance MUST reject a changed membership generation or key epoch between planning and durable commit. Rejection MUST preserve prior history, queued publication and working files.                                                                                                                                                                                           |
 | LN-SYNC-041 | State commits, guarded mutations and receipt recovery MUST forward the operation's captured vault, device, key epoch and membership generation to the host. Asynchronous admission MUST NOT upgrade that authority. Apply progress commits MUST retain the same captured authority as their mutation/recovery operation. These fences MUST remain outside signed events and encrypted protocol objects. |
 
+## Connection-only runtime
+
+| ID          | Requirement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| LN-SYNC-042 | The private plugin MUST verify the real Deno protocol and account-authorized managed-vault access without claiming enrollment or synchronized content. Owner or editor access is required. Connection checks MUST use deadlines, reject redirects and stale or disposed results, distinguish access denial from an unavailable server, and never persist credentials. HTTPS is required by default; a private development host MAY explicitly allow HTTP on literal loopback hosts without persisting that policy. |
+
 ## Delivery status
 
 The foundation implements protocol codecs, event filtering and replaceable
@@ -124,8 +130,9 @@ and network pairing delivery remain required before production runtime activatio
 The native kernel durably upgrades supported legacy roots to indexed journal
 format 2 before access; actual earlier kernels reject that format in Node and
 Deno acceptance. This does not activate application or server synchronization.
-The production default is disconnected; it has no
-simulated history or success path. Deno event/object storage, enrollment and
+The private default now checks real Deno protocol and account access through
+the existing control plane. It starts disconnected and exposes only connection
+testing; success does not grant enrollment or content authority. Deno event/object storage, enrollment and
 server capture/apply remain subsequent slices in the saved implementation plan.
 
 The owning API also qualifies registered/protected asynchronous document loads
