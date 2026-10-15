@@ -34,6 +34,12 @@ export class ServerConnectionRuntime implements SyncRuntime {
   #abort = new AbortController();
   #disposed = false;
   constructor(readonly options: ServerConnectionOptions = {}) {}
+  invalidateConnection(): void {
+    this.#abort.abort();
+    this.#abort = new AbortController();
+    this.#state.destination = createDisconnectedSnapshot().destination;
+    this.#notify();
+  }
   snapshot(): SyncSnapshot {
     return structuredClone(this.#state);
   }
@@ -242,7 +248,7 @@ export class ServerConnectionRuntime implements SyncRuntime {
       };
       this.#notify();
     } catch (cause) {
-      if (this.#disposed || signal.aborted) throw cause;
+      if (this.#disposed || signal.aborted || (requestSignal.aborted && !deadline.aborted)) throw cause;
       const error =
         cause instanceof ConnectionError
           ? cause

@@ -22,12 +22,15 @@ import {
   type SyncPlacement,
 } from "./workspace-layout";
 import "@lapis-notes/lapis-plugin-sync/styles.css";
+import { PreviewAccountHost } from "./preview-account";
+import type { SyncAccountState } from "@lapis-notes/lapis-plugin-sync";
 export type SyncWorkspaceOptions = {
   kind?: SyncPaneKind;
   placement?: SyncPlacement;
   state?: SyncStoryState;
   shell?: boolean;
   settings?: boolean;
+  account?: SyncAccountState["status"];
 };
 let sequence = 0;
 export async function bootSyncWorkspace(options: SyncWorkspaceOptions) {
@@ -44,7 +47,7 @@ export async function bootSyncWorkspace(options: SyncWorkspaceOptions) {
           version: 1,
           settings: {
             provider: "lapis-server",
-            serverUrl: state === "setup" ? "" : "https://sync.example.test",
+            serverUrl: state === "setup" && !options.account ? "" : "https://sync.example.test",
             managedVaultId: state === "setup" ? "" : "atlas-server",
             enabled: state !== "setup",
             indexFileTags: false,
@@ -72,9 +75,14 @@ export async function bootSyncWorkspace(options: SyncWorkspaceOptions) {
   });
   const releaseCompatibility = installApplicationCompatibility(app);
   const runtime = state === "setup" ? null : new PreviewSyncRuntime(app, state);
+  const account = options.account ? new PreviewAccountHost(options.account) : undefined;
   class CatalogSyncPlugin extends SyncPlugin {
     constructor(owner: App, manifest?: PluginManifest) {
       super(owner, manifest, {
+        account,
+        connection: account ? {
+          request: async input => Response.json({ result: { data: String(input).includes("system.info") ? { protocolMajor: 1 } : [{ id: "11111111-1111-4111-8111-111111111111", name: "Atlas Knowledge Vault", role: "owner" }] } }),
+        } : undefined,
         createRuntime: runtime ? () => runtime : undefined,
       });
     }

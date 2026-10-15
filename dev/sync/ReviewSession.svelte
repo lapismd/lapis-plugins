@@ -14,6 +14,7 @@
   import { SourceEditorPlugin } from "@lapis-notes/source-editor";
   import { MarkdownPlugin } from "@lapis-notes/markdown";
   import { SyncPlugin } from "@lapis-notes/lapis-plugin-sync";
+  import { MemoryServerAccount } from "./server-account";
 
   let { session }: { session: VaultSession } = $props();
   const serverUrl = import.meta.env.VITE_SYNC_REVIEW_SERVER_URL ?? "http://localhost:8797";
@@ -26,6 +27,7 @@
     markdownRenderer: async () => {},
   });
   const release = installApplicationCompatibility(owned);
+  const account = new MemoryServerAccount();
   let ready = $state(false);
   let failure = $state("");
   let disposal: Promise<void> | undefined;
@@ -38,6 +40,7 @@
         }
         await owned.workspace.disposeWorkspaceHost();
         await initialSession.close();
+        await account.dispose();
       } finally {
         release();
       }
@@ -47,14 +50,10 @@
   class PrivateSyncPlugin extends SyncPlugin {
     constructor(owner: App, manifest?: PluginManifest) {
       super(owner, manifest, {
+        account,
         connection: {
           allowLoopbackHttp: true,
-          request: (input, init) => {
-            const url = new URL(
-              typeof input === "string" ? input : input instanceof URL ? input.href : input.url,
-            );
-            return fetch(url.origin === serverUrl ? url.pathname + url.search : input, init);
-          },
+          request: account.request,
         },
       });
     }
@@ -112,8 +111,8 @@
 
 <main>
   <header>
-    <span>Private connection review · No content synchronization</span>
-    <a href={serverUrl} target="_blank" rel="noopener">Sign in to Lapis Server</a>
+    <span>Private Sync review · Sign-in lasts until reload · No content synchronization</span>
+    <a href={serverUrl} target="_blank" rel="noopener">Open Lapis Server</a>
   </header>
   {#if failure}
     <p role="alert">{failure}</p>

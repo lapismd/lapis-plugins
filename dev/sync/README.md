@@ -27,19 +27,48 @@ while avoiding development tarball remaps during registry validation.
 3. Run `pnpm dev:sync` here. The host compiles the public Design Core stylesheet
    with Tailwind after the Svelte transform, matching the main application's
    plugin order. Fonts come from that shared stylesheet.
-4. Sign in at `http://localhost:8797/` and create a managed vault. Enter that
-   URL in **Settings → Lapis Sync**, select the managed vault by name, then
-   **Test connection**. Use the refresh icon to reload the list; the UUID below
-   the picker copies its full value.
+4. Enter the server URL in **Settings → Lapis Sync**. In **Server account**,
+   choose **Sign in** to open server sign-in immediately. If the browser blocks
+   the new window, open or copy the approval link shown underneath the account
+   guidance, or use **Open server sign-in**. Sign into the server and
+   explicitly approve **Lapis Notes Sync** for the displayed client origin.
+   Return to Settings to see the signed-in account and accessible vaults.
+   Choose a vault by name, then **Test connection**. The server needs at least
+   one managed vault; create one in its ordinary vault chooser if necessary.
+   The refresh icon reloads names; the UUID below the picker copies its full value.
 5. Stop Deno and test again to see the unavailable state. Restart it and retry.
    Reload the client to check saved settings and note content.
 
-The optional `VITE_SYNC_REVIEW_SERVER_URL` environment setting selects a single
-literal loopback origin for the development proxy. It must have no credentials,
-path, query or fragment. The HTTP policy is host-only and is never saved in
-plugin data. Deno authentication stays in its HTTP-only cookie. Connection
-checks query protocol/account access only; no keys, enrollment, snapshots or
-file content are transferred. Other Sync operations remain disabled.
+Use **Cancel sign-in** while waiting or **Sign out** after approval. The private
+host retains its account credential only in memory, so reloading signs this
+client out while preserving local notes and non-secret settings. Protected
+credential persistence and production desktop-host integration remain later work.
+Server changes clear the account and discovered vaults and invalidate connection
+health. Account access does not enable encrypted device enrollment or sync.
+
+The optional `VITE_SYNC_REVIEW_SERVER_URL` environment setting controls the
+header's server link. Settings chooses the actual account destination. HTTPS
+is required outside literal loopback development origins; use a server origin
+without credentials, a path, query or fragment. All account and connection
+requests cross origins directly with explicit bearer authorization and omitted
+cookies. There is no development authentication proxy.
+
+The host excludes Turso's `/vite` driver from dependency optimization, matching
+the main Web host, so the driver's worker initialization remains intact. The
+root lockfile also mirrors Notes' scoped Turso 0.7.2 compatibility pins: WASM
+runtime 1.0.7 uses emnapi core and runtime 1.8.1 from npm.
+
+Focused checks, with the private app and review Deno already running:
+
+```sh
+pnpm exec vitest run --config dev/sync/vitest.config.ts
+pnpm exec playwright test -c dev/sync/playwright.config.ts
+```
+
+Live acceptance reads the isolated review account's existing password file from
+`LAPIS_SYNC_REVIEW_PASSWORD_FILE` (default `/tmp/lapis-sync-slice1-password`),
+requires literal loopback origins and uses a fresh browser context. It never
+prints credentials or resets an existing vault.
 
 Check this host with `pnpm exec svelte-check --tsconfig dev/sync/tsconfig.json
 --fail-on-warnings`. TypeScript uses the same released API identity that Vite

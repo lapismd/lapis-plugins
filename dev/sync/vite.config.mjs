@@ -6,22 +6,6 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
-const destination = new URL(
-  process.env.VITE_SYNC_REVIEW_SERVER_URL ?? "http://localhost:8797",
-);
-if (
-  !["localhost", "127.0.0.1", "[::1]"].includes(destination.hostname) ||
-  destination.username ||
-  destination.password ||
-  destination.pathname !== "/" ||
-  destination.search ||
-  destination.hash
-)
-  throw new Error(
-    "The private review proxy requires a literal loopback server origin.",
-  );
-const proxyTarget = new URL(destination);
-if (proxyTarget.hostname === "localhost") proxyTarget.hostname = "127.0.0.1";
 export default defineConfig({
   root: fileURLToPath(new URL("./", import.meta.url)),
   cacheDir: path.join(root, ".local/sync-review-vite"),
@@ -63,6 +47,7 @@ export default defineConfig({
   optimizeDeps: {
     exclude: [
       "@lapis-notes/api",
+      "@tursodatabase/database-wasm/vite",
       "@lapismd/design-core",
       "@lapis-notes/lapis-plugin-sync",
       "@lapis-notes/source-editor",
@@ -97,6 +82,5 @@ export default defineConfig({
       "Cross-Origin-Embedder-Policy": "require-corp",
       "Cross-Origin-Opener-Policy": "same-origin",
     },
-    proxy: { "/api": { target: proxyTarget.origin } },
   },
 });

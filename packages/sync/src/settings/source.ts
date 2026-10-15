@@ -4,6 +4,7 @@ import type {
 } from "@lapis-notes/api";
 import type { SyncPlugin } from "../sync-plugin";
 import type { SyncAction, ManagedVault } from "../presentation/types";
+import type { SyncAccountState } from "../presentation/account";
 import type {
   PairingSettingsValue,
   RecoverySettingsValue,
@@ -12,6 +13,8 @@ import type {
 export class SyncSettingsSource implements WorkspaceSettingsSource {
   #listeners = new Set<(fieldId?: string) => void>();
   #unsubscribe: () => void;
+  #unsubscribeAccount?: () => void;
+  #accountError: string | null = null;
   #disposed = false;
   #invitation = "";
   #alias = "This device";
@@ -40,11 +43,45 @@ export class SyncSettingsSource implements WorkspaceSettingsSource {
       }
       this.notify();
     });
+    this.#unsubscribeAccount = plugin.options?.account?.subscribe(() => {
+      this.#vaultRequest?.abort();
+      this.#vaultRequest = null;
+      this.#vaults = [];
+      this.#vaultLoading = this.#vaultLoaded = false;
+      this.#vaultError = this.#accountError = null;
+      plugin.session.runtime?.invalidateConnection?.();
+      this.notify();
+      if (this.account.status === "signed-in") void this.refreshManagedVaults();
+    });
+  }
+  get account(): SyncAccountState {
+    const host = this.plugin.options?.account?.snapshot();
+    if (!host || host.serverUrl !== this.plugin.settings.serverUrl) return {
+      status: "unavailable", serverUrl: this.plugin.settings.serverUrl,
+      username: null, verificationUrl: null,
+      message: "Remote sign-in is not available in this host yet.",
+    };
+    return {
+      status: this.#accountError ? "error" : host.status,
+      serverUrl: host.serverUrl, username: host.username,
+      verificationUrl: host.verificationUrl,
+      message: this.#accountError ?? host.message,
+    };
+  }
+  async accountAction(action: "signIn" | "cancel" | "signOut"): Promise<void> {
+    this.#accountError = null;
+    try { await this.plugin.options?.account?.[action](); }
+    catch { this.#accountError = "Unable to complete this account action. Please retry."; }
+    this.notify();
+  }
+  openAccountSignIn(): void {
+    this.plugin.options?.account?.openSignIn();
   }
   get(fieldId: string): unknown {
     const snapshot = this.plugin.session.snapshot(),
       settings = this.plugin.settings;
     switch (fieldId.replace(/^sync\./, "")) {
+      case "account": return this.account;
       case "provider":
         return settings.provider;
       case "serverUrl":
@@ -57,6 +94,7 @@ export class SyncSettingsSource implements WorkspaceSettingsSource {
           loading: this.#vaultLoading,
           loaded: this.#vaultLoaded,
           error: this.#vaultError,
+          requiresSignIn: Boolean(this.plugin.options?.account) && this.account.status !== "signed-in",
         };
       case "enabled":
         return settings.enabled;
@@ -299,6 +337,7 @@ export class SyncSettingsSource implements WorkspaceSettingsSource {
     this.#vaultRequest = null;
     this.#vaults = [];
     this.#unsubscribe();
+    this.#unsubscribeAccount?.();
     this.#listeners.clear();
     this.#file = null;
     this.#choices = {};

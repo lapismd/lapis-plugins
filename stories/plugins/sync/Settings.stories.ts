@@ -3,6 +3,7 @@ import { expect, userEvent, waitFor, within } from "storybook/test";
 import SyncWorkspaceDemo from "./SyncWorkspaceDemo.svelte";
 import { expectSyncReady } from "./story-assertions";
 import type { SyncStoryState } from "./preview-runtime";
+import { PreviewAccountHost } from "./preview-account";
 const meta = {
   title: "Plugins/Sync/Settings",
   component: SyncWorkspaceDemo,
@@ -41,6 +42,62 @@ export const Setup = settings("setup", async ({ canvas }) => {
     canvas.getByRole("button", { name: "Test connection" }),
   ).toBeDisabled();
 });
+export const AccountSignIn: Story = {
+  args: { options: { state: "setup", settings: true, account: "signed-out" } },
+  play: async ({ canvasElement }) => {
+    const { canvas, plugin, app } = await ready(canvasElement);
+    const account = plugin.options.account as PreviewAccountHost;
+    const picker = canvas.getByRole("combobox", { name: "Managed vault", exact: true });
+    expect(picker).toBeDisabled();
+    await userEvent.click(canvas.getByRole("button", { name: "Sign in", exact: true }));
+    expect(account.calls).toEqual(["signIn", "openSignIn"]);
+    expect(await canvas.findByRole("status", { name: "Server account status" })).toHaveTextContent(/Waiting for approval/);
+    await userEvent.click(canvas.getByRole("button", { name: "Open server sign-in" }));
+    expect(account.calls).toContain("openSignIn");
+    account.approve();
+    expect(await canvas.findByRole("button", { name: "Sign out" })).toBeEnabled();
+    await waitFor(() => expect(canvas.getByRole("status", { name: "Server account status" })).toHaveTextContent("Signed in as alex."));
+    expect(picker).toBeEnabled();
+    expect(canvas.getByRole("switch", { name: "Enable sync" })).toBeDisabled();
+    expect(plugin.session.can("sync")).toBe(false);
+    expect(JSON.stringify(app.configuration.getPluginData("sync"))).not.toMatch(/alex|authorize_client|verifier|accessToken/);
+    await userEvent.click(canvas.getByRole("button", { name: "Sign out" }));
+    await waitFor(() => expect(canvas.getByRole("status", { name: "Server account status" })).toHaveTextContent("Signed out"));
+    expect(picker).toBeDisabled();
+  },
+};
+export const AccountWaiting: Story = {
+  args: { options: { state: "setup", settings: true, account: "signing-in" } },
+  play: async ({ canvasElement }) => {
+    const { canvas } = await ready(canvasElement);
+    expect(canvas.getByRole("button", { name: "Open server sign-in" })).toBeEnabled();
+    const link = canvas.getByRole("link", { name: "Server sign-in link" });
+    expect(link).toHaveAttribute("href", "https://sync.example.test/?authorize_client=review");
+    const clipboard = canvasElement.ownerDocument.defaultView!.navigator.clipboard;
+    const originalWrite = clipboard.writeText;
+    let copied = "";
+    clipboard.writeText = async (value) => { copied = value; };
+    try {
+      const copy = canvas.getByRole("button", { name: "Copy sign-in link" });
+      await userEvent.click(copy);
+      await waitFor(() => expect(copy).toHaveAttribute("data-copied", "true"));
+      expect(copied).toBe(link.getAttribute("href"));
+    } finally { clipboard.writeText = originalWrite; }
+    await userEvent.click(canvas.getByRole("button", { name: "Cancel sign-in" }));
+    await waitFor(() => expect(canvas.getByRole("status", { name: "Server account status" })).toHaveTextContent("cancelled"));
+    expect(canvas.getByRole("button", { name: "Sign in", exact: true })).toBeEnabled();
+    expect(canvas.queryByRole("link", { name: "Server sign-in link" })).toBeNull();
+  },
+};
+export const AccountExpired: Story = {
+  args: { options: { state: "setup", settings: true, account: "error" } },
+  play: async ({ canvasElement }) => {
+    const { canvas } = await ready(canvasElement);
+    expect(canvas.getByRole("alert", { name: "Server account status" })).toHaveTextContent("Sign-in expired.");
+    await userEvent.click(canvas.getByRole("button", { name: "Sign in", exact: true }));
+    expect(await canvas.findByRole("button", { name: "Cancel sign-in" })).toBeEnabled();
+  },
+};
 export const Owner = settings("dirty", async ({ canvas, app, plugin }) => {
   expect(
     canvas.getByRole("button", { name: "Create pairing invitation" }),

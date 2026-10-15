@@ -24,6 +24,7 @@ export interface PairingSettingsFieldDefinition extends WorkspaceCustomSetting {
 }
 
 export type ManagedVaultSettingsValue = {
+  requiresSignIn?: boolean;
   selectedId: string;
   serverUrl: string;
   vaults: ManagedVault[];
@@ -35,4 +36,11 @@ export interface ManagedVaultSettingsFieldDefinition
   extends WorkspaceCustomSetting {
   refresh(): Promise<void>;
   cancel(): void;
+}
+
+export interface AccountSettingsFieldDefinition extends WorkspaceCustomSetting {
+  openSignIn(): void;
+  signIn(): Promise<void>;
+  cancel(): Promise<void>;
+  signOut(): Promise<void>;
 }

@@ -10,9 +10,9 @@
 
   let { value, id, field, setValue, disabled = false, readOnly = false, busy = false, error }: WorkspaceCustomSettingProps<ManagedVaultSettingsValue> = $props();
   const selected = $derived(value.vaults.find(vault => vault.id === value.selectedId));
-  const unavailable = $derived(disabled || readOnly || busy || !value.serverUrl);
+  const unavailable = $derived(disabled || readOnly || busy || !value.serverUrl || value.requiresSignIn);
   function refresh() { return (field as ManagedVaultSettingsFieldDefinition).refresh(); }
-  onMount(() => { if (value.serverUrl && value.selectedId) void refresh(); });
+  onMount(() => { if (value.serverUrl && value.selectedId && !value.requiresSignIn) void refresh(); });
   onDestroy(() => (field as ManagedVaultSettingsFieldDefinition).cancel());
 </script>
 
@@ -46,10 +46,16 @@
   {#if value.loading}<p role="status">Loading managed vaults…</p>
   {:else if error || value.error}<p role="alert" class="sync-controlled-field__error">{error || value.error}</p>
   {:else if !value.serverUrl}<p>Enter a server URL to load your vaults.</p>
+  {:else if value.requiresSignIn}<p class="sync-vault-picker__guidance">Sign in to load your managed vaults.</p>
   {:else if value.loaded && !value.vaults.length}<p role="status">No active managed vaults are available to this account.</p>{/if}
 </div>
 
 <style>
+  .sync-vault-picker__guidance {
+    margin: 0;
+    font-size: var(--ui-workspace-settings-description-size, 0.75rem);
+    color: var(--ui-workspace-muted-foreground, var(--muted-foreground));
+  }
   .sync-vault-picker__controls { display: flex; gap: 0.5rem; min-width: 0; }
   .sync-vault-picker__controls :global(.sync-vault-picker__trigger) { flex: 1; min-width: 0; }
   .sync-vault-picker__controls :global(.sync-vault-picker__refresh) {

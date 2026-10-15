@@ -24,10 +24,12 @@ import { SyncSettingsSource } from "./settings/source";
 import { createSyncSettingsDefinition } from "./settings/definition";
 import { SyncView } from "./sync-view";
 import { SyncStatusBar } from "./status-bar";
+import type { SyncAccountHost } from "./presentation/account";
 import { SYNC_VIEW_TYPES, type SyncPaneKind } from "./view-state.svelte";
 
 export const SYNC_PLUGIN_ID = "sync";
 export type SyncPluginOptions = {
+  account?: SyncAccountHost;
   connection?: ServerConnectionOptions;
   createRuntime?: (
     app: App,
@@ -58,6 +60,7 @@ export class SyncPlugin extends Plugin {
     this.#settings = readSyncSettings(
       data?.version === 1 ? data.settings : null,
     );
+    this.options.account?.configure(this.#settings.serverUrl);
     await this.session.dispose();
     this.session = new SyncSession(
       this.options.createRuntime
@@ -146,6 +149,7 @@ export class SyncPlugin extends Plugin {
         const next = readSyncSettings({ ...this.#settings, ...patch });
         await this.saveData({ version: 1, settings: next });
         this.#settings = next;
+        this.options.account?.configure(next.serverUrl);
         this.session.notify();
       });
     this.#saveTail = save;

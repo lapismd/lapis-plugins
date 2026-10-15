@@ -5,6 +5,7 @@ export {
   type SyncPluginOptions,
 } from "./sync-plugin";
 export { SyncSession } from "./presentation/session";
+export type { SyncAccountState, SyncAccountHost } from "./presentation/account";
 export {
   ServerConnectionRuntime,
   type ServerConnectionOptions,
