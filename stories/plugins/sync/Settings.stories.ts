@@ -64,7 +64,7 @@ export const Member = settings("member", async ({ canvas }) => {
     canvas.getByRole("button", { name: "Create pairing invitation" }),
   ).toBeDisabled();
   expect(
-    canvas.getByRole("button", { name: "Export encrypted recovery bundle" }),
+    canvas.getByRole("button", { name: "Export recovery bundle" }),
   ).toBeDisabled();
 });
 export const InvitationQR = settings("qr", async ({ canvas }) => {
@@ -187,6 +187,13 @@ export const PairingControls = settings(
     const group = canvas.getByRole("group", {
       name: "Pairing invitation actions",
     });
+    const heading = canvas.getByText("Pairing invitation", { exact: true });
+    const create = canvas.getByRole("button", { name: "Create pairing invitation" });
+    const labelRect = heading.getBoundingClientRect();
+    const actionRect = create.getBoundingClientRect();
+    expect(actionRect.top).toBeLessThan(labelRect.bottom);
+    expect(actionRect.bottom).toBeGreaterThan(labelRect.top);
+    expect(actionRect.left).toBeGreaterThan(labelRect.right);
     expect(canvas.queryByRole("button", { name: "Cancel pairing" })).toBeNull();
     await userEvent.click(
       canvas.getByRole("button", { name: "Create pairing invitation" }),
@@ -228,6 +235,9 @@ export const InlineFields = settings("dirty", async ({ canvas }) => {
     const labelRect = label.getBoundingClientRect();
     const controlRect = control.getBoundingClientRect();
     expect(controlRect.left).toBeGreaterThan(labelRect.right);
+    if (name === "Invitation URL") {
+      expect(controlRect.right).toBeCloseTo(control.closest("label")!.getBoundingClientRect().right, 0);
+    }
     expect(labelRect.bottom).toBeGreaterThan(controlRect.top);
     expect(labelRect.top).toBeLessThan(controlRect.bottom);
     expect(getComputedStyle(label).fontSize).toBe(
@@ -237,6 +247,9 @@ export const InlineFields = settings("dirty", async ({ canvas }) => {
   }
   const file = canvas.getByLabelText("Recovery bundle");
   expect(file).toHaveAttribute("data-ui-component", "input");
+  const fileStyle = getComputedStyle(file);
+  const fileButton = getComputedStyle(file, "::file-selector-button");
+  expect(parseFloat(fileButton.height) + parseFloat(fileStyle.paddingTop) + parseFloat(fileStyle.paddingBottom) + parseFloat(fileStyle.borderTopWidth) + parseFloat(fileStyle.borderBottomWidth)).toBeLessThanOrEqual(file.getBoundingClientRect().height + 1);
   expect(getComputedStyle(file, "::file-selector-button").borderWidth).toBe(
     "0px",
   );

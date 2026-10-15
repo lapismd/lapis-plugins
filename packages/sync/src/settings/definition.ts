@@ -10,6 +10,7 @@ import type { SyncAction } from "../presentation/types";
 import type { SyncSettingsSource } from "./source";
 import ManagedVaultSettingsField from "../ui/ManagedVaultSettingsField.svelte";
 import PairingSettingsField from "../ui/PairingSettingsField.svelte";
+import PairingInvitationActions from "../ui/PairingInvitationActions.svelte";
 import RecoverySettingsField from "../ui/RecoverySettingsField.svelte";
 
 export function createSyncSettingsDefinition(
@@ -70,7 +71,7 @@ export function createSyncSettingsDefinition(
   return {
     source,
     adapters: [
-      { id: "sync.pairing", component: PairingSettingsField },
+      { id: "sync.pairing", component: PairingSettingsField, headerComponent: PairingInvitationActions },
       { id: "sync.managed-vault", component: ManagedVaultSettingsField },
       { id: "sync.recovery", component: RecoverySettingsField },
     ],
@@ -279,7 +280,7 @@ export function createSyncSettingsDefinition(
             action(
               "export-recovery",
               "Owner recovery",
-              "Export encrypted recovery bundle",
+              "Export recovery bundle",
               "download",
               () => source.action({ type: "export-recovery" }),
             ),

@@ -4,6 +4,17 @@ This development host loads the built private Sync plugin and released host
 packages. Notes and plugin settings persist in the browser's OPFS storage at
 `http://localhost:6080/`. The existing apps on other ports retain their data.
 
+Sync remains outside the recursive release workspace. Install its private
+registry dependencies before the first build:
+
+```sh
+pnpm --dir packages/sync install --ignore-workspace --ignore-pnpmfile --lockfile=false --no-frozen-lockfile
+```
+
+The review requires released Design Core 0.3.5 for controlled pairing header
+actions and file-input sizing. `--ignore-pnpmfile` leaves local hooks unchanged
+while avoiding development tarball remaps during registry validation.
+
 1. Build Source Editor and Markdown once with
    `pnpm --dir packages/source-editor build` and
    `pnpm --dir packages/markdown build`.

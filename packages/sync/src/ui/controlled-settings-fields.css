@@ -14,7 +14,7 @@
 }
 
 .sync-controlled-field label.sync-controlled-field__row {
-  grid-template-columns: minmax(9rem, 0.45fr) minmax(0, 1fr);
+  grid-template-columns: minmax(9rem, 1fr) minmax(0, 20rem);
   align-items: center;
   gap: 0.75rem;
 }

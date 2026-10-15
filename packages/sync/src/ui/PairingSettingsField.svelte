@@ -4,21 +4,17 @@
   import CameraIcon from "@lucide/svelte/icons/camera";
   import CameraOffIcon from "@lucide/svelte/icons/camera-off";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import QrCodeIcon from "@lucide/svelte/icons/qr-code";
-  import XIcon from "@lucide/svelte/icons/x";
   import { Input } from "@lapismd/design-core/shadcn/input";
   import { Textarea } from "@lapismd/design-core/shadcn/textarea";
   import type { WorkspaceCustomSettingProps } from "@lapis-notes/api";
   import { pairingQrDataUrl, scanPairingQr } from "../pairing-qr";
   import type {
     PairingSettingsValue,
-    PairingSettingsFieldDefinition,
   } from "../settings/field-values";
   import "./controlled-settings-fields.css";
 
   let {
     value,
-    field,
     setValue,
     disabled = false,
     readOnly = false,
@@ -26,17 +22,6 @@
     error,
   }: WorkspaceCustomSettingProps<PairingSettingsValue> = $props();
 
-  const actions = $derived.by(() => {
-    // A source notification refreshes the controlled value and action gates together.
-    void value;
-    const active = value.cameraActive || !["idle", "complete", "expired"].includes(value.stage);
-    return (field as PairingSettingsFieldDefinition).actions
-      .filter(action => (action.id === "sync.cancel-pairing") === active)
-      .map((action) => ({
-        ...action,
-        disabled: action.isDisabled?.() || action.isBusy?.(),
-      }));
-  });
   let qrDataUrl = $state("");
   let video = $state<HTMLVideoElement | null>(null);
   let scanner: IScannerControls | null = null;
@@ -64,6 +49,14 @@
     return () => {
       cancelled = true;
     };
+  });
+
+  $effect(() => {
+    if (!value.cameraActive) {
+      scanGeneration++;
+      scanner?.stop();
+      scanner = null;
+    }
   });
 
   onDestroy(() => {
@@ -128,27 +121,6 @@
 </script>
 
 <div class="sync-controlled-field" data-stage={value.stage} aria-busy={busy}>
-  <div
-    class="sync-controlled-field__actions"
-    role="group"
-    aria-label="Pairing invitation actions"
-  >
-    {#each actions as action (action.id)}
-      <Button
-        variant="outline"
-        disabled={disabled || readOnly || busy || action.disabled}
-        onclick={async () => {
-          if (action.id === "sync.cancel-pairing") await stopCamera();
-          await action.run();
-        }}
-      >
-        {#if action.id === "sync.begin-pairing"}<QrCodeIcon
-            data-icon="inline-start"
-          />{:else}<XIcon data-icon="inline-start" />{/if}
-        {action.label}
-      </Button>
-    {/each}
-  </div>
   {#if value.invitationUri}
     <div class="sync-pairing-qr">
       {#if qrDataUrl}

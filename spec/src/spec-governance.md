@@ -16,6 +16,11 @@ assertion; casts, aliases and relaxed assertions do not qualify the graph.
 AI, Bases and History mobile shell stories qualify the published count-bearing
 dock label by opening and closing the actual workspace tab chooser.
 
+Registry dependency acceptance bypasses pre-existing local pnpm hooks with
+`--ignore-pnpmfile`; local hook files remain outside the verified diff. The
+private Sync review record includes its separate registry install command and
+the released Design Core floor before controlled header integration.
+
 The registry metadata audit enforces the manifest-owned SHA-256 Gravatar for
 `dev@lapis.md` under LP-SPEC-041, including image size and initials fallback.
 

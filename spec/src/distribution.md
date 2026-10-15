@@ -4,6 +4,10 @@ Bases carries independent patch release intent for result-limit label contrast.
 The component retains Design Core typography and color; the CI repair does not
 activate package publication or change plugin host contracts.
 
+Private Sync Settings requires published Design Core `^0.3.5` for controlled
+header actions and compact file inputs. The shared development host resolves
+the same registry release; this does not select Sync for publication.
+
 Lapis Sync remains private and parked under LP-SPEC-049. Its explicit shared
 Storybook entry and media-only registry catalog permit UI review without
 installation, publication or registry dispatch. Direct package checks qualify
