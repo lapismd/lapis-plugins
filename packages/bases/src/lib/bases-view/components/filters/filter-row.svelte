@@ -3,6 +3,7 @@
 </script>
 
 <script lang="ts">
+  const commandListId = $props.id();
   import type { Table } from "@tanstack/table-core";
   import * as Popover from "@lapismd/design-core/shadcn/popover";
   import * as Command from "@lapismd/design-core/shadcn/command";
@@ -235,8 +236,8 @@
         </Popover.Trigger>
         <Popover.Content class="bases-style-w-max-2f935d bases-style-p-0-8a539c" align="start">
           <Command.Root>
-            <Command.Input placeholder="Find or create" />
-            <Command.List class="bases-style-p-1-eb6a3c">
+            <Command.Input aria-controls={commandListId} placeholder="Find or create" />
+            <Command.List id={commandListId} class="bases-style-p-1-eb6a3c">
               <Command.Empty>No results found.</Command.Empty>
               {#each controller.getAllColumns() as column (column.id)}
                 <Command.Item

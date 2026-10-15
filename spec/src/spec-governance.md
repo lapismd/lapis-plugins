@@ -1,5 +1,12 @@
 # Specification Governance
 
+
+The standalone Bases accessibility patch preserves all normal CI and release
+gates. Its workflow story verifies the named property search and visible
+controlled list; source IDs remain unique across component instances and typed
+view options. Notes acceptance must consume the released package fix rather
+than a source alias, patched dependency or suppressed accessibility check.
+
 Private Sync sign-in acceptance records its isolated host's real Deno journey
 separately from Storybook fixtures. A host dependency compatibility repair keeps
 the frozen registry graph and startup evidence explicit; it does not waive

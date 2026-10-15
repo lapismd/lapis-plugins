@@ -1,5 +1,13 @@
 # Bases Plugin
 
+A standalone Bases patch carries the picker accessibility repair before the
+Design Core 0.4.0 framework refresh. Search inputs explicitly reference unique
+result lists and property icon actions expose accessible names. The property
+popup uses grid rows with independent visibility/edit controls in grid cells,
+preserving search and keyboard actions without buttons nested in options. The patch
+retains the existing published dependency ranges, so Notes can consume the
+released fix without waiting for its own API/UI compatibility release.
+
 The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.
 

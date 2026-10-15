@@ -1,4 +1,5 @@
 <script lang="ts">
+  const commandListId = $props.id();
   import { Icon } from "@lapis-notes/api/icon";
   import { Label } from "@lapismd/design-core/shadcn/label";
   import { Input } from "@lapismd/design-core/shadcn/input";
@@ -297,8 +298,8 @@
           </Popover.Trigger>
           <Popover.Content class="bases-style-w-310px-8357f2 bases-style-p-0-8a539c" align="start">
             <Command.Root>
-              <Command.Input placeholder="Find or create" />
-              <Command.List class="bases-style-p-1-eb6a3c">
+              <Command.Input aria-controls={`${commandListId}-${option.key}`} placeholder="Find or create" />
+              <Command.List id={`${commandListId}-${option.key}`} class="bases-style-p-1-eb6a3c">
                 <Command.Empty>No results found.</Command.Empty>
                 {#each controller
                   .getAllColumns()
