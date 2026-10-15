@@ -18,6 +18,7 @@ export class SyncSettingsSource implements WorkspaceSettingsSource {
   #camera = false;
   #cameraError: string | null = null;
   #file: File | null = null;
+  #lastOperation: string | null = null;
   #choices: RecoverySettingsValue["choices"] = {};
   constructor(readonly plugin: SyncPlugin) {
     this.#unsubscribe = plugin.session.subscribe(() => this.notify());
@@ -70,7 +71,9 @@ export class SyncSettingsSource implements WorkspaceSettingsSource {
           error: null,
         } satisfies RecoverySettingsValue;
       case "operationResult":
-        return snapshot.lastError ?? "";
+        return (
+          snapshot.lastError ?? this.#lastOperation ?? "No operations yet."
+        );
       default:
         return undefined;
     }
@@ -115,13 +118,35 @@ export class SyncSettingsSource implements WorkspaceSettingsSource {
   }
   async action(action: SyncAction): Promise<WorkspaceActionResult> {
     const success = await this.plugin.session.run(action);
-    return {
-      tone: success ? "success" : "error",
-      message: success
-        ? "Sync action completed."
-        : (this.plugin.session.snapshot().lastError ??
-          "Sync action unavailable."),
+    const completed: Record<SyncAction["type"], string> = {
+      "test-connection": "Connection test completed.",
+      "begin-pairing": "Pairing invitation created.",
+      "cancel-pairing": "Pairing canceled.",
+      "accept-pairing":
+        "Pairing invitation accepted. Confirm the security code on both devices.",
+      "confirm-pairing": "Security code confirmed.",
+      "export-recovery": "Encrypted recovery bundle exported.",
+      "preview-recovery": "Recovery preview ready for review.",
+      "apply-recovery": "Recovery applied.",
+      "revoke-device": "Device revoked.",
+      checkpoint: "Checkpoint saved.",
+      sync: "Sync completed.",
+      "restore-file": "File restored.",
+      "resolve-merge": "Merge choice recorded.",
+      "publish-merge": "Merge published.",
     };
+    const message = success
+      ? completed[action.type]
+      : (this.plugin.session.snapshot().lastError ??
+        "Sync action unavailable.");
+    this.#lastOperation = message;
+    if (success && action.type === "cancel-pairing") {
+      this.#invitation = "";
+      this.#camera = false;
+      this.#cameraError = null;
+    }
+    this.notify();
+    return { tone: success ? "success" : "error", message };
   }
   acceptPairing(): Promise<WorkspaceActionResult> {
     return this.action({
@@ -142,6 +167,15 @@ export class SyncSettingsSource implements WorkspaceSettingsSource {
       sessionId: session.sessionId,
       sas: session.sas,
     });
+  }
+  canCancel(): boolean {
+    return (
+      this.plugin.session.can("cancel-pairing") &&
+      (this.#camera ||
+        !["idle", "complete", "expired"].includes(
+          this.plugin.session.snapshot().pairing.stage,
+        ))
+    );
   }
   canAccept(): boolean {
     return (

@@ -2,6 +2,7 @@ import type {
   PluginSettingsDefinition,
   WorkspaceActionSetting,
 } from "@lapis-notes/api";
+import type { PairingSettingsFieldDefinition } from "./field-values";
 import type { SyncAction } from "../presentation/types";
 import type { SyncSettingsSource } from "./source";
 import PairingSettingsField from "../ui/PairingSettingsField.svelte";
@@ -29,6 +30,30 @@ export function createSyncSettingsDefinition(
     isBusy: () => session.busy,
     run,
   });
+  const pairingField: PairingSettingsFieldDefinition = {
+    id: "sync.pairing",
+    type: "custom",
+    title: "Pairing invitation",
+    adapter: "sync.pairing",
+    presentation: "full-width",
+    actions: [
+      action(
+        "begin-pairing",
+        "Owner invitation",
+        "Create pairing invitation",
+        "qr-code",
+        () => source.action({ type: "begin-pairing" }),
+      ),
+      action(
+        "cancel-pairing",
+        "Cancel pairing",
+        "Cancel pairing",
+        "x",
+        () => source.action({ type: "cancel-pairing" }),
+        () => !source.canCancel(),
+      ),
+    ],
+  };
   return {
     source,
     adapters: [
@@ -220,20 +245,7 @@ export function createSyncSettingsDefinition(
               default: "This device",
               maxLength: 64,
             },
-            {
-              id: "sync.pairing",
-              type: "custom",
-              title: "Pairing invitation",
-              adapter: "sync.pairing",
-              presentation: "full-width",
-            },
-            action(
-              "begin-pairing",
-              "Owner invitation",
-              "Create pairing invitation",
-              "qr-code",
-              () => source.action({ type: "begin-pairing" }),
-            ),
+            pairingField,
             action(
               "accept-pairing",
               "Join this vault",
@@ -248,13 +260,6 @@ export function createSyncSettingsDefinition(
               "Confirm security code",
               "shield-check",
               () => source.confirmPairing(),
-            ),
-            action(
-              "cancel-pairing",
-              "Cancel pairing",
-              "Cancel pairing",
-              "x",
-              () => source.action({ type: "cancel-pairing" }),
             ),
           ],
         },
@@ -277,7 +282,7 @@ export function createSyncSettingsDefinition(
               type: "custom",
               title: "Recovery bundle",
               adapter: "sync.recovery",
-              presentation: "full-width",
+              presentation: "row",
             },
             action(
               "preview-recovery",

@@ -59,6 +59,7 @@ export const Owner = settings("dirty", async ({ canvas, app, plugin }) => {
   });
 });
 export const Member = settings("member", async ({ canvas }) => {
+  expect(canvas.queryByRole("button", {name: "Cancel pairing"})).toBeNull();
   expect(
     canvas.getByRole("button", { name: "Create pairing invitation" }),
   ).toBeDisabled();
@@ -111,6 +112,7 @@ export const SecurityCode = settings("sas", async ({ canvas, runtime }) => {
   await waitFor(() =>
     expect(runtime?.snapshot().pairing.stage).toBe("complete"),
   );
+  expect(canvas.queryByRole("button", { name: "Cancel pairing" })).toBeNull();
 });
 export const RecoveryPreview = settings(
   "recovery",
@@ -177,4 +179,57 @@ export const CameraUnavailable = settings("dirty", async ({ canvas }) => {
   } finally {
     media.getUserMedia = original;
   }
+});
+
+export const PairingControls = settings("dirty", async ({ canvas, runtime }) => {
+  const group = canvas.getByRole("group", {name: "Pairing invitation actions"});
+  expect(canvas.queryByRole("button", {name: "Cancel pairing"})).toBeNull();
+  await userEvent.click(canvas.getByRole("button", {name: "Create pairing invitation"}));
+  const qr = await canvas.findByRole("img", {name: "QR code for this pairing invitation"});
+  expect(qr.getBoundingClientRect().top).toBeGreaterThanOrEqual(group.getBoundingClientRect().bottom);
+  expect(canvas.queryByRole("button", {name: "Create pairing invitation"})).toBeNull();
+  const cancel = canvas.getByRole("button", {name: "Cancel pairing"});
+  expect(group).toContainElement(cancel);
+  expect(cancel).toBeEnabled();
+  await userEvent.click(cancel);
+  await waitFor(() => expect(canvas.queryByRole("img", {name: "QR code for this pairing invitation"})).toBeNull());
+  expect(runtime?.calls.some(a => a.type === "cancel-pairing")).toBe(true);
+  expect(canvas.queryByRole("button", {name: "Cancel pairing"})).toBeNull();
+  expect(canvas.getByRole("button", {name: "Create pairing invitation"})).toBeEnabled();
+});
+export const InlineFields = settings("dirty", async ({ canvas }) => {
+  for (const name of ["Invitation URL", "Recovery bundle"]) {
+    const control = canvas.getByLabelText(name) as HTMLInputElement;
+    const label =
+      name === "Invitation URL"
+        ? control.closest("label")!.querySelector("span")!
+        : canvas.getByText("Recovery bundle", { exact: true });
+    const labelRect = label.getBoundingClientRect();
+    const controlRect = control.getBoundingClientRect();
+    expect(controlRect.left).toBeGreaterThan(labelRect.right);
+    expect(labelRect.bottom).toBeGreaterThan(controlRect.top);
+    expect(labelRect.top).toBeLessThan(controlRect.bottom);
+    expect(getComputedStyle(label).fontSize).toBe(
+      getComputedStyle(canvas.getByText("New device alias", { exact: true }))
+        .fontSize,
+    );
+  }
+  const file = canvas.getByLabelText("Recovery bundle");
+  expect(file).toHaveAttribute("data-ui-component", "input");
+  expect(getComputedStyle(file, "::file-selector-button").borderWidth).toBe(
+    "0px",
+  );
+});
+export const LastOperation = settings("dirty", async ({ canvas }) => {
+  expect(
+    canvas.getByRole("status", { name: "Last operation" }),
+  ).toHaveTextContent("No operations yet.");
+  await userEvent.click(
+    canvas.getByRole("button", { name: "Test connection" }),
+  );
+  await waitFor(() =>
+    expect(
+      canvas.getByRole("status", { name: "Last operation" }),
+    ).toHaveTextContent("Connection test completed."),
+  );
 });

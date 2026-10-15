@@ -6,6 +6,8 @@
 
   let {
     value,
+    id,
+    field,
     setValue,
     disabled = false,
     readOnly = false,
@@ -34,15 +36,14 @@
 </script>
 
 <div class="sync-controlled-field" aria-busy={busy}>
-  <label class="sync-controlled-field__file">
-    <span>Recovery bundle</span>
-    <Input
-      type="file"
-      accept=".lapis-recovery,application/octet-stream"
-      disabled={disabled || readOnly || busy}
-      onchange={selectFile}
-    />
-  </label>
+  <Input
+    {id}
+    aria-label={field.title}
+    type="file"
+    accept=".lapis-recovery,application/octet-stream"
+    disabled={disabled || readOnly || busy}
+    onchange={selectFile}
+  />
   {#if value.selectedFile}
     <p>Selected: {value.selectedFile.name}</p>
   {/if}

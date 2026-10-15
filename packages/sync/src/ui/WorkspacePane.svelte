@@ -66,8 +66,7 @@
       canSync={!busy && plugin.session.can("sync")}
       onCheckpoint={() => void plugin.session.run({ type: "checkpoint" })}
       onSync={() => void plugin.session.run({ type: "sync" })}
-      onOpenPath={(path) =>
-        void plugin.app.workspace.openLinkText(path, "", true)}
+      onOpenPath={(path) => void plugin.openFile(path)}
       onOpenMerge={() => void plugin.openPane("merge")}
     />
   {:else if kind === "history" || kind === "file-history"}

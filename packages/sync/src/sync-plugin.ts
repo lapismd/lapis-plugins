@@ -1,5 +1,7 @@
 import {
   Plugin,
+  FileView,
+  type WorkspaceLeaf,
   DeclarativePluginSettingTab,
   type App,
   type PluginManifest,
@@ -140,6 +142,28 @@ export class SyncPlugin extends Plugin {
       });
     this.#saveTail = save;
     return save;
+  }
+  async openFile(path: string): Promise<void> {
+    const file = this.app.vault.getFileByPath(path);
+    if (!file) return;
+    const workspace = this.app.workspace;
+    let existing: WorkspaceLeaf | undefined;
+    workspace.iterateAllLeaves((leaf) => {
+      if (
+        !existing &&
+        leaf.view instanceof FileView &&
+        leaf.view.file?.path === file.path
+      )
+        existing = leaf;
+    });
+    const leaf = existing ?? workspace.getLeaf("tab");
+    if (!existing) await leaf.openFile(file);
+    await workspace.revealLeaf(leaf);
+    workspace.activateLeaf(leaf, {
+      focusRootHost: false,
+      source: "api",
+      operation: "sync-open-file",
+    });
   }
   async openPane(
     kind: SyncPaneKind,
