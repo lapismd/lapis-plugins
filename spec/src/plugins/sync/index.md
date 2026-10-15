@@ -12,6 +12,9 @@ Sync plugin keeps its identity and installation behavior.
 Its shared-catalog dependencies are pinned by `packages/sync/pnpm-lock.yaml`
 and installed separately in CI with frozen registry resolution. This supports
 clean UI review while retaining the private package and recursive-task exclusion.
+The isolated development manifest explicitly supplies released UI `^0.1.3` to
+the API peer graph, including its corrected runtime dependency declarations.
+This development edge does not expand the plugin runtime host contract.
 
 ## Requirements
 

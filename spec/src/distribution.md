@@ -52,6 +52,11 @@ not a substitute for a coherent dependency graph. Audit exceptions for
 unpatched advisories must record dependency paths, input exposure and removal
 conditions in `spec/records` alongside their CVE entries.
 
+The shared catalog and private Sync development graph consume released UI
+0.1.3, whose retained runtime imports are declared as runtime dependencies.
+The registry lockfile reconciles compatible API and editor peer contexts across
+plugin development checks; public plugin peer ranges remain unchanged.
+
 The shared Storybook font gate must wait for actual catalog font faces within a
 fixed timeout, including faces registered during story startup. It must reject
 fallback-only availability, failed downloads and missing font tokens. Every

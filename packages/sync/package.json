@@ -70,7 +70,8 @@
     "@lapis-notes/api": "^0.1.4",
     "svelte": "5.56.10",
     "svelte-check": "^4.3.1",
-    "vite": "^7.3.2"
+    "vite": "^7.3.2",
+    "@lapis-notes/ui": "^0.1.3"
   },
   "repository": {
     "type": "git",

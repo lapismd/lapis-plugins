@@ -5,6 +5,13 @@ install, with local hooks bypassed. Its dependency lock does not activate the
 package for installation or publication. The parked-plugin workflow regression
 covers this setup and its separate dependency audit.
 
+Dependency-graph repair consumes the upstream UI 0.1.3 release before
+reconciling compatible API, CodeMirror and Lezer resolutions. Qualification
+retains the exact Graph/AI type checks and Bases Editable Cells highlighting
+assertion; casts, aliases and relaxed assertions do not qualify the graph.
+AI, Bases and History mobile shell stories qualify the published count-bearing
+dock label by opening and closing the actual workspace tab chooser.
+
 The registry metadata audit enforces the manifest-owned SHA-256 Gravatar for
 `dev@lapis.md` under LP-SPEC-041, including image size and initials fallback.
 
