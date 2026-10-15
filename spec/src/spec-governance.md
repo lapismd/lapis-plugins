@@ -7,6 +7,16 @@ controlled list; source IDs remain unique across component instances and typed
 view options. Notes acceptance must consume the released package fix rather
 than a source alias, patched dependency or suppressed accessibility check.
 
+The Design Core 0.4.0 consumer refresh updates declared npm ranges and both
+registry lockfiles. Package and cold catalog checks qualify public exports,
+prepared CSS and bundled fonts; existing visual baselines and private Sync
+activation remain separate review gates.
+
+The consumer repair retains all visibility, geometry, pointer-hit and axe
+assertions. Cold focused stories qualify overlay readiness, tool-summary
+selectors and Bases picker accessibility; full suites remain required in CI
+under the user's local memory-pressure constraint.
+
 Private Sync sign-in acceptance records its isolated host's real Deno journey
 separately from Storybook fixtures. A host dependency compatibility repair keeps
 the frozen registry graph and startup evidence explicit; it does not waive

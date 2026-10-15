@@ -1,5 +1,13 @@
 # Graph Plugin
 
+The package requires published Design Core `^0.4.0` for prepared browser CSS
+and bundled fonts through public exports. Application state and existing plugin
+behavior retain their owning contracts.
+
+Pointer acceptance remeasures the Group remove button after query focus can
+scroll the settings panel, then verifies that its current centre receives the
+pointer. The hit-target assertion remains required.
+
 The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.
 

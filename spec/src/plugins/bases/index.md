@@ -8,6 +8,15 @@ preserving search and keyboard actions without buttons nested in options. The pa
 retains the existing published dependency ranges, so Notes can consume the
 released fix without waiting for its own API/UI compatibility release.
 
+The package requires published Design Core `^0.4.0` for prepared browser CSS
+and bundled fonts through public exports. Application state and existing plugin
+behavior retain their owning contracts.
+
+Bases Command search inputs explicitly reference their result lists with stable
+per-instance IDs; property actions expose accessible names. Workflow acceptance
+waits for opening popovers and suggestions before checking visibility or
+geometry, retaining existing assertions and accessibility gates.
+
 The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.
 

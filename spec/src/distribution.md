@@ -15,9 +15,15 @@ Bases carries independent patch release intent for result-limit label contrast.
 The component retains Design Core typography and color; the CI repair does not
 activate package publication or change plugin host contracts.
 
-Private Sync Settings requires published Design Core `^0.3.5` for controlled
-header actions and compact file inputs. The shared development host resolves
-the same registry release; this does not select Sync for publication.
+First-party plugin packages, private Sync Settings and the shared development
+host require published Design Core `^0.4.0`, including prepared browser CSS and
+bundled fonts alongside controlled header actions and compact file inputs.
+Both the shared and parked Sync lockfiles resolve registry packages with local
+pnpm hooks disabled; this does not select Sync for publication.
+
+The Design Core refresh patch also restores Bases picker input/list links and
+accessible property-action names. Existing patch release intent includes this
+repair; package publication still requires separate approval.
 
 Lapis Sync remains private and parked under LP-SPEC-049. Its explicit shared
 Storybook entry and media-only registry catalog permit UI review without
@@ -190,7 +196,7 @@ The parked Sync catalog has its own tracked registry lockfile. CI installs it
 with `--ignore-workspace --ignore-pnpmfile --frozen-lockfile` alongside the root
 frozen install so clean Storybook jobs receive its icons and QR dependencies.
 Sync remains excluded from recursive workspace tasks and release selection.
-The review graph consumes the already released Design Core 0.3.5 Settings fixes.
+The review graph consumes released Design Core 0.4.0, retaining the Settings fixes.
 
 The private `pnpm dev:sync` review host uses built plugin entrypoints and
 released host packages with persistent browser storage. Its loopback-only
