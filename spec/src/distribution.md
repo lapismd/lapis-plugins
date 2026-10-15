@@ -161,3 +161,13 @@ CI consumer fixtures use independently generated ephemeral registry and release 
 They verify exact source/version archives through the static candidate verifier,
 export only public trust keys, and remove private signing material before artifact upload.
 They neither activate publication nor alter production trust.
+
+The parked Sync catalog has its own tracked registry lockfile. CI installs it
+with `--ignore-workspace --ignore-pnpmfile --frozen-lockfile` alongside the root
+frozen install so clean Storybook jobs receive its icons and QR dependencies.
+Sync remains excluded from recursive workspace tasks and release selection.
+The review graph consumes the already released Design Core 0.3.5 Settings fixes.
+
+The static catalog build has a bounded 6144 MiB Node heap. The default 4 GiB
+heap exhausts while compiling the complete catalog with private Sync enabled;
+the build budget does not alter interaction, accessibility or artifact gates.

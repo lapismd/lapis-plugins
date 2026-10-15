@@ -9,6 +9,10 @@ security and consumer acceptance are complete. The UI may be previewed in the
 shared catalog while Sync remains excluded from installation and releases. The existing Nostr
 Sync plugin keeps its identity and installation behavior.
 
+Its shared-catalog dependencies are pinned by `packages/sync/pnpm-lock.yaml`
+and installed separately in CI with frozen registry resolution. This supports
+clean UI review while retaining the private package and recursive-task exclusion.
+
 ## Requirements
 
 Stage 0C consumes released API 0.1.4, Design Core 0.3.4 and Mira 0.0.5

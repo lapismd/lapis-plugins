@@ -50,7 +50,7 @@
   "dependencies": {
     "@noble/hashes": "^1.8.0",
     "nostr-tools": "^2.25.2",
-    "@lapismd/design-core": "^0.3.4",
+    "@lapismd/design-core": "^0.3.5",
     "@lucide/svelte": "^0.523.0",
     "@zxing/browser": "^0.2.1",
     "@zxing/library": "^0.23.0",
@@ -82,5 +82,13 @@
   "peerDependencies": {
     "@lapis-notes/api": "^0.1.4",
     "svelte": "^5.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "katex@>=0.11.0 <0.18.2": ">=0.18.2 <0.19"
+    },
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

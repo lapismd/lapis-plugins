@@ -99,6 +99,34 @@ test("private Sync UI can be previewed without entering active packages", async 
   assert.ok(!pluginPackages.some((entry) => entry.pluginId === "sync"));
 });
 
+test("CI installs the private Sync catalog dependencies from a frozen registry lockfile", async () => {
+  const setup = await readFile(
+    new URL("../.github/actions/ci-setup/action.yml", import.meta.url),
+    "utf8",
+  );
+  assert.match(
+    setup,
+    /pnpm --dir packages\/sync install --ignore-workspace --ignore-pnpmfile --frozen-lockfile/,
+  );
+  const lockfile = await readFile(
+    new URL("../packages/sync/pnpm-lock.yaml", import.meta.url),
+    "utf8",
+  );
+  for (const name of ["@lucide/svelte", "@zxing/browser", "qrcode"]) {
+    assert.ok(lockfile.includes(name), `${name} has a frozen resolution`);
+  }
+  assert.doesNotMatch(
+    lockfile,
+    /\b(?:specifier|version|tarball):\s*['"]?(?:file|link|workspace):/,
+  );
+  const ci = await readFile(
+    new URL("../.github/workflows/ci.yml", import.meta.url),
+    "utf8",
+  );
+  assert.match(ci, /pnpm --dir packages\/sync audit --ignore-workspace/);
+  assert.ok(!pluginPackages.some((entry) => entry.pluginId === "sync"));
+});
+
 test("Sync registry media is selected independently of install and release workflows", async () => {
   for (const selector of ["sync", "@lapis-notes/lapis-plugin-sync"]) {
     assert.equal(registryMediaPluginBySelector(selector)?.pluginId, "sync");

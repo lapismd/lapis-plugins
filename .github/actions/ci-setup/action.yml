@@ -18,3 +18,6 @@ runs:
     - name: Install frozen workspace
       shell: bash
       run: pnpm install --frozen-lockfile --prefer-offline
+    - name: Install frozen private Sync catalog dependencies
+      shell: bash
+      run: pnpm --dir packages/sync install --ignore-workspace --ignore-pnpmfile --frozen-lockfile --prefer-offline

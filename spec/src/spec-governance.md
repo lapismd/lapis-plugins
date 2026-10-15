@@ -1,5 +1,10 @@
 # Specification Governance
 
+Clean CI catalog acceptance includes the parked Sync package's frozen registry
+install, with local hooks bypassed. Its dependency lock does not activate the
+package for installation or publication. The parked-plugin workflow regression
+covers this setup and its separate dependency audit.
+
 The registry metadata audit enforces the manifest-owned SHA-256 Gravatar for
 `dev@lapis.md` under LP-SPEC-041, including image size and initials fallback.
 
@@ -225,3 +230,7 @@ security gates. Exact frozen source candidates supply signed runtime artifacts
 for Web acceptance without replacing committed npm ranges.
 
 Production release retention maps the explicit public candidate file globs and empty-upload gate to Distribution and its verification evidence. Private signing keys remain temporary CI inputs outside the retained release directory.
+
+The static catalog build has a bounded 6144 MiB Node heap. The default 4 GiB
+heap exhausts while compiling the complete catalog with private Sync enabled;
+the build budget does not alter interaction, accessibility or artifact gates.
