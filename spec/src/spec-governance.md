@@ -168,8 +168,21 @@ package and release lanes run.
 The CI fan-out and stable aggregation gate are protected by LP-SPEC-038. The
 workflow, pinned setup composite, Turbo cache summary reporter, and workflow
 source tests map to Distribution and this chapter. The prerequisite checks every declared framework range and AI Controller on npm.
-Validate rejects skipped, cancelled or failed lanes; publication variables cannot
-turn missing acceptance into a successful aggregate. Community is not a CI prerequisite. Dependency auditing is
+Pull requests changing only non-executable, regular Markdown files beneath
+`spec/src/` or `spec/records/` use a specification-only lane. Classification
+compares the complete PR diff from its single merge base, with renames disabled
+so both sides of moves are checked. Empty, malformed, ambiguous or unavailable
+comparisons, executable files, symlinks, other spec files and mixed changes
+retain full validation. Pushes, manual runs and reusable release calls retain
+full validation. The fast lane uses the pinned toolchain and frozen graph and
+runs the existing `pnpm spec:check`, including validation, mdBook, spec-first
+and App ownership, without package builds or publication prerequisites.
+Validate requires successful classification and image resolution. It accepts
+the fast route only when specification checks succeed and every full lane is
+skipped; otherwise every full lane must succeed. Unexpected skips, cancellations
+and failures remain blocking; publication variables cannot turn missing
+acceptance into a successful aggregate. Executable regressions cover both routes
+and their failure states. Community is not a CI prerequisite. Dependency auditing is
 protected by LP-SPEC-048: root `check`, `ci:release`, and the quality job run
 `pnpm audit` against the committed lockfile, and only recorded
 `auditConfig.ignoreCves` entries may suppress an unpatched advisory. Functional Storybook and
