@@ -73,3 +73,38 @@ prints credentials or resets an existing vault.
 Check this host with `pnpm exec svelte-check --tsconfig dev/sync/tsconfig.json
 --fail-on-warnings`. TypeScript uses the same released API identity that Vite
 selects through host deduplication.
+
+## Native account bridge review (1B-C checkpoint)
+
+The default plugin now uses the released API native bridge when one is present.
+The native host owns S256 authorization, the OS credential record, authenticated
+reads and profile admission. Its stable client origin is
+`https://desktop.lapis.md`; renderer loopback ports are not credential scope.
+The ordinary browser review above keeps its explicit memory-only adapter.
+
+For the isolated native-process/UI acceptance, start a separate review frontend:
+
+```sh
+VITE_SYNC_NATIVE_REVIEW=true pnpm exec vite --config dev/sync/vite.config.mjs --port 6081 --strictPort
+```
+
+With the existing loopback Deno review server, run:
+
+```sh
+LAPIS_SYNC_NATIVE_HOST_DRIVER=../lapis-notes/packages/desktop-deno/scripts/server-account-review-process.ts pnpm exec playwright test -c dev/sync/native-playwright.config.ts --headed
+```
+
+Use an absolute driver path if running outside the Plugins repository. The
+acceptance creates an isolated OPFS profile, starts the real Notes account host
+in independent Deno processes, uses actual macOS Keychain and server approval,
+then verifies named-vault connection, native-process restart and sign-out across
+another restart. Profile admission and browser launching are fixture adapters;
+this does not qualify the packaged desktop window or other platforms. Full
+client restart includes the native process; a renderer-only reload does not
+retire an admitted native runtime. Existing profile admission rejects competing
+runtimes rather than replacing their account sessions.
+
+A standalone desktop-window attempt currently stops before Sync on the existing
+AI-controller managed-import resolution. Track that host launch separately;
+keep enrollment, content transfer, plugin release activation and visual
+baselines outside this checkpoint.

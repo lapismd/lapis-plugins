@@ -7,6 +7,7 @@
     type PluginManifest,
     type VaultSession,
     type WorkspaceLeaf,
+    getNativeDesktopBridge,
   } from "@lapis-notes/api";
   import { getWorkspaceHostBinding } from "@lapis-notes/api/workspace-host";
   import { WorkspaceShell } from "@lapis-notes/workspace";
@@ -27,7 +28,10 @@
     markdownRenderer: async () => {},
   });
   const release = installApplicationCompatibility(owned);
-  const account = new MemoryServerAccount();
+  const native = getNativeDesktopBridge();
+  const account = native ? null : new MemoryServerAccount();
+  const nativeDatabaseId = `sync-account-review-${crypto.randomUUID()}`;
+  let nativeProfileOpened = false;
   let ready = $state(false);
   let failure = $state("");
   let disposal: Promise<void> | undefined;
@@ -40,7 +44,8 @@
         }
         await owned.workspace.disposeWorkspaceHost();
         await initialSession.close();
-        await account.dispose();
+        await account?.dispose();
+        if (nativeProfileOpened) await native?.invoke("desktop_app_database_close", { databaseId: nativeDatabaseId });
       } finally {
         release();
       }
@@ -49,13 +54,13 @@
 
   class PrivateSyncPlugin extends SyncPlugin {
     constructor(owner: App, manifest?: PluginManifest) {
-      super(owner, manifest, {
+      super(owner, manifest, account ? {
         account,
         connection: {
           allowLoopbackHttp: true,
           request: account.request,
         },
-      });
+      } : {});
     }
   }
   owned.plugins.registerCorePlugins([
@@ -68,6 +73,10 @@
   onMount(() => {
     let canceled = false;
     const boot = async () => {
+      if (native) {
+        await native.invoke("desktop_app_database_open", { databaseId: nativeDatabaseId, vaultId: owned.appDatabase.vaultId });
+        nativeProfileOpened = true;
+      }
       await owned.vault.load();
       await owned.configuration.load();
       await owned.plugins.loadPlugins({
@@ -111,7 +120,7 @@
 
 <main>
   <header>
-    <span>Private Sync review · Sign-in lasts until reload · No content synchronization</span>
+    <span>Private Sync review · {native ? "Protected native account session" : "Sign-in lasts until reload"} · No content synchronization</span>
     <a href={serverUrl} target="_blank" rel="noopener">Open Lapis Server</a>
   </header>
   {#if failure}

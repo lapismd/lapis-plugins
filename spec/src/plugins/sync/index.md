@@ -1,5 +1,12 @@
 # Lapis Sync
 
+Native desktop account integration uses the released API's native bridge and
+the owning App database's stable vault ID. The native host retains the verifier,
+bearer credential and OS-store access. Explicit account adapters continue to own
+the private browser review and catalog fixtures. The default native adapter
+restores account presentation, routes connection/discovery reads, invalidates
+late results on account or server changes, and closes before plugin teardown.
+
 The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.
 
@@ -17,6 +24,10 @@ the API peer graph, including its corrected runtime dependency declarations.
 This development edge does not expand the plugin runtime host contract.
 
 ## Requirements
+
+| ID | Requirement |
+| --- | --- |
+| LN-SYNC-049 | A native Sync installation MUST obtain account state and authenticated connection/discovery reads through a profile-bound host session. It MUST NOT receive bearer credentials or authorization verifiers. Restore, server changes, cancellation, sign-out and unload MUST reject obsolete responses and keep account access separate from enrollment and content synchronization. Explicit host adapters MUST take precedence; an older native host MUST show account unavailability. |
 
 Stage 0C consumes released API 0.1.4, Design Core 0.3.4 and Mira 0.0.5
 through npm. Sync's API and Design Core floors cover its required public

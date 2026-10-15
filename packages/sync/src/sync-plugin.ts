@@ -7,6 +7,7 @@ import {
   type PluginManifest,
   type PluginSettingsRegistration,
   type DiagnosticCollection,
+  getNativeDesktopBridge,
 } from "@lapis-notes/api";
 import manifestSpec from "../manifest.json";
 import { SyncSession } from "./presentation/session";
@@ -25,6 +26,7 @@ import { createSyncSettingsDefinition } from "./settings/definition";
 import { SyncView } from "./sync-view";
 import { SyncStatusBar } from "./status-bar";
 import type { SyncAccountHost } from "./presentation/account";
+import { NativeSyncAccount } from "./presentation/native-account";
 import { SYNC_VIEW_TYPES, type SyncPaneKind } from "./view-state.svelte";
 
 export const SYNC_PLUGIN_ID = "sync";
@@ -33,11 +35,13 @@ export type SyncPluginOptions = {
   connection?: ServerConnectionOptions;
   createRuntime?: (
     app: App,
-    settings: Readonly<SyncSettings>,
+    settings: Readonly<SyncSettings>
   ) => SyncRuntime | Promise<SyncRuntime>;
 };
 
 export class SyncPlugin extends Plugin {
+  readonly options: SyncPluginOptions;
+  #nativeAccount?: NativeSyncAccount;
   #settings = { ...DEFAULT_SYNC_SETTINGS };
   #saveTail: Promise<void> = Promise.resolve();
   session = new SyncSession(null, () => this.#settings);
@@ -48,9 +52,24 @@ export class SyncPlugin extends Plugin {
   constructor(
     app: App,
     manifest: PluginManifest = manifestSpec as PluginManifest,
-    readonly options: SyncPluginOptions = {},
+    options: SyncPluginOptions = {}
   ) {
     super(app, manifest);
+    const bridge = options.account ? null : getNativeDesktopBridge();
+    this.#nativeAccount = bridge
+      ? new NativeSyncAccount(bridge, app.appDatabase.vaultId)
+      : undefined;
+    this.options = this.#nativeAccount
+      ? {
+          ...options,
+          account: this.#nativeAccount,
+          connection: {
+            ...options.connection,
+            request: this.#nativeAccount.request,
+            allowLoopbackHttp: true,
+          },
+        }
+      : options;
   }
   get settings(): Readonly<SyncSettings> {
     return { ...this.#settings };
@@ -58,7 +77,7 @@ export class SyncPlugin extends Plugin {
   async onload(): Promise<void> {
     const data = await this.loadData();
     this.#settings = readSyncSettings(
-      data?.version === 1 ? data.settings : null,
+      data?.version === 1 ? data.settings : null
     );
     this.options.account?.configure(this.#settings.serverUrl);
     await this.session.dispose();
@@ -67,7 +86,7 @@ export class SyncPlugin extends Plugin {
         ? await this.options.createRuntime(this.app, this.settings)
         : new ServerConnectionRuntime(this.options.connection),
       () => this.settings,
-      this.options.connection,
+      this.options.connection
     );
     for (const kind of ["sync", "history", "file-history"] as const) {
       const command = {
@@ -85,7 +104,7 @@ export class SyncPlugin extends Plugin {
         this.registerView(
           SYNC_VIEW_TYPES[kind],
           (leaf) => new SyncView(leaf, this, kind),
-          { kind: "command", command },
+          { kind: "command", command }
         );
       else
         this.registerSidebarView(
@@ -96,20 +115,20 @@ export class SyncPlugin extends Plugin {
             title: kind === "sync" ? "Sync" : "File History",
             icon: kind === "sync" ? "refresh-cw" : "file-clock",
           },
-          { kind: "command", command },
+          { kind: "command", command }
         );
     }
     for (const kind of ["compare", "merge"] as const)
       this.registerView(
         SYNC_VIEW_TYPES[kind],
         (leaf) => new SyncView(leaf, this, kind),
-        { kind: "internal" },
+        { kind: "internal" }
       );
     this.settingsSource = new SyncSettingsSource(this);
     const definition = createSyncSettingsDefinition(this.settingsSource);
     this.settingsRegistration = this.registerSettingsSection(definition);
     this.addSettingTab(
-      new DeclarativePluginSettingTab(this.app, this, definition),
+      new DeclarativePluginSettingTab(this.app, this, definition)
     );
     this.#diagnostics = this.createDiagnosticCollection("runtime", {
       label: "Lapis Sync",
@@ -125,10 +144,10 @@ export class SyncPlugin extends Plugin {
     this.register(this.session.subscribe(refreshDiagnostics));
     refreshDiagnostics();
     this.registerEvent(
-      this.app.workspace.on("file-open", () => this.session.notify()),
+      this.app.workspace.on("file-open", () => this.session.notify())
     );
     this.status = new SyncStatusBar(this.app, this.session, () =>
-      this.openPane("sync"),
+      this.openPane("sync")
     );
     this.status.start();
     this.addCommand({
@@ -179,7 +198,7 @@ export class SyncPlugin extends Plugin {
   }
   async openPane(
     kind: SyncPaneKind,
-    state: Record<string, unknown> = {},
+    state: Record<string, unknown> = {}
   ): Promise<void> {
     const type = SYNC_VIEW_TYPES[kind];
     const existing = this.app.workspace.getLeavesOfType(type)[0];
@@ -200,6 +219,10 @@ export class SyncPlugin extends Plugin {
     await this.app.workspace.revealLeaf(leaf);
   }
   async onunload(): Promise<void> {
+    let nativeFailure: { error: unknown } | undefined;
+    const nativeCleanup = this.#nativeAccount?.dispose().catch((error) => {
+      nativeFailure = { error };
+    });
     for (const type of Object.values(SYNC_VIEW_TYPES))
       for (const leaf of this.app.workspace.getLeavesOfType(type))
         await leaf.detach();
@@ -213,6 +236,8 @@ export class SyncPlugin extends Plugin {
     await this.#saveTail.catch(() => {});
     this.#diagnostics?.dispose();
     this.#diagnostics = null;
+    await nativeCleanup;
+    if (nativeFailure) throw nativeFailure.error;
   }
 }
 export default SyncPlugin;

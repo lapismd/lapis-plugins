@@ -7,7 +7,9 @@
   onMount(() => {
     let canceled = false;
     void (async () => {
-      const adapter = await createOpfsVault({ name: "Sync connection review", vaultId: "sync-connection-review" });
+      const nativeId = new URLSearchParams(location.search).get("reviewVault") ?? "sync-native-review-desktop";
+      if (import.meta.env.VITE_SYNC_NATIVE_REVIEW === "true" && (!nativeId || !/^sync-native-review-[A-Za-z0-9-]{1,100}$/u.test(nativeId))) throw new Error("Native review requires an isolated reviewVault profile.");
+      const adapter = await createOpfsVault({ name: "Sync connection review", vaultId: import.meta.env.VITE_SYNC_NATIVE_REVIEW === "true" ? nativeId! : "sync-connection-review" });
       const opened = await createVaultSession(adapter);
       if (canceled) await opened.close();
       else session = opened;

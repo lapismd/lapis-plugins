@@ -13,8 +13,10 @@ lifecycle** next, before endpoint enrollment. Plugins PRs
 all nine CI jobs. The server authorization checkpoint and private Sync Settings
 sign-in UI are implemented; [PR #21](https://github.com/lapismd/lapis-plugins/pull/21)
 merged after all nine checks passed. Protected native account persistence now
-has its own review checkpoint. Production host integration remains pending;
-the browser review app still keeps its session in memory. See the
+has its own review checkpoint. Native account bridge and Settings source integration now have their own
+[qualified private checkpoint](2026-10-15-sync-slice-1c-native-account-bridge.md).
+Installed desktop-window review remains pending; the browser review app still
+keeps its session in memory. See the
 [native account checkpoint](2026-10-15-sync-slice-1b-native-account.md).
 See the [1B checkpoint record](2026-10-15-sync-slice-1b-server-authorization.md) and the
 [Design Core checkpoint](2026-10-14-sync-stage-0b-design-core-release.md) and
@@ -289,7 +291,9 @@ Deliver 1B in separate review stops rather than expanding one run across hosts:
    revocation cleanup. Offline and stale-result cases have focused regressions.
    This adds no public host API or renderer activation. See the
    [native account checkpoint](2026-10-15-sync-slice-1b-native-account.md).
-4. **1B-C, production host integration:** pending. Reuse the reviewed Settings UI and that host
+4. **1B-C, production host integration:** native account bridge and Settings
+   source integration are qualified for private review; the installed desktop-window
+   journey remains pending. See the [bridge checkpoint](2026-10-15-sync-slice-1c-native-account-bridge.md). Reuse the reviewed Settings UI and that host
    transport for sign-in/sign-out, explicit account/session state, connection
    checks and named vault discovery. Review the real installed-client journey
    and affected Settings interaction/accessibility before slice 2.
