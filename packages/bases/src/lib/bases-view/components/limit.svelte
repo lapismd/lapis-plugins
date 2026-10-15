@@ -55,9 +55,7 @@
     <Command.Root>
       <div class="bases-style-p-2-7660b4">
         <div class="bases-style-grid-f3c543 bases-style-grid-cols-1-d7c833 bases-style-items-center-3960ff bases-style-gap-2-77a2a2 bases-style-px-2-d5eab2 bases-style-pt-1-6b7d6e">
-          <Label for="column_name" class="bases-style-text-sm-fc7473 bases-style-opacity-50-0b8c50"
-            >Limit number of results</Label
-          >
+          <Label for="column_name">Limit number of results</Label>
           <Input
             type="number"
             placeholder="e.g 10"

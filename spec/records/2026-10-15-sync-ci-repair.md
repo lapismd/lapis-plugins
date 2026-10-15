@@ -63,8 +63,20 @@ remove redundant contexts and select compatible versions already in the graph.
   retaining its plugin, panel and collapsed-sidebar assertions. No product
   component, accessibility label or visual baseline changes.
 
-The remaining complete catalog run and exact-head PR CI are pending. This
-record does not yet declare the PRs green or merged.
+The complete local catalog then passed all 231 stories. CI for #16 at
+`61b0df79c313` passed every lane except interaction acceptance, which found
+one genuine contrast defect in the Bases results menu: its limit label used
+50% opacity (3.15:1 against the light surface, below 4.5:1). The owning Bases
+component now retains Design Core Label typography and color. The existing
+Query Controls play leaves that menu open for axe, reproducing 1 failure with
+the old component and 0 with the fix in fresh browser processes. Bases check,
+164 unit tests and package build/publint pass. A package-scoped patch Changeset
+records release intent; this repair does not publish the plugin.
+
+All 18 Bases interaction/accessibility stories pass after the contrast fix.
+The first exact-head #17 run (`38733880881`, `c07d4d716367`) passed all nine CI
+jobs. The updated common parent and rebased connection head still require
+exact-head CI; this record does not yet declare the PRs merged.
 
 The next feature is **1B. Remote sign-in and session lifecycle**, before endpoint
 enrollment, as recorded in the incremental delivery plan. Stop for review after

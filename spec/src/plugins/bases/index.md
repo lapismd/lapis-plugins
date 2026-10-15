@@ -19,6 +19,9 @@ unchanged; local overrides for these released packages are retired.
 Bases presentation resolves Design Core through the repository's current
 published semver range and committed lockfile.
 
+The result-limit label retains Design Core Label typography and theme color;
+plugin opacity must not reduce its accessible contrast.
+
 The package-owned `registry.json` is the source for curated categories,
 highlights, and registry-only Overview content under LP-SPEC-021 and LP-SPEC-033. Manifest and package
 metadata remain authoritative for the fields defined by LP-SPEC-022.

@@ -1,5 +1,9 @@
 # Distribution and Releases
 
+Bases carries independent patch release intent for result-limit label contrast.
+The component retains Design Core typography and color; the CI repair does not
+activate package publication or change plugin host contracts.
+
 Lapis Sync remains private and parked under LP-SPEC-049. Its explicit shared
 Storybook entry and media-only registry catalog permit UI review without
 installation, publication or registry dispatch. Direct package checks qualify

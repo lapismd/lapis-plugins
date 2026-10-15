@@ -1,5 +1,9 @@
 # Specification Governance
 
+Bases query-controls acceptance keeps the results menu visible for axe, covering
+its limit label and input. A reproduced contrast failure is fixed in the owning
+component; the accessibility threshold and visual baselines are unchanged.
+
 Clean CI catalog acceptance includes the parked Sync package's frozen registry
 install, with local hooks bypassed. Its dependency lock does not activate the
 package for installation or publication. The parked-plugin workflow regression
