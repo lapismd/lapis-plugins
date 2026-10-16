@@ -360,3 +360,7 @@ coverage class changes neither the capture stories nor signed plugin payloads.
 The optional Repository backup selection contract is an independent History
 patch under LN-HIST-018. Its public npm/controller exports and runtime archive
 retain one source identity; qualification keeps legacy services compatible.
+
+Graph native intake uses the verified current API archive for admitted pending
+operations. Its settings repair is packed at the owning source snapshot; npm
+publication and signed plugin artifacts remain at their separate release gates.

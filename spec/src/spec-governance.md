@@ -452,3 +452,8 @@ CSV Registry Screenshots are application stories under LP-SPEC-054. Their
 registry demo reaches the existing real WorkspaceShell through PanelDemo, so
 the classification inventory MUST include that family alongside the CSV panel.
 This inventory repair changes no story assertions, product code or baselines.
+
+Graph settings acceptance distinguishes coalescing from lifecycle admission.
+A source close-drain regression must prove the pending debounce remains owned;
+recovery must refresh mounted views without another write. Full session gates
+remain due after M7 implementation.
