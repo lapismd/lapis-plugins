@@ -52,6 +52,11 @@ plugins.
 The Markdown plugin owns Markdown document behavior and its integration with the
 Lapis plugin, editor, metadata, and workspace APIs. Movable panel behavior is
 specified separately under [Panels](./panels/index.md).
+Reading's inner Mira and preview layers stretch through the available pane for
+short notes and grow with long documents. The shared outer Scroll Area remains
+the only document scroller; a minimum-height outer shell alone is insufficient.
+See the [reading-view review](../../../records/2026-10-17-reading-surface-fill.md)
+for source and consumer evidence and deferred qualification.
 Lapis API and UI host modules are peer-provided by the application so the
 packed plugin shares the host's App and framework identity.
 
