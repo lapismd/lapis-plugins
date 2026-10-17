@@ -367,7 +367,7 @@ export const SearchToolHits: Story = {
       name: "Show details for notes_search",
     });
     await userEvent.click(trigger);
-    const hit = await canvas.findByRole("button", { name: "Open auth.md" });
+    const hit = await canvas.findByRole("button", { name: "Open auth.md Projects/auth.md" });
     await expect(hit).toBeVisible();
     await expect(canvas.getByText("OAuth tokens")).toBeVisible();
     await userEvent.click(hit);

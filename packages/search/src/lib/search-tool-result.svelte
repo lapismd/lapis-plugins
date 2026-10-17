@@ -34,7 +34,7 @@
         <button
           type="button"
           data-ui-part="file"
-          aria-label={`Open ${fileNameFromPath(hit.path)}`}
+          aria-label={`Open ${fileNameFromPath(hit.path)} ${hit.path}`}
           onclick={() => void openHit(hit)}
         >
           <span data-ui-part="file-label">{fileNameFromPath(hit.path)}</span>

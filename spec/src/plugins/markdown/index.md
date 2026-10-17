@@ -199,3 +199,8 @@ The signed runtime declares its compiled Svelte imports through the exact
 compiler-versioned renderer contracts in LP-SPEC-014 and LP-SPEC-047. Host-owned
 components and archived components share that renderer graph; npm package peers
 remain portable.
+
+Panel preview acceptance observes settled entrance geometry before checking the
+existing 400px minimum. Initial Hover Card visibility can precede the end of its
+animation; Backlinks and Outgoing Links retain their navigation, editing and
+pointer-handoff assertions while waiting for that public geometry contract.

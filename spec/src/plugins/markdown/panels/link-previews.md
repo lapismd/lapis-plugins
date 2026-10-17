@@ -47,3 +47,7 @@ Outgoing candidate discovery tokenizes the active indexed Search document,
 limits query and result counts, and reuses returned Search content. It MUST NOT
 reread the active or candidate Markdown body when those documents are already
 indexed.
+
+Panel browser acceptance waits for preview entrance geometry before asserting
+the unchanged 400px minimum width. Visibility can precede the end of Hover Card
+animation; that intermediate frame does not define the settled card size.

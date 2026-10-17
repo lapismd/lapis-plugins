@@ -6,7 +6,7 @@ behavior retain their owning contracts.
 
 Chat acceptance waits for composer menus to become visible before using them.
 Tool-call name assertions target the public call-name part so the same name in
-expanded details does not make the summary query ambiguous.
+expanded details does not make the summary query ambiguous. Search result navigation asserts the complete accessible filename and path supplied by Search.
 The real AI shell applies the same overlay-readiness contract. It waits for
 menu visibility and released pointer handling before opening Settings, changing
 folder scope or acting after closing a menu; assertions and native animations
