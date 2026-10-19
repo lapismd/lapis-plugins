@@ -187,20 +187,6 @@
       );
     });
   });
-  $effect(() => {
-    const input = {
-      text: query,
-      caseSensitive: settings.view.matchCase,
-      mode: retrievalModeForQuery(),
-      limit: settings.query.resultLimit,
-    };
-    const enabled = scope !== "files";
-    const timer = window.setTimeout(
-      () => providerController.search(input, enabled),
-      250,
-    );
-    return () => window.clearTimeout(timer);
-  });
   let settings = $state(untrack(() => plugin.getSettings()));
   let results = $state<SearchResult[]>([]);
   let resultCount = $state(0);
@@ -221,6 +207,23 @@
         ? `${resultCount} result${resultCount === 1 ? "" : "s"}`
         : `${scope === "history" ? 0 : resultCount} current · ${historyCount} saved${historyPending ? " loaded" : ""}`,
   );
+  const providerSearchKey = $derived(
+    JSON.stringify({
+      text: query,
+      caseSensitive: settings.view.matchCase,
+      mode: retrievalModeForQuery(),
+      limit: settings.query.resultLimit,
+      enabled: scope !== "files",
+    }),
+  );
+  $effect(() => {
+    const { enabled, ...input } = JSON.parse(providerSearchKey);
+    const timer = window.setTimeout(
+      () => providerController.search(input, enabled),
+      250,
+    );
+    return () => window.clearTimeout(timer);
+  });
   const databaseRefreshDelayMs = 75;
 
   const diagnostic = $derived(
@@ -444,7 +447,7 @@
       const nextResults = response.hits
         .map((hit) => searchResultFromHit(app, hit))
         .filter((result): result is SearchResult => result !== null);
-      resultCount = response.count;
+      resultCount = nextResults.length;
       const identity = `${term}\u0000${nextResults
         .map(
           (result) =>

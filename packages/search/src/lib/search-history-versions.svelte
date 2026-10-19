@@ -14,6 +14,7 @@
   import type { ProviderVersion } from "./search-provider-groups";
   import HighlightedText from "./highlighted-text.svelte";
   import { onDestroy } from "svelte";
+  const treeId = $props.id();
   let {
     versions,
     report,
@@ -57,14 +58,14 @@
 </script>
 
 <Sidebar.MenuSub role="group" class="search-panel__history-list">
-  {#each versions as { provider, hit } (`${provider.id}/${hit.id}`)}
+  {#each versions as { provider, hit }, index (`${provider.id}/${hit.id}`)}
     {@const id = key(provider, hit)}
     <Sidebar.MenuSubItem
       role="treeitem"
       aria-selected="false"
       aria-level={2}
-      aria-label={`History ${hit.version?.label ?? hit.title}${hit.timestamp ? ` ${new Date(hit.timestamp).toLocaleDateString()}` : ""}`}
       aria-expanded={expanded[id] ?? false}
+      aria-labelledby={`${treeId}-${index}-label`}
       tabindex={0}
       onclick={(event) => {
         const target = event.target as HTMLElement;
@@ -92,7 +93,18 @@
         open={expanded[id] ?? false}
         onOpenChange={(value) => (expanded[id] = value)}
       >
-        <Collapsible.Trigger class="search-panel__history-version">
+        <Collapsible.Trigger
+          class="search-panel__history-version"
+          id={`${treeId}-${index}-label`}
+          aria-label={`History ${hit.version?.label ?? hit.title}${hit.timestamp ? ` ${new Date(hit.timestamp).toLocaleDateString()}` : ""}`}
+          aria-expanded={expanded[id] ?? false}
+          onkeydown={(event) => {
+            if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+              event.preventDefault();
+              expanded[id] = event.key === "ArrowRight";
+            }
+          }}
+        >
           <ChevronRight class="search-panel__disclosure" aria-hidden="true" />
           <Badge variant="outline">History</Badge>
           <span class="search-panel__history-label"
@@ -103,7 +115,11 @@
               >{new Date(hit.timestamp).toLocaleDateString()}</time
             >{/if}
         </Collapsible.Trigger>
-        <Collapsible.Content class="search-panel__history-content">
+        <Collapsible.Content
+          class="search-panel__history-content"
+          role="group"
+          id={`${treeId}-${index}`}
+        >
           <div class="search-panel__history-details">
             <Button
               variant="ghost"
@@ -150,6 +166,7 @@
                   role="treeitem"
                   aria-selected="false"
                   aria-level={3}
+                  aria-label={`${match.text} ${match.field}`}
                   tabindex={0}
                   onclick={() => open(provider, hit, match)}
                   onkeydown={(event) => {

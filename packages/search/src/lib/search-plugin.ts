@@ -36,7 +36,7 @@ export class SearchPlugin extends Plugin {
 
   constructor(
     app: App,
-    pluginManifest: PluginManifest = manifestSpec as PluginManifest
+    pluginManifest: PluginManifest = manifestSpec as PluginManifest,
   ) {
     super(app, pluginManifest);
     this.settings = mergeSearchSettings(null);
@@ -57,7 +57,7 @@ export class SearchPlugin extends Plugin {
 
   async updateSettings(patch: SearchPluginSettingsPatch): Promise<void> {
     const previousProvider = resolveSearchEmbeddingProviderConfig(
-      this.settings
+      this.settings,
     );
     this.settings = patchSearchSettings(this.settings, patch);
     await this.saveData(this.settings);
@@ -78,7 +78,7 @@ export class SearchPlugin extends Plugin {
   async onload(): Promise<void> {
     this.settings = mergeSearchSettings(await this.loadData());
     await this.app.appDatabase.configureSearchEmbeddingProvider(
-      resolveSearchEmbeddingProviderConfig(this.settings)
+      resolveSearchEmbeddingProviderConfig(this.settings),
     );
     this.registerEvent(
       this.app.searchDocumentProviders.on("changed", ({ reason }) => {
@@ -90,15 +90,15 @@ export class SearchPlugin extends Plugin {
           return;
         }
         this.scheduleProviderReconciliation(`provider-${reason}`);
-      })
+      }),
     );
     this.registerSearchDocumentProvider(
       "markdown",
-      MARKDOWN_SEARCH_DOCUMENT_PROVIDER
+      MARKDOWN_SEARCH_DOCUMENT_PROVIDER,
     );
     this.registerSearchDocumentProvider(
       "canvas",
-      CANVAS_SEARCH_DOCUMENT_PROVIDER
+      CANVAS_SEARCH_DOCUMENT_PROVIDER,
     );
     this.registerAgentTool(createNotesSearchTool(this.searchManager));
     this.registerAgentSlashCommand(createNotesSearchSlashCommand());
@@ -118,15 +118,15 @@ export class SearchPlugin extends Plugin {
           id: "open-search",
           name: "Open Search",
           callback: (query?: string, scope?: SearchResultScope) =>
-            void this.openSearchInLeftSidebar(query, scope),
+            this.openSearchInLeftSidebar(query, scope),
         },
-      }
+      },
     );
 
     this.registerEvent(
       this.app.metadataCache.on("loaded", () => {
         void this.startupRefresh();
-      })
+      }),
     );
     if (this.app.metadataCache.initialized) {
       void this.startupRefresh();
@@ -138,7 +138,7 @@ export class SearchPlugin extends Plugin {
       callback: async () => {
         const status = await this.rebuildSemanticSearch();
         new Notice(
-          `Semantic search refreshed (${status.readyChunkCount}/${status.chunkCount} ready)`
+          `Semantic search refreshed (${status.readyChunkCount}/${status.chunkCount} ready)`,
         );
       },
     });
@@ -182,7 +182,7 @@ export class SearchPlugin extends Plugin {
     this.startupRefreshStarted = true;
     this.startupRefreshPromise = reconcileSearchAfterMetadata(
       this.app,
-      this.searchManager
+      this.searchManager,
     )
       .then(() => undefined)
       .catch((error) => {
@@ -190,7 +190,7 @@ export class SearchPlugin extends Plugin {
         new Notice(
           `Search index refresh failed: ${
             error instanceof Error ? error.message : String(error)
-          }`
+          }`,
         );
       })
       .finally(() => {
@@ -213,7 +213,7 @@ export class SearchPlugin extends Plugin {
         new Notice(
           `Search provider refresh failed: ${
             error instanceof Error ? error.message : String(error)
-          }`
+          }`,
         );
       })
       .finally(() => {
@@ -226,7 +226,7 @@ export class SearchPlugin extends Plugin {
 
   private async openSearchInLeftSidebar(
     query = "",
-    scope: SearchResultScope = "files"
+    scope: SearchResultScope = "files",
   ): Promise<void> {
     const existing = this.app.workspace.getLeavesOfType(SearchViewType)[0];
     const target =

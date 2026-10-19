@@ -83,3 +83,24 @@ unchanged; archive overlays are ignored development setup only.
 The first follow-up spec-first run rejected the unchanged mapped canonical
 chapter. The chapter now explicitly records visible-text naming and the exact
 revision-pinned gate is rerun after amendment; this failure is retained.
+
+Expanded version rows now name their labelled header, with metadata/actions
+inside the owning tree item and snippets in its nested group. This fixes the
+Desktop label-content mismatch without exposing descendant messages as the
+version name. Intermediate trigger-owned groups first duplicated the snippet
+name and then violated required tree children; the final labelled container
+retains click-anywhere and keyboard behavior. The two exact federated stories
+pass in history-search-labelled-row-actions.log. Provider request identity also
+ignores recent-query saves, preventing unrelated settings updates from clearing
+results. Current-file totals count only successfully resolved live file hits.
+The original user's exact query was unavailable; fresh native acceptance and
+catalog checks cover Current files rendering rather than claiming a confirmed
+cause for every stale-index instance.
+
+Final labelled version-container, click/keyboard and nested-group structure
+passes all 13 Search stories in a cold process (`history-search-landed-stories.log`).
+The intermediate non-container ownership design is discarded. Header labels
+reference only visible header text; metadata actions remain inside the owning
+item. No failing assertions or axe rules were removed. Search check, build and
+public packaging are rerun on this final source. Wider source aggregates remain
+outside this explicitly focused functional-UI slice.

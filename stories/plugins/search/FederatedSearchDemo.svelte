@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import PanelDemo from "../_shared/panels/PanelDemo.svelte";
+  import SearchPanelDemo from "./panels/SearchPanelDemo.svelte";
   import type { App, SearchProviderHit } from "@lapis-notes/api";
   let root: HTMLDivElement;
   let ready = $state(false),
@@ -40,7 +40,8 @@
         app = root.querySelector<HTMLElement & { __lapisApp?: App }>(
           '[data-testid="panel-demo"]',
         )?.__lapisApp;
-        if (app && root.querySelector('[data-app-shell-ready="true"]')) break;
+        if (app && root.querySelector('[data-search-placement-ready="true"]'))
+          break;
         await new Promise((resolve) => requestAnimationFrame(resolve));
       }
       if (!app || disposed) return;
@@ -101,12 +102,7 @@
   data-federated-ready={ready}
   data-opened-revision={opened}
 >
-  <PanelDemo
-    kind="search"
-    layout="middle-top-tabs"
-    hideSidebars={true}
-    diagnostics="none"
-  />
+  <SearchPanelDemo layout="middle-top-tabs" diagnostics="none" />
   <button
     class="release"
     onclick={() => {

@@ -204,3 +204,9 @@ inheriting a second Sidebar sub-list indent. The sort control keeps its
 accessible name and hides its label when the Search pane is narrow.
 Accessible names on source, count, file and version controls include their
 visible text while retaining path, revision and activation meaning.
+Expanded version details are a nested group so their actions and snippets do not
+replace the version row label.
+Saving recent queries or unrelated view preferences does not restart a provider
+query. Only its query/scope/options identity changes trigger a new search.
+Current-file totals describe renderable live-file hits; stale unresolved paths
+are not advertised as visible results. Open Search returns its activation task.

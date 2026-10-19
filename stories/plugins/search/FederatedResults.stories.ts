@@ -35,6 +35,7 @@ export const IncrementalSavedVersions: StoryObj<typeof meta> = {
       name: /History Preserve the welcome/,
     });
     await userEvent.click(version);
+
     await expect(
       await view.findByRole("treeitem", {
         name: /Welcome to the earlier saved notes/,
