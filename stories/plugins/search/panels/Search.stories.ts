@@ -3,7 +3,7 @@ import { getWorkspaceHostBinding } from "@lapis-notes/api/workspace-host";
 import { SearchPanel } from "@lapis-notes/search";
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
-import PanelDemo from "../../_shared/panels/PanelDemo.svelte";
+import SearchPanelDemo from "./SearchPanelDemo.svelte";
 import { panelExampleSources } from "../../_shared/panels/Panel.example-sources";
 import type { PanelDemoLayout } from "../../_shared/panels/create-panel-demo";
 import {
@@ -63,8 +63,8 @@ function resolveTokenColor(element: HTMLElement, token: string): string {
 
 function renderPlacement(layout: PanelDemoLayout): StoryRender {
   return (() => ({
-    Component: PanelDemo,
-    props: { kind, layout },
+    Component: SearchPanelDemo,
+    props: { layout },
   })) as StoryRender;
 }
 
@@ -78,6 +78,13 @@ function placementStory(
     parameters: placementParameters(kind, layout, source, description),
     render: renderPlacement(layout),
     play: async ({ args, canvasElement, parameters }) => {
+      await waitFor(
+        () =>
+          expect(
+            canvasElement.querySelector('[data-search-placement-ready="true"]'),
+          ).not.toBeNull(),
+        { timeout: 30000 },
+      );
       const panel = await expectPanelPlacement(
         canvasElement,
         kind,

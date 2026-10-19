@@ -23,7 +23,7 @@ export const AccessibleFileNavigation: Story = {
     const canvas = within(canvasElement);
     await userEvent.click(
       await canvas.findByRole("button", {
-        name: "Show details for notes_search",
+        name: /^Show details for notes_search(?:\s|$)/,
       })
     );
     const hit = await canvas.findByRole("button", { name: /^Open auth.md/ });
@@ -55,7 +55,7 @@ export const EmptyResults: Story = {
     const canvas = within(canvasElement);
     await userEvent.click(
       await canvas.findByRole("button", {
-        name: "Show details for notes_search",
+        name: /^Show details for notes_search(?:\s|$)/,
       })
     );
     const empty = await canvas.findByText("No matching notes.");
