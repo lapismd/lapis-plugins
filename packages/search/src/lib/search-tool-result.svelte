@@ -1,5 +1,7 @@
 <script lang="ts">
   import type { AgentResultViewProps } from "@lapis-notes/api";
+  import * as Empty from "@lapismd/design-core/shadcn/empty";
+  import SearchIcon from "@lucide/svelte/icons/search";
   import type { App } from "@lapis-notes/api";
   import {
     fileNameFromPath,
@@ -27,7 +29,12 @@
 
 <div data-ui-component="search-tool-result">
   {#if hits.length === 0}
-    <p data-ui-part="empty">No matching notes.</p>
+    <Empty.Root data-ui-part="empty">
+      <Empty.Header>
+        <Empty.Media variant="icon"><SearchIcon aria-hidden="true" /></Empty.Media>
+        <Empty.Description>No matching notes.</Empty.Description>
+      </Empty.Header>
+    </Empty.Root>
   {:else}
     {#each hits as hit (hit.path)}
       <div data-ui-part="hit">

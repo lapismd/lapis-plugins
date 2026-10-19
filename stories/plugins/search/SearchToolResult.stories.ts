@@ -38,3 +38,31 @@ export const AccessibleFileNavigation: Story = {
     await expect(canvas.getByTestId("ai-chat-panel")).toBeVisible();
   },
 };
+
+export const EmptyResults: Story = {
+  render: () => ({
+    Component: AiChatDemo,
+    props: {
+      enableSearchResult: true,
+      seedItems: createNotesSearchSeedItems().map((item) =>
+        item.type === "tool"
+          ? { ...item, output: JSON.stringify({ results: [] }) }
+          : item
+      ),
+    },
+  }),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      await canvas.findByRole("button", {
+        name: "Show details for notes_search",
+      })
+    );
+    const empty = await canvas.findByText("No matching notes.");
+    const root = empty.closest(
+      '[data-ui-component="empty"][data-ui-part="empty"]'
+    );
+    expect(root).not.toBeNull();
+    expect(root?.querySelector("svg")).not.toBeNull();
+  },
+};

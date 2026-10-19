@@ -1,6 +1,6 @@
 # Search Plugin
 
-The package requires published Design Core `^0.4.0` for prepared browser CSS
+The package requires Design Core `^0.4.0 || ^0.5.0` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
 behavior retain their owning contracts.
 
@@ -131,7 +131,8 @@ Composer `/search` is the user-facing tool-dispatch path for the same
 `notes_search` callback; it stays off the workspace palette and disappears
 when Search unloads (LN-SRCH-040).
 The same plugin registers the `notes_search` chat result view so hit rows
-open the matching vault file (LN-SRCH-041).
+open the matching vault file (LN-SRCH-041); empty results MUST use Design Core
+Empty with a search icon and muted description instead of plain paragraph text.
 `@lapis-notes/search/agent-tools` exposes only the portable factory used by the
 explicit real-agent probe; indexing ownership and plugin registration remain in
 the Search root package.

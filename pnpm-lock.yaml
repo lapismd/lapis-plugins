@@ -736,7 +736,7 @@ importers:
         specifier: ^0.1.2
         version: 0.1.4(24fa998e87d3c77b087c3d2c5174b8ea)
       '@lapismd/design-core':
-        specifier: ^0.4.0
+        specifier: ^0.4.0 || ^0.5.0
         version: 0.4.0(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lezer/common':
         specifier: ^1.5.2

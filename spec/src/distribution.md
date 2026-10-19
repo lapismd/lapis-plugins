@@ -1,5 +1,9 @@
 # Distribution and Releases
 
+Search accepts Design Core 0.4 and 0.5 through portable semver ranges; its
+locked 0.4 graph and source/package ownership remain unchanged. Local 0.5
+consumer acceptance is recorded in `spec/records/2026-10-19-search-empty-results.md`.
+
 
 The independent Bases 0.1.4 candidate includes pending result-limit contrast and
 picker accessibility fixes on the existing published dependency graph. It can
