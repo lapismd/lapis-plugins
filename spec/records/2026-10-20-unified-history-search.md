@@ -61,3 +61,25 @@ author and revision while retaining the version title. The two federated source
 stories pass afterward (`.local/history-search-history-style-a11y.log`).
 LN-SRCH-052/053 are implemented at the Search presentation boundary; native,
 provider and full application release gates remain consumer-owned and deferred.
+
+Desktop's stricter axe run also found source, summary, file and saved-version
+controls whose accessible labels omitted visible text. Labels now include the
+visible scope/count/title/date, with the original path and navigation intent
+retained. LN-SRCH-005/052 contracts are unchanged: grouped navigation stays
+accessible and path-specific. The initial label repair produced six fixture
+path-parser failures and one missing saved-version row; the fixtures now parse
+the explicit path portion and version items retain an unambiguous label.
+The final family run passes 12/13, with only Middle Top Tabs's filename selector
+failing; that exact target then passes 1/1 after updating its obsolete prefix
+selector. Package check/build/publint and pack pass after the production repair.
+No accessibility rule or product behavior assertion was disabled.
+
+Local payload ZIP verification and deterministic reproduction passed before this
+label follow-up (payload b450823022b5e8fc5f6504015ed325a7d59f970ae26801ec920e814425ee6aaf).
+The follow-up requires a fresh payload at final qualification. Production signing
+and publication remain deferred. The portable dependencies and lockfile are
+unchanged; archive overlays are ignored development setup only.
+
+The first follow-up spec-first run rejected the unchanged mapped canonical
+chapter. The chapter now explicitly records visible-text naming and the exact
+revision-pinned gate is rerun after amendment; this failure is retained.

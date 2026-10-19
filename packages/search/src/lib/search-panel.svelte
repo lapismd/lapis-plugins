@@ -214,6 +214,13 @@
   let metadataFacetError = $state<string | null>(null);
   let metadataFacetGeneration = 0;
   let searchRevision = 0;
+  const resultSummary = $derived(
+    searching
+      ? "Searching…"
+      : scope === "files"
+        ? `${resultCount} result${resultCount === 1 ? "" : "s"}`
+        : `${scope === "history" ? 0 : resultCount} current · ${historyCount} saved${historyPending ? " loaded" : ""}`,
+  );
   const databaseRefreshDelayMs = 75;
 
   const diagnostic = $derived(
@@ -763,7 +770,7 @@
 
     <div class="search-panel__source">
       <FilterCommandPicker
-        label="Search source"
+        label={`${scope === "files" ? "Current files" : scope === "history" ? "History" : "Everything"} search source`}
         value={scope}
         options={[
           { value: "files", label: "Current files" },
@@ -780,16 +787,12 @@
         variant="ghost"
         size="sm"
         class="search-panel__summary-control"
-        aria-label="Copy search results"
+        aria-label={`Copy search results: ${resultSummary}`}
         disabled={!filteredResults.length && !historyCount}
         onclick={copySearchResults}
       >
         <Copy aria-hidden="true" />
-        {searching
-          ? "Searching…"
-          : scope === "files"
-            ? `${resultCount} result${resultCount === 1 ? "" : "s"}`
-            : `${scope === "history" ? 0 : resultCount} current · ${historyCount} saved${historyPending ? " loaded" : ""}`}
+        {resultSummary}
       </Button>
       <Popover.Root>
         <Popover.Trigger>
@@ -900,8 +903,8 @@
                     aria-selected="false"
                     aria-expanded={open}
                     aria-label={result
-                      ? `${path}, ${(result?.matches.length ?? 0) + (display.history?.versions.length ?? 0)} matches`
-                      : `${path}, ${display.history?.versions.length ?? 0} saved versions`}
+                      ? `${result.file.basename} ${(result?.matches.length ?? 0) + (display.history?.versions.length ?? 0)} · ${path}, ${(result?.matches.length ?? 0) + (display.history?.versions.length ?? 0)} matches`
+                      : `${display.history?.title ?? path} ${display.history?.versions.length ?? 0} · ${path}, ${display.history?.versions.length ?? 0} saved versions`}
                   >
                     <ChevronRight
                       class="search-panel__disclosure"

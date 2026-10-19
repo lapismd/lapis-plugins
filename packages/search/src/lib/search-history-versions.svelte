@@ -63,7 +63,7 @@
       role="treeitem"
       aria-selected="false"
       aria-level={2}
-      aria-label={`History ${hit.version?.label ?? hit.title}`}
+      aria-label={`History ${hit.version?.label ?? hit.title}${hit.timestamp ? ` ${new Date(hit.timestamp).toLocaleDateString()}` : ""}`}
       aria-expanded={expanded[id] ?? false}
       tabindex={0}
       onclick={(event) => {
@@ -92,10 +92,7 @@
         open={expanded[id] ?? false}
         onOpenChange={(value) => (expanded[id] = value)}
       >
-        <Collapsible.Trigger
-          class="search-panel__history-version"
-          aria-label={`Toggle saved version ${hit.version?.label ?? hit.title}`}
-        >
+        <Collapsible.Trigger class="search-panel__history-version">
           <ChevronRight class="search-panel__disclosure" aria-hidden="true" />
           <Badge variant="outline">History</Badge>
           <span class="search-panel__history-label"

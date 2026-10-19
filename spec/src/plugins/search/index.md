@@ -202,3 +202,5 @@ files without a Search provider do not invalidate the checkpoint.
 Saved-version rows use compact disclosures and matching snippet insets, without
 inheriting a second Sidebar sub-list indent. The sort control keeps its
 accessible name and hides its label when the Search pane is narrow.
+Accessible names on source, count, file and version controls include their
+visible text while retaining path, revision and activation meaning.

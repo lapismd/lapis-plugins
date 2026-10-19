@@ -184,7 +184,9 @@ function placementStory(
       const resultRow = fileTreeItem!;
       const resultPath = resultRow
         .getAttribute("aria-label")!
-        .replace(/, \d+ matches$/, "");
+        .replace(/, \d+ matches$/, "")
+        .split(" · ")
+        .at(-1)!;
       const resultFilename = resultPath
         .split("/")
         .at(-1)!
@@ -444,7 +446,7 @@ function placementStory(
       searchPanel.style.removeProperty("--ui-search-highlight-foreground");
 
       const resultCopyButton = panel.getByRole("button", {
-        name: "Copy search results",
+        name: /^Copy search results/,
       });
       const sortButton = panel.getByRole("button", {
         name: /Filename \(A to Z\)/,
@@ -569,7 +571,7 @@ function placementStory(
         ).toBeVisible();
 
         await userEvent.click(
-          panel.getByRole("button", { name: "Copy search results" }),
+          panel.getByRole("button", { name: /^Copy search results/ }),
         );
         await expect(writeText).toHaveBeenCalledWith(
           expect.stringContaining("Notes/Welcome.md"),
@@ -601,7 +603,7 @@ function placementStory(
           expect(panel.queryByRole("alert")).not.toBeInTheDocument();
         });
         await userEvent.click(
-          panel.getByRole("button", { name: "Copy search results" }),
+          panel.getByRole("button", { name: /^Copy search results/ }),
         );
         await waitFor(() => {
           const chip = searchbox.querySelector<HTMLElement>(
@@ -671,7 +673,9 @@ function placementStory(
           )!;
           const resultPath = currentFileTreeItem
             .getAttribute("aria-label")!
-            .replace(/, \d+ matches$/, "");
+            .replace(/, \d+ matches$/, "")
+            .split(" · ")
+            .at(-1)!;
           expect(
             within(resultGroup)
               .getAllByRole("treeitem")
@@ -681,7 +685,9 @@ function placementStory(
           await expect(within(resultGroup).getByText("lexical")).toBeVisible();
         }
         const filenameOnlyResult = currentFileTreeItems.find((item) =>
-          item.getAttribute("aria-label")?.startsWith("Notes/FilenameOnly.md,"),
+          item
+            .getAttribute("aria-label")
+            ?.includes(" · Notes/FilenameOnly.md,"),
         )!;
         await expect(
           within(
