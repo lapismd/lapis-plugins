@@ -1,6 +1,6 @@
 # Graph Plugin
 
-The package requires published Design Core `^0.4.0` for prepared browser CSS
+The package accepts Design Core `^0.4.0 || ^0.5.1` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
 behavior retain their owning contracts.
 

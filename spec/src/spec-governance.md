@@ -1,9 +1,12 @@
 # Specification Governance
 
+Source Editor, Markdown and Graph also accept Design Core 0.5.1 through portable
+semver ranges. The 0.4 registry graph remains valid; current-source Desktop
+acceptance uses verified 0.5.1 public archives without changing release gates.
+
 Search accepts Design Core 0.4 and 0.5 through portable semver ranges; its
 locked 0.4 graph and source/package ownership remain unchanged. Local 0.5
 consumer acceptance is recorded in `spec/records/2026-10-19-search-empty-results.md`.
-
 
 The standalone Bases accessibility patch preserves all normal CI and release
 gates. Its workflow story verifies the named property search and visible
