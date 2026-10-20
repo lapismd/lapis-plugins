@@ -92,10 +92,12 @@
     app,
     initialQuery = "",
     initialScope = "files",
+    onStateChange,
   }: {
     app: App;
     initialQuery?: string;
     initialScope?: SearchResultScope;
+    onStateChange?: () => void;
   } = $props();
 
   const plugin = untrack(() => {
@@ -106,8 +108,18 @@
     return registered;
   });
 
-  let query = $state("");
+  let query = $state(untrack(() => initialQuery));
   let scope = $state<SearchResultScope>(untrack(() => initialScope));
+  let previousViewState = untrack(() => JSON.stringify({ query, scope }));
+  $effect(() => {
+    const next = JSON.stringify({ query, scope });
+    if (next === previousViewState) return;
+    previousViewState = next;
+    untrack(() => onStateChange?.());
+  });
+  export function getSearchState() {
+    return { query, scope };
+  }
   let providerRows = $state<ProviderResults[]>([]);
   const providerController = untrack(
     () =>
@@ -599,7 +611,6 @@
   }
 
   onMount(() => {
-    query = initialQuery;
     const unsubscribeProviders = providerController.subscribe(
       (rows) => (providerRows = rows),
     );

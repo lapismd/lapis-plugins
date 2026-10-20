@@ -9,8 +9,16 @@ import { SearchViewType } from "./search-view-type";
 
 export { SearchViewType } from "./search-view-type";
 
+type SearchPanelState = { query: string; scope: SearchResultScope };
+type SearchPanelInstance = {
+  getSearchState?(): SearchPanelState;
+  setSearchScope?(scope: SearchResultScope): void;
+  setSearchQuery?(query: string): void;
+};
+
 export class SearchView extends View {
-  private component: Record<string, unknown> | null = null;
+  private component: SearchPanelInstance | null = null;
+  private snapshot?: SearchPanelState;
 
   constructor(leaf: WorkspaceLeaf) {
     super(leaf);
@@ -28,6 +36,13 @@ export class SearchView extends View {
     return "search";
   }
 
+  getState(): Record<string, unknown> {
+    return {
+      ...super.getState(),
+      ...(this.component?.getSearchState?.() ?? this.snapshot),
+    };
+  }
+
   protected onOpen(): Promise<void> {
     return Promise.resolve();
   }
@@ -42,7 +57,7 @@ export class SearchView extends View {
       props: {
         app: this.app,
         initialScope: (["files", "history", "all"].includes(
-          String(this.getState()["scope"])
+          String(this.getState()["scope"]),
         )
           ? this.getState()["scope"]
           : "files") as SearchResultScope,
@@ -50,26 +65,29 @@ export class SearchView extends View {
           typeof this.getState()["query"] === "string"
             ? (this.getState()["query"] as string)
             : "",
+        onStateChange: () => {
+          if (this.component)
+            this.app.workspace.requestSaveLayout({
+              source: "api",
+              operation: "search-state",
+            });
+        },
       },
-    }) as Record<string, unknown>;
+    }) as SearchPanelInstance;
   }
 
   async setState(state: Record<string, unknown>): Promise<void> {
+    this.snapshot = undefined;
     await super.setState(state);
     if (["files", "history", "all"].includes(String(state["scope"])))
-      (
-        this.component as {
-          setSearchScope?: (scope: SearchResultScope) => void;
-        } | null
-      )?.setSearchScope?.(state["scope"] as SearchResultScope);
+      this.component?.setSearchScope?.(state["scope"] as SearchResultScope);
     if (typeof state["query"] === "string") {
-      (
-        this.component as { setSearchQuery?: (query: string) => void } | null
-      )?.setSearchQuery?.(state["query"]);
+      this.component?.setSearchQuery?.(state["query"]);
     }
   }
 
   onunload(): void {
+    this.snapshot = this.component?.getSearchState?.() ?? this.snapshot;
     if (this.component) void unmount(this.component);
     this.component = null;
   }

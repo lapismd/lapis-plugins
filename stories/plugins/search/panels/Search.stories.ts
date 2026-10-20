@@ -52,6 +52,51 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 type StoryRender = NonNullable<Story["render"]>;
 
+export const LiveQueryAndScopeState: Story = {
+  render: () => ({
+    Component: SearchPanelDemo,
+    props: { layout: "left-sidebar", diagnostics: "none" },
+  }),
+  play: async ({ canvasElement }) => {
+    await waitFor(
+      () =>
+        expect(
+          canvasElement.querySelector('[data-search-placement-ready="true"]'),
+        ).not.toBeNull(),
+      { timeout: 30000 },
+    );
+    const app = panelDemoApp(canvasElement);
+    await app.commands.executeCommand("search:open-search", "", "history");
+    const canvas = within(canvasElement);
+    const input = await canvas.findByRole("searchbox", {
+      name: "Search vault",
+    });
+    await userEvent.type(input, "welcome archive");
+    const leaf = app.workspace.getLeavesOfType("search")[0]!;
+    expect(leaf.view.getState()).toMatchObject({
+      query: "welcome archive",
+      scope: "history",
+    });
+    await app.workspace.flushLayout();
+    expect(
+      await app.vault.adapter.read(".lapis/search-placement.json"),
+    ).toContain('"query": "welcome archive"');
+    const state = leaf.view.getState();
+    await leaf.setViewState({ type: "empty", state: {} });
+    await leaf.setViewState({ type: "search", state });
+    await app.workspace.revealLeaf(leaf);
+    await waitFor(() =>
+      expect(
+        canvas.getByRole("searchbox", { name: "Search vault" }),
+      ).toHaveTextContent("welcome archive"),
+    );
+    expect(leaf.view.getState()).toMatchObject({
+      query: "welcome archive",
+      scope: "history",
+    });
+  },
+};
+
 function resolveTokenColor(element: HTMLElement, token: string): string {
   const probe = document.createElement("span");
   probe.style.cssText = `position:absolute;background:var(${token})`;
