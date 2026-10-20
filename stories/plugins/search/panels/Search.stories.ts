@@ -52,6 +52,39 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 type StoryRender = NonNullable<Story["render"]>;
 
+export const CommandQueryOnNewView: Story = {
+  render: () => ({
+    Component: SearchPanelDemo,
+    props: { layout: "left-sidebar", diagnostics: "none" },
+  }),
+  play: async ({ canvasElement }) => {
+    await waitFor(
+      () =>
+        expect(
+          canvasElement.querySelector('[data-search-placement-ready="true"]')
+        ).not.toBeNull(),
+      { timeout: 30000 }
+    );
+    const app = panelDemoApp(canvasElement);
+    await app.workspace.getLeavesOfType("search")[0]!.close();
+    await app.commands.executeCommand(
+      "search:open-search",
+      "welcome archive",
+      "history"
+    );
+    const leaf = app.workspace.getLeavesOfType("search")[0]!;
+    expect(leaf.view.getState()).toMatchObject({
+      query: "welcome archive",
+      scope: "history",
+    });
+    await expect(
+      await within(canvasElement).findByRole("searchbox", {
+        name: "Search vault",
+      })
+    ).toHaveTextContent("welcome archive");
+  },
+};
+
 export const LiveQueryAndScopeState: Story = {
   render: () => ({
     Component: SearchPanelDemo,
@@ -61,9 +94,9 @@ export const LiveQueryAndScopeState: Story = {
     await waitFor(
       () =>
         expect(
-          canvasElement.querySelector('[data-search-placement-ready="true"]'),
+          canvasElement.querySelector('[data-search-placement-ready="true"]')
         ).not.toBeNull(),
-      { timeout: 30000 },
+      { timeout: 30000 }
     );
     const app = panelDemoApp(canvasElement);
     await app.commands.executeCommand("search:open-search", "", "history");
@@ -79,7 +112,7 @@ export const LiveQueryAndScopeState: Story = {
     });
     await app.workspace.flushLayout();
     expect(
-      await app.vault.adapter.read(".lapis/search-placement.json"),
+      await app.vault.adapter.read(".lapis/search-placement.json")
     ).toContain('"query": "welcome archive"');
     const state = leaf.view.getState();
     await leaf.setViewState({ type: "empty", state: {} });
@@ -87,8 +120,8 @@ export const LiveQueryAndScopeState: Story = {
     await app.workspace.revealLeaf(leaf);
     await waitFor(() =>
       expect(
-        canvas.getByRole("searchbox", { name: "Search vault" }),
-      ).toHaveTextContent("welcome archive"),
+        canvas.getByRole("searchbox", { name: "Search vault" })
+      ).toHaveTextContent("welcome archive")
     );
     expect(leaf.view.getState()).toMatchObject({
       query: "welcome archive",
@@ -116,7 +149,7 @@ function renderPlacement(layout: PanelDemoLayout): StoryRender {
 function placementStory(
   layout: PanelDemoLayout,
   source: string,
-  description: string,
+  description: string
 ): Story {
   return {
     name: PANEL_PLACEMENTS[layout].name,
@@ -126,25 +159,25 @@ function placementStory(
       await waitFor(
         () =>
           expect(
-            canvasElement.querySelector('[data-search-placement-ready="true"]'),
+            canvasElement.querySelector('[data-search-placement-ready="true"]')
           ).not.toBeNull(),
-        { timeout: 30000 },
+        { timeout: 30000 }
       );
       const panel = await expectPanelPlacement(
         canvasElement,
         kind,
         layout,
         "search-panel",
-        args,
+        args
       );
       const searchbox = panel.getByRole("searchbox", { name: "Search vault" });
       if (layout === "middle-top-tabs") {
         const startupItems = await getWorkspaceHostBinding(
-          panelDemoApp(canvasElement).workspace,
+          panelDemoApp(canvasElement).workspace
         ).controller.commands.searchPalette("", { tab: "all" });
         expect(startupItems.some((item) => item.tab === "actions")).toBe(true);
         const startupFiles = startupItems.filter(
-          (item) => item.providerId === "lapis-vault-files",
+          (item) => item.providerId === "lapis-vault-files"
         );
         expect(startupFiles.length).toBeGreaterThan(0);
         expect(startupFiles.length).toBeLessThanOrEqual(5);
@@ -153,7 +186,7 @@ function placementStory(
       const ownerDocument = canvasElement.ownerDocument;
       const completionTooltip = await waitFor(() => {
         const current = ownerDocument.body.querySelector<HTMLElement>(
-          ".cm-tooltip-autocomplete",
+          ".cm-tooltip-autocomplete"
         );
         expect(current).not.toBeNull();
         const currentRect = current!.getBoundingClientRect();
@@ -162,10 +195,10 @@ function placementStory(
         return current!;
       });
       const completionPortal = completionTooltip.closest<HTMLElement>(
-        ".cv-search-filter-bar__tooltip-layer",
+        ".cv-search-filter-bar__tooltip-layer"
       );
       const searchPanelRoot = canvasElement.querySelector<HTMLElement>(
-        '[data-testid="search-panel"]',
+        '[data-testid="search-panel"]'
       );
       expect(completionPortal).not.toBeNull();
       expect(completionPortal!.parentElement).toBe(ownerDocument.body);
@@ -175,10 +208,10 @@ function placementStory(
       expect(completionRect.left).toBeGreaterThanOrEqual(0);
       expect(completionRect.top).toBeGreaterThanOrEqual(0);
       expect(completionRect.right).toBeLessThanOrEqual(
-        ownerDocument.documentElement.clientWidth,
+        ownerDocument.documentElement.clientWidth
       );
       expect(completionRect.bottom).toBeLessThanOrEqual(
-        ownerDocument.documentElement.clientHeight,
+        ownerDocument.documentElement.clientHeight
       );
       expect(completionRect.width).toBeGreaterThanOrEqual(280);
       expect(completionRect.width).toBeLessThanOrEqual(304);
@@ -186,20 +219,20 @@ function placementStory(
         completionTooltip.querySelector<HTMLElement>("li[role='option']");
       expect(completionOption).not.toBeNull();
       const completionDetail = completionOption!.querySelector<HTMLElement>(
-        ".cm-completionDetail",
+        ".cm-completionDetail"
       );
       expect(completionDetail).not.toBeNull();
       expect(getComputedStyle(completionDetail!).whiteSpace).toBe("normal");
       const optionRect = completionOption!.getBoundingClientRect();
       const hit = ownerDocument.elementFromPoint(
         optionRect.left + optionRect.width / 2,
-        optionRect.top + optionRect.height / 2,
+        optionRect.top + optionRect.height / 2
       );
       expect(completionOption!.contains(hit)).toBe(true);
       await userEvent.keyboard("{Escape}");
       await waitFor(() => {
         expect(
-          ownerDocument.body.querySelector(".cm-tooltip-autocomplete"),
+          ownerDocument.body.querySelector(".cm-tooltip-autocomplete")
         ).toBeNull();
       });
       await userEvent.type(searchbox, "Welcome");
@@ -208,7 +241,7 @@ function placementStory(
         expect(
           panel.getByRole("treeitem", {
             name: /Notes\/Welcome\.md, \d+ matches/,
-          }),
+          })
         ).toBeVisible();
         expect(panel.getByText(/result/)).toBeVisible();
       });
@@ -223,7 +256,7 @@ function placementStory(
       expect(
         within(tree)
           .getAllByRole("treeitem")
-          .some((item) => item.getAttribute("aria-level") === "2"),
+          .some((item) => item.getAttribute("aria-level") === "2")
       ).toBe(true);
       expect(within(tree).getAllByText("lexical").length).toBeGreaterThan(0);
       const resultRow = fileTreeItem!;
@@ -237,34 +270,34 @@ function placementStory(
         .at(-1)!
         .replace(/\.[^.]+$/, "");
       const resultGroup = resultRow.closest<HTMLElement>(
-        ".search-panel__result",
+        ".search-panel__result"
       )!;
       const matchList = resultGroup.querySelector<HTMLElement>(
-        ".search-panel__match-list",
+        ".search-panel__match-list"
       )!;
       const matchHeader = matchList.querySelector<HTMLElement>(
-        ".search-panel__match-header",
+        ".search-panel__match-header"
       )!;
       const matchPath = matchHeader.querySelector<HTMLElement>(
-        ".search-panel__match-path",
+        ".search-panel__match-path"
       )!;
       const modeBadge = matchHeader.querySelector<HTMLElement>(
-        ".search-panel__mode-badge",
+        ".search-panel__mode-badge"
       )!;
       const searchPanel = canvasElement.querySelector<HTMLElement>(
-        '[data-testid="search-panel"]',
+        '[data-testid="search-panel"]'
       )!;
       const resultsBody = canvasElement.querySelector<HTMLElement>(
-        '[data-testid="search-panel"] .search-panel__tree-inset',
+        '[data-testid="search-panel"] .search-panel__tree-inset'
       )!;
       const resultsSurface = canvasElement.querySelector<HTMLElement>(
-        '[data-testid="search-panel"] .search-panel__results',
+        '[data-testid="search-panel"] .search-panel__results'
       )!;
       const resultLabel = resultRow.querySelector<HTMLElement>(
-        ".search-panel__file-label",
+        ".search-panel__file-label"
       );
       const countBadge = resultRow.querySelector<HTMLElement>(
-        ".search-panel__count-badge",
+        ".search-panel__count-badge"
       );
       expect(resultLabel).not.toBeNull();
       expect(countBadge).not.toBeNull();
@@ -284,38 +317,38 @@ function placementStory(
       expect(countRect.top).toBeLessThan(labelRect.top + 2);
       expect(resultRect.right - countRect.right).toBeGreaterThanOrEqual(0);
       expect(getComputedStyle(countBadge!).backgroundColor).toBe(
-        "rgba(0, 0, 0, 0)",
+        "rgba(0, 0, 0, 0)"
       );
       expect(getComputedStyle(countBadge!).borderTopWidth).toBe("0px");
       expect(getComputedStyle(countBadge!).fontFamily).toBe(
-        getComputedStyle(searchPanel).fontFamily,
+        getComputedStyle(searchPanel).fontFamily
       );
       expect(getComputedStyle(countBadge!).color).not.toBe(
-        getComputedStyle(searchPanel).color,
+        getComputedStyle(searchPanel).color
       );
       const editor = canvasElement.querySelector<HTMLElement>(
-        '[data-testid="search-panel"] .cm-editor',
+        '[data-testid="search-panel"] .cm-editor'
       );
       expect(editor).not.toBeNull();
       expect(
-        editor?.querySelectorAll(".cm-content .cm-line > span").length,
+        editor?.querySelectorAll(".cm-content .cm-line > span").length
       ).toBeGreaterThan(0);
       expect(
         canvasElement.querySelectorAll('[data-testid="search-panel"] mark')
-          .length,
+          .length
       ).toBeGreaterThan(0);
       expect(within(tree).getAllByText("content").length).toBeGreaterThan(0);
       const firstMatch = within(tree)
         .getAllByRole("treeitem")
         .find((item) => item.getAttribute("aria-level") === "2")!;
       const matchListBody = matchList.querySelector<HTMLElement>(
-        '[data-ui-part="sidebar-menu-sub"]',
+        '[data-ui-part="sidebar-menu-sub"]'
       )!;
       const matchText = firstMatch.querySelector<HTMLElement>(
-        ".search-panel__match-text",
+        ".search-panel__match-text"
       )!;
       const matchKey = firstMatch.querySelector<HTMLElement>(
-        ".search-panel__match-key",
+        ".search-panel__match-key"
       )!;
       const matchTextRect = matchText.getBoundingClientRect();
       const matchKeyRect = matchKey.getBoundingClientRect();
@@ -326,33 +359,33 @@ function placementStory(
       expect(firstMatchRect.left - matchListRect.left).toBeLessThan(2);
       expect(matchListRect.right - firstMatchRect.right).toBeLessThan(2);
       expect(matchHeader.getBoundingClientRect().bottom).toBeLessThanOrEqual(
-        firstMatchRect.top,
+        firstMatchRect.top
       );
       expect(getComputedStyle(matchList).borderTopWidth).not.toBe("0px");
       const primarySurface = resolveTokenColor(
         searchPanel,
-        "--ui-workspace-view-background",
+        "--ui-workspace-view-background"
       );
       const secondarySurface = resolveTokenColor(
         searchPanel,
-        "--ui-workspace-view-secondary-background",
+        "--ui-workspace-view-secondary-background"
       );
       expect(getComputedStyle(searchPanel).backgroundColor).toBe(
-        primarySurface,
+        primarySurface
       );
       expect(getComputedStyle(resultsSurface).backgroundColor).toBe(
-        primarySurface,
+        primarySurface
       );
       expect(getComputedStyle(matchList).backgroundColor).toBe(
-        secondarySurface,
+        secondarySurface
       );
       expect(getComputedStyle(matchListBody).backgroundColor).toBe(
-        secondarySurface,
+        secondarySurface
       );
       expect(secondarySurface).not.toBe(primarySurface);
       expect(getComputedStyle(modeBadge!).backgroundColor).toBe(primarySurface);
       expect(getComputedStyle(modeBadge!).backgroundColor).not.toBe(
-        getComputedStyle(matchList).backgroundColor,
+        getComputedStyle(matchList).backgroundColor
       );
       expect(getComputedStyle(matchKey).backgroundColor).toBe(primarySurface);
       expect(Math.abs(matchKeyRect.left - matchTextRect.left)).toBeLessThan(1);
@@ -360,8 +393,8 @@ function placementStory(
       await userEvent.hover(firstMatch);
       await waitFor(() =>
         expect(getComputedStyle(matchKey).backgroundColor).not.toBe(
-          getComputedStyle(firstMatch).backgroundColor,
-        ),
+          getComputedStyle(firstMatch).backgroundColor
+        )
       );
       await userEvent.unhover(firstMatch);
 
@@ -372,11 +405,11 @@ function placementStory(
             item.getAttribute("aria-level") === "2" &&
             item
               .querySelector(".search-panel__match-key")
-              ?.textContent?.trim() === "content",
+              ?.textContent?.trim() === "content"
         )!;
       expect(contentMatch).toBeDefined();
       const contentShell = contentMatch.closest<HTMLElement>(
-        ".search-panel__match-shell",
+        ".search-panel__match-shell"
       )!;
       const contextBefore = within(contentShell).getByRole("button", {
         name: "Show more context before this match",
@@ -388,14 +421,14 @@ function placementStory(
       const beforeRect = contextBefore.getBoundingClientRect();
       const afterRect = contextAfter.getBoundingClientRect();
       expect(contentShellRect.right - beforeRect.right).toBeGreaterThanOrEqual(
-        0,
+        0
       );
       expect(beforeRect.top - contentShellRect.top).toBeGreaterThanOrEqual(0);
       expect(contentShellRect.right - afterRect.right).toBeGreaterThanOrEqual(
-        0,
+        0
       );
       expect(contentShellRect.bottom - afterRect.bottom).toBeGreaterThanOrEqual(
-        0,
+        0
       );
 
       const initialContextText = contentMatch.textContent?.length ?? 0;
@@ -403,10 +436,10 @@ function placementStory(
       await userEvent.click(contextBefore);
       await waitFor(() => {
         expect(contentMatch.textContent?.length ?? 0).toBeGreaterThan(
-          initialContextText,
+          initialContextText
         );
         expect(contentShell.getBoundingClientRect().height).toBeGreaterThan(
-          initialContextHeight,
+          initialContextHeight
         );
       });
       const beforeExpandedText = contentMatch.textContent ?? "";
@@ -419,20 +452,20 @@ function placementStory(
             item.getAttribute("aria-level") === "2" &&
             item
               .querySelector(".search-panel__match-key")
-              ?.textContent?.trim() === "content",
+              ?.textContent?.trim() === "content"
         )!;
       expect(stableBeforeMatch.textContent).toBe(beforeExpandedText);
       expect(
         stableBeforeMatch
           .closest<HTMLElement>(".search-panel__match-shell")!
-          .getBoundingClientRect().height,
+          .getBoundingClientRect().height
       ).toBe(beforeExpandedHeight);
       await expect(fileTreeItem!).toHaveAttribute("aria-expanded", "true");
       const beforeExpandedLength = stableBeforeMatch.textContent?.length ?? 0;
       await userEvent.click(
         within(stableBeforeMatch).getByRole("button", {
           name: "Show more context after this match",
-        }),
+        })
       );
       await waitFor(() => {
         const expandedMatch = within(tree)
@@ -442,10 +475,10 @@ function placementStory(
               item.getAttribute("aria-level") === "2" &&
               item
                 .querySelector(".search-panel__match-key")
-                ?.textContent?.trim() === "content",
+                ?.textContent?.trim() === "content"
           )!;
         expect(expandedMatch.textContent?.length ?? 0).toBeGreaterThan(
-          beforeExpandedLength,
+          beforeExpandedLength
         );
       });
       const afterExpandedMatch = within(tree)
@@ -455,7 +488,7 @@ function placementStory(
             item.getAttribute("aria-level") === "2" &&
             item
               .querySelector(".search-panel__match-key")
-              ?.textContent?.trim() === "content",
+              ?.textContent?.trim() === "content"
         )!;
       const afterExpandedText = afterExpandedMatch.textContent ?? "";
       await new Promise((resolve) => window.setTimeout(resolve, 400));
@@ -466,7 +499,7 @@ function placementStory(
             item.getAttribute("aria-level") === "2" &&
             item
               .querySelector(".search-panel__match-key")
-              ?.textContent?.trim() === "content",
+              ?.textContent?.trim() === "content"
         )!;
       expect(stableAfterMatch.textContent).toBe(afterExpandedText);
       await expect(fileTreeItem!).toHaveAttribute("aria-expanded", "true");
@@ -475,15 +508,15 @@ function placementStory(
       expect(highlightedMatch).not.toBeNull();
       searchPanel.style.setProperty(
         "--ui-search-highlight-background",
-        "rgb(255 217 102)",
+        "rgb(255 217 102)"
       );
       searchPanel.style.setProperty(
         "--ui-search-highlight-foreground",
-        "rgb(62 48 0)",
+        "rgb(62 48 0)"
       );
       await waitFor(() => {
         expect(getComputedStyle(highlightedMatch).backgroundColor).toBe(
-          "rgb(255, 217, 102)",
+          "rgb(255, 217, 102)"
         );
         expect(getComputedStyle(highlightedMatch).color).toBe("rgb(62, 48, 0)");
       });
@@ -497,7 +530,7 @@ function placementStory(
         name: /Filename \(A to Z\)/,
       });
       await expect(resultCopyButton).toHaveClass(
-        "search-panel__summary-control",
+        "search-panel__summary-control"
       );
       await expect(sortButton).toHaveClass("search-panel__summary-control");
       const restingSortBackground =
@@ -506,16 +539,16 @@ function placementStory(
       await expect(sortButton).toHaveAttribute("aria-expanded", "true");
       await waitFor(() =>
         expect(getComputedStyle(sortButton).backgroundColor).not.toBe(
-          restingSortBackground,
-        ),
+          restingSortBackground
+        )
       );
       await userEvent.keyboard("{Escape}");
       expect(
-        canvasElement.querySelector(".search-panel__semantic-status"),
+        canvasElement.querySelector(".search-panel__semantic-status")
       ).toBeNull();
 
       await userEvent.click(
-        panel.getByRole("button", { name: "Expand filter options" }),
+        panel.getByRole("button", { name: "Expand filter options" })
       );
       const fileTypePicker = panel.getByRole("button", {
         name: "Filter by file type",
@@ -525,7 +558,7 @@ function placementStory(
       await userEvent.click(
         within(canvasElement.ownerDocument.body).getByRole("option", {
           name: "Markdown",
-        }),
+        })
       );
       await expect(fileTypePicker).toHaveTextContent("Markdown");
       await expect(fileTypePicker).toHaveAttribute("data-active", "true");
@@ -540,7 +573,7 @@ function placementStory(
           expectFailure: () =>
             waitFor(() => {
               expect(panel.getByRole("alert")).toHaveTextContent(
-                "Storybook metadata query failure",
+                "Storybook metadata query failure"
               );
             }),
           expectRecovery: () =>
@@ -562,7 +595,7 @@ function placementStory(
         await userEvent.click(collapseResults);
         await expect(collapseResults).toHaveAttribute(
           "data-state",
-          "unchecked",
+          "unchecked"
         );
         await expect(fileTreeItem!).toHaveAttribute("aria-expanded", "true");
         await userEvent.click(fileTreeItem!);
@@ -586,7 +619,7 @@ function placementStory(
         await expect(showMoreContext).toHaveAttribute("data-state", "checked");
         await expect(semanticStructured).toHaveAttribute(
           "data-state",
-          "checked",
+          "checked"
         );
         await expect(fileTreeItem!).toHaveAttribute("aria-expanded", "false");
         await userEvent.click(explainTerms);
@@ -598,42 +631,42 @@ function placementStory(
         await userEvent.click(
           within(canvasElement.ownerDocument.body).getByRole("option", {
             name: "Lexical",
-          }),
+          })
         );
         await expect(retrievalPicker).toHaveTextContent("Lexical");
         await expect(retrievalPicker).toHaveAttribute("data-active", "true");
 
         await userEvent.click(
-          panel.getByRole("button", { name: /Filename \(A to Z\)/ }),
+          panel.getByRole("button", { name: /Filename \(A to Z\)/ })
         );
         await userEvent.click(
           within(document.body).getByRole("button", {
             name: "Modified (new to old)",
-          }),
+          })
         );
         await expect(
-          panel.getByRole("button", { name: /Modified \(new to old\)/ }),
+          panel.getByRole("button", { name: /Modified \(new to old\)/ })
         ).toBeVisible();
 
         await userEvent.click(
-          panel.getByRole("button", { name: /^Copy search results/ }),
+          panel.getByRole("button", { name: /^Copy search results/ })
         );
         await expect(writeText).toHaveBeenCalledWith(
-          expect.stringContaining("Notes/Welcome.md"),
+          expect.stringContaining("Notes/Welcome.md")
         );
         await userEvent.click(
-          panel.getByRole("button", { name: "Clear search" }),
+          panel.getByRole("button", { name: "Clear search" })
         );
         await expect(panel.getByText("Type to search.")).toBeVisible();
         expect(
-          panel.queryByRole("heading", { name: "Recent searches" }),
+          panel.queryByRole("heading", { name: "Recent searches" })
         ).not.toBeInTheDocument();
         await userEvent.type(searchbox, "tag:#project/a");
         await waitFor(() => {
           expect(
             canvasElement.ownerDocument.body.querySelector(
-              ".cm-tooltip-autocomplete",
-            ),
+              ".cm-tooltip-autocomplete"
+            )
           ).toBeTruthy();
         });
         await userEvent.keyboard("{Enter}");
@@ -643,39 +676,39 @@ function placementStory(
           expect(
             panel.getByRole("treeitem", {
               name: /Notes\/Welcome\.md, \d+ matches/,
-            }),
+            })
           ).toBeVisible();
           expect(panel.queryByRole("alert")).not.toBeInTheDocument();
         });
         await userEvent.click(
-          panel.getByRole("button", { name: /^Copy search results/ }),
+          panel.getByRole("button", { name: /^Copy search results/ })
         );
         await waitFor(() => {
           const chip = searchbox.querySelector<HTMLElement>(
-            ".cv-search-filter-bar__predicate-chip",
+            ".cv-search-filter-bar__predicate-chip"
           );
           expect(chip).not.toBeNull();
           expect(
             chip!.querySelector<HTMLElement>(
-              ".cv-search-filter-bar__predicate-chip-label",
-            ),
+              ".cv-search-filter-bar__predicate-chip-label"
+            )
           ).toHaveTextContent("tag:#project/alpha");
         });
         await userEvent.click(
-          panel.getByRole("button", { name: "Clear search" }),
+          panel.getByRole("button", { name: "Clear search" })
         );
         await userEvent.type(searchbox, "tag:#project");
         const spacedTagOption = await waitFor(() => {
           const options = [
             ...canvasElement.ownerDocument.body.querySelectorAll<HTMLElement>(
-              ".cm-tooltip-autocomplete li",
+              ".cm-tooltip-autocomplete li"
             ),
           ];
           expect(options.map((option) => option.textContent)).toContain(
-            "#project alpha",
+            "#project alpha"
           );
           return options.find(
-            (candidate) => candidate.textContent === "#project alpha",
+            (candidate) => candidate.textContent === "#project alpha"
           )!;
         });
         await userEvent.click(spacedTagOption);
@@ -685,20 +718,20 @@ function placementStory(
           expect(
             panel.getByRole("treeitem", {
               name: /Notes\/Welcome\.md, \d+ matches/,
-            }),
+            })
           ).toBeVisible();
           expect(panel.queryByRole("alert")).not.toBeInTheDocument();
         });
         await userEvent.click(
-          panel.getByRole("button", { name: "Clear search" }),
+          panel.getByRole("button", { name: "Clear search" })
         );
         await userEvent.type(searchbox, "file:FilenameOnly");
         await waitFor(() =>
           expect(
             panel.getByRole("treeitem", {
               name: /Notes\/FilenameOnly\.md, \d+ matches/,
-            }),
-          ).toBeVisible(),
+            })
+          ).toBeVisible()
         );
         const currentTree = panel.getByRole("tree", { name: "Search results" });
         const app = panelDemoApp(canvasElement);
@@ -714,7 +747,7 @@ function placementStory(
             await userEvent.click(currentFileTreeItem);
           }
           const resultGroup = currentFileTreeItem.closest(
-            ".search-panel__result",
+            ".search-panel__result"
           )!;
           const resultPath = currentFileTreeItem
             .getAttribute("aria-label")!
@@ -724,31 +757,29 @@ function placementStory(
           expect(
             within(resultGroup)
               .getAllByRole("treeitem")
-              .some((item) => item.getAttribute("aria-level") === "2"),
+              .some((item) => item.getAttribute("aria-level") === "2")
           ).toBe(true);
           await expect(within(resultGroup).getByText(resultPath)).toBeVisible();
           await expect(within(resultGroup).getByText("lexical")).toBeVisible();
         }
         const filenameOnlyResult = currentFileTreeItems.find((item) =>
-          item
-            .getAttribute("aria-label")
-            ?.includes(" · Notes/FilenameOnly.md,"),
+          item.getAttribute("aria-label")?.includes(" · Notes/FilenameOnly.md,")
         )!;
         await expect(
           within(
-            filenameOnlyResult.closest(".search-panel__result")!,
-          ).getByText("name"),
+            filenameOnlyResult.closest(".search-panel__result")!
+          ).getByText("name")
         ).toBeVisible();
         await userEvent.click(
-          panel.getByRole("button", { name: "Clear search" }),
+          panel.getByRole("button", { name: "Clear search" })
         );
         await userEvent.type(searchbox, "Welcome");
         await waitFor(() =>
           expect(
             panel.getByRole("treeitem", {
               name: /Notes\/Welcome\.md, \d+ matches/,
-            }),
-          ).toBeVisible(),
+            })
+          ).toBeVisible()
         );
         const navigationTree = panel.getByRole("tree", {
           name: "Search results",
@@ -762,13 +793,13 @@ function placementStory(
         await userEvent.click(
           within(navigationTree)
             .getAllByRole("treeitem")
-            .find((item) => item.getAttribute("aria-level") === "2")!,
+            .find((item) => item.getAttribute("aria-level") === "2")!
         );
         await waitFor(() => {
           expect(
             canvasElement.querySelector(
-              '.markdown-view, [data-ui-component="markdown-mira-preview"]',
-            ),
+              '.markdown-view, [data-ui-component="markdown-mira-preview"]'
+            )
           ).not.toBeNull();
         });
         expect(app.workspace.getLeavesOfType("search")).toContain(searchLeaf);
@@ -777,7 +808,7 @@ function placementStory(
         app.workspace.revealLeaf(searchLeaf!);
         await waitFor(() => {
           expect(
-            within(canvasElement).getByTestId("search-panel"),
+            within(canvasElement).getByTestId("search-panel")
           ).toBeVisible();
           expect(app.workspace.activeLeaf).toBe(searchLeaf);
         });
@@ -790,30 +821,30 @@ function placementStory(
 export const MiddleTopTabs = placementStory(
   "middle-top-tabs",
   sources.MiddleTopTabs,
-  "Search in the middle workspace over the real indexed in-memory vault.",
+  "Search in the middle workspace over the real indexed in-memory vault."
 );
 export const StackedTabs = placementStory(
   "stacked-tabs",
   sources.StackedTabs,
-  "Search selected inside the real stacked-tabs presentation.",
+  "Search selected inside the real stacked-tabs presentation."
 );
 export const LeftSidebar = placementStory(
   "left-sidebar",
   sources.LeftSidebar,
-  "Search in its canonical left-sidebar placement.",
+  "Search in its canonical left-sidebar placement."
 );
 export const RightSidebar = placementStory(
   "right-sidebar",
   sources.RightSidebar,
-  "Search remains placement-independent in the right sidebar.",
+  "Search remains placement-independent in the right sidebar."
 );
 export const BottomPanel = placementStory(
   "bottom-panel",
   sources.BottomPanel,
-  "Search inside the real grouped bottom panel.",
+  "Search inside the real grouped bottom panel."
 );
 export const SidebarGroup = placementStory(
   "sidebar-group",
   sources.SidebarGroup,
-  "Search inside a grouped right-sidebar item.",
+  "Search inside a grouped right-sidebar item."
 );
