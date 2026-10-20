@@ -1,5 +1,8 @@
 # Markdown Plugin
 
+LN-MD-022's empty Outline explains the missing headings outside its semantic
+list. The real-App No headings story retains interaction and axe qualification.
+
 The package accepts Design Core `^0.4.0 || ^0.5.1` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
 behavior retain their owning contracts.

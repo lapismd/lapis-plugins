@@ -1,5 +1,8 @@
 # Distribution and Releases
 
+The shared catalog's disposable `.lapis` state matches the current public API
+default. This fixture-only repair changes no plugin payload or migration gate.
+
 The Source Editor, Markdown and Graph dependency repair accepts Design Core
 `^0.4.0 || ^0.5.1`. Their independent patch release intent is recorded; local
 Desktop acceptance does not publish packages, sign production artifacts or

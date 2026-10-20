@@ -1,5 +1,10 @@
 # Specification Governance
 
+Shared disposable panel fixtures seed app, types, workspace and bookmark state
+under the API's `.lapis` directory. Their explicit configuration path and default
+workspace loader must select the same state; expected panel counts, placement
+assertions, timeouts and accessibility gates remain unchanged (LP-SPEC-006).
+
 Source Editor, Markdown and Graph also accept Design Core 0.5.1 through portable
 semver ranges. The 0.4 registry graph remains valid; current-source Desktop
 acceptance uses verified 0.5.1 public archives without changing release gates.

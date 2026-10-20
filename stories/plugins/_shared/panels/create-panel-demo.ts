@@ -520,7 +520,7 @@ export function createPanelDemoSeed(
   }
 
   return {
-    ".obsidian/app.json": JSON.stringify(
+    ".lapis/app.json": JSON.stringify(
       {
         ...PANEL_APP_CONFIGURATION,
         ...(kind === "bookmarks"
@@ -531,7 +531,7 @@ export function createPanelDemoSeed(
       2,
     ),
     ".env": "DEMO=1\n",
-    ".obsidian/types.json": JSON.stringify(
+    ".lapis/types.json": JSON.stringify(
       {
         types: {
           title: "text",
@@ -546,7 +546,7 @@ export function createPanelDemoSeed(
       null,
       2,
     ),
-    ".obsidian/workspace.json": JSON.stringify(workspaceLayout, null, 2),
+    ".lapis/workspace.json": JSON.stringify(workspaceLayout, null, 2),
     "Notes/Welcome.md": [
       "---",
       "title: Welcome",
@@ -770,7 +770,7 @@ function createBookmarksDocument() {
 
 function createBookmarksSeed(): Record<string, string> {
   return {
-    ".obsidian/bookmarks.json": JSON.stringify(
+    ".lapis/bookmarks.json": JSON.stringify(
       createBookmarksDocument(),
       null,
       2,
@@ -937,7 +937,7 @@ export async function bootPanelDemo(
   );
   const app = new App({
     version: "0.0.1-story",
-    configPath: ".obsidian/app.json",
+    configPath: ".lapis/app.json",
     adapter,
     appDatabase: new MemoryAppDatabase(`lapis-panel-${kind}-${layout}`),
     workspaceShell: { application: { name: "Lapis Notes" } },

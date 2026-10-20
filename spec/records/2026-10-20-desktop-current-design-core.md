@@ -25,5 +25,6 @@ Source verification (logs under `.local/desktop-current-core-*`):
 - `pnpm spec:check`: all three canonical lanes and App ownership pass.
 - Scoped formatting first flags the generated registry lockfile; formatting it
   repairs that lane without changing any dependency resolution.
-- Root Storybook interaction/accessibility qualification is running. No visual
-  baselines are generated, updated or approved; publication remains deferred.
+- Final source qualification and user-accepted catalog/audit deferrals are
+  recorded in `2026-10-20-catalog-lapis-state.md`. No visual baselines are
+  generated, updated or approved; publication remains deferred.
