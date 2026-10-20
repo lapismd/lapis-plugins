@@ -65,29 +65,6 @@
       aria-selected="false"
       aria-level={2}
       aria-expanded={expanded[id] ?? false}
-      aria-labelledby={`${treeId}-${index}-label`}
-      tabindex={0}
-      onclick={(event) => {
-        const target = event.target as HTMLElement;
-        if (
-          target.closest("button") ||
-          target.closest('[role="treeitem"]') !== event.currentTarget
-        )
-          return;
-        expanded[id] = !(expanded[id] ?? false);
-      }}
-      onkeydown={(event) => {
-        if (event.target !== event.currentTarget) return;
-        if (["Enter", " ", "ArrowRight", "ArrowLeft"].includes(event.key)) {
-          event.preventDefault();
-          expanded[id] =
-            event.key === "ArrowRight"
-              ? true
-              : event.key === "ArrowLeft"
-                ? false
-                : !(expanded[id] ?? false);
-        }
-      }}
     >
       <Collapsible.Root
         open={expanded[id] ?? false}

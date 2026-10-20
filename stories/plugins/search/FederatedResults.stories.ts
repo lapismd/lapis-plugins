@@ -34,10 +34,12 @@ export const IncrementalSavedVersions: StoryObj<typeof meta> = {
     const version = await view.findByRole("treeitem", {
       name: /History Preserve the welcome/,
     });
-    await userEvent.click(version);
+    await userEvent.click(
+      within(version).getByRole("button", { name: /^History / }),
+    );
 
     await expect(
-      await view.findByRole("treeitem", {
+      await within(version).findByRole("treeitem", {
         name: /Welcome to the earlier saved notes/,
       }),
     ).toBeVisible();
@@ -47,7 +49,7 @@ export const IncrementalSavedVersions: StoryObj<typeof meta> = {
     await waitFor(() => expect(view.getByText("2 checkpoints")).toBeVisible());
     await expect(file).toHaveAttribute("aria-expanded", "true");
     await expect(
-      await view.findByRole("treeitem", {
+      await within(version).findByRole("treeitem", {
         name: /Welcome to the earlier saved notes/,
       }),
     ).toBeVisible();

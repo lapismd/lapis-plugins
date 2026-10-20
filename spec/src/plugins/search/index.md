@@ -210,3 +210,5 @@ Saving recent queries or unrelated view preferences does not restart a provider
 query. Only its query/scope/options identity changes trigger a new search.
 Current-file totals describe renderable live-file hits; stale unresolved paths
 are not advertised as visible results. Open Search returns its activation task.
+Version containers derive their names from visible content, while header
+actions retain concise names. Their nested matches have independent targets.

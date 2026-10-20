@@ -84,10 +84,8 @@ The first follow-up spec-first run rejected the unchanged mapped canonical
 chapter. The chapter now explicitly records visible-text naming and the exact
 revision-pinned gate is rerun after amendment; this failure is retained.
 
-Expanded version rows now name their labelled header, with metadata/actions
-inside the owning tree item and snippets in its nested group. This fixes the
-Desktop label-content mismatch without exposing descendant messages as the
-version name. Intermediate trigger-owned groups first duplicated the snippet
+An intermediate version named its labelled header, with metadata/actions
+inside the owning tree item and snippets in its nested group. This passed source axe but Desktop axe 4.14 still rejected the expanded name. Intermediate trigger-owned groups first duplicated the snippet
 name and then violated required tree children; the final labelled container
 retains click-anywhere and keyboard behavior. The two exact federated stories
 pass in history-search-labelled-row-actions.log. Provider request identity also
@@ -97,10 +95,23 @@ The original user's exact query was unavailable; fresh native acceptance and
 catalog checks cover Current files rendering rather than claiming a confirmed
 cause for every stale-index instance.
 
-Final labelled version-container, click/keyboard and nested-group structure
+The earlier labelled version-container, click/keyboard and nested-group structure
 passes all 13 Search stories in a cold process (`history-search-landed-stories.log`).
 The intermediate non-container ownership design is discarded. Header labels
 reference only visible header text; metadata actions remain inside the owning
 item. No failing assertions or axe rules were removed. Search check, build and
-public packaging are rerun on this final source. Wider source aggregates remain
+public packaging were rerun on that intermediate source. Wider source aggregates remain
 outside this explicitly focused functional-UI slice.
+
+Final consumer accessibility acceptance uses a name-from-content version
+container with a full-width named header button and physically nested snippet
+groups. Expanded metadata/snippets no longer conflict with an explicit
+container label. Header click, Enter/Space and ArrowLeft/Right retain disclosure
+control; snippet actions retain independent targets. No axe rules are disabled.
+The final source passes 13/13 cold Search interaction/axe stories in four files
+(`history-search-natural-family.log`) and 44/44 unit tests in ten files
+(`history-search-natural-unit.log`). Check/build/publint/npm pack, audit,
+App ownership, spec validation and spec-first pass in the matching natural logs.
+Desktop verifies the packed public output separately with axe 4.14. Payload
+reproduction/signature validation follows the enclosing commit; publication
+and wider original qualification gates remain deferred.
