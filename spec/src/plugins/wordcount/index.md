@@ -84,3 +84,8 @@ LP-SPEC-014 governs the signed runtime editor boundary. This package declares
 `@codemirror/state`, `@codemirror/view`
 as shared host modules and portable npm peers. Its bundled language grammars
 reuse these host-owned editor and parser core instances.
+
+The package test toolchain uses patched Vite 6.4.4 and Vitest 4.1.12
+or newer within the existing major versions. Shared catalog qualification uses
+the patched Storybook toolchain described in distribution; application behavior
+and public package ownership remain unchanged.

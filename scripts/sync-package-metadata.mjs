@@ -12,18 +12,18 @@ import {
 
 const repositoryRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
-  "..",
+  ".."
 );
 const mode = process.argv[2] ?? "--check";
 assert.ok(
   mode === "--check" || mode === "--write",
-  "Usage: sync-package-metadata.mjs --check|--write",
+  "Usage: sync-package-metadata.mjs --check|--write"
 );
 
 import { versionedRendererHostSpecifier } from "./lib/svelte-runtime-contract.mjs";
 import { rendererCompilerVersionFromLockfile } from "./lib/runtime-host-modules.mjs";
 const rendererVersion = rendererCompilerVersionFromLockfile(
-  await readFile(path.join(repositoryRoot, "pnpm-lock.yaml"), "utf8"),
+  await readFile(path.join(repositoryRoot, "pnpm-lock.yaml"), "utf8")
 );
 const rendererSharedDependencies = new Map(
   Object.entries({
@@ -99,7 +99,7 @@ const rendererSharedDependencies = new Map(
     "source-editor": [],
     spellcheck: [],
     wordcount: [],
-  }),
+  })
 );
 
 const descriptions = new Map([
@@ -272,7 +272,7 @@ const editorSharedDependencies = new Map(
     ],
     spellcheck: [],
     wordcount: ["@codemirror/state", "@codemirror/view"],
-  }),
+  })
 );
 
 const findings = [];
@@ -286,12 +286,12 @@ for (const plugin of pluginPackages) {
   const normalizedManifest = normalizeManifest(
     manifest,
     plugin,
-    packageJson.version,
+    packageJson.version
   );
   const normalizedPackage = normalizePackage(
     packageJson,
     normalizedManifest,
-    plugin,
+    plugin
   );
   await compareOrWrite(packagePath, packageJson, normalizedPackage);
   await compareOrWrite(manifestPath, manifest, normalizedManifest);
@@ -304,7 +304,7 @@ if (findings.length) {
   console.log(
     mode === "--write"
       ? `Synchronized ${pluginPackages.length} plugin package manifests.`
-      : `Verified ${pluginPackages.length} plugin package manifests.`,
+      : `Verified ${pluginPackages.length} plugin package manifests.`
   );
 }
 
@@ -318,7 +318,7 @@ function normalizeManifest(manifest, plugin, packageVersion) {
     ...rendererSharedDependencies
       .get(plugin.directory)
       .map((specifier) =>
-        versionedRendererHostSpecifier(specifier, rendererVersion),
+        versionedRendererHostSpecifier(specifier, rendererVersion)
       ),
   ];
   const lapis = manifest.lapis ?? {};
@@ -402,7 +402,10 @@ function normalizePackage(packageJson, manifest, plugin) {
     "devDependencies",
   ]) {
     if (normalized[field]) {
-      normalized[field] = normalizeDependencies(normalized[field]);
+      normalized[field] = normalizeDependencies(
+        normalized[field],
+        plugin.directory
+      );
     }
   }
   return normalized;
@@ -460,18 +463,21 @@ function normalizeScripts(scripts) {
   if (normalized.check?.includes("packages/plugins/")) {
     normalized.check = normalized.check.replace(
       /pnpm --dir \.\.\/\.\.\/\.\. check:no-tailwind packages\/plugins\/plugin-[^ ]+\/src && /,
-      "",
+      ""
     );
   }
   return normalized;
 }
 
-function normalizeDependencies(dependencies) {
+function normalizeDependencies(dependencies, plugin) {
   const normalized = {};
   for (const [name, version] of Object.entries(dependencies).sort(([a], [b]) =>
-    a.localeCompare(b),
+    a.localeCompare(b)
   )) {
-    normalized[name] = frameworkPackageVersions.get(name) ?? version;
+    normalized[name] =
+      plugin === "history" && name === "@lapis-notes/api"
+        ? "^0.1.4"
+        : frameworkPackageVersions.get(name) ?? version;
   }
   return normalized;
 }
@@ -485,7 +491,10 @@ async function compareOrWrite(filePath, current, normalized) {
   const actual = `${JSON.stringify(current, null, 2)}\n`;
   if (actual !== expected) {
     findings.push(
-      `${path.relative(repositoryRoot, filePath)} is not synchronized; run pnpm packages:sync`,
+      `${path.relative(
+        repositoryRoot,
+        filePath
+      )} is not synchronized; run pnpm packages:sync`
     );
   }
 }

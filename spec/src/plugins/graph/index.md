@@ -1,12 +1,15 @@
 # Graph Plugin
 
-The package accepts Design Core `^0.4.0 || ^0.5.1` for prepared browser CSS
+The package requires Design Core `^0.6.0` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
 behavior retain their owning contracts.
 
 Pointer acceptance remeasures the Group remove button after query focus can
 scroll the settings panel, then verifies that its current centre receives the
 pointer. The hit-target assertion remains required.
+The focused-node preview scenario first opens and closes a real vault note,
+retaining its public workspace file context before focusing the graph. It does
+not assume that an empty workspace has an active note.
 
 The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.
@@ -18,7 +21,7 @@ Release qualification uses `@lapis-notes/api@^0.1.2` for the shared renderer,
 diagnostics invalidation and selected metadata fingerprint contracts. Portable
 consumers must resolve this prerequisite from npm before plugin publication.
 
-Dependency acceptance now uses published Design Core `0.3.2` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
+Earlier dependency acceptance used Design Core `0.3.2` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
 unchanged; local overrides for these released packages are retired.
 
 Graph presentation resolves Design Core through the repository's current
@@ -151,3 +154,13 @@ The signed runtime declares its compiled Svelte imports through the exact
 compiler-versioned renderer contracts in LP-SPEC-014 and LP-SPEC-047. Host-owned
 components and archived components share that renderer graph; npm package peers
 remain portable.
+
+The package test toolchain uses patched Vite 6.4.4 and Vitest 4.1.12
+or newer within the existing major versions. Shared catalog qualification uses
+the patched Storybook toolchain described in distribution; application behavior
+and public package ownership remain unchanged.
+
+Current shared-shell qualification uses the released Design Core 0.6
+public boundary and matching Notes framework archives. Published dependency
+ranges now admit that boundary directly; the Avatar repair remains a recorded
+local candidate until the separate release gate.

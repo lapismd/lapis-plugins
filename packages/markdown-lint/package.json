@@ -32,8 +32,8 @@
     "svelte": "^5.38.2",
     "svelte-check": "^4.3.1",
     "typescript": "~5.9.3",
-    "vite": "^6.4.2",
-    "vitest": "^4.1.8"
+    "vite": "^6.4.4",
+    "vitest": "^4.1.12"
   },
   "description": "Markdown diagnostics for Lapis applications",
   "repository": {

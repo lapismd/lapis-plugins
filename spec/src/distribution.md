@@ -217,3 +217,12 @@ publication, enrollment or content transfer (LN-SYNC-042).
 The static catalog build has a bounded 6144 MiB Node heap. The default 4 GiB
 heap exhausts while compiling the complete catalog with private Sync enabled;
 the build budget does not alter interaction, accessibility or artifact gates.
+
+Shared repository-history qualification consumes its public built entrypoints
+from the private catalog host. The catalog tooling uses patched Storybook
+10.6.2 and Vite 6.4.4/7.3.7 or newer within their existing major versions;
+Vitest 4.1.12 or newer qualifies the browser mocker boundary. Audit failures
+are repaired without new advisory suppressions. Optional feature peers are
+supplied explicitly by hosts rather than auto-installed by pnpm. The unpublished
+History client is an explicit migration prerequisite supplied by a recorded local
+archive during validation; its public peer range remains portable.

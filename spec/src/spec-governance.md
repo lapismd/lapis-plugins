@@ -302,3 +302,9 @@ publication, enrollment or content transfer (LN-SYNC-042).
 The static catalog build has a bounded 6144 MiB Node heap. The default 4 GiB
 heap exhausts while compiling the complete catalog with private Sync enabled;
 the build budget does not alter interaction, accessibility or artifact gates.
+
+The catalog validates shared repository-history public exports with recorded
+source and consumer evidence. Optional migration peers are provided explicitly
+through ignored local archive overlays; committed package ranges and registry
+lockfiles retain portable dependency coordinates. Audit remediation changes
+patched tool versions without adding advisory suppressions.

@@ -1,6 +1,6 @@
 # Lapis Sync
 
-The package requires published Design Core `^0.4.0` for prepared browser CSS
+The package requires published Design Core `^0.6.0` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
 behavior retain their owning contracts.
 
@@ -29,8 +29,8 @@ This development edge does not expand the plugin runtime host contract.
 
 ## Requirements
 
-| ID | Requirement |
-| --- | --- |
+| ID          | Requirement                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | LN-SYNC-049 | A native Sync installation MUST obtain account state and authenticated connection/discovery reads through a profile-bound host session. It MUST NOT receive bearer credentials or authorization verifiers. Restore, server changes, cancellation, sign-out and unload MUST reject obsolete responses and keep account access separate from enrollment and content synchronization. Explicit host adapters MUST take precedence; an older native host MUST show account unavailability. |
 
 Stage 0C consumes released API 0.1.4, Design Core 0.3.4 and Mira 0.0.5
@@ -112,15 +112,15 @@ full-width action-feedback layout through its public npm exports.
 | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | LN-SYNC-043 | Sync Settings MUST discover active managed vaults through the configured server's authenticated vault-list query and display their names in a dropdown while persisting only the selected vault ID. Viewer-only vaults MUST be unavailable for selection. Loading, empty, sign-in and request failures MUST remain visible. Changing servers or disposing Settings MUST cancel pending discovery and discard stale results. Discovery MUST NOT grant content authority or silently select a vault. |
 | LN-SYNC-044 | The selected managed-vault UUID MUST remain available through the shared truncated copy control. Copying MUST use the complete UUID and show success or failure feedback. The vault picker MUST retain the selected vault name when closed and reload names from the configured server after reopening Settings. Its refresh control MUST use the shared Settings control height and a transparent idle appearance.                                                                                |
-| LN-SYNC-045 | Pairing invitation actions MUST share the invitation label row, aligned to its trailing edge. Generated invitation details MUST remain below that row, and the Invitation URL input MUST align to its row's trailing edge where inline layout fits. |
-| LN-SYNC-046 | The recovery export action MUST be labelled Export recovery bundle. Its file picker MUST use the shared Settings Input geometry without consumer paint overrides. |
+| LN-SYNC-045 | Pairing invitation actions MUST share the invitation label row, aligned to its trailing edge. Generated invitation details MUST remain below that row, and the Invitation URL input MUST align to its row's trailing edge where inline layout fits.                                                                                                                                                                                                                                                |
+| LN-SYNC-046 | The recovery export action MUST be labelled Export recovery bundle. Its file picker MUST use the shared Settings Input geometry without consumer paint overrides.                                                                                                                                                                                                                                                                                                                                  |
 
 ## Remote account presentation
 
-| ID | Requirement |
-| --- | --- |
+| ID          | Requirement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | LN-SYNC-047 | Sync Settings MUST expose host-backed sign-in, browser approval, cancellation and sign-out with explicit account, waiting, unavailable and failure states. Sign in MUST open the approval window within the click's user activation and retain a visible approval link with a copy action when opening is blocked. Account actions MUST pair relevant icons with their text labels. Account guidance MUST use shared smaller, muted settings-description styling; errors MUST remain distinct. Credentials MUST remain host-owned and MUST NOT enter Settings values or plugin persistence. Account sign-in MUST NOT enable enrollment or content operations. The private review host MAY keep its account session in memory until protected persistence is delivered. |
-| LN-SYNC-048 | Account changes and sign-out MUST invalidate connection health and cached vault discovery, abort pending discovery, and reject stale results. Changing the server MUST cancel the previous handoff and prevent credentials or results from crossing destinations. The review host MUST use direct cross-origin bearer requests without its earlier cookie proxy. |
+| LN-SYNC-048 | Account changes and sign-out MUST invalidate connection health and cached vault discovery, abort pending discovery, and reject stale results. Changing the server MUST cancel the previous handoff and prevent credentials or results from crossing destinations. The review host MUST use direct cross-origin bearer requests without its earlier cookie proxy.                                                                                                                                                                                                                                                                                                                                                                                                       |
 
 ## Delivery status
 
@@ -172,3 +172,7 @@ Original drafts persist before switching or movement; stale/canceled/failed read
 cannot replace another document. Workspace navigation, complete rename rebinding,
 Mira/domain writers and App shutdown remain required before production guard
 selection. This host milestone does not connect the Sync UI or activate apply.
+
+Current App-backed catalog seeds and copyable host examples use `.lapis`
+for application state, matching the Notes-wide default. Historical vault data
+and the frozen Deno host are not migrated or edited.

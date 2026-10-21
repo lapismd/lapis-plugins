@@ -1,6 +1,13 @@
 # AI Plugin
 
-The package requires published Design Core `^0.4.0` for prepared browser CSS
+Catalog tool-disclosure assertions include Design Core 0.6's visible target and
+group metadata in accessible names; expanding details still verifies the actual
+captured command/output and exact approval state.
+Shell geometry measures ordinary spacing from the resolved composer dock padding
+under LN-AI-027, without carrying forward a former footer's fixed 20px allowance.
+The panel still has no bottom padding and the composer cannot overlap messages.
+
+The package requires published Design Core `^0.6.0` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
 behavior retain their owning contracts.
 
@@ -29,7 +36,7 @@ Release qualification uses `@lapis-notes/api@^0.1.2` for the shared renderer,
 diagnostics invalidation and selected metadata fingerprint contracts. Portable
 consumers must resolve this prerequisite from npm before plugin publication.
 
-Dependency acceptance now uses published Design Core `0.3.2` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
+Earlier dependency acceptance used Design Core `0.3.2` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
 unchanged; local overrides for these released packages are retired.
 
 AI presentation resolves Design Core through the repository's current published
@@ -567,3 +574,17 @@ animations and the rendered control center MUST hit-test to that control.
 Preference dismissal MUST await removal of every root/submenu portal before
 reopening. Visibility and restored body pointer events alone do not prove
 geometry and menu lifecycle readiness.
+
+The package test toolchain uses patched Vite 6.4.4 and Vitest 4.1.12
+or newer within the existing major versions. Shared catalog qualification uses
+the patched Storybook toolchain described in distribution; application behavior
+and public package ownership remain unchanged.
+
+Current shared-shell qualification uses the released Design Core 0.6
+public boundary and matching Notes framework archives. Published dependency
+ranges now admit that boundary directly; the Avatar repair remains a recorded
+local candidate until the separate release gate.
+
+Current App-backed catalog seeds and copyable host examples use `.lapis`
+for application state, matching the Notes-wide default. Historical vault data
+and the frozen Deno host are not migrated or edited.

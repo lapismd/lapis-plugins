@@ -1,6 +1,6 @@
 # Source Editor Plugin
 
-The package accepts Design Core `^0.4.0 || ^0.5.1` for prepared browser CSS
+The package requires Design Core `^0.6.0` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
 behavior retain their owning contracts.
 
@@ -14,7 +14,7 @@ Release qualification uses `@lapis-notes/api@^0.1.2` for the shared renderer,
 diagnostics invalidation and selected metadata fingerprint contracts. Portable
 consumers must resolve this prerequisite from npm before plugin publication.
 
-Dependency acceptance now uses published Design Core `0.3.2` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
+Earlier dependency acceptance used Design Core `0.3.2` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
 unchanged; local overrides for these released packages are retired.
 
 Source Editor presentation resolves Design Core through the repository's
@@ -65,3 +65,8 @@ LP-SPEC-014 governs the signed runtime editor boundary. This package declares
 `@codemirror/language`, `@lezer/common`, `@lezer/highlight`, `@lezer/lr`
 as shared host modules and portable npm peers. Its bundled language grammars
 reuse these host-owned editor and parser core instances.
+
+The package test toolchain uses patched Vite 6.4.4 and Vitest 4.1.12
+or newer within the existing major versions. Shared catalog qualification uses
+the patched Storybook toolchain described in distribution; application behavior
+and public package ownership remain unchanged.

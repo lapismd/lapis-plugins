@@ -204,13 +204,13 @@ export function createAiWorkspaceSeed(
         }
       : undefined;
   return {
-    ".obsidian/app.json": JSON.stringify(AI_WORKSPACE_CONFIGURATION, null, 2),
-    ".obsidian/workspace.json": JSON.stringify(
+    ".lapis/app.json": JSON.stringify(AI_WORKSPACE_CONFIGURATION, null, 2),
+    ".lapis/workspace.json": JSON.stringify(
       createAiWorkspaceLayout(initialLocation, scenario),
       null,
       2
     ),
-    ".obsidian/ai.json": JSON.stringify(pluginData, null, 2),
+    ".lapis/ai.json": JSON.stringify(pluginData, null, 2),
     "Notes/Welcome.md": "# Welcome\n\nAsk the AI chat in the workspace.\n",
     "Notes/alpha.md": "# Alpha\n\nTODO: summarize this note.\n",
     ...(scenario === "registry-overview"
@@ -336,7 +336,7 @@ export async function bootAiWorkspaceDemo(
   }
   const app = new App({
     version: "0.0.1-story",
-    configPath: ".obsidian/app.json",
+    configPath: ".lapis/app.json",
     adapter,
     appDatabase: new MemoryAppDatabase("lapis-ai-workspace"),
     workspaceShell: { application: { name: "Lapis Notes" } },

@@ -77,3 +77,17 @@ The signed runtime declares its compiled Svelte imports through the exact
 compiler-versioned renderer contracts in LP-SPEC-014 and LP-SPEC-047. Host-owned
 components and archived components share that renderer graph; npm package peers
 remain portable.
+
+The package test toolchain uses patched Vite 6.4.4 and Vitest 4.1.12
+or newer within the existing major versions. Shared catalog qualification uses
+the patched Storybook toolchain described in distribution; application behavior
+and public package ownership remain unchanged.
+
+Current shared-shell qualification uses the released Design Core 0.6
+public boundary and matching Notes framework archives. Published dependency
+ranges now admit that boundary directly; the Avatar repair remains a recorded
+local candidate until the separate release gate.
+
+Current App-backed catalog seeds and copyable host examples use `.lapis`
+for application state, matching the Notes-wide default. Historical vault data
+and the frozen Deno host are not migrated or edited.

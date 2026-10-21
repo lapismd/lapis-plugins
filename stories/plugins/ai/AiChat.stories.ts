@@ -364,7 +364,7 @@ export const SearchToolHits: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const trigger = await canvas.findByRole("button", {
-      name: "Show details for notes_search",
+      name: "Show details for notes_search OAuth",
     });
     await userEvent.click(trigger);
     const hit = await canvas.findByRole("button", { name: "Open auth.md Projects/auth.md" });
@@ -681,7 +681,7 @@ export const ToolRunning: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const trigger = await canvas.findByRole("button", {
-      name: "Show details for shell.execute",
+      name: "Show details for shell.execute local workspace",
     });
     await expect(
       trigger.querySelector('[data-ui-part="detail-chevron"]')
@@ -725,7 +725,7 @@ export const SuccessfulToolCall: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const trigger = await canvas.findByRole("button", {
-      name: "Show details for shell.execute",
+      name: "Show details for shell.execute local workspace",
     });
     const chevron = trigger.querySelector('[data-ui-part="detail-chevron"]');
     await expect(chevron).toHaveAttribute("data-direction", "right");
@@ -764,7 +764,7 @@ export const AppToolReadTranscript: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const trigger = await canvas.findByRole("button", {
-      name: "Show details for read",
+      name: "Show details for read Notes/alpha.md",
     });
     await userEvent.click(trigger);
     expect(canvas.getAllByText(/Notes\/alpha\.md/).length).toBeGreaterThan(0);
@@ -840,10 +840,10 @@ export const AppToolSessionGrant: Story = {
     const canvas = within(canvasElement);
     await expect(await canvas.findByText(/Approval approved/)).toBeVisible();
     await userEvent.click(
-      canvas.getByRole("button", { name: "Expand 2 tool calls" })
+      canvas.getByRole("button", { name: "Expand edit Notes/beta.md 2 tool calls" })
     );
     expect(
-      canvas.getAllByRole("button", { name: "Show details for edit" })
+      canvas.getAllByRole("button", { name: /^Show details for edit Notes\/(alpha|beta)\.md$/ })
     ).toHaveLength(2);
     expect(canvas.queryByRole("button", { name: /Allow once/ })).toBeNull();
   },
@@ -913,7 +913,7 @@ export const FailedToolCall: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const trigger = await canvas.findByRole("button", {
-      name: "Show details for shell.execute",
+      name: "Show details for shell.execute local workspace",
     });
     await expect(
       trigger.querySelector('[data-ui-part="call-status"][data-status="error"]')
@@ -1132,7 +1132,7 @@ export const AgentTrace: Story = {
       expect(canvas.queryByText("available commands updated (75)")).toBeNull();
     });
     const readTrigger = canvas.getByRole("button", {
-      name: "Show details for vault.read",
+      name: "Show details for vault.read Notes/alpha.md",
     });
     const readCall = readTrigger.closest('[data-ui-part="call"]');
     expect(readCall).not.toBeNull();

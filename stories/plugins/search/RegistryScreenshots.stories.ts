@@ -118,7 +118,7 @@ export const SearchFilters: Story = {
       panel.getByRole("region", { name: "Search view settings" })
     ).toBeVisible();
     expect(
-      panel.getByRole("button", { name: "Filter by file type" })
+      panel.getByRole("button", { name: "Filter by file type: All" })
     ).toBeVisible();
   },
 };

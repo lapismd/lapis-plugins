@@ -1,6 +1,10 @@
 # Search Plugin
 
-The package requires Design Core `^0.4.0 || ^0.5.0` for prepared browser CSS
+Catalog filter triggers use their complete current accessible name, including
+the selected file type and retrieval mode. Selection and persistence assertions
+remain required after opening the public controls.
+
+The package requires Design Core `^0.6.0` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
 behavior retain their owning contracts.
 
@@ -14,7 +18,7 @@ Release qualification uses `@lapis-notes/api@^0.1.2` for the shared renderer,
 diagnostics invalidation and selected metadata fingerprint contracts. Portable
 consumers must resolve this prerequisite from npm before plugin publication.
 
-Dependency acceptance now uses published Design Core `0.3.2` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
+Earlier dependency acceptance used Design Core `0.3.2` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
 unchanged; local overrides for these released packages are retired.
 
 Search presentation resolves Design Core through the repository's current
@@ -212,3 +216,17 @@ Current-file totals describe renderable live-file hits; stale unresolved paths
 are not advertised as visible results. Open Search returns its activation task.
 Version containers derive their names from visible content, while header
 actions retain concise names. Their nested matches have independent targets.
+
+The package test toolchain uses patched Vite 6.4.4 and Vitest 4.1.12
+or newer within the existing major versions. Shared catalog qualification uses
+the patched Storybook toolchain described in distribution; application behavior
+and public package ownership remain unchanged.
+
+Current shared-shell qualification uses the released Design Core 0.6
+public boundary and matching Notes framework archives. Published dependency
+ranges now admit that boundary directly; the Avatar repair remains a recorded
+local candidate until the separate release gate.
+
+Filter review stories assert the complete current Design Core accessible
+trigger name, including its selected value, and retain all filter mutations
+and persisted-setting checks.
