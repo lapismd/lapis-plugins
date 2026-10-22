@@ -18,5 +18,7 @@ App ownership, package metadata and audit gates pass.
 The first static build exhausted Node 26's default 4 GiB heap. A cold retry
 with Node 24 and a process-local 8 GiB heap passes. No global runtime setting,
 warning suppression or visual baseline changed. Archive reproduction requires
-this source checkpoint and is recorded separately. Hosted consumer integration
-and distribution remain separate gates.
+the source checkpoint `b678caa8`. After that checkpoint all 12 npm archives pack,
+all 12 plugin payloads reproduce and all 12 payloads verify. The History npm
+archive has SHA256 `d4b3a360621972d408079f836fb8a0d3a9edfdf1e1b633e8a728f6c3bb273db9`.
+Hosted consumer integration and distribution remain separate gates.
