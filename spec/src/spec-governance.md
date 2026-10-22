@@ -1,5 +1,10 @@
 # Specification Governance
 
+The Search query-settlement repair maps to the Search chapter and verification
+record. Source, shared catalog and consumer acceptance remain separate gates;
+its pending-query scenario does not waive lifecycle failures or authorize visual
+baseline changes.
+
 Shared disposable panel fixtures seed app, types, workspace and bookmark state
 under the API's `.lapis` directory. Their explicit configuration path and default
 workspace loader must select the same state; expected panel counts, placement
@@ -313,3 +318,8 @@ The optional History replacement observer remains governed by LN-HIST-015
 and its single verification row. Source, archive and consuming-host evidence
 remain distinct; it grants no exception to qualification, source ownership or
 visual-baseline approval.
+
+The plugin interaction runner owns IPv4 loopback port 63422 with strict port
+selection. Notes uses 63421 and Desktop retains its separate catalog port.
+Concurrent browser APIs cannot share IPv4/IPv6 listeners behind `localhost`
+because module and RPC requests may otherwise reach another repository.

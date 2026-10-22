@@ -8,6 +8,7 @@
     searchQueryLanguageSupport,
     Notice,
     type App,
+    type Plugin,
     type SearchResultScope,
     type EditorPosition,
     type TFile,
@@ -69,6 +70,7 @@
   import SearchHistoryVersions from "./search-history-versions.svelte";
 
   type SearchPanelPlugin = {
+    readonly state: Plugin["state"];
     searchManager: SearchManager;
     getSettings(): SearchPluginSettings;
     updateSettings(patch: SearchPluginSettingsPatch): Promise<void>;
@@ -435,6 +437,7 @@
   }
 
   async function executeSearch(term: string, revision: number): Promise<void> {
+    if (plugin.state !== "enabled") return;
     if (
       !term.trim() ||
       diagnostic ||
@@ -455,7 +458,7 @@
         snippetLength: snippetLength(),
         mode: retrievalModeForQuery(),
       });
-      if (revision !== searchRevision) return;
+      if (revision !== searchRevision || plugin.state !== "enabled") return;
       const nextResults = response.hits
         .map((hit) => searchResultFromHit(app, hit))
         .filter((result): result is SearchResult => result !== null);
@@ -468,7 +471,14 @@
         .join("\u0000")}`;
       if (identity !== resultIdentity) results = nextResults;
       refreshOpenState(nextResults, identity);
-      void rememberSearch(term);
+      await rememberSearch(term);
+    } catch (error) {
+      if (revision === searchRevision && plugin.state === "enabled")
+        new Notice(
+          error instanceof Error ? error.message : String(error),
+          undefined,
+          app,
+        );
     } finally {
       if (revision === searchRevision) searching = false;
     }

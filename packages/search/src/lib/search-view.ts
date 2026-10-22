@@ -19,6 +19,7 @@ type SearchPanelInstance = {
 export class SearchView extends View {
   private component: SearchPanelInstance | null = null;
   private snapshot?: SearchPanelState;
+  private closing?: Promise<void>;
 
   constructor(leaf: WorkspaceLeaf) {
     super(leaf);
@@ -48,16 +49,17 @@ export class SearchView extends View {
   }
 
   protected onClose(): Promise<void> {
-    return Promise.resolve();
+    return this.stopPanel();
   }
 
   onload(): void {
+    this.closing = undefined;
     this.component = mount(SearchPanel, {
       target: this.containerEl,
       props: {
         app: this.app,
         initialScope: (["files", "history", "all"].includes(
-          String(this.getState()["scope"]),
+          String(this.getState()["scope"])
         )
           ? this.getState()["scope"]
           : "files") as SearchResultScope,
@@ -86,9 +88,15 @@ export class SearchView extends View {
     }
   }
 
-  onunload(): void {
+  onunload(): Promise<void> {
+    return this.stopPanel();
+  }
+
+  private stopPanel(): Promise<void> {
+    if (this.closing) return this.closing;
     this.snapshot = this.component?.getSearchState?.() ?? this.snapshot;
-    if (this.component) void unmount(this.component);
+    const current = this.component;
     this.component = null;
+    return (this.closing = current ? unmount(current) : Promise.resolve());
   }
 }

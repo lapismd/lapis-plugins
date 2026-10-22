@@ -69,6 +69,7 @@ export default defineConfig({
           setupFiles: ["./.storybook/vitest.setup.ts"],
           testTimeout: 120_000,
           browser: {
+            api: { host: "127.0.0.1", port: 63422, strictPort: true },
             enabled: true,
             headless: true,
             provider: playwright({}),

@@ -230,3 +230,11 @@ local candidate until the separate release gate.
 Filter review stories assert the complete current Design Core accessible
 trigger name, including its selected value, and retain all filter mutations
 and persisted-setting checks.
+
+Search view close awaits its owned Svelte panel teardown before the App can
+release persistence. The final live query/scope snapshot remains available;
+unload reuses that same idempotent teardown.
+Results completing after plugin disable are obsolete: they do not update
+presentation or persist recent queries. Active query failures are reported
+through the owning App's notice surface, and recent-query persistence settles
+inside that same operation.

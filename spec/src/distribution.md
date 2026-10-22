@@ -1,5 +1,9 @@
 # Distribution and Releases
 
+Search query settlement changes only its owned runtime lifecycle and review
+story. Package identity, independent versions, allowed host imports, payload
+reproduction, signature verification and publication approval remain unchanged.
+
 The shared catalog's disposable `.lapis` state matches the current public API
 default. This fixture-only repair changes no plugin payload or migration gate.
 

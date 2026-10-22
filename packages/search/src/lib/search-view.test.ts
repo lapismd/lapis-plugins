@@ -39,6 +39,33 @@ vi.mock("svelte", () => ({
 }));
 import { SearchView } from "./search-view";
 import type { WorkspaceLeaf } from "@lapis-notes/api";
+import { unmount } from "svelte";
+
+it("awaits panel teardown before the owning view finishes closing", async () => {
+  class ClosingView extends SearchView {
+    closePanel() {
+      return this.onClose();
+    }
+  }
+  const current = new ClosingView({} as WorkspaceLeaf);
+  current.onload();
+  let release!: () => void;
+  vi.mocked(unmount).mockImplementationOnce(
+    () =>
+      new Promise<void>((done) => {
+        release = done;
+      })
+  );
+  let closed = false;
+  const closing = current.closePanel().then(() => {
+    closed = true;
+  });
+  await Promise.resolve();
+  expect(closed).toBe(false);
+  release();
+  await closing;
+  expect(closed).toBe(true);
+});
 
 beforeEach(() => {
   fixture.save.mockClear();
