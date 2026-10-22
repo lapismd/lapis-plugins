@@ -19,3 +19,10 @@ unpublished client uses a recorded ignored archive overlay during migration;
 publication and final dependency-floor qualification are separate gates.
 Provenance and brand-path licenses are retained in `dist/repository/NOTICE.md`
 and the repository's `docs/repository-history-provenance.json`.
+
+Hosts coordinating multiple Apps can use the public
+`repository/controllers/transcript-writers` acquired-guard observer. Entry occurs
+inside existing editor and transcript protection, and its disposer follows the
+action. It permits observing already-held protection without reacquiring it;
+it neither replaces that protection nor authorizes saved writes. Dispose the
+App-owned observer during host teardown.

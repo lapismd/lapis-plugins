@@ -308,3 +308,8 @@ source and consumer evidence. Optional migration peers are provided explicitly
 through ignored local archive overlays; committed package ranges and registry
 lockfiles retain portable dependency coordinates. Audit remediation changes
 patched tool versions without adding advisory suppressions.
+
+The optional History replacement observer remains governed by LN-HIST-015
+and its single verification row. Source, archive and consuming-host evidence
+remain distinct; it grants no exception to qualification, source ownership or
+visual-baseline approval.

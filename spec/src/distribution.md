@@ -226,3 +226,8 @@ are repaired without new advisory suppressions. Optional feature peers are
 supplied explicitly by hosts rather than auto-installed by pnpm. The unpublished
 History client is an explicit migration prerequisite supplied by a recorded local
 archive during validation; its public peer range remains portable.
+
+LN-HIST-015 uses the existing repository controller export wildcard for an
+optional acquired-guard observer. It changes no package identity, host module
+allowlist, archive authority or signing boundary. The independent History
+Changeset retains the ordinary release gate.

@@ -5,6 +5,21 @@ type Guard = <T>(
   apply: () => Promise<T>
 ) => Promise<T>;
 const writers = new WeakMap<App, { guard: Guard }>();
+type GuardObserver = (path: string | undefined) => () => void;
+const observers = new WeakMap<App, { enter: GuardObserver }>();
+/** Observe protection already acquired by the shared controller; grants no authority. */
+export function bindReplacementGuardObserver(
+  app: App,
+  enter: GuardObserver
+): () => void {
+  if (observers.has(app))
+    throw new Error("Replacement observer is already bound");
+  const lease = { enter };
+  observers.set(app, lease);
+  return () => {
+    if (observers.get(app) === lease) observers.delete(app);
+  };
+}
 /** Optional AI writer admission augments replacement, not ordinary App teardown. */
 export function bindTranscriptWriters(app: App, guard: Guard): () => void {
   if (writers.has(app)) throw new Error("Transcript writers are already bound");
@@ -20,7 +35,13 @@ export function guardTranscriptReplacement<T>(
   apply: () => Promise<T>
 ): Promise<T> {
   const guard = writers.get(app)?.guard;
-  return guard
-    ? guard(path, apply)
-    : app.fileEditingSessions.guard(path, apply);
+  const run = async () => {
+    const leave = observers.get(app)?.enter(path);
+    try {
+      return await apply();
+    } finally {
+      leave?.();
+    }
+  };
+  return guard ? guard(path, run) : app.fileEditingSessions.guard(path, run);
 }
