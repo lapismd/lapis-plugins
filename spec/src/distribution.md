@@ -1,5 +1,10 @@
 # Distribution and Releases
 
+The isolated Desktop shared-screen intake accepts portable Mira compatibility
+ranges. Existing audit findings are recorded separately with the user
+acceptance in `spec/records/2026-10-23-desktop-mira-compatibility.md`; no release
+or audit exemption is granted.
+
 Search query settlement changes only its owned runtime lifecycle and review
 story. Package identity, independent versions, allowed host imports, payload
 reproduction, signature verification and publication approval remain unchanged.

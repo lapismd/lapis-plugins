@@ -10,7 +10,9 @@ behavior retain their owning contracts.
 The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.
 
-Version 0.1.6 requires released Mira 0.0.4 for safe pending-overlay teardown.
+Version 0.1.6 accepts the Mira 0.0.4 and 0.1 public-export lines, including
+the matching 0.0.2/0.0.3 editor and optional plugin releases. The earlier line
+retains the safe pending-overlay teardown floor.
 Its generated manifest, README installation coordinate and authentic Changesets
 changelog agree on the independent release version.
 

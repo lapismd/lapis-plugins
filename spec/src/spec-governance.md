@@ -1,5 +1,10 @@
 # Specification Governance
 
+The isolated Desktop shared-screen intake accepts portable Mira compatibility
+ranges. Existing audit findings are recorded separately with the user
+acceptance in `spec/records/2026-10-23-desktop-mira-compatibility.md`; no release
+or audit exemption is granted.
+
 The Search query-settlement repair maps to the Search chapter and verification
 record. Source, shared catalog and consumer acceptance remain separate gates;
 its pending-query scenario does not waive lifecycle failures or authorize visual
