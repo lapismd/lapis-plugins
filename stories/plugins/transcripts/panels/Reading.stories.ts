@@ -321,6 +321,108 @@ function placementStory(
       expect(getComputedStyle(commentAvatars[0]!).width).toBe("24px");
       expect(getComputedStyle(status).height).toBe("32px");
       expect(getComputedStyle(status).backgroundColor).toBe("rgb(255, 255, 255)");
+      const timeSeparators = [
+        ...reading.querySelectorAll<HTMLElement>(
+          '.ui-transcript-message-metadata [data-ui-part="timestamp"] + [data-ui-part="separator"]',
+        ),
+      ];
+      expect(
+        timeSeparators.filter(
+          (separator) => getComputedStyle(separator).display !== "none",
+        ),
+      ).toHaveLength(0);
+      const commented = view
+        .getAllByText("Check this wording against the signed agreement.")
+        .find((node) => node.checkVisibility())
+        ?.closest<HTMLElement>("[data-chat-item]");
+      expect(commented).toBeTruthy();
+      const commentedBlock = commented!.querySelector<HTMLElement>(
+        ".ui-transcript-text-block",
+      );
+      expect(commentedBlock).toBeTruthy();
+      commentedBlock!.tabIndex = -1;
+      commentedBlock!.focus();
+      await userEvent.click(
+        within(commented!).getByRole("button", { name: /More actions/ }),
+      );
+      const removeMenu = await waitFor(() => {
+        const menu = [
+          ...canvasElement.ownerDocument.querySelectorAll<HTMLElement>(
+            ".ui-message-actions__menu, [data-ui-part='dropdown-menu-content']",
+          ),
+        ].find((node) => node.textContent?.includes("Remove comment"));
+        expect(menu, "remove comment menu").not.toBeNull();
+        expect(
+          within(menu!).getByRole("menuitem", { name: "Remove comment" }),
+        ).toBeVisible();
+        return menu!;
+      });
+      const removeItem = within(removeMenu).getByRole("menuitem", {
+        name: "Remove comment",
+      });
+      expect(removeItem.querySelector("svg")).not.toBeNull();
+      expect(removeMenu.scrollWidth).toBeLessThanOrEqual(
+        removeMenu.clientWidth + 1,
+      );
+      expect(removeMenu.scrollHeight).toBeLessThanOrEqual(
+        removeMenu.clientHeight + 1,
+      );
+      await userEvent.keyboard("{Escape}");
+      const avatarColumn = speakerAvatars[0]!.getBoundingClientRect().left;
+      await userEvent.click(view.getByRole("button", { name: /^Play$/ }));
+      let playingMessage: HTMLElement | null = null;
+      try {
+        playingMessage = await waitFor(
+          () => {
+            const message = reading.querySelector<HTMLElement>(
+              '[data-playing="true"] .ui-transcript-message',
+            );
+            if (!message) throw new Error("waiting for playback");
+            return message;
+          },
+          { timeout: 1500 },
+        );
+      } catch {
+        playingMessage = null;
+      }
+      if (playingMessage) {
+        const playingAvatar = playingMessage.querySelector<HTMLElement>(
+          '.ui-transcript-message-avatar [data-ui-component="avatar"]',
+        );
+        expect(playingAvatar, "playing avatar").not.toBeNull();
+        expect(
+          Math.abs(playingAvatar!.getBoundingClientRect().left - avatarColumn),
+        ).toBeLessThan(1);
+        const playingStyle = getComputedStyle(playingMessage);
+        expect(Number.parseFloat(playingStyle.paddingTop)).toBeGreaterThan(0);
+        expect(Number.parseFloat(playingStyle.marginTop)).toBeLessThan(0);
+        expect(
+          playingMessage.querySelector(".transcript-reading-sound"),
+          "playing sound",
+        ).not.toBeNull();
+        const playingSeparator = playingMessage.querySelector<HTMLElement>(
+          '[data-ui-part="timestamp"] + [data-ui-part="separator"]',
+        );
+        expect(playingSeparator, "playing separator").not.toBeNull();
+        expect(getComputedStyle(playingSeparator!).display).not.toBe("none");
+        await userEvent.click(
+          within(playingMessage).getByRole("button", { name: "Pause" }),
+        );
+        await waitFor(() => {
+          expect(reading.querySelector('[data-playing="true"]')).toBeNull();
+        });
+      } else {
+        const item = reading.querySelector<HTMLElement>("[data-chat-item]");
+        const separator = item?.querySelector<HTMLElement>(
+          '.ui-transcript-message-metadata [data-ui-part="timestamp"] + [data-ui-part="separator"]',
+        );
+        if (separator) {
+          item!.dataset.playing = "true";
+          expect(getComputedStyle(separator).display).not.toBe("none");
+          delete item!.dataset.playing;
+          expect(getComputedStyle(separator).display).toBe("none");
+        }
+      }
       const controls = within(status);
       await expect(controls.getByRole("slider", { name: "Seek" })).toBeVisible();
       await expect(controls.getByRole("button", { name: "Mute" })).toBeVisible();

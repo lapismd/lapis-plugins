@@ -35,6 +35,7 @@
     shiftCommentsForEdits,
   } from "./replace-transcript-text";
   import FileCodeIcon from "@lucide/svelte/icons/file-code";
+  import MessageSquareXIcon from "@lucide/svelte/icons/message-square-x";
   import SearchIcon from "@lucide/svelte/icons/search";
   import SendIcon from "@lucide/svelte/icons/send-horizontal";
   import PauseIcon from "@lucide/svelte/icons/pause";
@@ -459,6 +460,7 @@ import {
       {
         id: "remove-transcript-comment",
         label: ids.length === 1 ? "Remove comment" : "Remove comments",
+        icon: removeCommentIcon,
         destructive: true,
         onSelect: () => {
           void removeSavedComments(ids);
@@ -611,6 +613,9 @@ import {
         items={sampleTranscriptItems}
         threads={sampleCommentThreads}
         {playingId}
+        onPause={() => {
+          void togglePlayback();
+        }}
         markdown={renderedMarkdown}
         {resolveFileLink}
         {label}
@@ -623,6 +628,9 @@ import {
           items={projection.items}
           threads={projection.threads}
           {playingId}
+          onPause={() => {
+            void togglePlayback();
+          }}
           markdown={renderedMarkdown}
           {resolveFileLink}
           {label}
@@ -796,6 +804,10 @@ import {
   </div>
 </div>
 
+{#snippet removeCommentIcon()}
+  <MessageSquareXIcon aria-hidden="true" />
+{/snippet}
+
 <style>
   .transcript-reading {
     display: flex;
@@ -840,6 +852,25 @@ import {
   }
 
   .transcript-reading
+    :global(
+      .ui-transcript-message-metadata
+        [data-ui-part="timestamp"]
+        + [data-ui-part="separator"]
+    ) {
+    display: none;
+  }
+
+  .transcript-reading
+    :global(
+      [data-playing="true"]
+        .ui-transcript-message-metadata
+        [data-ui-part="timestamp"]
+        + [data-ui-part="separator"]
+    ) {
+    display: inline;
+  }
+
+  .transcript-reading
     :global([data-chat-item][data-playing="true"] .ui-transcript-message) {
     background: color-mix(
       in srgb,
@@ -848,6 +879,8 @@ import {
     );
     border-radius: 0.75rem;
     padding: 0.5rem 0.625rem;
+    margin-block: -0.5rem;
+    margin-inline: -0.625rem;
   }
 
   .transcript-reading :global([data-chat-item] [data-ui-part="timestamp"]) {
