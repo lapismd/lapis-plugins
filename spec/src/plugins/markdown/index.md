@@ -5,7 +5,11 @@ list. The real-App No headings story retains interaction and axe qualification.
 
 The package requires Design Core `^0.6.0` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
-behavior retain their owning contracts.
+behavior retain their owning contracts. A full-file Markdown embed asks
+registered Markdown embedders in order for `md` and `markdown`. The first
+embedder that accepts the file owns it. When every embedder declines, the
+portable Markdown preview remains. Extension renderers stay on their own
+extensions.
 
 The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.

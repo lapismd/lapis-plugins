@@ -5,6 +5,7 @@
   import { BookmarksViewType } from "@lapis-notes/bookmarks";
   import { FileExplorerView } from "@lapis-notes/file-explorer";
   import {
+    sampleEmbeddedNote,
     samplePlainTranscript,
     sampleSavedComment,
     sampleTranscriptFormats,
@@ -68,6 +69,7 @@
       for (const format of [
         ...sampleTranscriptFormats,
         samplePlainTranscript,
+        sampleEmbeddedNote,
       ]) {
         if (!runtime.app.vault.getAbstractFileByPath(format.path)) {
           await runtime.app.vault.create(format.path, format.markdown);

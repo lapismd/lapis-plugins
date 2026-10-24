@@ -8,11 +8,27 @@ const harness = vi.hoisted(() => ({
   menuHandler: null as null | ((context: unknown) => void),
   viewRegistration: null as null | unknown[],
   editorView: null as null | Record<string, unknown>,
+  markdownEmbedder: null as null | ((props: {
+    app: unknown;
+    containerEl: HTMLElement;
+    file: { path: string };
+  }) => false | { destroy: () => void }),
+  mount: vi.fn(() => ({ id: "reading" })),
+  unmount: vi.fn(async () => undefined),
 }));
 
 vi.mock("./views/reading-view", () => ({
   TRANSCRIPT_READING_VIEW: "lapis-transcripts-reading",
   TranscriptReadingView: class TranscriptReadingView {},
+}));
+
+vi.mock("./TranscriptReading.svelte", () => ({
+  default: class TranscriptReading {},
+}));
+
+vi.mock("svelte", () => ({
+  mount: harness.mount,
+  unmount: harness.unmount,
 }));
 
 vi.mock("@lapis-notes/api", () => {
@@ -41,6 +57,12 @@ vi.mock("@lapis-notes/api", () => {
       harness.menuHandler = handler;
     }
 
+    registerMarkdownEmbedder(
+      embedder: NonNullable<(typeof harness)["markdownEmbedder"]>,
+    ) {
+      harness.markdownEmbedder = embedder;
+    }
+
     addCommand(command: typeof harness.command) {
       harness.command = command;
     }
@@ -52,7 +74,12 @@ vi.mock("@lapis-notes/api", () => {
     }
   }
 
-  return { FileView, Notice, Plugin };
+  function matchesEditorAssociationGlob(pattern: string, path: string) {
+    const name = path.split("/").pop() ?? path;
+    return pattern === "*transcript.md" && name.endsWith("transcript.md");
+  }
+
+  return { FileView, Notice, Plugin, matchesEditorAssociationGlob };
 });
 
 import { FileView } from "@lapis-notes/api";
@@ -88,6 +115,9 @@ describe("TranscriptsPlugin", () => {
     harness.menuHandler = null;
     harness.viewRegistration = null;
     harness.editorView = null;
+    harness.markdownEmbedder = null;
+    harness.mount.mockClear();
+    harness.unmount.mockClear();
   });
 
   it("registers the reading view, command, and Markdown menu item", () => {
@@ -109,6 +139,50 @@ describe("TranscriptsPlugin", () => {
       priority: "exclusive",
     });
     expect(harness.menuHandler).toBeTypeOf("function");
+  });
+
+  it("claims a transcript embed and declines other Markdown notes", () => {
+    const { app } = createApp();
+    new TranscriptsPlugin(app as never).onload();
+    const container = document.createElement("div");
+    const embedder = harness.markdownEmbedder;
+    expect(embedder).toBeTypeOf("function");
+
+    expect(
+      embedder?.({
+        app,
+        containerEl: container,
+        file: { path: "Notes/Draft meeting.md" },
+      }),
+    ).toBe(false);
+    expect(harness.mount).not.toHaveBeenCalled();
+
+    const claimed = embedder?.({
+      app,
+      containerEl: container,
+      file: { path: "Notes/Contract transcript.md" },
+    });
+    expect(claimed).toEqual(
+      expect.objectContaining({ destroy: expect.any(Function) }),
+    );
+    if (claimed === false || claimed === undefined) {
+      throw new Error("transcript embedder declined the transcript");
+    }
+    expect(container.style.height).toBe("24rem");
+    expect(harness.mount).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        target: container,
+        props: expect.objectContaining({
+          app,
+          mode: "file",
+          filePath: "Notes/Contract transcript.md",
+        }),
+      }),
+    );
+    claimed?.destroy();
+    expect(harness.unmount).toHaveBeenCalledOnce();
+    expect(container.childElementCount).toBe(0);
   });
 
   it("notices when there is no Markdown note to open", async () => {

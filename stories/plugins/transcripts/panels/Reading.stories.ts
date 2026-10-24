@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, userEvent, waitFor, within } from "storybook/test";
 import {
   TranscriptReading,
+  sampleEmbeddedNote,
   samplePlainTranscript,
   sampleTranscriptFormats,
 } from "@lapis-notes/transcripts";
@@ -239,9 +240,13 @@ function placementStory(
       await expect(view.getAllByText("Speaker 1").length).toBeGreaterThan(0);
       await expect(view.getByText("2 speakers")).toBeVisible();
       await expect(view.getByRole("button", { name: /^Play$/ })).toBeEnabled();
-      await expect(
-        view.getByText("Check this wording against the signed agreement."),
-      ).toBeVisible();
+      await waitFor(() => {
+        expect(
+          view
+            .getAllByText("Check this wording against the signed agreement.")
+            .filter((node) => node.checkVisibility()),
+        ).toHaveLength(1);
+      });
       const document = reading.querySelector<HTMLElement>(
         ".ui-transcript-document",
       );
@@ -339,11 +344,14 @@ function placementStory(
           within(explorer!).getByRole("button", { name: /Contract transcript/ }),
         );
         await waitFor(() => {
-          expect(
-            canvas.getByText(
-              "Check this wording against the signed agreement.",
-            ),
-          ).toBeVisible();
+          const notes = [...canvasElement.querySelectorAll("p")].filter(
+            (node) =>
+              node.checkVisibility() &&
+              node.textContent?.includes(
+                "Check this wording against the signed agreement.",
+              ),
+          );
+          expect(notes).toHaveLength(1);
         });
         await userEvent.click(
           within(explorer!).getByRole("button", {
@@ -357,6 +365,25 @@ function placementStory(
             ),
           ].find((node) => node.checkVisibility());
           expect(editor?.textContent).toContain(samplePlainTranscript.marker);
+        });
+        const read = [...canvasElement.querySelectorAll("button")].find(
+          (button) =>
+            button.checkVisibility() &&
+            (button.getAttribute("aria-label") ?? "").includes("Click to read"),
+        );
+        expect(read).toBeTruthy();
+        await userEvent.click(read!);
+        await waitFor(() => {
+          const readings = [
+            ...canvasElement.querySelectorAll<HTMLElement>(
+              '[data-testid="transcript-reading"]',
+            ),
+          ].filter((node) => node.checkVisibility());
+          expect(
+            readings.some((node) => node.textContent?.includes("mass page")),
+          ).toBe(true);
+          const agenda = canvas.getByText(sampleEmbeddedNote.marker);
+          expect(agenda.closest('[data-testid="transcript-reading"]')).toBeNull();
         });
       }
     },

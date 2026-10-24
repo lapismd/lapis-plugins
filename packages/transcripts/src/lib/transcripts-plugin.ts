@@ -2,15 +2,18 @@ import {
   FileView,
   Notice,
   Plugin,
+  matchesEditorAssociationGlob,
   type App,
   type MarkdownViewMenuContext,
   type PluginManifest,
   type TFile,
   type WorkspaceLeaf,
 } from "@lapis-notes/api";
+import { mount, unmount } from "svelte";
 import manifestSpec from "../../manifest.json";
 import { TRANSCRIPTS_PLUGIN_ID } from "./ids";
 import { TRANSCRIPT_FILENAME_PATTERN } from "./transcript-association";
+import TranscriptReading from "./TranscriptReading.svelte";
 import {
   TRANSCRIPT_READING_VIEW,
   TranscriptReadingView,
@@ -46,6 +49,7 @@ export class TranscriptsPlugin extends Plugin {
       priority: "exclusive",
     });
     this.registerMarkdownViewMenuItem(this.addMarkdownViewMenuItem);
+    this.registerMarkdownEmbedder(this.renderMarkdownEmbed);
     this.addCommand({
       id: "open-transcript",
       name: "Open transcript",
@@ -53,6 +57,41 @@ export class TranscriptsPlugin extends Plugin {
       callback: () => this.openTranscript(this.app.workspace.activeLeaf),
     });
   }
+
+  private readonly renderMarkdownEmbed = ({
+    app,
+    containerEl,
+    file,
+  }: {
+    app: App;
+    containerEl: HTMLElement;
+    file: TFile;
+  }) => {
+    if (
+      !matchesEditorAssociationGlob(TRANSCRIPT_FILENAME_PATTERN, file.path)
+    ) {
+      return false;
+    }
+    containerEl.style.display = "flex";
+    containerEl.style.flexDirection = "column";
+    containerEl.style.height = "24rem";
+    containerEl.style.minHeight = "0";
+    containerEl.style.overflow = "hidden";
+    const component = mount(TranscriptReading, {
+      target: containerEl,
+      props: {
+        app,
+        mode: "file",
+        filePath: file.path,
+      },
+    });
+    return {
+      destroy() {
+        void unmount(component);
+        containerEl.replaceChildren();
+      },
+    };
+  };
 
   private readonly addMarkdownViewMenuItem = ({
     menu,

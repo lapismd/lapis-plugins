@@ -46,6 +46,7 @@ function createAppFixture() {
     },
     embedRegistry: {
       get: (extension: string) => (extension === "pdf" ? renderEmbed : null),
+      renderMarkdownEmbed: () => false,
     },
     openFile,
   } as unknown as App;
@@ -136,6 +137,55 @@ describe("Lapis Mira file adapter", () => {
     expect(typeof cleanup).toBe("function");
     if (typeof cleanup === "function") cleanup();
     expect(destroy).toHaveBeenCalledOnce();
+  });
+
+  it("asks markdown embedders before declining a markdown embed", () => {
+    const contract = file("Notes/Contract transcript.md");
+    const draft = file("Notes/Draft meeting.md");
+    const destroy = vi.fn();
+    const element = { replaceChildren: vi.fn() } as unknown as HTMLElement;
+    const renderMarkdownEmbed = vi.fn(
+      (props: { file: { path: string } }) =>
+        props.file.path.endsWith("transcript.md") ? { destroy } : false,
+    );
+    const app = {
+      vault: {
+        getFileByPath: (path: string) =>
+          [contract, draft].find((candidate) => candidate.path === path) ??
+          null,
+      },
+      embedRegistry: {
+        get: () => {
+          throw new Error("extension renderers do not own markdown embeds");
+        },
+        renderMarkdownEmbed,
+      },
+    } as unknown as App;
+    const adapter = createLapisMiraFileAdapter(app);
+    const targetFor = (candidate: TFile) => ({
+      href: candidate.path,
+      path: candidate.path,
+      file: {
+        path: candidate.path,
+        name: candidate.name,
+        extension: candidate.extension,
+        kind: "markdown" as const,
+      },
+    });
+
+    expect(adapter.renderEmbed?.(targetFor(draft), element)).toBe(false);
+    const cleanup = adapter.renderEmbed?.(targetFor(contract), element);
+    expect(renderMarkdownEmbed).toHaveBeenCalledWith(
+      expect.objectContaining({
+        app,
+        containerEl: element,
+        file: contract,
+      }),
+    );
+    expect(typeof cleanup).toBe("function");
+    if (typeof cleanup === "function") cleanup();
+    expect(destroy).toHaveBeenCalledOnce();
+    expect(element.replaceChildren).toHaveBeenCalledOnce();
   });
 
   it("writes only existing Markdown files through the Lapis vault", async () => {

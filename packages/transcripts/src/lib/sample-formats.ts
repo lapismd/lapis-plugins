@@ -17,7 +17,18 @@ Please keep the first pass in the note until we agree the wording.
 00:18 Speaker 2
 
 The second turn is enough to qualify this as a transcript.
+
+![[Contract transcript.md]]
+
+![[Agenda.md]]
 `,
+};
+
+export const sampleEmbeddedNote: SampleTranscriptFormat = {
+  path: "Notes/Agenda.md",
+  title: "Agenda.md",
+  marker: "Bring the signed schedule.",
+  markdown: "Bring the signed schedule.\n",
 };
 
 export const sampleTranscriptFormats: readonly SampleTranscriptFormat[] = [

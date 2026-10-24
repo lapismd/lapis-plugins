@@ -19,6 +19,7 @@ export {
   sampleTranscriptRevision,
 } from "./lib/sample-turns";
 export {
+  sampleEmbeddedNote,
   samplePlainTranscript,
   sampleTranscriptFormats,
 } from "./lib/sample-formats";

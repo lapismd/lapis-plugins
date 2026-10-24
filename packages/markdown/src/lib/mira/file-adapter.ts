@@ -121,6 +121,19 @@ export function createLapisMiraFileAdapter(app: App): MiraFileAdapter {
         };
       }
 
+      if (isMarkdown(file)) {
+        const handle = app.embedRegistry.renderMarkdownEmbed({
+          app,
+          containerEl: element,
+          file,
+        });
+        if (handle === false) return false;
+        return () => {
+          void handle?.destroy?.();
+          element.replaceChildren();
+        };
+      }
+
       const renderer = app.embedRegistry.get(file.extension);
       if (!renderer) return false;
       const handle = renderer({
