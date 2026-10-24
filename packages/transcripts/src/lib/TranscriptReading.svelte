@@ -652,7 +652,13 @@ import {
       {/key}
     {/if}
   </div>
-  <div class="transcript-reading-status" data-testid="transcript-reading-status">
+  <div
+    class={[
+      "transcript-reading-status",
+      { "transcript-reading-status-without-audio": !playbackUrl },
+    ]}
+    data-testid="transcript-reading-status"
+  >
     <button
       type="button"
       class="transcript-reading-icon transcript-reading-find"
@@ -1052,6 +1058,10 @@ import {
 
   .transcript-reading-source {
     margin-inline-start: 0.125rem;
+  }
+
+  .transcript-reading-status-without-audio .transcript-reading-source {
+    margin-inline-start: auto;
   }
 
   .transcript-reading-icon.transcript-reading-send {

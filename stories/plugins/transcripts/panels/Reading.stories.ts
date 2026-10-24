@@ -473,6 +473,17 @@ function placementStory(
           await waitFor(() => {
             expect(canvas.getByText(format.marker)).toBeVisible();
             expect(canvas.queryByRole("button", { name: /^Play$/ })).toBeNull();
+            const status = [
+              ...canvasElement.querySelectorAll<HTMLElement>(
+                '[data-testid="transcript-reading-status"]',
+              ),
+            ].find((node) => node.checkVisibility());
+            expect(status, "visible footer").toBeTruthy();
+            const source = within(status!).getByRole("button", { name: "Source" });
+            expect(
+              status!.getBoundingClientRect().right -
+                source.getBoundingClientRect().right,
+            ).toBeLessThanOrEqual(12);
           });
         }
         await userEvent.click(
