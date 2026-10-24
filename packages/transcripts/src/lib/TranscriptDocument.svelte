@@ -1,7 +1,9 @@
 <script lang="ts">
   import {
+    CommentQueue,
     Transcript,
     TranscriptController,
+    TranscriptFooter,
     type MessageAction,
     type TranscriptBlock,
     type TranscriptCommentThread,
@@ -41,7 +43,19 @@
     }),
     [...threads],
   );
+  const queuedComments = $derived(
+    Boolean(comments.active) ||
+      comments.pending.length > 0 ||
+      comments.sending,
+  );
 </script>
+
+{#snippet queuedSection()}
+  <CommentQueue state={comments} />
+{/snippet}
+{#snippet sendFooter()}
+  <TranscriptFooter state={comments} />
+{/snippet}
 
 <Transcript
   {items}
@@ -52,6 +66,8 @@
   scrollButton={true}
   label="Transcript"
   logLabel="Transcript turns"
+  afterItems={comments.pending.length > 0 ? queuedSection : undefined}
+  footer={queuedComments ? sendFooter : undefined}
 >
   {#snippet metadataSupplement(item)}
     {#if item.id === playingId}

@@ -99,6 +99,7 @@ describe("TranscriptsPlugin", () => {
     expect(harness.command).toMatchObject({
       id: "open-transcript",
       name: "Open transcript",
+      icon: "lucide-audio-lines",
     });
     expect(harness.editorView).toEqual({
       id: "lapis-transcripts-reading-file",

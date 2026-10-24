@@ -49,6 +49,7 @@ export class TranscriptsPlugin extends Plugin {
     this.addCommand({
       id: "open-transcript",
       name: "Open transcript",
+      icon: "lucide-audio-lines",
       callback: () => this.openTranscript(this.app.workspace.activeLeaf),
     });
   }

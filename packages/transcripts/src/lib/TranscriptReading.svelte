@@ -737,6 +737,14 @@ import {
     padding: 1.25rem;
   }
 
+  .transcript-reading :global(.ui-transcript-transcript-activity) {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0 1.25rem 1.25rem;
+  }
+
   .transcript-reading
     :global(.ui-transcript-message[data-ui-component][data-ui-part]) {
     grid-template-columns: 2rem minmax(0, 1fr);
