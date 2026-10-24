@@ -12,9 +12,11 @@ while an ordinary embedded note stays a Markdown preview. An embedded transcript
 uses the Markdown embed's left border and file name, and frames the reading
 with the theme border and a small theme radius. Inside a transcript,
 Markdown links render as links and a wiki embed renders through the same file
-adapter. Playback starts at the beginning of the note. A timestamp
+adapter. Playback starts at the beginning of the note. Find and replace searches
+every spoken turn, and a replacement is written back into the note. A timestamp
 seeks to that spoken turn and plays, the active turn is highlighted, and
-follow-along pauses after a manual scroll. The footer also seeks, skips ten
+follow-along pauses after a manual scroll. A find control to the left of the
+speaker count toggles find and replace. The footer also seeks, skips ten
 seconds, mutes, changes volume, and changes playback speed. Narrow panes keep
 seek, mute, and play, and hide the extra controls.
 

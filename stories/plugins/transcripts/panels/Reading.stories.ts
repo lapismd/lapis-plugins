@@ -239,6 +239,16 @@ function placementStory(
       ).toBeVisible();
       await expect(view.getAllByText("Speaker 1").length).toBeGreaterThan(0);
       await expect(view.getByText("2 speakers")).toBeVisible();
+      const findToggle = view.getByRole("button", { name: "Find and replace" });
+      await userEvent.click(findToggle);
+      await waitFor(() => {
+        expect(view.getByRole("textbox", { name: "Find" })).toBeVisible();
+      });
+      expect(findToggle).toHaveAttribute("aria-pressed", "true");
+      await userEvent.click(findToggle);
+      await waitFor(() => {
+        expect(view.queryByRole("textbox", { name: "Find" })).toBeNull();
+      });
       await expect(view.getByRole("button", { name: /^Play$/ })).toBeEnabled();
       await waitFor(() => {
         expect(view.getByRole("link", { name: "recording terms" })).toBeVisible();
@@ -255,13 +265,31 @@ function placementStory(
       );
       expect(document).not.toBeNull();
       const padding = getComputedStyle(document!);
-      expect(padding.paddingTop).toBe(padding.paddingRight);
+      expect(Number.parseFloat(padding.paddingTop)).toBeGreaterThan(
+        Number.parseFloat(padding.paddingRight),
+      );
       expect(padding.paddingRight).toBe(padding.paddingBottom);
       expect(padding.paddingBottom).toBe(padding.paddingLeft);
       const viewport = reading.querySelector<HTMLElement>(
         '[data-ui-part="scroll-area-viewport"]',
       );
       expect(viewport).not.toBeNull();
+      viewport!.scrollTop = 0;
+      const firstBlock = [
+        ...reading.querySelectorAll<HTMLElement>(".ui-transcript-text-block"),
+      ].find((node) => !node.closest(".ui-transcript-markdown-preview"));
+      expect(firstBlock).toBeTruthy();
+      firstBlock!.tabIndex = -1;
+      firstBlock!.focus();
+      const firstActions = firstBlock!.querySelector<HTMLElement>(
+        ":scope > .ui-transcript-text-actions",
+      );
+      expect(firstActions).toBeTruthy();
+      const firstActionBox = firstActions!.getBoundingClientRect();
+      const portBox = viewport!.getBoundingClientRect();
+      expect(getComputedStyle(firstActions!).opacity).not.toBe("0");
+      expect(firstActionBox.top).toBeGreaterThanOrEqual(portBox.top - 1);
+      expect(firstActionBox.height).toBeGreaterThan(0);
       expect(viewport!.scrollHeight).toBeGreaterThan(viewport!.clientHeight);
       viewport!.scrollTop = 240;
       expect(viewport!.scrollTop).toBeGreaterThan(0);
@@ -449,6 +477,34 @@ function placementStory(
           (node) => getComputedStyle(node).opacity !== "0",
         );
         expect(visibleActions).toHaveLength(1);
+        const embedded = preview!.querySelector<HTMLElement>(
+          ".transcript-reading-embedded",
+        );
+        const actionBox = visibleActions[0]!.getBoundingClientRect();
+        const frameBox = embedded!.getBoundingClientRect();
+        const pad = getComputedStyle(
+          embedded!.querySelector(".ui-transcript-document")!,
+        ).paddingTop;
+        expect(
+          actionBox.top,
+          `padding ${pad}; action ${actionBox.top}; frame ${frameBox.top}`,
+        ).toBeGreaterThanOrEqual(frameBox.top - 1);
+        const surface = preview!.querySelector<HTMLElement>(
+          "[data-ui-component='transcript']",
+        );
+        surface!.dispatchEvent(
+          new KeyboardEvent("keydown", {
+            key: "f",
+            metaKey: true,
+            bubbles: true,
+            cancelable: true,
+          }),
+        );
+        await waitFor(() => {
+          expect(
+            within(surface!).getByRole("textbox", { name: "Find" }),
+          ).toBeVisible();
+        });
       }
     },
   };

@@ -26,9 +26,16 @@
   } from "./transcript-comments";
   import {
     projectTranscript,
+    transcriptBodyBlockId,
     type ProjectedTranscript,
   } from "./project-transcript";
+  import { parseTranscript } from "./parse-transcript";
+  import {
+    replaceTranscriptSource,
+    shiftCommentsForEdits,
+  } from "./replace-transcript-text";
   import FileCodeIcon from "@lucide/svelte/icons/file-code";
+  import SearchIcon from "@lucide/svelte/icons/search";
   import SendIcon from "@lucide/svelte/icons/send-horizontal";
   import PauseIcon from "@lucide/svelte/icons/pause";
   import PlayIcon from "@lucide/svelte/icons/play";
@@ -106,6 +113,7 @@ import {
     enabled: false,
     send: () => undefined,
   });
+  let searchOpen = $state(false);
   let audio: HTMLAudioElement | undefined;
   let programmaticScroll = false;
   let lastScrolledTurnId = "";
@@ -361,6 +369,37 @@ import {
     loading = false;
   }
 
+  async function replaceBlockText(
+    edits: Parameters<NonNullable<TranscriptProps["replaceBlockText"]>>[0],
+  ) {
+    if (mode !== "file" || !app || !filePath || edits.length === 0) return;
+    const file = app.vault.getFileByPath(filePath);
+    if (!file) return;
+    const source = await app.vault.read(file);
+    const parsed = parseTranscript(source);
+    const blocks = parsed.turns.map((turn, index) => ({
+      id: transcriptBodyBlockId(turn, index, parsed.turns),
+      bodyStart: turn.bodyRange.start,
+      body: turn.body,
+    }));
+    const next = replaceTranscriptSource(source, blocks, edits);
+    if (next === null || next === source) return;
+    await app.vault.modify(file, next);
+    await app.fileManager.processFrontMatter(
+      file,
+      (frontmatter: Record<string, unknown>) => {
+        writeComments(
+          frontmatter,
+          shiftCommentsForEdits(
+            commentsFromValue(frontmatter.comments),
+            blocks,
+            edits,
+          ),
+        );
+      },
+    );
+  }
+
   async function persistComments(
     snapshot: TranscriptSubmission,
   ): Promise<TranscriptSubmissionResult> {
@@ -576,6 +615,7 @@ import {
         {resolveFileLink}
         {label}
         bind:commentSend
+        bind:searchOpen
       />
     {:else if projection}
       {#key projection.signature}
@@ -588,12 +628,27 @@ import {
           {label}
           onSend={persistComments}
           getMessageActions={messageActions}
+          replaceBlockText={replaceBlockText}
           bind:commentSend
+        bind:searchOpen
         />
       {/key}
     {/if}
   </div>
   <div class="transcript-reading-status" data-testid="transcript-reading-status">
+    <button
+      type="button"
+      class="transcript-reading-icon transcript-reading-find"
+      aria-label="Find and replace"
+      aria-pressed={searchOpen}
+      title="Find and replace"
+      onclick={(event) => {
+        event.stopPropagation();
+        searchOpen = !searchOpen;
+      }}
+    >
+      <SearchIcon aria-hidden="true" />
+    </button>
     <span class="transcript-reading-status-text">{speakerCount} speakers</span>
     <span class="transcript-reading-time">{playheadLabel}</span>
     <div class="transcript-reading-seek">
@@ -808,7 +863,9 @@ import {
   }
 
   .transcript-reading :global(.ui-transcript-document) {
-    padding: 1.25rem;
+    padding-block-start: var(--ui-transcript-hover-clearance, 3rem);
+    padding-inline: 1.25rem;
+    padding-block-end: 1.25rem;
   }
 
   .transcript-reading :global(.ui-transcript-transcript-activity) {
@@ -966,6 +1023,11 @@ import {
 
   .transcript-reading-icon.transcript-reading-send:disabled {
     opacity: 0.45;
+  }
+
+  .transcript-reading-find[aria-pressed="true"] {
+    color: var(--foreground);
+    background: color-mix(in srgb, var(--foreground) 8%, #fff);
   }
 
   .transcript-reading-icon :global(svg) {

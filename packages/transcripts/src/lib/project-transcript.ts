@@ -96,6 +96,14 @@ function projectTurn(
   };
 }
 
+export function transcriptBodyBlockId(
+  turn: ParsedTranscriptTurn,
+  index: number,
+  turns: readonly ParsedTranscriptTurn[],
+): string {
+  return projectTurn(turn, index, turns).blocks[0]!.id;
+}
+
 function speakerAuthor(name: string): TranscriptAuthor {
   return {
     id: slug(name),

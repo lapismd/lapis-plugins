@@ -33,8 +33,10 @@
     getMessageActions,
     markdown,
     resolveFileLink,
+    replaceBlockText,
     label = "Transcript",
     commentSend = $bindable(idleCommentSend),
+    searchOpen = $bindable(false),
   }: {
     items: readonly TranscriptItem[];
     threads: TranscriptCommentThread[];
@@ -42,7 +44,9 @@
     commentSend?: TranscriptCommentSend;
     markdown?: TranscriptProps["markdown"];
     resolveFileLink?: TranscriptProps["resolveFileLink"];
+    replaceBlockText?: TranscriptProps["replaceBlockText"];
     label?: string;
+    searchOpen?: boolean;
     onSend?: (
       snapshot: TranscriptSubmission,
     ) => TranscriptSubmissionResult | Promise<TranscriptSubmissionResult>;
@@ -61,6 +65,7 @@
       ...(onSend ? { canEditComment: () => true, onSend } : {}),
       ...(getMessageActions ? { getMessageActions } : {}),
       ...(resolveFileLink ? { resolveFileLink } : {}),
+      ...(replaceBlockText ? { replaceBlockText } : {}),
     }),
     [...threads],
   );
@@ -95,6 +100,7 @@
   view="document"
   scrollButton={true}
   label={label}
+  bind:searchOpen
   logLabel="Transcript turns"
   afterItems={comments.pending.length > 0 ? queuedSection : undefined}
 >
