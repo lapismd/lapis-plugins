@@ -404,6 +404,14 @@ function placementStory(
               node.textContent?.includes(sampleEmbeddedNote.marker),
           );
           expect(transcript).toBeTruthy();
+          const embedded = transcript!.querySelector<HTMLElement>(
+            ".ui-transcript-markdown-preview .transcript-reading-embedded",
+          );
+          expect(embedded).toBeTruthy();
+          const frame = getComputedStyle(embedded!);
+          expect(frame.borderTopWidth).toBe("1px");
+          expect(frame.borderTopStyle).toBe("solid");
+          expect(frame.borderRadius).not.toBe("0px");
           expect(
             within(transcript!).getByRole("link", { name: "recording terms" }),
           ).toBeVisible();
