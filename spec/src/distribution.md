@@ -171,6 +171,16 @@ metadata and each owning plugin chapter together, then pass the complete
 tarball, rootless-payload, portable-proof, and clean-consumer preparation gate
 before approval.
 
+Transcripts is an active catalog package so Storybook and metadata checks can
+see its preview. Registry media selection omits it until a
+`Plugins/Transcripts/Registry Screenshots` story exists, and the release
+workflow does not offer it yet.
+
+The shared development host resolves published Mira `~0.1.0` together with
+mira-editor, mira-plugin-ai, and mira-plugin-mermaid `~0.0.3`. Design Core
+stays on the published `^0.6.0` range. Storybook keeps prebundling
+`@lapismd/mira/**`, including that line's CommonJS highlighter dependencies.
+
 Shared Storybook imports API's public `build/vite` helper for prebuilt Turso
 client and worker modules. The helper is shipped by its owning package; consumers
 do not copy its transform or rewrite dependency files. Preview never starts

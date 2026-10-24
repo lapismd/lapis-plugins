@@ -152,6 +152,15 @@ shims, final-state assertions, and baseline policy.
 They also stay aligned on required banner and selective distinct Overview
 roles, two-theme capture, exact half-area diagonal composition, Word Count
 full-shell framing, and the four-output media contract.
+The shared Storybook host installs published Mira 0.1.0 so Design Core 0.6.0
+and the 0.0.3 editor plugins resolve one Mira line. Deep Mira modules stay in
+the Vite prebundle, which converts their CommonJS dependencies before the
+preview loads them.
+The Transcripts Reading preview is visual-pending under
+`Plugins/Transcripts/Panels/Reading`. It MUST show the scrollable sample in
+all six governed workspace placements, with slightly larger circular speaker avatars in
+distinct colours, a compact white footer, and one source icon that opens the Markdown editor, and stays outside the
+registry-media inventory until a capture story is added.
 Shared full-shell framing changes MUST preserve the complete 3:2 source capture
 and prove both horizontal edges remain in the composed output. Every composed
 frame MUST preserve the shared dark right-edge gutter; subject-focused presets

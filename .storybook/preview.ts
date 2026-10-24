@@ -52,6 +52,7 @@ const preview: Preview = {
             "Markdown",
             "Search",
             "Slides",
+            "Transcripts",
             "Bookmarks",
             "Graph",
             "History",

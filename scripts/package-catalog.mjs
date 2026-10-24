@@ -55,6 +55,11 @@ const allPluginPackages = [
     pluginId: "spellcheck",
   },
   {
+    directory: "transcripts",
+    packageName: "@lapis-notes/transcripts",
+    pluginId: "lapis-transcripts",
+  },
+  {
     directory: "wordcount",
     packageName: "@lapis-notes/wordcount",
     pluginId: "wordcount",

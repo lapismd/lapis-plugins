@@ -220,6 +220,19 @@ export const pluginPanelFamilies = [
     storyFile: "stories/plugins/history/panels/History.stories.ts",
     storyPrefix: "plugins-history-panels-history",
   },
+  {
+    kind: "reading",
+    plugin: "Transcripts",
+    panel: "Reading",
+    title: "Transcript",
+    spec: "spec/src/plugins/transcripts/index.md",
+    publicSurface: "@lapis-notes/transcripts",
+    sourceFile: "packages/transcripts/src/lib/transcripts-plugin.ts",
+    commandId: "lapis-transcripts:open-transcript",
+    commandToken: 'id: "open-transcript"',
+    storyFile: "stories/plugins/transcripts/panels/Reading.stories.ts",
+    storyPrefix: "plugins-transcripts-panels-reading",
+  },
 ];
 
 export const pluginPanelCatalog = pluginPanelFamilies.flatMap((family) =>

@@ -55,6 +55,11 @@ const packageAliases = [
   ],
   ["@lapis-notes/slides", "packages/slides/src/lib/index.ts"],
   [
+    "@lapis-notes/transcripts/styles.css",
+    "packages/transcripts/src/styles.css",
+  ],
+  ["@lapis-notes/transcripts", "packages/transcripts/src/index.ts"],
+  [
     "@lapis-notes/source-editor/styles.css",
     "packages/source-editor/src/styles.css",
   ],
@@ -82,6 +87,33 @@ const linkedRoots = linkedPackages.flatMap((packageName) => {
 const linkedWorkspaceRoots = [
   ...new Set(linkedRoots.map((root) => searchForWorkspaceRoot(root))),
 ];
+const siblingDesignCore = path.resolve(repoRoot, "../design-core");
+const usesSiblingDesignCore = linkedRoots.some((root) =>
+  root.includes(`${path.sep}@lapismd+design-core@file+..+design-core`),
+);
+const siblingDesignCoreAliases = usesSiblingDesignCore
+  ? [
+      [
+        "tw-animate-css",
+        "node_modules/tw-animate-css/dist/tw-animate.css",
+      ],
+      [
+        "@fontsource-variable/dm-sans",
+        "node_modules/@fontsource-variable/dm-sans/index.css",
+      ],
+      [
+        "@fontsource-variable/source-code-pro",
+        "node_modules/@fontsource-variable/source-code-pro/index.css",
+      ],
+      [
+        "shadcn-svelte/tailwind.css",
+        "node_modules/shadcn-svelte/dist/tailwind.css",
+      ],
+    ].map(([find, relativePath]) => ({
+      find,
+      replacement: path.join(siblingDesignCore, relativePath),
+    }))
+  : [];
 
 const config: StorybookConfig = {
   stories: [
@@ -160,6 +192,7 @@ const config: StorybookConfig = {
             find: /^harper\.js\/binary$/,
             replacement: path.join(storybookDir, "harper-binary.ts"),
           },
+          ...siblingDesignCoreAliases,
           ...packageAliases.map(([find, replacement]) => ({
             find: new RegExp(
               `^${find.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
@@ -207,7 +240,12 @@ const config: StorybookConfig = {
       },
       server: {
         fs: {
-          allow: [repoRoot, ...linkedRoots, ...linkedWorkspaceRoots],
+          allow: [
+            repoRoot,
+            ...linkedRoots,
+            ...linkedWorkspaceRoots,
+            ...(usesSiblingDesignCore ? [siblingDesignCore] : []),
+          ],
         },
       },
     });

@@ -18,6 +18,7 @@ const packages = [
   "source-editor",
   "spellcheck",
   "sync",
+  "transcripts",
   "wordcount",
 ];
 

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 2,
+  "categories": ["writing"],
+  "highlights": [
+    "Read a Markdown transcript as speaker turns.",
+    "Keep comments beside the phrase they mark.",
+    "Leave the note body as ordinary Markdown."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/transcripts#readme",
+  "appearance": {
+    "icon": "file-text",
+    "accent": "#8B5CF6"
+  }
+}

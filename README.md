@@ -20,6 +20,7 @@ signed `.lapis-plugin` release asset.
 | `@lapis-notes/search`        | `search`              |
 | `@lapis-notes/source-editor` | `lapis-source-editor` |
 | `@lapis-notes/spellcheck`    | `spellcheck`          |
+| `@lapis-notes/transcripts`   | `lapis-transcripts`   |
 | `@lapis-notes/wordcount`     | `wordcount`           |
 
 The package name and runtime ID intentionally remain separate compatibility
