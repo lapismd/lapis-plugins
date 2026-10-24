@@ -7,6 +7,7 @@ const harness = vi.hoisted(() => ({
   command: null as null | { id: string; name: string; callback: () => unknown },
   menuHandler: null as null | ((context: unknown) => void),
   viewRegistration: null as null | unknown[],
+  editorView: null as null | Record<string, unknown>,
 }));
 
 vi.mock("./views/reading-view", () => ({
@@ -30,6 +31,10 @@ vi.mock("@lapis-notes/api", () => {
 
     registerView(...args: unknown[]) {
       harness.viewRegistration = args;
+    }
+
+    registerEditorView(contribution: Record<string, unknown>) {
+      harness.editorView = contribution;
     }
 
     registerMarkdownViewMenuItem(handler: (context: unknown) => void) {
@@ -82,6 +87,7 @@ describe("TranscriptsPlugin", () => {
     harness.command = null;
     harness.menuHandler = null;
     harness.viewRegistration = null;
+    harness.editorView = null;
   });
 
   it("registers the reading view, command, and Markdown menu item", () => {
@@ -93,6 +99,13 @@ describe("TranscriptsPlugin", () => {
     expect(harness.command).toMatchObject({
       id: "open-transcript",
       name: "Open transcript",
+    });
+    expect(harness.editorView).toEqual({
+      id: "lapis-transcripts-reading-file",
+      viewType: "lapis-transcripts-reading",
+      label: "Transcript",
+      filenamePatterns: ["*transcript.md"],
+      priority: "exclusive",
     });
     expect(harness.menuHandler).toBeTypeOf("function");
   });

@@ -23,6 +23,8 @@ describe("sample transcript", () => {
     expect(sampleTranscriptItems[1]?.timestamp).toBe(samplePlayheadLabel);
     expect(sampleTranscriptItems[1]?.id).toBe(samplePlayingTurnId);
     expect(sampleSpeakerCount).toBe(2);
+    expect(sampleTranscriptMarkdown()).toContain("Speaker 1  (00:00)");
+    expect(sampleTranscriptMarkdown()).toContain("00:06 Speaker 2");
     expect(sampleTranscriptMarkdown()).toContain("02:14");
     expect(sampleTranscriptMarkdown()).toContain(sampleFirstTurnBody);
   });

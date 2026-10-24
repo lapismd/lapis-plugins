@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   audioPathCandidates,
   findRecordingReference,
+  playableMediaUrl,
+  recordingMediaType,
 } from "./transcript-audio";
 
 describe("transcript audio", () => {
@@ -33,5 +35,14 @@ describe("transcript audio", () => {
     expect(audioPathCandidates("Notes/a.md", "https://example.com/a.mp3")).toEqual(
       [],
     );
+  });
+
+  it("treats browser and file URLs as playable and keeps a media type", () => {
+    expect(playableMediaUrl("blob:http://localhost/recording")).toBe(true);
+    expect(playableMediaUrl("file:///vault/meeting.m4a")).toBe(true);
+    expect(playableMediaUrl("memory-vault://demo/Notes/meeting.m4a")).toBe(
+      false,
+    );
+    expect(recordingMediaType("m4a")).toBe("audio/mp4");
   });
 });

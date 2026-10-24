@@ -79,6 +79,7 @@ export interface PanelDemoOptions {
   hideSidebars?: boolean;
   diagnostics?: PanelDemoDiagnostics;
   graphData?: "default" | "registry-rich";
+  plugins?: Parameters<App["plugins"]["registerCorePlugins"]>[0];
 }
 
 export const PANEL_DEMO_LAYOUTS: PanelDemoLayout[] = [
@@ -984,6 +985,7 @@ export async function bootPanelDemo(
       enabledByDefault: true,
       distribution: "bundled",
     },
+    ...(options.plugins ?? []),
   ]);
 
   await app.vault.load();

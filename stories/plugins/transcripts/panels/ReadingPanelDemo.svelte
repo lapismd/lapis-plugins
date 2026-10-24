@@ -5,8 +5,13 @@
   import { BookmarksViewType } from "@lapis-notes/bookmarks";
   import { FileExplorerView } from "@lapis-notes/file-explorer";
   import {
+    samplePlainTranscript,
+    sampleSavedComment,
+    sampleTranscriptFormats,
     sampleTranscriptMarkdown,
     sampleTranscriptPath,
+    TRANSCRIPT_READING_VIEW,
+    TranscriptsPlugin,
   } from "@lapis-notes/transcripts";
   import {
     bootPanelDemo,
@@ -15,10 +20,7 @@
   import "../../../workspace/lapis-editor-demo/lapis-editor-demo.css";
   import "@lapismd/mira/themes/obsidian.css";
   import "@lapismd/mira-editor/styles.css";
-  import {
-    TRANSCRIPT_READING_VIEW,
-    TranscriptReadingView,
-  } from "./reading-view";
+  import sampleMeetingUrl from "../../../../packages/transcripts/assets/sample-meeting.m4a?url";
 
   let { layout }: { layout: PanelDemoLayout } = $props();
 
@@ -37,27 +39,17 @@
 
   onMount(() => {
     let cancelled = false;
-    let unregisterTranscriptFile: (() => void) | null = null;
     const runtimePromise = bootPanelDemo("bookmarks", layout, {
       diagnostics: "none",
+      plugins: [
+        {
+          plugin: TranscriptsPlugin,
+          required: false,
+          enabledByDefault: true,
+          distribution: "bundled",
+        },
+      ],
     }).then(async (runtime) => {
-      runtime.app.workspace.registerView(
-        TRANSCRIPT_READING_VIEW,
-        (leaf: WorkspaceLeaf) => new TranscriptReadingView(leaf),
-      );
-      unregisterTranscriptFile = runtime.app.workspace.registerEditorView({
-        id: `${TRANSCRIPT_READING_VIEW}-file`,
-        viewType: TRANSCRIPT_READING_VIEW,
-        label: "Transcript",
-        filenamePatterns: [sampleTranscriptPath],
-        priority: "exclusive",
-      });
-      if (!runtime.app.vault.getAbstractFileByPath(sampleTranscriptPath)) {
-        await runtime.app.vault.create(
-          sampleTranscriptPath,
-          sampleTranscriptMarkdown(),
-        );
-      }
       let readingLeaf: WorkspaceLeaf | null = null;
       runtime.app.workspace.iterateAllLeaves((leaf) => {
         if (!readingLeaf && leaf.view.getViewType() === BookmarksViewType) {
@@ -67,12 +59,46 @@
       if (!readingLeaf) {
         throw new Error("The workspace shell has no main leaf for Transcripts");
       }
+      if (!runtime.app.vault.getAbstractFileByPath(sampleTranscriptPath)) {
+        await runtime.app.vault.create(
+          sampleTranscriptPath,
+          sampleTranscriptMarkdown(),
+        );
+      }
+      for (const format of [
+        ...sampleTranscriptFormats,
+        samplePlainTranscript,
+      ]) {
+        if (!runtime.app.vault.getAbstractFileByPath(format.path)) {
+          await runtime.app.vault.create(format.path, format.markdown);
+        }
+      }
+      const recordingPath = "Notes/recordings/meeting.m4a";
+      if (!runtime.app.vault.getAbstractFileByPath(recordingPath)) {
+        if (!runtime.app.vault.getAbstractFileByPath("Notes/recordings")) {
+          await runtime.app.vault.createFolder("Notes/recordings");
+        }
+        const recording = await fetch(sampleMeetingUrl);
+        await runtime.app.vault.createBinary(
+          recordingPath,
+          await recording.arrayBuffer(),
+        );
+      }
+      const transcript = runtime.app.vault.getFileByPath(sampleTranscriptPath);
+      if (!transcript) throw new Error("Missing sample transcript");
+      await runtime.app.fileManager.processFrontMatter(
+        transcript,
+        (frontmatter: Record<string, unknown>) => {
+          frontmatter.comments = [sampleSavedComment()];
+        },
+      );
+      await waitForSavedComment(runtime.app, sampleTranscriptPath);
       if (layout === "middle-top-tabs") {
         await showExplorerForSample(runtime.app, readingLeaf);
       } else {
         await readingLeaf.setViewState({
           type: TRANSCRIPT_READING_VIEW,
-          state: {},
+          state: { file: transcript.path },
         });
         runtime.app.workspace.setActiveLeaf(readingLeaf, { focus: false });
       }
@@ -91,10 +117,8 @@
       });
     return () => {
       cancelled = true;
-      unregisterTranscriptFile?.();
       void runtimePromise
         .then(async (runtime) => {
-          runtime.app.workspace.unregisterView(TRANSCRIPT_READING_VIEW);
           await runtime.dispose();
         })
         .catch(() => undefined);
@@ -107,12 +131,38 @@
     app: App,
     documentLeaf: WorkspaceLeaf,
   ): Promise<void> {
-    await documentLeaf.setViewState({ type: "empty", state: {} });
+    const timeFirst = sampleTranscriptFormats[0];
+    if (!timeFirst) throw new Error("Missing time-first transcript");
+    await documentLeaf.setViewState({
+      type: TRANSCRIPT_READING_VIEW,
+      state: { file: sampleTranscriptPath },
+    });
+    const timeFirstLeaf = app.workspace.getLeaf("tab");
+    await timeFirstLeaf.setViewState({
+      type: TRANSCRIPT_READING_VIEW,
+      state: { file: timeFirst.path },
+    });
+    const plainFile = app.vault.getFileByPath(samplePlainTranscript.path);
+    if (!plainFile) throw new Error("Missing draft transcript");
+    const plainLeaf = app.workspace.getLeaf("tab");
+    await plainLeaf.openFile(plainFile);
+    app.workspace.setActiveLeaf(plainLeaf, { focus: false });
     await app.commands.executeCommand(OPEN_EXPLORER_COMMAND);
     const explorerLeaf = await waitForFileExplorer(app);
     if (explorerLeaf.view instanceof FileExplorerView) {
-      explorerLeaf.view.revealPath(sampleTranscriptPath);
+      explorerLeaf.view.revealPath(samplePlainTranscript.path);
     }
+  }
+
+  async function waitForSavedComment(app: App, path: string): Promise<void> {
+    const started = Date.now();
+    while (Date.now() - started < 5_000) {
+      const comments =
+        app.metadataCache.getCache(path)?.frontmatter?.comments;
+      if (Array.isArray(comments) && comments.length > 0) return;
+      await new Promise((resolve) => setTimeout(resolve, 20));
+    }
+    throw new Error("Saved transcript comment was not indexed");
   }
 
   async function waitForFileExplorer(app: App): Promise<WorkspaceLeaf> {

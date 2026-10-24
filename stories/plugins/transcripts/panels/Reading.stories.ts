@@ -1,6 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, userEvent, waitFor, within } from "storybook/test";
-import { TranscriptReading } from "@lapis-notes/transcripts";
+import {
+  TranscriptReading,
+  samplePlainTranscript,
+  sampleTranscriptFormats,
+} from "@lapis-notes/transcripts";
 import type { PanelDemoLayout } from "../../_shared/panels/create-panel-demo";
 import {
   PANEL_DOCS_PARAMETERS,
@@ -51,10 +55,14 @@ const transcriptReadingSource = `<script lang="ts">
   import type { App, WorkspaceLeaf } from "@lapis-notes/api";
   import { TranscriptReading } from "@lapis-notes/transcripts";
 
-  let { app, leaf }: { app: App; leaf: WorkspaceLeaf } = $props();
+  let { app, leaf, filePath }: {
+    app: App;
+    leaf: WorkspaceLeaf;
+    filePath: string;
+  } = $props();
 </script>
 
-<TranscriptReading {app} {leaf} />`;
+<TranscriptReading {app} {leaf} mode="file" {filePath} />`;
 
 function readingParameters(layout: PanelDemoLayout, description: string) {
   const { visualDelta: _visualDelta, ...parameters } = placementParameters(
@@ -86,7 +94,74 @@ function placementStory(
         { timeout: 30_000 },
       );
       const canvas = within(canvasElement);
+      const lapisApp = await waitFor(() => {
+        const owned = canvasElement.querySelector(
+          "[data-testid='panel-demo']",
+        ) as
+          | (HTMLElement & {
+              __lapisApp?: {
+                commands: { commands: Record<string, { name: string }> };
+                workspace: {
+                  getLeavesOfType: (type: string) => Array<{
+                    view: {
+                      onPaneMenu: (
+                        menu: {
+                          addItem: (callback: (item: {
+                            setSection: () => unknown;
+                            setTitle: (title: string) => unknown;
+                            setIcon: () => unknown;
+                            setChecked: () => unknown;
+                            onClick: () => unknown;
+                          }) => void) => unknown;
+                          addSeparator: () => unknown;
+                        },
+                        source: string,
+                      ) => void;
+                    };
+                  }>;
+                };
+              };
+            })
+          | null;
+        const app = owned?.__lapisApp;
+        expect(app?.commands.commands["lapis-transcripts:open-transcript"]?.name).toBe(
+          "Transcripts: Open transcript",
+        );
+        return app;
+      });
       if (layout === "middle-top-tabs") {
+        const menuTitles: string[] = [];
+        const menu = {
+            addItem(callback) {
+              const item = {
+                setSection() {
+                  return item;
+                },
+                setTitle(title: string) {
+                  menuTitles.push(title);
+                  return item;
+                },
+                setIcon() {
+                  return item;
+                },
+                setChecked() {
+                  return item;
+                },
+                onClick() {
+                  return item;
+                },
+              };
+              callback(item);
+              return menu;
+            },
+            addSeparator() {
+              return menu;
+            },
+        };
+        lapisApp?.workspace
+          .getLeavesOfType("markdown")[0]
+          ?.view.onPaneMenu(menu, "more-options");
+        expect(menuTitles).toContain("Open transcript");
         const explorer = await waitFor(() => {
           const node = canvasElement.querySelector<HTMLElement>(
             '[data-ui-component="workspace-explorer"]',
@@ -100,6 +175,22 @@ function placementStory(
         expect(
           body?.querySelectorAll('[data-ui-component="workspace-tabs"]'),
         ).toHaveLength(1);
+        expect(within(body!).queryByText("New Tab")).toBeNull();
+        expect(
+          within(body!).getAllByText("Contract transcript.md").length,
+        ).toBeGreaterThan(0);
+        expect(
+          within(body!).getAllByText("Time first transcript.md").length,
+        ).toBeGreaterThan(0);
+        expect(
+          within(body!).getAllByText(samplePlainTranscript.title).length,
+        ).toBeGreaterThan(0);
+        await waitFor(() => {
+          const editor = body!.querySelector(
+            '[data-ui-component="markdown-editing-surface"]',
+          );
+          expect(editor?.textContent).toContain(samplePlainTranscript.marker);
+        });
         await userEvent.click(
           within(explorer).getByRole("button", {
             name: /Contract transcript/,
@@ -110,9 +201,15 @@ function placementStory(
           expect(within(body!).queryByText("No file is open")).toBeNull();
         });
       }
-      const reading = await waitFor(() =>
-        canvas.getByTestId("transcript-reading"),
-      );
+      const reading = await waitFor(() => {
+        const visible = [
+          ...canvasElement.querySelectorAll<HTMLElement>(
+            '[data-testid="transcript-reading"]',
+          ),
+        ].filter((node) => node.checkVisibility());
+        expect(visible).toHaveLength(1);
+        return visible[0]!;
+      });
       await expect(reading).toBeVisible();
       const host = reading.closest(
         `[data-ui-component="${PLACEMENT_HOST[layout]}"]`,
@@ -135,16 +232,15 @@ function placementStory(
         );
         expect(header).toHaveAttribute("aria-expanded", "true");
       }
+      const view = within(reading);
       await expect(
-        canvas.getByRole("region", { name: "Transcript" }),
+        view.getByRole("region", { name: "Transcript" }),
       ).toBeVisible();
-      await expect(canvas.getAllByText("Speaker 1").length).toBeGreaterThan(0);
-      await expect(canvas.getByText("2 speakers")).toBeVisible();
+      await expect(view.getAllByText("Speaker 1").length).toBeGreaterThan(0);
+      await expect(view.getByText("2 speakers")).toBeVisible();
+      await expect(view.getByRole("button", { name: /^Play$/ })).toBeEnabled();
       await expect(
-        canvas.getByRole("button", { name: /^Play$/ }),
-      ).toBeVisible();
-      await expect(
-        canvas.getByText("Check this wording against the signed agreement."),
+        view.getByText("Check this wording against the signed agreement."),
       ).toBeVisible();
       const document = reading.querySelector<HTMLElement>(
         ".ui-transcript-document",
@@ -161,7 +257,7 @@ function placementStory(
       expect(viewport!.scrollHeight).toBeGreaterThan(viewport!.clientHeight);
       viewport!.scrollTop = 240;
       expect(viewport!.scrollTop).toBeGreaterThan(0);
-      const status = canvas.getByTestId("transcript-reading-status");
+      const status = view.getByTestId("transcript-reading-status");
       const speakerAvatars = [
         ...reading.querySelectorAll<HTMLElement>(
           '.ui-transcript-message-avatar [data-ui-component="avatar"]',
@@ -203,20 +299,64 @@ function placementStory(
           controls.getByRole("button", { name: "Back 10 seconds" }),
         ).toBeVisible();
       }
-      await userEvent.click(canvas.getByRole("button", { name: "Source" }));
+      await userEvent.click(view.getByRole("button", { name: "Source" }));
       await waitFor(() => {
-        const editor = canvasElement.querySelector(
-          '[data-ui-component="markdown-editing-surface"]',
-        );
+        const editor = [
+          ...canvasElement.querySelectorAll<HTMLElement>(
+            '[data-ui-component="markdown-editing-surface"]',
+          ),
+        ].find((node) => node.checkVisibility());
         expect(editor).not.toBeNull();
-        expect(editor?.textContent).toContain("Contract transcript");
+        expect(editor?.textContent).toContain("mass page");
       });
       if (layout === "middle-top-tabs" || layout === "stacked-tabs") {
         await userEvent.click(
           canvas.getByRole("button", { name: /Click to open Transcript/ }),
         );
         await waitFor(() => {
-          expect(canvas.getByTestId("transcript-reading")).toBeVisible();
+          const visible = [
+            ...canvasElement.querySelectorAll<HTMLElement>(
+              '[data-testid="transcript-reading"]',
+            ),
+          ].filter((node) => node.checkVisibility());
+          expect(visible).toHaveLength(1);
+        });
+      }
+      if (layout === "middle-top-tabs") {
+        const explorer = canvasElement.querySelector<HTMLElement>(
+          '[data-ui-component="workspace-explorer"]',
+        );
+        expect(explorer).not.toBeNull();
+        for (const format of sampleTranscriptFormats) {
+          await userEvent.click(
+            within(explorer!).getByRole("button", { name: format.title }),
+          );
+          await waitFor(() => {
+            expect(canvas.getByText(format.marker)).toBeVisible();
+          });
+        }
+        await userEvent.click(
+          within(explorer!).getByRole("button", { name: /Contract transcript/ }),
+        );
+        await waitFor(() => {
+          expect(
+            canvas.getByText(
+              "Check this wording against the signed agreement.",
+            ),
+          ).toBeVisible();
+        });
+        await userEvent.click(
+          within(explorer!).getByRole("button", {
+            name: samplePlainTranscript.title,
+          }),
+        );
+        await waitFor(() => {
+          const editor = [
+            ...canvasElement.querySelectorAll<HTMLElement>(
+              '[data-ui-component="markdown-editing-surface"]',
+            ),
+          ].find((node) => node.checkVisibility());
+          expect(editor?.textContent).toContain(samplePlainTranscript.marker);
         });
       }
     },
@@ -225,7 +365,7 @@ function placementStory(
 
 export const MiddleTopTabs = placementStory(
   "middle-top-tabs",
-  "Reading in the middle workspace. Open Explorer reveals the file tree, and choosing the sample note opens it in the existing tab.",
+  "Reading in the middle workspace. Notes ending in transcript.md open in the reading view. Draft meeting.md is a transcript whose name does not match, so it opens in the Markdown editor.",
 );
 export const StackedTabs = placementStory(
   "stacked-tabs",

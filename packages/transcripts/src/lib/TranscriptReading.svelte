@@ -9,7 +9,11 @@
   } from "@lapismd/design-core/chat";
   import { Slider } from "@lapismd/design-core/shadcn/slider";
   import TranscriptDocument from "./TranscriptDocument.svelte";
-  import { audioPathCandidates } from "./transcript-audio";
+  import {
+  audioPathCandidates,
+  playableMediaUrl,
+  recordingMediaType,
+} from "./transcript-audio";
   import {
     commentsFromValue,
     removeComments,
@@ -73,6 +77,8 @@ import {
   // svelte-ignore state_referenced_locally
   let loading = $state(mode === "file");
   let resolvedAudioUrl = $state("");
+  let ownedAudioUrl = "";
+  let refreshGeneration = 0;
 
   let readingRoot = $state<HTMLDivElement>();
   let playing = $state(false);
@@ -248,36 +254,67 @@ import {
     }
   }
 
+  function releaseOwnedAudio(): void {
+    if (!ownedAudioUrl) return;
+    URL.revokeObjectURL(ownedAudioUrl);
+    ownedAudioUrl = "";
+  }
+
   async function resolveAudio(
     path: string,
     reference: string | null,
-  ): Promise<string> {
-    if (!app || !reference) return "";
+  ): Promise<{ url: string; owned: boolean }> {
+    if (!app || !reference) return { url: "", owned: false };
     for (const candidate of audioPathCandidates(path, reference)) {
       const audioFile = app.vault.getFileByPath(candidate);
-      if (audioFile) return app.vault.getResourcePath(audioFile);
+      if (!audioFile) continue;
+      const resource = await app.vault.getResourceUrl(audioFile);
+      if (playableMediaUrl(resource)) return { url: resource, owned: false };
+      const bytes = await app.vault.readBinary(audioFile);
+      return {
+        url: URL.createObjectURL(
+          new Blob([bytes], { type: recordingMediaType(audioFile.extension) }),
+        ),
+        owned: true,
+      };
     }
-    return "";
+    return { url: "", owned: false };
+  }
+
+  function replaceOwnedAudio(url: string, owned: boolean): void {
+    const previous = ownedAudioUrl;
+    ownedAudioUrl = owned ? url : "";
+    if (previous && previous !== url) URL.revokeObjectURL(previous);
   }
 
   async function refreshNote(): Promise<void> {
+    const generation = ++refreshGeneration;
     if (mode !== "file" || !app || !filePath) {
       loading = false;
       return;
     }
     const file = app.vault.getFileByPath(filePath);
     if (!file) {
+      if (generation !== refreshGeneration) return;
       markdown = "";
       frontMatterComments = undefined;
+      replaceOwnedAudio("", false);
       resolvedAudioUrl = "";
       loading = false;
       return;
     }
     markdown = await app.vault.read(file);
-    frontMatterComments = app.metadataCache.getCache(file.path)?.frontmatter
+    const resolvedComments = app.metadataCache.getCache(file.path)?.frontmatter
       ?.comments;
-    const projected = projectTranscript(markdown, frontMatterComments);
-    resolvedAudioUrl = await resolveAudio(file.path, projected.audioReference);
+    const projected = projectTranscript(markdown, resolvedComments);
+    const resolved = await resolveAudio(file.path, projected.audioReference);
+    if (generation !== refreshGeneration) {
+      if (resolved.owned) URL.revokeObjectURL(resolved.url);
+      return;
+    }
+    frontMatterComments = resolvedComments;
+    replaceOwnedAudio(resolved.url, resolved.owned);
+    resolvedAudioUrl = resolved.url;
     loading = false;
   }
 
@@ -471,6 +508,7 @@ import {
       readingRoot?.removeEventListener("keydown", onKeydown);
       if (modify) app?.vault.offref(modify);
       if (changed) app?.metadataCache.offref(changed);
+      releaseOwnedAudio();
     };
   });
 </script>

@@ -9,6 +9,31 @@ const AUDIO_EXTENSIONS = new Set([
   "webm",
 ]);
 
+export function playableMediaUrl(url: string): boolean {
+  return /^(?:https?:|blob:|data:|file:)/i.test(url);
+}
+
+export function recordingMediaType(extension: string): string {
+  switch (extension.toLowerCase()) {
+    case "mp3":
+      return "audio/mpeg";
+    case "aac":
+    case "m4a":
+    case "mp4":
+      return "audio/mp4";
+    case "wav":
+      return "audio/wav";
+    case "ogg":
+      return "audio/ogg";
+    case "flac":
+      return "audio/flac";
+    case "webm":
+      return "audio/webm";
+    default:
+      return "application/octet-stream";
+  }
+}
+
 export function findRecordingReference(
   markdown: string,
   frontMatterAudio: string | null,

@@ -139,7 +139,7 @@ function savedComment(value: unknown): SavedTranscriptComment | null {
   const body = typeof record.text === "string" ? record.text : null;
   const authorId = text(record.authorId);
   const authorName = text(record.authorName);
-  const version = text(record.version);
+  const version = versionText(record.version);
   const from = whole(record.from);
   const to = whole(record.to);
   if (
@@ -178,6 +178,13 @@ function savedComment(value: unknown): SavedTranscriptComment | null {
 
 function text(value: unknown): string | null {
   return typeof value === "string" && value.trim().length > 0 ? value : null;
+}
+
+function versionText(value: unknown): string | null {
+  if (typeof value === "number" && Number.isInteger(value) && value > 0) {
+    return String(value);
+  }
+  return text(value);
 }
 
 function whole(value: unknown): number | null {

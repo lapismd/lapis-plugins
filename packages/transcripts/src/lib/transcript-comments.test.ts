@@ -62,6 +62,26 @@ describe("transcript comments", () => {
     expect(frontmatter.type).toBe("transcript");
   });
 
+  it("reads a comment version that YAML stored as a number", () => {
+    expect(
+      commentsFromValue([
+        {
+          id: "comment-1",
+          threadId: "thread-1",
+          blockId: "speaker-1-0025-1-body",
+          revision: "rev-1",
+          from: 7,
+          to: 16,
+          quote: "mass page",
+          text: "Check this.",
+          authorId: "local-user",
+          authorName: "You",
+          version: 1,
+        },
+      ])[0]?.version,
+    ).toBe("1");
+  });
+
   it("keeps a saved quote unavailable after the turn changes", () => {
     const note = `Speaker 1 (00:25)
 

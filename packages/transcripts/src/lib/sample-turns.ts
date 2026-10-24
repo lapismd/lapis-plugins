@@ -156,13 +156,17 @@ export const sampleTranscriptPath = "Notes/Contract transcript.md";
 
 export function sampleTranscriptMarkdown(): string {
   return sampleTranscriptItems
-    .map((item) => {
+    .map((item, index) => {
       const speaker = item.author?.name ?? item.label;
       const text = item.blocks
         .map((block) => ("text" in block ? block.text : ""))
         .filter((block) => block.length > 0)
         .join("\n\n");
-      return `**${speaker}** · ${item.timestamp}\n\n${text}`;
+      const header =
+        index % 2 === 0
+          ? `${speaker}  (${item.timestamp})`
+          : `${item.timestamp} ${speaker}`;
+      return `${header}\n\n${text}`;
     })
     .join("\n\n");
 }

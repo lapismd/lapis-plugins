@@ -10,12 +10,13 @@ import {
 } from "@lapis-notes/api";
 import manifestSpec from "../../manifest.json";
 import { TRANSCRIPTS_PLUGIN_ID } from "./ids";
+import { TRANSCRIPT_FILENAME_PATTERN } from "./transcript-association";
 import {
   TRANSCRIPT_READING_VIEW,
   TranscriptReadingView,
 } from "./views/reading-view";
 
-export { TRANSCRIPTS_PLUGIN_ID, TRANSCRIPT_READING_VIEW };
+export { TRANSCRIPTS_PLUGIN_ID, TRANSCRIPT_FILENAME_PATTERN, TRANSCRIPT_READING_VIEW };
 
 function isMarkdownFile(file: TFile | null | undefined): file is TFile {
   if (!file) return false;
@@ -37,6 +38,13 @@ export class TranscriptsPlugin extends Plugin {
       (leaf) => new TranscriptReadingView(leaf),
       { kind: "file" },
     );
+    this.registerEditorView({
+      id: `${TRANSCRIPT_READING_VIEW}-file`,
+      viewType: TRANSCRIPT_READING_VIEW,
+      label: "Transcript",
+      filenamePatterns: [TRANSCRIPT_FILENAME_PATTERN],
+      priority: "exclusive",
+    });
     this.registerMarkdownViewMenuItem(this.addMarkdownViewMenuItem);
     this.addCommand({
       id: "open-transcript",
