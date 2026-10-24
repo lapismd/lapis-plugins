@@ -29,6 +29,7 @@
     transcriptBodyBlockId,
     type ProjectedTranscript,
   } from "./project-transcript";
+  import { transcriptNavigationStats } from "./transcript-navigation-stats";
   import { parseTranscript } from "./parse-transcript";
   import {
     replaceTranscriptSource,
@@ -54,6 +55,7 @@ import {
     sampleCommentThreads,
     samplePlayheadLabel,
     sampleRecordingDurationSeconds,
+    sampleRecordingReference,
     sampleSpeakerCount,
     sampleTranscriptItems,
     sampleTranscriptMarkdown,
@@ -137,6 +139,18 @@ import {
       : sampleSpeakerCount,
   );
   const playbackUrl = $derived(mode === "file" ? resolvedAudioUrl : audioUrl);
+  const navigationStats = $derived(
+    transcriptNavigationStats({
+      speakers: speakerCount,
+      durationSeconds,
+      cueSeconds: Object.values(secondsByTurn ?? {}),
+      audioPath:
+        mode === "file"
+          ? (projection?.audioReference ?? null)
+          : sampleRecordingReference,
+      source: mode === "file" ? markdown : sampleTranscriptMarkdown(),
+    }),
+  );
   const notePath = $derived(mode === "file" ? filePath : sampleTranscriptPath);
   const renderedMarkdown = $derived<TranscriptProps["markdown"]>(
     fileAdapter ? { sourcePath: notePath, fileAdapter } : undefined,
@@ -628,6 +642,7 @@ import {
         markdown={renderedMarkdown}
         {resolveFileLink}
         {label}
+        {navigationStats}
         bind:commentSend
         bind:searchOpen
       />
@@ -643,6 +658,7 @@ import {
           markdown={renderedMarkdown}
           {resolveFileLink}
           {label}
+          {navigationStats}
           onSend={persistComments}
           getMessageActions={messageActions}
           replaceBlockText={replaceBlockText}

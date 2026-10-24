@@ -11,6 +11,7 @@ import {
 } from "./transcript-comments";
 import { parseTranscript, type ParsedTranscriptTurn } from "./parse-transcript";
 import { sampleReader } from "./sample-turns";
+import { transcriptTurnPreview } from "./transcript-navigation-stats";
 
 const SPEAKER_COLORS = [
   "#6e56cf",
@@ -83,6 +84,14 @@ function projectTurn(
     label: author.name,
     author,
     timestamp: turn.timestamp,
+    turn: {
+      id,
+      author: author.name,
+      initials: author.initials,
+      prompt: transcriptTurnPreview(turn.body),
+      summary: "",
+      timeLabel: turn.timestamp,
+    },
     blocks: [
       {
         id: `${id}-body`,

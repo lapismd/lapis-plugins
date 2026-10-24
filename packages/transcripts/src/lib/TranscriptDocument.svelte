@@ -38,6 +38,7 @@
     resolveFileLink,
     replaceBlockText,
     label = "Transcript",
+    navigationStats,
     commentSend = $bindable(idleCommentSend),
     searchOpen = $bindable(false),
   }: {
@@ -50,6 +51,7 @@
     resolveFileLink?: TranscriptProps["resolveFileLink"];
     replaceBlockText?: TranscriptProps["replaceBlockText"];
     label?: string;
+    navigationStats?: TranscriptProps["navigationStats"];
     searchOpen?: boolean;
     onSend?: (
       snapshot: TranscriptSubmission,
@@ -104,6 +106,7 @@
   view="document"
   scrollButton={true}
   label={label}
+  {navigationStats}
   bind:searchOpen
   logLabel="Transcript turns"
   afterItems={comments.pending.length > 0 ? queuedSection : undefined}

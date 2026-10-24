@@ -3,6 +3,7 @@ import type {
   TranscriptCommentThread,
   TranscriptItem,
 } from "@lapismd/design-core/chat";
+import { transcriptTurnPreview } from "./transcript-navigation-stats";
 
 export const sampleTranscriptRevision = "preview";
 
@@ -52,6 +53,14 @@ function turn(
     label: speaker.name,
     author: speaker,
     timestamp,
+    turn: {
+      id,
+      author: speaker.name,
+      initials: speaker.initials,
+      prompt: transcriptTurnPreview(text),
+      summary: "",
+      timeLabel: timestamp,
+    },
     blocks: [
       {
         id: `${id}-body`,
