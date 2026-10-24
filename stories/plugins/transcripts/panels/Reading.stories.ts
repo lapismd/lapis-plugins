@@ -446,6 +446,7 @@ function placementStory(
         ].find((node) => node.checkVisibility());
         expect(editor).not.toBeNull();
         expect(editor?.textContent).toContain("mass page");
+        expect(editor?.textContent).toContain("audio: recordings/meeting.m4a");
       });
       if (layout === "middle-top-tabs" || layout === "stacked-tabs") {
         await userEvent.click(
@@ -471,6 +472,7 @@ function placementStory(
           );
           await waitFor(() => {
             expect(canvas.getByText(format.marker)).toBeVisible();
+            expect(canvas.queryByRole("button", { name: /^Play$/ })).toBeNull();
           });
         }
         await userEvent.click(

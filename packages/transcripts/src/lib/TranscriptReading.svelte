@@ -477,6 +477,7 @@ import {
   }
 
   function onReadingClick(event: MouseEvent): void {
+    if (!playbackUrl) return;
     const id = turnIdFrom(event.target);
     if (!id) return;
     event.preventDefault();
@@ -484,6 +485,7 @@ import {
   }
 
   function onReadingKeydown(event: KeyboardEvent): void {
+    if (!playbackUrl) return;
     if (event.key !== "Enter" && event.key !== " ") return;
     const id = turnIdFrom(event.target);
     if (!id) return;
@@ -499,9 +501,16 @@ import {
       if (item.dataset.chatItem === id) item.dataset.playing = "true";
       else delete item.dataset.playing;
     }
+    const canPlay = playbackUrl !== "";
     for (const stamp of node.querySelectorAll<HTMLElement>(
       '[data-chat-item] [data-ui-part="timestamp"]',
     )) {
+      if (!canPlay) {
+        stamp.removeAttribute("role");
+        stamp.removeAttribute("tabindex");
+        stamp.removeAttribute("aria-label");
+        continue;
+      }
       stamp.tabIndex = 0;
       stamp.setAttribute("role", "button");
       const label = stamp.textContent?.trim() || "timestamp";
@@ -658,6 +667,7 @@ import {
       <SearchIcon aria-hidden="true" />
     </button>
     <span class="transcript-reading-status-text">{speakerCount} speakers</span>
+    {#if playbackUrl}
     <span class="transcript-reading-time">{playheadLabel}</span>
     <div class="transcript-reading-seek">
       <Slider
@@ -771,6 +781,7 @@ import {
       >
         Follow
       </button>
+    {/if}
     {/if}
     <button
       type="button"

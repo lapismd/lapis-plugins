@@ -16,6 +16,7 @@ describe("sample transcript document", () => {
   it("parses the spoken note in both header styles and anchors the saved comment", () => {
     const parsed = parseTranscript(sampleTranscriptMarkdown());
     expect(parsed.qualified).toBe(true);
+    expect(parsed.audioReference).toBe("recordings/meeting.m4a");
     expect(parsed.turns[0]?.body).toBe(sampleFirstTurnBody);
     expect(parsed.turns.map((turn) => turn.seconds)[1]).toBe(6);
     expect(sampleCommentMatchesOpeningTurn()).toBe(true);

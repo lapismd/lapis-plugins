@@ -154,8 +154,10 @@ export const sampleTranscriptItems: readonly TranscriptItem[] = [
 
 export const sampleTranscriptPath = "Notes/Contract transcript.md";
 
+export const sampleRecordingReference = "recordings/meeting.m4a";
+
 export function sampleTranscriptMarkdown(): string {
-  return sampleTranscriptItems
+  const body = sampleTranscriptItems
     .map((item, index) => {
       const speaker = item.author?.name ?? item.label;
       const text = item.blocks
@@ -169,6 +171,7 @@ export function sampleTranscriptMarkdown(): string {
       return `${header}\n\n${text}`;
     })
     .join("\n\n");
+  return `---\naudio: ${sampleRecordingReference}\n---\n${body}`;
 }
 
 const firstBlock = sampleTranscriptItems[0]?.blocks[0];
