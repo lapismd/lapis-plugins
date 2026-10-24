@@ -8,7 +8,9 @@ time-then-speaker `hh:mm:ss`, `mm:ss:cs`, and a single turn declared with
 `type: transcript`. A note whose name ends in `transcript.md` opens in the reading view. One
 qualified note does not use that name, so the story opens it in the Markdown
 editor and shows `![[Contract transcript.md]]` as the transcript reading view
-while an ordinary embedded note stays a Markdown preview. Playback starts at the beginning of the note. A timestamp
+while an ordinary embedded note stays a Markdown preview. Inside a transcript,
+Markdown links render as links and a wiki embed renders through the same file
+adapter. Playback starts at the beginning of the note. A timestamp
 seeks to that spoken turn and plays, the active turn is highlighted, and
 follow-along pauses after a manual scroll. The footer also seeks, skips ten
 seconds, mutes, changes volume, and changes playback speed. Narrow panes keep

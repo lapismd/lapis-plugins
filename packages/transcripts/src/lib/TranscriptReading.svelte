@@ -1,9 +1,11 @@
 <script lang="ts">
   import { onMount, untrack } from "svelte";
   import type { App, TAbstractFile, WorkspaceLeaf } from "@lapis-notes/api";
+  import { createLapisMiraFileAdapter } from "@lapis-notes/markdown";
   import {
     type MessageAction,
     type TranscriptBlock,
+    type TranscriptProps,
     type TranscriptSubmission,
     type TranscriptSubmissionResult,
   } from "@lapismd/design-core/chat";
@@ -57,6 +59,7 @@ import {
     audioUrl = "",
     mode = "preview",
     filePath = "",
+    label = "Transcript",
   }: {
     app?: App | null;
     leaf?: WorkspaceLeaf | null;
@@ -64,7 +67,12 @@ import {
     audioUrl?: string;
     mode?: "preview" | "file";
     filePath?: string;
+    label?: string;
   } = $props();
+
+  const fileAdapter = $derived(
+    app ? createLapisMiraFileAdapter(app) : undefined,
+  );
 
   const playbackRates = [0.75, 1, 1.25, 1.5, 2] as const;
   const skipSeconds = 10;
@@ -121,6 +129,33 @@ import {
   );
   const playbackUrl = $derived(mode === "file" ? resolvedAudioUrl : audioUrl);
   const notePath = $derived(mode === "file" ? filePath : sampleTranscriptPath);
+  const renderedMarkdown = $derived<TranscriptProps["markdown"]>(
+    fileAdapter ? { sourcePath: notePath, fileAdapter } : undefined,
+  );
+  const resolveFileLink = (
+    _block: TranscriptBlock,
+    destination: string,
+  ): (() => void) | undefined => {
+    if (!fileAdapter || !destination.trim()) return undefined;
+    if (
+      /^(?:[a-z][a-z0-9+.-]*:)?\/\//i.test(destination) ||
+      destination.startsWith("mailto:")
+    ) {
+      return undefined;
+    }
+    return () => {
+      const path = destination.split("#")[0] ?? destination;
+      void Promise.resolve(
+        fileAdapter.resolveLink({
+          href: destination,
+          path,
+          sourcePath: notePath,
+        }),
+      ).then((file) => {
+        if (file) void fileAdapter.openFile?.(file);
+      });
+    };
+  };
   const playingId = $derived(playing && activeTurn ? activeTurn.id : "");
   const playheadLabel = $derived(formatPlayhead(currentSeconds));
   const durationLabel = $derived(formatPlayhead(durationSeconds));
@@ -536,6 +571,9 @@ import {
         items={sampleTranscriptItems}
         threads={sampleCommentThreads}
         {playingId}
+        markdown={renderedMarkdown}
+        {resolveFileLink}
+        {label}
         bind:commentSend
       />
     {:else if projection}
@@ -544,6 +582,9 @@ import {
           items={projection.items}
           threads={projection.threads}
           {playingId}
+          markdown={renderedMarkdown}
+          {resolveFileLink}
+          {label}
           onSend={persistComments}
           getMessageActions={messageActions}
           bind:commentSend

@@ -7,6 +7,7 @@
     type TranscriptBlock,
     type TranscriptCommentThread,
     type TranscriptItem,
+    type TranscriptProps,
     type TranscriptSubmission,
     type TranscriptSubmissionResult,
   } from "@lapismd/design-core/chat";
@@ -30,12 +31,18 @@
     playingId = "",
     onSend,
     getMessageActions,
+    markdown,
+    resolveFileLink,
+    label = "Transcript",
     commentSend = $bindable(idleCommentSend),
   }: {
     items: readonly TranscriptItem[];
     threads: TranscriptCommentThread[];
     playingId?: string;
     commentSend?: TranscriptCommentSend;
+    markdown?: TranscriptProps["markdown"];
+    resolveFileLink?: TranscriptProps["resolveFileLink"];
+    label?: string;
     onSend?: (
       snapshot: TranscriptSubmission,
     ) => TranscriptSubmissionResult | Promise<TranscriptSubmissionResult>;
@@ -53,6 +60,7 @@
       canComment: true,
       ...(onSend ? { canEditComment: () => true, onSend } : {}),
       ...(getMessageActions ? { getMessageActions } : {}),
+      ...(resolveFileLink ? { resolveFileLink } : {}),
     }),
     [...threads],
   );
@@ -80,12 +88,13 @@
 
 <Transcript
   {items}
+  {markdown}
   author={sampleReader}
   canComment={true}
   commentState={comments}
   view="document"
   scrollButton={true}
-  label="Transcript"
+  label={label}
   logLabel="Transcript turns"
   afterItems={comments.pending.length > 0 ? queuedSection : undefined}
 >

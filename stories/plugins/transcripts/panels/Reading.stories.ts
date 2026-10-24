@@ -241,6 +241,9 @@ function placementStory(
       await expect(view.getByText("2 speakers")).toBeVisible();
       await expect(view.getByRole("button", { name: /^Play$/ })).toBeEnabled();
       await waitFor(() => {
+        expect(view.getByRole("link", { name: "recording terms" })).toBeVisible();
+      });
+      await waitFor(() => {
         expect(
           view
             .getAllByText("Check this wording against the signed agreement.")
@@ -384,6 +387,26 @@ function placementStory(
           ).toBe(true);
           const agenda = canvas.getByText(sampleEmbeddedNote.marker);
           expect(agenda.closest('[data-testid="transcript-reading"]')).toBeNull();
+        });
+        await (
+          lapisApp?.commands as {
+            executeCommand: (id: string) => Promise<unknown>;
+          }
+        ).executeCommand("lapis-transcripts:open-transcript");
+        await waitFor(() => {
+          const transcript = [
+            ...canvasElement.querySelectorAll<HTMLElement>(
+              '[data-testid="transcript-reading"]',
+            ),
+          ].find(
+            (node) =>
+              node.checkVisibility() &&
+              node.textContent?.includes(sampleEmbeddedNote.marker),
+          );
+          expect(transcript).toBeTruthy();
+          expect(
+            within(transcript!).getByRole("link", { name: "recording terms" }),
+          ).toBeVisible();
         });
       }
     },

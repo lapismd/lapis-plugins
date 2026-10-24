@@ -79,11 +79,12 @@ export class TranscriptsPlugin extends Plugin {
     containerEl.style.overflow = "hidden";
     const component = mount(TranscriptReading, {
       target: containerEl,
-      props: {
-        app,
-        mode: "file",
-        filePath: file.path,
-      },
+        props: {
+          app,
+          mode: "file",
+          filePath: file.path,
+          label: file.basename,
+        },
     });
     return {
       destroy() {
