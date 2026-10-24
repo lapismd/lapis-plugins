@@ -177,6 +177,11 @@ see its preview. Registry media selection includes
 the package yet. A panel demo may add vault files and preset the main document
 in the workspace seed, so the shell's first frame is that page.
 
+PDF is an active catalog package so Storybook and metadata checks can see
+its preview. Registry media selection includes
+`Plugins/PDF/Registry Screenshots`. The release workflow does not offer the
+package, and this slice does not add it to a host profile.
+
 The shared development host resolves published Mira `~0.1.0` together with
 mira-editor, mira-plugin-ai, and mira-plugin-mermaid `~0.0.3`. Design Core
 stays on the published `^0.6.0` range. Storybook keeps prebundling

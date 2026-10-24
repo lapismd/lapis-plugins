@@ -113,6 +113,7 @@ export function placementParameters(
     search: "search/panels/search",
     bookmarks: "bookmarks/panels/bookmarks",
     history: "history/panels/history",
+    pdf: "pdf/panels/viewing",
     reading: "transcripts/panels/reading",
     graph: "graph/panels/graph",
     "local-graph": "graph/panels/local-graph",
@@ -177,7 +178,9 @@ export async function expectPanelSource(
             ? 'from "@lapis-notes/history";'
             : kind === "reading"
               ? 'from "@lapis-notes/transcripts";'
-              : kind === "explorer"
+              : kind === "pdf"
+                ? 'from "@lapis-notes/pdf";'
+                : kind === "explorer"
                 ? 'from "@lapis-notes/file-explorer";'
                 : kind === "ai-history" ||
                     kind === "ai-catalog" ||

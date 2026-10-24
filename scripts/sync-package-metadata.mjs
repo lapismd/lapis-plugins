@@ -96,6 +96,12 @@ const rendererSharedDependencies = new Map(
       "svelte/internal/client",
       "svelte/internal/disclose-version",
     ],
+    pdf: [
+      "svelte",
+      "svelte/attachments",
+      "svelte/internal/client",
+      "svelte/internal/disclose-version",
+    ],
     transcripts: [
       "svelte",
       "svelte/internal/client",
@@ -119,6 +125,7 @@ const descriptions = new Map([
   ],
   ["source-editor", "Source editing for text, JSON, and YAML files"],
   ["slides", "Presentation mode for Markdown notes"],
+  ["pdf", "PDF file view and note embed for Lapis applications"],
   ["transcripts", "Speaker-separated reading view for Markdown transcripts"],
   ["spellcheck", "Harper grammar and spelling diagnostics for open notes"],
   ["wordcount", "Status bar word, character, and reading-time counts"],
@@ -191,6 +198,7 @@ const sharedDependencies = new Map([
     ],
   ],
   ["slides", ["@lapis-notes/api", "@lapis-notes/markdown/embed"]],
+  ["pdf", ["@lapis-notes/api"]],
   ["transcripts", ["@lapis-notes/api"]],
   [
     "source-editor",
@@ -271,6 +279,7 @@ const editorSharedDependencies = new Map(
       "@lezer/lr",
     ],
     slides: [],
+    pdf: [],
     transcripts: [],
     "source-editor": [
       "@codemirror/language",

@@ -159,10 +159,15 @@ preview loads them.
 The Transcripts Reading preview is visual-pending under
 `Plugins/Transcripts/Panels/Reading`. It MUST show the scrollable sample in
 all six governed workspace placements, with slightly larger circular speaker avatars in
-distinct colours, a compact white footer, and one source icon that opens the Markdown editor.
+distinct colours, a compact theme-surface footer, and one source icon that opens the Markdown editor.
 `Plugins/Transcripts/Registry Screenshots` is in the registry-media inventory.
 Its shell presets the open note in the workspace seed, so the first frame is
 that page.
+The PDF viewing preview is visual-pending under `Plugins/PDF/Panels/Viewing`.
+It MUST show the seeded PDF in all six governed placements, and Middle (Top
+Tabs) MUST also show that PDF inside a note embed. Registry media selection
+includes `Plugins/PDF/Registry Screenshots`. Stories stay `visual-pending` and MUST
+NOT create Visual Delta baselines.
 Shared full-shell framing changes MUST preserve the complete 3:2 source capture
 and prove both horizontal edges remain in the composed output. Every composed
 frame MUST preserve the shared dark right-edge gutter; subject-focused presets

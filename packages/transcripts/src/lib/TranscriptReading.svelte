@@ -967,7 +967,7 @@ import {
     min-width: 0;
     padding-inline: 0.5rem;
     border-block-start: 1px solid var(--ui-workspace-border, var(--border));
-    background: #fff;
+    background: var(--background);
     color: var(--ui-workspace-muted-foreground, var(--muted-foreground));
     font-size: 0.75rem;
     line-height: 1;
@@ -1036,7 +1036,7 @@ import {
 
   .transcript-reading-rate:hover {
     color: var(--foreground);
-    background: color-mix(in srgb, var(--foreground) 8%, #fff);
+    background: color-mix(in srgb, var(--foreground) 8%, transparent);
   }
 
   .transcript-reading-follow {
@@ -1050,7 +1050,7 @@ import {
   }
 
   .transcript-reading-follow:hover {
-    background: color-mix(in srgb, var(--foreground) 8%, #fff);
+    background: color-mix(in srgb, var(--foreground) 8%, transparent);
   }
 
   .transcript-reading-icon {
@@ -1069,7 +1069,7 @@ import {
 
   .transcript-reading-icon:hover:not(:disabled) {
     color: var(--foreground);
-    background: color-mix(in srgb, var(--foreground) 8%, #fff);
+    background: color-mix(in srgb, var(--foreground) 8%, transparent);
   }
 
   .transcript-reading-source {
@@ -1097,7 +1097,7 @@ import {
 
   .transcript-reading-find[aria-pressed="true"] {
     color: var(--foreground);
-    background: color-mix(in srgb, var(--foreground) 8%, #fff);
+    background: color-mix(in srgb, var(--foreground) 8%, transparent);
   }
 
   .transcript-reading-icon :global(svg) {

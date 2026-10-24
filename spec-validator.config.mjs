@@ -13,6 +13,7 @@ const packages = [
   "history",
   "markdown",
   "markdown-lint",
+  "pdf",
   "search",
   "slides",
   "source-editor",

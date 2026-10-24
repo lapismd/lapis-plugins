@@ -58,6 +58,7 @@ export type PanelDemoKind =
   | "local-graph"
   | "bookmarks"
   | "history"
+  | "pdf"
   | "reading"
   | "tags";
 
@@ -115,6 +116,7 @@ export const PANEL_VIEW_TYPE: Record<PanelDemoKind, string> = {
   "local-graph": LocalGraphViewType,
   bookmarks: BookmarksViewType,
   history: HistoryViewType,
+  pdf: "lapis-pdf",
   reading: "lapis-transcripts-reading",
   tags: TagsViewType,
 };
@@ -206,6 +208,12 @@ export const PANEL_LEAF_META: Record<
     icon: "history",
     group: "History",
     requiresFile: true,
+  },
+  pdf: {
+    title: "PDF",
+    icon: "file-text",
+    group: "PDF",
+    requiresFile: false,
   },
   reading: {
     title: "Transcript",

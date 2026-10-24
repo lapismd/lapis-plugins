@@ -347,7 +347,9 @@ function placementStory(
       expect(commentAvatars.length).toBeGreaterThan(0);
       expect(getComputedStyle(commentAvatars[0]!).width).toBe("24px");
       expect(getComputedStyle(status).height).toBe("32px");
-      expect(getComputedStyle(status).backgroundColor).toBe("rgb(255, 255, 255)");
+      expect(getComputedStyle(status).backgroundColor).toBe(
+        getComputedStyle(reading).backgroundColor,
+      );
       const timeSeparators = [
         ...reading.querySelectorAll<HTMLElement>(
           '.ui-transcript-message-metadata [data-ui-part="timestamp"] + [data-ui-part="separator"]',
