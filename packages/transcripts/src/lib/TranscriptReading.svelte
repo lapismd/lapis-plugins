@@ -559,6 +559,7 @@ import {
 <div
   bind:this={readingRoot}
   class="transcript-reading"
+  class:transcript-reading-embedded={!leaf}
   data-testid="transcript-reading"
 >
   <div class="transcript-reading-frame">
@@ -753,6 +754,12 @@ import {
     background: var(--background);
     container-name: transcript-reading;
     container-type: inline-size;
+  }
+
+  .transcript-reading-embedded {
+    box-sizing: border-box;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm, calc(var(--radius) * 0.6));
   }
 
   .transcript-reading-frame {
