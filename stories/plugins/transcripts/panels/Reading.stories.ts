@@ -404,18 +404,43 @@ function placementStory(
               node.textContent?.includes(sampleEmbeddedNote.marker),
           );
           expect(transcript).toBeTruthy();
-          const embedded = transcript!.querySelector<HTMLElement>(
-            ".ui-transcript-markdown-preview .transcript-reading-embedded",
+          const preview = transcript!.querySelector<HTMLElement>(
+            ".ui-transcript-markdown-preview.mira-embed",
           );
-          expect(embedded).toBeTruthy();
-          const frame = getComputedStyle(embedded!);
-          expect(frame.borderTopWidth).toBe("1px");
-          expect(frame.borderTopStyle).toBe("solid");
-          expect(frame.borderRadius).not.toBe("0px");
+          expect(preview?.querySelector("figcaption")?.textContent).toBe(
+            "Contract transcript.md",
+          );
+          expect(getComputedStyle(preview!).borderInlineStartWidth).toBe("2px");
           expect(
             within(transcript!).getByRole("link", { name: "recording terms" }),
           ).toBeVisible();
         });
+        const preview = [
+          ...canvasElement.querySelectorAll<HTMLElement>(
+            '[data-testid="transcript-reading"]',
+          ),
+        ]
+          .find(
+            (node) =>
+              node.checkVisibility() &&
+              node.textContent?.includes(sampleEmbeddedNote.marker),
+          )
+          ?.querySelector<HTMLElement>(".ui-transcript-markdown-preview.mira-embed");
+        const turn = preview?.querySelector<HTMLElement>(
+          ".ui-transcript-text-block",
+        );
+        const actions = [
+          ...preview!.querySelectorAll<HTMLElement>(".ui-transcript-text-actions"),
+        ];
+        expect(turn).toBeTruthy();
+        expect(actions.length).toBeGreaterThan(1);
+        // Focus uses the same reveal rule as hover, and it stays inside this turn.
+        turn!.tabIndex = -1;
+        turn!.focus();
+        const visibleActions = actions.filter(
+          (node) => getComputedStyle(node).opacity !== "0",
+        );
+        expect(visibleActions).toHaveLength(1);
       }
     },
   };
