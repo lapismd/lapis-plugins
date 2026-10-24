@@ -27,9 +27,16 @@ The package lives at `packages/transcripts` as version `0.1.0` with runtime id
 `lapis-transcripts`. `App` is received by the plugin constructor. The preview
 does not read or assign `globalThis.app`.
 
-Registry capture stays deferred. The package is omitted from registry media
-selection until a `Plugins/Transcripts/Registry Screenshots` story exists.
-Release checkboxes stay unchanged.
+Registry identity and capture-backed gallery media remain package-owned under
+LP-SPEC-030 and LP-SPEC-031. The governed `Registry Screenshots` story covers
+two settled states with both sidebars closed, and stays `visual-pending`
+until separate visual approval. The workspace seed opens the spoken sample
+before the shell renders, with speaker turns, one comment, and the playback
+footer, and both sidebars closed. The gallery seed opens a meeting note that
+embeds that call. Capture MUST assert each settled surface
+before declaring the story ready. Overview media is omitted because the
+gallery already shows the different full-screen state. Release checkboxes stay
+unchanged.
 
 ## Requirements
 

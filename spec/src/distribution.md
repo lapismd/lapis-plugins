@@ -172,9 +172,10 @@ tarball, rootless-payload, portable-proof, and clean-consumer preparation gate
 before approval.
 
 Transcripts is an active catalog package so Storybook and metadata checks can
-see its preview. Registry media selection omits it until a
-`Plugins/Transcripts/Registry Screenshots` story exists, and the release
-workflow does not offer it yet.
+see its preview. Registry media selection includes
+`Plugins/Transcripts/Registry Screenshots`. The release workflow does not offer
+the package yet. A panel demo may add vault files and preset the main document
+in the workspace seed, so the shell's first frame is that page.
 
 The shared development host resolves published Mira `~0.1.0` together with
 mira-editor, mira-plugin-ai, and mira-plugin-mermaid `~0.0.3`. Design Core

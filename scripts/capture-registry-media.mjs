@@ -320,6 +320,7 @@ function registryStoryTitle(directory) {
     "source-editor": "Source Editor",
     spellcheck: "Spell Check",
     sync: "Sync",
+    transcripts: "Transcripts",
     wordcount: "Word Count",
   };
   return `Plugins/${labels[directory]}/Registry Screenshots`;

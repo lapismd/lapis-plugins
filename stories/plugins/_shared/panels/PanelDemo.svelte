@@ -2,11 +2,12 @@
   import { onMount } from "svelte";
   import { WorkspaceShell } from "@lapis-notes/workspace";
   import {
-    bootPanelDemo,
-    type PanelDemoDiagnostics,
-    type PanelDemoKind,
-    type PanelDemoLayout,
-  } from "./create-panel-demo";
+  bootPanelDemo,
+  type PanelDemoDiagnostics,
+  type PanelDemoKind,
+  type PanelDemoLayout,
+  type PanelDemoOptions,
+} from "./create-panel-demo";
   import type { App } from "@lapis-notes/api";
   import "../../../workspace/lapis-editor-demo/lapis-editor-demo.css";
   import "@lapismd/mira/themes/obsidian.css";
@@ -18,12 +19,18 @@
     hideSidebars = false,
     diagnostics = "all",
     graphData = "default",
+    plugins,
+    files,
+    openDocument,
   }: {
     kind: PanelDemoKind;
     layout?: PanelDemoLayout;
     hideSidebars?: boolean;
     diagnostics?: PanelDemoDiagnostics;
     graphData?: "default" | "registry-rich";
+    plugins?: PanelDemoOptions["plugins"];
+    files?: PanelDemoOptions["files"];
+    openDocument?: PanelDemoOptions["openDocument"];
   } = $props();
 
   let app = $state<App | null>(null);
@@ -45,14 +52,21 @@
       hideSidebars,
       diagnostics,
       graphData,
+      plugins,
+      files,
+      openDocument,
     });
-    void runtimePromise.then((runtime) => {
-      if (cancelled) {
-        return;
-      }
-      app = runtime.app;
-      status = "ready";
-    });
+    void runtimePromise
+      .then((runtime) => {
+        if (cancelled) return;
+        app = runtime.app;
+        status = "ready";
+      })
+      .catch((reason: unknown) => {
+        if (!cancelled) {
+          status = reason instanceof Error ? reason.message : "failed";
+        }
+      });
     return () => {
       cancelled = true;
       void runtimePromise.then((runtime) => runtime.dispose());

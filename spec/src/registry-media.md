@@ -51,6 +51,7 @@ All sources live under `Plugins/<Plugin>/Registry Screenshots` and carry both
 | Source Editor | Focused JSON editor                                                           |
 | Spell Check   | Suggestions and Problems, Editor action popover                               |
 | Word Count    | Complete shell with both sidebars closed and status bar                       |
+| Transcripts   | Spoken reading with both sidebars closed, and a note that embeds the call    |
 
 Each plugin owns one explicit banner story. AI shows History left, Chat in the
 main area, and Catalog right. Graph shows Explorer, Global Graph, and Local
@@ -59,13 +60,14 @@ Live Preview, and File Properties. Bases uses the populated cover cards view.
 Bookmarks and Search show their primary panel on the left beside an empty main
 workspace. Markdown Lint, Source Editor, Spell Check, and Word Count use the
 complete shell with both sidebars closed. Slides uses the full-screen Goals
-presentation.
+presentation. Transcripts shows the spoken reading with both sidebars closed,
+and a gallery card embeds that call in a meeting note.
 
 Overview media is intentionally selective. AI uses focused tool activity,
 Bases uses Grouped List, Graph uses the focused Global Graph, History uses
 Compare, Markdown uses Reading, Search uses open search filters, and Spell
 Check uses the editor action popover. Bookmarks, Markdown Lint, Source Editor,
-Slides, and Word Count omit Overview media because their available full-screen state
+Slides, Transcripts, and Word Count omit Overview media because their available full-screen state
 would repeat the banner rather than add useful context.
 
 Full-shell stories use the common 1200x800 application frame with Explorer

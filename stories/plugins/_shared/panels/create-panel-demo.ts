@@ -75,11 +75,20 @@ export type PanelDemoDiagnostics =
   | "markdownlint"
   | "spellcheck";
 
+export interface PanelDemoOpenDocument {
+  title: string;
+  icon: string;
+  type: string;
+  state: Record<string, unknown>;
+}
+
 export interface PanelDemoOptions {
   hideSidebars?: boolean;
   diagnostics?: PanelDemoDiagnostics;
   graphData?: "default" | "registry-rich";
   plugins?: Parameters<App["plugins"]["registerCorePlugins"]>[0];
+  files?: Record<string, string | ArrayBuffer>;
+  openDocument?: PanelDemoOpenDocument;
 }
 
 export const PANEL_DEMO_LAYOUTS: PanelDemoLayout[] = [
@@ -931,13 +940,43 @@ function countPanelLeaves(app: App, panelType: string): number {
   return count;
 }
 
+function presetMainDocument(
+  layout: Record<string, unknown>,
+  document: PanelDemoOpenDocument,
+): void {
+  const main = layout.main as {
+    children?: Array<{ children?: Array<Record<string, unknown>> }>;
+  };
+  const leafNode = main.children?.[0]?.children?.[0];
+  if (!leafNode || leafNode.type !== "leaf" || typeof leafNode.id !== "string") {
+    throw new Error("Panel demo has no main document leaf to preset");
+  }
+  leafNode.state = {
+    type: document.type,
+    state: document.state,
+    icon: document.icon,
+    title: document.title,
+  };
+  layout.active = leafNode.id;
+}
+
 export async function bootPanelDemo(
   kind: PanelDemoKind,
   layout: PanelDemoLayout,
   options: PanelDemoOptions = {},
 ): Promise<{ app: App; dispose: () => Promise<void> }> {
+  const seed = createPanelDemoSeed(kind, layout, options);
+  if (options.files) Object.assign(seed, options.files);
+  if (options.openDocument) {
+    const workspace = JSON.parse(String(seed[".lapis/workspace.json"])) as Record<
+      string,
+      unknown
+    >;
+    presetMainDocument(workspace, options.openDocument);
+    seed[".lapis/workspace.json"] = JSON.stringify(workspace, null, 2);
+  }
   const adapter = new MemoryVaultAdapter(
-    createPanelDemoSeed(kind, layout, options),
+    seed,
     {
       name: `Lapis Panel ${kind} ${layout}`,
       vaultId: `lapis-panel-${kind}-${layout}`,

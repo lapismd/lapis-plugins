@@ -159,8 +159,10 @@ preview loads them.
 The Transcripts Reading preview is visual-pending under
 `Plugins/Transcripts/Panels/Reading`. It MUST show the scrollable sample in
 all six governed workspace placements, with slightly larger circular speaker avatars in
-distinct colours, a compact white footer, and one source icon that opens the Markdown editor, and stays outside the
-registry-media inventory until a capture story is added.
+distinct colours, a compact white footer, and one source icon that opens the Markdown editor.
+`Plugins/Transcripts/Registry Screenshots` is in the registry-media inventory.
+Its shell presets the open note in the workspace seed, so the first frame is
+that page.
 Shared full-shell framing changes MUST preserve the complete 3:2 source capture
 and prove both horizontal edges remain in the composed output. Every composed
 frame MUST preserve the shared dark right-edge gutter; subject-focused presets
