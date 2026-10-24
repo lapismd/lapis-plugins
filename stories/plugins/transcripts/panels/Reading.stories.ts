@@ -584,9 +584,16 @@ function placementStory(
         );
         const actionBox = visibleActions[0]!.getBoundingClientRect();
         const frameBox = embedded!.getBoundingClientRect();
-        const pad = getComputedStyle(
-          embedded!.querySelector(".ui-transcript-document")!,
-        ).paddingTop;
+        const documentList = embedded!.querySelector<HTMLElement>(
+          "ol.ui-transcript-document",
+        );
+        expect(documentList).toBeTruthy();
+        expect(getComputedStyle(documentList!).listStyleType).toBe("none");
+        expect(
+          getComputedStyle(documentList!.querySelector(":scope > li")!)
+            .marginInlineStart,
+        ).toBe("0px");
+        const pad = getComputedStyle(documentList!).paddingTop;
         expect(
           actionBox.top,
           `padding ${pad}; action ${actionBox.top}; frame ${frameBox.top}`,
