@@ -3,7 +3,6 @@
     CommentQueue,
     Transcript,
     TranscriptController,
-    TranscriptFooter,
     type MessageAction,
     type TranscriptBlock,
     type TranscriptCommentThread,
@@ -13,16 +12,30 @@
   } from "@lapismd/design-core/chat";
   import { sampleReader } from "./sample-turns";
 
+  export type TranscriptCommentSend = {
+    visible: boolean;
+    enabled: boolean;
+    send: () => Promise<boolean> | false | undefined;
+  };
+
+  const idleCommentSend: TranscriptCommentSend = {
+    visible: false,
+    enabled: false,
+    send: () => undefined,
+  };
+
   let {
     items,
     threads,
     playingId = "",
     onSend,
     getMessageActions,
+    commentSend = $bindable(idleCommentSend),
   }: {
     items: readonly TranscriptItem[];
     threads: TranscriptCommentThread[];
     playingId?: string;
+    commentSend?: TranscriptCommentSend;
     onSend?: (
       snapshot: TranscriptSubmission,
     ) => TranscriptSubmissionResult | Promise<TranscriptSubmissionResult>;
@@ -48,13 +61,21 @@
       comments.pending.length > 0 ||
       comments.sending,
   );
+
+  $effect(() => {
+    commentSend = {
+      visible: queuedComments,
+      enabled: comments.canSend,
+      send: () => comments.send(),
+    };
+    return () => {
+      commentSend = idleCommentSend;
+    };
+  });
 </script>
 
 {#snippet queuedSection()}
   <CommentQueue state={comments} />
-{/snippet}
-{#snippet sendFooter()}
-  <TranscriptFooter state={comments} />
 {/snippet}
 
 <Transcript
@@ -67,7 +88,6 @@
   label="Transcript"
   logLabel="Transcript turns"
   afterItems={comments.pending.length > 0 ? queuedSection : undefined}
-  footer={queuedComments ? sendFooter : undefined}
 >
   {#snippet metadataSupplement(item)}
     {#if item.id === playingId}

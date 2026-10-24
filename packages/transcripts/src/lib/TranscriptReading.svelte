@@ -8,7 +8,9 @@
     type TranscriptSubmissionResult,
   } from "@lapismd/design-core/chat";
   import { Slider } from "@lapismd/design-core/shadcn/slider";
-  import TranscriptDocument from "./TranscriptDocument.svelte";
+  import TranscriptDocument, {
+    type TranscriptCommentSend,
+  } from "./TranscriptDocument.svelte";
   import {
   audioPathCandidates,
   playableMediaUrl,
@@ -25,6 +27,7 @@
     type ProjectedTranscript,
   } from "./project-transcript";
   import FileCodeIcon from "@lucide/svelte/icons/file-code";
+  import SendIcon from "@lucide/svelte/icons/send-horizontal";
   import PauseIcon from "@lucide/svelte/icons/pause";
   import PlayIcon from "@lucide/svelte/icons/play";
   import SkipBackIcon from "@lucide/svelte/icons/skip-back";
@@ -90,6 +93,11 @@ import {
   let muted = $state(false);
   let playbackRate = $state<(typeof playbackRates)[number]>(1);
   let openingSource = $state(false);
+  let commentSend = $state<TranscriptCommentSend>({
+    visible: false,
+    enabled: false,
+    send: () => undefined,
+  });
   let audio: HTMLAudioElement | undefined;
   let programmaticScroll = false;
   let lastScrolledTurnId = "";
@@ -528,6 +536,7 @@ import {
         items={sampleTranscriptItems}
         threads={sampleCommentThreads}
         {playingId}
+        bind:commentSend
       />
     {:else if projection}
       {#key projection.signature}
@@ -537,6 +546,7 @@ import {
           {playingId}
           onSend={persistComments}
           getMessageActions={messageActions}
+          bind:commentSend
         />
       {/key}
     {/if}
@@ -670,6 +680,22 @@ import {
     >
       <FileCodeIcon aria-hidden="true" />
     </button>
+    {#if commentSend.visible}
+      <button
+        type="button"
+        class="transcript-reading-icon transcript-reading-send"
+        aria-label="Send message"
+        title="Send message (⌘ / Ctrl + Enter)"
+        aria-keyshortcuts="Control+Enter Meta+Enter"
+        disabled={!commentSend.enabled}
+        onclick={(event) => {
+          event.stopPropagation();
+          void commentSend.send();
+        }}
+      >
+        <SendIcon aria-hidden="true" />
+      </button>
+    {/if}
   </div>
 </div>
 
@@ -877,6 +903,21 @@ import {
 
   .transcript-reading-source {
     margin-inline-start: 0.125rem;
+  }
+
+  .transcript-reading-icon.transcript-reading-send {
+    border-radius: 50%;
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  .transcript-reading-icon.transcript-reading-send:hover:not(:disabled) {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  .transcript-reading-icon.transcript-reading-send:disabled {
+    opacity: 0.45;
   }
 
   .transcript-reading-icon :global(svg) {
