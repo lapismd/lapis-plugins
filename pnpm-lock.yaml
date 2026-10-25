@@ -25,6 +25,8 @@ overrides:
   sharp: '>=0.35.5 <0.36'
   source-map-js@>=1.0.0 <1.2.2: '>=1.2.2 <2'
 
+pnpmfileChecksum: sha256-WM2ttzCdlVnjeZqyHzd5MPjFD6ir8nSG/WuOPGTFC68=
+
 patchedDependencies:
   bits-ui@2.19.5:
     hash: bea104a59c6c54ddc78960341344344d787a51eb4d5bc64a32df6aa1e98e5beb
@@ -80,26 +82,26 @@ importers:
         specifier: 5.3.0
         version: 5.3.0
       '@lapis-notes/api':
-        specifier: ^0.1.4
-        version: 0.1.4(1f79f7193c833b65d73970ad5c935110)
+        specifier: file:/Users/stevejuma/code/lapismd/lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz
+        version: file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.9.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.9.3)
       '@lapis-notes/file-explorer':
         specifier: ^0.1.2
-        version: 0.1.2(f3a6290a3a90a55bc06a2a65cfe1b858)
+        version: 0.1.2(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.9.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.9.3)
       '@lapis-notes/history':
         specifier: ^0.1.4
         version: link:packages/history
       '@lapis-notes/language-service':
         specifier: ^0.1.1
-        version: 0.1.1(1f79f7193c833b65d73970ad5c935110)
+        version: 0.1.1(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.9.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.9.3)
       '@lapis-notes/ui':
         specifier: ^0.1.3
-        version: 0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@0.6.0(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)
+        version: 0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)
       '@lapis-notes/workspace':
         specifier: ^0.2.0
-        version: 0.2.0(f3a6290a3a90a55bc06a2a65cfe1b858)
+        version: 0.2.0(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.9.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.9.3)
       '@lapismd/design-core':
-        specifier: ^0.6.0
-        version: 0.6.0(svelte@5.56.10)(tailwindcss@4.3.3)
+        specifier: file:/Users/stevejuma/code/lapismd/design-core
+        version: file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lapismd/mira':
         specifier: ~0.1.0
         version: 0.1.1(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@internationalized/date@3.12.4)(@lezer/common@1.5.3)(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(svelte@5.56.10)(tailwindcss@4.3.3)
@@ -248,11 +250,11 @@ importers:
   packages/ai:
     dependencies:
       '@lapismd/ai-controller':
-        specifier: ^0.1.0
-        version: 0.1.0(zod@4.6.6)
+        specifier: file:/Users/stevejuma/code/lapismd/ai-controller/.local/lapismd-ai-controller-0.1.0-native-mcp.tgz
+        version: file:../ai-controller/.local/lapismd-ai-controller-0.1.0-native-mcp.tgz(zod@4.6.6)
       '@lapismd/design-core':
-        specifier: ^0.6.0
-        version: 0.6.0(svelte@5.56.10)(tailwindcss@4.3.3)
+        specifier: file:/Users/stevejuma/code/lapismd/design-core
+        version: file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte':
         specifier: ^0.523.0
         version: 0.523.0(svelte@5.56.10)
@@ -263,6 +265,9 @@ importers:
         specifier: ^2.9.0
         version: 2.9.1
     devDependencies:
+      '@lapis-notes/api':
+        specifier: file:/Users/stevejuma/code/lapismd/lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz
+        version: file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.8.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.8.3)
       '@lapis-notes/markdown':
         specifier: ^0.1.6
         version: link:../markdown
@@ -315,8 +320,8 @@ importers:
         specifier: ^0.4.0
         version: 0.4.0(svelte@5.56.10)
       '@lapismd/design-core':
-        specifier: ^0.6.0
-        version: 0.6.0(svelte@5.56.10)(tailwindcss@4.3.3)
+        specifier: file:/Users/stevejuma/code/lapismd/design-core
+        version: file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte':
         specifier: ^0.523.0
         version: 0.523.0(svelte@5.56.10)
@@ -336,6 +341,9 @@ importers:
         specifier: ^0.1.25
         version: 0.1.25(@codemirror/language@6.13.1)(@lezer/lr@1.4.11)(luxon@3.7.2)
     devDependencies:
+      '@lapis-notes/api':
+        specifier: file:/Users/stevejuma/code/lapismd/lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz
+        version: file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.8.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.8.3)
       '@sveltejs/package':
         specifier: ^2.5.0
         version: 2.5.8(svelte@5.56.10)(typescript@5.8.3)
@@ -379,12 +387,15 @@ importers:
   packages/bookmarks:
     dependencies:
       '@lapismd/design-core':
-        specifier: ^0.6.0
-        version: 0.6.0(svelte@5.56.10)(tailwindcss@4.3.3)
+        specifier: file:/Users/stevejuma/code/lapismd/design-core
+        version: file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte':
         specifier: ^0.523.0
         version: 0.523.0(svelte@5.56.10)
     devDependencies:
+      '@lapis-notes/api':
+        specifier: file:/Users/stevejuma/code/lapismd/lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz
+        version: file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.8.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.8.3)
       '@sveltejs/package':
         specifier: ^2.5.0
         version: 2.5.8(svelte@5.56.10)(typescript@5.8.3)
@@ -413,11 +424,69 @@ importers:
         specifier: ^4.1.12
         version: 4.1.12(@types/node@24.13.3)(@vitest/browser-playwright@4.1.12)(jsdom@26.1.0)(vite@6.4.5(@types/node@24.13.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1))
 
+  packages/csv:
+    dependencies:
+      '@dnd-kit/dom':
+        specifier: ^0.4.0
+        version: 0.4.0
+      '@dnd-kit/helpers':
+        specifier: ^0.4.0
+        version: 0.4.0
+      '@dnd-kit/svelte':
+        specifier: ^0.4.0
+        version: 0.4.0(svelte@5.56.10)
+      '@lapismd/design-core':
+        specifier: file:/Users/stevejuma/code/lapismd/design-core
+        version: file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3)
+      '@lucide/svelte':
+        specifier: ^0.523.0
+        version: 0.523.0(svelte@5.56.10)
+      '@tanstack/virtual-core':
+        specifier: ^3.13.12
+        version: 3.19.6
+      papaparse:
+        specifier: ^5.5.2
+        version: 5.7.0
+    devDependencies:
+      '@lapis-notes/api':
+        specifier: file:/Users/stevejuma/code/lapismd/lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz
+        version: file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.8.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.8.3)
+      '@sveltejs/package':
+        specifier: ^2.5.0
+        version: 2.5.8(svelte@5.56.10)(typescript@5.8.3)
+      '@sveltejs/vite-plugin-svelte':
+        specifier: ^5.1.1
+        version: 5.1.1(svelte@5.56.10)(vite@6.4.5(@types/node@24.13.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1))
+      '@tsconfig/svelte':
+        specifier: ^5.0.5
+        version: 5.0.8
+      '@types/papaparse':
+        specifier: ^5.3.16
+        version: 5.5.2
+      publint:
+        specifier: ^0.3.12
+        version: 0.3.24
+      svelte:
+        specifier: ^5.38.2
+        version: 5.56.10
+      svelte-check:
+        specifier: ^4.3.1
+        version: 4.7.6(picomatch@4.0.7)(svelte@5.56.10)(typescript@5.8.3)
+      typescript:
+        specifier: ~5.8.3
+        version: 5.8.3
+      vite:
+        specifier: ^6.4.4
+        version: 6.4.5(@types/node@24.13.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1)
+      vitest:
+        specifier: ^4.1.12
+        version: 4.1.12(@types/node@24.13.3)(@vitest/browser-playwright@4.1.12)(jsdom@26.1.0)(vite@6.4.5(@types/node@24.13.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1))
+
   packages/graph:
     dependencies:
       '@lapismd/design-core':
-        specifier: ^0.6.0
-        version: 0.6.0(svelte@5.56.10)(tailwindcss@4.3.3)
+        specifier: file:/Users/stevejuma/code/lapismd/design-core
+        version: file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte':
         specifier: ^0.523.0
         version: 0.523.0(svelte@5.56.10)
@@ -425,6 +494,9 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
     devDependencies:
+      '@lapis-notes/api':
+        specifier: file:/Users/stevejuma/code/lapismd/lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz
+        version: file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.8.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.8.3)
       '@lapis-notes/markdown':
         specifier: ^0.1.5
         version: link:../markdown
@@ -462,8 +534,8 @@ importers:
   packages/history:
     dependencies:
       '@lapismd/design-core':
-        specifier: ^0.6.0
-        version: 0.6.0(svelte@5.56.10)(tailwindcss@4.3.3)
+        specifier: file:/Users/stevejuma/code/lapismd/design-core
+        version: file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte':
         specifier: ^1.57.0
         version: 1.57.0(svelte@5.56.10)
@@ -471,6 +543,9 @@ importers:
         specifier: ^3.13.46
         version: 3.13.47(svelte@5.56.10)
     devDependencies:
+      '@lapis-notes/api':
+        specifier: file:/Users/stevejuma/code/lapismd/lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz
+        version: file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.8.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.8.3)
       '@sveltejs/package':
         specifier: ^2.5.0
         version: 2.5.8(svelte@5.56.10)(typescript@5.8.3)
@@ -505,8 +580,8 @@ importers:
   packages/markdown:
     dependencies:
       '@lapismd/design-core':
-        specifier: ^0.6.0
-        version: 0.6.0(svelte@5.56.10)(tailwindcss@4.3.3)
+        specifier: file:/Users/stevejuma/code/lapismd/design-core
+        version: file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lapismd/mira':
         specifier: ~0.0.4 || ~0.1.0
         version: 0.1.1(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@internationalized/date@3.12.4)(@lezer/common@1.5.3)(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(svelte@5.56.10)(tailwindcss@4.3.3)
@@ -526,6 +601,9 @@ importers:
         specifier: ^2.9.0
         version: 2.9.1
     devDependencies:
+      '@lapis-notes/api':
+        specifier: file:/Users/stevejuma/code/lapismd/lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz
+        version: file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.8.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.8.3)
       '@sveltejs/package':
         specifier: ^2.5.0
         version: 2.5.8(svelte@5.56.10)(typescript@5.8.3)
@@ -556,6 +634,9 @@ importers:
 
   packages/markdown-lint:
     devDependencies:
+      '@lapis-notes/api':
+        specifier: file:/Users/stevejuma/code/lapismd/lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz
+        version: file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.9.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.9.3)
       '@sveltejs/package':
         specifier: ^2.5.0
         version: 2.5.8(svelte@5.56.10)(typescript@5.9.3)
@@ -575,15 +656,55 @@ importers:
         specifier: ^4.1.12
         version: 4.1.12(@types/node@24.13.3)(@vitest/browser-playwright@4.1.12)(jsdom@26.1.0)(vite@6.4.5(@types/node@24.13.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1))
 
+  packages/pdf:
+    dependencies:
+      '@embedpdf/snippet':
+        specifier: ^2.0.0
+        version: 2.15.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+    devDependencies:
+      '@lapis-notes/api':
+        specifier: file:/Users/stevejuma/code/lapismd/lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz
+        version: file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.8.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.8.3)
+      '@sveltejs/package':
+        specifier: ^2.5.0
+        version: 2.5.8(svelte@5.56.10)(typescript@5.8.3)
+      '@sveltejs/vite-plugin-svelte':
+        specifier: ^5.1.1
+        version: 5.1.1(svelte@5.56.10)(vite@6.4.5(@types/node@24.13.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1))
+      '@tsconfig/svelte':
+        specifier: ^5.0.5
+        version: 5.0.8
+      publint:
+        specifier: ^0.3.12
+        version: 0.3.24
+      svelte:
+        specifier: ^5.38.2
+        version: 5.56.10
+      svelte-check:
+        specifier: ^4.3.1
+        version: 4.7.6(picomatch@4.0.7)(svelte@5.56.10)(typescript@5.8.3)
+      typescript:
+        specifier: ~5.8.3
+        version: 5.8.3
+      vite:
+        specifier: ^6.4.4
+        version: 6.4.5(@types/node@24.13.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1)
+      vitest:
+        specifier: ^4.1.12
+        version: 4.1.12(@types/node@24.13.3)(@vitest/browser-playwright@4.1.12)(jsdom@26.1.0)(vite@6.4.5(@types/node@24.13.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1))
+
   packages/search:
     dependencies:
       '@lapismd/design-core':
-        specifier: ^0.6.0
-        version: 0.6.0(svelte@5.56.10)(tailwindcss@4.3.3)
+        specifier: file:/Users/stevejuma/code/lapismd/design-core
+        version: file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte':
         specifier: ^0.523.0
         version: 0.523.0(svelte@5.56.10)
     devDependencies:
+      '@lapis-notes/api':
+        specifier: file:/Users/stevejuma/code/lapismd/lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz
+        version: file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.8.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.8.3)
       '@sveltejs/package':
         specifier: ^2.5.0
         version: 2.5.8(svelte@5.56.10)(typescript@5.8.3)
@@ -624,6 +745,9 @@ importers:
         specifier: ^5.2.1
         version: 5.2.1
     devDependencies:
+      '@lapis-notes/api':
+        specifier: file:/Users/stevejuma/code/lapismd/lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz
+        version: file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.8.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.8.3)
       '@lapis-notes/markdown':
         specifier: ^0.1.2
         version: link:../markdown
@@ -667,9 +791,12 @@ importers:
         specifier: ^6.1.2
         version: 6.1.3
       '@lapismd/design-core':
-        specifier: ^0.6.0
-        version: 0.6.0(svelte@5.56.10)(tailwindcss@4.3.3)
+        specifier: file:/Users/stevejuma/code/lapismd/design-core
+        version: file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3)
     devDependencies:
+      '@lapis-notes/api':
+        specifier: file:/Users/stevejuma/code/lapismd/lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz
+        version: file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.9.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.9.3)
       '@sveltejs/package':
         specifier: ^2.5.0
         version: 2.5.8(svelte@5.56.10)(typescript@5.9.3)
@@ -695,6 +822,9 @@ importers:
         specifier: ^2.7.0
         version: 2.7.0
     devDependencies:
+      '@lapis-notes/api':
+        specifier: file:/Users/stevejuma/code/lapismd/lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz
+        version: file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.9.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.9.3)
       '@sveltejs/package':
         specifier: ^2.5.0
         version: 2.5.8(svelte@5.56.10)(typescript@5.9.3)
@@ -717,12 +847,15 @@ importers:
   packages/transcripts:
     dependencies:
       '@lapismd/design-core':
-        specifier: ^0.6.0
-        version: 0.6.0(svelte@5.56.10)(tailwindcss@4.3.3)
+        specifier: file:/Users/stevejuma/code/lapismd/design-core
+        version: file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte':
         specifier: ^0.523.0
         version: 0.523.0(svelte@5.56.10)
     devDependencies:
+      '@lapis-notes/api':
+        specifier: file:/Users/stevejuma/code/lapismd/lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz
+        version: file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.8.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.8.3)
       '@lapis-notes/markdown':
         specifier: ^0.1.6
         version: link:../markdown
@@ -756,6 +889,9 @@ importers:
 
   packages/wordcount:
     devDependencies:
+      '@lapis-notes/api':
+        specifier: file:/Users/stevejuma/code/lapismd/lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz
+        version: file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.9.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.9.3)
       '@sveltejs/package':
         specifier: ^2.5.0
         version: 2.5.8(svelte@5.56.10)(typescript@5.9.3)
@@ -1039,6 +1175,371 @@ packages:
     resolution: {integrity: sha512-hWmIenZ7EeMh8eDrNteL+5yIDgUg/0GnF+U80Pr0nScWGHdCTehYKXEGQtV2PNm99ta5qNg6GuvvtP4WRS8dug==}
     peerDependencies:
       svelte: ^5.29.0
+
+  '@embedpdf/core@2.15.1':
+    resolution: {integrity: sha512-jP+fqsCM+RVQ3sMe6bq0+iamA+YdHcFrXxOICLe8c+xAA+e4//U0A5ys/B/3gJIe4Z+hwcKpVhZRvZrbnH7Qcg==}
+    peerDependencies:
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/engines@2.15.1':
+    resolution: {integrity: sha512-zihtFUtNnt5SMiSqNvkzhl7t5sR08QJx5qQ7hf34rzjnxJDCdIPKVBP8rUjlZt8HArMKC1L9XTvnIQ1WuKdUVQ==}
+    peerDependencies:
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/fonts-arabic@1.0.0':
+    resolution: {integrity: sha512-SnGvQb+LwPZQO2WjjvlmXrJZolJUfLYbLZQSaYUw1vrQyMyJKT4LewvJGG+hZ+Yz2fz7OMIQ+4Gc98mGODZtOg==}
+
+  '@embedpdf/fonts-hebrew@1.0.0':
+    resolution: {integrity: sha512-5HVAKGL7VqPeTxxADDrSqAFBxfmAXdP8fIqrPwJIKkqdK2643bOer8CqnnpO3/nPoFhkzxhttWMB9BGiqSW62w==}
+
+  '@embedpdf/fonts-jp@1.0.0':
+    resolution: {integrity: sha512-BY2tv/mcICUUKf+M/bizf3RU65PMqKClJ/e5o9mgMibxyML0OQvEDwYMRPODQkKgJKXCO3ScHmVvcmXp6kt+fA==}
+
+  '@embedpdf/fonts-kr@1.0.0':
+    resolution: {integrity: sha512-bh88HXSvOBS581kgmihWY7Ijp9hBsvlmXogFG5LSNx9UBAobRcakZiFMGieRBc06hUSkpo7WhjaFM/z/SfQ8dQ==}
+
+  '@embedpdf/fonts-latin@1.0.0':
+    resolution: {integrity: sha512-LLYysdr8O6sRNzhmW3PbF3AeA8xnqvOi4XLFfIfNlW5uEZ+qsJdcfd78Q78sFJMhlaOAYFMziMMsnOzmx463rA==}
+
+  '@embedpdf/fonts-sc@1.0.0':
+    resolution: {integrity: sha512-ETXl7XCwaQLSSvMO3EUDwMNqtL64kX2LlFxarTRi/NsIGGOIxUurGfKtrkmtnKHrWy1jAJSt6oxK2uJhvdvQIw==}
+
+  '@embedpdf/fonts-tc@1.0.0':
+    resolution: {integrity: sha512-rGZJbVD6DYS5BbXdpEMnWkpVF0Knar+bsiyb2o3+YRx7O8eyFubEBQUSUInirQk69HA6fc3GhYCg7TyC/oD76Q==}
+
+  '@embedpdf/models@2.15.1':
+    resolution: {integrity: sha512-UWjKnbmxnyD1wi5p4UeeY/M3tnjyfXmr76IJh4gY8Ffm/z7UrvS02Lr9tyACqf6RDbrFV25mw5gRjQFs/9pKXg==}
+
+  '@embedpdf/pdfium@2.15.1':
+    resolution: {integrity: sha512-qDH4gEkGSQT0iM+07Hpm3LyvoB7PEFbW3Qyk6+LPkEYLJYfHagkHM1OzYlDq2EDOhJRguykTkzdMOT3/w27x5Q==}
+
+  '@embedpdf/plugin-annotation@2.15.1':
+    resolution: {integrity: sha512-LoPqB/DNlSxjcyUqccRm6O2qP1Hiy6tLLSy7QjMVCKB4dXpD19Q6r7lTPDgW0H+9RxW2OHHBUPvuKgsSXF5TAA==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      '@embedpdf/plugin-history': 2.15.1
+      '@embedpdf/plugin-interaction-manager': 2.15.1
+      '@embedpdf/plugin-scroll': 2.15.1
+      '@embedpdf/plugin-selection': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-attachment@2.15.1':
+    resolution: {integrity: sha512-HV0KaqvRlV/0UDJHPYdVKw3PLcuupWe83wmJXy63L0k1dh6JUixbEZaRbIcf7Q0axTqAZ+zg4ZZklx4xm+YN0w==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-bookmark@2.15.1':
+    resolution: {integrity: sha512-EPGSPI8Lv4pCAopw0hIdsM/zcca3l4FgG6Ug+XE1qX0EJQMR/2zh0pBJ0LC3rIqTgbPkmD26Xvkxo5FaCkHAVA==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-capture@2.15.1':
+    resolution: {integrity: sha512-Be5Qj61c/O4/3uOIZSkvX54C5CN2cc6azIwDKu3MYqF+iTkp6mngSYDkvDTw5ObG5ko2JFd4bBP5P0IiR4kgIw==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      '@embedpdf/plugin-interaction-manager': 2.15.1
+      '@embedpdf/plugin-render': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-commands@2.15.1':
+    resolution: {integrity: sha512-plTvOHLvHe5qr1qx1CvrH56YLCLWeGNig4pyMT9lX1MTDj6o0UoEU+9/vFxmc3nf5pNWXYoy0P5p4P2t4f6tQw==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-document-manager@2.15.1':
+    resolution: {integrity: sha512-CRmnxcb8LefOWIr5GlyGiI64VPHBpgV5YrEnkT6cMuGMCk/vvgHx1/4g2yIgAvAzDFqc0CCm9RuHjQa/yttTpQ==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-export@2.15.1':
+    resolution: {integrity: sha512-WbAjHISnXgG001tDxeLQhtcAVVM/8VSOItYq9OScU0G7F7t2oeUpcFQ1b1S0+lQdwP1oa5rw1bnMMMomhlmkNQ==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-form@2.15.1':
+    resolution: {integrity: sha512-GT8l795lpkcZv4+HjfaysHGIvWRvDAhr/ID2bXdXEKfMnOyqrwcCUR+eskCuksZSggEsG0xODnIvaQcpBpA7KQ==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      '@embedpdf/plugin-annotation': 2.15.1
+      '@embedpdf/plugin-history': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-fullscreen@2.15.1':
+    resolution: {integrity: sha512-SXvA4Q1tvWGhmxukzaGvK8XWthY9MJtXgtck39Zkw/PGnHsdZIozdgD2avWl8s80AQbdsadKxUqJGpX+koXHGw==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-history@2.15.1':
+    resolution: {integrity: sha512-n2uSdcdN2qu5/hY6Ngn52ic30GE6gtJCM3Rvh8YfRhTup2htQE2DOq5SN6NkP14Yuz+afXMH1oitw70R8qHUAw==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-i18n@2.15.1':
+    resolution: {integrity: sha512-5UCmWpX+kloWhRvilOW9+8sl2NJvu83Q6kZcL69P6pJD5UDjHCt3CbVE3zoLKTSnmQZp35i1ZldicQRk7cjGdw==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-interaction-manager@2.15.1':
+    resolution: {integrity: sha512-5EgQBaZ2wnIoUKJXkzZK+Cn/aqv+maffpdv8KXWCkSqLcN8XVNudS+9c4HsRjiuhaTCWFmQu3+WivTrIse8sqA==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-pan@2.15.1':
+    resolution: {integrity: sha512-m7h5tl5s9gSX1DtlP+VbI7MLfz40UhW/+4tsZjD3umK6OZyuakfKKU1PL0o1Yv/6bsBzFjvk8IwYHWiAgOe9Ug==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      '@embedpdf/plugin-interaction-manager': 2.15.1
+      '@embedpdf/plugin-viewport': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-print@2.15.1':
+    resolution: {integrity: sha512-weYjiXAhQNc3dvTPqhwXExZzRn0NIT83QSJRvY38nKB9MDwy4W+SoFexAQ1bEy/pybcrFKYisoT/bxInWNs8Yg==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      preact: ^10.26.4
+      react: '>=18.0.0'
+      react-dom: '>=18.0.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-redaction@2.15.1':
+    resolution: {integrity: sha512-3hboeNQqZxko/ajjRBmUkUqhT0JZmwSPBKqWAuuDm2PYrIocIoxU0xkO7Oirvh4azKH4AJk/J9upo7qjlivXvA==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      '@embedpdf/plugin-annotation': 2.15.1
+      '@embedpdf/plugin-history': 2.15.1
+      '@embedpdf/plugin-interaction-manager': 2.15.1
+      '@embedpdf/plugin-selection': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-render@2.15.1':
+    resolution: {integrity: sha512-cb9sMRUnxEh7p+xFD5p7xkVkxDT+CP36mBd7VVjey9Pdaz+e1fC6QJElMTUES91MQj4Qpt8AD9hIy/VchzoD+g==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-rotate@2.15.1':
+    resolution: {integrity: sha512-iyLXoBCaRmsObP5+bHE5mehEOLvYZUVizUYtRD6K+i4nu8bv1Wk3UEewSelS+uOBPKAykqAV3K8h1x4Q0b/t/g==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-scroll@2.15.1':
+    resolution: {integrity: sha512-WEMims3x3LMPS/xZvujUdkctpXQYKe6AkkIRshqjItjBNjbgUf+ohqya/Q3drVGD5tzb1olYJ55bmwkNw+0rMQ==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      '@embedpdf/plugin-viewport': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-search@2.15.1':
+    resolution: {integrity: sha512-v/+GC2gitXIFJ1h/JR/GEJbOqEapB6Fg80aO+bqI7eAsPyCWIX00vOvf/B1Bo3RnCtf6wGp6xKy6ZOlvHx3H9Q==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-selection@2.15.1':
+    resolution: {integrity: sha512-mbC7uNzRg+DHHZs+zWkpqeAcipMmV+GNEOkSmYwFY5com7CN+Utn1m31uAhkjP9zgEYu9Rykd9hJuVbLnUNqHw==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      '@embedpdf/plugin-interaction-manager': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-signature@2.15.1':
+    resolution: {integrity: sha512-vawe3FtWjboMLc+v+qNv+9kqNPDRNe5456TNVWekBfExlMdQOOKsFpKIQ+YZ/w976GcmFlkyWDjp6t4CpDvoIQ==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      '@embedpdf/plugin-annotation': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-spread@2.15.1':
+    resolution: {integrity: sha512-lyVSgvgJC4sHe0/8jxuYicu7LI5Hy8Ffu2KhIbtaVXE5sigJjUQahELie/zn38HvCNIrRvhgeFr3ETWOZvb3pQ==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-stamp@2.15.1':
+    resolution: {integrity: sha512-TQKco3zmHFM1Ia8EAT4IpITB16XjWNTh8l98kpGBSEV7hbuSH4w6eLzqhNb8MZ/AZQcijr3Rj2/xuCo3q3FLeQ==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      '@embedpdf/plugin-annotation': 2.15.1
+      '@embedpdf/plugin-i18n': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-thumbnail@2.15.1':
+    resolution: {integrity: sha512-h5TqWsMXQj+OxSpjchhgSbZugDqDZ+TiukGkMGsXevd+NBiaM5mIWuj0JcTre/WzErX87VDE+usgWJ7GuC4H/A==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      '@embedpdf/plugin-render': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-tiling@2.15.1':
+    resolution: {integrity: sha512-1CmljI0wbC9Hs0lDG6MsEcz454pqYGzn+qIUKznjlW6dmXdkJdEyXBkavWVg5ocu8844ERwymG1v47/rB2ReWg==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      '@embedpdf/plugin-render': 2.15.1
+      '@embedpdf/plugin-scroll': 2.15.1
+      '@embedpdf/plugin-viewport': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-ui@2.15.1':
+    resolution: {integrity: sha512-4fCYOXADo2kSrm+PAhWbQcqWl2e965TqEGhn8gGrxqxA8tk1UsBrSgTATm8XEhJ8+FkxkRNC941uEyGUM2EQrw==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      '@embedpdf/plugin-render': 2.15.1
+      '@embedpdf/plugin-scroll': 2.15.1
+      '@embedpdf/plugin-viewport': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-viewport@2.15.1':
+    resolution: {integrity: sha512-Po8vKNubysKTDBt0YBd87Z2YzbmMdTECT1VT8GBLfZk4Vm2P3DX0dh1sWFctkM2IjrscCH3tjH/MA5ZDtrCiAg==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/plugin-zoom@2.15.1':
+    resolution: {integrity: sha512-u1n64WpNowFQH2Lb4ZyURAE5YqTWgjNSoChtwDMGYIsLtxGxa7JsyNJHBa55pt6sYx/JTCxrX/OsQ6ypaNrm4w==}
+    peerDependencies:
+      '@embedpdf/core': 2.15.1
+      '@embedpdf/plugin-scroll': 2.15.1
+      '@embedpdf/plugin-viewport': 2.15.1
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
+
+  '@embedpdf/snippet@2.15.1':
+    resolution: {integrity: sha512-plgR5O9JRE76UjsLYXYNFPFbxteN5GRPcsHLBpDYm2qcJHsMxapEacPa+G1+ELxlyp4XqzDeuS0Ku9Oo5GfvRg==}
+
+  '@embedpdf/utils@2.15.1':
+    resolution: {integrity: sha512-P9JaOhfNaFsx+M7bs4sK+vkBTmCHPxDWWqzfOsGtrYtLOe5cgPwD6fBJaXporUlHiZRyR/6y4SlaV37fdOoh1Q==}
+    peerDependencies:
+      preact: ^10.26.4
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      svelte: '>=5 <6'
+      vue: '>=3.2.0'
 
   '@emnapi/core@1.11.0':
     resolution: {integrity: sha512-l9Oo58x0HOP5znGzVhYW9U3e5wVuA4LAZU2AGezTmkhO1CgQRFDhDg4nneHsu/t3WniXg9QrG2nIXL/ZS8ln8Q==}
@@ -1627,8 +2128,9 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@lapis-notes/api@0.1.4':
-    resolution: {integrity: sha512-sLZov63/MIYa6E27xFul/NsFYNOImsgZYl0lA75soSoQAxyTv6HIFle7o1ZA6A8LTMSvRzxzIzRT8KvBeDdzdQ==}
+  '@lapis-notes/api@file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz':
+    resolution: {integrity: sha512-FFuj6pZtc+6IZxn4EGMNTnp2MjmcW0uCTDs6Y7RhprpOXzljZzCAM/EYKwsBK6R0Q4x8dy4NnWIfsfsTtZxA7A==, tarball: file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz}
+    version: 0.1.4
     peerDependencies:
       '@codemirror/autocomplete': ^6.18.6
       '@codemirror/commands': ^6.8.1
@@ -1644,8 +2146,6 @@ packages:
       '@dnd-kit/dom': ^0.4.0
       '@dnd-kit/svelte': ^0.4.0
       '@lapis-notes/ui': ^0.1.2
-      '@lapismd/design-core': ^0.3.2
-      '@lapismd/mira': ~0.0.3
       '@lezer/highlight': ^1.2.1
       '@lezer/markdown': ^1.4.3
       i18next: ^25.3.0
@@ -1654,54 +2154,39 @@ packages:
 
   '@lapis-notes/file-explorer@0.1.2':
     resolution: {integrity: sha512-q4sKdI6eo7qAmLxas9eNoKPKAg9JTzVnj+yQS4JO8uooK2sS6t19f9McyKAdxKevHYz/xWbgeNvnVYptSgv2LQ==}
+    version: 0.1.2
     peerDependencies:
       svelte: ^5.0.0
 
   '@lapis-notes/language-service@0.1.1':
     resolution: {integrity: sha512-zdHoMxqnZ6g2dMVAhhM4WUY62+tTqHuOd0jwcUXxBVdhWzkmyYzWOBAxxEKYsgCJLXxhNqYI29eO6K8gZmoQYA==}
+    version: 0.1.1
 
   '@lapis-notes/ui@0.1.3':
     resolution: {integrity: sha512-ExnI05GYV4/8hYFCKy/cgAIpreONqib2h74UY3DNPrBlWKBX/91S5nzvVDd9OR8Z/74W9yOrw/Vhe7IIPoP7Cg==}
+    version: 0.1.3
     peerDependencies:
       '@lapismd/design-core': ^0.3.2
       svelte: ^5.0.0
 
   '@lapis-notes/workspace@0.2.0':
     resolution: {integrity: sha512-iNUeLDFwiWrot2sQdVQzNWgGyu9lQvPQ8Orpue4IhwX74wxA9/rBu/IdQn9QzGxLATaw3KxDniujhRTi1NMhxg==}
+    version: 0.2.0
     peerDependencies:
       svelte: ^5.0.0
 
-  '@lapismd/agent-redaction@0.1.0':
-    resolution: {integrity: sha512-DXxKKFi68lBAdQgKLKJYJSy2lgSnbvjiynI7yZfH9v4sf7BL6X1mjXR3IMz7ugak+TTsh6eUDGq7tx6nd7o4Hg==}
+  '@lapismd/ai-controller@file:../ai-controller/.local/lapismd-ai-controller-0.1.0-native-mcp.tgz':
+    resolution: {integrity: sha512-41F3cl0m7XQRgAOBEGJi0+wPZR4xhUf6VfcYpY+zl0UtHCwSfqrJ0eGUoDMZPEVzxKSuiWCLEi12z1bALU68Fg==, tarball: file:../ai-controller/.local/lapismd-ai-controller-0.1.0-native-mcp.tgz}
+    version: 0.1.0
     engines: {node: '>=22.13.0'}
-    hasBin: true
-
-  '@lapismd/ai-controller@0.1.0':
-    resolution: {integrity: sha512-82YT0fxUWs/jSqOm7YxBRfKJZLpzSXmx6hghJHHPC1/4+vw2QqSsGgn16AQd1k7Rb24Q8lV1fDZOrk3Os8zSXA==}
-    engines: {deno: '>=2.9.5', node: '>=22.13.0'}
-    peerDependencies:
-      node-llama-cpp: 3.18.1
-    peerDependenciesMeta:
-      node-llama-cpp:
-        optional: true
 
   '@lapismd/ai-host@0.1.0':
     resolution: {integrity: sha512-CMXPXvAav8MW7ODGXASO4FGb0Rg4VGOF15B1yqWL8NrEnZay692LaU+ng73oXgeFdb8NyF1Rx5yp3ig93e+5cw==}
     engines: {node: '>=22'}
     hasBin: true
 
-  '@lapismd/ai-host@0.3.0':
-    resolution: {integrity: sha512-KQ5BQZD4e7Lq0Q4LiE9XW5xf4MJJ1eBTPKE/qCAdBRjtY17Qpy37RM8B5IBmTjI9L0I4g3uWCqXWK4AjvUyVXw==}
-    engines: {deno: '>=2.9.5', node: '>=22'}
-
-  '@lapismd/design-core@0.3.5':
-    resolution: {integrity: sha512-MlJrpATLfk2EN8A7l2jpfpXu9rYijRoBtpthzUiIJFrhhDbL4NyvzT//S8OYgab9NPRrUGT2g1w+f61aHfhDtw==}
-    engines: {node: ^22.11 || ^24 || >=26}
-    peerDependencies:
-      svelte: ^5.0.0
-
-  '@lapismd/design-core@0.6.0':
-    resolution: {integrity: sha512-xLZssOtMmjptLwIX+DondoV6SDR4bKxSumLBxCseq0WimssAB4/Y+SfcppI2TAcc8wUCVHplgTEAU5yK9c2PbA==}
+  '@lapismd/design-core@file:../design-core':
+    resolution: {directory: ../design-core, type: directory}
     engines: {node: ^22.11 || ^24 || >=26}
     peerDependencies:
       svelte: ^5.0.0
@@ -1723,25 +2208,6 @@ packages:
       '@codemirror/language': ^6.11.3
       svelte: ^5.0.0
       unified: ^11.0.5
-
-  '@lapismd/mira@0.0.5':
-    resolution: {integrity: sha512-e1BofLLChHI48k+KCVmdU4YpHA5bipHi+LW1HypYrIET+LTu6SWfQuzP5Z+6e3aH7dR7UyJoJGinqcXFikGObg==}
-    peerDependencies:
-      '@codemirror/autocomplete': ^6.18.7
-      '@codemirror/commands': ^6.10.0
-      '@codemirror/lang-markdown': ^6.3.4
-      '@codemirror/lang-yaml': ^6.1.2
-      '@codemirror/language': ^6.11.3
-      '@codemirror/language-data': ^6.5.2
-      '@codemirror/legacy-modes': ^6.5.3
-      '@codemirror/lint': ^6.9.2
-      '@codemirror/search': ^6.5.11
-      '@codemirror/state': ^6.5.2
-      '@codemirror/view': ^6.38.8
-      '@lezer/common': ^1.5.2
-      '@lezer/highlight': ^1.2.3
-      '@lezer/markdown': ^1.4.3
-      svelte: ^5.0.0
 
   '@lapismd/mira@0.1.1':
     resolution: {integrity: sha512-8u53kwNYy/yYsG1pk8YRUcNo55ByVQhTq6M29H9Rku54SLU9bC0EXzUiYPEttUIZTXv151bvScoRnMZywyZkYA==}
@@ -1941,56 +2407,6 @@ packages:
   '@nodelib/fs.walk@1.2.8':
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
-
-  '@openclaw/fs-safe-darwin-arm64@0.12.0':
-    resolution: {integrity: sha512-N0eX53qE+1zRErYTVeUz4/YBIZCvI4iNaFdCdny9BIc32UrnP1L/3Zj4+B0GSOGQFQBffDRd4M8orHjpiCgzIw==}
-    engines: {node: '>=22'}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@openclaw/fs-safe-darwin-x64@0.12.0':
-    resolution: {integrity: sha512-az+rfw1exd1t0m3mJSSAqhExngWs5yT9igPewsOU59WvGsE13n2v0YrK1jtaYaBEebMYOdm6WnIFXuIq6KLHyQ==}
-    engines: {node: '>=22'}
-    cpu: [x64]
-    os: [darwin]
-
-  '@openclaw/fs-safe-linux-arm64-gnu@0.12.0':
-    resolution: {integrity: sha512-ADBxjAz+Kjmfuv1tyH0B/pRBSlbymUpemCpc7MjzYwNF1lVunQKxaK5BM4e741Cz1Di6djKs/sIPag5TeL2Edw==}
-    engines: {node: '>=22'}
-    cpu: [arm64]
-    os: [linux]
-    libc: [glibc]
-
-  '@openclaw/fs-safe-linux-arm64-musl@0.12.0':
-    resolution: {integrity: sha512-Gs9xHGxwgEi2/yJgE9SO5qfxO55Ly+HDdjNyRLR5EAXZlh521b5mbh0ccNb5ivwT5X3MFOq2p0hSWdhW63fQpg==}
-    engines: {node: '>=22'}
-    cpu: [arm64]
-    os: [linux]
-    libc: [musl]
-
-  '@openclaw/fs-safe-linux-x64-gnu@0.12.0':
-    resolution: {integrity: sha512-xyrhaPVsCjIlbcOjjw99+7vDD23dO9J+uod2pN3W/J8dpLXiCcBsdK/L8QQ/106f9uF13jOFTRkIkmbPp+PuaA==}
-    engines: {node: '>=22'}
-    cpu: [x64]
-    os: [linux]
-    libc: [glibc]
-
-  '@openclaw/fs-safe-linux-x64-musl@0.12.0':
-    resolution: {integrity: sha512-7PN3Rg/76HFZoP/Pnr2SsWUAMjm1EB+41Rf0oVUGsrvey8gCAHixdt7d70FbODwj+xkd2mur9ed0HhN1INeY2g==}
-    engines: {node: '>=22'}
-    cpu: [x64]
-    os: [linux]
-    libc: [musl]
-
-  '@openclaw/fs-safe-win32-x64-msvc@0.12.0':
-    resolution: {integrity: sha512-hI+0jj3uwl6iWlOLu6bYAfaUzYwITIeM8z5P38mY59vnVppduBHyomKwsuO/aW6xsNKwR9rDH/FrsLbiTyZW/A==}
-    engines: {node: '>=22'}
-    cpu: [x64]
-    os: [win32]
-
-  '@openclaw/fs-safe@0.12.0':
-    resolution: {integrity: sha512-Dwu2BZL6+n9pTeSLwijjL+dUBN0ktOjyucZPDjwSpuIkiPx9aussFWdyiWUD9UvNu3gwfLRAcktz1HfYT8QW1w==}
-    engines: {node: '>=22'}
 
   '@oxc-parser/binding-android-arm-eabi@0.127.0':
     resolution: {integrity: sha512-0LC7ye4hvqbIKxAzThzvswgHLFu2AURKzYLeSVvLdu2TBOYWQDmHnTqPLeA597BcUCxiLqLsS4CJ5uoI5WYWCQ==}
@@ -2421,124 +2837,6 @@ packages:
   '@scure/bip39@2.0.1':
     resolution: {integrity: sha512-PsxdFj/d2AcJcZDX1FXN3dDgitDDTmwf78rKZq1a6c1P1Nan1X/Sxc7667zU3U+AN60g7SxxP0YCVw2H/hBycg==}
 
-  '@secretlint/core@13.0.5':
-    resolution: {integrity: sha512-GOT2sDxb3Gz1kLx1/1zfSbnzjQrmZ/8rB62jcz98uA2eavtMNkwgybsaW0toNIaGGCVvnfYJ35pwRR6UG8lJRQ==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/profiler@13.0.5':
-    resolution: {integrity: sha512-FAQIuD+sHgBqUl3zf4PN/zPW4aMDo5Ou9z3lMqL7vWSDvujhqwqolyLbdK/FKsmpdE8L87vfiabL2XvWqufZ7Q==}
-
-  '@secretlint/secretlint-rule-1password@13.0.5':
-    resolution: {integrity: sha512-mPh3nLDwUgVhoMJ/dYmUVmbuMq1ynCu6dUDSjqSydVuzXdTLMMpr6NtYiTQ2HdcM8ImSZfY87hh/Ub82kOijsQ==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-anthropic@13.0.5':
-    resolution: {integrity: sha512-g3bik9U6RO/BXjhCkne7/2TLdHKGm/hVSyLGv1qmy1KvSOFk210RZapiI/T4hsPekR7cbp3uwSW7BVOobD0dDA==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-aws@13.0.5':
-    resolution: {integrity: sha512-EG2JuyggT5CZSyKOuI2tUnmE+mza5SxgkizZs0dhEh2wpPWIC4usG8iol4IeWomDw5dZOgV3UqX0EmeAvC+j8g==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-basicauth@13.0.5':
-    resolution: {integrity: sha512-yUNH+Voocm62hKmCYYas+1/JPHturWSZco5o0XdkzGFOC8YlLKOfDaH+EhQSHD1f5Zkz12XKD2NGz6XqJAQJMw==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-cloudflare@13.0.5':
-    resolution: {integrity: sha512-x6Uhm6f7qLBhS2lkmjlIbc/9bTyPMP4JbKAYolJffCu4GlJXRCTrJI2DtKX1XWsHU333q0BsWNi4PLpegFieUw==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-database-connection-string@13.0.5':
-    resolution: {integrity: sha512-87/+X5/FGJ5TeL/eqfffD/j1z3FXQBg443Q6G5PJlxc1tLR7sxbGXQqVuRoxhm4OZ8pmTbF77o21PHCN6d3pUA==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-databricks@13.0.5':
-    resolution: {integrity: sha512-nOY77IGT7nWsfGiAq3tNpOzEg12cMz6BED38tpnBDB9oKzWZ3qzLEBYmxziZEvH6u8QwT/LqfuI8T6QFhKgXLA==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-docker@13.0.5':
-    resolution: {integrity: sha512-+ZsX8EKJ9cUFVwJ7m8+Xm8LUFzJLn7lmpHHjKha0ozbb+HJQWTP9TFdY4AK7cELJAYzZxsmGj4p+63sjwRzPwA==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-figma@13.0.5':
-    resolution: {integrity: sha512-1T+qkoce0bQDRidyvajPl6XdQ1sGjaY2rwvh8+YEy7exmMryrCg4R7eXoikfhfzWFUuXPRhvLI3kOiupv0cfkA==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-gcp@13.0.5':
-    resolution: {integrity: sha512-upGPXG3LyChNBv7SQvXSrGKtgnNuPya+ucUpEEDFhOCUvhiLLM/3F72IMrYr5lSKevvCa2bPBhybCEIT5sKIaQ==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-github@13.0.5':
-    resolution: {integrity: sha512-Wxr/l8uHVfQ1Vm4sTHpciak+xZFv1NLkrXX5Yc+/DW4+fJfitgSHkiTWbzu9Mr0y8CVoEPqLpCzA96R7tT5LHw==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-gitlab@13.0.5':
-    resolution: {integrity: sha512-i+KN1SZz3A8F+e/MgNPHRNlmSdLmGj+xcv3pA38gFMHCRwAh0BvWqSvnCtePZ4CDEdn96LxtDrwSRZBDeKbW0A==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-grafana@13.0.5':
-    resolution: {integrity: sha512-EZVsR+6qYqbf4GUV+juc64YGhue+rLpQUiqKhsFZOMXQhMSPsA1Xb32h6eBt84mQW8EioW1W9iX8DDMcbAHhPA==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-groq@13.0.5':
-    resolution: {integrity: sha512-6EWvQXWE68kZ3TJhmBFkGp9lSi+jTKleh4OYT7WXuKcMCa4U3z1CBQhrZkmm0BukgqEc3P5nVEgWxtRtojX96g==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-hashicorp-vault@13.0.5':
-    resolution: {integrity: sha512-mbezLbUiFjcdGDjCS8mRPX4qG3UEOSKr1qYip+VfU27PhRzp8BnM1IaHc/CM/74naHfzFaiA3XcDoa2111vPIw==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-huggingface@13.0.5':
-    resolution: {integrity: sha512-YeBPy+4NUUJdn1KeoCDoRUZg8r0k0qCuhFrB+R2qCI8OLzD9+20Asb2eROPK6sBqggQLXptKbz+ghcuOv104MQ==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-linear@13.0.5':
-    resolution: {integrity: sha512-xRiXDQ5YLlSiy/vYjZJ6duYmmMzqhR/HOQmYVuk+DP9VBhtYDsxUnIrianxFm6Ot+o1KdA4YeoAyHuqlsMR+cw==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-notion@13.0.5':
-    resolution: {integrity: sha512-IlDs/RfQTb69KMAhyNHZor52jfp9H3ysxVTnB5Y1bcisIl28VyE9hJYGMfq33D8sbWz+u2HVrtTJJcPDPMzpUg==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-npm@13.0.5':
-    resolution: {integrity: sha512-wNiqIHKlaKWuMO5liaTCSuR+I6LCIjyk/GzUKpYmhx7hXLFKZSv2NuYklqeFHHi2pemUn3xeX9urR3RZnmd4+w==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-openai@13.0.5':
-    resolution: {integrity: sha512-KFw3ASk84/j0v/bD4o+HFGZnqfVj+HOyXNBipWXbJxV8eIOScdLsxpqakrljni0w/BVRlf8cwwZr4tPQ5Ed0zQ==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-privatekey@13.0.5':
-    resolution: {integrity: sha512-/6X/rvqul36d6VKBLhbMiG1Ot35/MlBJagnYI1QwJz9r7eCKwSLHcoqaedu6FCOqFbJ1NtBliL0NkwFthlEifA==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-sendgrid@13.0.5':
-    resolution: {integrity: sha512-OcZPDaRRJM9xgZlYRpfQzGIBSkkoYDRJbtId3wQz2AgZo9RErEo/Inxn3wHRDCYwsiFkBIKjcvEXy49nA1NQew==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-shopify@13.0.5':
-    resolution: {integrity: sha512-cdbTx+fFJCAILAmlvD1sf7MvZpB7MxvaUKLTabGIt6seY83osaswZP0ZhnFdwC6bKEsl5JozOMnTC3U710iNVQ==}
-
-  '@secretlint/secretlint-rule-slack@13.0.5':
-    resolution: {integrity: sha512-DR4lu+e7V/esZWK1CIIhvEV7jPiVgLayNCdMhSstgeX4XY0HL4rWdWNgpvUfj7HZnRv7hwU6r6ucaqqlCK5uqA==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-stripe@13.0.5':
-    resolution: {integrity: sha512-KkRAun3d/5D+Oq8S3lgR7unPvRcCOntDrBUUGuQuMbuA0n3sfkYMNqBvuZcOFMbq8IXPuEp4quRWaN0HFjU46g==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-tailscale@13.0.5':
-    resolution: {integrity: sha512-eOhCG5GsLQedhJIsj4IfOPW4UQeVEn79XGydZzFVdMouZbbmV6zmDzFxBCkEwN4Rv7KPznXF9GJoiNGvWnJIBw==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/secretlint-rule-vercel@13.0.5':
-    resolution: {integrity: sha512-Yg9Hnwnf8TWniOjlE9LiRWYl4/VkTmi5GHa7DgswNRDYANwMCM8TybPy3K2RMC7tUjbGJA/ycgg+i89PwbfaAw==}
-    engines: {node: '>=22.0.0'}
-
-  '@secretlint/types@13.0.5':
-    resolution: {integrity: sha512-VUIv9iZ9pg2lcWARUmR+7psoi02QBjgUtQnQGPRmAq/3Yt1whB5y52xwP2v5zxfj7C8KGrM2fxf7GhbHCHJUgQ==}
-    engines: {node: '>=22.0.0'}
-
   '@sindresorhus/is@4.6.0':
     resolution: {integrity: sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==}
     engines: {node: '>=10'}
@@ -2777,11 +3075,6 @@ packages:
     peerDependencies:
       vite: ^5.2.0 || ^6 || ^7 || ^8
 
-  '@tanstack/svelte-virtual@3.13.45':
-    resolution: {integrity: sha512-doQ43qKkfuaBPglZpCJu7xtE/s+vOzuHXTYzA74M+tTND3QLbJGBgjXTtfjVMqwrB0F7en1KA0yxBgG4vAIvvQ==}
-    peerDependencies:
-      svelte: ^3.48.0 || ^4.0.0 || ^5.0.0
-
   '@tanstack/svelte-virtual@3.13.47':
     resolution: {integrity: sha512-lF1mdrnkoFR1+AubB/W0ifgryCHyO0iDBygWIf4LE/H0XAjHZQ/ui83EDXpWvdSrD9VV5bPR2pn5toVyHNq7xw==}
     peerDependencies:
@@ -2790,9 +3083,6 @@ packages:
   '@tanstack/table-core@8.21.3':
     resolution: {integrity: sha512-ldZXEhOBb8Is7xLs01fR3YEc3DERiz5silj8tnGkFZytt1abEvl/GhUmCE0PMLaMPTa3Jk4HbKmRlHmu+gCftg==}
     engines: {node: '>=12'}
-
-  '@tanstack/virtual-core@3.19.4':
-    resolution: {integrity: sha512-ygZ3O99Il18dl0gG0q7sH78iSkb96F07G+xK9V83eCgV8NQbcNd7R+cgcJJMFO7llBoebd0A82sCCstQq2Vp6Q==}
 
   '@tanstack/virtual-core@3.19.6':
     resolution: {integrity: sha512-CsTW892z23gy7IyxYTTorVu1uZWB+0N349rSMgKz4rFLPpLza7F7TpcCKeI5iUAwYQCt8QUlOU67J+KXCxtpGw==}
@@ -2810,9 +3100,6 @@ packages:
     engines: {node: '>=12', npm: '>=6'}
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
-
-  '@textlint/regexp-string-matcher@2.0.2':
-    resolution: {integrity: sha512-OXLD9XRxMhd3S0LWuPHpiARQOI7z9tCOs0FsynccW2lmyZzHHFJ9/eR6kuK9xF459Qf+740qI5h+/0cx+NljzA==}
 
   '@tsconfig/svelte@5.0.8':
     resolution: {integrity: sha512-UkNnw1/oFEfecR8ypyHIQuWYdkPvHiwcQ78sh+ymIiYoF+uc5H1UBetbjyqT+vgGJ3qQN6nhucJviX6HesWtKQ==}
@@ -3003,6 +3290,9 @@ packages:
   '@types/node@24.13.3':
     resolution: {integrity: sha512-Dh8vAsV36ig5wa9OX4pXvMc9D3Veibfw2wix0CUwYODLD8nkj9UsLjASr49nPg+2eKzxhBV+v7L8pXvT4e639Q==}
 
+  '@types/papaparse@5.5.2':
+    resolution: {integrity: sha512-gFnFp/JMzLHCwRf7tQHrNnfhN4eYBVYYI897CGX4MY1tzY9l2aLkVyx2IlKZ/SAqDbB3I1AOZW5gTMGGsqWliA==}
+
   '@types/react@19.3.0':
     resolution: {integrity: sha512-N0rFCuH9YoxG9/m61l9MfpJKfmLOVU0em7ipIz6TRgSSkvReLB9vL85GB+yr8Bs5leqpvg96JSwF4ZS1s4viQg==}
 
@@ -3087,11 +3377,6 @@ packages:
 
   acpx@0.13.1:
     resolution: {integrity: sha512-9zhvUrAR4XxSIgaLCiiWmrwmEWh+m6jxu2KUFC8BMOiK4sFsnrRL7H6VF54ZLTTpt0IHrZQju2V7+8wiMf9DXQ==}
-    engines: {node: '>=22.13.0'}
-    hasBin: true
-
-  acpx@0.17.1:
-    resolution: {integrity: sha512-VafoVDYO8xE/Pd/8hTwAR6eHoSJf3K119knfFfAjCVqGy8ilGtWoVRI8z7fm+Q1o+R1vKDo58MJoxDx6YIt1tQ==}
     engines: {node: '>=22.13.0'}
     hasBin: true
 
@@ -3225,9 +3510,6 @@ packages:
     resolution: {integrity: sha512-Ifk1KcLrxaGt1occQagQNFNNOqRt1LFuehEnHHzB8Z6cRgIxRU1TBaiIsUiCdA+gy5PL7Y1IX31DNKkRmxtXjQ==}
     engines: {node: '>=18'}
 
-  boundary@2.0.0:
-    resolution: {integrity: sha512-rJKn5ooC9u8q13IMCrW0RSp31pxBCHE3y9V/tp3TdWSLf8Em3p6Di4NBpfzbJge9YjjFEsD0RtFEjtvHL5VyEA==}
-
   brace-expansion@5.0.12:
     resolution: {integrity: sha512-YovQ3rzhaLMIrDjNDMkNS01tea93qhEhG5xy8f6+R0l+dw3Ki+5sCoIoI942iuLZTHWogWktgwVDhU09iNEimQ==}
     engines: {node: 20 || >=22}
@@ -3302,20 +3584,11 @@ packages:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
     engines: {node: '>=6'}
 
-  cn@0.3.3:
-    resolution: {integrity: sha512-OEiyJkSpYm2kOuNOKQ+c2wmzZRG8orrb9fnObtHTbCGNx/E9KLnGcmcocItOzREKk5KzQN5I2e3BUCj563KEpw==}
-    engines: {node: '>=20'}
-    hasBin: true
-
   codemirror-lang-mermaid@0.5.0:
     resolution: {integrity: sha512-Taw/2gPCyNArQJCxIP/HSUif+3zrvD+6Ugt7KJZ2dUKou/8r3ZhcfG8krNTZfV2iu8AuGnymKuo7bLPFyqsh/A==}
 
   comma-separated-tokens@2.0.3:
     resolution: {integrity: sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==}
-
-  commander@14.0.3:
-    resolution: {integrity: sha512-H+y0Jo/T1RZ9qPP4Eh1pkcQcLRglraJaSLoyOtHxu6AapkjWVCy2Sit1QQ4x3Dng8qDlSsZEet7g5Pq06MvTgw==}
-    engines: {node: '>=20'}
 
   commander@15.0.0:
     resolution: {integrity: sha512-z67u4ZhzCL/Tydu1lJARtEZYWbWaN7oYLHbsuzocr6y4N6WZAagG3RQ4FW61V1/0+jImpj293XfrcYnd1qxtPg==}
@@ -3353,9 +3626,6 @@ packages:
   cookie@0.7.2:
     resolution: {integrity: sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==}
     engines: {node: '>= 0.6'}
-
-  core-util-is@1.0.3:
-    resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
 
   cors@2.8.6:
     resolution: {integrity: sha512-tJtZBBHA6vjIAaF6EnIaq6laBBP9aq/Y3ouVJjEfoHbRBcHBAHYcMh/w8LDrk2PvIMMq8gmopa5D4V8RmbrxGw==}
@@ -3641,10 +3911,6 @@ packages:
 
   dompurify@3.4.17:
     resolution: {integrity: sha512-B/pSlYVHQ58kqISD/yDjuJ1yfzI34m1gF4lAod2bwSRhiN4K5Cl3H8Af7hqB2PmTL911tdEudnnXn5FnhRoz0w==}
-
-  dotenv@17.3.1:
-    resolution: {integrity: sha512-IO8C/dzEb6O3F9/twg6ZLXz164a2fhTnEWb95H23Dm4OuN+92NmEAlTrupP9VW6Jm3sO26tQlqyvyi4CsnY9GA==}
-    engines: {node: '>=12'}
 
   dotenv@8.6.0:
     resolution: {integrity: sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==}
@@ -4058,9 +4324,6 @@ packages:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
     engines: {node: '>= 4'}
 
-  immediate@3.0.6:
-    resolution: {integrity: sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==}
-
   import-meta-resolve@4.2.0:
     resolution: {integrity: sha512-Iqv2fzaTQN28s/FwZAoFq0ZSs/7hMAHJVX+w8PZl3cY19Pxk6jFFalxQoIfW2826i/fDLXv8IiEZRIT0lDuWcg==}
 
@@ -4148,9 +4411,6 @@ packages:
     resolution: {integrity: sha512-e6rvdUCiQCAuumZslxRJWR/Doq4VpPR82kqclvcS0efgt430SlGIk05vdCN58+VrzgtIcfNODjozVielycD4Sw==}
     engines: {node: '>=16'}
 
-  isarray@1.0.0:
-    resolution: {integrity: sha512-VLghIWNM6ELQzo7zwmcg0NmTVyWKYjvIeM83yjp0wRDTmUnrM678fQbcKBo6n2CJEF0szoG//ytg+TKla89ALQ==}
-
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
@@ -4193,9 +4453,6 @@ packages:
   jsonfile@4.0.0:
     resolution: {integrity: sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg==}
 
-  jszip@3.10.2:
-    resolution: {integrity: sha512-3l+rb15IOWtUhU0H5MFqES/T6Kh7abYwjosBey/vD6hDt8zoEffkSC5Ws5SGtgVw3gBx2NEbhTeSW1+kWkpyTQ==}
-
   katex@0.18.10:
     resolution: {integrity: sha512-/B6p9eY9DX7aHBfpkHdpirDTZ5QH9xTwL9y837PWuzuv41O5jFdqNQwVQEQsimY0/iVNkwBY4+4hMfhQ7d4Dbw==}
     hasBin: true
@@ -4215,9 +4472,6 @@ packages:
 
   layout-base@2.0.1:
     resolution: {integrity: sha512-dp3s92+uNI1hWIpPGH3jK2kxE2lMjdXdr+DH8ynZHpd6PUlH6x6cbuXnoMmiNumznqaNO31xu9e79F0uuZ0JFg==}
-
-  lie@3.3.0:
-    resolution: {integrity: sha512-UaiMJzeWRlEujzAuw5LokY1L5ecNQYZKfmyZ9L7wDHb/p5etKaxXhohBcrw0EYby+G/NA52vRSN4N39dxHAIwQ==}
 
   lightningcss-android-arm64@1.32.0:
     resolution: {integrity: sha512-YK7/ClTt4kAK0vo6w3X+Pnm0D2cf2vPHbhOXdoNti1Ga0al1P4TBZhwjATvjNwLEBCnKvjJc2jQgHXH0NEwlAg==}
@@ -4307,17 +4561,8 @@ packages:
   lodash-es@4.18.1:
     resolution: {integrity: sha512-J8xewKD/Gk22OZbhpOVSwcs60zhd95ESDwezOFuA3/099925PdHJ7OFHNTGtajL3AlZkykD32HykiMo+BIBI8A==}
 
-  lodash.sortby@4.7.0:
-    resolution: {integrity: sha512-HDWXG8isMntAyRF5vZ7xKuEvOhT4AhlRt/3czTSjvGUxjYCBVRQY48ViDHyfYz9VIoBkW4TMGQNapx+l3RUwdA==}
-
   lodash.startcase@4.4.0:
     resolution: {integrity: sha512-+WKqsK294HMSc2jEbNgpHpd0JfIBhp7rEV4aqXWqFr6AlXov+SlcgB1Fv01y2kGe3Gc8nMW7VA0SrGuSkRfIEg==}
-
-  lodash.uniq@4.5.0:
-    resolution: {integrity: sha512-xfBaXQd9ryd9dlSDvnvI0lvxfLJlYAZzXomUYzLKtUeOQvOP5piqAWuGtrhWeqaXK9hhoM/iyJc5AV+XfsX3HQ==}
-
-  lodash.uniqwith@4.5.0:
-    resolution: {integrity: sha512-7lYL8bLopMoy4CTICbxygAUq6CdRJ36vFc80DucPueUee+d5NBRxz3FdT9Pes/HEx5mPoT9jwnsEJWz1N7uq7Q==}
 
   long@5.3.2:
     resolution: {integrity: sha512-mNAgZ1GmyNhD7AuqnTG3/VQ26o760+ZYBPKjPvugO8+nLbYfX6TVpJPseBvopbdY+qpZ/lKUnmEc1LeZYS3QAA==}
@@ -4592,9 +4837,6 @@ packages:
     resolution: {integrity: sha512-Z3lTE9pLaJF47NyMhd4ww1yFTAP8YhYI8SleJiHzM46Fgpm5cnNzSl9XfzFNqbaz+VlJrIj3fXQ4DeN1Rjm6cw==}
     engines: {node: '>=18'}
 
-  node-fetch-native@1.6.7:
-    resolution: {integrity: sha512-g9yhqoedzIUm0nTnTqAQvueMPVOuIY16bqgAJJC8XOOubYFNwz6IER9qs0Gq2Xd0+CecCKFjtdDTMA4u4xG06Q==}
-
   node-fetch@2.7.0:
     resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==}
     engines: {node: 4.x || >=6.0.0}
@@ -4694,13 +4936,13 @@ packages:
   package-manager-detector@1.8.0:
     resolution: {integrity: sha512-yQA4H19AmPEoMUeavPMDIe1higySl/gH/yaQrkT/s07Qp+7pp2hYz30N3z2l5BkjVkF9Ow6o0wjJamm2y7Sn0A==}
 
-  pako@1.0.11:
-    resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
-
   paneforge@1.0.2:
     resolution: {integrity: sha512-KzmIXQH1wCfwZ4RsMohD/IUtEjVhteR+c+ulb/CHYJHX8SuDXoJmChtsc/Xs5Wl8NHS4L5Q7cxL8MG40gSU1bA==}
     peerDependencies:
       svelte: ^5.29.0
+
+  papaparse@5.7.0:
+    resolution: {integrity: sha512-qBGxg/7Q3Kl9Wfhrz2Z74UnvnHTXLNG6jmKJFeBvP2+y4lV7So+7SR62+Zd47JvdrCkX+nDcnr0ObPzek/+6RA==}
 
   parse-entities@4.0.2:
     resolution: {integrity: sha512-GG2AQYWoLgL877gQIKeRPGO1xF9+eG1ujIb5soS5gPvLQ1y2o8FL90w2QWNdf9I361Mpp7726c+lj3U0qK1uGw==}
@@ -4800,6 +5042,14 @@ packages:
     resolution: {integrity: sha512-zkd+e9S1AQHhmaBKye9zlFHWjOwVgqXl1q3ECYy8561K7qxR2cREf/STLskulBFd78k6AOFeA+ff1TtEzk9bAA==}
     engines: {node: ^10 || ^12 || >=14}
 
+  preact@10.29.8:
+    resolution: {integrity: sha512-ej2aVZ+vZ8WO7tvlQWRM9N63A0KzF9q4mWJfDUHgYaIofWY9hu74QdnQrjoPMmZi2/nZ5gN0bJCQF49xQqx09Q==}
+    peerDependencies:
+      preact-render-to-string: '>=5'
+    peerDependenciesMeta:
+      preact-render-to-string:
+        optional: true
+
   prettier@2.8.8:
     resolution: {integrity: sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==}
     engines: {node: '>=10.13.0'}
@@ -4808,9 +5058,6 @@ packages:
   pretty-format@27.5.1:
     resolution: {integrity: sha512-Qb1gy5OrP5+zDf2Bvnzdl3jsTf1qXVMazbvCoKhtKqVs4/YK4ozX4gKQJJVyNe+cajNPn0KoC0MC3FUmaHWEmQ==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
-
-  process-nextick-args@2.0.1:
-    resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
 
   property-information@7.2.0:
     resolution: {integrity: sha512-IAtzIB6sUiWaJYrX9smp3V46pBGbBeLFRGdh25kg1334VcBlD8HzhPeNIWQH9zhGmo2itIe25EHt9dQP7G5hmg==}
@@ -4831,10 +5078,6 @@ packages:
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
-
-  qs@6.16.0:
-    resolution: {integrity: sha512-h6fhOIaRrID2CbEY2fqs+7t+UXZo+MLAnU5gRIq85uFtdiUPCdsApMlHhXogKVM4HM2DVbIjGNTTYH2OcmP1vA==}
-    engines: {node: '>=0.6'}
 
   qs@6.16.1:
     resolution: {integrity: sha512-5Px6J7rfHBAGUhNQ3es4YzcOdBBw0SDcVtThJml4RdnKw4tKs2epA0kPZ+K8X+WiHktT93RHVcQ/3ym5aTCgtg==}
@@ -4869,9 +5112,6 @@ packages:
   read-yaml-file@1.1.0:
     resolution: {integrity: sha512-VIMnQi/Z4HT2Fxuwg5KrY174U1VdUIASQVWXXyqtNRtxSr9IYkn1rsI6Tb6HsrHCmB7gVpNwX6JxPTHcH6IoTA==}
     engines: {node: '>=6'}
-
-  readable-stream@2.3.8:
-    resolution: {integrity: sha512-8p0AUk4XODgIewSi0l8Epjs+EVnWiK7NoDIEGU0HhE7+ZyY8D1IMY7odu5lRrFXGg71L15KG8QrPmum45RTtdA==}
 
   readdirp@4.1.2:
     resolution: {integrity: sha512-GDhwkLfywWL2s6vEjyhri+eXmfH6j1L7JE27WhqLeYzoh/A3DBaYGEj2H/HFZCn/kMfim73FXxEJTw06WtxQwg==}
@@ -5010,9 +5250,6 @@ packages:
     resolution: {integrity: sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A==}
     engines: {node: '>=6'}
 
-  safe-buffer@5.1.2:
-    resolution: {integrity: sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==}
-
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
@@ -5043,17 +5280,8 @@ packages:
     resolution: {integrity: sha512-xRXBn0pPqQTVQiC8wyQrKs2MOlX24zQ0POGaj0kultvoOCstBQM5yvOhAVSUwOMjQtTvsPWoNCHfPGwaaQJhTw==}
     engines: {node: '>= 18'}
 
-  setimmediate@1.0.5:
-    resolution: {integrity: sha512-MATJdZp8sLqDl/68LfQmbP8zKPLQNV6BIZoIgrscFDQ+RsvK/BxeDQOgyxKKoh0y/8h3BqVFnCqQ/gd+reiIXA==}
-
   setprototypeof@1.2.0:
     resolution: {integrity: sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw==}
-
-  shadcn-svelte@1.7.0:
-    resolution: {integrity: sha512-AK3ZsYOL8PN/RxcEBCHGvQj2TrLfaaBsbw0QohyEb3nn/yPNDRC/+9iSjnTp/uKEe+tAi0tBxB/Yhzno0N7EEg==}
-    hasBin: true
-    peerDependencies:
-      svelte: ^5.0.0
 
   sharp@0.35.5:
     resolution: {integrity: sha512-Ywn4OnzGukp7CDMrp08RQ50YKmuwG47brZgIVPTvBaaAfQlRlygrRqSrxdCiL9M+LlzLBiJ68IR1QqvzHyjC7g==}
@@ -5167,9 +5395,6 @@ packages:
     resolution: {integrity: sha512-Kxl3KJGb/gxkaUMOjRsQ8IrXiGW75O4E3RPjFIINOVH8AMl2SQ/yWdTzWwF3FevIX9LcMAjJW+GRwAlAbTSXdg==}
     engines: {node: '>=20'}
 
-  string_decoder@1.1.1:
-    resolution: {integrity: sha512-n/ShnvDi6FHbbVfviro+WojiFzv+s8MPMHBczVePfUpDJLwoLT0ht1l4YwBCbi8pJAveEEdnkHyPyTP/mzRfwg==}
-
   stringify-entities@4.0.4:
     resolution: {integrity: sha512-IwfBptatlO+QCJUo19AqvrPNqlVMpW9YEL2LIVY+Rpv2qsjCGxaDLNRgeGsQWJhfItebuJhsGSLjaBbNSQ+ieg==}
 
@@ -5188,9 +5413,6 @@ packages:
   strip-indent@3.0.0:
     resolution: {integrity: sha512-laJTa3Jb+VQpaC6DseHhF7dXVqHTfJPCRDaEbid/drOhgitgYku/letMUqOXFoWV0zIIUbjpdH2t+tYj4bQMRQ==}
     engines: {node: '>=8'}
-
-  structured-source@4.0.0:
-    resolution: {integrity: sha512-qGzRFNJDjFieQkl/sVOI2dUjHKRyL9dAJi2gCPGJLbJHBIkyOHxjuocpIEfbLioX+qSJpvbYdT49/YCdMznKxA==}
 
   style-mod@4.1.4:
     resolution: {integrity: sha512-XXWIQt633/EpAFx8aZDOTjBzrCaGmhvEQlQo6MVPfa2OzO2cWo+4hV9h+6UkHYlXGfy+ODXKUdP7Pthmcu5ATw==}
@@ -5291,18 +5513,6 @@ packages:
     engines: {node: '>=16.x', pnpm: '>=7.x'}
     peerDependencies:
       tailwindcss: '*'
-
-  tailwind-variants@3.3.1:
-    resolution: {integrity: sha512-4pAvwUtM4HKBiRZftncAbpn6V9Hhwoa5Fl7O2u5zbp7Z5Cvu+/o/6+176WY3WCEES209543quG8zFIcXCsc5Jw==}
-    engines: {node: '>=16.9.x', pnpm: '>=7.x'}
-    peerDependencies:
-      tailwind-merge: '>=3.0.0'
-      tailwindcss: '*'
-    peerDependenciesMeta:
-      tailwind-merge:
-        optional: true
-      tailwindcss:
-        optional: true
 
   tailwindcss@4.3.3:
     resolution: {integrity: sha512-gOhV3P7ufE62QDGg1zVaTgCR+EtPv92k2nIhVcVKcLmxT1sUBsQGhnZj175j+MqRt4zLF7ic+sCYjfhxMxj7YQ==}
@@ -5408,9 +5618,6 @@ packages:
     resolution: {integrity: sha512-AswgMPnpOoaVZHrrSBejETzEbuIA69OVGwfkHwfrY0A23VjWXBANzgq9+OymWOHAIArB7D1+1z498WY8fGg1Jw==}
     hasBin: true
 
-  tw-animate-css@1.4.0:
-    resolution: {integrity: sha512-7bziOlRqH0hJx80h/3mbicLW7o8qLsH5+RaLR2t+OHM3D0JlWGODQKQ4cxbK7WlvmUxpcj6Kgu6EKqjrGFe3QQ==}
-
   type-fest@0.20.2:
     resolution: {integrity: sha512-Ne+eE4r0/iWnpAxD852z3A+N0Bt5RN//NjJwRd2VFHEmrywxf5vsZlh4R6lixl6B+wz/8d+maTSAkN1FIkI3LQ==}
     engines: {node: '>=10'}
@@ -5491,9 +5698,6 @@ packages:
     resolution: {integrity: sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-
-  util-deprecate@1.0.2:
-    resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
   uuid@14.0.2:
     resolution: {integrity: sha512-xZe/16rV4aa+HGSOCiY2YeLT1OybRLrrkL/Rqaq7p7GMVXjFh+6wN4oMYgjFmnSnhY8t6Xpdl2l9qmnHYuMHwQ==}
@@ -6303,6 +6507,383 @@ snapshots:
       svelte: 5.56.10
       tslib: 2.8.1
 
+  '@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/engines': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/engines@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/fonts-arabic': 1.0.0
+      '@embedpdf/fonts-hebrew': 1.0.0
+      '@embedpdf/fonts-jp': 1.0.0
+      '@embedpdf/fonts-kr': 1.0.0
+      '@embedpdf/fonts-latin': 1.0.0
+      '@embedpdf/fonts-sc': 1.0.0
+      '@embedpdf/fonts-tc': 1.0.0
+      '@embedpdf/models': 2.15.1
+      '@embedpdf/pdfium': 2.15.1
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/fonts-arabic@1.0.0': {}
+
+  '@embedpdf/fonts-hebrew@1.0.0': {}
+
+  '@embedpdf/fonts-jp@1.0.0': {}
+
+  '@embedpdf/fonts-kr@1.0.0': {}
+
+  '@embedpdf/fonts-latin@1.0.0': {}
+
+  '@embedpdf/fonts-sc@1.0.0': {}
+
+  '@embedpdf/fonts-tc@1.0.0': {}
+
+  '@embedpdf/models@2.15.1': {}
+
+  '@embedpdf/pdfium@2.15.1': {}
+
+  '@embedpdf/plugin-annotation@2.15.1(0ef33c129a22a9185780217e32973db7)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      '@embedpdf/plugin-history': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-interaction-manager': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-scroll': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-viewport@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-selection': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-interaction-manager@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/utils': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-attachment@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-bookmark@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-capture@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-interaction-manager@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-render@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      '@embedpdf/plugin-interaction-manager': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-render': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-commands@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-document-manager@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-export@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-form@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-annotation@2.15.1(0ef33c129a22a9185780217e32973db7))(@embedpdf/plugin-history@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      '@embedpdf/plugin-annotation': 2.15.1(0ef33c129a22a9185780217e32973db7)
+      '@embedpdf/plugin-history': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/utils': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-fullscreen@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-history@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-i18n@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-interaction-manager@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-pan@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-interaction-manager@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-viewport@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      '@embedpdf/plugin-interaction-manager': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-viewport': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-print@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-redaction@2.15.1(1fdec9782a178ac5a62fd672b6785abe)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      '@embedpdf/plugin-annotation': 2.15.1(0ef33c129a22a9185780217e32973db7)
+      '@embedpdf/plugin-history': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-interaction-manager': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-selection': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-interaction-manager@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/utils': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-render@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-rotate@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-scroll@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-viewport@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      '@embedpdf/plugin-viewport': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-search@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-selection@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-interaction-manager@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      '@embedpdf/plugin-interaction-manager': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/utils': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-signature@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-annotation@2.15.1(0ef33c129a22a9185780217e32973db7))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      '@embedpdf/plugin-annotation': 2.15.1(0ef33c129a22a9185780217e32973db7)
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-spread@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-stamp@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-annotation@2.15.1(0ef33c129a22a9185780217e32973db7))(@embedpdf/plugin-i18n@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      '@embedpdf/plugin-annotation': 2.15.1(0ef33c129a22a9185780217e32973db7)
+      '@embedpdf/plugin-i18n': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-thumbnail@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-render@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      '@embedpdf/plugin-render': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-tiling@2.15.1(447680fa1aa639fd7ca37337363e4f36)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      '@embedpdf/plugin-render': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-scroll': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-viewport@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-viewport': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-ui@2.15.1(447680fa1aa639fd7ca37337363e4f36)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      '@embedpdf/plugin-render': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-scroll': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-viewport@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-viewport': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-viewport@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/plugin-zoom@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-scroll@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-viewport@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-viewport@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      '@embedpdf/plugin-scroll': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-viewport@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-viewport': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
+  '@embedpdf/snippet@2.15.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      '@embedpdf/core': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/engines': 2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/models': 2.15.1
+      '@embedpdf/pdfium': 2.15.1
+      '@embedpdf/plugin-annotation': 2.15.1(0ef33c129a22a9185780217e32973db7)
+      '@embedpdf/plugin-attachment': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-bookmark': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-capture': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-interaction-manager@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-render@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-commands': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-document-manager': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-export': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-form': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-annotation@2.15.1(0ef33c129a22a9185780217e32973db7))(@embedpdf/plugin-history@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-fullscreen': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-history': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-i18n': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-interaction-manager': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-pan': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-interaction-manager@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-viewport@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-print': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-redaction': 2.15.1(1fdec9782a178ac5a62fd672b6785abe)
+      '@embedpdf/plugin-render': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-rotate': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-scroll': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-viewport@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-search': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-selection': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-interaction-manager@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-signature': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-annotation@2.15.1(0ef33c129a22a9185780217e32973db7))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-spread': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-stamp': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-annotation@2.15.1(0ef33c129a22a9185780217e32973db7))(@embedpdf/plugin-i18n@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-thumbnail': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-render@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-tiling': 2.15.1(447680fa1aa639fd7ca37337363e4f36)
+      '@embedpdf/plugin-ui': 2.15.1(447680fa1aa639fd7ca37337363e4f36)
+      '@embedpdf/plugin-viewport': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      '@embedpdf/plugin-zoom': 2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-scroll@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-viewport@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(@embedpdf/plugin-viewport@2.15.1(@embedpdf/core@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10))(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)
+      preact: 10.29.8
+      tailwind-merge: 3.7.0
+    transitivePeerDependencies:
+      - preact-render-to-string
+      - react
+      - react-dom
+      - svelte
+      - vue
+
+  '@embedpdf/utils@2.15.1(preact@10.29.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(svelte@5.56.10)':
+    dependencies:
+      preact: 10.29.8
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      svelte: 5.56.10
+
   '@emnapi/core@1.11.0':
     dependencies:
       '@emnapi/wasi-threads': 1.2.2
@@ -6711,7 +7292,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.6.0
 
-  '@lapis-notes/api@0.1.4(1f79f7193c833b65d73970ad5c935110)':
+  '@lapis-notes/api@file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.8.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.8.3)':
     dependencies:
       '@codemirror/autocomplete': 6.20.3
       '@codemirror/commands': 6.11.1
@@ -6730,9 +7311,9 @@ snapshots:
       '@iconify-json/lucide': 1.2.144
       '@iconify/types': 2.0.0
       '@iconify/utils': 2.3.0
-      '@lapis-notes/ui': 0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@0.6.0(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)
+      '@lapis-notes/ui': 0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)
       '@lapismd/ai-host': 0.1.0(zod@3.25.76)
-      '@lapismd/design-core': 0.6.0(svelte@5.56.10)(tailwindcss@4.3.3)
+      '@lapismd/design-core': file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lapismd/mira': 0.1.1(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@internationalized/date@3.12.4)(@lezer/common@1.5.3)(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lezer/common': 1.5.3
       '@lezer/highlight': 1.2.5
@@ -6742,8 +7323,73 @@ snapshots:
       '@noble/ciphers': 2.4.0
       '@noble/hashes': 2.4.0
       '@replit/codemirror-indentation-markers': 6.5.3(@codemirror/language@6.13.1)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)
-      '@tanstack/svelte-virtual': 3.13.45(svelte@5.56.10)
-      '@tanstack/virtual-core': 3.19.4
+      '@tanstack/svelte-virtual': 3.13.47(svelte@5.56.10)
+      '@tanstack/virtual-core': 3.19.6
+      '@tursodatabase/database-wasm': 0.7.2
+      '@types/lodash-es': 4.17.12
+      bits-ui: 2.19.5(patch_hash=bea104a59c6c54ddc78960341344344d787a51eb4d5bc64a32df6aa1e98e5beb)(@internationalized/date@3.12.4)(svelte@5.56.10)
+      clsx: 2.1.1
+      eventemitter3: 5.0.4
+      fflate: 0.8.3
+      i18next: 25.10.10(typescript@5.8.3)
+      lodash-es: 4.18.1
+      lucide-static: 0.503.0
+      lucide-svelte: 0.487.0(svelte@5.56.10)
+      luxon: 3.7.2
+      minimatch: 10.2.6
+      nostr-tools: 2.25.2(typescript@5.8.3)
+      svelte: 5.56.10
+      svelte-sonner: 1.2.1(svelte@5.56.10)
+      tailwind-merge: 2.6.1
+      tailwind-variants: 0.3.1(tailwindcss@4.3.3)
+      zod: 3.25.76
+    transitivePeerDependencies:
+      - '@cfworker/json-schema'
+      - '@internationalized/date'
+      - '@sveltejs/kit'
+      - '@types/node'
+      - bare-abort-controller
+      - bare-buffer
+      - bufferutil
+      - react-native-b4a
+      - supports-color
+      - tailwindcss
+      - typescript
+      - utf-8-validate
+
+  '@lapis-notes/api@file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.9.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.9.3)':
+    dependencies:
+      '@codemirror/autocomplete': 6.20.3
+      '@codemirror/commands': 6.11.1
+      '@codemirror/lang-markdown': 6.5.2
+      '@codemirror/lang-yaml': 6.1.3
+      '@codemirror/language': 6.13.1
+      '@codemirror/language-data': 6.5.2
+      '@codemirror/legacy-modes': 6.5.5
+      '@codemirror/lint': 6.9.7
+      '@codemirror/search': 6.7.2
+      '@codemirror/state': 6.7.6
+      '@codemirror/view': 6.43.14
+      '@dnd-kit/dom': 0.4.0
+      '@dnd-kit/svelte': 0.4.0(svelte@5.56.10)
+      '@huggingface/transformers': 4.3.1(@types/node@24.13.3)
+      '@iconify-json/lucide': 1.2.144
+      '@iconify/types': 2.0.0
+      '@iconify/utils': 2.3.0
+      '@lapis-notes/ui': 0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)
+      '@lapismd/ai-host': 0.1.0(zod@3.25.76)
+      '@lapismd/design-core': file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3)
+      '@lapismd/mira': 0.1.1(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@internationalized/date@3.12.4)(@lezer/common@1.5.3)(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(svelte@5.56.10)(tailwindcss@4.3.3)
+      '@lezer/common': 1.5.3
+      '@lezer/highlight': 1.2.5
+      '@lezer/lr': 1.4.11
+      '@lezer/markdown': 1.8.0
+      '@lucide/svelte': 0.523.0(svelte@5.56.10)
+      '@noble/ciphers': 2.4.0
+      '@noble/hashes': 2.4.0
+      '@replit/codemirror-indentation-markers': 6.5.3(@codemirror/language@6.13.1)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)
+      '@tanstack/svelte-virtual': 3.13.47(svelte@5.56.10)
+      '@tanstack/virtual-core': 3.19.6
       '@tursodatabase/database-wasm': 0.7.2
       '@types/lodash-es': 4.17.12
       bits-ui: 2.19.5(patch_hash=bea104a59c6c54ddc78960341344344d787a51eb4d5bc64a32df6aa1e98e5beb)(@internationalized/date@3.12.4)(svelte@5.56.10)
@@ -6776,75 +7422,10 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@lapis-notes/api@0.1.4(ee220bf22f0e6f615bcfdcc307d6b1ac)':
+  '@lapis-notes/file-explorer@0.1.2(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.9.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.9.3)':
     dependencies:
-      '@codemirror/autocomplete': 6.20.3
-      '@codemirror/commands': 6.11.1
-      '@codemirror/lang-markdown': 6.5.2
-      '@codemirror/lang-yaml': 6.1.3
-      '@codemirror/language': 6.13.1
-      '@codemirror/language-data': 6.5.2
-      '@codemirror/legacy-modes': 6.5.5
-      '@codemirror/lint': 6.9.7
-      '@codemirror/search': 6.7.2
-      '@codemirror/state': 6.7.6
-      '@codemirror/view': 6.43.14
-      '@dnd-kit/dom': 0.4.0
-      '@dnd-kit/svelte': 0.4.0(svelte@5.56.10)
-      '@huggingface/transformers': 4.3.1(@types/node@24.13.3)
-      '@iconify-json/lucide': 1.2.144
-      '@iconify/types': 2.0.0
-      '@iconify/utils': 2.3.0
-      '@lapis-notes/ui': 0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@0.6.0(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)
-      '@lapismd/ai-host': 0.1.0(zod@3.25.76)
-      '@lapismd/design-core': 0.3.5(svelte@5.56.10)(tailwindcss@4.3.3)
-      '@lapismd/mira': 0.1.1(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@internationalized/date@3.12.4)(@lezer/common@1.5.3)(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(svelte@5.56.10)(tailwindcss@4.3.3)
-      '@lezer/common': 1.5.3
-      '@lezer/highlight': 1.2.5
-      '@lezer/lr': 1.4.11
-      '@lezer/markdown': 1.8.0
-      '@lucide/svelte': 0.523.0(svelte@5.56.10)
-      '@noble/ciphers': 2.4.0
-      '@noble/hashes': 2.4.0
-      '@replit/codemirror-indentation-markers': 6.5.3(@codemirror/language@6.13.1)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)
-      '@tanstack/svelte-virtual': 3.13.45(svelte@5.56.10)
-      '@tanstack/virtual-core': 3.19.4
-      '@tursodatabase/database-wasm': 0.7.2
-      '@types/lodash-es': 4.17.12
-      bits-ui: 2.19.5(patch_hash=bea104a59c6c54ddc78960341344344d787a51eb4d5bc64a32df6aa1e98e5beb)(@internationalized/date@3.12.4)(svelte@5.56.10)
-      clsx: 2.1.1
-      eventemitter3: 5.0.4
-      fflate: 0.8.3
-      i18next: 25.10.10(typescript@5.9.3)
-      lodash-es: 4.18.1
-      lucide-static: 0.503.0
-      lucide-svelte: 0.487.0(svelte@5.56.10)
-      luxon: 3.7.2
-      minimatch: 10.2.6
-      nostr-tools: 2.25.2(typescript@5.9.3)
-      svelte: 5.56.10
-      svelte-sonner: 1.2.1(svelte@5.56.10)
-      tailwind-merge: 2.6.1
-      tailwind-variants: 0.3.1(tailwindcss@4.3.3)
-      zod: 3.25.76
-    transitivePeerDependencies:
-      - '@cfworker/json-schema'
-      - '@internationalized/date'
-      - '@sveltejs/kit'
-      - '@types/node'
-      - bare-abort-controller
-      - bare-buffer
-      - bufferutil
-      - react-native-b4a
-      - supports-color
-      - tailwindcss
-      - typescript
-      - utf-8-validate
-
-  '@lapis-notes/file-explorer@0.1.2(f3a6290a3a90a55bc06a2a65cfe1b858)':
-    dependencies:
-      '@lapis-notes/api': 0.1.4(ee220bf22f0e6f615bcfdcc307d6b1ac)
-      '@lapismd/design-core': 0.3.5(svelte@5.56.10)(tailwindcss@4.3.3)
+      '@lapis-notes/api': file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.9.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.9.3)
+      '@lapismd/design-core': file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3)
       svelte: 5.56.10
     transitivePeerDependencies:
       - '@cfworker/json-schema'
@@ -6863,7 +7444,6 @@ snapshots:
       - '@dnd-kit/svelte'
       - '@internationalized/date'
       - '@lapis-notes/ui'
-      - '@lapismd/mira'
       - '@lezer/highlight'
       - '@lezer/markdown'
       - '@sveltejs/kit'
@@ -6879,9 +7459,9 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@lapis-notes/language-service@0.1.1(1f79f7193c833b65d73970ad5c935110)':
+  '@lapis-notes/language-service@0.1.1(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.9.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.9.3)':
     dependencies:
-      '@lapis-notes/api': 0.1.4(1f79f7193c833b65d73970ad5c935110)
+      '@lapis-notes/api': file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.9.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.9.3)
       character-entities: 2.0.2
       markdownlint: 0.40.0
     transitivePeerDependencies:
@@ -6901,8 +7481,6 @@ snapshots:
       - '@dnd-kit/svelte'
       - '@internationalized/date'
       - '@lapis-notes/ui'
-      - '@lapismd/design-core'
-      - '@lapismd/mira'
       - '@lezer/highlight'
       - '@lezer/markdown'
       - '@sveltejs/kit'
@@ -6919,11 +7497,11 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@0.6.0(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)':
+  '@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)':
     dependencies:
       '@dnd-kit/dom': 0.4.0
       '@dnd-kit/svelte': 0.4.0(svelte@5.56.10)
-      '@lapismd/design-core': 0.6.0(svelte@5.56.10)(tailwindcss@4.3.3)
+      '@lapismd/design-core': file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte': 0.515.0(svelte@5.56.10)
       bits-ui: 2.19.5(patch_hash=bea104a59c6c54ddc78960341344344d787a51eb4d5bc64a32df6aa1e98e5beb)(@internationalized/date@3.12.4)(svelte@5.56.10)
       clsx: 2.1.1
@@ -6934,10 +7512,10 @@ snapshots:
       - '@internationalized/date'
       - '@sveltejs/kit'
 
-  '@lapis-notes/workspace@0.2.0(f3a6290a3a90a55bc06a2a65cfe1b858)':
+  '@lapis-notes/workspace@0.2.0(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.9.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.9.3)':
     dependencies:
-      '@lapis-notes/api': 0.1.4(ee220bf22f0e6f615bcfdcc307d6b1ac)
-      '@lapismd/design-core': 0.3.5(svelte@5.56.10)(tailwindcss@4.3.3)
+      '@lapis-notes/api': file:../lapis-notes/.local/packages/lapis-notes-api-0.1.4.tgz(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@dnd-kit/dom@0.4.0)(@dnd-kit/svelte@0.4.0(svelte@5.56.10))(@internationalized/date@3.12.4)(@lapis-notes/ui@0.1.3(@internationalized/date@3.12.4)(@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10))(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(@types/node@24.13.3)(i18next@25.10.10(typescript@5.9.3))(svelte-sonner@1.2.1(svelte@5.56.10))(svelte@5.56.10)(tailwindcss@4.3.3)(typescript@5.9.3)
+      '@lapismd/design-core': file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte': 0.523.0(svelte@5.56.10)
       svelte: 5.56.10
     transitivePeerDependencies:
@@ -6957,7 +7535,6 @@ snapshots:
       - '@dnd-kit/svelte'
       - '@internationalized/date'
       - '@lapis-notes/ui'
-      - '@lapismd/mira'
       - '@lezer/highlight'
       - '@lezer/markdown'
       - '@sveltejs/kit'
@@ -6973,46 +7550,9 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@lapismd/agent-redaction@0.1.0':
+  '@lapismd/ai-controller@file:../ai-controller/.local/lapismd-ai-controller-0.1.0-native-mcp.tgz(zod@4.6.6)':
     dependencies:
-      '@secretlint/core': 13.0.5
-      '@secretlint/profiler': 13.0.5
-      '@secretlint/secretlint-rule-1password': 13.0.5
-      '@secretlint/secretlint-rule-anthropic': 13.0.5
-      '@secretlint/secretlint-rule-aws': 13.0.5
-      '@secretlint/secretlint-rule-basicauth': 13.0.5
-      '@secretlint/secretlint-rule-cloudflare': 13.0.5
-      '@secretlint/secretlint-rule-database-connection-string': 13.0.5
-      '@secretlint/secretlint-rule-databricks': 13.0.5
-      '@secretlint/secretlint-rule-docker': 13.0.5
-      '@secretlint/secretlint-rule-figma': 13.0.5
-      '@secretlint/secretlint-rule-gcp': 13.0.5
-      '@secretlint/secretlint-rule-github': 13.0.5
-      '@secretlint/secretlint-rule-gitlab': 13.0.5
-      '@secretlint/secretlint-rule-grafana': 13.0.5
-      '@secretlint/secretlint-rule-groq': 13.0.5
-      '@secretlint/secretlint-rule-hashicorp-vault': 13.0.5
-      '@secretlint/secretlint-rule-huggingface': 13.0.5
-      '@secretlint/secretlint-rule-linear': 13.0.5
-      '@secretlint/secretlint-rule-notion': 13.0.5
-      '@secretlint/secretlint-rule-npm': 13.0.5
-      '@secretlint/secretlint-rule-openai': 13.0.5
-      '@secretlint/secretlint-rule-privatekey': 13.0.5
-      '@secretlint/secretlint-rule-sendgrid': 13.0.5
-      '@secretlint/secretlint-rule-shopify': 13.0.5
-      '@secretlint/secretlint-rule-slack': 13.0.5
-      '@secretlint/secretlint-rule-stripe': 13.0.5
-      '@secretlint/secretlint-rule-tailscale': 13.0.5
-      '@secretlint/secretlint-rule-vercel': 13.0.5
-      '@secretlint/types': 13.0.5
-      dotenv: 17.3.1
-    transitivePeerDependencies:
-      - supports-color
-
-  '@lapismd/ai-controller@0.1.0(zod@4.6.6)':
-    dependencies:
-      '@lapismd/agent-redaction': 0.1.0
-      '@lapismd/ai-host': 0.3.0(zod@4.6.6)
+      '@lapismd/ai-host': 0.1.0(zod@4.6.6)
       ajv: 8.20.0
       ws: 8.22.0
       yaml: 2.9.1
@@ -7041,10 +7581,10 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@lapismd/ai-host@0.3.0(zod@4.6.6)':
+  '@lapismd/ai-host@0.1.0(zod@4.6.6)':
     dependencies:
       '@modelcontextprotocol/sdk': 1.32.1(zod@4.6.6)
-      acpx: 0.17.1
+      acpx: 0.13.1
       ws: 8.22.0
     transitivePeerDependencies:
       - '@cfworker/json-schema'
@@ -7056,56 +7596,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@lapismd/design-core@0.3.5(svelte@5.56.10)(tailwindcss@4.3.3)':
-    dependencies:
-      '@codemirror/autocomplete': 6.20.3
-      '@codemirror/commands': 6.11.1
-      '@codemirror/lang-java': 6.0.2
-      '@codemirror/lang-javascript': 6.2.5
-      '@codemirror/lang-json': 6.0.2
-      '@codemirror/lang-markdown': 6.5.2
-      '@codemirror/lang-python': 6.2.1
-      '@codemirror/lang-yaml': 6.1.3
-      '@codemirror/language': 6.13.1
-      '@codemirror/language-data': 6.5.2
-      '@codemirror/legacy-modes': 6.5.5
-      '@codemirror/lint': 6.9.7
-      '@codemirror/search': 6.7.2
-      '@codemirror/state': 6.7.6
-      '@codemirror/view': 6.43.14
-      '@fontsource-variable/dm-sans': 5.3.0
-      '@fontsource-variable/source-code-pro': 5.3.0
-      '@iconify-json/lucide': 1.2.144
-      '@iconify/utils': 2.3.0
-      '@internationalized/date': 3.12.4
-      '@lapismd/mira': 0.0.5(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@internationalized/date@3.12.4)(@lezer/common@1.5.3)(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(svelte@5.56.10)(tailwindcss@4.3.3)
-      '@lezer/common': 1.5.3
-      '@lezer/highlight': 1.2.5
-      '@lezer/lr': 1.4.11
-      '@lezer/markdown': 1.8.0
-      '@lucide/svelte': 1.57.0(svelte@5.56.10)
-      '@tanstack/svelte-virtual': 3.13.47(svelte@5.56.10)
-      '@types/luxon': 3.7.6
-      bits-ui: 2.19.5(patch_hash=bea104a59c6c54ddc78960341344344d787a51eb4d5bc64a32df6aa1e98e5beb)(@internationalized/date@3.12.4)(svelte@5.56.10)
-      chrono-node: 2.10.3
-      clsx: 2.1.1
-      codemirror-lang-mermaid: 0.5.0
-      luxon: 3.7.2
-      minimatch: 10.2.6
-      paneforge: 1.0.2(svelte@5.56.10)
-      shadcn-svelte: 1.7.0(svelte@5.56.10)
-      svelte: 5.56.10
-      tailwind-merge: 3.7.0
-      tailwind-variants: 3.3.1(tailwind-merge@3.7.0)(tailwindcss@4.3.3)
-      tw-animate-css: 1.4.0
-      vaul-svelte: 1.0.0-next.7(svelte@5.56.10)
-      yaml: 2.9.1
-    transitivePeerDependencies:
-      - '@sveltejs/kit'
-      - supports-color
-      - tailwindcss
-
-  '@lapismd/design-core@0.6.0(svelte@5.56.10)(tailwindcss@4.3.3)':
+  '@lapismd/design-core@file:../design-core(svelte@5.56.10)(tailwindcss@4.3.3)':
     dependencies:
       '@codemirror/autocomplete': 6.20.3
       '@codemirror/commands': 6.11.1
@@ -7235,68 +7726,6 @@ snapshots:
       - '@lezer/common'
       - '@lezer/highlight'
       - '@lezer/markdown'
-      - '@sveltejs/kit'
-      - supports-color
-      - tailwindcss
-
-  '@lapismd/mira@0.0.5(@codemirror/autocomplete@6.20.3)(@codemirror/commands@6.11.1)(@codemirror/lang-markdown@6.5.2)(@codemirror/lang-yaml@6.1.3)(@codemirror/language-data@6.5.2)(@codemirror/language@6.13.1)(@codemirror/legacy-modes@6.5.5)(@codemirror/lint@6.9.7)(@codemirror/search@6.7.2)(@codemirror/state@6.7.6)(@codemirror/view@6.43.14)(@internationalized/date@3.12.4)(@lezer/common@1.5.3)(@lezer/highlight@1.2.5)(@lezer/markdown@1.8.0)(svelte@5.56.10)(tailwindcss@4.3.3)':
-    dependencies:
-      '@adobe/mdast-util-gridtables': 4.0.20
-      '@adobe/remark-gridtables': 3.0.21
-      '@codemirror/autocomplete': 6.20.3
-      '@codemirror/commands': 6.11.1
-      '@codemirror/lang-markdown': 6.5.2
-      '@codemirror/lang-yaml': 6.1.3
-      '@codemirror/language': 6.13.1
-      '@codemirror/language-data': 6.5.2
-      '@codemirror/legacy-modes': 6.5.5
-      '@codemirror/lint': 6.9.7
-      '@codemirror/search': 6.7.2
-      '@codemirror/state': 6.7.6
-      '@codemirror/view': 6.43.14
-      '@dnd-kit/dom': 0.4.0
-      '@dnd-kit/svelte': 0.4.0(svelte@5.56.10)
-      '@fontsource/source-code-pro': 5.3.1
-      '@lezer/common': 1.5.3
-      '@lezer/highlight': 1.2.5
-      '@lezer/markdown': 1.8.0
-      '@lucide/svelte': 0.525.0(svelte@5.56.10)
-      bits-ui: 2.19.5(patch_hash=bea104a59c6c54ddc78960341344344d787a51eb4d5bc64a32df6aa1e98e5beb)(@internationalized/date@3.12.4)(svelte@5.56.10)
-      clsx: 2.1.1
-      hast-util-to-text: 4.0.2
-      katex: 0.18.10
-      lodash-es: 4.18.1
-      mdast-util-from-markdown: 2.1.0
-      mdast-util-gfm-table: 2.0.0
-      mdast-util-to-markdown: 2.2.0
-      micromark-extension-gfm-table: 2.1.2
-      micromark-factory-space: 2.1.0
-      micromark-util-character: 2.1.1
-      micromark-util-symbol: 2.0.1
-      micromark-util-types: 2.0.3
-      rehype-highlight: 7.0.2
-      rehype-katex: 7.0.1
-      rehype-parse: 9.0.1
-      rehype-raw: 7.0.0
-      rehype-remark: 10.0.1
-      rehype-sanitize: 6.0.0
-      rehype-stringify: 10.0.1
-      remark-directive: 4.0.0
-      remark-emoji: 5.0.2
-      remark-frontmatter: 5.0.0
-      remark-gfm: 4.0.1
-      remark-math: 6.0.0
-      remark-parse: 11.0.0
-      remark-rehype: 11.1.2
-      remark-stringify: 11.0.0
-      svelte: 5.56.10
-      tailwind-merge: 3.7.0
-      tailwind-variants: 1.0.0(tailwindcss@4.3.3)
-      unified: 11.0.5
-      unist-util-visit: 5.1.0
-      yaml: 2.9.1
-    transitivePeerDependencies:
-      - '@internationalized/date'
       - '@sveltejs/kit'
       - supports-color
       - tailwindcss
@@ -7615,38 +8044,6 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.20.2
 
-  '@openclaw/fs-safe-darwin-arm64@0.12.0':
-    optional: true
-
-  '@openclaw/fs-safe-darwin-x64@0.12.0':
-    optional: true
-
-  '@openclaw/fs-safe-linux-arm64-gnu@0.12.0':
-    optional: true
-
-  '@openclaw/fs-safe-linux-arm64-musl@0.12.0':
-    optional: true
-
-  '@openclaw/fs-safe-linux-x64-gnu@0.12.0':
-    optional: true
-
-  '@openclaw/fs-safe-linux-x64-musl@0.12.0':
-    optional: true
-
-  '@openclaw/fs-safe-win32-x64-msvc@0.12.0':
-    optional: true
-
-  '@openclaw/fs-safe@0.12.0':
-    optionalDependencies:
-      '@openclaw/fs-safe-darwin-arm64': 0.12.0
-      '@openclaw/fs-safe-darwin-x64': 0.12.0
-      '@openclaw/fs-safe-linux-arm64-gnu': 0.12.0
-      '@openclaw/fs-safe-linux-arm64-musl': 0.12.0
-      '@openclaw/fs-safe-linux-x64-gnu': 0.12.0
-      '@openclaw/fs-safe-linux-x64-musl': 0.12.0
-      '@openclaw/fs-safe-win32-x64-msvc': 0.12.0
-      jszip: 3.10.2
-
   '@oxc-parser/binding-android-arm-eabi@0.127.0':
     optional: true
 
@@ -7900,150 +8297,6 @@ snapshots:
       '@noble/hashes': 2.0.1
       '@scure/base': 2.0.0
 
-  '@secretlint/core@13.0.5':
-    dependencies:
-      '@secretlint/profiler': 13.0.5
-      '@secretlint/types': 13.0.5
-      debug: 4.4.3
-      structured-source: 4.0.0
-    transitivePeerDependencies:
-      - supports-color
-
-  '@secretlint/profiler@13.0.5': {}
-
-  '@secretlint/secretlint-rule-1password@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-anthropic@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-
-  '@secretlint/secretlint-rule-aws@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-basicauth@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-cloudflare@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-database-connection-string@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-databricks@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-docker@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-figma@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-gcp@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-github@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-gitlab@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-grafana@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-groq@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-hashicorp-vault@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-huggingface@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-linear@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-
-  '@secretlint/secretlint-rule-notion@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-npm@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-openai@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-
-  '@secretlint/secretlint-rule-privatekey@13.0.5':
-    dependencies:
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-sendgrid@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-shopify@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-slack@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-stripe@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-tailscale@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/secretlint-rule-vercel@13.0.5':
-    dependencies:
-      '@secretlint/types': 13.0.5
-      '@textlint/regexp-string-matcher': 2.0.2
-
-  '@secretlint/types@13.0.5': {}
-
   '@sindresorhus/is@4.6.0': {}
 
   '@standard-schema/spec@1.1.0': {}
@@ -8285,19 +8538,12 @@ snapshots:
       tailwindcss: 4.3.3
       vite: 7.3.7(@types/node@24.13.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1)
 
-  '@tanstack/svelte-virtual@3.13.45(svelte@5.56.10)':
-    dependencies:
-      '@tanstack/virtual-core': 3.19.4
-      svelte: 5.56.10
-
   '@tanstack/svelte-virtual@3.13.47(svelte@5.56.10)':
     dependencies:
       '@tanstack/virtual-core': 3.19.6
       svelte: 5.56.10
 
   '@tanstack/table-core@8.21.3': {}
-
-  '@tanstack/virtual-core@3.19.4': {}
 
   '@tanstack/virtual-core@3.19.6': {}
 
@@ -8324,13 +8570,6 @@ snapshots:
   '@testing-library/user-event@14.6.6(@testing-library/dom@10.4.1)':
     dependencies:
       '@testing-library/dom': 10.4.1
-
-  '@textlint/regexp-string-matcher@2.0.2':
-    dependencies:
-      escape-string-regexp: 4.0.0
-      lodash.sortby: 4.7.0
-      lodash.uniq: 4.5.0
-      lodash.uniqwith: 4.5.0
 
   '@tsconfig/svelte@5.0.8': {}
 
@@ -8533,6 +8772,10 @@ snapshots:
     dependencies:
       undici-types: 7.18.2
 
+  '@types/papaparse@5.5.2':
+    dependencies:
+      '@types/node': 24.13.3
+
   '@types/react@19.3.0':
     dependencies:
       csstype: 3.2.3
@@ -8704,19 +8947,6 @@ snapshots:
       - bare-buffer
       - react-native-b4a
 
-  acpx@0.17.1:
-    dependencies:
-      '@agentclientprotocol/sdk': 1.8.0(zod@4.6.6)
-      '@openclaw/fs-safe': 0.12.0
-      commander: 15.0.0
-      skillflag: 0.2.1
-      tsx: 4.23.15
-      zod: 4.6.6
-    transitivePeerDependencies:
-      - bare-abort-controller
-      - bare-buffer
-      - react-native-b4a
-
   adm-zip@0.6.1: {}
 
   agent-base@7.1.4: {}
@@ -8828,8 +9058,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  boundary@2.0.0: {}
-
   brace-expansion@5.0.12:
     dependencies:
       balanced-match: 4.0.4
@@ -8892,8 +9120,6 @@ snapshots:
 
   clsx@2.1.1: {}
 
-  cn@0.3.3: {}
-
   codemirror-lang-mermaid@0.5.0:
     dependencies:
       '@codemirror/language': 6.13.1
@@ -8901,8 +9127,6 @@ snapshots:
       '@lezer/lr': 1.4.11
 
   comma-separated-tokens@2.0.3: {}
-
-  commander@14.0.3: {}
 
   commander@15.0.0: {}
 
@@ -8923,9 +9147,6 @@ snapshots:
   cookie-signature@1.2.2: {}
 
   cookie@0.7.2: {}
-
-  core-util-is@1.0.3:
-    optional: true
 
   cors@2.8.6:
     dependencies:
@@ -9219,8 +9440,6 @@ snapshots:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
 
-  dotenv@17.3.1: {}
-
   dotenv@8.6.0: {}
 
   dunder-proto@1.0.1:
@@ -9400,7 +9619,7 @@ snapshots:
       once: 1.4.0
       parseurl: 1.3.3
       proxy-addr: 2.0.8
-      qs: 6.16.0
+      qs: 6.16.1
       range-parser: 1.3.0
       router: 2.2.0
       send: 1.2.1
@@ -9766,6 +9985,12 @@ snapshots:
 
   human-id@4.2.1: {}
 
+  i18next@25.10.10(typescript@5.8.3):
+    dependencies:
+      '@babel/runtime': 7.29.10
+    optionalDependencies:
+      typescript: 5.8.3
+
   i18next@25.10.10(typescript@5.9.3):
     dependencies:
       '@babel/runtime': 7.29.10
@@ -9781,9 +10006,6 @@ snapshots:
       safer-buffer: 2.1.2
 
   ignore@5.3.2: {}
-
-  immediate@3.0.6:
-    optional: true
 
   import-meta-resolve@4.2.0: {}
 
@@ -9846,9 +10068,6 @@ snapshots:
     dependencies:
       is-inside-container: 1.0.0
 
-  isarray@1.0.0:
-    optional: true
-
   isexe@2.0.0: {}
 
   jiti@2.7.0: {}
@@ -9903,14 +10122,6 @@ snapshots:
     optionalDependencies:
       graceful-fs: 4.2.11
 
-  jszip@3.10.2:
-    dependencies:
-      lie: 3.3.0
-      pako: 1.0.11
-      readable-stream: 2.3.8
-      setimmediate: 1.0.5
-    optional: true
-
   katex@0.18.10:
     dependencies:
       commander: 15.0.0
@@ -9924,11 +10135,6 @@ snapshots:
   layout-base@1.0.2: {}
 
   layout-base@2.0.1: {}
-
-  lie@3.3.0:
-    dependencies:
-      immediate: 3.0.6
-    optional: true
 
   lightningcss-android-arm64@1.32.0:
     optional: true
@@ -9993,13 +10199,7 @@ snapshots:
 
   lodash-es@4.18.1: {}
 
-  lodash.sortby@4.7.0: {}
-
   lodash.startcase@4.4.0: {}
-
-  lodash.uniq@4.5.0: {}
-
-  lodash.uniqwith@4.5.0: {}
 
   long@5.3.2: {}
 
@@ -10559,11 +10759,21 @@ snapshots:
       emojilib: 2.4.0
       skin-tone: 2.0.0
 
-  node-fetch-native@1.6.7: {}
-
   node-fetch@2.7.0:
     dependencies:
       whatwg-url: 5.0.0
+
+  nostr-tools@2.25.2(typescript@5.8.3):
+    dependencies:
+      '@noble/ciphers': 2.1.1
+      '@noble/curves': 2.0.1
+      '@noble/hashes': 2.0.1
+      '@scure/base': 2.0.0
+      '@scure/bip32': 2.0.1
+      '@scure/bip39': 2.0.1
+      nostr-wasm: 0.1.0
+    optionalDependencies:
+      typescript: 5.8.3
 
   nostr-tools@2.25.2(typescript@5.9.3):
     dependencies:
@@ -10694,14 +10904,13 @@ snapshots:
 
   package-manager-detector@1.8.0: {}
 
-  pako@1.0.11:
-    optional: true
-
   paneforge@1.0.2(svelte@5.56.10):
     dependencies:
       runed: 0.23.4(svelte@5.56.10)
       svelte: 5.56.10
       svelte-toolbelt: 0.9.3(svelte@5.56.10)
+
+  papaparse@5.7.0: {}
 
   parse-entities@4.0.2:
     dependencies:
@@ -10792,6 +11001,8 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.2
 
+  preact@10.29.8: {}
+
   prettier@2.8.8: {}
 
   pretty-format@27.5.1:
@@ -10799,9 +11010,6 @@ snapshots:
       ansi-regex: 5.0.1
       ansi-styles: 5.2.0
       react-is: 17.0.2
-
-  process-nextick-args@2.0.1:
-    optional: true
 
   property-information@7.2.0: {}
 
@@ -10832,11 +11040,6 @@ snapshots:
       sade: 1.8.1
 
   punycode@2.3.1: {}
-
-  qs@6.16.0:
-    dependencies:
-      es-define-property: 1.0.1
-      side-channel: 1.1.1
 
   qs@6.16.1:
     dependencies:
@@ -10871,17 +11074,6 @@ snapshots:
       js-yaml: 3.15.2
       pify: 4.0.1
       strip-bom: 3.0.0
-
-  readable-stream@2.3.8:
-    dependencies:
-      core-util-is: 1.0.3
-      inherits: 2.0.4
-      isarray: 1.0.0
-      process-nextick-args: 2.0.1
-      safe-buffer: 5.1.2
-      string_decoder: 1.1.1
-      util-deprecate: 1.0.2
-    optional: true
 
   readdirp@4.1.2: {}
 
@@ -11118,9 +11310,6 @@ snapshots:
     dependencies:
       mri: 1.2.0
 
-  safe-buffer@5.1.2:
-    optional: true
-
   safer-buffer@2.1.2: {}
 
   saxes@6.0.0:
@@ -11162,18 +11351,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  setimmediate@1.0.5:
-    optional: true
-
   setprototypeof@1.2.0: {}
-
-  shadcn-svelte@1.7.0(svelte@5.56.10):
-    dependencies:
-      cn: 0.3.3
-      commander: 14.0.3
-      node-fetch-native: 1.6.7
-      postcss: 8.5.30
-      svelte: 5.56.10
 
   sharp@0.35.5(@types/node@24.13.3):
     dependencies:
@@ -11331,11 +11509,6 @@ snapshots:
       get-east-asian-width: 1.6.0
       strip-ansi: 7.2.0
 
-  string_decoder@1.1.1:
-    dependencies:
-      safe-buffer: 5.1.2
-    optional: true
-
   stringify-entities@4.0.4:
     dependencies:
       character-entities-html4: 2.1.0
@@ -11354,10 +11527,6 @@ snapshots:
   strip-indent@3.0.0:
     dependencies:
       min-indent: 1.0.1
-
-  structured-source@4.0.0:
-    dependencies:
-      boundary: 2.0.0
 
   style-mod@4.1.4: {}
 
@@ -11496,11 +11665,6 @@ snapshots:
       tailwind-merge: 3.0.2
       tailwindcss: 4.3.3
 
-  tailwind-variants@3.3.1(tailwind-merge@3.7.0)(tailwindcss@4.3.3):
-    optionalDependencies:
-      tailwind-merge: 3.7.0
-      tailwindcss: 4.3.3
-
   tailwindcss@4.3.3: {}
 
   tapable@2.3.3: {}
@@ -11599,8 +11763,6 @@ snapshots:
       '@turbo/windows-64': 2.10.12
       '@turbo/windows-arm64': 2.10.12
 
-  tw-animate-css@1.4.0: {}
-
   type-fest@0.20.2: {}
 
   type-fest@2.19.0: {}
@@ -11684,9 +11846,6 @@ snapshots:
   use-sync-external-store@1.6.0(react@19.2.8):
     dependencies:
       react: 19.2.8
-
-  util-deprecate@1.0.2:
-    optional: true
 
   uuid@14.0.2: {}
 
