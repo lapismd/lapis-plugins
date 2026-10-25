@@ -14,6 +14,7 @@ import {
   CSV_PLUGIN_ID,
   CSV_VIEW_TYPE,
 } from "./ids";
+import { csvSourceExtensions } from "./codemirror/csv-source-extensions";
 import { CsvFileView } from "./views/csv-view";
 
 export { CSV_PLUGIN_ID, CSV_VIEW_TYPE, CSV_FILENAME_PATTERNS };
@@ -66,6 +67,10 @@ export class CSVPlugin extends Plugin {
       priority: "exclusive",
     });
     this.registerExtensions([...CSV_EXTENSIONS], CSV_VIEW_TYPE);
+    this.registerEditorExtension(
+      () => csvSourceExtensions(),
+      CSV_VIEW_TYPE,
+    );
     for (const extension of CSV_EXTENSIONS) {
       this.register(
         this.app.embedRegistry.register(extension, ({ app, containerEl, state }) => {
@@ -80,6 +85,17 @@ export class CSVPlugin extends Plugin {
       name: "Open CSV",
       icon: "lucide-table",
       callback: () => this.openTable(this.app.workspace.activeLeaf),
+    });
+    this.addCommand({
+      id: "toggle-csv-source",
+      name: "Toggle CSV source",
+      icon: "lucide-file-code",
+      checkCallback: (checking: boolean) => {
+        const view = this.app.workspace.activeLeaf?.view;
+        if (!(view instanceof CsvFileView)) return false;
+        if (!checking) view.toggleMode();
+        return true;
+      },
     });
   }
 

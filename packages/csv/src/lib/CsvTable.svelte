@@ -1,60 +1,55 @@
 <script lang="ts">
   import type { App, TFile } from "@lapis-notes/api";
-  import { delimiterForExtension, parseDelimitedText } from "./parse-csv";
+  import CsvTableView from "./components/csv-table-view.svelte";
+  import {
+    DEFAULT_CSV_SETTINGS,
+    patchCsvSettings,
+    type CsvPluginSettings,
+    type CsvPluginSettingsPatch,
+  } from "../csv-settings";
 
   let {
     app,
     file,
     role = "file",
+    onToggleSource,
   }: {
     app: App;
     file: TFile;
     role?: "file" | "embed";
+    onToggleSource?: () => void;
   } = $props();
 
-  const rows = $derived.by(() => {
-    const currentApp = app;
-    const currentFile = file;
-    return currentApp.vault.cachedRead(currentFile).then((text) =>
-      parseDelimitedText(text, delimiterForExtension(currentFile.extension)),
-    );
-  });
+  let settings = $state<CsvPluginSettings>({ ...DEFAULT_CSV_SETTINGS });
+  const loaded = $derived.by(() => app.vault.cachedRead(file));
+
+  function handleContentChange(text: string) {
+    void app.vault.modify(file, text);
+  }
+
+  function handleSettingsChange(patch: CsvPluginSettingsPatch) {
+    settings = patchCsvSettings(settings, patch);
+  }
 </script>
 
-<div
-  class={["csv-table-frame", { "csv-table-embedded": role === "embed" }]}
-  data-testid="csv-table"
-  data-csv-role={role}
->
-  {#await rows}
-    <p class="csv-table-status">Reading this table.</p>
-  {:then parsed}
-    {@const header = parsed[0] ?? []}
-    {#if header.length === 0}
-      <p class="csv-table-status">This file has no rows.</p>
-    {:else}
-      <table class="csv-table">
-        <thead>
-          <tr>
-            {#each header as cell, column (column)}
-              <th scope="col">{cell}</th>
-            {/each}
-          </tr>
-        </thead>
-        <tbody>
-          {#each parsed.slice(1) as row, rowIndex (rowIndex)}
-            <tr>
-              {#each header as _, column (`${rowIndex}-${column}`)}
-                <td>{row[column] ?? ""}</td>
-              {/each}
-            </tr>
-          {/each}
-        </tbody>
-      </table>
-    {/if}
-  {:catch reason}
-    <p class="csv-table-status" data-csv-error="true">
-      {reason instanceof Error ? reason.message : "Unable to read this table."}
-    </p>
-  {/await}
+<div class="csv-table-frame" data-testid="csv-table" data-csv-role={role}>
+  {#key file.path}
+    {#await loaded}
+      <p class="csv-table-status">Reading this table.</p>
+    {:then content}
+      <CsvTableView
+        {app}
+        {file}
+        {content}
+        {settings}
+        onContentChange={handleContentChange}
+        onSettingsChange={handleSettingsChange}
+        {onToggleSource}
+      />
+    {:catch reason}
+      <p class="csv-table-status" data-csv-error="true">
+        {reason instanceof Error ? reason.message : "Unable to read this table."}
+      </p>
+    {/await}
+  {/key}
 </div>

@@ -1,0 +1,765 @@
+.csv-data-table__shell {
+  width: 100%;
+  min-height: 0;
+  font-family: var(--font-mono);
+  padding: 1rem;
+}
+
+.csv-data-table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.875rem;
+  overflow: visible;
+  --table-border-width: 1px;
+  --table-selection-border-width: 2px;
+  --table-selection-border-radius: 4px;
+}
+
+.csv-data-table__shell [data-ui-component="table"][data-ui-part="table-container"] {
+  overflow: visible;
+}
+
+.csv-data-table__shell thead .csv-data-table__head--actions {
+  background-color: var(--csv-header-background);
+}
+
+.csv-data-table__header-row {
+  background: var(--csv-header-background);
+}
+
+.csv-data-table__head {
+  --csv-head-fill: var(--csv-header-background);
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  border-bottom: 1px solid var(--csv-surface-border);
+  background: var(--csv-head-fill);
+  font-weight: 600;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.csv-data-table__head--label {
+  padding: 0;
+  border-right: 1px solid var(--csv-surface-border);
+}
+
+.csv-data-table :is(th).csv-data-table__head--gutter {
+  --csv-head-fill: var(--csv-index-background);
+}
+
+.csv-data-table :is(th, td).csv-data-table__head--gutter,
+.csv-data-table :is(th, td).csv-data-table__cell--gutter {
+  border-right: 0;
+  min-width: 2rem;
+  width: 2rem;
+  max-width: 2rem;
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+  background: var(--csv-index-background);
+}
+
+.csv-data-table__head--actions,
+.csv-data-table__cell--actions {
+  border-right: 0;
+  border-left: 0;
+  min-width: 2rem;
+  width: 2rem;
+  padding: 0;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.csv-data-table__header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  min-width: 6rem;
+  min-height: 2.5rem;
+  padding-inline-end: 1.875rem;
+}
+
+.csv-data-table__header-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.csv-data-table__header-menu {
+  position: absolute;
+  inset-inline-end: 0.125rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+}
+
+.csv-data-table__header-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+}
+
+.csv-data-table__menu[data-ui-part="dropdown-menu-content"],
+.csv-data-table__menu[data-ui-part="context-menu-content"] {
+  width: max-content;
+  min-width: 13.5rem;
+}
+
+.csv-data-table__menu [data-slot="dropdown-menu-item"],
+.csv-data-table__menu [data-ui-part="item-row"] {
+  white-space: nowrap;
+}
+
+[data-ui-component="menu"][data-ui-part="sub-content"][data-ui-part="sub-content"] {
+  width: max-content;
+  min-width: 13.5rem;
+}
+
+[data-ui-component="menu"][data-ui-part="sub-content"] [data-ui-part="item-row"] {
+  white-space: nowrap;
+}
+
+.csv-data-table__header-cell-editor.csv-cell__display,
+.csv-data-table__header-cell-editor.csv-cell__input {
+  font-weight: 600;
+  padding-inline: 0.5rem;
+}
+
+.csv-data-table__col-grip,
+.csv-data-table__row-grip {
+  opacity: 0;
+  cursor: grab;
+  color: var(--table-drag-handle-color);
+  background: var(--table-drag-handle-background);
+  padding: 0;
+}
+
+.csv-data-table__col-grip:hover,
+.csv-data-table__row-grip:hover,
+.csv-data-table__col-grip:focus-visible,
+.csv-data-table__row-grip:focus-visible {
+  background: var(--table-drag-handle-background);
+}
+
+.group\/trigger:hover .csv-data-table__col-grip,
+.csv-data-table__row:hover .csv-data-table__row-grip {
+  opacity: 1;
+}
+
+.csv-data-table__col-grip {
+  position: absolute;
+  top: -0.5rem;
+  left: calc(50% - 0.75rem / 2);
+  z-index: 4;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.csv-data-table__row-grip {
+  position: absolute;
+  left: -0.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 4;
+  width: 0.375rem;
+  min-width: 0.375rem;
+  height: 1.25rem;
+}
+
+.csv-data-table__row:hover {
+  background: color-mix(
+    in oklab,
+    var(--csv-header-background) 70%,
+    transparent
+  );
+}
+
+.csv-data-table.csv-data-table :is(th, td).csv-data-table__cell,
+.csv-data-table.csv-data-table :is(th, td).csv-data-table__head {
+  padding: 0;
+}
+
+.csv-data-table__cell {
+  position: relative;
+  vertical-align: middle;
+  border-right: 1px solid var(--csv-surface-border);
+  border-bottom: 1px solid var(--csv-surface-border);
+  padding: 0;
+  min-width: 6rem;
+  max-width: 24rem;
+}
+
+.csv-data-table__cell--gutter {
+  position: relative;
+}
+
+.csv-data-table__col-1 {
+  color: var(--csv-col-1);
+}
+
+.csv-data-table__col-2 {
+  color: var(--csv-col-2);
+}
+
+.csv-data-table__col-3 {
+  color: var(--csv-col-3);
+}
+
+.csv-data-table__col-4 {
+  color: var(--csv-col-4);
+}
+
+.csv-data-table__col-5 {
+  color: var(--csv-col-5);
+}
+
+.csv-data-table__head.csv-data-table__col-1 {
+  --csv-head-fill: color-mix(
+    in oklab,
+    var(--csv-col-1) 8%,
+    var(--csv-header-background)
+  );
+  background: var(--csv-head-fill);
+}
+
+.csv-data-table__head.csv-data-table__col-2 {
+  --csv-head-fill: color-mix(
+    in oklab,
+    var(--csv-col-2) 8%,
+    var(--csv-header-background)
+  );
+  background: var(--csv-head-fill);
+}
+
+.csv-data-table__head.csv-data-table__col-3 {
+  --csv-head-fill: color-mix(
+    in oklab,
+    var(--csv-col-3) 8%,
+    var(--csv-header-background)
+  );
+  background: var(--csv-head-fill);
+}
+
+.csv-data-table__head.csv-data-table__col-4 {
+  --csv-head-fill: color-mix(
+    in oklab,
+    var(--csv-col-4) 8%,
+    var(--csv-header-background)
+  );
+  background: var(--csv-head-fill);
+}
+
+.csv-data-table__head.csv-data-table__col-5 {
+  --csv-head-fill: color-mix(
+    in oklab,
+    var(--csv-col-5) 8%,
+    var(--csv-header-background)
+  );
+  background: var(--csv-head-fill);
+}
+
+.csv-data-table__rownum {
+  display: block;
+  padding: 0;
+  text-align: center;
+  color: var(--csv-muted-color);
+}
+
+.csv-data-table__cell-shell {
+  display: flex;
+  min-height: 2rem;
+  height: 100%;
+}
+
+.csv-data-table__row-actions {
+  width: 2rem;
+  height: 2rem;
+}
+
+.csv-data-table__empty {
+  padding: 1rem;
+  text-align: center;
+  color: var(--csv-muted-color);
+}
+
+.csv-data-table__cell-editor,
+.csv-cell__display,
+.csv-cell__input {
+  box-sizing: border-box;
+  display: block;
+  flex: 1 1 auto;
+  align-self: stretch;
+  width: 100%;
+  height: 100%;
+  min-height: 2rem;
+  margin: 0;
+  padding: 0 0.5rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  line-height: 2rem;
+}
+
+.csv-cell__display {
+  cursor: text;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.csv-cell__display--multiline {
+  overflow: visible;
+  text-overflow: unset;
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 4rem;
+  height: auto;
+  padding: 0.375rem 0.5rem;
+  line-height: 1.25rem;
+}
+
+.csv-cell__input--multiline {
+  min-height: 4rem;
+  height: auto;
+  padding: 0.375rem 0.5rem;
+  line-height: 1.25rem;
+  resize: vertical;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.csv-cell__display:focus-visible,
+.csv-cell__input:focus,
+.csv-cell__input:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline: 2px solid color-mix(in oklab, var(--csv-col-3) 45%, transparent);
+  outline-offset: -1px;
+}
+
+.csv-data-table th.is-selected,
+.csv-data-table td.is-selected {
+  position: relative;
+}
+
+.csv-data-table th.is-selected.end,
+.csv-data-table td.is-selected.end {
+  border-inline-end-color: transparent;
+}
+
+.csv-data-table th.is-selected.start,
+.csv-data-table td.is-selected.start {
+  border-inline-start-color: transparent;
+}
+
+.csv-data-table th.is-selected.top,
+.csv-data-table td.is-selected.top {
+  border-top-color: transparent;
+}
+
+.csv-data-table th.is-selected.bottom,
+.csv-data-table td.is-selected.bottom {
+  border-bottom-color: transparent;
+}
+
+.csv-data-table th.is-selected::after,
+.csv-data-table td.is-selected::after {
+  pointer-events: none;
+  content: "";
+  display: block;
+  position: absolute;
+  top: calc(-1 * var(--table-border-width, 1px));
+  inset-inline-end: calc(-1 * var(--table-border-width, 1px));
+  bottom: calc(-1 * var(--table-border-width, 1px));
+  inset-inline-start: calc(-1 * var(--table-border-width, 1px));
+  background-color: var(--table-selection);
+  border: 0 solid var(--table-selection-border-color);
+  mix-blend-mode: normal;
+  z-index: 1;
+}
+
+.csv-data-table th.start::after,
+.csv-data-table td.start::after,
+.csv-data-table th.is-selected.start::after,
+.csv-data-table td.is-selected.start::after {
+  border-inline-start-width: var(--table-selection-border-width);
+  inset-inline-start: calc(-1 * var(--table-selection-border-width));
+}
+
+.csv-data-table th.end::after,
+.csv-data-table td.end::after,
+.csv-data-table th.is-selected.end::after,
+.csv-data-table td.is-selected.end::after {
+  border-inline-end-width: var(--table-selection-border-width);
+  inset-inline-end: calc(-1 * var(--table-selection-border-width));
+}
+
+.csv-data-table th.top::after,
+.csv-data-table td.top::after,
+.csv-data-table th.is-selected.top::after,
+.csv-data-table td.is-selected.top::after {
+  border-top-width: var(--table-selection-border-width);
+  top: calc(-1 * var(--table-selection-border-width));
+}
+
+.csv-data-table th.bottom::after,
+.csv-data-table td.bottom::after,
+.csv-data-table th.is-selected.bottom::after,
+.csv-data-table td.is-selected.bottom::after {
+  border-bottom-width: var(--table-selection-border-width);
+  bottom: calc(-1 * var(--table-selection-border-width));
+}
+
+.csv-data-table th.top.end::after,
+.csv-data-table td.top.end::after,
+.csv-data-table th.is-selected.top.end::after,
+.csv-data-table td.is-selected.top.end::after {
+  border-start-end-radius: var(--table-selection-border-radius);
+}
+
+.csv-data-table th.bottom.end::after,
+.csv-data-table td.bottom.end::after,
+.csv-data-table th.is-selected.bottom.end::after,
+.csv-data-table td.is-selected.bottom.end::after {
+  border-end-end-radius: var(--table-selection-border-radius);
+}
+
+.csv-data-table th.top.start::after,
+.csv-data-table td.top.start::after,
+.csv-data-table th.is-selected.top.start::after,
+.csv-data-table td.is-selected.top.start::after {
+  border-start-start-radius: var(--table-selection-border-radius);
+}
+
+/* First body row sits under the sticky header; negative top pulls the overlay
+   under that header and clips the accent border. */
+.csv-data-table
+  tbody
+  > .csv-data-table__row:first-child
+  > :is(td, th).is-selected.top::after {
+  top: 0;
+}
+
+.csv-data-table th.bottom.start::after,
+.csv-data-table td.bottom.start::after,
+.csv-data-table th.is-selected.bottom.start::after,
+.csv-data-table td.is-selected.bottom.start::after {
+  border-end-start-radius: var(--table-selection-border-radius);
+}
+
+.csv-data-table td.is-selected .csv-data-table__cell-shell {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.csv-data-table th.is-dragging-right,
+.csv-data-table td.is-dragging-right {
+  border-right: 3px solid var(--table-selection-border-color);
+}
+
+.csv-data-table th.is-dragging-left,
+.csv-data-table td.is-dragging-left {
+  border-left: 3px solid var(--table-selection-border-color);
+}
+
+.csv-data-table td.is-dragging-top {
+  border-top: 3px solid var(--table-selection-border-color);
+}
+
+.csv-data-table td.is-dragging-bottom {
+  border-bottom: 3px solid var(--table-selection-border-color);
+}
+
+.csv-data-table__row.is-row-drag-source > :is(td, th),
+.csv-data-table th.is-col-drag-source,
+.csv-data-table td.is-col-drag-source {
+  opacity: 0.4;
+}
+
+.csv-data-table__row.is-row-drag-source > :is(td, th).is-selected::after,
+.csv-data-table th.is-col-drag-source.is-selected::after,
+.csv-data-table td.is-col-drag-source.is-selected::after {
+  opacity: 1;
+}
+
+[data-dnd-overlay] {
+  pointer-events: none;
+  z-index: 20;
+}
+
+.csv-data-table__shell [data-dnd-overlay][data-dnd-dragging] {
+  width: auto !important;
+  max-width: none !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.csv-data-table__drag-overlay {
+  box-sizing: border-box;
+  overflow: hidden;
+  border: var(--table-selection-border-width) solid
+    var(--table-selection-border-color);
+  border-radius: var(--table-selection-border-radius);
+  background: var(--csv-header-background);
+  box-shadow:
+    0 12px 28px rgb(15 23 42 / 0.18),
+    0 0 0 1px rgb(15 23 42 / 0.04);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}
+
+.csv-data-table__drag-overlay--row {
+  display: table;
+  table-layout: fixed;
+}
+
+.csv-data-table__drag-overlay--col {
+  display: flex;
+  flex-direction: column;
+}
+
+.csv-data-table__drag-overlay-cell {
+  box-sizing: border-box;
+  padding: 0.375rem 0.5rem;
+  border-right: 1px solid var(--csv-surface-border);
+  border-bottom: 1px solid var(--csv-surface-border);
+  background: var(--table-selection);
+  color: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.csv-data-table__drag-overlay--row .csv-data-table__drag-overlay-cell {
+  display: table-cell;
+  vertical-align: top;
+}
+
+.csv-data-table__drag-overlay--row
+  .csv-data-table__drag-overlay-cell:last-child {
+  border-right: 0;
+}
+
+.csv-data-table__drag-overlay--col
+  .csv-data-table__drag-overlay-cell:last-child {
+  border-bottom: 0;
+}
+
+.csv-data-table__drag-overlay-cell--head {
+  font-weight: 600;
+  background: var(--csv-header-background);
+}
+
+.csv-data-table__drag-overlay-cell--gutter {
+  min-width: 2rem;
+  max-width: 2rem;
+  padding: 0;
+  text-align: center;
+  color: var(--csv-muted-color);
+  background: var(--csv-index-background);
+}
+
+.csv-table-view__scroll [data-slot="scroll-area-viewport"] {
+  position: relative;
+}
+
+.markdown-preview-surface .markdown .csv-data-table,
+.markdown-rendered .csv-data-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: max-content;
+  min-width: 100%;
+  font-size: 0.875rem;
+  line-height: normal;
+}
+
+.markdown-preview-surface .markdown .csv-data-table :is(th, td),
+.markdown-rendered .csv-data-table :is(th, td) {
+  border-style: solid;
+  border-color: var(--csv-surface-border);
+  border-width: 0 1px 1px 0;
+  padding: 0;
+  background: transparent;
+  color: var(--csv-column-color, var(--csv-text-color));
+  text-align: left;
+  vertical-align: middle;
+  white-space: nowrap;
+  font: inherit;
+  height: auto;
+  min-width: 6rem;
+}
+
+.markdown-preview-surface .markdown .csv-data-table th.csv-data-table__head,
+.markdown-rendered .csv-data-table th.csv-data-table__head {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--csv-header-background);
+  font-weight: 600;
+}
+
+.markdown-preview-surface .markdown .csv-data-table :is(th, td).csv-data-table__col-1,
+.markdown-rendered .csv-data-table :is(th, td).csv-data-table__col-1,
+.markdown-preview-surface .markdown .csv-data-table tr:hover > :is(th, td).csv-data-table__col-1,
+.markdown-rendered .csv-data-table tr:hover > :is(th, td).csv-data-table__col-1 {
+  color: var(--csv-col-1);
+}
+
+.markdown-preview-surface .markdown .csv-data-table :is(th, td).csv-data-table__col-2,
+.markdown-rendered .csv-data-table :is(th, td).csv-data-table__col-2,
+.markdown-preview-surface .markdown .csv-data-table tr:hover > :is(th, td).csv-data-table__col-2,
+.markdown-rendered .csv-data-table tr:hover > :is(th, td).csv-data-table__col-2 {
+  color: var(--csv-col-2);
+}
+
+.markdown-preview-surface .markdown .csv-data-table :is(th, td).csv-data-table__col-3,
+.markdown-rendered .csv-data-table :is(th, td).csv-data-table__col-3,
+.markdown-preview-surface .markdown .csv-data-table tr:hover > :is(th, td).csv-data-table__col-3,
+.markdown-rendered .csv-data-table tr:hover > :is(th, td).csv-data-table__col-3 {
+  color: var(--csv-col-3);
+}
+
+.markdown-preview-surface .markdown .csv-data-table :is(th, td).csv-data-table__col-4,
+.markdown-rendered .csv-data-table :is(th, td).csv-data-table__col-4,
+.markdown-preview-surface .markdown .csv-data-table tr:hover > :is(th, td).csv-data-table__col-4,
+.markdown-rendered .csv-data-table tr:hover > :is(th, td).csv-data-table__col-4 {
+  color: var(--csv-col-4);
+}
+
+.markdown-preview-surface .markdown .csv-data-table :is(th, td).csv-data-table__col-5,
+.markdown-rendered .csv-data-table :is(th, td).csv-data-table__col-5,
+.markdown-preview-surface .markdown .csv-data-table tr:hover > :is(th, td).csv-data-table__col-5,
+.markdown-rendered .csv-data-table tr:hover > :is(th, td).csv-data-table__col-5 {
+  color: var(--csv-col-5);
+}
+
+.markdown-preview-surface .markdown .csv-data-table th.csv-data-table__col-1,
+.markdown-rendered .csv-data-table th.csv-data-table__col-1,
+.markdown-preview-surface .markdown .csv-data-table tr:hover > th.csv-data-table__col-1,
+.markdown-rendered .csv-data-table tr:hover > th.csv-data-table__col-1 {
+  background: color-mix(
+    in oklab,
+    var(--csv-col-1) 8%,
+    var(--csv-header-background)
+  );
+}
+
+.markdown-preview-surface .markdown .csv-data-table th.csv-data-table__col-2,
+.markdown-rendered .csv-data-table th.csv-data-table__col-2,
+.markdown-preview-surface .markdown .csv-data-table tr:hover > th.csv-data-table__col-2,
+.markdown-rendered .csv-data-table tr:hover > th.csv-data-table__col-2 {
+  background: color-mix(
+    in oklab,
+    var(--csv-col-2) 8%,
+    var(--csv-header-background)
+  );
+}
+
+.markdown-preview-surface .markdown .csv-data-table th.csv-data-table__col-3,
+.markdown-rendered .csv-data-table th.csv-data-table__col-3,
+.markdown-preview-surface .markdown .csv-data-table tr:hover > th.csv-data-table__col-3,
+.markdown-rendered .csv-data-table tr:hover > th.csv-data-table__col-3 {
+  background: color-mix(
+    in oklab,
+    var(--csv-col-3) 8%,
+    var(--csv-header-background)
+  );
+}
+
+.markdown-preview-surface .markdown .csv-data-table th.csv-data-table__col-4,
+.markdown-rendered .csv-data-table th.csv-data-table__col-4,
+.markdown-preview-surface .markdown .csv-data-table tr:hover > th.csv-data-table__col-4,
+.markdown-rendered .csv-data-table tr:hover > th.csv-data-table__col-4 {
+  background: color-mix(
+    in oklab,
+    var(--csv-col-4) 8%,
+    var(--csv-header-background)
+  );
+}
+
+.markdown-preview-surface .markdown .csv-data-table th.csv-data-table__col-5,
+.markdown-rendered .csv-data-table th.csv-data-table__col-5,
+.markdown-preview-surface .markdown .csv-data-table tr:hover > th.csv-data-table__col-5,
+.markdown-rendered .csv-data-table tr:hover > th.csv-data-table__col-5 {
+  background: color-mix(
+    in oklab,
+    var(--csv-col-5) 8%,
+    var(--csv-header-background)
+  );
+}
+
+.markdown-preview-surface .markdown .csv-data-table :is(th, td).csv-data-table__head--gutter,
+.markdown-preview-surface .markdown .csv-data-table :is(th, td).csv-data-table__cell--gutter,
+.markdown-rendered .csv-data-table :is(th, td).csv-data-table__head--gutter,
+.markdown-rendered .csv-data-table :is(th, td).csv-data-table__cell--gutter {
+  border-right-width: 0;
+  min-width: 2rem;
+  width: 2rem;
+  max-width: 2rem;
+  padding: 0;
+  text-align: center;
+  color: var(--csv-muted-color);
+  background: var(--csv-index-background);
+}
+
+.markdown-preview-surface .markdown .csv-data-table :is(th, td).csv-data-table__head--actions,
+.markdown-preview-surface .markdown .csv-data-table :is(th, td).csv-data-table__cell--actions,
+.markdown-rendered .csv-data-table :is(th, td).csv-data-table__head--actions,
+.markdown-rendered .csv-data-table :is(th, td).csv-data-table__cell--actions {
+  border-width: 0 0 1px;
+  min-width: 2rem;
+  width: 2rem;
+  max-width: 2rem;
+  padding: 0;
+  color: inherit;
+}
+
+.markdown-preview-surface .markdown .csv-data-table th.csv-data-table__head--actions,
+.markdown-rendered .csv-data-table th.csv-data-table__head--actions {
+  background: var(--csv-header-background);
+}
+
+.markdown-preview-surface .markdown .csv-data-table td.csv-data-table__cell--actions,
+.markdown-rendered .csv-data-table td.csv-data-table__cell--actions {
+  background: transparent;
+}
+
+.markdown-preview-surface .markdown .csv-data-table :is(.csv-cell__display, .csv-cell__input),
+.markdown-rendered .csv-data-table :is(.csv-cell__display, .csv-cell__input) {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0 0.5rem;
+  border: 0;
+  line-height: 2rem;
+  text-align: left;
+  color: inherit;
+}
+
+.csv-data-table.csv-data-table tr.csv-data-table__header-row:hover > th.csv-data-table__head,
+.markdown-preview-surface .markdown .csv-data-table tr.csv-data-table__header-row:hover > th.csv-data-table__head,
+.markdown-rendered .csv-data-table tr.csv-data-table__header-row:hover > th.csv-data-table__head {
+  background: color-mix(in oklab, var(--csv-head-fill, var(--csv-header-background)) 86%, black);
+}
+
+.csv-data-table__source-toggle {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--csv-muted-color);
+}
+
+.csv-data-table__source-toggle svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}

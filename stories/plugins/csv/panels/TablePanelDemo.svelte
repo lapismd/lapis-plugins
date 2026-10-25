@@ -79,6 +79,12 @@
           type: "markdown",
           state: { file: note.path, mode: "preview" },
         });
+        const sourceLeaf = runtime.app.workspace.getLeaf("tab");
+        await sourceLeaf.setViewState({
+          type: "lapis-csv",
+          state: { file: SAMPLE_CSV_PATH, mode: "source" },
+        });
+        runtime.app.workspace.setActiveLeaf(noteLeaf, { focus: false });
       }
       return runtime;
     });

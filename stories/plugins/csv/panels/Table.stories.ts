@@ -1,7 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, waitFor, within } from "storybook/test";
 import type { App, WorkspaceLeaf } from "@lapis-notes/api";
-import { CsvTable, SAMPLE_READING_NOTE_PATH } from "@lapis-notes/csv";
+import {
+  CsvTable,
+  SAMPLE_CSV_PATH,
+  SAMPLE_READING_NOTE_PATH,
+} from "@lapis-notes/csv";
 import type { PanelDemoLayout } from "../../_shared/panels/create-panel-demo";
 import {
   PANEL_DOCS_PARAMETERS,
@@ -110,6 +114,7 @@ function placementStory(layout: PanelDemoLayout, description: string): Story {
         "right",
         layout === "right-sidebar" || layout === "sidebar-group",
       );
+      const fileLeaves = [...lapisApp.workspace.getLeavesOfType("lapis-csv")];
       if (layout === "middle-top-tabs") {
         const noteLeaf = markdownLeaf(lapisApp, SAMPLE_READING_NOTE_PATH);
         lapisApp.workspace.setActiveLeaf(noteLeaf, { focus: false });
@@ -131,26 +136,56 @@ function placementStory(layout: PanelDemoLayout, description: string): Story {
           expect(embed.isConnected).toBe(true);
         });
         await noteLeaf.setViewState({ type: "empty", state: {} });
+        await expectTableRemoved(canvasElement);
+        await restoreCsvFile(fileLeaves);
+        await noteLeaf.setViewState({
+          type: "markdown",
+          state: { file: SAMPLE_READING_NOTE_PATH, mode: "preview" },
+        });
+        lapisApp.workspace.setActiveLeaf(noteLeaf, { focus: false });
+        expectQuotedCell(await waitForTable(canvasElement, "embed"));
       } else {
         await closeCsvLeaves(lapisApp);
+        await expectTableRemoved(canvasElement);
+        await restoreCsvFile(fileLeaves);
+        const fileLeaf = fileLeaves[0];
+        if (!fileLeaf) throw new Error("Missing CSV leaf");
+        lapisApp.workspace.setActiveLeaf(fileLeaf, { focus: false });
+        expectQuotedCell(await waitForTable(canvasElement, "file"));
       }
-      await waitFor(
-        () => {
-          expect(
-            canvasElement.querySelector("[data-testid='csv-table']"),
-          ).toBeNull();
-        },
-        { timeout: 5_000 },
-      );
     },
   };
 }
 
 function expectQuotedCell(table: HTMLElement) {
   const cell = within(table).getByRole("cell", { name: QUOTED_NOTE });
-  expect(cell.closest("tr")?.querySelectorAll("td")).toHaveLength(4);
-  expect(within(table).getByRole("columnheader", { name: "staff" })).toBeVisible();
-  expect(within(table).getByRole("columnheader", { name: "note" })).toBeVisible();
+  expect(cell.textContent).toBe(QUOTED_NOTE);
+  const grid = table.querySelector("table.csv-data-table");
+  const totalRows = Number(grid?.getAttribute("data-csv-row-count"));
+  const renderedRows = Number(grid?.getAttribute("data-csv-rendered-rows"));
+  expect(totalRows).toBeGreaterThan(1000);
+  expect(renderedRows).toBeGreaterThan(0);
+  expect(renderedRows).toBeLessThan(totalRows);
+  expect(within(table).getByRole("columnheader", { name: "#" })).toBeVisible();
+  expect(within(table).getByRole("columnheader", { name: /staff/ })).toBeVisible();
+  expect(within(table).getByRole("columnheader", { name: /note/ })).toBeVisible();
+  expect(
+    within(table).getAllByRole("button", { name: "Column actions" }).length,
+  ).toBeGreaterThan(0);
+  expectStickyHeader(table);
+}
+
+function expectStickyHeader(table: HTMLElement) {
+  const viewport = table.querySelector<HTMLElement>(
+    '[data-slot="scroll-area-viewport"]',
+  );
+  const header = within(table).getByRole("columnheader", { name: /staff/ });
+  expect(viewport).not.toBeNull();
+  const before = header.getBoundingClientRect().top;
+  viewport!.scrollTop = 400;
+  expect(viewport!.scrollTop).toBeGreaterThan(0);
+  expect(Math.abs(header.getBoundingClientRect().top - before)).toBeLessThan(2);
+  viewport!.scrollTop = 0;
 }
 
 function expectSidebar(
@@ -163,6 +198,24 @@ function expectSidebar(
     `[data-workspace-sidebar-side="${side}"]`,
   );
   expect(Boolean(dock?.contains(table))).toBe(containsTable);
+}
+
+async function expectTableRemoved(canvasElement: HTMLElement): Promise<void> {
+  await waitFor(
+    () => {
+      expect(canvasElement.querySelector("[data-testid='csv-table']")).toBeNull();
+    },
+    { timeout: 5_000 },
+  );
+}
+
+async function restoreCsvFile(leaves: WorkspaceLeaf[]): Promise<void> {
+  for (const leaf of leaves) {
+    await leaf.setViewState({
+      type: "lapis-csv",
+      state: { file: SAMPLE_CSV_PATH },
+    });
+  }
 }
 
 async function closeCsvLeaves(app: App): Promise<void> {

@@ -1,9 +1,16 @@
 import { FileView, type TFile, type WorkspaceLeaf } from "@lapis-notes/api";
 import { mount, unmount } from "svelte";
+import CsvSourceView from "../components/csv-source-view.svelte";
 import CsvTable from "../CsvTable.svelte";
 import { CSV_EXTENSIONS, CSV_VIEW_TYPE } from "../ids";
 
 const tableExtensions = new Set<string>(CSV_EXTENSIONS);
+
+export type CsvViewMode = "table" | "source";
+
+export function csvViewMode(state: Record<string, unknown>): CsvViewMode {
+  return state["mode"] === "source" ? "source" : "table";
+}
 
 export class CsvFileView extends FileView {
   #component: Record<string, unknown> | null = null;
@@ -21,26 +28,42 @@ export class CsvFileView extends FileView {
   }
 
   getIcon(): string {
-    return "table";
+    return this.mode() === "source" ? "file-code" : "table";
   }
 
   canAcceptExtension(extension: string): boolean {
     return tableExtensions.has(extension.toLowerCase());
   }
 
+  mode(): CsvViewMode {
+    return csvViewMode(this.getState());
+  }
+
+  showMode(mode: CsvViewMode): void {
+    const file = this.file?.path ?? this.getState()["file"];
+    void this.leaf.setViewState({
+      type: CSV_VIEW_TYPE,
+      state: { ...this.getState(), file, mode },
+    });
+  }
+
+  toggleMode(): void {
+    this.showMode(this.mode() === "source" ? "table" : "source");
+  }
+
   async onLoadFile(file: TFile): Promise<void> {
     this.file = file;
-    this.mountTable();
+    this.mountSurface();
   }
 
   async onUnloadFile(_file: TFile): Promise<void> {
     this.file = null;
-    this.unmountTable();
+    this.unmountSurface();
   }
 
   async onRename(file: TFile): Promise<void> {
     this.file = file;
-    this.mountTable();
+    this.mountSurface();
   }
 
   onload(): void {
@@ -48,7 +71,7 @@ export class CsvFileView extends FileView {
   }
 
   onunload(): void {
-    this.unmountTable();
+    this.unmountSurface();
   }
 
   private prepareHost(): void {
@@ -63,17 +86,34 @@ export class CsvFileView extends FileView {
     });
   }
 
-  private mountTable(): void {
+  private mountSurface(): void {
     this.prepareHost();
-    this.unmountTable();
-    if (!this.file) return;
+    this.unmountSurface();
+    const file = this.file;
+    if (!file) return;
+    if (this.mode() === "source") {
+      this.#component = mount(CsvSourceView, {
+        target: this.contentEl,
+        props: {
+          app: this.app,
+          file,
+          onShowTable: () => this.showMode("table"),
+        },
+      }) as Record<string, unknown>;
+      return;
+    }
     this.#component = mount(CsvTable, {
       target: this.contentEl,
-      props: { app: this.app, file: this.file, role: "file" },
+      props: {
+        app: this.app,
+        file,
+        role: "file",
+        onToggleSource: () => this.showMode("source"),
+      },
     }) as Record<string, unknown>;
   }
 
-  private unmountTable(): void {
+  private unmountSurface(): void {
     if (!this.#component) return;
     void unmount(this.#component);
     this.#component = null;

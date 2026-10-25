@@ -42,12 +42,29 @@
     "./styles.css": "./styles.css",
     "./registry.json": "./registry.json"
   },
+  "dependencies": {
+    "@dnd-kit/dom": "^0.4.0",
+    "@dnd-kit/helpers": "^0.4.0",
+    "@dnd-kit/svelte": "^0.4.0",
+    "@lapismd/design-core": "^0.6.0",
+    "@lucide/svelte": "^0.523.0",
+    "@tanstack/svelte-virtual": "^3.13.46",
+    "papaparse": "^5.5.2"
+  },
   "peerDependencies": {
+    "@codemirror/language": "^6.11.3",
+    "@codemirror/state": "^6.6.0",
+    "@codemirror/view": "^6.42.1",
     "@lapis-notes/api": "^0.1.2",
+    "@lapis-notes/ui": "^0.1.2",
+    "@lezer/common": "^1.5.2",
+    "@lezer/highlight": "^1.2.3",
+    "@lezer/lr": "^1.4.2",
     "svelte": "^5.0.0"
   },
   "devDependencies": {
     "@sveltejs/package": "^2.5.0",
+    "@types/papaparse": "^5.3.16",
     "@sveltejs/vite-plugin-svelte": "^5.1.1",
     "@tsconfig/svelte": "^5.0.5",
     "publint": "^0.3.12",

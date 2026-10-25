@@ -6,7 +6,13 @@ const harness = vi.hoisted(() => ({
   viewRegistration: null as null | unknown[],
   editorView: null as null | Record<string, unknown>,
   extensions: null as null | unknown[],
-  command: null as null | { id: string; name: string; callback: () => void },
+  commands: [] as {
+    id: string;
+    name: string;
+    callback?: () => void;
+    checkCallback?: (checking: boolean) => boolean;
+  }[],
+  editorExtension: null as null | unknown,
   embeds: [] as {
     extension: string;
     handler: (props: {
@@ -62,8 +68,12 @@ vi.mock("@lapis-notes/api", () => {
       harness.extensions = args;
     }
 
-    addCommand(command: typeof harness.command) {
-      harness.command = command;
+    registerEditorExtension(extension: unknown) {
+      harness.editorExtension = extension;
+    }
+
+    addCommand(command: (typeof harness.commands)[number]) {
+      harness.commands.push(command);
     }
   }
 
@@ -71,6 +81,7 @@ vi.mock("@lapis-notes/api", () => {
 });
 
 import { CSVPlugin } from "./csv-plugin";
+import { CsvFileView } from "./views/csv-view";
 
 function createApp(file: { path: string; extension: string } | null) {
   const leaf = { setViewState: vi.fn(async () => undefined) };
@@ -99,7 +110,8 @@ describe("CSVPlugin", () => {
     harness.viewRegistration = null;
     harness.editorView = null;
     harness.extensions = null;
-    harness.command = null;
+    harness.commands = [];
+    harness.editorExtension = null;
     harness.embeds = [];
     harness.mount.mockClear();
     harness.unmount.mockClear();
@@ -117,7 +129,11 @@ describe("CSVPlugin", () => {
       priority: "exclusive",
     });
     expect(harness.extensions).toEqual([["csv", "tsv"], "lapis-csv"]);
-    expect(harness.command?.id).toBe("open-csv");
+    expect(harness.commands.map((command) => command.id)).toEqual([
+      "open-csv",
+      "toggle-csv-source",
+    ]);
+    expect(typeof harness.editorExtension).toBe("function");
     expect(harness.embeds.map((entry) => entry.extension)).toEqual(["csv", "tsv"]);
 
     const container = document.createElement("div");
@@ -138,7 +154,7 @@ describe("CSVPlugin", () => {
     });
     expect(harness.mount).toHaveBeenCalledOnce();
 
-    harness.command?.callback();
+    harness.commands.find((command) => command.id === "open-csv")?.callback?.();
     expect(leaf.setViewState).toHaveBeenCalledWith({
       type: "lapis-csv",
       state: { file: "Sample.csv" },
@@ -148,7 +164,24 @@ describe("CSVPlugin", () => {
   it("leaves a non-table file on its current view", () => {
     const { app, leaf } = createApp({ path: "Notes/Welcome.md", extension: "md" });
     new CSVPlugin(app as never).onload();
-    harness.command?.callback();
+    harness.commands.find((command) => command.id === "open-csv")?.callback?.();
     expect(leaf.setViewState).not.toHaveBeenCalled();
+  });
+
+  it("toggles the active CSV leaf between the table and the source", () => {
+    const { app } = createApp({ path: "Sample.csv", extension: "csv" });
+    const view = new (CsvFileView as unknown as new () => CsvFileView)();
+    const toggleMode = vi.fn();
+    Object.assign(view, { toggleMode });
+    app.workspace.activeLeaf = { view, setViewState: vi.fn() } as never;
+    new CSVPlugin(app as never).onload();
+    const command = harness.commands.find(
+      (entry) => entry.id === "toggle-csv-source",
+    );
+
+    expect(command?.checkCallback?.(true)).toBe(true);
+    expect(toggleMode).not.toHaveBeenCalled();
+    expect(command?.checkCallback?.(false)).toBe(true);
+    expect(toggleMode).toHaveBeenCalledOnce();
   });
 });

@@ -368,3 +368,6 @@ and consuming Notes lifetime evidence remain distinct. Native-only intake does
 not qualify npm publication, host adoption, or unrelated pending plugin work.
 The ordinary verification generator leaves the `LN-NATIVE` namespace with its
 dedicated table, preserving evidence and avoiding duplicate requirement rows.
+
+The current CSV metadata synchronization follows LP-SPEC-002 and keeps the
+separate native-services and distribution gates alongside its plugin chapter.

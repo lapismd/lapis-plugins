@@ -23,3 +23,7 @@ resolving its temporary install graph. This changes no native Markdown parser
 contract or output; native service acceptance and registry-only release
 qualification remain separate. The native migration source stays pinned by
 Notes rather than being inferred from a mutable checkout.
+
+CSV host-module metadata synchronization changes no native Markdown parser
+behavior. Its native migration contract remains the independently owned pure
+service boundary, with source and renderer qualification recorded separately.
