@@ -1,7 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, waitFor, within } from "storybook/test";
 import type { App, WorkspaceLeaf } from "@lapis-notes/api";
-import { PdfViewer, SAMPLE_READING_NOTE_PATH } from "@lapis-notes/pdf";
+import {
+  PdfViewer,
+  SAMPLE_PDF_PATH,
+  SAMPLE_READING_NOTE_PATH,
+} from "@lapis-notes/pdf";
 import type { PanelDemoLayout } from "../../_shared/panels/create-panel-demo";
 import {
   PANEL_DOCS_PARAMETERS,
@@ -110,6 +114,7 @@ function placementStory(layout: PanelDemoLayout, description: string): Story {
         "right",
         layout === "right-sidebar" || layout === "sidebar-group",
       );
+      const fileLeaves = [...lapisApp.workspace.getLeavesOfType("lapis-pdf")];
       if (layout === "middle-top-tabs") {
         const noteLeaf = markdownLeaf(lapisApp, SAMPLE_READING_NOTE_PATH);
         lapisApp.workspace.setActiveLeaf(noteLeaf, { focus: false });
@@ -130,17 +135,23 @@ function placementStory(layout: PanelDemoLayout, description: string): Story {
           expect(embed.isConnected).toBe(true);
         });
         await noteLeaf.setViewState({ type: "empty", state: {} });
+        await expectPdfRemoved(canvasElement);
+        await restorePdfFile(fileLeaves);
+        await noteLeaf.setViewState({
+          type: "markdown",
+          state: { file: SAMPLE_READING_NOTE_PATH, mode: "preview" },
+        });
+        lapisApp.workspace.setActiveLeaf(noteLeaf, { focus: false });
+        expect(await waitForPdfPage(canvasElement, "embed")).toBeVisible();
       } else {
         await closePdfLeaves(lapisApp);
+        await expectPdfRemoved(canvasElement);
+        await restorePdfFile(fileLeaves);
+        const fileLeaf = fileLeaves[0];
+        if (!fileLeaf) throw new Error("Missing PDF leaf");
+        lapisApp.workspace.setActiveLeaf(fileLeaf, { focus: false });
+        expect(await waitForPdfPage(canvasElement, "file")).toBeVisible();
       }
-      await waitFor(
-        () => {
-          expect(
-            canvasElement.querySelector("[data-testid='pdf-viewer']"),
-          ).toBeNull();
-        },
-        { timeout: 5_000 },
-      );
     },
   };
 }
@@ -155,6 +166,24 @@ function expectSidebar(
     `[data-workspace-sidebar-side="${side}"]`,
   );
   expect(Boolean(dock?.contains(viewer))).toBe(containsViewer);
+}
+
+async function expectPdfRemoved(canvasElement: HTMLElement): Promise<void> {
+  await waitFor(
+    () => {
+      expect(canvasElement.querySelector("[data-testid='pdf-viewer']")).toBeNull();
+    },
+    { timeout: 5_000 },
+  );
+}
+
+async function restorePdfFile(leaves: WorkspaceLeaf[]): Promise<void> {
+  for (const leaf of leaves) {
+    await leaf.setViewState({
+      type: "lapis-pdf",
+      state: { file: SAMPLE_PDF_PATH },
+    });
+  }
 }
 
 async function closePdfLeaves(app: App): Promise<void> {
