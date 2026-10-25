@@ -1,0 +1,57 @@
+# DOCX Plugin
+
+`@lapis-notes/docx` opens a vault Word document in a file view and in a note
+embed. `Plugins/DOCX/Panels/Viewing` is the first governed surface. It loads a
+seeded sample in every placement, and Middle (Top Tabs) also opens a Markdown
+note that embeds that same file. The story stays `visual-pending`. It does not
+create Visual Delta baselines.
+
+The package lives at `packages/docx` as version `0.1.0` with runtime id
+`lapis-docx`. The view type is `lapis-docx`. `App` is received by the plugin
+constructor. The preview does not read or assign `globalThis.app`.
+
+A file named `*.docx` is associated exclusively with that view, and
+`registerExtensions(["docx"], "lapis-docx")` agrees. The embed registry entry
+`docx` is the extension renderer, so `![[Sample.docx]]` uses the same viewer.
+An ordinary Markdown embed stays a Markdown preview. The filename caption
+stays on the DOCX embed. Open Word is the command that opens the active DOCX
+in this view.
+
+The file view and the embed call one mount helper. The packaged output keeps
+that import as a relative path to the vendored tree beside `dist`. This slice
+does not publish, so the archive file list does not yet carry that tree. The
+helper lazy-loads the vendored browser editor from canvas-word commit
+`69dac7966e8932ec9b8bb8bde152d008d67a2cc3`, reads the vault bytes, and opens
+them with `readonly: true` and no `backendUrl`. The vendored tree is the
+browser `WordCanvas` graph and its shared model. It is not the
+`@forevka/wordcanvas` npm package. `@chenglou/pretext@0.0.7` is bundled with
+the upstream bidi and analysis patch. `fflate` and `txml` are bundled for
+DOCX import. None of those modules are host externals. A mount that finishes
+after dispose destroys the editor immediately. The host has a pixel height.
+The embedded frame uses the theme border and a small theme radius.
+
+Catalog metadata includes dimension placeholders so the package checker can
+see the plugin. Those images are not an approved capture. The capture command,
+settings, theme tokens, saving the document back to the vault, collaboration,
+PDF export, and legacy `.doc` stay deferred. This slice does not publish the
+package and does not add it to a host profile.
+
+## Requirements
+
+| ID | Requirement |
+| --- | --- |
+| LN-DOCX-001 | DOCX MUST live at `packages/docx` as `@lapis-notes/docx@0.1.0` with runtime id `lapis-docx` and view type `lapis-docx`. The plugin class MUST receive `App` from its constructor and MUST NOT read or assign `globalThis.app`. It MUST register the file view, an exclusive `*.docx` association, `registerExtensions(["docx"], "lapis-docx")`, an Open Word command, and `embedRegistry.register("docx", ...)`. The file view and the embed MUST call one mount helper. That helper MUST lazy-load the vendored browser `WordCanvas`, read the file with `vault.readBinary`, and open those bytes with `readonly: true` and no `backendUrl`. `@forevka/wordcanvas` MUST NOT be an npm dependency. `@chenglou/pretext`, `fflate`, and `txml` MUST be bundled and MUST NOT be added to the host external allowlist. A mount that finishes after dispose MUST be destroyed immediately. The host MUST have a pixel height. An embedded DOCX MUST use the theme border and a small theme radius. |
+| LN-DOCX-002 | `Plugins/DOCX/Panels/Viewing` MUST open `packages/docx/assets/sample.docx`, seeded as `Sample.docx`, in all six governed placements: Middle (Top Tabs), Stacked Tabs, Left Sidebar, Right Sidebar, Bottom Panel, and Sidebar As a Group. The story MUST show the viewer host and at least one canvas, and both sidebars for that placement. Closing or leaving the view MUST remove that viewer. The play function MUST then restore the open file, and Middle (Top Tabs) MUST restore the note, so the settled story shows the file. Middle (Top Tabs) MUST also open a Markdown note containing `![[Sample.docx]]` and show the same viewer inside the embed frame with the filename caption. An ordinary note embed in that note MUST stay a Markdown preview. The viewing stories MUST stay `visual-pending` and MUST NOT create Visual Delta baselines. |
+| LN-DOCX-003 | Registry screenshots, settings, theme tokens, saving back to the vault, collaboration, PDF export, legacy `.doc`, and web or native resource-url checks MUST stay deferred. This slice MUST NOT publish the package or add it to a host profile. |
+
+## Verification
+
+Package tests cover the runtime id, the exclusive `*.docx` association, the
+`docx` embed registration, the Open Word command, a read-only mount with no
+collaboration URL, and a mount that is closed before the document finishes
+opening. `Plugins/DOCX/Panels/Viewing` asserts the viewer host, a canvas, the
+placement sidebars, and removal of the viewer after the view closes. The play
+function then restores the open file, and Middle (Top Tabs) restores the note,
+so the settled story shows the file. Middle (Top Tabs) also asserts the
+filename caption on `![[Sample.docx]]` and keeps `![[Welcome.md]]` as a
+Markdown preview. The sample is `packages/docx/assets/sample.docx`.

@@ -65,6 +65,8 @@ const packageAliases = [
   ["@lapis-notes/transcripts", "packages/transcripts/src/index.ts"],
   ["@lapis-notes/pdf/styles.css", "packages/pdf/src/styles.css"],
   ["@lapis-notes/pdf", "packages/pdf/src/index.ts"],
+  ["@lapis-notes/docx/styles.css", "packages/docx/src/styles.css"],
+  ["@lapis-notes/docx", "packages/docx/src/index.ts"],
   ["@lapis-notes/csv/styles.css", "packages/csv/src/styles.css"],
   ["@lapis-notes/csv", "packages/csv/src/index.ts"],
   [
@@ -186,6 +188,13 @@ const config: StorybookConfig = {
           "@lezer/common",
         ],
         alias: [
+          {
+            find: /^@cw\/shared$/,
+            replacement: path.join(
+              repoRoot,
+              "packages/docx/vendor/wordcanvas/shared/src/index.ts",
+            ),
+          },
           {
             find: /^harper\.js\/binaryInlined$/,
             replacement: path.join(

@@ -35,6 +35,7 @@ const allPluginPackages = [
     pluginId: "lapis-markdown-lint",
   },
   { directory: "pdf", packageName: "@lapis-notes/pdf", pluginId: "lapis-pdf" },
+  { directory: "docx", packageName: "@lapis-notes/docx", pluginId: "lapis-docx" },
   { directory: "csv", packageName: "@lapis-notes/csv", pluginId: "lapis-csv" },
   {
     directory: "search",

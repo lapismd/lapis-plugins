@@ -116,6 +116,9 @@
   "stories/plugins/pdf/panels/Viewing.stories.ts": {
     "kind": "application"
   },
+  "stories/plugins/docx/panels/Viewing.stories.ts": {
+    "kind": "application"
+  },
   "stories/plugins/search/FederatedResults.stories.ts": {
     "kind": "application"
   },
