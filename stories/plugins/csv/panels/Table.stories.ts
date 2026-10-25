@@ -185,8 +185,34 @@ async function expectQuotedCell(table: HTMLElement) {
     name: "View CSV source",
   });
   expect(sourceButtons).toHaveLength(table.dataset.csvRole === "file" ? 2 : 0);
+  expectActionsInView(table);
   await expectScrolledWindow(table, totalRows);
   await expectFind(table);
+}
+
+function expectActionsInView(table: HTMLElement) {
+  const actions = table.querySelector("td.csv-data-table__cell--actions");
+  const viewport = table.querySelector("[data-slot='scroll-area-viewport']");
+  const sample = table.querySelector(".csv-cell__display");
+  if (
+    !(actions instanceof HTMLElement) ||
+    !(viewport instanceof HTMLElement) ||
+    !(sample instanceof HTMLElement)
+  ) {
+    throw new Error("Missing CSV row actions");
+  }
+  const cellBox = actions.getBoundingClientRect();
+  const viewBox = viewport.getBoundingClientRect();
+  expect(cellBox.width).toBeGreaterThan(0);
+  expect(cellBox.left).toBeGreaterThanOrEqual(viewBox.left - 1);
+  expect(cellBox.right).toBeLessThanOrEqual(viewBox.right + 1);
+  const themeMono = getComputedStyle(table.ownerDocument.documentElement)
+    .getPropertyValue("--font-mono")
+    .split(",")[0]
+    .trim()
+    .replace(/^["']|["']$/g, "");
+  expect(themeMono.length).toBeGreaterThan(0);
+  expect(getComputedStyle(sample).fontFamily).toContain(themeMono);
 }
 
 async function expectScrolledWindow(table: HTMLElement, totalRows: number) {
