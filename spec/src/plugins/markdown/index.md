@@ -234,3 +234,9 @@ Current shared-shell qualification uses the released Design Core 0.6
 public boundary and matching Notes framework archives. Published dependency
 ranges now admit that boundary directly; the Avatar repair remains a recorded
 local candidate until the separate release gate.
+
+The native frontmatter parity corpus under LN-NATIVE-001 also qualifies the
+retained TypeScript extractor through its JSON persistence boundary. It adds
+Unicode/scalar/alias/error cases without changing renderer behavior, published
+plugin exports or the browser's YAML implementation. Native source and either
+host's adoption remain separate evidence.

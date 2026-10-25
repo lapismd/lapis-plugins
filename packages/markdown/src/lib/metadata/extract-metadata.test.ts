@@ -1,11 +1,18 @@
 import { describe, expect, it } from "vitest";
 import { extractMetadata } from "./extract-metadata";
 import nativeFixtures from "../../../../../crates/lapis-plugin-services/tests/fixtures/metadata.json";
+import yamlFixtures from "../../../../../crates/lapis-plugin-services/tests/fixtures/metadata-yaml.json";
 
 describe("extractMetadata", () => {
   for (const fixture of nativeFixtures) {
     it(`retains native conformance: ${fixture.name}`, () => {
       expect(extractMetadata(fixture.input)).toEqual(fixture.expected);
+    });
+  }
+  for (const fixture of yamlFixtures) {
+    it(`retains serialized YAML conformance: ${fixture.name}`, () => {
+      const actual = JSON.parse(JSON.stringify(extractMetadata(fixture.input)));
+      expect(actual).toEqual(fixture.expected);
     });
   }
   it("parses nested YAML front matter", () => {

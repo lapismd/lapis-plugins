@@ -424,3 +424,8 @@ Dependency-lock repair uses ordinary registry semver manifests with the local
 pnpm hook disabled. Existing Bits UI and text-layout patches share the workspace
 patch authority; tests keep both the lifecycle/hash and portable-lock guards.
 A generated lock or a temporary archive graph is not release qualification.
+
+CSV Registry Screenshots are application stories under LP-SPEC-054. Their
+registry demo reaches the existing real WorkspaceShell through PanelDemo, so
+the classification inventory MUST include that family alongside the CSV panel.
+This inventory repair changes no story assertions, product code or baselines.

@@ -340,3 +340,7 @@ local pnpm-hook checksum or machine paths. Regeneration uses the pinned pnpm
 version with local hooks ignored; it changes no patch body, release coordinate,
 native algorithm or selected consumer archive. Required source, consumer and
 audit gates remain independent of lock generation.
+
+The CSV registry screenshot family participates in the existing application
+composition guard through its real public workspace shell. Recording that
+coverage class changes neither the capture stories nor signed plugin payloads.

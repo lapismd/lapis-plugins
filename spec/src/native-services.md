@@ -7,10 +7,11 @@ contracts and the standalone browser implementation remain unchanged.
 
 ## Requirements
 
-| ID            | Requirement                                                                                                                                                                                                  |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| LN-NATIVE-001 | The native Markdown extractor MUST retain the existing renderer extractor's frontmatter, heading, link, tag, heading-context and UTF-16 position results. Shared fixtures MUST qualify both implementations. |
-| LN-NATIVE-002 | Native Markdown cache identity MUST use the retained MD5 of the UTF-8 source bytes. Application policy MUST own index publication and unattended lifetime.                                                   |
+| ID            | Requirement                                                                                                                                                                                                                                                                                   |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| LN-NATIVE-001 | The native Markdown extractor MUST retain the existing renderer extractor's frontmatter, heading, link, tag, heading-context and UTF-16 position results. Shared fixtures MUST qualify both implementations, including serialized YAML 1.2 scalar, Unicode, alias and invalid-input outcomes. |
+| LN-NATIVE-002 | Native Markdown cache identity MUST use the retained MD5 of the UTF-8 source bytes. Application policy MUST own index publication and unattended lifetime.                                                                                                                                    |
+| LN-NATIVE-003 | The native Markdown parser version MUST change when metadata interpretation changes so unchanged source bytes cannot reuse stale derived metadata.                                                                                                                                            |
 
 This intake covers the existing lightweight metadata extractor. Task, custom
 projection and extension processors remain separate migration work. It neither
@@ -64,3 +65,17 @@ Restoring registry-only npm dependency resolution and existing lifecycle-patch
 hashes does not select another native Markdown/Search implementation. Native
 crate prerequisites and application/consumer qualification remain separately
 pinned while the normal source graph is repaired and validated.
+
+## Frontmatter source parity
+
+The shared retained corpus compares complete metadata through the existing JSON
+persistence boundary. Literal U+0085, U+2028 and U+2029 MUST remain source text;
+a reader MUST NOT substitute code points before parsing. YAML core scalar
+types, alias values, duplicate rejection and single-document admission retain
+the TypeScript extractor. Nonfinite scalar values use the retained serialized
+JSON null representation. Public extraction and source UTF-8 hashing stay
+independent of application scheduling and both host selections.
+
+CSV registry screenshot application classification changes only the existing
+catalog guard inventory. It does not alter native Markdown metadata or grant
+a native/host adoption exception.

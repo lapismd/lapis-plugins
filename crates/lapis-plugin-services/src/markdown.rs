@@ -1,8 +1,10 @@
+mod frontmatter;
+
 use regex::Regex;
 use serde_json::{Map, Value, json};
 use std::sync::LazyLock;
 
-pub const PARSER_VERSION: &str = "markdown-native-v1";
+pub const PARSER_VERSION: &str = "markdown-native-v2";
 
 /// Retain the renderer's UTF-8 content MD5 identity for existing cache rows.
 pub fn content_hash(text: &str) -> String {
@@ -60,7 +62,7 @@ pub fn extract_metadata(text: &str) -> Value {
     let mut offset = 0;
     if let Some(found) = FRONTMATTER.captures(text) {
         let span = found.get(0).unwrap();
-        let value = serde_yaml::from_str::<Value>(&found[1]).unwrap_or(json!({}));
+        let value = frontmatter::parse(&found[1]);
         cache.insert(
             "frontmatter".into(),
             if value.is_object() { value } else { json!({}) },
