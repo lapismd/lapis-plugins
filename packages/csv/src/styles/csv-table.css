@@ -842,6 +842,14 @@
   background: color-mix(in oklab, var(--csv-head-fill, var(--csv-header-background)) 86%, black);
 }
 
+.csv-data-table.csv-data-table tr.csv-data-table__header-row > th.csv-data-table__head--label:is(:hover, :focus-within),
+.markdown-preview-surface .markdown .csv-data-table tr.csv-data-table__header-row > th.csv-data-table__head--label:is(:hover, :focus-within),
+.markdown-rendered .csv-data-table tr.csv-data-table__header-row > th.csv-data-table__head--label:is(:hover, :focus-within) {
+  z-index: 4;
+  outline: 2px solid color-mix(in oklab, var(--csv-col-3) 45%, transparent);
+  outline-offset: -1px;
+}
+
 .csv-data-table th.csv-data-table__head.csv-data-table__head--actions {
   padding: 0;
   text-align: center;

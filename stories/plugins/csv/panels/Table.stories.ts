@@ -163,6 +163,19 @@ function placementStory(layout: PanelDemoLayout, description: string): Story {
   };
 }
 
+async function expectColumnHeaderRing(table: HTMLElement) {
+  const header = within(table).getByRole("columnheader", { name: /staff/ });
+  const label = within(header).getByRole("button", { name: "staff" });
+  label.focus();
+  await waitFor(() => {
+    const style = getComputedStyle(header);
+    expect(style.outlineStyle).toBe("solid");
+    expect(parseFloat(style.outlineWidth)).toBeGreaterThanOrEqual(2);
+    expect(style.outlineOffset).toBe("-1px");
+  });
+  label.blur();
+}
+
 async function expectQuotedCell(table: HTMLElement) {
   const cell = within(table).getByRole("cell", { name: QUOTED_NOTE });
   expect(cell.textContent).toBe(QUOTED_NOTE);
@@ -175,6 +188,7 @@ async function expectQuotedCell(table: HTMLElement) {
   expect(within(table).getByRole("columnheader", { name: "#" })).toBeVisible();
   expect(within(table).getByRole("columnheader", { name: /staff/ })).toBeVisible();
   expect(within(table).getByRole("columnheader", { name: /note/ })).toBeVisible();
+  await expectColumnHeaderRing(table);
   expect(
     within(table).getAllByRole("button", { name: "Column actions" }).length,
   ).toBeGreaterThan(0);
