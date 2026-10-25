@@ -91,3 +91,15 @@ contract. The CSV metadata notes remain with the unfinished application's
 uncommitted changes so its same-change specification gate remains intact.
 Existing CSV, Markdown asset and lockfile work is preserved, with no unresolved
 Jujutsu conflicts.
+
+## Confirmed temporary-workspace cleanup
+
+On 2026-10-25 the user confirmed cleanup. The 1 temporary workspace was
+unregistered from Jujutsu and moved to timestamped macOS Trash locations.
+Their complete local evidence was archived in the default workspace under
+`.local/retired-workspaces/catalog-validation-20261025T155102Z`,
+with verified archive checksums, original head/parent revisions and local
+recovery bookmarks in `retirement.json`. Each checkout was clean, its non-empty
+changes were already landed, and no running process owned its directory.
+The before/after comparison confirmed every existing main-workspace tracked
+file remained byte-identical during retirement. Other workspaces were retained.
