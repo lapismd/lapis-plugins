@@ -1,7 +1,8 @@
 @import "./styles/csv-table.css";
 
 .csv-view,
-.csv-table-view {
+.csv-table-view,
+.csv-source-pane {
   --csv-col-1: oklch(0.62 0.19 25);
   --csv-col-2: oklch(0.68 0.16 145);
   --csv-col-3: oklch(0.66 0.14 230);
@@ -74,11 +75,6 @@
 .csv-source-view .cm-csv-separator {
   color: var(--csv-separator);
   opacity: 0.75;
-}
-
-.csv-source-view .cm-csv-string,
-.csv-source-view .cm-csv-value {
-  color: inherit;
 }
 
 .csv-source-pane {

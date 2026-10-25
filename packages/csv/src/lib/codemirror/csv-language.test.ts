@@ -1,4 +1,6 @@
+import { highlightTree } from "@lezer/highlight";
 import { describe, expect, it } from "vitest";
+import { csvHighlightStyle } from "./csv-rainbow-theme";
 import { csvLanguage } from "./csv-language";
 import { csvSourceExtensions } from "./csv-source-extensions";
 
@@ -23,5 +25,25 @@ describe("CSV language", () => {
 
   it("contributes the rainbow highlighter with the language", () => {
     expect(csvSourceExtensions()).toHaveLength(4);
+  });
+
+  it("keeps a column colour on quoted and plain cell text", () => {
+    const text = 'North,1.84,"Clear, weed"';
+    const spans: Array<{ text: string; classes: string }> = [];
+    highlightTree(
+      csvLanguage.parser.parse(text),
+      csvHighlightStyle,
+      (from, to, classes) => {
+        spans.push({ text: text.slice(from, to), classes });
+      },
+    );
+
+    expect(spans).toEqual([
+      { text: "North", classes: "cm-csv-cell1" },
+      { text: ",", classes: "cm-csv-separator" },
+      { text: "1.84", classes: "cm-csv-cell2" },
+      { text: ",", classes: "cm-csv-separator" },
+      { text: '"Clear, weed"', classes: "cm-csv-cell3" },
+    ]);
   });
 });

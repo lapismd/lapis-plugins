@@ -750,12 +750,24 @@
 .csv-data-table.csv-data-table tr.csv-data-table__header-row:hover > th.csv-data-table__head,
 .markdown-preview-surface .markdown .csv-data-table tr.csv-data-table__header-row:hover > th.csv-data-table__head,
 .markdown-rendered .csv-data-table tr.csv-data-table__header-row:hover > th.csv-data-table__head {
+  background: var(--csv-head-fill, var(--csv-header-background));
+}
+
+.csv-data-table.csv-data-table tr.csv-data-table__header-row > th.csv-data-table__head:hover,
+.markdown-preview-surface .markdown .csv-data-table tr.csv-data-table__header-row > th.csv-data-table__head:hover,
+.markdown-rendered .csv-data-table tr.csv-data-table__header-row > th.csv-data-table__head:hover {
   background: color-mix(in oklab, var(--csv-head-fill, var(--csv-header-background)) 86%, black);
 }
 
-.csv-data-table__source-toggle {
+.csv-data-table th.csv-data-table__head.csv-data-table__head--actions {
+  padding: 0;
+  text-align: center;
+}
+
+.csv-data-table th.csv-data-table__head--actions .csv-data-table__source-toggle {
   width: 1.5rem;
   height: 1.5rem;
+  vertical-align: middle;
   color: var(--csv-muted-color);
 }
 
