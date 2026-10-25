@@ -32,8 +32,8 @@ export function toMiraFileRef(file: TFile): MiraFileRef {
     kind: isMarkdown(file)
       ? "markdown"
       : IMAGE_EXTENSIONS.has(file.extension.toLocaleLowerCase())
-        ? "image"
-        : "unknown",
+      ? "image"
+      : "unknown",
   };
 }
 
@@ -47,7 +47,7 @@ function resolveFile(app: App, target: MiraFileTarget): TFile | null {
   }
   return app.metadataCache.getFirstLinkpathDest(
     target.path,
-    target.sourcePath ?? "",
+    target.sourcePath ?? ""
   );
 }
 
@@ -76,6 +76,18 @@ export function createLapisMiraFileAdapter(app: App): MiraFileAdapter {
       return resolved && isMarkdown(resolved)
         ? app.vault.cachedRead(resolved)
         : null;
+    },
+
+    async readAssetUrl(file) {
+      const resolved = fileFromRef(app, file);
+      // Markdown keeps the preview path. A resource URL would make Mira render
+      // the note as an image and hide that preview.
+      if (!resolved || isMarkdown(resolved)) return null;
+      return app.vault.getResourceUrl(resolved);
+    },
+
+    releaseAssetUrl(url) {
+      app.vault.revokeResourceUrl(url);
     },
 
     async writeMarkdown(file, value) {
@@ -164,7 +176,7 @@ export function createLapisMiraFileAdapter(app: App): MiraFileAdapter {
           id: heading.heading,
           text: heading.heading,
           level: heading.level,
-        }),
+        })
       );
     },
 

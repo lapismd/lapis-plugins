@@ -372,3 +372,5 @@ dedicated table, preserving evidence and avoiding duplicate requirement rows.
 
 The current CSV metadata synchronization follows LP-SPEC-002 and keeps the
 separate native-services and distribution gates alongside its plugin chapter.
+The Markdown image URL lease follows the same split: the plugin chapter owns
+the vault hook, and this governance chapter does not gain a new gate.

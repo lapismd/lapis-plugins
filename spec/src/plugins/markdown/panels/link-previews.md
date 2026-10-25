@@ -15,6 +15,11 @@ Backlinks and Outgoing Links retain this preview behavior when a legacy
 view-type alias is restored. Canonicalization changes only persisted workspace
 identity, not link resolution or preview ownership.
 
+Portable image rendering uses Mira's public `readAssetUrl` and
+`releaseAssetUrl` hooks. The owning App's vault acquires and revokes each asset
+URL; missing files return no URL. The existing registered-embed path remains
+available without a desktop-specific loader or resource workaround.
+
 ## Requirements
 
 | ID        | Requirement                                                                                                                                                                                                                                                                                                                                                                                                                 |

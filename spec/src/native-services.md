@@ -29,4 +29,6 @@ host peers. That metadata synchronization changes no native Markdown parser
 behavior. Its native migration contract remains the independently owned pure
 service boundary, with source and renderer qualification recorded separately.
 Including `Plugins/CSV/Registry Screenshots` in registry media selection
-changes no native Markdown parser behavior.
+changes no native Markdown parser behavior. Leasing ordinary Markdown image
+URLs through the owning vault uses the public Mira asset hooks and changes no
+native Markdown parser behavior.

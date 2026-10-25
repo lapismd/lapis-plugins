@@ -150,6 +150,9 @@ menu layers releases the document-level pointer lock.
 
 Reusable Plugin and Editor contracts remain in `@lapis-notes/api`. Markdown
 document policy lives in `@lapis-notes/markdown` and is implemented by Mira.
+Portable image URLs are leased through the owning vault using Mira's public
+`readAssetUrl`/`releaseAssetUrl` hooks; missing assets remain unresolved.
+
 The Lapis package owns the app-bound `MiraFileAdapter` and reuses one instance
 per App; portable rendering and editor behavior remain Mira-owned. Markdown views, renderers, frontmatter, and
 Mira extension factories receive that App explicitly; static compatibility
