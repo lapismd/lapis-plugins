@@ -349,3 +349,10 @@ The plugin interaction runner owns IPv4 loopback port 63422 with strict port
 selection. Notes uses 63421 and Desktop retains its separate catalog port.
 Concurrent browser APIs cannot share IPv4/IPv6 listeners behind `localhost`
 because module and RPC requests may otherwise reach another repository.
+
+Native first-party algorithms are mapped to the dedicated native-services
+chapter and native-verification table. Cargo source, retained renderer fixture
+and consuming Notes lifetime evidence remain distinct. Native-only intake does
+not qualify npm publication, host adoption, or unrelated pending plugin work.
+The ordinary verification generator leaves the `LN-NATIVE` namespace with its
+dedicated table, preserving evidence and avoiding duplicate requirement rows.

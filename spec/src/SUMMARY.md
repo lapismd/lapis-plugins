@@ -3,6 +3,7 @@
 - [Specification governance](spec-governance.md)
 - [Distribution and releases](distribution.md)
 - [Registry media](registry-media.md)
+- [Native plugin services](native-services.md)
 - [Plugins](plugins/index.md)
   - [Plugins / AI](plugins/ai/index.md)
   - [Plugins / Bases](plugins/bases/index.md)
@@ -30,3 +31,4 @@
   - [Plugins / Sync](plugins/sync/index.md)
   - [Plugins / Word Count](plugins/wordcount/index.md)
 - [Verification](verification.md)
+- [Native service verification](native-verification.md)

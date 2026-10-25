@@ -261,3 +261,9 @@ LN-HIST-015 uses the existing repository controller export wildcard for an
 optional acquired-guard observer. It changes no package identity, host module
 allowlist, archive authority or signing boundary. The independent History
 Changeset retains the ordinary release gate.
+
+The private native plugin-services crate is a recorded Rust migration
+prerequisite, separate from npm publication. Its own Cargo lockfile qualifies
+the native parser; Notes consumes it through an explicit temporary sibling
+dependency. Shared renderer fixtures compare existing metadata outputs without
+changing published plugin contracts or release coordinates.

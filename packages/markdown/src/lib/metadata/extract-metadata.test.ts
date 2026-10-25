@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { extractMetadata } from "./extract-metadata";
+import nativeFixtures from "../../../../../crates/lapis-plugin-services/tests/fixtures/metadata.json";
 
 describe("extractMetadata", () => {
+  for (const fixture of nativeFixtures) {
+    it(`retains native conformance: ${fixture.name}`, () => {
+      expect(extractMetadata(fixture.input)).toEqual(fixture.expected);
+    });
+  }
   it("parses nested YAML front matter", () => {
     const cache = extractMetadata(`---
 type: task
