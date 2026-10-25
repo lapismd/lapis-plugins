@@ -320,6 +320,7 @@ function registryStoryTitle(directory) {
     "source-editor": "Source Editor",
     spellcheck: "Spell Check",
     sync: "Sync",
+    csv: "CSV",
     pdf: "PDF",
     transcripts: "Transcripts",
     wordcount: "Word Count",

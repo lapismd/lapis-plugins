@@ -184,7 +184,7 @@ NOT create Visual Delta baselines.
 The CSV table preview is visual-pending under `Plugins/CSV/Panels/Table`.
 It MUST show the seeded CSV in all six governed placements, and Middle (Top
 Tabs) MUST also show that CSV inside a note embed. Registry media selection
-omits CSV until its screenshot slice. Stories stay `visual-pending` and MUST
+includes `Plugins/CSV/Registry Screenshots`. Stories stay `visual-pending` and MUST
 NOT create Visual Delta baselines.
 Shared full-shell framing changes MUST preserve the complete 3:2 source capture
 and prove both horizontal edges remain in the composed output. Every composed
