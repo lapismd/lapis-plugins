@@ -271,9 +271,13 @@
   color: var(--csv-muted-color);
 }
 
+.csv-data-table tbody > tr.csv-data-table__row {
+  height: 2rem;
+}
+
 .csv-data-table__cell-shell {
   display: flex;
-  min-height: 2rem;
+  min-height: 0;
   height: 100%;
 }
 

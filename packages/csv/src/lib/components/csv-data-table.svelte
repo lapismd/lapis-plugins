@@ -5,12 +5,7 @@
     DragOverEvent,
     DragStartEvent,
   } from "@dnd-kit/dom";
-  import { onDestroy, onMount, untrack } from "svelte";
-  import {
-    createVirtualizer,
-    type SvelteVirtualizer,
-    type VirtualItem,
-  } from "@tanstack/svelte-virtual";
+  import { onMount, untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as ContextMenu from "@lapismd/design-core/shadcn/context-menu";
   import * as Table from "@lapismd/design-core/shadcn/table";
@@ -50,8 +45,11 @@
   import CsvDataTableDragOverlay from "./csv-data-table-drag-overlay.svelte";
   import CsvDataTableRow from "./csv-data-table-row.svelte";
   import CsvDataTableRowActions from "./csv-data-table-row-actions.svelte";
-
-  const ROW_HEIGHT = 32;
+  import {
+    createCsvRowVirtualizer,
+    CSV_ROW_HEIGHT,
+    CSV_ROW_OVERSCAN,
+  } from "./csv-row-virtualizer.svelte";
 
   type Props = {
     grid: CsvGrid;
@@ -80,40 +78,20 @@
   );
   const bodyRowIndices = $derived(tableData.map((row) => row.rowIndex));
   const columnSpan = $derived(colCount + (showRowNumbers ? 1 : 0) + 1);
-  let visibleRows = $state.raw<VirtualItem[]>([]);
-  let totalSize = $state(0);
-  let virtualizer = $state.raw<SvelteVirtualizer<
-    HTMLElement,
-    HTMLTableRowElement
-  > | null>(null);
-  const rowVirtualizer = createVirtualizer<HTMLElement, HTMLTableRowElement>({
-    count: 0,
-    getScrollElement: () => null,
-    estimateSize: () => ROW_HEIGHT,
-    overscan: 8,
-    enabled: false,
-  });
-  const stopVirtualizer = untrack(() =>
-    rowVirtualizer.subscribe((next) => {
-      if (!virtualizer) virtualizer = next;
-      visibleRows = next.getVirtualItems();
-      totalSize = next.getTotalSize();
-    }),
-  );
-  onDestroy(stopVirtualizer);
+  const rowVirtualizer = createCsvRowVirtualizer();
+  const visibleRows = $derived(rowVirtualizer.items);
+  const totalSize = $derived(rowVirtualizer.totalSize);
 
   $effect(() => {
     const count = tableData.length;
     const viewport = scrollViewport;
-    const active = virtualizer;
-    if (!active) return;
     untrack(() => {
-      active.setOptions({
+      rowVirtualizer.setOptions({
         count,
-        getScrollElement: () => viewport,
-        estimateSize: () => ROW_HEIGHT,
-        overscan: 8,
         enabled: viewport != null,
+        estimateSize: () => CSV_ROW_HEIGHT,
+        getScrollElement: () => viewport,
+        overscan: CSV_ROW_OVERSCAN,
       });
     });
   });

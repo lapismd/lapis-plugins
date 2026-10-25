@@ -48,7 +48,7 @@
     "@dnd-kit/svelte": "^0.4.0",
     "@lapismd/design-core": "^0.6.0",
     "@lucide/svelte": "^0.523.0",
-    "@tanstack/svelte-virtual": "^3.13.46",
+    "@tanstack/virtual-core": "^3.13.12",
     "papaparse": "^5.5.2"
   },
   "peerDependencies": {
