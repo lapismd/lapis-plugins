@@ -1,5 +1,19 @@
 # Distribution and Releases
 
+## Local validation contracts
+
+The 2026-10-25 isolated catalog qualification includes the approved Transcripts
+Markdown peer and development dependency correction under LP-SPEC-011. Its
+existing Zod 3 audit advisory is accepted only for this infrastructure change;
+normal audit-first commands and registry-only release qualification remain
+blocked as detailed in the [qualification record](../records/2026-10-25-catalog-validation.md).
+
+| ID          | Requirement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| LP-SPEC-053 | Root checks, builds and portable tests MUST default to isolated Docker execution with exact tracked source, frozen registry installs, bounded resources, reusable fingerprinted images and dependency-keyed caches. Missing images MUST build automatically; native execution MUST require an explicit override and Docker failure MUST NOT fall back to the host. Runs MUST retain source/tool identities, literal arguments and reports across separate Jujutsu workspaces and remote daemons.                             |
+| LP-SPEC-054 | Every executable story family MUST declare application, component, integration or prototype coverage. Application stories MUST reach the real public WorkspaceShell through the actual render path; imports alone, replacement chrome and unresolved alternate composition MUST fail normal and specification checks. Components MUST identify their public subject; integration fixtures and prototypes MUST identify their governing requirement and purpose. The audited inventory MUST reject missing and stale entries. |
+| LP-SPEC-055 | Synthetic story controls MUST use a reusable padded, dotted-border FixtureControls surface outside application layout, while component fixtures MAY keep controls inline. Static parity, functional interactions, accessibility and visual approval MUST remain independent gates.                                                                                                                                                                                                                                           |
+
 The isolated Desktop shared-screen intake accepts portable Mira compatibility
 ranges. Existing audit findings are recorded separately with the user
 acceptance in `spec/records/2026-10-23-desktop-mira-compatibility.md`; no release
@@ -267,3 +281,7 @@ prerequisite, separate from npm publication. Its own Cargo lockfile qualifies
 the native parser; Notes consumes it through an explicit temporary sibling
 dependency. Shared renderer fixtures compare existing metadata outputs without
 changing published plugin contracts or release coordinates.
+
+Application panel fixtures own a full viewport even when the browser test host
+omits Storybook body classes. Plays verify the actual viewport height before
+checking placement; isolated Docs canvases retain their explicit 700px height.

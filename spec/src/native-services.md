@@ -15,3 +15,11 @@ contracts and the standalone browser implementation remain unchanged.
 This intake covers the existing lightweight metadata extractor. Task, custom
 projection and extension processors remain separate migration work. It neither
 loads JavaScript into the Rust service nor qualifies either host's owner cutover.
+
+## Catalog validation integration
+
+Docker catalog qualification supplies checksum-verified prerequisites before
+resolving its temporary install graph. This changes no native Markdown parser
+contract or output; native service acceptance and registry-only release
+qualification remain separate. The native migration source stays pinned by
+Notes rather than being inferred from a mutable checkout.

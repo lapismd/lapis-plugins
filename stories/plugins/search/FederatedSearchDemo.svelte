@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FixtureControls from "../../catalog/FixtureControls.svelte";
   import { onMount } from "svelte";
   import SearchPanelDemo from "./panels/SearchPanelDemo.svelte";
   import type { App, SearchProviderHit } from "@lapis-notes/api";
@@ -103,13 +104,14 @@
   data-opened-revision={opened}
 >
   <SearchPanelDemo layout="middle-top-tabs" diagnostics="none" />
+  <FixtureControls label="Search history fixture">
   <button
-    class="release"
     onclick={() => {
       loaded = true;
       release?.();
     }}>Load remaining history</button
   >
+  </FixtureControls>
 </div>
 
 <style>
@@ -117,9 +119,5 @@
     height: 100vh;
     min-height: 0;
   }
-  .release {
-    position: fixed;
-    top: 0.5rem;
-    right: 1rem;
-  }
+
 </style>

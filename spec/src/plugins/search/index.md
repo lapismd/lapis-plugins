@@ -238,3 +238,8 @@ Results completing after plugin disable are obsolete: they do not update
 presentation or persist recent queries. Active query failures are reported
 through the owning App's notice surface, and recent-query persistence settles
 inside that same operation.
+
+Catalog fixtures declare their actual composition under LP-SPEC-054. Synthetic
+setup actions use the separate LP-SPEC-055 fixture-controls surface; application
+stories retain the production WorkspaceShell. Loading and failure placeholders
+remain explicitly identified as boot status rather than alternate app chrome.

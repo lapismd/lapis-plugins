@@ -85,7 +85,7 @@ The signed wording sits in the recording.
     {openDocument}
   />
 {:else}
-  <div class="registry-demo" data-testid="panel-demo" data-status={failure || "booting"}>
+  <div role="status" class="registry-demo" data-testid="panel-demo" data-status={failure || "booting"}>
     <div data-testid="panel-demo-status">{failure || "booting"}</div>
   </div>
 {/if}

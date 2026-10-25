@@ -176,3 +176,8 @@ selection. This host milestone does not connect the Sync UI or activate apply.
 Current App-backed catalog seeds and copyable host examples use `.lapis`
 for application state, matching the Notes-wide default. Historical vault data
 and the frozen Deno host are not migrated or edited.
+
+The private catalog install is frozen separately from the root workspace. Its
+validation tooling consumes patched Vitest, body-parser and fast-uri registry
+versions; the released API Zod 3 advisory remains an explicitly recorded
+upstream release gate rather than a new audit suppression.

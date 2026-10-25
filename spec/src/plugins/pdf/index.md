@@ -63,3 +63,10 @@ page, the placement sidebars, and removal of the viewer after the view closes.
 Middle (Top Tabs) also asserts the filename caption on `![[Sample.pdf]]` and
 keeps `![[Welcome.md]]` as a Markdown preview. The sample is
 `packages/pdf/assets/sample.pdf`.
+
+## Clean package validation
+
+The package explicitly builds `src` into `dist` so its declared runtime and type
+entrypoints exist in a clean npm archive. Registry loading and failure
+presentation use an accessible status region; the settled capture still mounts
+the production workspace shell. Functional checks do not approve visual media.

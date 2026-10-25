@@ -124,7 +124,7 @@ function renderPlacement(layout: PanelDemoLayout): StoryRender {
 function placementStory(
   layout: PanelDemoLayout,
   source: string,
-  description: string,
+  description: string
 ): Story {
   return {
     name: PANEL_PLACEMENTS[layout].name,
@@ -136,7 +136,7 @@ function placementStory(
         kind,
         layout,
         "graph-panel",
-        args,
+        args
       );
       await waitFor(() => {
         expect(panel.getByText(/\d+ nodes • \d+ links/)).toBeVisible();
@@ -144,7 +144,7 @@ function placementStory(
       });
       const app = panelDemoApp(canvasElement);
       expect(app.plugins.plugins.get("lapis-graph")).toBeInstanceOf(
-        GraphPlugin,
+        GraphPlugin
       );
 
       await userEvent.click(panel.getByLabelText("Focus active file"));
@@ -169,23 +169,23 @@ function placementStory(
       expect(getComputedStyle(displayTrigger).textDecorationLine).toBe("none");
       await userEvent.unhover(displayTrigger);
       expect(
-        displayTrigger.querySelector('[data-indicator-glyph="chevron-right"]'),
+        displayTrigger.querySelector('[data-indicator-glyph="chevron-right"]')
       ).toBeVisible();
       const graphRoot = canvasElement.querySelector<HTMLElement>(
-        '[data-ui-component="graph"]',
+        '[data-ui-component="graph"]'
       );
       expect(graphRoot).not.toBeNull();
       const graphStyle = getComputedStyle(graphRoot!);
       expect(
-        graphStyle.getPropertyValue("--ui-graph-controls-width").trim(),
+        graphStyle.getPropertyValue("--ui-graph-controls-width").trim()
       ).toBe("300px");
       expect(graphStyle.getPropertyValue("--ui-graph-node-note").trim()).toBe(
-        graphStyle.getPropertyValue("--muted-foreground").trim(),
+        graphStyle.getPropertyValue("--muted-foreground").trim()
       );
       expect(
-        graphStyle.getPropertyValue("--ui-graph-node-label-hover").trim(),
+        graphStyle.getPropertyValue("--ui-graph-node-label-hover").trim()
       ).toBe(
-        graphStyle.getPropertyValue("--ui-graph-surface-foreground").trim(),
+        graphStyle.getPropertyValue("--ui-graph-surface-foreground").trim()
       );
       for (const role of [
         "--graph-text",
@@ -199,10 +199,10 @@ function placementStory(
         expect(graphStyle.getPropertyValue(role).trim()).not.toBe("");
       }
       expect(graphStyle.getPropertyValue("--graph-line").trim()).toBe(
-        graphStyle.getPropertyValue("--input").trim(),
+        graphStyle.getPropertyValue("--input").trim()
       );
       expect(graphStyle.getPropertyValue("--ui-graph-link-active").trim()).toBe(
-        graphStyle.getPropertyValue("--graph-node-focused").trim(),
+        graphStyle.getPropertyValue("--graph-node-focused").trim()
       );
       await userEvent.click(displayTrigger);
       const linkThickness = within(dialog).getByRole("slider", {
@@ -213,12 +213,12 @@ function placementStory(
       expect(
         within(dialog).getByRole("slider", {
           name: "Hover activation delay",
-        }),
+        })
       ).toHaveAttribute("aria-valuenow", "500");
       expect(
         within(dialog).getByRole("slider", {
           name: "Hover release delay",
-        }),
+        })
       ).toHaveAttribute("aria-valuenow", "350");
       await userEvent.click(displayTrigger);
       await userEvent.click(within(dialog).getByText("Filters"));
@@ -242,14 +242,14 @@ function placementStory(
         });
 
         await userEvent.click(
-          within(dialog).getByRole("button", { name: /Groups/ }),
+          within(dialog).getByRole("button", { name: /Groups/ })
         );
         await userEvent.click(
-          within(dialog).getByRole("button", { name: "New group" }),
+          within(dialog).getByRole("button", { name: "New group" })
         );
         const groupQuery = within(dialog).getByLabelText("Group 1 query");
         const groupItem = groupQuery.closest<HTMLElement>(
-          '[data-sortable-group="graph-groups"]',
+          '[data-sortable-group="graph-groups"]'
         );
         expect(groupItem).not.toBeNull();
         const colorButton = within(dialog).getByRole("button", {
@@ -273,7 +273,7 @@ function placementStory(
         expect(idleItemStyle.borderBottomWidth).toBe("0px");
         expect(idleItemStyle.boxShadow).toBe("none");
         expect(
-          Math.abs(dragRect.left - groupItemRect.left - 4),
+          Math.abs(dragRect.left - groupItemRect.left - 4)
         ).toBeLessThanOrEqual(0.5);
         expect(queryRect.left - dragRect.right).toBeGreaterThanOrEqual(4);
         expect(queryRect.right).toBeLessThanOrEqual(colorRect.left);
@@ -281,15 +281,15 @@ function placementStory(
         expect(getComputedStyle(removeButton).position).toBe("absolute");
         expect(removeRect.right).toBeLessThanOrEqual(groupItemRect.right);
         expect(
-          Math.abs(groupItemRect.right - removeRect.right - 8),
+          Math.abs(groupItemRect.right - removeRect.right - 8)
         ).toBeLessThanOrEqual(0.5);
         expect(removeRect.right).toBeLessThanOrEqual(
-          dialog.getBoundingClientRect().right,
+          dialog.getBoundingClientRect().right
         );
         await userEvent.click(groupQuery);
         groupQuery.focus();
         await waitFor(() =>
-          expect(groupItem!.matches(":focus-within")).toBe(true),
+          expect(groupItem!.matches(":focus-within")).toBe(true)
         );
         const focusPaintProbe =
           canvasElement.ownerDocument.createElement("span");
@@ -300,15 +300,15 @@ function placementStory(
         focusPaintProbe.remove();
         await waitFor(() =>
           expect(getComputedStyle(groupItem!).backgroundColor).toBe(
-            expectedFocusBackground,
-          ),
+            expectedFocusBackground
+          )
         );
         const focusedItemStyle = getComputedStyle(groupItem!);
         expect(
-          Number.parseFloat(focusedItemStyle.borderRadius),
+          Number.parseFloat(focusedItemStyle.borderRadius)
         ).toBeGreaterThan(0);
         expect(
-          dialogRect.right - groupItem!.getBoundingClientRect().right,
+          dialogRect.right - groupItem!.getBoundingClientRect().right
         ).toBeGreaterThanOrEqual(4);
         expect(dragRect.left).toBeGreaterThanOrEqual(groupItemRect.left);
         expect(removeRect.right).toBeLessThanOrEqual(groupItemRect.right);
@@ -318,33 +318,34 @@ function placementStory(
           const currentRemoveRect = removeButton.getBoundingClientRect();
           const removeHitTarget = canvasElement.ownerDocument.elementFromPoint(
             currentRemoveRect.left + currentRemoveRect.width / 2,
-            currentRemoveRect.top + currentRemoveRect.height / 2,
+            currentRemoveRect.top + currentRemoveRect.height / 2
           );
-          expect(removeHitTarget && removeButton.contains(removeHitTarget)).toBe(
-            true,
-          );
+          expect(
+            removeHitTarget && removeButton.contains(removeHitTarget),
+            `Remove control must receive pointer input; hit ${removeHitTarget?.tagName}`
+          ).toBe(true);
         });
         expect(
           removeStyle
             .getPropertyValue(
-              "--ui-sortable-array-item-remove-hover-background",
+              "--ui-sortable-array-item-remove-hover-background"
             )
-            .trim(),
+            .trim()
         ).toBe(
-          removeStyle.getPropertyValue("--ui-graph-controls-hover").trim(),
+          removeStyle.getPropertyValue("--ui-graph-controls-hover").trim()
         );
         const ownerRules = styleRules(canvasElement.ownerDocument);
         const handleHoverRule = ownerRules.find((rule) =>
           rule.selectorText.includes(
-            '[data-ui-part="sortable-array-item-drag"]:hover:not(:focus-visible)',
-          ),
+            '[data-ui-part="sortable-array-item-drag"]:hover:not(:focus-visible)'
+          )
         );
         expect(handleHoverRule?.style.boxShadow).toBe("none");
         const removeHoverRule = ownerRules.find((rule) =>
-          rule.selectorText.includes(".ui-sortable-array-item__remove:hover"),
+          rule.selectorText.includes(".ui-sortable-array-item__remove:hover")
         );
         expect(removeHoverRule?.style.background).toContain(
-          "--ui-sortable-array-item-remove-hover-background",
+          "--ui-sortable-array-item-remove-hover-background"
         );
         await userEvent.type(groupQuery, "tag:");
         const ownerBody = within(canvasElement.ownerDocument.body);
@@ -353,7 +354,7 @@ function placementStory(
         });
         await userEvent.click(slashTag);
         await waitFor(() =>
-          expect(groupQuery).toHaveTextContent("tag:#project/alpha"),
+          expect(groupQuery).toHaveTextContent("tag:#project/alpha")
         );
 
         await userEvent.click(colorButton);
@@ -361,7 +362,7 @@ function placementStory(
           name: "Use #16a34a",
         });
         const palette = colorPreset.closest<HTMLElement>(
-          '[data-ui-part="popover-content"]',
+          '[data-ui-part="popover-content"]'
         );
         expect(palette).not.toBeNull();
         const triggerRect = colorButton.getBoundingClientRect();
@@ -371,8 +372,8 @@ function placementStory(
             Math.abs(paletteRect.left - triggerRect.right),
             Math.abs(triggerRect.left - paletteRect.right),
             Math.abs(paletteRect.top - triggerRect.bottom),
-            Math.abs(triggerRect.top - paletteRect.bottom),
-          ),
+            Math.abs(triggerRect.top - paletteRect.bottom)
+          )
         ).toBeLessThanOrEqual(8);
         const anyColor = ownerBody.getByLabelText("Group 1 any color");
         expect(anyColor).toHaveValue("#3b82f6");
@@ -382,13 +383,13 @@ function placementStory(
           expect(
             getComputedStyle(colorButton)
               .getPropertyValue("--ui-color-picker-current")
-              .trim(),
-          ).toBe("#0ea5e9"),
+              .trim()
+          ).toBe("#0ea5e9")
         );
         await userEvent.click(colorPreset);
 
         await userEvent.click(
-          within(dialog).getByRole("button", { name: "New group" }),
+          within(dialog).getByRole("button", { name: "New group" })
         );
         const secondQuery = within(dialog).getByLabelText("Group 2 query");
         await userEvent.type(secondQuery, "path:Code");
@@ -399,10 +400,10 @@ function placementStory(
         await fireEvent.keyDown(reorderButton, { key: "ArrowUp" });
         await waitFor(() => {
           const reordered = dialog.querySelectorAll<HTMLElement>(
-            '[data-sortable-group="graph-groups"]',
+            '[data-sortable-group="graph-groups"]'
           );
           expect(
-            within(reordered[0]!).getByLabelText("Group 1 query"),
+            within(reordered[0]!).getByLabelText("Group 1 query")
           ).toHaveTextContent("path:Code");
         });
 
@@ -417,7 +418,7 @@ function placementStory(
         app.workspace.setActiveLeaf(graphLeaf, { focus: false });
         await userEvent.click(panel.getByLabelText("Focus active file"));
         const canvas = canvasElement.querySelector<HTMLCanvasElement>(
-          '[data-ui-part="canvas"]',
+          '[data-ui-part="canvas"]'
         );
         expect(canvas).not.toBeNull();
         const canvasRect = canvas!.getBoundingClientRect();
@@ -429,15 +430,15 @@ function placementStory(
         const previewCard = await waitFor(
           () => {
             const card = canvasElement.ownerDocument.querySelector<HTMLElement>(
-              ".graph-file-preview",
+              ".graph-file-preview"
             );
             expect(card).toBeVisible();
             return card!;
           },
-          { timeout: 2000 },
+          { timeout: 2000 }
         );
         expect(
-          within(previewCard).getByRole("button", { name: /^Open / }),
+          within(previewCard).getByRole("button", { name: /^Open / })
         ).toBeVisible();
         await waitFor(() => {
           const previewRect = previewCard.getBoundingClientRect();
@@ -445,18 +446,18 @@ function placementStory(
           const visibleLeft = Math.max(0, previewRect.left);
           const visibleRight = Math.min(
             ownerWindow.innerWidth,
-            previewRect.right,
+            previewRect.right
           );
           const visibleTop = Math.max(0, previewRect.top);
           const visibleBottom = Math.min(
             ownerWindow.innerHeight,
-            previewRect.bottom,
+            previewRect.bottom
           );
           expect(visibleRight).toBeGreaterThan(visibleLeft);
           expect(visibleBottom).toBeGreaterThan(visibleTop);
           const topmost = canvasElement.ownerDocument.elementFromPoint(
             (visibleLeft + visibleRight) / 2,
-            visibleTop + Math.min((visibleBottom - visibleTop) / 2, 80),
+            visibleTop + Math.min((visibleBottom - visibleTop) / 2, 80)
           );
           expect(topmost && previewCard.contains(topmost)).toBe(true);
         });
@@ -475,7 +476,7 @@ function placementStory(
 
         await userEvent.click(displayTrigger);
         await userEvent.click(
-          within(dialog).getByRole("button", { name: "Animate graph" }),
+          within(dialog).getByRole("button", { name: "Animate graph" })
         );
         const stopAnimation = await within(dialog).findByRole("button", {
           name: "Stop graph animation",
@@ -483,7 +484,7 @@ function placementStory(
         await userEvent.click(stopAnimation);
 
         await userEvent.click(
-          within(dialog).getByRole("button", { name: "Forces" }),
+          within(dialog).getByRole("button", { name: "Forces" })
         );
         const centerForce = within(dialog).getByRole("slider", {
           name: "Center force",
@@ -514,30 +515,30 @@ function placementStory(
 export const MiddleTopTabs = placementStory(
   "middle-top-tabs",
   sources.MiddleTopTabs,
-  "Global Graph in a main-area top tab over an indexed linked vault.",
+  "Global Graph in a main-area top tab over an indexed linked vault."
 );
 export const StackedTabs = placementStory(
   "stacked-tabs",
   sources.StackedTabs,
-  "Global Graph inside the real stacked-tabs presentation.",
+  "Global Graph inside the real stacked-tabs presentation."
 );
 export const LeftSidebar = placementStory(
   "left-sidebar",
   sources.LeftSidebar,
-  "Global Graph remains placement-independent in the left sidebar.",
+  "Global Graph remains placement-independent in the left sidebar."
 );
 export const RightSidebar = placementStory(
   "right-sidebar",
   sources.RightSidebar,
-  "Global Graph rendered in the right sidebar.",
+  "Global Graph rendered in the right sidebar."
 );
 export const BottomPanel = placementStory(
   "bottom-panel",
   sources.BottomPanel,
-  "Global Graph inside the real grouped bottom panel.",
+  "Global Graph inside the real grouped bottom panel."
 );
 export const SidebarGroup = placementStory(
   "sidebar-group",
   sources.SidebarGroup,
-  "Global Graph inside a grouped right-sidebar item.",
+  "Global Graph inside a grouped right-sidebar item."
 );

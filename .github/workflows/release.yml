@@ -81,6 +81,9 @@ defaults:
   run:
     shell: bash
 
+env:
+  LAPIS_PLUGINS_VALIDATION_RUNTIME: native
+
 jobs:
   selection:
     if: vars.STATIC_RELEASE_ENABLED == 'true'

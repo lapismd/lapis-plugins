@@ -164,3 +164,8 @@ Current shared-shell qualification uses the released Design Core 0.6
 public boundary and matching Notes framework archives. Published dependency
 ranges now admit that boundary directly; the Avatar repair remains a recorded
 local candidate until the separate release gate.
+
+Catalog validation follows LP-SPEC-054/055: application fixtures fill the actual
+browser viewport and synthetic setup stays in the declared fixture-controls
+boundary. The focus/preview scenario establishes its file through the owned
+workspace before checking pointer interaction.

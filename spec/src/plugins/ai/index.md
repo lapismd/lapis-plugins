@@ -588,3 +588,8 @@ local candidate until the separate release gate.
 Current App-backed catalog seeds and copyable host examples use `.lapis`
 for application state, matching the Notes-wide default. Historical vault data
 and the frozen Deno host are not migrated or edited.
+
+Catalog fixtures declare their actual composition under LP-SPEC-054. Synthetic
+setup actions use the separate LP-SPEC-055 fixture-controls surface; application
+stories retain the production WorkspaceShell. Loading and failure placeholders
+remain explicitly identified as boot status rather than alternate app chrome.

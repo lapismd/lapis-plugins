@@ -1,5 +1,17 @@
 # Specification Governance
 
+LP-SPEC-053 defaults local portable validation to isolated Docker workers;
+hosted CI explicitly uses its provisioned native runtime. The repository-owned
+composition plugin enforces LP-SPEC-054 and LP-SPEC-055 beside existing Docs,
+App-ownership, public-boundary, accessibility and release checks.
+
+The isolated catalog qualification records the user's 2026-10-25 acceptance of
+the released API's existing Zod 3 advisory for this infrastructure change only.
+Normal audit-first commands and release qualification remain blocked. The
+approved Transcripts Markdown peer/development correction preserves LP-SPEC-011;
+temporary source-archive acceptance and the released Design Core teardown
+blocker remain explicit in the [qualification record](../records/2026-10-25-catalog-validation.md).
+
 The isolated Desktop shared-screen intake accepts portable Mira compatibility
 ranges. Existing audit findings are recorded separately with the user
 acceptance in `spec/records/2026-10-23-desktop-mira-compatibility.md`; no release

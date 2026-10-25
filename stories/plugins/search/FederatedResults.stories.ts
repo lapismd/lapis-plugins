@@ -77,6 +77,14 @@ export const IncrementalSavedVersions: StoryObj<typeof meta> = {
       { timeout: 60_000 }
     );
     const view = within(canvasElement);
+    const controls = view.getByRole("complementary", {
+      name: "Search history fixture",
+    });
+    expect(getComputedStyle(controls).borderTopStyle).toBe("dotted");
+    expect(parseFloat(getComputedStyle(controls).paddingTop)).toBeGreaterThan(
+      0
+    );
+    expect(getComputedStyle(controls).position).toBe("fixed");
     await waitFor(
       () =>
         expect(

@@ -29,5 +29,10 @@
       "dependsOn": ["^build"],
       "outputs": []
     }
-  }
+  },
+  "globalEnv": ["LAPIS_PLUGINS_VALIDATION_WORKER"],
+  "globalPassThroughEnv": [
+    "LAPIS_PLUGINS_VALIDATION_RUNTIME",
+    "PLAYWRIGHT_BROWSERS_PATH"
+  ]
 }

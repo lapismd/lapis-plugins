@@ -58,3 +58,8 @@ without remote-cache access. Do not commit `.env`.
 
 See [RELEASING.md](./RELEASING.md) for the manual publication gate and release
 asset contract.
+
+## Local checks
+
+Portable checks, builds and tests default to Docker. See [validation](docs/validation.md)
+for image preparation, remote execution, explicit native runs and story composition checks.

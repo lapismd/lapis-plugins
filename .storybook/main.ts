@@ -32,6 +32,10 @@ const packageAliases = [
   ["@lapis-notes/graph/embed", "packages/graph/src/lib/embed.ts"],
   ["@lapis-notes/graph/styles.css", "packages/graph/src/lib/styles.css"],
   ["@lapis-notes/graph", "packages/graph/src/lib/index.ts"],
+  [
+    "@lapis-notes/history/repository",
+    "packages/history/src/lib/repository/index.ts",
+  ],
   ["@lapis-notes/history/styles.css", "packages/history/src/lib/styles.css"],
   ["@lapis-notes/history", "packages/history/src/lib/index.ts"],
   [
@@ -93,14 +97,11 @@ const linkedWorkspaceRoots = [
 ];
 const siblingDesignCore = path.resolve(repoRoot, "../design-core");
 const usesSiblingDesignCore = linkedRoots.some((root) =>
-  root.includes(`${path.sep}@lapismd+design-core@file+..+design-core`),
+  root.includes(`${path.sep}@lapismd+design-core@file+..+design-core`)
 );
 const siblingDesignCoreAliases = usesSiblingDesignCore
   ? [
-      [
-        "tw-animate-css",
-        "node_modules/tw-animate-css/dist/tw-animate.css",
-      ],
+      ["tw-animate-css", "node_modules/tw-animate-css/dist/tw-animate.css"],
       [
         "@fontsource-variable/dm-sans",
         "node_modules/@fontsource-variable/dm-sans/index.css",
@@ -123,7 +124,7 @@ const config: StorybookConfig = {
   stories: [
     ...pluginPackages.map(
       (plugin) =>
-        `../stories/plugins/${plugin.directory}/**/*.stories.@(js|ts|svelte)`,
+        `../stories/plugins/${plugin.directory}/**/*.stories.@(js|ts|svelte)`
     ),
     // Private UI qualification; this does not activate Sync or release selection.
     "../stories/plugins/sync/**/*.stories.@(js|ts|svelte)",
@@ -154,7 +155,7 @@ const config: StorybookConfig = {
     const nonSveltePlugins = plugins.filter(
       (plugin) =>
         !plugin?.name?.startsWith("vite-plugin-svelte") &&
-        plugin?.name !== "sveltekit-autoimport-configuration",
+        plugin?.name !== "sveltekit-autoimport-configuration"
     );
     viteConfig.plugins = [
       tursoBundleBuildPlugin(),
@@ -169,10 +170,10 @@ const config: StorybookConfig = {
     return mergeConfig(viteConfig, {
       define: {
         "import.meta.env.LAPIS_AGENT_RUNTIME_URL": JSON.stringify(
-          process.env.LAPIS_AGENT_RUNTIME_URL ?? "",
+          process.env.LAPIS_AGENT_RUNTIME_URL ?? ""
         ),
         "import.meta.env.LAPIS_AGENT_RUNTIME_TOKEN": JSON.stringify(
-          process.env.LAPIS_AGENT_RUNTIME_TOKEN ?? "",
+          process.env.LAPIS_AGENT_RUNTIME_TOKEN ?? ""
         ),
       },
       resolve: {
@@ -189,7 +190,7 @@ const config: StorybookConfig = {
             find: /^harper\.js\/binaryInlined$/,
             replacement: path.join(
               repoRoot,
-              "packages/spellcheck/node_modules/harper.js/dist/binaryInlined.js",
+              "packages/spellcheck/node_modules/harper.js/dist/binaryInlined.js"
             ),
           },
           {
@@ -199,7 +200,7 @@ const config: StorybookConfig = {
           ...siblingDesignCoreAliases,
           ...packageAliases.map(([find, replacement]) => ({
             find: new RegExp(
-              `^${find.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
+              `^${find.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`
             ),
             replacement: path.join(repoRoot, replacement),
           })),
@@ -207,7 +208,7 @@ const config: StorybookConfig = {
             find: /^\$lib(?:\/(.*))?$/,
             replacement: `${path.join(
               repoRoot,
-              "packages/markdown/src/lib",
+              "packages/markdown/src/lib"
             )}/$1`,
           },
         ],
