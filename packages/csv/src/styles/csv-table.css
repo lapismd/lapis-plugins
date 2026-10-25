@@ -110,6 +110,12 @@
   );
 }
 
+.csv-data-table__row:hover .csv-data-table__row-actions,
+.csv-data-table__row:focus-within .csv-data-table__row-actions,
+.csv-data-table__row[data-csv-hover="true"] .csv-data-table__row-actions {
+  opacity: 1;
+}
+
 .csv-data-table__header {
   position: relative;
   display: flex;
@@ -325,6 +331,7 @@
 .csv-data-table__row-actions {
   width: 2rem;
   height: 2rem;
+  opacity: 0;
 }
 
 .csv-data-table__empty {

@@ -185,27 +185,41 @@ async function expectQuotedCell(table: HTMLElement) {
     name: "View CSV source",
   });
   expect(sourceButtons).toHaveLength(table.dataset.csvRole === "file" ? 2 : 0);
-  expectActionsInView(table);
+  await expectActionsInView(table);
   await expectScrolledWindow(table, totalRows);
   await expectFind(table);
 }
 
-function expectActionsInView(table: HTMLElement) {
+async function expectActionsInView(table: HTMLElement) {
   const actions = table.querySelector("td.csv-data-table__cell--actions");
   const viewport = table.querySelector("[data-slot='scroll-area-viewport']");
   const sample = table.querySelector(".csv-cell__display");
+  const button = actions?.querySelector<HTMLElement>(".csv-data-table__row-actions");
+  const row = actions?.closest("tr");
   if (
     !(actions instanceof HTMLElement) ||
     !(viewport instanceof HTMLElement) ||
-    !(sample instanceof HTMLElement)
+    !(sample instanceof HTMLElement) ||
+    !button ||
+    !row
   ) {
     throw new Error("Missing CSV row actions");
   }
-  const cellBox = actions.getBoundingClientRect();
   const viewBox = viewport.getBoundingClientRect();
+  const cellBox = actions.getBoundingClientRect();
   expect(cellBox.width).toBeGreaterThan(0);
   expect(cellBox.left).toBeGreaterThanOrEqual(viewBox.left - 1);
   expect(cellBox.right).toBeLessThanOrEqual(viewBox.right + 1);
+  await userEvent.hover(button);
+  expect(row.getAttribute("data-csv-hover")).toBe("true");
+  await waitFor(() => {
+    expect(Number(getComputedStyle(button).opacity)).toBeGreaterThan(0.9);
+  });
+  const buttonBox = button.getBoundingClientRect();
+  const hoveredView = viewport.getBoundingClientRect();
+  expect(buttonBox.width).toBeGreaterThan(0);
+  expect(buttonBox.left).toBeGreaterThanOrEqual(hoveredView.left - 1);
+  expect(buttonBox.right).toBeLessThanOrEqual(hoveredView.right + 1);
   const themeMono = getComputedStyle(table.ownerDocument.documentElement)
     .getPropertyValue("--font-mono")
     .split(",")[0]

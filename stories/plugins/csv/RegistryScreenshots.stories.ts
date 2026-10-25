@@ -61,6 +61,25 @@ function expectActionsInView(table: HTMLElement): void {
   expect(cellBox.right).toBeLessThanOrEqual(viewBox.right + 1);
 }
 
+async function expectRowActionsOnHover(table: HTMLElement): Promise<void> {
+  const button = table.querySelector<HTMLElement>(
+    "tr.csv-data-table__row .csv-data-table__row-actions",
+  );
+  const row = button?.closest("tr");
+  const viewport = table.querySelector("[data-slot='scroll-area-viewport']");
+  if (!button || !row || !(viewport instanceof HTMLElement)) {
+    throw new Error("Missing CSV row actions");
+  }
+  await userEvent.hover(button);
+  expect(row.getAttribute("data-csv-hover")).toBe("true");
+  await waitFor(() => {
+    expect(Number(getComputedStyle(button).opacity)).toBeGreaterThan(0.9);
+  });
+  const buttonBox = button.getBoundingClientRect();
+  const viewBox = viewport.getBoundingClientRect();
+  expect(buttonBox.right).toBeLessThanOrEqual(viewBox.right + 1);
+}
+
 export const Overview: Story = {
   name: "Overview",
   parameters: registryStoryParameters(
@@ -71,22 +90,21 @@ export const Overview: Story = {
   play: async ({ canvasElement }) => {
     await registryPanelApp(canvasElement);
     const canvas = within(canvasElement);
-    await waitFor(
-      () => {
-        const table = canvasElement.querySelector<HTMLElement>(
-          '[data-testid="csv-table"][data-csv-role="file"]',
-        );
-        expect(table?.checkVisibility()).toBe(true);
-        expect(canvas.getByRole("cell", { name: QUOTED_NOTE })).toBeVisible();
-        expect(canvas.getByRole("columnheader", { name: /staff/ })).toBeVisible();
-        expect(canvas.getByTestId("csv-status-bar").textContent).toContain(
-          "2,501 rows",
-        );
-        expectActionsInView(table!);
-        expectClosedSidebars(canvasElement);
-      },
-      { timeout: 20_000 },
-    );
+    const table = await waitFor(() => {
+      const found = canvasElement.querySelector<HTMLElement>(
+        '[data-testid="csv-table"][data-csv-role="file"]',
+      );
+      expect(found?.checkVisibility()).toBe(true);
+      expect(canvas.getByRole("cell", { name: QUOTED_NOTE })).toBeVisible();
+      expect(canvas.getByRole("columnheader", { name: /staff/ })).toBeVisible();
+      expect(canvas.getByTestId("csv-status-bar").textContent).toContain(
+        "2,501 rows",
+      );
+      expectActionsInView(found!);
+      expectClosedSidebars(canvasElement);
+      return found!;
+    }, { timeout: 20_000 });
+    await expectRowActionsOnHover(table);
   },
 };
 
@@ -130,22 +148,21 @@ export const Embedded: Story = {
   play: async ({ canvasElement }) => {
     await registryPanelApp(canvasElement);
     const canvas = within(canvasElement);
-    await waitFor(
-      () => {
-        const table = canvasElement.querySelector<HTMLElement>(
-          '[data-testid="csv-table"][data-csv-role="embed"]',
-        );
-        expect(table?.checkVisibility()).toBe(true);
-        expect(
-          table?.closest(".mira-embed")?.querySelector("figcaption")?.textContent,
-        ).toContain("Sample.csv");
-        expect(canvas.getByRole("cell", { name: QUOTED_NOTE })).toBeVisible();
-        expect(canvas.getAllByText("The south basin kept the late tide.").length).toBeGreaterThan(0);
-        expectActionsInView(table!);
-        expectClosedSidebars(canvasElement);
-      },
-      { timeout: 20_000 },
-    );
+    const table = await waitFor(() => {
+      const found = canvasElement.querySelector<HTMLElement>(
+        '[data-testid="csv-table"][data-csv-role="embed"]',
+      );
+      expect(found?.checkVisibility()).toBe(true);
+      expect(
+        found?.closest(".mira-embed")?.querySelector("figcaption")?.textContent,
+      ).toContain("Sample.csv");
+      expect(canvas.getByRole("cell", { name: QUOTED_NOTE })).toBeVisible();
+      expect(canvas.getAllByText("The south basin kept the late tide.").length).toBeGreaterThan(0);
+      expectActionsInView(found!);
+      expectClosedSidebars(canvasElement);
+      return found!;
+    }, { timeout: 20_000 });
+    await expectRowActionsOnHover(table);
   },
 };
 

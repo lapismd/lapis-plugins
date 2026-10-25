@@ -18,12 +18,21 @@
     isRowDragSource = false,
     children,
   }: Props = $props();
+
+  let hovered = $state(false);
 </script>
 
 <Table.Row
   data-index={virtualIndex}
   data-csv-row-index={rowIndex}
+  data-csv-hover={hovered ? "true" : undefined}
   class={cn(className, isRowDragSource && "is-drag-source is-row-drag-source")}
+  onpointerenter={() => {
+    hovered = true;
+  }}
+  onpointerleave={() => {
+    hovered = false;
+  }}
 >
   {@render children()}
 </Table.Row>
