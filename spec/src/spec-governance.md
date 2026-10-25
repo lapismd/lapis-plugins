@@ -1,5 +1,11 @@
 # Specification Governance
 
+Bases LN-BASE-032 and LN-BASE-033 govern explicit purpose names across the full
+filter, grouping, sort, summary and data-driven settings Select surface. Exact
+and complete catalog counts, public-archive provenance and the inherited Zod
+advisory are recorded in `spec/records/2026-10-25-bases-filter-names.md`.
+The advisory requires fresh acceptance for this patch before commit.
+
 LP-SPEC-053 defaults local portable validation to isolated Docker workers;
 hosted CI explicitly uses its provisioned native runtime. The repository-owned
 composition plugin enforces LP-SPEC-054 and LP-SPEC-055 beside existing Docs,

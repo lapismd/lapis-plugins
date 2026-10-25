@@ -18,6 +18,12 @@ loads JavaScript into the Rust service nor qualifies either host's owner cutover
 
 ## Catalog validation integration
 
+Native hosts consume the same Bases presentation package as the browser
+catalog. Purpose names for its filter, grouping, sort, summary and settings
+controls remain plugin-owned presentation; runtime bundles and host intake must
+qualify the same source revision as the npm package. The native service interface
+and metadata outputs retain their existing contracts.
+
 Docker catalog qualification supplies checksum-verified prerequisites before
 resolving its temporary install graph. This changes no native Markdown parser
 contract or output; native service acceptance and registry-only release

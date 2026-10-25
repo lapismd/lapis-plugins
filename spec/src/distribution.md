@@ -2,6 +2,11 @@
 
 ## Local validation contracts
 
+The Bases accessibility patch preserves independent package identity and
+published dependency ranges. Its nine Select controls carry explicit purpose
+names; source, same-revision npm/runtime artifacts and consumer acceptance remain
+separate from the recorded Zod advisory and publication approval.
+
 The 2026-10-25 isolated catalog qualification includes the approved Transcripts
 Markdown peer and development dependency correction under LP-SPEC-011. Its
 existing Zod 3 audit advisory is accepted only for this infrastructure change;

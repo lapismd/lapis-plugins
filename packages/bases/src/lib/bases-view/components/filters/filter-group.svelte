@@ -75,7 +75,10 @@
 <div class={cn("filter-group", className)}>
   <div class="filter-group-header bases-style-flex-60fbb7 bases-style-items-center-3960ff bases-style-justify-between-8ef226">
     <Select.Root type="single" bind:value={getFilterType, setFilterType}>
-      <Select.Trigger data-bases-filter-control="group-type-trigger">
+      <Select.Trigger
+        aria-label="Filter group match"
+        data-bases-filter-control="group-type-trigger"
+      >
         {triggerContent}
       </Select.Trigger>
       <Select.Content
