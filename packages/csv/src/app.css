@@ -175,7 +175,7 @@
   margin-inline-start: auto;
 }
 
-.csv-status-bar__icon :global(svg) {
+.csv-status-bar__icon svg {
   width: 0.875rem;
   height: 0.875rem;
 }

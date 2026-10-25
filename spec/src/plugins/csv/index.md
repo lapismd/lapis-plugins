@@ -42,7 +42,7 @@ editor settings. Each column, including a quoted cell, keeps `cm-csv-cell1`
 through `cm-csv-cell5`, and separators keep `cm-csv-separator`.
 
 The file view and the embed show a footer with the column count, the data row
-count, and find and replace. The file view footer also switches between the
+count, and find and replace. Footer icons use the transcript status size. The file view footer also switches between the
 table and the source, and the header-cell switch stays. Find and replace uses
 the transcript search bar: case, whole word, regular expression, previous,
 next, replace, and replace all. The table searches cell text and writes
