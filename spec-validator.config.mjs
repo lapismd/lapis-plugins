@@ -9,6 +9,7 @@ const packages = [
   "bases",
   "bookmarks",
   "community",
+  "csv",
   "graph",
   "history",
   "markdown",

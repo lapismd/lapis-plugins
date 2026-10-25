@@ -1,0 +1,16 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 2,
+  "categories": ["editing"],
+  "highlights": [
+    "Open a vault CSV or TSV as a table.",
+    "Embed the same table in a note.",
+    "Keep a quoted comma in one cell."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/csv#readme",
+  "appearance": {
+    "icon": "table-2",
+    "accent": "#06B6D4"
+  },
+  "releases": {}
+}

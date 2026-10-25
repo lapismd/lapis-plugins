@@ -54,6 +54,9 @@ All sources live under `Plugins/<Plugin>/Registry Screenshots` and carry both
 | PDF           | Open PDF with both sidebars closed, and a note that embeds that file         |
 | Transcripts   | Spoken reading with both sidebars closed, and a note that embeds the call    |
 
+CSV is an active catalog package and stays outside this inventory until its
+screenshot slice. Registry media selection omits it.
+
 Each plugin owns one explicit banner story. AI shows History left, Chat in the
 main area, and Catalog right. Graph shows Explorer, Global Graph, and Local
 Graph. History shows Explorer, Compare, and History. Markdown shows Backlinks,

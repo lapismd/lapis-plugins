@@ -113,6 +113,7 @@ export function placementParameters(
     search: "search/panels/search",
     bookmarks: "bookmarks/panels/bookmarks",
     history: "history/panels/history",
+    csv: "csv/panels/table",
     pdf: "pdf/panels/viewing",
     reading: "transcripts/panels/reading",
     graph: "graph/panels/graph",
@@ -180,7 +181,9 @@ export async function expectPanelSource(
               ? 'from "@lapis-notes/transcripts";'
               : kind === "pdf"
                 ? 'from "@lapis-notes/pdf";'
-                : kind === "explorer"
+                : kind === "csv"
+                  ? 'from "@lapis-notes/csv";'
+                  : kind === "explorer"
                 ? 'from "@lapis-notes/file-explorer";'
                 : kind === "ai-history" ||
                     kind === "ai-catalog" ||

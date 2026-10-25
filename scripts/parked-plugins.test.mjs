@@ -46,7 +46,7 @@ test("parked Community cannot enter build, pack or metadata selection", async ()
     ),
   );
   assert.equal(manifest.private, true);
-  assert.equal(pluginPackages.length, 13);
+  assert.equal(pluginPackages.length, 15);
   assert.ok(!pluginPackages.some((entry) => entry.pluginId === "community"));
   for (const selector of ["community", "@lapis-notes/community"]) {
     assert.equal(pluginPackageBySelector(selector), undefined);

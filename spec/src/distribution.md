@@ -182,6 +182,11 @@ its preview. Registry media selection includes
 `Plugins/PDF/Registry Screenshots`. The release workflow does not offer the
 package, and this slice does not add it to a host profile.
 
+CSV is an active catalog package so Storybook and metadata checks can see
+its table preview. Registry media selection omits it until the screenshot
+slice. The release workflow does not offer the package, and this slice does
+not add it to a host profile.
+
 The shared development host resolves published Mira `~0.1.0` together with
 mira-editor, mira-plugin-ai, and mira-plugin-mermaid `~0.0.3`. Design Core
 stays on the published `^0.6.0` range. Storybook keeps prebundling
