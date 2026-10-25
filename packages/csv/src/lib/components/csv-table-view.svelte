@@ -3,14 +3,19 @@
   import { cn } from "@lapis-notes/ui";
   import type { App, TFile } from "@lapis-notes/api";
   import { onMount } from "svelte";
+  import type { Attachment } from "svelte/attachments";
   import { CsvGrid } from "../model/csv-grid";
   import { parseCsvText } from "../model/parse-csv";
+  import { csvBodyCounts, csvCellMatches, csvSearchQuery, isCsvFindShortcut } from "../model/csv-search";
   import {
     resolveDelimiter,
     type CsvPluginSettings,
     type CsvPluginSettingsPatch,
   } from "../../csv-settings";
   import CsvDataTable from "./csv-data-table.svelte";
+  import CsvFind from "./csv-find.svelte";
+  import { CSV_ROW_HEIGHT } from "./csv-row-virtualizer.svelte";
+  import CsvStatusBar from "./csv-status-bar.svelte";
 
   type Props = {
     app: App;
@@ -36,6 +41,14 @@
 
   let scrollViewport = $state<HTMLElement | null>(null);
   let incoming = $state<string | null>(null);
+  let searchOpen = $state(false);
+  let searchRequest = $state(0);
+  let searchValue = $state("");
+  let replaceValue = $state("");
+  let caseSensitive = $state(false);
+  let wholeWord = $state(false);
+  let regexp = $state(false);
+  let active = $state(0);
   const text = $derived(incoming ?? content);
   const delimiter = $derived(resolveDelimiter(settings, file.extension));
   const parsed = $derived.by(() => {
@@ -55,11 +68,90 @@
     };
   });
 
+  const rows = $derived(parsed.grid.getRows());
+  const counts = $derived(
+    csvBodyCounts(
+      parsed.grid.getRowCount(),
+      parsed.grid.getColCount(),
+      settings.headerRow,
+    ),
+  );
+  const searchCell = $derived.by(() => {
+    if (!searchOpen) return null;
+    const matches = csvCellMatches(
+      rows,
+      csvSearchQuery({
+        search: searchValue,
+        replace: replaceValue,
+        caseSensitive,
+        wholeWord,
+        regexp,
+      }),
+    );
+    if (matches.length === 0) return null;
+    const match = matches[Math.min(active, matches.length - 1)];
+    return match ? { row: match.row, col: match.col } : null;
+  });
+
   function handleGridChange(nextGrid: CsvGrid) {
     const next = nextGrid.toText({ delimiter });
     incoming = next;
     onContentChange?.(next);
   }
+
+  function replaceCells(
+    edits: { row: number; col: number; value: string }[],
+  ) {
+    const next = parsed.grid.clone();
+    for (const edit of edits) next.updateCell(edit.row, edit.col, edit.value);
+    handleGridChange(next);
+  }
+
+  function openSearch() {
+    searchOpen = true;
+    searchRequest += 1;
+  }
+
+  function toggleSearch() {
+    if (searchOpen) {
+      searchOpen = false;
+      return;
+    }
+    openSearch();
+  }
+
+  function onFindShortcut(event: KeyboardEvent) {
+    if (!isCsvFindShortcut(event)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    openSearch();
+  }
+
+  const findShortcut: Attachment<HTMLElement> = (node) => {
+    node.addEventListener("keydown", onFindShortcut, true);
+    return () => node.removeEventListener("keydown", onFindShortcut, true);
+  };
+
+  const scrollToSearch: Attachment<HTMLElement> = () => {
+    const target = searchCell;
+    const viewport = scrollViewport;
+    if (!target || !viewport) return;
+    if (settings.headerRow && target.row === 0) return;
+    const bodyIndex = settings.headerRow ? target.row - 1 : target.row;
+    const top = Math.max(0, bodyIndex) * CSV_ROW_HEIGHT;
+    const bottom = top + CSV_ROW_HEIGHT;
+    const viewTop = viewport.scrollTop;
+    const viewBottom = viewTop + viewport.clientHeight;
+    if (top >= viewTop && bottom <= viewBottom) return;
+    viewport.scrollTop = Math.max(
+      0,
+      top - Math.floor(viewport.clientHeight / 3),
+    );
+  };
+
+  const searchScrollKey = $derived(
+    searchCell ? `${searchCell.row}:${searchCell.col}` : "",
+  );
 
   onMount(() => {
     const currentApp = app;
@@ -76,7 +168,7 @@
   });
 </script>
 
-<div class={cn("csv-table-view", className)}>
+<div class={cn("csv-table-view", className)} {@attach findShortcut}>
   {#if parsed.errors.length > 0}
     <div class="csv-table-view__errors" role="status">
       {#each parsed.errors as error (error)}
@@ -84,6 +176,22 @@
       {/each}
     </div>
   {/if}
+
+  <CsvFind
+    bind:open={searchOpen}
+    bind:searchValue
+    bind:replaceValue
+    bind:caseSensitive
+    bind:wholeWord
+    bind:regexp
+    bind:active
+    {searchRequest}
+    {rows}
+    onReplaceCells={replaceCells}
+  />
+  {#key searchScrollKey}
+    <span hidden {@attach scrollToSearch}></span>
+  {/key}
 
   <ScrollArea
     class="csv-table-view__scroll"
@@ -95,9 +203,18 @@
       headerRow={settings.headerRow}
       showRowNumbers={settings.showRowNumbers}
       {scrollViewport}
+      {searchCell}
       onChange={handleGridChange}
       {onSettingsChange}
       {onToggleSource}
     />
   </ScrollArea>
+  <CsvStatusBar
+    columns={counts.columns}
+    rows={counts.rows}
+    {searchOpen}
+    mode="table"
+    onToggleSearch={toggleSearch}
+    onToggleMode={onToggleSource}
+  />
 </div>

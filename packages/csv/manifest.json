@@ -20,8 +20,10 @@
           "format": "esm",
           "sharedDependencies": [
             "@lapis-notes/api",
+            "@lapis-notes/api/editor/core",
             "@lapis-notes/api/menu",
             "@codemirror/language",
+            "@codemirror/search",
             "@codemirror/state",
             "@codemirror/view",
             "@lezer/common",

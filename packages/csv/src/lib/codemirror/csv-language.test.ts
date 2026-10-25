@@ -2,7 +2,7 @@ import { highlightTree } from "@lezer/highlight";
 import { describe, expect, it } from "vitest";
 import { csvHighlightStyle } from "./csv-rainbow-theme";
 import { csvLanguage } from "./csv-language";
-import { csvSourceExtensions } from "./csv-source-extensions";
+import { csvLanguageExtensions } from "./csv-language-extensions";
 
 describe("CSV language", () => {
   it("marks successive cells and the separator", () => {
@@ -24,7 +24,7 @@ describe("CSV language", () => {
   });
 
   it("contributes the rainbow highlighter with the language", () => {
-    expect(csvSourceExtensions()).toHaveLength(4);
+    expect(csvLanguageExtensions()).toHaveLength(3);
   });
 
   it("keeps a column colour on quoted and plain cell text", () => {

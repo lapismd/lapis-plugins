@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
-import { expect, waitFor, within } from "storybook/test";
+import { expect, userEvent, waitFor, within } from "storybook/test";
 import type { App, WorkspaceLeaf } from "@lapis-notes/api";
 import {
   CsvTable,
@@ -178,7 +178,15 @@ async function expectQuotedCell(table: HTMLElement) {
   expect(
     within(table).getAllByRole("button", { name: "Column actions" }).length,
   ).toBeGreaterThan(0);
+  const status = within(table).getByTestId("csv-status-bar");
+  expect(status.textContent).toContain(`${totalRows.toLocaleString()} rows`);
+  expect(status.textContent).toMatch(/\d[\d,]* columns/);
+  const sourceButtons = within(table).queryAllByRole("button", {
+    name: "View CSV source",
+  });
+  expect(sourceButtons).toHaveLength(table.dataset.csvRole === "file" ? 2 : 0);
   await expectScrolledWindow(table, totalRows);
+  await expectFind(table);
 }
 
 async function expectScrolledWindow(table: HTMLElement, totalRows: number) {
@@ -209,6 +217,22 @@ async function expectScrolledWindow(table: HTMLElement, totalRows: number) {
     expect(within(table).getByRole("cell", { name: QUOTED_NOTE })).toBeVisible();
     expect(within(table).queryByRole("cell", { name: LATER_CELL })).toBeNull();
   });
+}
+
+async function expectFind(table: HTMLElement) {
+  await userEvent.click(
+    within(table).getByRole("button", { name: "Find and replace" }),
+  );
+  const findInput = within(table).getByRole("textbox", { name: "Find" });
+  await userEvent.type(findInput, "culvert");
+  await waitFor(() => {
+    expect(within(table).getAllByText("1 of 1").length).toBeGreaterThan(0);
+  });
+  await userEvent.click(
+    within(table).getByRole("button", { name: "Close search" }),
+  );
+  expect(within(table).queryByRole("textbox", { name: "Find" })).toBeNull();
+  expect(within(table).getByRole("cell", { name: QUOTED_NOTE })).toBeVisible();
 }
 
 function renderedRowCount(table: HTMLElement): number {

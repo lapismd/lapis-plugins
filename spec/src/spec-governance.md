@@ -144,6 +144,7 @@ approved-release environment, and immutable-version patch rollback policy.
 Package-boundary verification also rejects bundled Lapis host packages and
 requires every externalized Lapis or approved singleton editor runtime module to resolve through a declared
 peer supplied by the consuming application.
+CSV's markup editor and search modules are declared peers on that same list.
 Shared release tooling MUST scan all emitted JavaScript runtime chunks for
 browser bare imports. Only declared Lapis, approved CodeMirror/Lezer and versioned Svelte renderer host modules may remain external;
 Compiler-emitted Svelte imports bind the locked renderer ABI through host-owned

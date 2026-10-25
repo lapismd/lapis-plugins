@@ -68,7 +68,7 @@ export class CSVPlugin extends Plugin {
     });
     this.registerExtensions([...CSV_EXTENSIONS], CSV_VIEW_TYPE);
     this.registerEditorExtension(
-      () => csvSourceExtensions(),
+      () => csvSourceExtensions(this.app),
       CSV_VIEW_TYPE,
     );
     for (const extension of CSV_EXTENSIONS) {

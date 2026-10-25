@@ -56,6 +56,7 @@
     headerRow: boolean;
     showRowNumbers: boolean;
     scrollViewport?: HTMLElement | null;
+    searchCell?: { row: number; col: number } | null;
     onChange: (grid: CsvGrid) => void;
     onSettingsChange?: (patch: { headerRow?: boolean }) => void;
     onToggleSource?: () => void;
@@ -66,6 +67,7 @@
     headerRow,
     showRowNumbers,
     scrollViewport = null,
+    searchCell = null,
     onChange,
     onSettingsChange,
     onToggleSource,
@@ -697,6 +699,10 @@
                       <div
                         class="csv-data-table__cell-shell"
                         data-csv-cell={`${row.rowIndex}:${colIndex}`}
+                        data-csv-search={searchCell?.row === row.rowIndex &&
+                        searchCell.col === colIndex
+                          ? "active"
+                          : undefined}
                         data-csv-selected={selectedClasses[coordId]
                           ? "true"
                           : undefined}
@@ -717,6 +723,10 @@
                       <div
                         class="csv-data-table__cell-shell"
                         data-csv-cell={`${row.rowIndex}:${colIndex}`}
+                        data-csv-search={searchCell?.row === row.rowIndex &&
+                        searchCell.col === colIndex
+                          ? "active"
+                          : undefined}
                         data-csv-selected={selectedClasses[coordId]
                           ? "true"
                           : undefined}

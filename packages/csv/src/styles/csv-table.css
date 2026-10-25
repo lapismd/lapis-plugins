@@ -2,10 +2,10 @@
   width: 100%;
   min-height: 0;
   font-family: var(--font-mono);
-  /* Vertical padding lives below the table. Padding above the header sits
-     inside the scrollport and pulls a sticky header up by that amount. */
-  padding-inline: 1rem;
+  padding-top: 0;
   padding-bottom: 1rem;
+  padding-left: 0;
+  padding-right: 0.5rem;
 }
 
 .csv-data-table {
@@ -294,6 +294,10 @@
   display: flex;
   min-height: 2rem;
   height: 100%;
+}
+
+.csv-data-table__cell-shell[data-csv-search="active"] {
+  box-shadow: inset 0 0 0 2px var(--csv-col-3);
 }
 
 .csv-data-table__row-actions {

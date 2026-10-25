@@ -206,7 +206,7 @@ const sharedDependencies = new Map([
   ],
   ["slides", ["@lapis-notes/api", "@lapis-notes/markdown/embed"]],
   ["pdf", ["@lapis-notes/api"]],
-  ["csv", ["@lapis-notes/api", "@lapis-notes/api/menu"]],
+  ["csv", ["@lapis-notes/api", "@lapis-notes/api/editor/core", "@lapis-notes/api/menu"]],
   ["transcripts", ["@lapis-notes/api"]],
   [
     "source-editor",
@@ -290,6 +290,7 @@ const editorSharedDependencies = new Map(
     pdf: [],
     csv: [
       "@codemirror/language",
+      "@codemirror/search",
       "@codemirror/state",
       "@codemirror/view",
       "@lezer/common",
