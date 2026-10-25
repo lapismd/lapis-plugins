@@ -7,6 +7,7 @@
   let {
     columns,
     rows,
+    shownRows = undefined,
     searchOpen = false,
     mode = "table",
     onToggleSearch,
@@ -14,13 +15,14 @@
   }: {
     columns: number;
     rows: number;
+    shownRows?: number;
     searchOpen?: boolean;
     mode?: "table" | "source";
     onToggleSearch: () => void;
     onToggleMode?: () => void;
   } = $props();
 
-  const label = $derived(csvStatusLabel(columns, rows));
+  const label = $derived(csvStatusLabel(columns, rows, shownRows));
   const modeLabel = $derived(
     mode === "table" ? "View CSV source" : "View CSV table",
   );

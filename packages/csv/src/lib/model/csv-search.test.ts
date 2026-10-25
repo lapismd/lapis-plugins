@@ -5,6 +5,7 @@ import {
   csvCellMatches,
   csvDocumentMatches,
   csvSearchQuery,
+  csvShownRowCount,
   csvStatusLabel,
   replaceCellText,
 } from "./csv-search";
@@ -64,5 +65,26 @@ describe("CSV search", () => {
     expect(csvBodyCounts(2501, 4, true)).toEqual({ columns: 4, rows: 2500 });
     expect(csvStatusLabel(4, 2500)).toBe("4 columns · 2,500 rows");
     expect(csvStatusLabel(1, 1)).toBe("1 column · 1 row");
+    expect(csvStatusLabel(4, 57, 23)).toBe(
+      "4 columns · Showing 23 rows (filtered from 57 total rows)",
+    );
+    expect(csvStatusLabel(1, 1, 1)).toBe(
+      "1 column · Showing 1 row (filtered from 1 total row)",
+    );
+    expect(csvStatusLabel(4, 2500, 0)).toBe(
+      "4 columns · Showing 0 rows (filtered from 2,500 total rows)",
+    );
+  });
+
+  it("counts each matching data row once and skips the header", () => {
+    expect(
+      csvShownRowCount(3, true, [
+        { row: 0 },
+        { row: 1 },
+        { row: 1 },
+        { row: 2 },
+      ]),
+    ).toBe(2);
+    expect(csvShownRowCount(3, false, [{ row: 0 }, { row: 2 }])).toBe(2);
   });
 });

@@ -201,7 +201,7 @@ async function expectQuotedCell(table: HTMLElement) {
   expect(sourceButtons).toHaveLength(table.dataset.csvRole === "file" ? 2 : 0);
   await expectActionsInView(table);
   await expectScrolledWindow(table, totalRows);
-  await expectFind(table);
+  await expectFind(table, totalRows);
 }
 
 async function expectActionsInView(table: HTMLElement) {
@@ -273,7 +273,7 @@ async function expectScrolledWindow(table: HTMLElement, totalRows: number) {
   });
 }
 
-async function expectFind(table: HTMLElement) {
+async function expectFind(table: HTMLElement, totalRows: number) {
   await userEvent.click(
     within(table).getByRole("button", { name: "Find and replace" }),
   );
@@ -281,12 +281,31 @@ async function expectFind(table: HTMLElement) {
   await userEvent.type(findInput, "culvert");
   await waitFor(() => {
     expect(within(table).getAllByText("1 of 1").length).toBeGreaterThan(0);
+    expect(within(table).getByRole("cell", { name: QUOTED_NOTE })).toBeVisible();
+    expect(within(table).queryByRole("cell", { name: LATER_CELL })).toBeNull();
+    expect(within(table).getByRole("columnheader", { name: /staff/ })).toBeVisible();
+    expect(table.querySelector("table.csv-data-table")?.getAttribute("data-csv-row-count")).toBe(
+      "1",
+    );
+    expect(within(table).getByTestId("csv-status-bar").textContent).toContain(
+      `Showing 1 row (filtered from ${totalRows.toLocaleString()} total rows)`,
+    );
   });
   await userEvent.click(
     within(table).getByRole("button", { name: "Close search" }),
   );
-  expect(within(table).queryByRole("textbox", { name: "Find" })).toBeNull();
-  expect(within(table).getByRole("cell", { name: QUOTED_NOTE })).toBeVisible();
+  await waitFor(() => {
+    expect(within(table).queryByRole("textbox", { name: "Find" })).toBeNull();
+    expect(within(table).getByRole("cell", { name: QUOTED_NOTE })).toBeVisible();
+    expect(
+      within(table).getByTestId("csv-status-bar").textContent,
+    ).not.toContain("filtered from");
+    expect(
+      table
+        .querySelector("table.csv-data-table")
+        ?.getAttribute("data-csv-row-count"),
+    ).toBe(String(totalRows));
+  });
 }
 
 function renderedRowCount(table: HTMLElement): number {

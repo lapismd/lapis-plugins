@@ -108,10 +108,33 @@ export function csvBodyCounts(
   };
 }
 
-export function csvStatusLabel(columns: number, rows: number): string {
+/** Data rows that contain a match. Header matches do not count. */
+export function csvShownRowCount(
+  rowCount: number,
+  headerRow: boolean,
+  matches: readonly { row: number }[],
+): number {
+  const start = headerRow ? 1 : 0;
+  const matched = new Set<number>();
+  for (const match of matches) {
+    if (match.row >= start && match.row < rowCount) matched.add(match.row);
+  }
+  return matched.size;
+}
+
+export function csvStatusLabel(
+  columns: number,
+  rows: number,
+  shownRows?: number,
+): string {
   const columnLabel = columns === 1 ? "column" : "columns";
   const rowLabel = rows === 1 ? "row" : "rows";
-  return `${columns.toLocaleString()} ${columnLabel} · ${rows.toLocaleString()} ${rowLabel}`;
+  const counts = `${columns.toLocaleString()} ${columnLabel}`;
+  if (shownRows == null) {
+    return `${counts} · ${rows.toLocaleString()} ${rowLabel}`;
+  }
+  const shownLabel = shownRows === 1 ? "row" : "rows";
+  return `${counts} · Showing ${shownRows.toLocaleString()} ${shownLabel} (filtered from ${rows.toLocaleString()} total ${rowLabel})`;
 }
 
 export function isCsvFindShortcut(event: KeyboardEvent): boolean {

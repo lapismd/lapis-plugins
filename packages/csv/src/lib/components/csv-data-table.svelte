@@ -56,6 +56,8 @@
     headerRow: boolean;
     showRowNumbers: boolean;
     scrollViewport?: HTMLElement | null;
+    /** Grid row indexes to keep. Null shows every body row. */
+    rowFilter?: ReadonlySet<number> | null;
     searchCell?: { row: number; col: number } | null;
     onChange: (grid: CsvGrid) => void;
     onSettingsChange?: (patch: { headerRow?: boolean }) => void;
@@ -67,6 +69,7 @@
     headerRow,
     showRowNumbers,
     scrollViewport = null,
+    rowFilter = null,
     searchCell = null,
     onChange,
     onSettingsChange,
@@ -74,7 +77,12 @@
   }: Props = $props();
 
   const colCount = $derived(grid.getColCount());
-  const tableData = $derived(rowsFromGrid(grid, headerRow));
+  const tableData = $derived.by(() => {
+    const body = rowsFromGrid(grid, headerRow);
+    const filter = rowFilter;
+    if (!filter) return body;
+    return body.filter((row) => filter.has(row.rowIndex));
+  });
   const headerLabels = $derived(
     headerLabelsFromGrid(grid, headerRow, colCount),
   );
@@ -760,7 +768,7 @@
             {#if tableData.length === 0}
               <Table.Row>
                 <Table.Cell colspan={columnSpan} class="csv-data-table__empty">
-                  No rows
+                  {rowFilter ? "No matching rows" : "No rows"}
                 </Table.Cell>
               </Table.Row>
             {/if}
