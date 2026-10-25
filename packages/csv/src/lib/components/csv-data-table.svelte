@@ -624,6 +624,9 @@
             <Table.Head
               class="csv-data-table__head csv-data-table__head--actions"
             >
+              {#if !onToggleSource}
+                <span class="csv-data-table__actions-label">Row actions</span>
+              {/if}
               {#if onToggleSource}
                 <Button
                   variant="ghost"
@@ -680,6 +683,11 @@
                       dragSource?.type === "csv-table-col" &&
                       dragSource.index === colIndex,
                     class: rainbowClass(colIndex, "cell"),
+                    onmousedown: onMouseDown,
+                    onmouseenter: onMouseOver,
+                    oncontextmenu: () => {
+                      menuCoords = [row.rowIndex, colIndex];
+                    },
                   }}
                   {#if colIndex === 0}
                     <CsvDataTableRowGripCell
@@ -687,18 +695,11 @@
                       onSelectRow={() => selectRow(row)}
                     >
                       <div
-                        role="gridcell"
-                        tabindex="-1"
                         class="csv-data-table__cell-shell"
                         data-csv-cell={`${row.rowIndex}:${colIndex}`}
                         data-csv-selected={selectedClasses[coordId]
                           ? "true"
                           : undefined}
-                        onmousedown={onMouseDown}
-                        onmouseenter={onMouseOver}
-                        oncontextmenu={() => {
-                          menuCoords = [row.rowIndex, colIndex];
-                        }}
                       >
                         <CsvCell
                           {value}
@@ -714,18 +715,11 @@
                   {:else}
                     <CsvDataTableDataCell {...cellProps}>
                       <div
-                        role="gridcell"
-                        tabindex="-1"
                         class="csv-data-table__cell-shell"
                         data-csv-cell={`${row.rowIndex}:${colIndex}`}
                         data-csv-selected={selectedClasses[coordId]
                           ? "true"
                           : undefined}
-                        onmousedown={onMouseDown}
-                        onmouseenter={onMouseOver}
-                        oncontextmenu={() => {
-                          menuCoords = [row.rowIndex, colIndex];
-                        }}
                       >
                         <CsvCell
                           {value}

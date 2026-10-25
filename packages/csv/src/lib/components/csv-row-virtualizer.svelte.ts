@@ -60,6 +60,10 @@ export function createCsvRowVirtualizer() {
         ...next,
         onChange: options.onChange,
       });
+      // virtual-core only observes the scroll element from `_willUpdate`.
+      // The count and scrollport arrive after mount, so rebinding has to
+      // happen here or `getVirtualItems()` stays empty.
+      virtualizer._willUpdate();
       virtualizer.measure();
     },
   };

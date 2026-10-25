@@ -17,6 +17,9 @@
     selectedClass?: string;
     isColDragSource?: boolean;
     onSelectRow?: () => void;
+    onmousedown?: (event: MouseEvent) => void;
+    onmouseenter?: (event: MouseEvent) => void;
+    oncontextmenu?: (event: MouseEvent) => void;
     children: Snippet;
   };
 
@@ -29,6 +32,9 @@
     selectedClass,
     isColDragSource = false,
     onSelectRow,
+    onmousedown,
+    onmouseenter,
+    oncontextmenu,
     children,
   }: Props = $props();
 
@@ -70,6 +76,9 @@
 <Table.Cell
   bind:ref={cellRef}
   data-csv-col-index={colIndex}
+  {onmousedown}
+  {onmouseenter}
+  {oncontextmenu}
   class={cn(
     "csv-data-table__cell",
     className,

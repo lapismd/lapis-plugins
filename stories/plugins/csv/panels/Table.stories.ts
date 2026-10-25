@@ -34,6 +34,9 @@ const PLACEMENT_SURFACE: Record<PanelDemoLayout, string> = {
 };
 
 const QUOTED_NOTE = "Weed across the culvert, stick in the mouth";
+/** Unique time on sample.csv line 1200, far below the first screen. */
+const LATER_CELL = "02:22";
+const LATER_ROW_INDEX = 1198;
 
 const meta = {
   title: "Plugins/CSV/Panels/Table",
@@ -96,9 +99,12 @@ function placementStory(layout: PanelDemoLayout, description: string): Story {
         }
       ).__lapisApp;
       if (!lapisApp) throw new Error("Missing panel app");
+      if (layout === "middle-top-tabs") {
+        lapisApp.workspace.setActiveLeaf(csvTableLeaf(lapisApp), { focus: false });
+      }
       const fileTable = await waitForTable(canvasElement, "file");
       expect(fileTable).toBeVisible();
-      expectQuotedCell(fileTable);
+      await expectQuotedCell(fileTable);
       const host = fileTable.closest(
         `[data-ui-component="${PLACEMENT_HOST[layout]}"]`,
       );
@@ -119,7 +125,7 @@ function placementStory(layout: PanelDemoLayout, description: string): Story {
         const noteLeaf = markdownLeaf(lapisApp, SAMPLE_READING_NOTE_PATH);
         lapisApp.workspace.setActiveLeaf(noteLeaf, { focus: false });
         const embed = await waitForTable(canvasElement, "embed");
-        expectQuotedCell(embed);
+        await expectQuotedCell(embed);
         const caption = embed.closest("figure")?.querySelector("figcaption");
         expect(caption?.textContent).toContain("Sample.csv");
         const plain = await waitFor(
@@ -143,7 +149,7 @@ function placementStory(layout: PanelDemoLayout, description: string): Story {
           state: { file: SAMPLE_READING_NOTE_PATH, mode: "preview" },
         });
         lapisApp.workspace.setActiveLeaf(noteLeaf, { focus: false });
-        expectQuotedCell(await waitForTable(canvasElement, "embed"));
+        await expectQuotedCell(await waitForTable(canvasElement, "embed"));
       } else {
         await closeCsvLeaves(lapisApp);
         await expectTableRemoved(canvasElement);
@@ -151,13 +157,13 @@ function placementStory(layout: PanelDemoLayout, description: string): Story {
         const fileLeaf = fileLeaves[0];
         if (!fileLeaf) throw new Error("Missing CSV leaf");
         lapisApp.workspace.setActiveLeaf(fileLeaf, { focus: false });
-        expectQuotedCell(await waitForTable(canvasElement, "file"));
+        await expectQuotedCell(await waitForTable(canvasElement, "file"));
       }
     },
   };
 }
 
-function expectQuotedCell(table: HTMLElement) {
+async function expectQuotedCell(table: HTMLElement) {
   const cell = within(table).getByRole("cell", { name: QUOTED_NOTE });
   expect(cell.textContent).toBe(QUOTED_NOTE);
   const grid = table.querySelector("table.csv-data-table");
@@ -172,20 +178,45 @@ function expectQuotedCell(table: HTMLElement) {
   expect(
     within(table).getAllByRole("button", { name: "Column actions" }).length,
   ).toBeGreaterThan(0);
-  expectStickyHeader(table);
+  await expectScrolledWindow(table, totalRows);
 }
 
-function expectStickyHeader(table: HTMLElement) {
+async function expectScrolledWindow(table: HTMLElement, totalRows: number) {
   const viewport = table.querySelector<HTMLElement>(
     '[data-slot="scroll-area-viewport"]',
   );
   const header = within(table).getByRole("columnheader", { name: /staff/ });
   expect(viewport).not.toBeNull();
   const before = header.getBoundingClientRect().top;
+  const maxScroll = viewport!.scrollHeight - viewport!.clientHeight;
+  expect(maxScroll).toBeGreaterThan(viewport!.clientHeight);
   viewport!.scrollTop = 400;
   expect(viewport!.scrollTop).toBeGreaterThan(0);
   expect(Math.abs(header.getBoundingClientRect().top - before)).toBeLessThan(2);
+
+  viewport!.scrollTop = Math.round(
+    (viewport!.scrollHeight * LATER_ROW_INDEX) / totalRows,
+  );
+  await waitFor(() => {
+    expect(within(table).getByRole("cell", { name: LATER_CELL })).toBeVisible();
+    expect(within(table).queryByRole("cell", { name: QUOTED_NOTE })).toBeNull();
+    expect(renderedRowCount(table)).toBeGreaterThan(0);
+    expect(renderedRowCount(table)).toBeLessThan(totalRows);
+  });
+
   viewport!.scrollTop = 0;
+  await waitFor(() => {
+    expect(within(table).getByRole("cell", { name: QUOTED_NOTE })).toBeVisible();
+    expect(within(table).queryByRole("cell", { name: LATER_CELL })).toBeNull();
+  });
+}
+
+function renderedRowCount(table: HTMLElement): number {
+  return Number(
+    table
+      .querySelector("table.csv-data-table")
+      ?.getAttribute("data-csv-rendered-rows"),
+  );
 }
 
 function expectSidebar(
@@ -224,6 +255,15 @@ async function closeCsvLeaves(app: App): Promise<void> {
   for (const leaf of leaves) {
     await leaf.setViewState({ type: "empty", state: {} });
   }
+}
+
+function csvTableLeaf(app: App): WorkspaceLeaf {
+  const leaf = app.workspace.getLeavesOfType("lapis-csv").find((candidate) => {
+    const view = candidate.view as { mode?: () => string };
+    return view.mode?.() !== "source";
+  });
+  if (!leaf) throw new Error("Missing CSV table leaf");
+  return leaf;
 }
 
 function markdownLeaf(app: App, path: string): WorkspaceLeaf {
