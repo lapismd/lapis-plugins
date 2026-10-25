@@ -1,5 +1,10 @@
 # CSV Plugin
 
+Generated package metadata keeps development dependency keys in canonical
+lexical order. The 2026-10-25 normalization moves only `@types/papaparse`; every
+JSON value, dependency range, runtime contract and package version is unchanged.
+Evidence: `spec/records/2026-10-25-csv-metadata-order.md`.
+
 `@lapis-notes/csv` opens a vault CSV or TSV as a table, in a file view and in
 a note embed. `Plugins/CSV/Panels/Table` is the first governed surface. It
 loads a seeded sample, including one cell whose value contains a comma, in
