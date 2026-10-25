@@ -285,3 +285,8 @@ changing published plugin contracts or release coordinates.
 Application panel fixtures own a full viewport even when the browser test host
 omits Storybook body classes. Plays verify the actual viewport height before
 checking placement; isolated Docs canvases retain their explicit 700px height.
+
+Npm import-containment checks inspect the actual packed JavaScript inventory.
+Excluded compiled tests cannot block a package; any shipped test remains subject
+to the same containment boundary. Clean package builds select the owning source
+root explicitly when it differs from `src/lib`.

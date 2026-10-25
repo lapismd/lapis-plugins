@@ -1,9 +1,11 @@
 # Lapis Plugins catalog validation and Docker execution
 
-Status: implemented and qualified for this isolated change in the
+Status: original implementation and qualification for this isolated change in the
 `catalog-validation` Jujutsu workspace. Registry-only release qualification
 remains blocked as described below.
-Ongoing application edits in the default workspace are excluded.
+Ongoing application edits in the default workspace were excluded from this
+original qualification. See [the later landing record](2026-10-25-catalog-main-landing.md)
+for the combined main workspace and its additional blockers.
 
 The repository owns its WorkspaceShell policy through the spec-validator plugin
 and explicit inventory. Component examples do not claim full application parity.

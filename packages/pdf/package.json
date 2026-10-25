@@ -10,7 +10,7 @@
     "check:svelte": "svelte-check --tsconfig ./tsconfig.app.json --fail-on-warnings --output human",
     "check:types": "tsc -p tsconfig.node.json --noEmit",
     "test": "vitest run",
-    "prepack": "svelte-package --tsconfig ./tsconfig.pack.json && publint",
+    "prepack": "svelte-package --input src --output dist --tsconfig ./tsconfig.pack.json && publint",
     "publint": "publint",
     "pack": "pnpm pack --pack-destination ../../.release/npm"
   },

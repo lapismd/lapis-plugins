@@ -53,6 +53,9 @@
     "kind": "component",
     "subject": "@lapis-notes/community#CommunityPluginApplication"
   },
+  "stories/plugins/csv/panels/Table.stories.ts": {
+    "kind": "application"
+  },
   "stories/plugins/graph/RegistryScreenshots.stories.ts": {
     "kind": "application"
   },
@@ -75,6 +78,9 @@
     "kind": "application"
   },
   "stories/plugins/history/shell/Shell.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/markdown-lint/RegistryScreenshots.stories.ts": {
     "kind": "application"
   },
   "stories/plugins/markdown/ReadingSurface.stories.ts": {
@@ -104,7 +110,10 @@
   "stories/plugins/markdown/panels/Tags.stories.ts": {
     "kind": "application"
   },
-  "stories/plugins/markdown-lint/RegistryScreenshots.stories.ts": {
+  "stories/plugins/pdf/RegistryScreenshots.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/pdf/panels/Viewing.stories.ts": {
     "kind": "application"
   },
   "stories/plugins/search/FederatedResults.stories.ts": {
