@@ -15,6 +15,7 @@
     SHEET_RESIZE_SLOP,
     SHEET_ROW_HEIGHT,
     SHEET_SORT_HIT,
+    SHEET_SORT_PAD,
     bodyOffsets,
     cellDocumentRect,
     chromeHeight,
@@ -22,7 +23,10 @@
     columnEdges,
     columnLetter,
     fittedColumnWidth,
+    gridRowFromAddress,
     hitTestSheet,
+    parseSheetAddress,
+    sheetRowNumber,
     sheetCommands,
     sheetContentSize,
     sheetMenuTarget,
@@ -106,6 +110,7 @@
   } | null = null;
   let selectOnEdit = false;
   let wrap = $state(false);
+  let colours = $state(false);
   let measureCanvas: HTMLCanvasElement | null = null;
 
   function measureText(text: string): number {
@@ -148,7 +153,7 @@
     widths,
     headerRow,
     headerLabels: grid.getRows()[0] ?? [],
-    rowLabels: bodyRows.map((row) => String(headerRow ? row : row + 1)),
+    rowLabels: bodyRows.map((row) => String(sheetRowNumber(row, headerRow) ?? "")),
     body: bodyRows.map((row) => grid.getRows()[row] ?? []),
     scrollLeft,
     scrollTop,
@@ -159,6 +164,7 @@
     search: searchPaint(),
     theme,
     wrap,
+    colours,
     rowOffsets,
   });
 
@@ -176,6 +182,12 @@
       selection: value("--table-selection", "rgba(37, 99, 235, 0.16)"),
       accent: value("--table-selection-border-color", "#2563eb"),
       search: value("--csv-col-5", "#b45309"),
+      columns: [1, 2, 3, 4, 5].map((slot, index) =>
+        value(
+          `--csv-col-${slot}`,
+          ["#c2410c", "#15803d", "#1d4ed8", "#a21caf", "#a16207"][index] ?? "#111",
+        ),
+      ),
     };
   }
 
@@ -299,8 +311,8 @@
       viewportWidth: Math.max(viewportWidth, 1),
       widths,
     });
-    const top = headerRow ? SHEET_LETTER_HEIGHT : 0;
-    const height = headerRow ? SHEET_HEADER_HEIGHT : SHEET_LETTER_HEIGHT;
+    const bandTop = headerRow ? SHEET_LETTER_HEIGHT : 0;
+    const bandHeight = headerRow ? SHEET_HEADER_HEIGHT : SHEET_LETTER_HEIGHT;
     const buttons = [];
     for (let col = range.start; col < range.end; col += 1) {
       const right = edges[col + 1];
@@ -308,10 +320,10 @@
       const label = headerRow ? grid.getRows()[0]?.[col] : columnLetter(col);
       buttons.push({
         col,
-        left: right - SHEET_SORT_HIT - scrollLeft,
-        top,
-        width: Math.max(0, SHEET_SORT_HIT - SHEET_RESIZE_SLOP),
-        height,
+        left: right - SHEET_SORT_HIT + SHEET_SORT_PAD - scrollLeft,
+        top: bandTop + SHEET_SORT_PAD,
+        width: Math.max(0, SHEET_SORT_HIT - SHEET_RESIZE_SLOP - SHEET_SORT_PAD * 2),
+        height: Math.max(0, bandHeight - SHEET_SORT_PAD * 2),
         direction: sort?.index === col ? sort.direction : null,
         label: `Sort ${label || columnLetter(col)}`,
       });
@@ -341,8 +353,10 @@
     }
     const letter = columnLetter(commandAt.col);
     if (commandTarget === "column") return letter;
-    if (commandTarget === "row") return String(commandAt.row + 1);
-    return `${letter}${commandAt.row + 1}`;
+    const rowNumber = sheetRowNumber(commandAt.row, headerRow);
+    if (rowNumber == null) return letter;
+    if (commandTarget === "row") return String(rowNumber);
+    return `${letter}${rowNumber}`;
   });
 
   const menuItems = $derived.by(() => {
@@ -370,6 +384,30 @@
     else if (id === "clear" && target === "column") onClearColumn(col);
     else if (id === "clear" && target === "row") onClearRow(row);
     else onClearCell(row, col);
+  }
+
+  function goToAddress(value: string) {
+    const address = parseSheetAddress(value);
+    if (!address) return;
+    if (address.kind === "column") {
+      if (address.col >= grid.getColCount()) return;
+      selectColumns(address.col, address.col);
+      const row = headerRow ? 0 : Math.max(0, gridRow(0));
+      if (row >= 0) reveal(row, address.col);
+      return;
+    }
+    const row = gridRowFromAddress(address.row, headerRow, grid.getRowCount());
+    if (row == null) return;
+    if (address.kind === "cell") {
+      if (address.col >= grid.getColCount()) return;
+      selectCell(row, address.col);
+      reveal(row, address.col);
+      return;
+    }
+    const index = bodyIndex(row);
+    if (index < 0) return;
+    selectRows(index, index);
+    reveal(row, 0);
   }
 
   function selectAll() {
@@ -771,6 +809,8 @@
     {reference}
     commands={toolbarCommands}
     {wrap}
+    {colours}
+    onAddress={goToAddress}
     onCommand={(id) => {
       const at = commandAt;
       const target = commandTarget;
@@ -780,6 +820,9 @@
     }}
     onWrap={(value) => {
       wrap = value;
+    }}
+    onColours={(value) => {
+      colours = value;
     }}
   />
   <div class="csv-sheet-body">
@@ -916,8 +959,10 @@
 
   :global(.csv-sheet__sort) {
     position: absolute;
+    box-sizing: border-box;
     min-width: 0;
-    padding: 0;
+    padding: 0.25rem;
+    background: transparent;
     pointer-events: auto;
   }
 

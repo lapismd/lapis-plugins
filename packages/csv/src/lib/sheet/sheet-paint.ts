@@ -25,6 +25,7 @@ export type SheetPaintTheme = {
   selection: string;
   accent: string;
   search: string;
+  columns: readonly string[];
 };
 
 export type SheetPaintModel = {
@@ -47,6 +48,7 @@ export type SheetPaintModel = {
   search: { index: number; col: number; header: boolean } | null;
   theme: SheetPaintTheme;
   wrap: boolean;
+  colours: boolean;
   rowOffsets: readonly number[] | null;
 };
 
@@ -121,6 +123,16 @@ function vLine(
 ): void {
   if (height <= 0) return;
   ctx.fillRect(Math.round(x), Math.round(y), 1, Math.round(height));
+}
+
+function columnColor(model: SheetPaintModel, col: number): string {
+  const colors = model.theme.columns;
+  return colors[col % Math.max(colors.length, 1)] || model.theme.text;
+}
+
+function headerFill(model: SheetPaintModel, col: number, picked: boolean): string {
+  if (picked || !model.colours) return picked ? model.theme.selection : model.theme.header;
+  return `color-mix(in oklab, ${columnColor(model, col)} 8%, ${model.theme.header})`;
 }
 
 function columnSelected(
@@ -236,7 +248,7 @@ export function paintSheet(
         col <= model.selection.endCol;
       ctx.fillStyle = selected ? theme.selection : theme.background;
       ctx.fillRect(x, box.y, columnWidth, box.height);
-      ctx.fillStyle = theme.text;
+      ctx.fillStyle = model.colours ? columnColor(model, col) : theme.text;
       paintCellText(ctx, row[col] ?? "", x, box.y, columnWidth, box.height, model.wrap);
       ctx.fillStyle = theme.grid;
       hLine(ctx, x, box.y + box.height - 1, columnWidth);
@@ -257,6 +269,15 @@ export function paintSheet(
     const picked = columnSelected(model, col);
     ctx.fillStyle = picked ? theme.selection : theme.header;
     ctx.fillRect(x, 0, columnWidth, SHEET_LETTER_HEIGHT);
+    if (!model.headerRow && model.colours && !picked) {
+      ctx.fillStyle = headerFill(model, col, false);
+      ctx.fillRect(
+        x + Math.max(0, columnWidth - SHEET_SORT_HIT),
+        0,
+        Math.min(columnWidth, SHEET_SORT_HIT),
+        SHEET_LETTER_HEIGHT,
+      );
+    }
     ctx.fillStyle = theme.muted;
     clipText(
       ctx,
@@ -269,22 +290,15 @@ export function paintSheet(
     );
     if (model.headerRow) {
       const labelWidth = Math.max(0, columnWidth - SHEET_SORT_HIT);
-      ctx.fillStyle = picked ? theme.selection : theme.header;
+      ctx.fillStyle = headerFill(model, col, picked);
       ctx.fillRect(x, SHEET_LETTER_HEIGHT, columnWidth, SHEET_HEADER_HEIGHT);
-      ctx.fillStyle = theme.text;
+      ctx.fillStyle = model.colours ? columnColor(model, col) : theme.text;
       clipText(
         ctx,
         model.headerLabels[col] ?? "",
         x,
         SHEET_LETTER_HEIGHT,
         labelWidth,
-        SHEET_HEADER_HEIGHT,
-      );
-      ctx.fillStyle = picked ? theme.selection : theme.header;
-      ctx.fillRect(
-        x + labelWidth,
-        SHEET_LETTER_HEIGHT,
-        SHEET_SORT_HIT,
         SHEET_HEADER_HEIGHT,
       );
     }

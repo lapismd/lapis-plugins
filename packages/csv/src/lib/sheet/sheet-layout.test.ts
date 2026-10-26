@@ -9,6 +9,9 @@ import {
   SHEET_ROW_HEIGHT,
   clampColumnWidth,
   columnLetter,
+  gridRowFromAddress,
+  parseSheetAddress,
+  sheetRowNumber,
   bodyOffsets,
   fittedColumnWidth,
   hitTestSheet,
@@ -24,6 +27,24 @@ import {
 const widths = [120, 80, 160];
 
 describe("sheet layout", () => {
+  it("reads a cell address, a column, or a row", () => {
+    expect(parseSheetAddress("b12")).toEqual({ kind: "cell", row: 11, col: 1 });
+    expect(parseSheetAddress("$AA$1")).toEqual({ kind: "cell", row: 0, col: 26 });
+    expect(parseSheetAddress("C")).toEqual({ kind: "column", col: 2 });
+    expect(parseSheetAddress("4")).toEqual({ kind: "row", row: 3 });
+    expect(parseSheetAddress("A0")).toBeNull();
+    expect(parseSheetAddress("1B")).toBeNull();
+  });
+
+  it("numbers address rows with the row rail", () => {
+    expect(sheetRowNumber(1, true)).toBe(1);
+    expect(sheetRowNumber(0, true)).toBeNull();
+    expect(sheetRowNumber(0, false)).toBe(1);
+    expect(gridRowFromAddress(0, true, 4)).toBe(1);
+    expect(gridRowFromAddress(0, false, 4)).toBe(0);
+    expect(gridRowFromAddress(3, true, 4)).toBeNull();
+  });
+
   it("labels columns the way a sheet does", () => {
     expect(columnLetter(0)).toBe("A");
     expect(columnLetter(25)).toBe("Z");

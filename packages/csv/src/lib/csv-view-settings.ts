@@ -14,7 +14,7 @@ const DEFAULT_VIEW_FIELD = {
   title: "Default table view",
   description: "Open a CSV or TSV as the table or the canvas sheet.",
   type: "string" as const,
-  default: "table",
+  default: "canvas",
   enum: ["table", "canvas"],
 };
 
@@ -56,8 +56,8 @@ export function readDefaultCsvView(app: App): CsvTablePresentation {
   if (isCsvTablePresentation(live)) return live;
   const stored = app.configuration
     ?.getConfiguration()
-    .get(CSV_SETTING_IDS.defaultView, "table");
-  return isCsvTablePresentation(stored) ? stored : "table";
+    .get(CSV_SETTING_IDS.defaultView, "canvas");
+  return isCsvTablePresentation(stored) ? stored : "canvas";
 }
 
 export function createCsvSettingsSection() {
@@ -75,7 +75,7 @@ export function createCsvSettingsSection() {
         title: DEFAULT_VIEW_FIELD.title,
         description: DEFAULT_VIEW_FIELD.description,
         type: "enum" as const,
-        default: "table" as const,
+        default: "canvas" as const,
         options: [
           { value: "table", label: "Table" },
           { value: "canvas", label: "Canvas" },

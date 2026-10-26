@@ -9,19 +9,55 @@
     reference,
     commands,
     wrap,
+    colours,
+    onAddress,
     onCommand,
     onWrap,
+    onColours,
   }: {
     reference: string;
     commands: readonly SheetCommand[];
     wrap: boolean;
+    colours: boolean;
+    onAddress: (address: string) => void;
     onCommand: (id: SheetCommandId) => void;
     onWrap: (wrap: boolean) => void;
+    onColours: (colours: boolean) => void;
   } = $props();
+
+  let draft = $state<string | null>(null);
+
+  function commitAddress() {
+    if (draft == null) return;
+    const value = draft;
+    draft = null;
+    onAddress(value);
+  }
 </script>
 
 <div class="csv-sheet-toolbar" role="toolbar" aria-label="Sheet" data-sheet-toolbar>
-  <span class="csv-sheet-toolbar__name" data-sheet-reference>{reference}</span>
+  <input
+    class="csv-sheet-toolbar__name"
+    data-sheet-reference
+    aria-label="Cell address"
+    value={draft ?? reference}
+    spellcheck="false"
+    onfocus={(event) => event.currentTarget.select()}
+    oninput={(event) => {
+      draft = event.currentTarget.value;
+    }}
+    onkeydown={(event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        commitAddress();
+        event.currentTarget.blur();
+      } else if (event.key === "Escape") {
+        draft = null;
+        event.currentTarget.blur();
+      }
+    }}
+    onblur={commitAddress}
+  />
   <Tooltip.Provider delayDuration={300}>
     {#each commands as command (command.id)}
       <Tooltip.Root>
@@ -62,6 +98,25 @@
       </Tooltip.Trigger>
       <Tooltip.Content side="bottom">Wrap text</Tooltip.Content>
     </Tooltip.Root>
+    <Tooltip.Root>
+      <Tooltip.Trigger>
+        {#snippet child({ props })}
+          <Toggle
+            {...props}
+            pressed={colours}
+            size="sm"
+            variant="outline"
+            aria-label="Column colours"
+            aria-pressed={colours}
+            data-sheet-colours
+            onPressedChange={(pressed) => onColours(pressed === true)}
+          >
+            <SheetGlyph command="colours" />
+          </Toggle>
+        {/snippet}
+      </Tooltip.Trigger>
+      <Tooltip.Content side="bottom">Column colours</Tooltip.Content>
+    </Tooltip.Root>
   </Tooltip.Provider>
 </div>
 
@@ -84,14 +139,33 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 3.25rem;
+    width: 4.5rem;
     height: 1.75rem;
     margin-right: 0.25rem;
     padding: 0 0.5rem;
     border: 1px solid var(--csv-surface-border, var(--border));
     border-radius: 0.25rem;
     background: var(--csv-shell-background, var(--background));
+    color: inherit;
+    font: inherit;
     font-variant-numeric: tabular-nums;
+    text-align: center;
+  }
+
+  .csv-sheet-toolbar__name:focus {
+    outline: 2px solid var(--table-selection-border-color, var(--interactive-accent, var(--accent)));
+    outline-offset: 1px;
+  }
+
+  .csv-sheet-toolbar :global(button:hover:not(:disabled)) {
+    background: color-mix(in srgb, var(--foreground) 10%, transparent);
+  }
+
+  .csv-sheet-toolbar :global(button[aria-pressed="true"]),
+  .csv-sheet-toolbar :global(button[aria-pressed="true"]:hover) {
+    background: var(--table-selection-border-color, var(--interactive-accent, var(--accent)));
+    color: var(--csv-shell-background, #fff);
+    border-color: transparent;
   }
 
   .csv-sheet-toolbar__rule {

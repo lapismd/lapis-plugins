@@ -6,7 +6,8 @@ export const SHEET_MIN_COLUMN_WIDTH = 48;
 export const SHEET_DEFAULT_COLUMN_WIDTH = 120;
 export const SHEET_RESIZE_SLOP = 5;
 export const SHEET_OVERSCAN = 8;
-export const SHEET_SORT_HIT = 18;
+export const SHEET_SORT_HIT = 40;
+export const SHEET_SORT_PAD = 3;
 export const SHEET_CELL_PADDING = 16;
 export const SHEET_MAX_COLUMN_WIDTH = 960;
 export const SHEET_LINE_HEIGHT = 16;
@@ -46,6 +47,60 @@ export function columnLetter(index: number): string {
     value = Math.floor(value / 26);
   }
   return label;
+}
+
+export type SheetAddress =
+  | { kind: "cell"; row: number; col: number }
+  | { kind: "column"; col: number }
+  | { kind: "row"; row: number };
+
+export function parseSheetAddress(input: string): SheetAddress | null {
+  const value = input.trim().replaceAll("$", "").toUpperCase();
+  if (value.length === 0) return null;
+  const cell = /^([A-Z]+)(\d+)$/.exec(value);
+  if (cell) {
+    const col = columnIndex(cell[1] ?? "");
+    const row = Number(cell[2]) - 1;
+    if (col == null || row < 0) return null;
+    return { kind: "cell", row, col };
+  }
+  if (/^[A-Z]+$/.test(value)) {
+    const col = columnIndex(value);
+    return col == null ? null : { kind: "column", col };
+  }
+  if (/^\d+$/.test(value)) {
+    const row = Number(value) - 1;
+    return row < 0 ? null : { kind: "row", row };
+  }
+  return null;
+}
+
+/** Rail and address number for a grid row. The header row is not numbered. */
+export function sheetRowNumber(gridRow: number, headerRow: boolean): number | null {
+  if (gridRow < 0) return null;
+  if (!headerRow) return gridRow + 1;
+  return gridRow === 0 ? null : gridRow;
+}
+
+/** Grid row for a parsed address row (`A1` is 0). Null when it is not a body row. */
+export function gridRowFromAddress(
+  addressRow: number,
+  headerRow: boolean,
+  rowCount: number,
+): number | null {
+  const gridRow = headerRow ? addressRow + 1 : addressRow;
+  if (gridRow < 0 || gridRow >= rowCount) return null;
+  return gridRow;
+}
+
+function columnIndex(letters: string): number | null {
+  let value = 0;
+  for (const char of letters) {
+    const code = char.charCodeAt(0) - 64;
+    if (code < 1 || code > 26) return null;
+    value = value * 26 + code;
+  }
+  return value - 1;
 }
 
 export function clampColumnWidth(width: number): number {
