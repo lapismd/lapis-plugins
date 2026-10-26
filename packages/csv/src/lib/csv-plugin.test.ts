@@ -132,6 +132,7 @@ describe("CSVPlugin", () => {
     expect(harness.commands.map((command) => command.id)).toEqual([
       "open-csv",
       "toggle-csv-source",
+      "show-csv-canvas",
     ]);
     expect(typeof harness.editorExtension).toBe("function");
     expect(harness.embeds.map((entry) => entry.extension)).toEqual(["csv", "tsv"]);
@@ -183,5 +184,22 @@ describe("CSVPlugin", () => {
     expect(toggleMode).not.toHaveBeenCalled();
     expect(command?.checkCallback?.(false)).toBe(true);
     expect(toggleMode).toHaveBeenCalledOnce();
+  });
+
+  it("switches the active CSV leaf to the canvas sheet", () => {
+    const { app } = createApp({ path: "Sample.csv", extension: "csv" });
+    const view = new (CsvFileView as unknown as new () => CsvFileView)();
+    const showCanvas = vi.fn();
+    Object.assign(view, { showCanvas });
+    app.workspace.activeLeaf = { view, setViewState: vi.fn() } as never;
+    new CSVPlugin(app as never).onload();
+    const command = harness.commands.find(
+      (entry) => entry.id === "show-csv-canvas",
+    );
+
+    expect(command?.checkCallback?.(true)).toBe(true);
+    expect(showCanvas).not.toHaveBeenCalled();
+    expect(command?.checkCallback?.(false)).toBe(true);
+    expect(showCanvas).toHaveBeenCalledOnce();
   });
 });

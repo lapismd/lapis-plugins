@@ -9,12 +9,17 @@
   min-height: 0;
 }
 
-.csv-table-frame > .csv-table-view {
+.csv-table-frame > .csv-table-view,
+.csv-table-frame > .csv-sheet-view {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
   min-width: 0;
   min-height: 0;
+}
+
+.csv-table-frame > .csv-sheet-view {
+  font-family: var(--csv-font-mono);
 }
 
 .csv-table-frame[data-csv-role="embed"] {

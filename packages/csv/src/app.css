@@ -2,6 +2,7 @@
 
 .csv-view,
 .csv-table-view,
+.csv-sheet-view,
 .csv-source-pane {
   /* Mira rebinds `--font-mono` inside notes. The theme face stays on `--studio-font-mono`. */
   --csv-font-mono: var(
@@ -46,6 +47,7 @@
 
 .dark .csv-view,
 .dark .csv-table-view,
+.dark .csv-sheet-view,
 .dark .csv-source-pane {
   --csv-col-1: oklch(0.72 0.16 25);
   --csv-col-2: oklch(0.74 0.14 145);
@@ -191,8 +193,15 @@
   background: color-mix(in srgb, var(--foreground) 8%, transparent);
 }
 
-.csv-status-bar__mode {
+.csv-status-bar__modes {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
   margin-inline-start: auto;
+}
+
+.csv-status-bar__mode {
+  margin-inline-start: 0;
 }
 
 .csv-status-bar__icon svg {

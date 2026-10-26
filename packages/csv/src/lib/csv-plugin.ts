@@ -15,6 +15,7 @@ import {
   CSV_VIEW_TYPE,
 } from "./ids";
 import { csvSourceExtensions } from "./codemirror/csv-source-extensions";
+import { registerCsvViewSettings } from "./csv-view-settings";
 import { CsvFileView } from "./views/csv-view";
 
 export { CSV_PLUGIN_ID, CSV_VIEW_TYPE, CSV_FILENAME_PATTERNS };
@@ -97,6 +98,18 @@ export class CSVPlugin extends Plugin {
         return true;
       },
     });
+    this.addCommand({
+      id: "show-csv-canvas",
+      name: "Show CSV canvas",
+      icon: "lucide-grid-3x3",
+      checkCallback: (checking: boolean) => {
+        const view = this.app.workspace.activeLeaf?.view;
+        if (!(view instanceof CsvFileView)) return false;
+        if (!checking) view.showCanvas();
+        return true;
+      },
+    });
+    registerCsvViewSettings(this);
   }
 
   private openTable(leaf: WorkspaceLeaf | null): void {

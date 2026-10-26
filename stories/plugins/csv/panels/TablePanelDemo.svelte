@@ -19,7 +19,10 @@
   import "@lapismd/mira-editor/styles.css";
   import sampleCsv from "../../../../packages/csv/assets/sample.csv?raw";
 
-  let { layout }: { layout: PanelDemoLayout } = $props();
+  let {
+    layout,
+    mode = "table",
+  }: { layout: PanelDemoLayout; mode?: "table" | "canvas" } = $props();
 
   let app = $state<App | null>(null);
   let status = $state("booting");
@@ -68,10 +71,13 @@
       }
       await tableLeaf.setViewState({
         type: "lapis-csv",
-        state: { file: SAMPLE_CSV_PATH },
+        state: {
+          file: SAMPLE_CSV_PATH,
+          ...(mode === "canvas" ? { mode: "canvas" } : {}),
+        },
       });
       runtime.app.workspace.setActiveLeaf(tableLeaf, { focus: false });
-      if (layout === "middle-top-tabs") {
+      if (layout === "middle-top-tabs" && mode !== "canvas") {
         const note = runtime.app.vault.getFileByPath(SAMPLE_READING_NOTE_PATH);
         if (!note) throw new Error("Missing staff readings note");
         const noteLeaf = runtime.app.workspace.getLeaf("tab");

@@ -32,6 +32,7 @@
     onContentChange?: (text: string) => void;
     onSettingsChange?: (patch: CsvPluginSettingsPatch) => void;
     onToggleSource?: () => void;
+    onShowCanvas?: () => void;
   };
 
   let {
@@ -43,6 +44,7 @@
     onContentChange,
     onSettingsChange,
     onToggleSource,
+    onShowCanvas,
   }: Props = $props();
 
   let scrollViewport = $state<HTMLElement | null>(null);
@@ -258,5 +260,6 @@
     mode="table"
     onToggleSearch={toggleSearch}
     onToggleMode={onToggleSource}
+    {onShowCanvas}
   />
 </div>

@@ -13,11 +13,13 @@
     file,
     role = "file",
     onToggleSource,
+    onShowCanvas,
   }: {
     app: App;
     file: TFile;
     role?: "file" | "embed";
     onToggleSource?: () => void;
+    onShowCanvas?: () => void;
   } = $props();
 
   let settings = $state<CsvPluginSettings>({ ...DEFAULT_CSV_SETTINGS });
@@ -45,6 +47,7 @@
         onContentChange={handleContentChange}
         onSettingsChange={handleSettingsChange}
         {onToggleSource}
+        {onShowCanvas}
       />
     {:catch reason}
       <p class="csv-table-status" data-csv-error="true">

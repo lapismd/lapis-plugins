@@ -17,10 +17,12 @@
     app,
     file,
     onShowTable,
+    onShowCanvas,
   }: {
     app: App;
     file: TFile;
     onShowTable: () => void;
+    onShowCanvas?: () => void;
   } = $props();
 
   let editor = $state<EditorView | null>(null);
@@ -120,5 +122,6 @@
     mode="source"
     onToggleSearch={toggleSearch}
     onToggleMode={onShowTable}
+    {onShowCanvas}
   />
 </div>
