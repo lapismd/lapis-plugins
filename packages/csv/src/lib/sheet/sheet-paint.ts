@@ -290,8 +290,10 @@ export function paintSheet(
     );
     if (model.headerRow) {
       const labelWidth = Math.max(0, columnWidth - SHEET_SORT_HIT);
-      ctx.fillStyle = headerFill(model, col, picked);
-      ctx.fillRect(x, SHEET_LETTER_HEIGHT, columnWidth, SHEET_HEADER_HEIGHT);
+      const fill = headerFill(model, col, picked);
+      ctx.fillStyle = fill;
+      ctx.fillRect(x, SHEET_LETTER_HEIGHT, labelWidth, SHEET_HEADER_HEIGHT);
+      ctx.fillRect(x + labelWidth, SHEET_LETTER_HEIGHT, SHEET_SORT_HIT, SHEET_HEADER_HEIGHT);
       ctx.fillStyle = model.colours ? columnColor(model, col) : theme.text;
       clipText(
         ctx,

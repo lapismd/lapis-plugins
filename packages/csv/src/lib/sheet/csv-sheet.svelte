@@ -168,6 +168,20 @@
     rowOffsets,
   });
 
+  function sortFill(col: number): string {
+    const picked =
+      selection != null &&
+      bodyRows.length > 0 &&
+      selection.startIndex === 0 &&
+      selection.endIndex >= bodyRows.length - 1 &&
+      col >= selection.startCol &&
+      col <= selection.endCol;
+    if (picked) return theme.selection;
+    if (!colours) return "transparent";
+    const color = theme.columns[col % Math.max(theme.columns.length, 1)] || theme.text;
+    return `color-mix(in oklab, ${color} 8%, ${theme.header})`;
+  }
+
   function readTheme(node: HTMLCanvasElement | null): SheetPaintTheme {
     const style = node ? getComputedStyle(node) : null;
     const value = (name: string, fallback: string) =>
@@ -324,6 +338,7 @@
         top: bandTop + SHEET_SORT_PAD,
         width: Math.max(0, SHEET_SORT_HIT - SHEET_RESIZE_SLOP - SHEET_SORT_PAD * 2),
         height: Math.max(0, bandHeight - SHEET_SORT_PAD * 2),
+        fill: sortFill(col),
         direction: sort?.index === col ? sort.direction : null,
         label: `Sort ${label || columnLetter(col)}`,
       });
@@ -854,7 +869,7 @@
     {#each sortButtons as button (button.col)}
       <Button
         class="csv-sheet__sort"
-        style="left: {button.left}px; top: {button.top}px; width: {button.width}px; height: {button.height}px;"
+        style="left: {button.left}px; top: {button.top}px; width: {button.width}px; height: {button.height}px; --csv-sort-fill: {button.fill};"
         variant="ghost"
         size="icon"
         aria-label={button.label}
@@ -962,12 +977,12 @@
     box-sizing: border-box;
     min-width: 0;
     padding: 0.25rem;
-    background: transparent;
+    background: var(--csv-sort-fill, transparent);
     pointer-events: auto;
   }
 
   :global(.csv-sheet__sort:hover) {
-    background: color-mix(in srgb, var(--foreground) 10%, transparent);
+    background: color-mix(in srgb, var(--foreground) 10%, var(--csv-sort-fill, transparent));
   }
 
   .csv-sheet__editor {
