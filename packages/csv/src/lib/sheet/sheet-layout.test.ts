@@ -4,13 +4,21 @@ import {
   SHEET_GUTTER_WIDTH,
   SHEET_HEADER_HEIGHT,
   SHEET_LETTER_HEIGHT,
+  SHEET_MAX_COLUMN_WIDTH,
   SHEET_MIN_COLUMN_WIDTH,
   SHEET_ROW_HEIGHT,
   clampColumnWidth,
   columnLetter,
+  bodyOffsets,
+  fittedColumnWidth,
   hitTestSheet,
+  rowIndexAt,
+  sheetCommands,
+  sheetMenuTarget,
   visibleBodyRange,
   visibleColumnRange,
+  wrapLines,
+  wrappedRowHeight,
 } from "./sheet-layout";
 
 const widths = [120, 80, 160];
@@ -98,6 +106,81 @@ describe("sheet layout", () => {
       bodyCount: 4,
     });
     expect(row).toEqual({ kind: "row", index: 0 });
+
+    const letter = hitTestSheet({
+      x: SHEET_GUTTER_WIDTH + 16,
+      y: 8,
+      scrollLeft: 0,
+      scrollTop: 0,
+      widths,
+      headerRow: true,
+      bodyCount: 4,
+    });
+    expect(letter).toEqual({ kind: "letter", col: 0 });
+
+    const sort = hitTestSheet({
+      x: SHEET_GUTTER_WIDTH + widths[0] - 10,
+      y: SHEET_LETTER_HEIGHT + 8,
+      scrollLeft: 0,
+      scrollTop: 0,
+      widths,
+      headerRow: true,
+      bodyCount: 4,
+    });
+    expect(sort).toEqual({ kind: "sort", col: 0 });
+  });
+
+  it("sizes a column to its text and still hides the rest", () => {
+    expect(fittedColumnWidth((text) => text.length * 7, ["note", "Clear of weed"])).toBe(
+      "Clear of weed".length * 7 + 16,
+    );
+    expect(fittedColumnWidth((text) => text.length * 40, ["a very long reading note"])).toBe(
+      SHEET_MAX_COLUMN_WIDTH,
+    );
+  });
+
+  it("wraps a long cell and grows that row", () => {
+    const measure = (value: string) => value.length * 8;
+    const lines = wrapLines("Weed across the culvert", 80, measure);
+    expect(lines.length).toBeGreaterThan(1);
+    expect(lines.join(" ")).toBe("Weed across the culvert");
+    expect(wrappedRowHeight(1)).toBe(SHEET_ROW_HEIGHT);
+    expect(wrappedRowHeight(3)).toBeGreaterThan(SHEET_ROW_HEIGHT);
+    const offsets = bodyOffsets([SHEET_ROW_HEIGHT, wrappedRowHeight(3), SHEET_ROW_HEIGHT]);
+    expect(rowIndexAt(offsets, 0)).toBe(0);
+    expect(rowIndexAt(offsets, SHEET_ROW_HEIGHT)).toBe(1);
+    expect(rowIndexAt(offsets, SHEET_ROW_HEIGHT + 4)).toBe(1);
+  });
+
+  it("lists move, clear, and delete for the pointer target", () => {
+    const column = sheetCommands("column", { row: 0, col: 0 }, { rows: 4, cols: 3 });
+    expect(column.map((command) => command.label)).toEqual([
+      "Move left",
+      "Move right",
+      "Clear",
+      "Delete",
+    ]);
+    expect(column[0]?.disabled).toBe(true);
+    expect(column[1]?.disabled).toBe(false);
+    expect(
+      sheetCommands("row", { row: 2, col: 0 }, { rows: 4, cols: 3 }).map(
+        (command) => command.id,
+      ),
+    ).toEqual(["move-up", "move-down", "clear", "delete"]);
+    expect(
+      sheetCommands("cell", { row: 1, col: 1 }, { rows: 4, cols: 3 }).map(
+        (command) => command.id,
+      ),
+    ).toEqual(["clear", "delete"]);
+  });
+
+  it("chooses the context menu from the pointer target", () => {
+    expect(sheetMenuTarget({ kind: "letter", col: 1 })).toBe("column");
+    expect(sheetMenuTarget({ kind: "header", col: 1 })).toBe("column");
+    expect(sheetMenuTarget({ kind: "sort", col: 2 })).toBe("column");
+    expect(sheetMenuTarget({ kind: "row", index: 3 })).toBe("row");
+    expect(sheetMenuTarget({ kind: "body", index: 1, col: 2 })).toBe("cell");
+    expect(sheetMenuTarget({ kind: "corner" })).toBeNull();
   });
 
   it("uses the default width when a file has no saved columns", () => {

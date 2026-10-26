@@ -18,7 +18,9 @@
   min-height: 0;
 }
 
-.csv-table-frame > .csv-sheet-view {
+.csv-sheet,
+.csv-sheet__canvas,
+.csv-sheet__editor {
   font-family: var(--csv-font-mono);
 }
 

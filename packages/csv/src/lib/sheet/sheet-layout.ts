@@ -6,12 +6,32 @@ export const SHEET_MIN_COLUMN_WIDTH = 48;
 export const SHEET_DEFAULT_COLUMN_WIDTH = 120;
 export const SHEET_RESIZE_SLOP = 5;
 export const SHEET_OVERSCAN = 8;
+export const SHEET_SORT_HIT = 18;
+export const SHEET_CELL_PADDING = 16;
+export const SHEET_MAX_COLUMN_WIDTH = 960;
+export const SHEET_LINE_HEIGHT = 16;
+export const SHEET_WRAP_MAX_LINES = 4;
+
+export type SheetCommandId =
+  | "move-left"
+  | "move-right"
+  | "move-up"
+  | "move-down"
+  | "clear"
+  | "delete";
+
+export type SheetCommand = {
+  id: SheetCommandId;
+  label: string;
+  disabled: boolean;
+};
 
 const sessionWidths = new Map<string, number[]>();
 
 export type SheetHit =
   | { kind: "corner" }
   | { kind: "letter"; col: number }
+  | { kind: "sort"; col: number }
   | { kind: "header"; col: number }
   | { kind: "body"; index: number; col: number }
   | { kind: "row"; index: number }
@@ -29,7 +49,19 @@ export function columnLetter(index: number): string {
 }
 
 export function clampColumnWidth(width: number): number {
-  return Math.max(SHEET_MIN_COLUMN_WIDTH, Math.round(width));
+  return Math.max(
+    SHEET_MIN_COLUMN_WIDTH,
+    Math.min(SHEET_MAX_COLUMN_WIDTH, Math.round(width)),
+  );
+}
+
+export function fittedColumnWidth(
+  measure: (text: string) => number,
+  texts: readonly string[],
+): number {
+  let widest = 0;
+  for (const text of texts) widest = Math.max(widest, measure(text));
+  return clampColumnWidth(widest + SHEET_CELL_PADDING);
 }
 
 export function columnWidths(
@@ -66,12 +98,122 @@ export function sheetContentSize(
   widths: readonly number[],
   bodyCount: number,
   headerRow: boolean,
+  bodyHeight?: number,
 ): { width: number; height: number } {
   const edges = columnEdges(widths);
   return {
     width: edges[edges.length - 1] ?? SHEET_GUTTER_WIDTH,
-    height: chromeHeight(headerRow) + bodyCount * SHEET_ROW_HEIGHT,
+    height: chromeHeight(headerRow) + (bodyHeight ?? bodyCount * SHEET_ROW_HEIGHT),
   };
+}
+
+export function wrapLines(
+  text: string,
+  innerWidth: number,
+  measure: (value: string) => number,
+): string[] {
+  if (text.length === 0 || innerWidth <= 0) return [text];
+  const lines: string[] = [];
+  for (const paragraph of text.split("\n")) {
+    const words = paragraph.split(/\s+/).filter((word) => word.length > 0);
+    if (words.length === 0) {
+      lines.push("");
+      continue;
+    }
+    let line = "";
+    for (const word of words) {
+      const next = line.length === 0 ? word : `${line} ${word}`;
+      if (measure(next) <= innerWidth) {
+        line = next;
+        continue;
+      }
+      if (line.length > 0) lines.push(line);
+      if (measure(word) <= innerWidth) {
+        line = word;
+        continue;
+      }
+      let chunk = "";
+      for (const char of word) {
+        const trial = chunk + char;
+        if (chunk.length === 0 || measure(trial) <= innerWidth) chunk = trial;
+        else {
+          lines.push(chunk);
+          chunk = char;
+        }
+      }
+      line = chunk;
+    }
+    if (line.length > 0) lines.push(line);
+  }
+  return lines.length > 0 ? lines : [""];
+}
+
+export function wrappedRowHeight(lineCount: number): number {
+  const lines = Math.max(1, Math.min(lineCount, SHEET_WRAP_MAX_LINES));
+  return Math.max(SHEET_ROW_HEIGHT, 12 + lines * SHEET_LINE_HEIGHT);
+}
+
+export function bodyOffsets(heights: readonly number[]): number[] {
+  const offsets = [0];
+  for (const height of heights) {
+    offsets.push((offsets[offsets.length - 1] ?? 0) + height);
+  }
+  return offsets;
+}
+
+export function rowIndexAt(offsets: readonly number[], position: number): number {
+  const last = Math.max(0, offsets.length - 2);
+  if (last === 0 || position <= 0) return 0;
+  let low = 0;
+  let high = last;
+  while (low < high) {
+    const mid = Math.ceil((low + high) / 2);
+    if ((offsets[mid] ?? 0) <= position) low = mid;
+    else high = mid - 1;
+  }
+  return low;
+}
+
+export function sheetCommands(
+  target: "column" | "row" | "cell",
+  position: { row: number; col: number },
+  bounds: { rows: number; cols: number },
+): SheetCommand[] {
+  const clear = { id: "clear" as const, label: "Clear", disabled: false };
+  const remove = { id: "delete" as const, label: "Delete", disabled: false };
+  if (target === "column") {
+    return [
+      {
+        id: "move-left",
+        label: "Move left",
+        disabled: position.col <= 0,
+      },
+      {
+        id: "move-right",
+        label: "Move right",
+        disabled: position.col >= bounds.cols - 1,
+      },
+      clear,
+      remove,
+    ];
+  }
+  if (target === "row") {
+    return [
+      {
+        id: "move-up",
+        label: "Move up",
+        disabled: position.row <= 0,
+      },
+      {
+        id: "move-down",
+        label: "Move down",
+        disabled: position.row >= bounds.rows - 1,
+      },
+      clear,
+      remove,
+    ];
+  }
+  return [clear, remove];
 }
 
 export function visibleBodyRange(options: {
@@ -79,9 +221,21 @@ export function visibleBodyRange(options: {
   viewportHeight: number;
   bodyCount: number;
   overscan?: number;
+  offsets?: readonly number[] | null;
 }): { start: number; end: number } {
   const overscan = options.overscan ?? SHEET_OVERSCAN;
   if (options.bodyCount <= 0) return { start: 0, end: 0 };
+  if (options.offsets && options.offsets.length > 1) {
+    const start = Math.max(0, rowIndexAt(options.offsets, options.scrollTop) - overscan);
+    const endIndex = rowIndexAt(
+      options.offsets,
+      options.scrollTop + Math.max(options.viewportHeight, SHEET_ROW_HEIGHT),
+    );
+    return {
+      start,
+      end: Math.min(options.bodyCount, endIndex + 1 + overscan),
+    };
+  }
   const start = Math.max(
     0,
     Math.floor(options.scrollTop / SHEET_ROW_HEIGHT) - overscan,
@@ -110,6 +264,35 @@ export function visibleColumnRange(options: {
   return { start, end: Math.max(end, Math.min(options.widths.length, start + 1)) };
 }
 
+export function sheetMenuTarget(
+  hit: SheetHit,
+): "column" | "row" | "cell" | null {
+  switch (hit.kind) {
+    case "letter":
+    case "header":
+    case "sort":
+    case "resize":
+      return "column";
+    case "row":
+      return "row";
+    case "body":
+      return "cell";
+    default:
+      return null;
+  }
+}
+
+function inSortZone(
+  documentX: number,
+  edges: readonly number[],
+  col: number,
+): boolean {
+  const right = edges[col + 1];
+  if (right == null) return false;
+  const fromRight = right - documentX;
+  return fromRight > SHEET_RESIZE_SLOP && fromRight <= SHEET_SORT_HIT;
+}
+
 function columnAt(documentX: number, edges: readonly number[]): number | null {
   if (documentX < edges[0]) return null;
   for (let index = 0; index < edges.length - 1; index += 1) {
@@ -126,6 +309,7 @@ export function hitTestSheet(options: {
   widths: readonly number[];
   headerRow: boolean;
   bodyCount: number;
+  offsets?: readonly number[] | null;
 }): SheetHit | null {
   const { x, y, widths } = options;
   if (x < 0 || y < 0 || widths.length === 0) return null;
@@ -142,13 +326,30 @@ export function hitTestSheet(options: {
   if (x < SHEET_GUTTER_WIDTH && y < chrome) return { kind: "corner" };
   if (y < SHEET_LETTER_HEIGHT) {
     const col = columnAt(x + options.scrollLeft, edges);
-    return col == null ? null : { kind: "letter", col };
+    if (col == null) return null;
+    if (!options.headerRow && inSortZone(x + options.scrollLeft, edges, col)) {
+      return { kind: "sort", col };
+    }
+    return { kind: "letter", col };
   }
   if (options.headerRow && y < chrome) {
     const col = columnAt(x + options.scrollLeft, edges);
-    return col == null ? null : { kind: "header", col };
+    if (col == null) return null;
+    if (inSortZone(x + options.scrollLeft, edges, col)) {
+      return { kind: "sort", col };
+    }
+    return { kind: "header", col };
   }
-  const index = Math.floor((y - chrome + options.scrollTop) / SHEET_ROW_HEIGHT);
+  const bodyY = y - chrome + options.scrollTop;
+  const offsets = options.offsets;
+  let index: number;
+  if (offsets && offsets.length > 1) {
+    const total = offsets[offsets.length - 1] ?? 0;
+    if (bodyY < 0 || bodyY >= total) return null;
+    index = rowIndexAt(offsets, bodyY);
+  } else {
+    index = Math.floor(bodyY / SHEET_ROW_HEIGHT);
+  }
   if (index < 0 || index >= options.bodyCount) return null;
   if (x < SHEET_GUTTER_WIDTH) return { kind: "row", index };
   const col = columnAt(x + options.scrollLeft, edges);

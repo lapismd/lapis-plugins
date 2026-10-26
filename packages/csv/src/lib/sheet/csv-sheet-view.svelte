@@ -5,7 +5,7 @@
   import type { Attachment } from "svelte/attachments";
   import {
     noteCsvColumnDeleted,
-    noteCsvColumnInserted,
+    noteCsvColumnMoved,
     noteCsvColumnSortEdit,
     toggleCsvColumnSort,
     type CsvColumnSort,
@@ -169,27 +169,10 @@
     publish(next);
   }
 
-  function insertRow(index: number) {
-    const next = parsed.grid.clone();
-    next.insertRowAt(index);
-    columnSort = null;
-    publish(next);
-  }
-
   function deleteRow(index: number) {
     const next = parsed.grid.clone();
     next.deleteRowAt(index);
     columnSort = null;
-    publish(next);
-  }
-
-  function insertColumn(index: number) {
-    const next = parsed.grid.clone();
-    next.insertColumnAt(index);
-    columnSort = noteCsvColumnInserted(columnSort, index);
-    const stored = [...widths];
-    stored.splice(index, 0, SHEET_DEFAULT_COLUMN_WIDTH);
-    rememberWidths(stored);
     publish(next);
   }
 
@@ -200,6 +183,57 @@
     const stored = widths.filter((_, column) => column !== index);
     rememberWidths(stored.length > 0 ? stored : [SHEET_DEFAULT_COLUMN_WIDTH]);
     publish(next);
+  }
+
+  function moveColumn(from: number, to: number) {
+    if (from === to || to < 0 || to >= parsed.grid.getColCount()) return;
+    const next = parsed.grid.clone();
+    next.moveColumnAt(from, to);
+    columnSort = noteCsvColumnMoved(columnSort, from, to);
+    const stored = [...widths];
+    const [width] = stored.splice(from, 1);
+    stored.splice(to, 0, width ?? SHEET_DEFAULT_COLUMN_WIDTH);
+    rememberWidths(stored);
+    publish(next);
+  }
+
+  function moveRow(from: number, to: number) {
+    if (from === to || to < 0 || to >= parsed.grid.getRowCount()) return;
+    const next = parsed.grid.clone();
+    next.moveRowAt(from, to);
+    columnSort = null;
+    publish(next);
+  }
+
+  function clearCoordinates(coords: Array<[number, number]>) {
+    const next = parsed.grid.clone();
+    next.clearCellsAt(coords);
+    if (columnSort) {
+      for (const [row, col] of coords) {
+        noteCsvColumnSortEdit(columnSort, row, col, "");
+      }
+    }
+    publish(next);
+  }
+
+  function clearColumn(col: number) {
+    const coords: Array<[number, number]> = [];
+    for (let row = 0; row < parsed.grid.getRowCount(); row += 1) {
+      coords.push([row, col]);
+    }
+    clearCoordinates(coords);
+  }
+
+  function clearRow(row: number) {
+    const coords: Array<[number, number]> = [];
+    for (let col = 0; col < parsed.grid.getColCount(); col += 1) {
+      coords.push([row, col]);
+    }
+    clearCoordinates(coords);
+  }
+
+  function clearCell(row: number, col: number) {
+    changeCell(row, col, "");
   }
 
   function replaceCells(edits: { row: number; col: number; value: string }[]) {
@@ -281,10 +315,13 @@
     onWidths={rememberWidths}
     onCellChange={changeCell}
     onSort={sortColumn}
-    onInsertRow={insertRow}
     onDeleteRow={deleteRow}
-    onInsertColumn={insertColumn}
     onDeleteColumn={deleteColumn}
+    onMoveColumn={moveColumn}
+    onMoveRow={moveRow}
+    onClearColumn={clearColumn}
+    onClearRow={clearRow}
+    onClearCell={clearCell}
   />
   <CsvStatusBar
     columns={counts.columns}
