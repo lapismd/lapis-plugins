@@ -32,4 +32,5 @@ Including `Plugins/CSV/Registry Screenshots` in registry media selection
 changes no native Markdown parser behavior. Leasing ordinary Markdown image
 URLs through the owning vault uses the public Mira asset hooks and changes no
 native Markdown parser behavior. Bundling the vendored DOCX editor changes no
-native Markdown parser behavior.
+native Markdown parser behavior. Polyfilling Node builtins for the DOCX PDF
+export worker changes no native Markdown parser behavior.

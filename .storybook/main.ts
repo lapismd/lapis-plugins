@@ -7,6 +7,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { mergeConfig, searchForWorkspaceRoot } from "vite";
 
+import { docxExportPolyfills } from "../scripts/lib/docx-export-polyfills.mjs";
 import { pluginPackages } from "../scripts/package-catalog.mjs";
 
 const storybookDir = path.dirname(fileURLToPath(import.meta.url));
@@ -161,6 +162,7 @@ const config: StorybookConfig = {
     );
     viteConfig.plugins = [
       tursoBundleBuildPlugin(),
+      docxExportPolyfills({ process: false }),
       svelte({
         preprocess: vitePreprocess(),
         emitCss: false,
@@ -224,7 +226,7 @@ const config: StorybookConfig = {
       },
       esbuild: { target: "esnext" },
       worker: {
-        plugins: () => [tursoBundleBuildPlugin()],
+        plugins: () => [tursoBundleBuildPlugin(), docxExportPolyfills()],
         format: "es",
         rollupOptions: { output: { inlineDynamicImports: true } },
       },

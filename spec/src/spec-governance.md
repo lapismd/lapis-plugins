@@ -375,3 +375,5 @@ separate native-services and distribution gates alongside its plugin chapter.
 The Markdown image URL lease follows the same split: the plugin chapter owns
 the vault hook, and this governance chapter does not gain a new gate. The
 vendored DOCX editor follows that same split and does not add a governance gate.
+The DOCX PDF export polyfill follows that same split and does not add a
+governance gate.

@@ -205,7 +205,9 @@ its table preview. Registry media selection includes
 package, and this slice does not add it to a host profile. The Markdown image
 URL lease is a package patch and does not change how that package is published.
 The vendored DOCX editor is bundled inside `@lapis-notes/docx` and does not
-change how packages are published.
+change how packages are published. Storybook and the plugin release build
+polyfill the Node builtins that the DOCX PDF export worker imports. That
+polyfill is a build-host detail and does not change how packages are published.
 
 The shared development host resolves published Mira `~0.1.0` together with
 mira-editor, mira-plugin-ai, and mira-plugin-mermaid `~0.0.3`. Design Core

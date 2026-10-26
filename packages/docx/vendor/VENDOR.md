@@ -10,7 +10,7 @@ reference, plus `shared/src` aliased as `@cw/shared`. Backend, desktop, dashboar
 landing, examples, and the Node export build are not included. `@forevka/wordcanvas`
 is not an npm dependency.
 
-Three host adaptations are recorded here:
+Four host adaptations are recorded here:
 
 - Each vendored TypeScript file starts with `// @ts-nocheck` so the Lapis checker
   does not adopt the upstream program.
@@ -18,6 +18,12 @@ Three host adaptations are recorded here:
   reading plugin, so that optional import is a warning instead of a dependency.
 - The save-state refresh calls `onDirtyChange` when the unsaved flag flips, so
   a file view can write the vault file before it closes.
+- The export worker loads pdfkit, which imports Node builtins. Storybook, its
+  export worker, and the plugin release build polyfill `assert`, `buffer`,
+  `events`, `stream`, `util`, and `zlib`. The worker and the release build also
+  polyfill `process`. Storybook's own client imports `node:process`, so that
+  module stays real there. Vitest stays on real Node and does not receive the
+  shims.
 
 `@chenglou/pretext@0.0.7` stays a bundled dependency. The upstream
 `pretext-patch` is applied with pnpm `patchedDependencies` from

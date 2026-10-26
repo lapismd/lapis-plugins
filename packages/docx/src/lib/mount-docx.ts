@@ -26,7 +26,6 @@ type WordCanvasConstructor = new (options: {
   readonly?: boolean;
   documentTitle?: string;
   backendUrl?: string;
-  view?: { exportPdf?: boolean };
   onSave?: (event: DocxSaveEvent) => void | Promise<void>;
   onDirtyChange?: (dirty: boolean) => void;
 }) => WordCanvasEditor;
@@ -34,8 +33,14 @@ type WordCanvasConstructor = new (options: {
 const DOCX_MIME =
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
-function docxBuffer(bytes: Uint8Array): ArrayBuffer {
+function copiedBuffer(bytes: Uint8Array): ArrayBuffer {
   return new Uint8Array(bytes).buffer;
+}
+
+function siblingPdfPath(file: TFile): string {
+  const slash = file.path.lastIndexOf("/");
+  const directory = slash === -1 ? "" : file.path.slice(0, slash + 1);
+  return `${directory}${file.basename}.pdf`;
 }
 
 export function mountDocxViewer(options: {
@@ -74,15 +79,32 @@ export function mountDocxViewer(options: {
 
   const persist = async (bytes: Uint8Array): Promise<void> => {
     if (disposed && !writingClose) return;
-    await options.app.vault.modifyBinary(options.file, docxBuffer(bytes));
+    await options.app.vault.modifyBinary(options.file, copiedBuffer(bytes));
+  };
+
+  const exportPdf = async (bytes: Uint8Array): Promise<void> => {
+    if (disposed && !writingClose) return;
+    const path = siblingPdfPath(options.file);
+    const buffer = copiedBuffer(bytes);
+    const existing = options.app.vault.getFileByPath(path);
+    if (existing) {
+      await options.app.vault.modifyBinary(existing, buffer);
+      return;
+    }
+    await options.app.vault.createBinary(path, buffer);
   };
 
   const save = async (event: DocxSaveEvent): Promise<void> => {
     if (disposed && !writingClose) return;
-    if (event.format !== "docx") {
-      throw new Error("The DOCX viewer only writes a Word document");
+    if (event.format === "docx") {
+      await persist(event.bytes);
+      return;
     }
-    await persist(event.bytes);
+    if (event.format === "pdf") {
+      await exportPdf(event.bytes);
+      return;
+    }
+    throw new Error("The DOCX viewer cannot write this format");
   };
 
   const finish = (current: WordCanvasEditor | undefined): void => {
@@ -126,7 +148,6 @@ export function mountDocxViewer(options: {
         documentTitle: options.file.basename,
         ...(editable
           ? {
-              view: { exportPdf: false },
               onSave: save,
               onDirtyChange: (nextDirty) => {
                 dirty = nextDirty;

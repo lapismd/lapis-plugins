@@ -52,29 +52,47 @@ vi.mock("../../vendor/wordcanvas/frontend/src/wordcanvas", () => ({
 
 import { mountDocxViewer } from "./mount-docx";
 
-function file(): TFile {
+function file(path = "Sample.docx"): TFile {
+  const name = path.slice(path.lastIndexOf("/") + 1);
   return {
-    path: "Sample.docx",
-    name: "Sample.docx",
-    basename: "Sample",
+    path,
+    name,
+    basename: name.replace(/\.[^.]+$/, ""),
     extension: "docx",
   } as TFile;
 }
 
 function app(bytes: ArrayBuffer = new Uint8Array([1, 2, 3]).buffer) {
-  const written: ArrayBuffer[] = [];
-  const modifyBinary = vi.fn(async (_file: TFile, data: ArrayBuffer) => {
-    written.push(data);
+  const files = new Map<string, TFile>();
+  const writes: { path: string; data: ArrayBuffer }[] = [];
+  const modifyBinary = vi.fn(async (target: TFile, data: ArrayBuffer) => {
+    writes.push({ path: target.path, data });
+  });
+  const createBinary = vi.fn(async (path: string, data: ArrayBuffer) => {
+    const name = path.slice(path.lastIndexOf("/") + 1);
+    const created = {
+      path,
+      name,
+      basename: name.replace(/\.[^.]+$/, ""),
+      extension: name.slice(name.lastIndexOf(".") + 1),
+    } as TFile;
+    files.set(path, created);
+    writes.push({ path, data });
+    return created;
   });
   return {
     app: {
       vault: {
         readBinary: vi.fn(async () => bytes),
         modifyBinary,
+        createBinary,
+        getFileByPath: (path: string) => files.get(path) ?? null,
       },
     } as unknown as App,
     modifyBinary,
-    written,
+    createBinary,
+    writes,
+    files,
   };
 }
 
@@ -89,7 +107,7 @@ describe("mountDocxViewer", () => {
   });
 
   it("opens a file view for editing and writes docx bytes back to the vault", async () => {
-    const { app: lapis, modifyBinary, written } = app();
+    const { app: lapis, modifyBinary, writes } = app();
     const container = document.createElement("div");
     Object.defineProperty(container, "clientHeight", { value: 640 });
     const handle = mountDocxViewer({
@@ -103,7 +121,7 @@ describe("mountDocxViewer", () => {
     });
     expect(harness.options?.readonly).toBeUndefined();
     expect(harness.options?.backendUrl).toBeUndefined();
-    expect(harness.options?.view).toEqual({ exportPdf: false });
+    expect(harness.options?.view).toBeUndefined();
     expect(harness.options?.documentTitle).toBe("Sample");
     expect(harness.opened).toBeInstanceOf(File);
     const source = new Uint8Array([4, 5, 6]);
@@ -114,16 +132,8 @@ describe("mountDocxViewer", () => {
       warnings: [],
     });
     expect(modifyBinary).toHaveBeenCalledOnce();
-    expect(new Uint8Array(written[0] ?? new ArrayBuffer(0))).toEqual(source);
-    await expect(
-      harness.options?.onSave?.({
-        blob: new Blob(),
-        bytes: new Uint8Array([1]),
-        format: "pdf",
-        warnings: [],
-      }),
-    ).rejects.toThrow(/Word document/);
-    expect(modifyBinary).toHaveBeenCalledOnce();
+    expect(writes[0]?.path).toBe("Sample.docx");
+    expect(new Uint8Array(writes[0]?.data ?? new ArrayBuffer(0))).toEqual(source);
     handle.destroy();
     expect(harness.exported).toBe(0);
     expect(harness.destroyed).toBe(1);
@@ -153,8 +163,44 @@ describe("mountDocxViewer", () => {
     expect(harness.options?.backendUrl).toBeUndefined();
   });
 
+  it("writes a PDF beside the Word file and overwrites that sibling", async () => {
+    const { app: lapis, modifyBinary, createBinary, writes } = app();
+    const container = document.createElement("div");
+    const handle = mountDocxViewer({
+      app: lapis,
+      file: file("Notes/Sample.docx"),
+      containerEl: container,
+      role: "file",
+    });
+    await vi.waitFor(() => {
+      expect(harness.options?.onSave).toEqual(expect.any(Function));
+    });
+    const source = new Uint8Array([9, 8, 7]);
+    const savePdf = () =>
+      harness.options?.onSave?.({
+        blob: new Blob([source]),
+        bytes: source,
+        format: "pdf",
+        warnings: [],
+      });
+    await savePdf();
+    expect(createBinary).toHaveBeenCalledOnce();
+    expect(modifyBinary).not.toHaveBeenCalled();
+    expect(writes[0]?.path).toBe("Notes/Sample.pdf");
+    expect(new Uint8Array(writes[0]?.data ?? new ArrayBuffer(0))).toEqual(source);
+    await savePdf();
+    expect(createBinary).toHaveBeenCalledOnce();
+    expect(modifyBinary).toHaveBeenCalledOnce();
+    expect(writes[1]?.path).toBe("Notes/Sample.pdf");
+    expect(new Uint8Array(writes[1]?.data ?? new ArrayBuffer(0))).toEqual(source);
+    handle.destroy();
+    await savePdf();
+    expect(createBinary).toHaveBeenCalledOnce();
+    expect(modifyBinary).toHaveBeenCalledOnce();
+  });
+
   it("saves a dirty file once before the view closes", async () => {
-    const { app: lapis, modifyBinary, written } = app();
+    const { app: lapis, modifyBinary, writes } = app();
     const container = document.createElement("div");
     const handle = mountDocxViewer({
       app: lapis,
@@ -172,7 +218,10 @@ describe("mountDocxViewer", () => {
     });
     expect(harness.exported).toBe(1);
     expect(modifyBinary).toHaveBeenCalledOnce();
-    expect(new Uint8Array(written[0] ?? new ArrayBuffer(0))).toEqual(harness.exportBytes);
+    expect(writes[0]?.path).toBe("Sample.docx");
+    expect(new Uint8Array(writes[0]?.data ?? new ArrayBuffer(0))).toEqual(
+      harness.exportBytes,
+    );
     expect(container.childElementCount).toBe(0);
   });
 

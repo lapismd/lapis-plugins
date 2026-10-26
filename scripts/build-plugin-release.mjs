@@ -37,6 +37,7 @@ import {
 } from "./lib/runtime-host-modules.mjs";
 import { resolveWorkerLimit, runBoundedWorkers } from "./lib/concurrency.mjs";
 import { scanRuntimeBareImports } from "./lib/plugin-runtime-imports.mjs";
+import { docxExportPolyfills } from "./lib/docx-export-polyfills.mjs";
 import { preparePluginReleaseRoot } from "./lib/release-output.mjs";
 import { resolveSourceCommit } from "./lib/source-commit.mjs";
 
@@ -181,6 +182,9 @@ async function buildRuntime(plugin, packageRoot, outDir, manifest) {
         preprocess: vitePreprocess(),
         compilerOptions: { runes: undefined },
       }),
+      ...(plugin.packageName === "@lapis-notes/docx"
+        ? [docxExportPolyfills()]
+        : []),
     ],
     resolve: {
       alias: [
@@ -188,10 +192,25 @@ async function buildRuntime(plugin, packageRoot, outDir, manifest) {
           find: /^\$lib(?:\/(.*))?$/,
           replacement: `${path.join(packageRoot, "src/lib")}/$1`,
         },
+        ...(plugin.packageName === "@lapis-notes/docx"
+          ? [
+              {
+                find: /^@cw\/shared$/,
+                replacement: path.join(
+                  packageRoot,
+                  "vendor/wordcanvas/shared/src/index.ts",
+                ),
+              },
+            ]
+          : []),
       ],
       dedupe: ["svelte"],
     },
-    worker: { format: "es" },
+    worker: {
+      format: "es",
+      plugins: () =>
+        plugin.packageName === "@lapis-notes/docx" ? [docxExportPolyfills()] : [],
+    },
     build: {
       ...entryBuildOptions,
       outDir,
