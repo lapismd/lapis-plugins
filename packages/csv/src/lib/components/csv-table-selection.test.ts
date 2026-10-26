@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 import {
   columnSelectionIncludingHeader,
   fullRowsAndColumns,
+  dragSelectionRange,
   getCellsBetween,
   headerSelectionClassForColumn,
+  selectionClassForCoord,
   selectionClassesForCells,
 } from "./csv-table-selection";
 import {
@@ -24,6 +26,27 @@ describe("getCellsBetween", () => {
 
   it("returns empty array for a single cell", () => {
     expect(getCellsBetween([0, 0], [0, 0])).toEqual([]);
+  });
+});
+
+describe("dragSelectionRange", () => {
+  it("paints the anchor cell before the pointer leaves it", () => {
+    expect(dragSelectionRange([2, 1], [2, 1])).toEqual({
+      minRow: 2,
+      maxRow: 2,
+      minCol: 1,
+      maxCol: 1,
+    });
+    expect(selectionClassForCoord(dragSelectionRange([2, 1], [2, 1]), 2, 1)).toBe(
+      "is-selected top start bottom end",
+    );
+  });
+
+  it("extends to the pointer's cell in either direction", () => {
+    const range = dragSelectionRange([1, 2], [0, 1]);
+    expect(selectionClassForCoord(range, 0, 1)).toBe("is-selected top start");
+    expect(selectionClassForCoord(range, 1, 2)).toBe("is-selected bottom end");
+    expect(selectionClassForCoord(range, 3, 2)).toBeUndefined();
   });
 });
 

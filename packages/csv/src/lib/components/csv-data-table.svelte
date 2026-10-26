@@ -29,15 +29,16 @@
     type CsvTableRow,
   } from "../model/csv-table-model";
   import {
-    coordsFromCellElement,
     columnSelectionIncludingHeader,
+    coordFromTarget,
     createSelectionState,
+    dragSelectionRange,
     fullRowsAndColumns,
     getCellsBetween,
-    headerSelectionClassForColumn,
     rowSelection,
-    selectionClassesForCells,
+    selectionClassForCoord,
     type CsvCellCoord,
+    type CsvSelectionRange,
   } from "./csv-table-selection";
   import type { CsvTableDragSource } from "./csv-table-dnd";
   import { tableReorderSensors } from "@lapis-notes/ui/table-dnd/sensors";
@@ -127,13 +128,25 @@
 
   const selectionPos = createSelectionState();
   let selected: CsvCellCoord[] = $state([]);
+  let selectionRange = $state<CsvSelectionRange | null>(null);
   let menuCoords: CsvCellCoord = $state([-1, -1]);
   let dragSource: CsvTableDragSource | null = $state(null);
   let dragOverIndex: number | null = $state(null);
   let dragOverlayMetrics: CsvDragOverlayMetrics | null = $state(null);
   let columnSort = $state<CsvColumnSort | null>(null);
 
-  const selectedClasses = $derived(selectionClassesForCells(selected));
+  function replaceSelection(cells: CsvCellCoord[]) {
+    selected = cells;
+    const first = cells[0];
+    const last = cells[cells.length - 1];
+    selectionRange =
+      first && last ? dragSelectionRange(first, last) : null;
+  }
+
+  function clearSelection() {
+    selected = [];
+    selectionRange = null;
+  }
 
   function emitChange(nextGrid: CsvGrid = grid) {
     onChange(nextGrid.clone());
@@ -172,7 +185,7 @@
   function deleteRowAt(index: number) {
     grid.deleteRowAt(index);
     columnSort = null;
-    selected = [];
+    clearSelection();
     emitChange();
   }
 
@@ -185,7 +198,7 @@
   function deleteColumnAt(index: number) {
     grid.deleteColumnAt(index);
     columnSort = noteCsvColumnDeleted(columnSort, index);
-    selected = [];
+    clearSelection();
     emitChange();
   }
 
@@ -220,7 +233,7 @@
   function clearCells(cells: CsvCellCoord[]) {
     grid.clearCellsAt(cells);
     rememberClearedCells(cells);
-    selected = [];
+    clearSelection();
     emitChange();
   }
 
@@ -246,7 +259,7 @@
       grid.clearCellsAt(cells);
       rememberClearedCells(cells);
     }
-    selected = [];
+    clearSelection();
     emitChange();
   }
 
@@ -291,6 +304,17 @@
       ?.focus();
   }
 
+  function previewSelection(end: CsvCellCoord) {
+    if (end[0] < 0 || end[1] < 0) {
+      return;
+    }
+    if (end[0] === selectionPos.end[0] && end[1] === selectionPos.end[1]) {
+      return;
+    }
+    selectionPos.end = end;
+    selectionRange = dragSelectionRange(selectionPos.start, end);
+  }
+
   function onMouseDown(evt: MouseEvent) {
     if (evt.button !== 0) {
       return;
@@ -298,48 +322,53 @@
     if ((evt.target as HTMLElement).closest(".csv-cell__input")) {
       return;
     }
-    selected = [];
+    const start = coordFromTarget(evt.target);
+    if (start[0] < 0) {
+      return;
+    }
+    clearSelection();
     selectionPos.isMouseDown = true;
-    selectionPos.start = coordsFromCellElement(
-      evt.target as HTMLElement,
-      evt.currentTarget,
-    );
+    selectionPos.start = start;
+    selectionPos.end = start;
+    selectionRange = dragSelectionRange(start, start);
     evt.preventDefault();
   }
 
-  function onMouseOver(evt: MouseEvent) {
+  function onPointerMove(evt: PointerEvent) {
     if (!selectionPos.isMouseDown) {
       return;
     }
-    selectionPos.end = coordsFromCellElement(
-      evt.target as HTMLElement,
-      evt.currentTarget,
-    );
-    selected = getCellsBetween(selectionPos.start, selectionPos.end);
-    evt.preventDefault();
+    previewSelection(coordFromTarget(evt.target));
   }
 
-  const handleDocumentMouseOver = (evt: MouseEvent) => {
-    if (!selectionPos.isMouseDown) {
+  function finishDragSelection() {
+    const sameCell =
+      selectionPos.start[0] === selectionPos.end[0] &&
+      selectionPos.start[1] === selectionPos.end[1];
+    selectionPos.isMouseDown = false;
+    if (sameCell) {
+      clearSelection();
       return;
     }
-    onMouseOver(evt);
-  };
+    replaceSelection(getCellsBetween(selectionPos.start, selectionPos.end));
+  }
 
   function selectColumn(column: number) {
     setTimeout(() => {
-      selected = columnSelectionIncludingHeader(
-        grid.getRowCount(),
-        column,
-        headerRow,
-        bodyRowIndices,
+      replaceSelection(
+        columnSelectionIncludingHeader(
+          grid.getRowCount(),
+          column,
+          headerRow,
+          bodyRowIndices,
+        ),
       );
     });
   }
 
   function selectRowByIndex(rowIndex: number) {
     setTimeout(() => {
-      selected = rowSelection(colCount, rowIndex);
+      replaceSelection(rowSelection(colCount, rowIndex));
     });
   }
 
@@ -368,11 +397,13 @@
     const table = event.operation.source?.element?.closest(".csv-data-table");
     if (data?.type === "csv-table-col") {
       dragSource = { type: "csv-table-col", index: data.index };
-      selected = columnSelectionIncludingHeader(
-        grid.getRowCount(),
-        data.index,
-        headerRow,
-        bodyRowIndices,
+      replaceSelection(
+        columnSelectionIncludingHeader(
+          grid.getRowCount(),
+          data.index,
+          headerRow,
+          bodyRowIndices,
+        ),
       );
       dragOverlayMetrics =
         table instanceof HTMLElement
@@ -380,7 +411,7 @@
           : null;
     } else if (data?.type === "csv-table-row") {
       dragSource = { type: "csv-table-row", index: data.index };
-      selected = rowSelection(colCount, data.index);
+      replaceSelection(rowSelection(colCount, data.index));
       dragOverlayMetrics =
         table instanceof HTMLElement
           ? measureRowOverlayMetrics(table, data.index)
@@ -584,12 +615,22 @@
   }
 
   function headerSelectedClass(colIndex: number): string | undefined {
-    return headerSelectionClassForColumn(
-      colIndex,
-      selected,
-      headerRow,
-      bodyRowIndices,
-    );
+    if (!selectionRange) {
+      return undefined;
+    }
+    if (headerRow) {
+      return selectionClassForCoord(selectionRange, 0, colIndex);
+    }
+    if (
+      bodyRowIndices.length === 0 ||
+      bodyRowIndices.some(
+        (rowIndex) =>
+          !selectionClassForCoord(selectionRange, rowIndex, colIndex),
+      )
+    ) {
+      return undefined;
+    }
+    return "is-selected top bottom start end";
   }
 
   onMount(() => {
@@ -601,22 +642,24 @@
           ".csv-data-table__col-grip, .csv-data-table__row-grip, .csv-data-table__header-actions, .csv-data-table__header-menu, .csv-data-table__header-sort, .csv-data-table__row-actions, [data-grab-handle], [role='menu'], [role='menuitem'], [data-slot='context-menu-content']",
         )
       ) {
-        selectionPos.isMouseDown = false;
+        if (selectionPos.isMouseDown) finishDragSelection();
         return;
       }
-      if (!selectionPos.isMouseDown && selected.length && evt.button === 0) {
+      const wasDragging = selectionPos.isMouseDown;
+      if (wasDragging) {
+        finishDragSelection();
+      } else if (selected.length && evt.button === 0) {
         setTimeout(() => {
-          selected = [];
+          clearSelection();
         });
       }
-      selectionPos.isMouseDown = false;
     };
 
     document.addEventListener("mouseup", onMouseUp);
-    document.addEventListener("mouseover", handleDocumentMouseOver);
+    document.addEventListener("pointermove", onPointerMove);
     return () => {
       document.removeEventListener("mouseup", onMouseUp);
-      document.removeEventListener("mouseover", handleDocumentMouseOver);
+      document.removeEventListener("pointermove", onPointerMove);
     };
   });
 </script>
@@ -731,20 +774,22 @@
                   </Table.Cell>
                 {/if}
                 {#each Array.from( { length: colCount }, ) as _, colIndex (colIndex)}
-                  {@const coordId = `${row.rowIndex},${colIndex}`}
                   {@const value = row.cells[colIndex] ?? ""}
+                  {@const selectedClass = selectionClassForCoord(
+                    selectionRange,
+                    row.rowIndex,
+                    colIndex,
+                  )}
                   {@const cellProps = {
                     rowIndex: row.rowIndex,
                     colIndex,
                     dragSource,
                     dragOverIndex,
-                    selectedClass: selectedClasses[coordId],
+                    selectedClass,
                     isColDragSource:
                       dragSource?.type === "csv-table-col" &&
                       dragSource.index === colIndex,
                     class: rainbowClass(colIndex, "cell"),
-                    onmousedown: onMouseDown,
-                    onmouseenter: onMouseOver,
                     oncontextmenu: () => {
                       menuCoords = [row.rowIndex, colIndex];
                     },
@@ -754,6 +799,7 @@
                       {...cellProps}
                       onSelectRow={() => selectRow(row)}
                     >
+                      <!-- svelte-ignore a11y_no_static_element_interactions -->
                       <div
                         class="csv-data-table__cell-shell"
                         data-csv-cell={`${row.rowIndex}:${colIndex}`}
@@ -761,9 +807,13 @@
                         searchCell.col === colIndex
                           ? "active"
                           : undefined}
-                        data-csv-selected={selectedClasses[coordId]
-                          ? "true"
-                          : undefined}
+                        data-csv-selected={selectedClass ? "true" : undefined}
+                        onmousedown={onMouseDown}
+                        onpointerenter={() => {
+                          if (selectionPos.isMouseDown) {
+                            previewSelection([row.rowIndex, colIndex]);
+                          }
+                        }}
                       >
                         <CsvCell
                           {value}
@@ -778,6 +828,7 @@
                     </CsvDataTableRowGripCell>
                   {:else}
                     <CsvDataTableDataCell {...cellProps}>
+                      <!-- svelte-ignore a11y_no_static_element_interactions -->
                       <div
                         class="csv-data-table__cell-shell"
                         data-csv-cell={`${row.rowIndex}:${colIndex}`}
@@ -785,9 +836,13 @@
                         searchCell.col === colIndex
                           ? "active"
                           : undefined}
-                        data-csv-selected={selectedClasses[coordId]
-                          ? "true"
-                          : undefined}
+                        data-csv-selected={selectedClass ? "true" : undefined}
+                        onmousedown={onMouseDown}
+                        onpointerenter={() => {
+                          if (selectionPos.isMouseDown) {
+                            previewSelection([row.rowIndex, colIndex]);
+                          }
+                        }}
                       >
                         <CsvCell
                           {value}

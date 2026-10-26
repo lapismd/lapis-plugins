@@ -10,6 +10,68 @@ export function createSelectionState(): CsvSelectionState {
   return { start: [-1, -1], end: [-1, -1], isMouseDown: false };
 }
 
+export type CsvSelectionRange = {
+  minRow: number;
+  maxRow: number;
+  minCol: number;
+  maxCol: number;
+};
+
+/** Inclusive bounds for a drag, including the anchor cell. */
+export function dragSelectionRange(
+  start: CsvCellCoord,
+  end: CsvCellCoord,
+): CsvSelectionRange | null {
+  const [row1, col1] = start;
+  const [row2, col2] = end;
+  if (row1 < 0 || col1 < 0 || row2 < 0 || col2 < 0) {
+    return null;
+  }
+  return {
+    minRow: Math.min(row1, row2),
+    maxRow: Math.max(row1, row2),
+    minCol: Math.min(col1, col2),
+    maxCol: Math.max(col1, col2),
+  };
+}
+
+export function selectionClassForCoord(
+  range: CsvSelectionRange | null,
+  row: number,
+  col: number,
+): string | undefined {
+  if (
+    !range ||
+    row < range.minRow ||
+    row > range.maxRow ||
+    col < range.minCol ||
+    col > range.maxCol
+  ) {
+    return undefined;
+  }
+  const decorations = ["is-selected"];
+  if (row === range.minRow) decorations.push("top");
+  if (col === range.minCol) decorations.push("start");
+  if (row === range.maxRow) decorations.push("bottom");
+  if (col === range.maxCol) decorations.push("end");
+  return decorations.join(" ");
+}
+
+export function coordFromTarget(target: EventTarget | null): CsvCellCoord {
+  if (!(target instanceof Element)) {
+    return [-1, -1];
+  }
+  const cell = target.closest("[data-csv-cell]");
+  if (!(cell instanceof HTMLElement) || !cell.dataset.csvCell) {
+    return [-1, -1];
+  }
+  const [row, col] = cell.dataset.csvCell.split(":").map(Number);
+  if (!Number.isInteger(row) || !Number.isInteger(col)) {
+    return [-1, -1];
+  }
+  return [row, col];
+}
+
 export function getCellsBetween(
   start: CsvCellCoord,
   end: CsvCellCoord,
@@ -47,12 +109,16 @@ export function selectionClassesForCells(
     return data;
   }
 
-  const rows = selected.map(([row]) => row);
-  const cols = selected.map(([, col]) => col);
-  const minRow = Math.min(...rows);
-  const maxRow = Math.max(...rows);
-  const minCol = Math.min(...cols);
-  const maxCol = Math.max(...cols);
+  let minRow = selected[0][0];
+  let maxRow = selected[0][0];
+  let minCol = selected[0][1];
+  let maxCol = selected[0][1];
+  for (const [row, col] of selected) {
+    if (row < minRow) minRow = row;
+    if (row > maxRow) maxRow = row;
+    if (col < minCol) minCol = col;
+    if (col > maxCol) maxCol = col;
+  }
 
   for (const pos of selected) {
     const id = pos.join(",");

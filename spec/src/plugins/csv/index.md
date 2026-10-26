@@ -39,7 +39,9 @@ mix of the cell's own colour, so the rows underneath do not show through. The
 other header cells stay on their own fill. That hovered column header also
 draws the same inset ring a focused body cell uses, around the header border.
 Editing the header label keeps that border and does not add a second ring on
-the field.
+the field. Holding the pointer on a body cell paints that cell immediately,
+and dragging extends the selection as the pointer crosses cells. A press that
+stays on one cell does not leave a selection behind.
 
 The furthest-right header cell switches the current leaf to the raw CSV. Toggle
 CSV source is the command for the same switch. The source editor uses the Lapis
@@ -87,7 +89,7 @@ Package tests cover the runtime id, the exclusive `*.csv` and `*.tsv`
 association, both embed registrations, the Open CSV command, Toggle CSV
 source, the CSV language cells, quoted-cell colours, and separator, the Lapis
 markup editor shell, cell search and replacement, the original grid parser,
-quoted commas, quoted line breaks, and column sort.
+quoted commas, quoted line breaks, column sort, and drag-selection bounds.
 `Plugins/CSV/Panels/Table` asserts the header, that the header stays in place
 after the table body scrolls, that a later row replaces the quoted cell and
 scrolling back restores it, the row-number gutter, the
