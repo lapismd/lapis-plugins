@@ -1,5 +1,11 @@
 # Native first-party plugin services
 
+Markdown preview admission adapts the App-owned native editing-intent port;
+it retains the public Mira input lease and existing conditional text writer.
+This binding adds no Tasks/plugin transformation engine, Rust policy or
+independent persistence owner to the renderer. Native algorithms and host
+selection retain their existing owning-package gates.
+
 The private `crates/lapis-plugin-services` crate owns transport-independent
 first-party algorithms for the shared Rust migration. It has no Tauri, HTTP,
 database, application scheduler or renderer dependency. Published npm plugin

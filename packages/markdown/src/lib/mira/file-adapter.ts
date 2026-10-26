@@ -4,6 +4,7 @@ import type {
   MiraFileRef,
   MiraFileTarget,
 } from "@lapismd/mira/extensions";
+import { bindLapisMarkdownEditingSession } from "./file-editing-binding";
 
 const IMAGE_EXTENSIONS = new Set([
   "apng",
@@ -66,6 +67,8 @@ export function createLapisMiraFileAdapter(app: App): MiraFileAdapter {
   if (existing) return existing;
 
   const adapter: MiraFileAdapter = {
+    bindMarkdownEditingSession: (path, session) =>
+      bindLapisMarkdownEditingSession(app, path, session),
     resolveLink(target) {
       const file = resolveFile(app, target);
       return file ? toMiraFileRef(file) : null;
@@ -98,6 +101,10 @@ export function createLapisMiraFileAdapter(app: App): MiraFileAdapter {
       if (!isMarkdown(resolved)) {
         throw new Error(`Cannot write non-Markdown file: ${file.path}`);
       }
+      if (app.vault.supportsConditionalTextWrites)
+        throw new Error(
+          "Conditional Markdown writes require a bound source session"
+        );
       await app.vault.modify(resolved, value);
     },
 

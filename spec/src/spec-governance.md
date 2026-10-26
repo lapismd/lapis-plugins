@@ -1,8 +1,15 @@
 # Specification Governance
 
+# Specification Governance
+
 LN-HIST-018 retains separate regressions for explicit native selection,
 passive observation, saved-state projection and lost acknowledgement. Its
 public package, runtime archive and hosted consumer evidence remain distinct.
+
+The native Markdown editing-intent scenario is classified as a public
+FileEmbed component review under LP-SPEC-054/055. Its real App, Mira writer and
+labelled shared fixture controls preserve the distinction between source
+interaction evidence and later application/native acceptance.
 
 Search settings recovery maps its private configuration observer, plugin/panel
 lifecycle and production-shell scenario to LN-SRCH-006/011/016. Evidence retains

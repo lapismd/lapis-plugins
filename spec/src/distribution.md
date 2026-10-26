@@ -1,5 +1,10 @@
 # Distribution and Releases
 
+The native editing-intent review family renders the public Markdown `FileEmbed`
+component with its real App and writer. Its classified component scenario keeps
+synthetic admission controls in the shared labelled fixture-controls surface;
+source and host acceptance remain separate.
+
 ## Local validation contracts
 
 Search settings recovery preserves the existing package identity, semver ranges

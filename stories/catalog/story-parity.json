@@ -119,6 +119,10 @@
   "stories/plugins/markdown/panels/LinkPreviewAcceptance.stories.ts": {
     "kind": "application"
   },
+  "stories/plugins/markdown/panels/NativeEditing.stories.ts": {
+    "kind": "component",
+    "subject": "@lapis-notes/markdown/embed#FileEmbed"
+  },
   "stories/plugins/markdown/panels/OutgoingLinks.stories.ts": {
     "kind": "application"
   },

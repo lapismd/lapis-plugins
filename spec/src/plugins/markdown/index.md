@@ -1,5 +1,10 @@
 # Markdown Plugin
 
+Writable preview sessions use the App-owned captured-source binding described
+in [link-preview persistence and native admission](panels/link-previews.md).
+The native input lease gates existing conditional persistence; it neither
+replaces Markdown embedders nor selects either application host.
+
 LN-MD-022's empty Outline explains the missing headings outside its semantic
 list. The real-App No headings story retains interaction and axe qualification.
 
