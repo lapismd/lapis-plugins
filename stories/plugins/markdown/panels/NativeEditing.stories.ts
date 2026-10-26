@@ -54,11 +54,30 @@ export const ProtectedAdmissionAndHandoff: Story = {
         "A protected draft."
       );
       await userEvent.keyboard("Forbidden during handoff");
+      const saved = await fixture.adapter.read(fixture.file.path);
+      await fixture.adapter.write(
+        fixture.file.path,
+        `${saved}\nNative saved change.`
+      );
     });
     expect(editor).not.toHaveTextContent("Forbidden during handoff");
     await waitFor(() =>
       expect(editor).toHaveAttribute("contenteditable", "true")
     );
     expect(fixture.state()).toMatchObject({ active: true, generation: 2 });
+    await waitFor(() =>
+      expect(editor).toHaveTextContent("Native saved change.")
+    );
+    await userEvent.click(editor);
+    await userEvent.keyboard(
+      "{Control>}{End}{/Control}{Enter}Next local draft."
+    );
+    await fixture.app.fileEditingSessions.guard(
+      fixture.file.path,
+      async () => {}
+    );
+    expect(await fixture.adapter.read(fixture.file.path)).toContain(
+      "Next local draft."
+    );
   },
 };

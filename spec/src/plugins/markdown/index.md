@@ -4,6 +4,8 @@ Writable preview sessions use the App-owned captured-source binding described
 in [link-preview persistence and native admission](panels/link-previews.md).
 The native input lease gates existing conditional persistence; it neither
 replaces Markdown embedders nor selects either application host.
+Protected native saved-state refresh reuses the same public Mira text lease
+under LN-MD-124; source qualification and actual host adoption remain separate.
 
 LN-MD-022's empty Outline explains the missing headings outside its semantic
 list. The real-App No headings story retains interaction and axe qualification.

@@ -19,6 +19,7 @@ export function bindLapisMarkdownEditingSession(
   if (file.extension !== "md" && file.extension !== "markdown")
     throw new Error(`Cannot write non-Markdown file: ${path}`);
   const text = session.text;
+  let absent = false;
   if (app.vault.supportsConditionalTextWrites && !text)
     throw new Error(
       "Conditional Markdown editing requires source text authority"
@@ -40,8 +41,14 @@ export function bindLapisMarkdownEditingSession(
           const lease = await text!.protectRecovery();
           return {
             release: () => lease.release(),
-            saved: () => lease.acceptLocal(),
-            reset: (contents) => lease.useExternal(contents),
+            saved: () => {
+              absent = false;
+              lease.acceptLocal();
+            },
+            reset: (contents) => {
+              absent = false;
+              lease.useExternal(contents);
+            },
           };
         },
         serialize,
@@ -62,7 +69,28 @@ export function bindLapisMarkdownEditingSession(
               );
             return session.hold();
           },
-          savedText: () => text.state.persistedValue,
+          savedText: () => (absent ? null : text.state.persistedValue),
+          async refreshSavedText(contents) {
+            if (session.dirty)
+              throw new Error("Protected Markdown refresh requires clean text");
+            if (contents === null) {
+              absent = true;
+              persistence?.acceptBaseline(null);
+              return;
+            }
+            const lease = await text.protectRecovery();
+            try {
+              if (session.dirty)
+                throw new Error(
+                  "Protected Markdown text changed during refresh"
+                );
+              absent = false;
+              lease.useExternal(contents);
+              persistence?.acceptBaseline(contents);
+            } finally {
+              lease.release();
+            }
+          },
         }
       : undefined,
   };
@@ -83,7 +111,7 @@ export function bindLapisMarkdownEditingSession(
       observedDirty = dirty;
       persistence?.updateLocal(state.value);
       if (!state.dirty && !state.saving && state.error === null)
-        persistence?.acceptBaseline(state.persistedValue);
+        persistence?.acceptBaseline(absent ? null : state.persistedValue);
     });
   } catch (error) {
     unregister();
@@ -99,6 +127,7 @@ export function bindLapisMarkdownEditingSession(
           throw new Error("Markdown persistence target changed");
         if (persistence) await persistence.persist(value);
         else await app.vault.modify(file, value);
+        absent = false;
       });
     },
     release() {
