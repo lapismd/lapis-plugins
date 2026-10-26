@@ -194,8 +194,9 @@ before approval.
 Transcripts is an active catalog package so Storybook and metadata checks can
 see its preview. Registry media selection includes
 `Plugins/Transcripts/Registry Screenshots`. The release workflow does not offer
-the package yet. A panel demo may add vault files and preset the main document
-in the workspace seed, so the shell's first frame is that page.
+the package yet. A panel demo may add vault files, merge caller configuration
+into the app seed, and preset the main document in the workspace seed, so the
+shell's first frame is that page.
 
 PDF is an active catalog package so Storybook and metadata checks can see
 its preview. Registry media selection includes

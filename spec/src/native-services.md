@@ -33,6 +33,7 @@ changes no native Markdown parser behavior. Leasing ordinary Markdown image
 URLs through the owning vault uses the public Mira asset hooks and changes no
 native Markdown parser behavior. The shared panel fixture's complete
 `Assets/map.png` and its fetchable resource URL change no native Markdown
-parser behavior. Bundling the vendored DOCX editor changes no
+parser behavior. Merging caller configuration into the shared panel demo seed
+changes no native Markdown parser behavior. Bundling the vendored DOCX editor changes no
 native Markdown parser behavior. Polyfilling Node builtins for the DOCX PDF
 export worker changes no native Markdown parser behavior.

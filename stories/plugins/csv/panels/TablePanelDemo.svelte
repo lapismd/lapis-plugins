@@ -42,6 +42,7 @@
     let cancelled = false;
     const runtimePromise = bootPanelDemo("bookmarks", layout, {
       diagnostics: "none",
+      configuration: { "lapis-csv.defaultView": mode },
       plugins: [
         {
           plugin: CSVPlugin,
@@ -73,11 +74,11 @@
         type: "lapis-csv",
         state: {
           file: SAMPLE_CSV_PATH,
-          ...(mode === "canvas" ? { mode: "canvas" } : {}),
+          mode,
         },
       });
       runtime.app.workspace.setActiveLeaf(tableLeaf, { focus: false });
-      if (layout === "middle-top-tabs" && mode !== "canvas") {
+      if (layout === "middle-top-tabs") {
         const note = runtime.app.vault.getFileByPath(SAMPLE_READING_NOTE_PATH);
         if (!note) throw new Error("Missing staff readings note");
         const noteLeaf = runtime.app.workspace.getLeaf("tab");
@@ -85,11 +86,13 @@
           type: "markdown",
           state: { file: note.path, mode: "preview" },
         });
-        const sourceLeaf = runtime.app.workspace.getLeaf("tab");
-        await sourceLeaf.setViewState({
-          type: "lapis-csv",
-          state: { file: SAMPLE_CSV_PATH, mode: "source" },
-        });
+        if (mode === "table") {
+          const sourceLeaf = runtime.app.workspace.getLeaf("tab");
+          await sourceLeaf.setViewState({
+            type: "lapis-csv",
+            state: { file: SAMPLE_CSV_PATH, mode: "source" },
+          });
+        }
         runtime.app.workspace.setActiveLeaf(noteLeaf, { focus: false });
       }
       return runtime;

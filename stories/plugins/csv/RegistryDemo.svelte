@@ -6,7 +6,9 @@
 
   let {
     document = "table",
-  }: { document?: "table" | "source" | "embedded" } = $props();
+  }: {
+    document?: "table" | "source" | "embedded" | "canvas" | "embedded-canvas";
+  } = $props();
 
   const readingPath = "Notes/Staff readings.md";
   const reading = `# Staff readings
@@ -19,8 +21,9 @@ The south basin kept the late tide.
     [SAMPLE_CSV_PATH]: sampleCsv,
     [readingPath]: reading,
   };
+  const embedded = $derived(document === "embedded" || document === "embedded-canvas");
   const openDocument = $derived<PanelDemoOpenDocument>(
-    document === "embedded"
+    embedded
       ? {
           title: "Staff readings",
           icon: "file-text",
@@ -29,13 +32,20 @@ The south basin kept the late tide.
         }
       : {
           title: "Sample",
-          icon: document === "source" ? "file-code" : "table",
+          icon: document === "source" ? "file-code" : document === "canvas" ? "grid-3x3" : "table",
           type: "lapis-csv",
           state: {
             file: SAMPLE_CSV_PATH,
-            mode: document === "source" ? "source" : "table",
+            mode: document === "source" ? "source" : document === "canvas" ? "canvas" : "table",
           },
         },
+  );
+  const configuration = $derived(
+    document === "embedded"
+      ? { "lapis-csv.defaultView": "table" }
+      : document === "embedded-canvas"
+        ? { "lapis-csv.defaultView": "canvas" }
+        : undefined,
   );
 </script>
 
@@ -54,4 +64,5 @@ The south basin kept the late tide.
   ]}
   {files}
   {openDocument}
+  {configuration}
 />

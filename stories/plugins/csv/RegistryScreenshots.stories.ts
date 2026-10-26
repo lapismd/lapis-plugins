@@ -21,7 +21,7 @@ const meta = {
       ...WORKSPACE_SHELL_DOCS_PARAMETERS,
       description: {
         component:
-          "An app-backed CSV table, its coloured source, find, and the same table embedded in a note. Both sidebars stay closed.",
+          "An app-backed CSV table, its canvas sheet, coloured source, find, and the table and canvas embedded in a note. Both sidebars stay closed.",
       },
     },
   },
@@ -31,7 +31,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 function shellRender(
-  document: "table" | "source" | "embedded",
+  document: "table" | "source" | "embedded" | "canvas" | "embedded-canvas",
 ): Story["render"] {
   return (() => ({
     Component: RegistryDemo,
@@ -136,6 +136,58 @@ export const Source: Story = {
       },
       { timeout: 20_000 },
     );
+  },
+};
+
+export const Canvas: Story = {
+  parameters: registryStoryParameters(
+    registrySource,
+    "The seeded canvas fills the shell with both sidebars closed.",
+  ),
+  render: shellRender("canvas"),
+  play: async ({ canvasElement }) => {
+    await registryPanelApp(canvasElement);
+    await waitFor(() => {
+      const frame = canvasElement.querySelector<HTMLElement>(
+        '[data-testid="csv-canvas"][data-csv-role="file"]',
+      );
+      const sheet = frame?.querySelector<HTMLElement>("[data-testid='csv-sheet']");
+      expect(frame?.checkVisibility()).toBe(true);
+      expect(sheet?.clientWidth ?? 0).toBeGreaterThan(200);
+      expect(frame?.querySelector("canvas")?.clientHeight ?? 0).toBeGreaterThan(80);
+      expect(canvasElement.querySelector(".csv-data-table")).toBeNull();
+      expect(
+        within(frame!).getByTestId("csv-status-bar").textContent,
+      ).toContain("columns");
+      expectClosedSidebars(canvasElement);
+    }, { timeout: 20_000 });
+  },
+};
+
+export const EmbeddedCanvas: Story = {
+  parameters: registryStoryParameters(
+    registrySource,
+    "A staff-readings note keeps the canvas sheet inside a Markdown embed.",
+  ),
+  render: shellRender("embedded-canvas"),
+  play: async ({ canvasElement }) => {
+    await registryPanelApp(canvasElement);
+    const canvas = within(canvasElement);
+    await waitFor(() => {
+      const frame = canvasElement.querySelector<HTMLElement>(
+        '[data-testid="csv-canvas"][data-csv-role="embed"]',
+      );
+      const sheet = frame?.querySelector<HTMLElement>("[data-testid='csv-sheet']");
+      expect(frame?.checkVisibility()).toBe(true);
+      expect(sheet?.clientWidth ?? 0).toBeGreaterThan(120);
+      expect(frame?.querySelector("canvas")?.clientHeight ?? 0).toBeGreaterThan(80);
+      expect(
+        frame?.closest(".mira-embed")?.querySelector("figcaption")?.textContent,
+      ).toContain("Sample.csv");
+      expect(canvas.getAllByText("The south basin kept the late tide.").length).toBeGreaterThan(0);
+      expect(canvasElement.querySelector(".csv-data-table")).toBeNull();
+      expectClosedSidebars(canvasElement);
+    }, { timeout: 20_000 });
   },
 };
 

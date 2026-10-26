@@ -91,6 +91,7 @@ export interface PanelDemoOptions {
   plugins?: Parameters<App["plugins"]["registerCorePlugins"]>[0];
   files?: Record<string, string | ArrayBuffer>;
   openDocument?: PanelDemoOpenDocument;
+  configuration?: Record<string, unknown>;
 }
 
 export const PANEL_DEMO_LAYOUTS: PanelDemoLayout[] = [
@@ -604,6 +605,7 @@ export function createPanelDemoSeed(
     ".lapis/app.json": JSON.stringify(
       {
         ...PANEL_APP_CONFIGURATION,
+        ...(options.configuration ?? {}),
         ...(kind === "bookmarks"
           ? { pluginData: { bookmarks: createBookmarksDocument() } }
           : {}),

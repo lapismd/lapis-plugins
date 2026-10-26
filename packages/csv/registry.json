@@ -209,6 +209,114 @@
           }
         ]
       }
+    },
+    {
+      "id": "canvas",
+      "alt": "The staff-readings CSV open as a canvas sheet, with column letters, a fixed header, and both sidebars closed.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/canvas.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/canvas.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/canvas.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/canvas.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-csv-registry-screenshots--canvas",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "Open the canvas",
+            "tone": "neutral"
+          },
+          {
+            "text": "sheet",
+            "tone": "cyan"
+          }
+        ],
+        "description": [
+          {
+            "text": "Select a",
+            "tone": "neutral"
+          },
+          {
+            "text": "column",
+            "tone": "cyan"
+          },
+          {
+            "text": "and keep the first row",
+            "tone": "neutral"
+          },
+          {
+            "text": "fixed.",
+            "tone": "violet"
+          }
+        ]
+      }
+    },
+    {
+      "id": "embedded-canvas",
+      "alt": "A staff-readings note with both sidebars closed, embedding the same CSV as a canvas sheet beneath a short introduction.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/embedded-canvas.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/embedded-canvas.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/embedded-canvas.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/embedded-canvas.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-csv-registry-screenshots--embedded-canvas",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "Embed the sheet",
+            "tone": "neutral"
+          },
+          {
+            "text": "in a note",
+            "tone": "violet"
+          }
+        ],
+        "description": [
+          {
+            "text": "Open a",
+            "tone": "neutral"
+          },
+          {
+            "text": "note",
+            "tone": "violet"
+          },
+          {
+            "text": "and keep the",
+            "tone": "neutral"
+          },
+          {
+            "text": "sheet",
+            "tone": "cyan"
+          },
+          {
+            "text": "inside it.",
+            "tone": "neutral"
+          }
+        ]
+      }
     }
   ]
 }

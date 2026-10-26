@@ -50,7 +50,7 @@ All sources live under `Plugins/<Plugin>/Registry Screenshots` and carry both
 | Slides        | Full-screen Goals presentation                                                |
 | Source Editor | Focused JSON editor                                                           |
 | Spell Check   | Suggestions and Problems, Editor action popover                               |
-| CSV           | Open table, coloured source, note embed, find                                 |
+| CSV           | Open table, coloured source, note embed, find, canvas sheet, embedded canvas |
 | Word Count    | Complete shell with both sidebars closed and status bar                       |
 | PDF           | Open PDF with both sidebars closed, and a note that embeds that file         |
 | Transcripts   | Spoken reading with both sidebars closed, and a note that embeds the call    |
@@ -70,7 +70,8 @@ and a gallery card embeds that call in a meeting note. PDF shows the open
 survey with both sidebars closed, and a gallery card embeds that file in a
 note. CSV shows the staff-readings table with both sidebars closed. Overview
 shows the coloured source. Gallery cards show that source, the same table
-inside a note, and find on the quoted cell.
+inside a note, find on the quoted cell, the canvas sheet, and that sheet
+inside a note.
 
 Overview media is intentionally selective. AI uses focused tool activity,
 Bases uses Grouped List, Graph uses the focused Global Graph, History uses

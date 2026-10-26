@@ -193,9 +193,16 @@
 
   function readTheme(node: HTMLCanvasElement | null): SheetPaintTheme {
     const style = node ? getComputedStyle(node) : null;
-    const value = (name: string, fallback: string) =>
-      style?.getPropertyValue(name).trim() || fallback;
-    return {
+    const probe = node ? node.ownerDocument.createElement("span") : null;
+    if (probe && node) node.append(probe);
+    const value = (name: string, fallback: string) => {
+      const raw = style?.getPropertyValue(name).trim() || fallback;
+      if (!probe) return raw;
+      probe.style.backgroundColor = raw;
+      const resolved = getComputedStyle(probe).backgroundColor;
+      return resolved && resolved !== "rgba(0, 0, 0, 0)" ? resolved : raw;
+    };
+    const theme = {
       background: value("--csv-shell-background", "#fff"),
       header: value("--csv-header-background", "#f4f4f5"),
       gutter: value("--csv-index-background", "#f4f4f5"),
@@ -212,6 +219,8 @@
         ),
       ),
     };
+    probe?.remove();
+    return theme;
   }
 
   function bodyIndex(row: number): number {

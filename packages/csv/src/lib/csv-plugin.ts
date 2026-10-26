@@ -7,6 +7,7 @@ import {
 } from "@lapis-notes/api";
 import { mount, unmount } from "svelte";
 import manifestSpec from "../../manifest.json";
+import CsvSheet from "./CsvSheet.svelte";
 import CsvTable from "./CsvTable.svelte";
 import {
   CSV_EXTENSIONS,
@@ -15,7 +16,7 @@ import {
   CSV_VIEW_TYPE,
 } from "./ids";
 import { csvSourceExtensions } from "./codemirror/csv-source-extensions";
-import { registerCsvViewSettings } from "./csv-view-settings";
+import { readDefaultCsvView, registerCsvViewSettings } from "./csv-view-settings";
 import { CsvFileView } from "./views/csv-view";
 
 export { CSV_PLUGIN_ID, CSV_VIEW_TYPE, CSV_FILENAME_PATTERNS };
@@ -26,7 +27,7 @@ function isTableFile(file: TFile | null | undefined): file is TFile {
   return tableExtensions.has(file?.extension.toLowerCase() ?? "");
 }
 
-function mountTable(
+function mountEmbed(
   app: App,
   containerEl: HTMLElement,
   file: TFile,
@@ -37,10 +38,17 @@ function mountTable(
   containerEl.style.height = "auto";
   containerEl.style.minHeight = "0";
   containerEl.style.overflow = "auto";
-  const component = mount(CsvTable, {
-    target: containerEl,
-    props: { app, file, role: "embed" },
-  });
+  const presentation = readDefaultCsvView(app);
+  const component =
+    presentation === "canvas"
+      ? mount(CsvSheet, {
+          target: containerEl,
+          props: { app, file, role: "embed" },
+        })
+      : mount(CsvTable, {
+          target: containerEl,
+          props: { app, file, role: "embed" },
+        });
   return {
     destroy: () => {
       void unmount(component);
@@ -77,7 +85,7 @@ export class CSVPlugin extends Plugin {
         this.app.embedRegistry.register(extension, ({ app, containerEl, state }) => {
           const file = state.file as TFile | undefined;
           if (!isTableFile(file) || file.extension.toLowerCase() !== extension) return;
-          return mountTable(app, containerEl, file);
+          return mountEmbed(app, containerEl, file);
         }),
       );
     }

@@ -160,6 +160,8 @@ dispatch tooling map to Distribution and this governance chapter.
 Shared registry showcase and capture tooling MUST use the root Storybook, fixed
 viewports, package-owned source stories, and deterministic comparison without
 creating or approving Visual Delta baselines.
+The shared panel demo may merge caller configuration into its app seed before
+plugins load, and that seed remains a Storybook fixture.
 Tracked registry-media guidance and the canonical registry-media chapter MUST
 stay aligned on story naming, capture density, authored data, generation
 commands, source-specific diagnostic isolation, production-compatible browser

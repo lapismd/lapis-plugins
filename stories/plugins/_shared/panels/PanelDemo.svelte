@@ -22,6 +22,7 @@
     plugins,
     files,
     openDocument,
+    configuration,
   }: {
     kind: PanelDemoKind;
     layout?: PanelDemoLayout;
@@ -31,6 +32,7 @@
     plugins?: PanelDemoOptions["plugins"];
     files?: PanelDemoOptions["files"];
     openDocument?: PanelDemoOptions["openDocument"];
+    configuration?: PanelDemoOptions["configuration"];
   } = $props();
 
   let app = $state<App | null>(null);
@@ -55,6 +57,7 @@
       plugins,
       files,
       openDocument,
+      configuration,
     });
     void runtimePromise
       .then((runtime) => {

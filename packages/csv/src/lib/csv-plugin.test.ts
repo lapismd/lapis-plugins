@@ -29,6 +29,10 @@ vi.mock("./CsvTable.svelte", () => ({
   default: class CsvTable {},
 }));
 
+vi.mock("./CsvSheet.svelte", () => ({
+  default: class CsvSheet {},
+}));
+
 vi.mock("./views/csv-view", () => ({
   CsvFileView: class CsvFileView {},
 }));
@@ -81,11 +85,21 @@ vi.mock("@lapis-notes/api", () => {
 });
 
 import { CSVPlugin } from "./csv-plugin";
+import CsvSheet from "./CsvSheet.svelte";
+import CsvTable from "./CsvTable.svelte";
 import { CsvFileView } from "./views/csv-view";
 
-function createApp(file: { path: string; extension: string } | null) {
+function createApp(
+  file: { path: string; extension: string } | null,
+  defaultView?: "table" | "canvas",
+) {
   const leaf = { setViewState: vi.fn(async () => undefined) };
   const app = {
+    configuration: {
+      getConfiguration: () => ({
+        get: (_key: string, fallback: unknown) => defaultView ?? fallback,
+      }),
+    },
     embedRegistry: {
       register: vi.fn(
         (
@@ -143,7 +157,14 @@ describe("CSVPlugin", () => {
       containerEl: container,
       state: { file: { path: "Sample.csv", extension: "csv" } },
     });
-    expect(harness.mount).toHaveBeenCalledOnce();
+    expect(harness.mount).toHaveBeenCalledExactlyOnceWith(CsvSheet, {
+      target: container,
+      props: {
+        app,
+        file: { path: "Sample.csv", extension: "csv" },
+        role: "embed",
+      },
+    });
     csvEmbed?.destroy?.();
     expect(harness.unmount).toHaveBeenCalledOnce();
 
@@ -159,6 +180,25 @@ describe("CSVPlugin", () => {
     expect(leaf.setViewState).toHaveBeenCalledWith({
       type: "lapis-csv",
       state: { file: "Sample.csv" },
+    });
+  });
+
+  it("embeds the DOM table when the default view is the table", () => {
+    const { app } = createApp({ path: "Sample.csv", extension: "csv" }, "table");
+    new CSVPlugin(app as never).onload();
+    const container = document.createElement("div");
+    harness.embeds[0]?.handler({
+      app,
+      containerEl: container,
+      state: { file: { path: "Sample.csv", extension: "csv" } },
+    });
+    expect(harness.mount).toHaveBeenCalledExactlyOnceWith(CsvTable, {
+      target: container,
+      props: {
+        app,
+        file: { path: "Sample.csv", extension: "csv" },
+        role: "embed",
+      },
     });
   });
 

@@ -11,11 +11,13 @@
   let {
     app,
     file,
+    role = "file",
     onShowTable,
     onToggleSource,
   }: {
     app: App;
     file: TFile;
+    role?: "file" | "embed";
     onShowTable?: () => void;
     onToggleSource?: () => void;
   } = $props();
@@ -32,7 +34,7 @@
   }
 </script>
 
-<div class="csv-table-frame" data-testid="csv-canvas" data-csv-role="file">
+<div class="csv-table-frame" data-testid="csv-canvas" data-csv-role={role}>
   {#key file.path}
     {#await loaded}
       <p class="csv-table-status">Reading this table.</p>
