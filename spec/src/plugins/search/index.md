@@ -243,3 +243,9 @@ Catalog fixtures declare their actual composition under LP-SPEC-054. Synthetic
 setup actions use the separate LP-SPEC-055 fixture-controls surface; application
 stories retain the production WorkspaceShell. Loading and failure placeholders
 remain explicitly identified as boot status rather than alternate app chrome.
+
+The private native plugin crate stages the same built-in Canvas extraction
+under LN-NATIVE-004. Complete shared source outcomes qualify the unchanged
+TypeScript provider and its native counterpart. Search provider selection,
+chunking configuration, scheduling and both application adoptions remain
+separate Rust-migration gates; standalone Web retains this implementation.

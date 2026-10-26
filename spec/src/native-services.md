@@ -7,11 +7,12 @@ contracts and the standalone browser implementation remain unchanged.
 
 ## Requirements
 
-| ID            | Requirement                                                                                                                                                                                                                                                                                   |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| LN-NATIVE-001 | The native Markdown extractor MUST retain the existing renderer extractor's frontmatter, heading, link, tag, heading-context and UTF-16 position results. Shared fixtures MUST qualify both implementations, including serialized YAML 1.2 scalar, Unicode, alias and invalid-input outcomes. |
-| LN-NATIVE-002 | Native Markdown cache identity MUST use the retained MD5 of the UTF-8 source bytes. Application policy MUST own index publication and unattended lifetime.                                                                                                                                    |
-| LN-NATIVE-003 | The native Markdown parser version MUST change when metadata interpretation changes so unchanged source bytes cannot reuse stale derived metadata.                                                                                                                                            |
+| ID            | Requirement                                                                                                                                                                                                                                                                                                                    |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| LN-NATIVE-001 | The native Markdown extractor MUST retain the existing renderer extractor's frontmatter, heading, link, tag, heading-context and UTF-16 position results. Shared fixtures MUST qualify both implementations, including serialized YAML 1.2 scalar, Unicode, alias and invalid-input outcomes.                                  |
+| LN-NATIVE-002 | Native Markdown cache identity MUST use the retained MD5 of the UTF-8 source bytes. Application policy MUST own index publication and unattended lifetime.                                                                                                                                                                     |
+| LN-NATIVE-003 | The native Markdown parser version MUST change when metadata interpretation changes so unchanged source bytes cannot reuse stale derived metadata.                                                                                                                                                                             |
+| LN-NATIVE-004 | The native Canvas Search extractor MUST preserve the retained built-in provider’s ordered field extraction, blank-value filtering and original-source fallback. Shared complete outcomes MUST qualify both implementations. Application services MUST own provider selection, configuration, source admission and publication. |
 
 This intake covers the existing lightweight metadata extractor. Task, custom
 projection and extension processors remain separate migration work. It neither
@@ -79,3 +80,14 @@ independent of application scheduling and both host selections.
 CSV registry screenshot application classification changes only the existing
 catalog guard inventory. It does not alter native Markdown metadata or grant
 a native/host adoption exception.
+
+## Built-in Canvas Search source
+
+The pure native extractor stages the retained Search provider under
+LN-SRCH-034 without changing that TypeScript implementation. It extracts node
+type, text, label, file and URL, followed by edge labels, retaining order,
+duplicates and original nonblank strings. Blankness follows ECMAScript trim,
+including its distinction between U+0085 and U+FEFF. Failed JSON parsing or
+invalid collection/field operations return the original source. This stage
+introduces no application writer, callback runtime or npm API; both host
+selections and full provider/configuration scheduling remain separate.
