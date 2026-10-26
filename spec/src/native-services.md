@@ -42,3 +42,7 @@ native Markdown parser behavior. The shared panel fixture's complete
 parser behavior. Bundling the vendored DOCX editor changes no
 native Markdown parser behavior. Polyfilling Node builtins for the DOCX PDF
 export worker changes no native Markdown parser behavior.
+
+Archive-backed source qualification audits the actual installed dependency
+graph under LP-SPEC-057. Source manifests/lockfiles remain portable, and native
+service ownership and publication gates retain their existing contracts.

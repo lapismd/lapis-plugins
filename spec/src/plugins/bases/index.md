@@ -178,3 +178,11 @@ local candidate until the separate release gate.
 Current App-backed catalog seeds and copyable host examples use `.lapis`
 for application state, matching the Notes-wide default. Historical vault data
 and the frozen Deno host are not migrated or edited.
+
+## File artwork
+
+<a id="lp-spec-056"></a>
+
+| ID | Requirement |
+| --- | --- |
+| LP-SPEC-056 | Bases MUST register its custom file SVG through the owning Plugin icon helper and contribute that ID for `.base` and `.bases` editor-view patterns. Plugin unload MUST release its artwork through the API lifecycle. Source and consumer qualification MUST use the public API archive containing that helper until the corresponding registry release is available. |

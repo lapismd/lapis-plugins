@@ -309,3 +309,7 @@ Npm import-containment checks inspect the actual packed JavaScript inventory.
 Excluded compiled tests cannot block a package; any shipped test remains subject
 to the same containment boundary. Clean package builds select the owning source
 root explicitly when it differs from `src/lib`.
+
+Archive-backed source qualification audits the actual installed dependency
+graph under LP-SPEC-057. Source manifests/lockfiles remain portable, and native
+service ownership and publication gates retain their existing contracts.

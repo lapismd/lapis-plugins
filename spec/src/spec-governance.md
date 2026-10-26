@@ -385,3 +385,12 @@ the vault hook, and this governance chapter does not gain a new gate. The
 vendored DOCX editor follows that same split and does not add a governance gate.
 The DOCX PDF export polyfill follows that same split and does not add a
 governance gate.
+
+
+## Candidate dependency audit
+
+<a id="lp-spec-057"></a>
+
+| ID | Requirement |
+| --- | --- |
+| LP-SPEC-057 | Archive-backed validation MUST audit the resolved installed candidate graph with the ordinary pnpm advisory policy. It MUST preserve that lockfile before restoring portable source metadata. Registry validation without candidate archives MUST audit the tracked graph. A candidate audit MUST NOT add advisory ignores or silently substitute the old registry dependency graph. |

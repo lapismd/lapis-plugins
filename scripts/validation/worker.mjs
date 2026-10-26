@@ -130,6 +130,12 @@ try {
         ["install", "--no-frozen-lockfile", "--ignore-pnpmfile"],
         { cwd: root }
       );
+      // Audit the graph actually installed from verified candidate archives.
+      // Keep the source manifest/lock portable for all other source checks.
+      const audit = join(root, ".local/validation/audit");
+      await mkdir(audit, { recursive: true });
+      await copyFile(packagePath, join(audit, "package.json"));
+      await copyFile(lockPath, join(audit, "pnpm-lock.yaml"));
     } finally {
       await writeFile(packagePath, original);
       await writeFile(lockPath, lock);
