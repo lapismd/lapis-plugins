@@ -60,6 +60,7 @@
     type SearchResult,
   } from "./search-result-model";
   import { SearchViewType } from "./search-view-type";
+  import { observeRecoveredSearchSettings } from "./search-settings-observer";
 
   import {
     SearchProviderController,
@@ -621,6 +622,23 @@
   }
 
   onMount(() => {
+    const settingsChanged = observeRecoveredSearchSettings(
+      app,
+      "search",
+      (next) => {
+        const collapseChanged =
+          settings.view.collapseResults !== next.view.collapseResults;
+        settings = next;
+        if (collapseChanged) {
+          resultOpenState = Object.fromEntries(
+            displayGroups.map((group) => [
+              group.id,
+              !next.view.collapseResults,
+            ]),
+          );
+        }
+      },
+    );
     const unsubscribeProviders = providerController.subscribe(
       (rows) => (providerRows = rows),
     );
@@ -644,6 +662,7 @@
       () => void refreshMetadataFacets(),
     );
     return () => {
+      settingsChanged();
       unsubscribeProviders();
       providerController.close();
       searchRevision += 1;

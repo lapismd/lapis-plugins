@@ -2,6 +2,12 @@
 
 ## Local validation contracts
 
+Search settings recovery preserves the existing package identity, semver ranges
+and independent patch release. Its private observer uses the public owning-App
+configuration contract; it adds no host API or bundled dependency. Source checks,
+the production-shell recovery story, public npm/runtime artifacts and hosted and
+Desktop acceptance qualify the same runtime inputs before release approval.
+
 The Bases accessibility patch preserves independent package identity and
 published dependency ranges. Its nine Select controls carry explicit purpose
 names; source, same-revision npm/runtime artifacts and consumer acceptance remain

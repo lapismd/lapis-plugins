@@ -66,11 +66,13 @@ async function fixture(registerProvider = true) {
   } as TFile;
   const metadata = new EventDispatcher();
   const vault = new EventDispatcher();
+  const configuration = new EventDispatcher();
   const app = {
     session: { backgroundIndexing: { call: vi.fn() } },
     backgroundIndexing: native,
     appDatabase: database,
     searchDocumentProviders: providers,
+    configuration,
     metadataCache: Object.assign(metadata, {
       processors: new Map(),
       getFileCacheAsync: vi.fn(async () => ({})),
@@ -93,7 +95,16 @@ async function fixture(registerProvider = true) {
     await manager.dispose();
     await database.close();
   });
-  return { app, database, providers, extract, native, manager, note };
+  return {
+    app,
+    database,
+    providers,
+    extract,
+    native,
+    manager,
+    note,
+    configuration,
+  };
 }
 
 async function pluginFixture() {
@@ -133,6 +144,106 @@ async function pluginFixture() {
 }
 
 describe("native Search ownership", () => {
+  it("ignores other plugin updates and save echoes, then releases its recovery listener", async () => {
+    const f = await pluginFixture();
+    const update = {
+      pluginId: "graph",
+      origin: "external-reload",
+      prev: null,
+      value: { view: { showMoreContext: true } },
+    };
+    f.configuration.emit("plugin-data-updated", update);
+    f.configuration.emit("plugin-data-updated", {
+      ...update,
+      pluginId: "search",
+      origin: "plugin-save",
+    });
+    expect(f.plugin.getSettings().view.showMoreContext).toBe(false);
+    const release = vi.spyOn(f.configuration, "offref");
+    await f.plugin.disable();
+    expect(release).toHaveBeenCalledOnce();
+    f.configuration.emit("plugin-data-updated", {
+      ...update,
+      pluginId: "search",
+    });
+    expect(f.plugin.getSettings().view.showMoreContext).toBe(false);
+    expect(f.plugin.saveData).not.toHaveBeenCalled();
+  });
+
+  it("reconciles recovered embedding and chunking controls without saving the recovery", async () => {
+    const f = await pluginFixture();
+    const configure = vi
+      .spyOn(f.database, "configureSearchEmbeddingProvider")
+      .mockResolvedValue(undefined);
+    f.native.selectSearch.mockClear();
+    f.configuration.emit("plugin-data-updated", {
+      pluginId: "search",
+      origin: "configuration-update",
+      prev: null,
+      value: {
+        embeddings: { provider: "transformers-js", modelId: "recovered-model" },
+        chunking: { targetChars: 2400 },
+      },
+    });
+    await vi.waitFor(() =>
+      expect(f.native.selectSearch).toHaveBeenCalledOnce(),
+    );
+    expect(configure).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        kind: "transformers-js",
+        modelId: "recovered-model",
+      }),
+    );
+    expect(f.native.selectSearch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        chunking: { ...DEFAULT_SEARCH_SETTINGS.chunking, targetChars: 2400 },
+      }),
+    );
+    expect(f.plugin.saveData).not.toHaveBeenCalled();
+    f.configuration.emit("plugin-data-updated", {
+      pluginId: "search",
+      origin: "external-reload",
+      prev: null,
+      value: { ...f.plugin.getSettings(), view: { showMoreContext: true } },
+    });
+    await Promise.resolve();
+    expect(configure).toHaveBeenCalledOnce();
+    expect(f.native.selectSearch).toHaveBeenCalledOnce();
+  });
+
+  it("uses recovered settings in the next partial save without rewriting the recovery", async () => {
+    const f = await pluginFixture();
+    f.configuration.emit("plugin-data-updated", {
+      pluginId: "search",
+      origin: "external-reload",
+      prev: null,
+      value: {
+        view: {
+          showMoreContext: true,
+          matchCase: false,
+          recentSearches: ["retained query"],
+        },
+      },
+    });
+    expect(f.plugin.getSettings().view).toMatchObject({
+      showMoreContext: true,
+      matchCase: false,
+      recentSearches: ["retained query"],
+    });
+    expect(f.plugin.saveData).not.toHaveBeenCalled();
+    await f.plugin.updateSettings({ view: { collapseResults: false } });
+    expect(f.plugin.saveData).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        view: expect.objectContaining({
+          showMoreContext: true,
+          matchCase: false,
+          collapseResults: false,
+          recentSearches: ["retained query"],
+        }),
+      }),
+    );
+  });
+
   it("refreshes through the App observer without renderer extraction or writes", async () => {
     const f = await fixture();
     const write = vi.spyOn(f.database, "upsertSearchDocument");

@@ -52,6 +52,13 @@ plugin shares the host's App and framework identity.
 
 ## Requirements
 
+Under LN-SRCH-006/011/016, recovered or externally reloaded Search plugin data
+MUST refresh the plugin's settings and every mounted Search panel. The next
+partial save MUST preserve recovered values, authored queries and scopes. The
+observer MUST use the owning App's public configuration events, ignore unrelated
+plugins and plugin-save echoes, dispose on unload, and reconcile changed native
+embedding/chunking controls without writing the recovered data again.
+
 | ID          | Requirement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | LN-SRCH-001 | Search MUST be ported from `/Users/stevejuma/code/lapis-notes/packages/plugins/plugin-search` at commit `8ec68e18` without copying API database or query-parser implementations.                                                                                                                                                                                                                                                                                                                                                                             |

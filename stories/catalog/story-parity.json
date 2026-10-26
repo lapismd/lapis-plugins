@@ -144,6 +144,9 @@
     "kind": "component",
     "subject": "@lapis-notes/ai#AiChatPanel"
   },
+  "stories/plugins/search/panels/Recovery.stories.ts": {
+    "kind": "application"
+  },
   "stories/plugins/search/panels/Search.stories.ts": {
     "kind": "application"
   },

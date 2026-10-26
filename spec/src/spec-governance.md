@@ -1,5 +1,12 @@
 # Specification Governance
 
+Search settings recovery maps its private configuration observer, plugin/panel
+lifecycle and production-shell scenario to LN-SRCH-006/011/016. Evidence retains
+the original stale-control failure, strict-check correction and every source and
+consumer cohort separately. The mapped chapter updates, new story parity entry,
+public package qualification and existing audit/release findings remain explicit;
+functional success does not approve visual baselines or publication.
+
 Bases LN-BASE-032 and LN-BASE-033 govern explicit purpose names across the full
 filter, grouping, sort, summary and data-driven settings Select surface. Exact
 and complete catalog counts, public-archive provenance and the inherited Zod

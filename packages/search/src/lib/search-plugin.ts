@@ -25,6 +25,7 @@ import { createNotesSearchTool } from "./notes-search-tool";
 import SearchToolResult from "./search-tool-result.svelte";
 import { reconcileSearchAfterMetadata } from "./search-startup";
 import manifestSpec from "@lapis-notes/search/manifest.json";
+import { observeRecoveredSearchSettings } from "./search-settings-observer";
 
 export class SearchPlugin extends Plugin {
   private settings: SearchPluginSettings;
@@ -61,20 +62,25 @@ export class SearchPlugin extends Plugin {
   }
 
   async updateSettings(patch: SearchPluginSettingsPatch): Promise<void> {
-    const manager = this.searchManager;
-    const previousChunking = JSON.stringify(this.settings.chunking);
-    const previousProvider = resolveSearchEmbeddingProviderConfig(
-      this.settings,
-    );
+    const previous = this.settings;
     this.settings = patchSearchSettings(this.settings, patch);
     await this.saveData(this.settings);
+    await this.reconfigureSettings(previous);
+  }
+
+  private async reconfigureSettings(
+    previous: SearchPluginSettings,
+  ): Promise<void> {
+    const manager = this.searchManager;
+    const previousProvider = resolveSearchEmbeddingProviderConfig(previous);
     const nextProvider = resolveSearchEmbeddingProviderConfig(this.settings);
     if (JSON.stringify(previousProvider) !== JSON.stringify(nextProvider)) {
       await this.app.appDatabase.configureSearchEmbeddingProvider(nextProvider);
     }
     if (
       this.app.session?.backgroundIndexing &&
-      previousChunking !== JSON.stringify(this.settings.chunking)
+      JSON.stringify(previous.chunking) !==
+        JSON.stringify(this.settings.chunking)
     ) {
       await manager.configureIndexing();
     }
@@ -103,6 +109,19 @@ export class SearchPlugin extends Plugin {
     this.settings = mergeSearchSettings(await this.loadData());
     await this.app.appDatabase.configureSearchEmbeddingProvider(
       resolveSearchEmbeddingProviderConfig(this.settings),
+    );
+    this.register(
+      observeRecoveredSearchSettings(this.app, this.manifest.id, (settings) => {
+        if (this.managerStopped) return;
+        const previous = this.settings;
+        this.settings = settings;
+        void this.reconfigureSettings(previous).catch((error) => {
+          if (this.nativeObserverDetached()) return;
+          new Notice(
+            `Search settings recovery failed: ${error instanceof Error ? error.message : String(error)}`,
+          );
+        });
+      }),
     );
     this.registerEvent(
       this.app.searchDocumentProviders.on("changed", ({ reason }) => {

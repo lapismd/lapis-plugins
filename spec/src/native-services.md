@@ -5,6 +5,12 @@ first-party algorithms for the shared Rust migration. It has no Tauri, HTTP,
 database, application scheduler or renderer dependency. Published npm plugin
 contracts and the standalone browser implementation remain unchanged.
 
+Search settings recovery refreshes its retained plugin and mounted panels through
+the public owning-App configuration events. Changed embedding and chunking data
+uses the existing admitted native controls; recovery neither writes the settings
+again nor adds a renderer indexing owner. The pure native service algorithms,
+source pins and host-specific owner cutover retain their separate gates.
+
 ## Requirements
 
 | ID            | Requirement                                                                                                                                                                                                                                                                                                                    |
