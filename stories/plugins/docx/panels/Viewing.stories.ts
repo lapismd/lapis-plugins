@@ -223,6 +223,15 @@ async function waitForDocxPage(
       expect(viewer).not.toBeNull();
       expect(viewer?.dataset.docxError ?? "").toBe("");
       expect(viewer?.querySelector("canvas")).not.toBeNull();
+      const editorStatus = viewer?.querySelector<HTMLElement>(".cw-statusbar");
+      const workspaceStatus = canvasElement.querySelector<HTMLElement>(
+        "[data-workspace-status-bar], .ui-workspace-status-bar",
+      );
+      expect(editorStatus).not.toBeNull();
+      expect(workspaceStatus).not.toBeNull();
+      expect(getComputedStyle(editorStatus!).backgroundColor).toBe(
+        getComputedStyle(workspaceStatus!).backgroundColor,
+      );
       return viewer!;
     },
     { timeout: 45_000 },
