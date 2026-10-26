@@ -249,3 +249,32 @@ under LN-NATIVE-004. Complete shared source outcomes qualify the unchanged
 TypeScript provider and its native counterpart. Search provider selection,
 chunking configuration, scheduling and both application adoptions remain
 separate Rust-migration gates; standalone Web retains this implementation.
+
+## Explicit native indexing ownership
+
+Under LN-SRCH-003/017/045, an explicitly supplied App background-indexing
+observer owns native provider selection, reconciliation and generated Search
+publication. Search MUST forward only registered provider identities, versions,
+priorities and retained chunk settings. Unsupported providers and selected
+service failures MUST remain observable without a callback or browser-writer
+fallback. Absent native selection MUST retain the standalone browser path.
+
+SearchManager MUST retain queries and its status presentation while omitting
+client file/metadata writer listeners and checkpoint writes under native
+selection. Native active or pending work MUST remain distinguishable from ready;
+the completion timestamp MUST come from the successful native pass. Query
+telemetry MUST use the last observed native activity without adding service
+reads to query execution.
+Manager/view disposal MUST remain passive and MUST NOT wait for accepted native
+refresh work; explicit plugin disable uses the App-owned native drain.
+Late settings/provider continuations MUST NOT select or refresh native indexing
+after the manager is disposed. Already accepted work may finish passively.
+Explicit disable MUST fence new declarations before awaiting native drain.
+Explicit re-enable MUST create a fresh presentation lifetime; old startup or
+provider continuations MUST NOT act on its replacement.
+Chunk-setting/provider changes declare the new selection. Query/view preferences
+MUST NOT redeclare indexing. Native rebuild requests MUST use the service's
+rebuild control instead of a client database writer.
+
+The [source adapter receipt](../../../records/2026-10-26-native-search-adapter.md)
+records independent API, plugin source, consumer and actual-host gates.

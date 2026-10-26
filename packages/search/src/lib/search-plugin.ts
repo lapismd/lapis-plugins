@@ -32,7 +32,8 @@ export class SearchPlugin extends Plugin {
   private startupRefreshPromise: Promise<void> | null = null;
   private providerReconcileReason: string | null = null;
   private providerReconcilePromise: Promise<void> | null = null;
-  readonly searchManager: SearchManager;
+  private managerStopped = false;
+  private currentSearchManager: SearchManager;
 
   constructor(
     app: App,
@@ -40,7 +41,11 @@ export class SearchPlugin extends Plugin {
   ) {
     super(app, pluginManifest);
     this.settings = mergeSearchSettings(null);
-    this.searchManager = new SearchManager(app, () => this.settings);
+    this.currentSearchManager = new SearchManager(app, () => this.settings);
+  }
+
+  get searchManager(): SearchManager {
+    return this.currentSearchManager;
   }
 
   getSettings(): SearchPluginSettings {
@@ -56,6 +61,8 @@ export class SearchPlugin extends Plugin {
   }
 
   async updateSettings(patch: SearchPluginSettingsPatch): Promise<void> {
+    const manager = this.searchManager;
+    const previousChunking = JSON.stringify(this.settings.chunking);
     const previousProvider = resolveSearchEmbeddingProviderConfig(
       this.settings,
     );
@@ -64,6 +71,12 @@ export class SearchPlugin extends Plugin {
     const nextProvider = resolveSearchEmbeddingProviderConfig(this.settings);
     if (JSON.stringify(previousProvider) !== JSON.stringify(nextProvider)) {
       await this.app.appDatabase.configureSearchEmbeddingProvider(nextProvider);
+    }
+    if (
+      this.app.session?.backgroundIndexing &&
+      previousChunking !== JSON.stringify(this.settings.chunking)
+    ) {
+      await manager.configureIndexing();
     }
   }
 
@@ -76,6 +89,17 @@ export class SearchPlugin extends Plugin {
   }
 
   async onload(): Promise<void> {
+    if (this.managerStopped) {
+      this.currentSearchManager = new SearchManager(
+        this.app,
+        () => this.settings,
+      );
+      this.managerStopped = false;
+      this.startupRefreshStarted = false;
+      this.startupRefreshPromise = null;
+      this.providerReconcileReason = null;
+      this.providerReconcilePromise = null;
+    }
     this.settings = mergeSearchSettings(await this.loadData());
     await this.app.appDatabase.configureSearchEmbeddingProvider(
       resolveSearchEmbeddingProviderConfig(this.settings),
@@ -83,6 +107,13 @@ export class SearchPlugin extends Plugin {
     this.registerEvent(
       this.app.searchDocumentProviders.on("changed", ({ reason }) => {
         if (this.state !== "enabled") return;
+        if (
+          this.app.session?.backgroundIndexing &&
+          this.app.metadataCache.initialized
+        ) {
+          this.scheduleProviderReconciliation(`provider-${reason}`);
+          return;
+        }
         if (
           !this.app.metadataCache.initialized ||
           !this.startupRefreshStarted
@@ -156,7 +187,8 @@ export class SearchPlugin extends Plugin {
       id: "rebuild-search-index",
       name: "Rebuild search index",
       callback: async () => {
-        await this.app.appDatabase.rebuildSearchIndex();
+        if (!this.app.session?.backgroundIndexing)
+          await this.app.appDatabase.rebuildSearchIndex();
         await this.refreshIndex("rebuild");
         new Notice("Search index rebuilt");
       },
@@ -172,21 +204,30 @@ export class SearchPlugin extends Plugin {
     return this.searchManager.refreshFromVault(reason);
   }
 
+  override async disable(): Promise<void> {
+    if (this.app.session?.backgroundIndexing) {
+      this.managerStopped = true;
+      await this.searchManager.dispose();
+    }
+    await super.disable();
+  }
+
   async onunload(): Promise<void> {
+    this.managerStopped = true;
     await this.searchManager.dispose();
   }
 
   private startupRefresh(): Promise<void> {
     if (this.startupRefreshPromise) return this.startupRefreshPromise;
     if (this.startupRefreshStarted) return Promise.resolve();
+    const manager = this.searchManager;
     this.startupRefreshStarted = true;
-    this.startupRefreshPromise = reconcileSearchAfterMetadata(
-      this.app,
-      this.searchManager,
-    )
+    this.startupRefreshPromise = reconcileSearchAfterMetadata(this.app, manager)
       .then(() => undefined)
       .catch((error) => {
+        if (this.searchManager !== manager) return;
         this.startupRefreshStarted = false;
+        if (this.nativeObserverDetached()) return;
         new Notice(
           `Search index refresh failed: ${
             error instanceof Error ? error.message : String(error)
@@ -194,22 +235,32 @@ export class SearchPlugin extends Plugin {
         );
       })
       .finally(() => {
-        if (!this.startupRefreshStarted) this.startupRefreshPromise = null;
+        if (this.searchManager === manager && !this.startupRefreshStarted)
+          this.startupRefreshPromise = null;
       });
     return this.startupRefreshPromise;
   }
 
   private scheduleProviderReconciliation(reason: string): void {
+    if (this.managerStopped || this.state !== "enabled") return;
     this.providerReconcileReason = reason;
     if (this.providerReconcilePromise) return;
+    const manager = this.searchManager;
     this.providerReconcilePromise = (async () => {
       await this.startupRefresh();
-      while (this.providerReconcileReason) {
+      while (
+        this.providerReconcileReason &&
+        !this.managerStopped &&
+        this.searchManager === manager &&
+        this.state === "enabled"
+      ) {
         this.providerReconcileReason = null;
-        await this.searchManager.reconcileStartup();
+        await manager.reconcileStartup();
       }
     })()
       .catch((error) => {
+        if (this.searchManager !== manager) return;
+        if (this.nativeObserverDetached()) return;
         new Notice(
           `Search provider refresh failed: ${
             error instanceof Error ? error.message : String(error)
@@ -217,7 +268,12 @@ export class SearchPlugin extends Plugin {
         );
       })
       .finally(() => {
+        if (this.searchManager !== manager) return;
         this.providerReconcilePromise = null;
+        if (this.managerStopped || this.state !== "enabled") {
+          this.providerReconcileReason = null;
+          return;
+        }
         if (this.providerReconcileReason) {
           this.scheduleProviderReconciliation(this.providerReconcileReason);
         }
@@ -241,5 +297,15 @@ export class SearchPlugin extends Plugin {
       operation: "open-search",
     });
     await this.app.workspace.revealLeaf(target);
+  }
+
+  private nativeObserverDetached(): boolean {
+    return Boolean(
+      this.app.session?.backgroundIndexing &&
+        (this.app.backgroundIndexing?.detached ||
+          this.managerStopped ||
+          this.state === "disabling" ||
+          this.state === "disabled"),
+    );
   }
 }
