@@ -236,6 +236,16 @@
     changeCell(row, col, "");
   }
 
+  function clearSheet() {
+    const coords: Array<[number, number]> = [];
+    for (let row = 0; row < parsed.grid.getRowCount(); row += 1) {
+      for (let col = 0; col < parsed.grid.getColCount(); col += 1) {
+        coords.push([row, col]);
+      }
+    }
+    clearCoordinates(coords);
+  }
+
   function replaceCells(edits: { row: number; col: number; value: string }[]) {
     const next = parsed.grid.clone();
     for (const edit of edits) {
@@ -322,6 +332,7 @@
     onClearColumn={clearColumn}
     onClearRow={clearRow}
     onClearCell={clearCell}
+    onClearSheet={clearSheet}
   />
   <CsvStatusBar
     columns={counts.columns}

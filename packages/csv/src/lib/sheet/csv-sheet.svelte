@@ -1,4 +1,8 @@
 <script lang="ts">
+  import { Button } from "@lapismd/design-core/shadcn/button";
+  import ArrowUpDownIcon from "@lucide/svelte/icons/arrow-up-down";
+  import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
+  import ChevronUpIcon from "@lucide/svelte/icons/chevron-up";
   import type { CsvColumnSortDirection } from "../model/csv-column-sort";
   import type { CsvGrid } from "../model/csv-grid";
   import CsvSheetToolbar from "./csv-sheet-toolbar.svelte";
@@ -8,17 +12,21 @@
     SHEET_CELL_PADDING,
     SHEET_HEADER_HEIGHT,
     SHEET_LETTER_HEIGHT,
+    SHEET_RESIZE_SLOP,
     SHEET_ROW_HEIGHT,
+    SHEET_SORT_HIT,
     bodyOffsets,
     cellDocumentRect,
     chromeHeight,
     clampColumnWidth,
+    columnEdges,
     columnLetter,
     fittedColumnWidth,
     hitTestSheet,
     sheetCommands,
     sheetContentSize,
     sheetMenuTarget,
+    visibleColumnRange,
     wrapLines,
     wrappedRowHeight,
     type SheetCommandId,
@@ -44,6 +52,7 @@
     onClearColumn,
     onClearRow,
     onClearCell,
+    onClearSheet,
   }: {
     grid: CsvGrid;
     headerRow: boolean;
@@ -61,6 +70,7 @@
     onClearColumn: (col: number) => void;
     onClearRow: (row: number) => void;
     onClearCell: (row: number, col: number) => void;
+    onClearSheet: () => void;
   } = $props();
 
   let scroller = $state<HTMLDivElement | null>(null);
@@ -147,7 +157,6 @@
     active: activeCellPaint(),
     selection,
     search: searchPaint(),
-    sort: sort ? { col: sort.index, direction: sort.direction } : null,
     theme,
     wrap,
     rowOffsets,
@@ -257,7 +266,7 @@
     });
   }
 
-  const commandTarget = $derived.by((): "column" | "row" | "cell" | null => {
+  const commandTarget = $derived.by((): "column" | "row" | "cell" | "sheet" | null => {
     if (selection && widths.length > 0 && bodyRows.length > 0) {
       const oneCol = selection.startCol === selection.endCol;
       const oneRow = selection.startIndex === selection.endIndex;
@@ -265,6 +274,7 @@
         selection.startIndex === 0 && selection.endIndex >= bodyRows.length - 1;
       const fullCols =
         selection.startCol === 0 && selection.endCol >= widths.length - 1;
+      if (fullRows && fullCols) return "sheet";
       if (fullRows && oneCol) return "column";
       if (fullCols && oneRow) return "row";
     }
@@ -282,9 +292,42 @@
     return active;
   });
 
+  const sortButtons = $derived.by(() => {
+    const edges = columnEdges(widths);
+    const range = visibleColumnRange({
+      scrollLeft,
+      viewportWidth: Math.max(viewportWidth, 1),
+      widths,
+    });
+    const top = headerRow ? SHEET_LETTER_HEIGHT : 0;
+    const height = headerRow ? SHEET_HEADER_HEIGHT : SHEET_LETTER_HEIGHT;
+    const buttons = [];
+    for (let col = range.start; col < range.end; col += 1) {
+      const right = edges[col + 1];
+      if (right == null) continue;
+      const label = headerRow ? grid.getRows()[0]?.[col] : columnLetter(col);
+      buttons.push({
+        col,
+        left: right - SHEET_SORT_HIT - scrollLeft,
+        top,
+        width: Math.max(0, SHEET_SORT_HIT - SHEET_RESIZE_SLOP),
+        height,
+        direction: sort?.index === col ? sort.direction : null,
+        label: `Sort ${label || columnLetter(col)}`,
+      });
+    }
+    return buttons;
+  });
+
   const toolbarCommands = $derived.by(() => {
     if (!commandTarget || !commandAt || commandAt.row < 0 || commandAt.col < 0) {
       return [];
+    }
+    if (commandTarget === "sheet") {
+      return [
+        { id: "clear" as const, label: "Clear", disabled: false },
+        { id: "delete" as const, label: "Delete", disabled: false },
+      ];
     }
     return sheetCommands(commandTarget, commandAt, {
       rows: grid.getRowCount(),
@@ -315,17 +358,30 @@
     id: SheetCommandId,
     row: number,
     col: number,
-    target: "column" | "row" | "cell",
+    target: "column" | "row" | "cell" | "sheet",
   ) {
     if (id === "move-left") onMoveColumn(col, col - 1);
     else if (id === "move-right") onMoveColumn(col, col + 1);
     else if (id === "move-up") onMoveRow(row, row - 1);
     else if (id === "move-down") onMoveRow(row, row + 1);
+    else if (target === "sheet") onClearSheet();
     else if (id === "delete" && target === "column") onDeleteColumn(col);
     else if (id === "delete" && target === "row") onDeleteRow(row);
     else if (id === "clear" && target === "column") onClearColumn(col);
     else if (id === "clear" && target === "row") onClearRow(row);
     else onClearCell(row, col);
+  }
+
+  function selectAll() {
+    const row = headerRow ? 0 : Math.max(0, gridRow(0));
+    active = { row, col: 0 };
+    selection = {
+      startIndex: 0,
+      endIndex: Math.max(0, bodyRows.length - 1),
+      startCol: 0,
+      endCol: Math.max(0, widths.length - 1),
+    };
+    editing = false;
   }
 
   function selectCell(row: number, col: number) {
@@ -493,7 +549,10 @@
       onSort(hit.col);
       return;
     }
-    if (hit.kind === "corner") return;
+    if (hit.kind === "corner") {
+      selectAll();
+      return;
+    }
     if (hit.kind === "letter" || hit.kind === "header") {
       if (event.detail >= 2 && hit.kind === "header") {
         selectCell(0, hit.col);
@@ -616,6 +675,11 @@
     scroller?.focus();
     if (editing) commitEdit();
     const hit = hitAt(event as unknown as PointerEvent);
+    if (hit?.kind === "corner") {
+      selectAll();
+      menu = null;
+      return;
+    }
     const target = hit ? sheetMenuTarget(hit) : null;
     if (!hit || !target) {
       menu = null;
@@ -743,6 +807,31 @@
     {@attach holdCanvas}
     {@attach paintAttachment}
   ></canvas>
+  <div class="csv-sheet__sorts">
+    {#each sortButtons as button (button.col)}
+      <Button
+        class="csv-sheet__sort"
+        style="left: {button.left}px; top: {button.top}px; width: {button.width}px; height: {button.height}px;"
+        variant="ghost"
+        size="icon"
+        aria-label={button.label}
+        aria-pressed={button.direction != null}
+        onclick={(event) => {
+          event.stopPropagation();
+          onSort(button.col);
+        }}
+        oncontextmenu={onContextMenu}
+      >
+        {#if button.direction === "asc"}
+          <ChevronUpIcon class="csv-data-table__header-icon" />
+        {:else if button.direction === "desc"}
+          <ChevronDownIcon class="csv-data-table__header-icon" />
+        {:else}
+          <ArrowUpDownIcon class="csv-data-table__header-icon" />
+        {/if}
+      </Button>
+    {/each}
+  </div>
   {#if editing}
     <input
       class="csv-sheet__editor"
@@ -815,6 +904,25 @@
     width: 100%;
     height: 100%;
     pointer-events: none;
+  }
+
+  .csv-sheet__sorts {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  :global(.csv-sheet__sort) {
+    position: absolute;
+    min-width: 0;
+    padding: 0;
+    pointer-events: auto;
+  }
+
+  :global(.csv-sheet__sort:hover) {
+    background: color-mix(in srgb, var(--foreground) 10%, transparent);
   }
 
   .csv-sheet__editor {

@@ -1,4 +1,3 @@
-import type { CsvColumnSortDirection } from "../model/csv-column-sort";
 import {
   SHEET_CELL_PADDING,
   SHEET_GUTTER_WIDTH,
@@ -46,7 +45,6 @@ export type SheetPaintModel = {
     endCol: number;
   } | null;
   search: { index: number; col: number; header: boolean } | null;
-  sort: { col: number; direction: CsvColumnSortDirection } | null;
   theme: SheetPaintTheme;
   wrap: boolean;
   rowOffsets: readonly number[] | null;
@@ -125,39 +123,6 @@ function vLine(
   ctx.fillRect(Math.round(x), Math.round(y), 1, Math.round(height));
 }
 
-function paintSortMark(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  direction: CsvColumnSortDirection | null,
-): void {
-  const cx = x + width / 2;
-  const cy = y + height / 2;
-  ctx.beginPath();
-  ctx.lineWidth = 1.25;
-  ctx.lineJoin = "round";
-  ctx.lineCap = "round";
-  if (direction === "asc") {
-    ctx.moveTo(cx - 3.5, cy + 2);
-    ctx.lineTo(cx, cy - 3);
-    ctx.lineTo(cx + 3.5, cy + 2);
-  } else if (direction === "desc") {
-    ctx.moveTo(cx - 3.5, cy - 2);
-    ctx.lineTo(cx, cy + 3);
-    ctx.lineTo(cx + 3.5, cy - 2);
-  } else {
-    ctx.moveTo(cx - 3, cy - 1);
-    ctx.lineTo(cx, cy - 4);
-    ctx.lineTo(cx + 3, cy - 1);
-    ctx.moveTo(cx - 3, cy + 1);
-    ctx.lineTo(cx, cy + 4);
-    ctx.lineTo(cx + 3, cy + 1);
-  }
-  ctx.stroke();
-}
-
 function columnSelected(
   model: SheetPaintModel,
   col: number,
@@ -169,6 +134,17 @@ function columnSelected(
     selection.endIndex >= model.body.length - 1 &&
     col >= selection.startCol &&
     col <= selection.endCol
+  );
+}
+
+function sheetSelected(model: SheetPaintModel): boolean {
+  const selection = model.selection;
+  if (!selection || model.body.length === 0 || model.widths.length === 0) return false;
+  return (
+    selection.startIndex === 0 &&
+    selection.endIndex >= model.body.length - 1 &&
+    selection.startCol === 0 &&
+    selection.endCol >= model.widths.length - 1
   );
 }
 
@@ -311,25 +287,6 @@ export function paintSheet(
         SHEET_SORT_HIT,
         SHEET_HEADER_HEIGHT,
       );
-      ctx.strokeStyle = model.sort?.col === col ? theme.accent : theme.muted;
-      paintSortMark(
-        ctx,
-        x + labelWidth,
-        SHEET_LETTER_HEIGHT,
-        SHEET_SORT_HIT,
-        SHEET_HEADER_HEIGHT,
-        model.sort?.col === col ? model.sort.direction : null,
-      );
-    } else {
-      ctx.strokeStyle = model.sort?.col === col ? theme.accent : theme.muted;
-      paintSortMark(
-        ctx,
-        x + columnWidth - SHEET_SORT_HIT,
-        0,
-        SHEET_SORT_HIT,
-        SHEET_LETTER_HEIGHT,
-        model.sort?.col === col ? model.sort.direction : null,
-      );
     }
     ctx.fillStyle = theme.grid;
     vLine(ctx, x + columnWidth - 1, 0, chrome);
@@ -362,7 +319,7 @@ export function paintSheet(
     ctx.fillStyle = theme.grid;
     hLine(ctx, 0, box.y + box.height - 1, SHEET_GUTTER_WIDTH);
   }
-  ctx.fillStyle = theme.header;
+  ctx.fillStyle = sheetSelected(model) ? theme.selection : theme.header;
   ctx.fillRect(0, 0, SHEET_GUTTER_WIDTH, chrome);
   ctx.fillStyle = theme.grid;
   hLine(ctx, 0, SHEET_LETTER_HEIGHT - 1, SHEET_GUTTER_WIDTH);
