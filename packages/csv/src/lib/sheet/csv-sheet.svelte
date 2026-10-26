@@ -7,6 +7,7 @@
   import type { CsvGrid } from "../model/csv-grid";
   import CsvSheetToolbar from "./csv-sheet-toolbar.svelte";
   import { paintSheet, type SheetPaintTheme } from "./sheet-paint";
+  import { watchSheetTheme } from "./sheet-theme";
   import SheetGlyph from "./sheet-glyph.svelte";
   import {
     SHEET_CELL_PADDING,
@@ -123,6 +124,7 @@
   let selectOnEdit = false;
   let wrap = $state(false);
   let colours = $state(false);
+  let themeEpoch = $state(0);
   let measureCanvas: HTMLCanvasElement | null = null;
 
   function measureText(text: string): number {
@@ -160,7 +162,7 @@
       rowOffsets ? rowOffsets[rowOffsets.length - 1] : undefined,
     ),
   );
-  const theme = $derived(readTheme(canvas));
+  const theme = $derived(readTheme(canvas, themeEpoch));
   const paintModel = $derived({
     widths,
     headerRow,
@@ -191,7 +193,8 @@
     return picked ? theme.selection : "transparent";
   }
 
-  function readTheme(node: HTMLCanvasElement | null): SheetPaintTheme {
+  function readTheme(node: HTMLCanvasElement | null, _epoch = 0): SheetPaintTheme {
+    void _epoch;
     const style = node ? getComputedStyle(node) : null;
     const probe = node ? node.ownerDocument.createElement("span") : null;
     if (probe && node) node.append(probe);
@@ -202,9 +205,22 @@
       const resolved = getComputedStyle(probe).backgroundColor;
       return resolved && resolved !== "rgba(0, 0, 0, 0)" ? resolved : raw;
     };
+    const header = value("--csv-header-background", "#f4f4f5");
+    const columns = [1, 2, 3, 4, 5].map((slot, index) =>
+      value(
+        `--csv-col-${slot}`,
+        ["#c2410c", "#15803d", "#1d4ed8", "#a21caf", "#a16207"][index] ?? "#111",
+      ),
+    );
+    const headerTints = columns.map((column) => {
+      if (!probe) return header;
+      probe.style.backgroundColor = `color-mix(in oklab, ${column} 8%, ${header})`;
+      const resolved = getComputedStyle(probe).backgroundColor;
+      return resolved && resolved !== "rgba(0, 0, 0, 0)" ? resolved : header;
+    });
     const theme = {
       background: value("--csv-shell-background", "#fff"),
-      header: value("--csv-header-background", "#f4f4f5"),
+      header,
       gutter: value("--csv-index-background", "#f4f4f5"),
       text: value("--csv-text-color", "#111"),
       muted: value("--csv-muted-color", "#666"),
@@ -212,15 +228,17 @@
       selection: value("--table-selection", "rgba(37, 99, 235, 0.16)"),
       accent: value("--table-selection-border-color", "#2563eb"),
       search: value("--csv-col-5", "#b45309"),
-      columns: [1, 2, 3, 4, 5].map((slot, index) =>
-        value(
-          `--csv-col-${slot}`,
-          ["#c2410c", "#15803d", "#1d4ed8", "#a21caf", "#a16207"][index] ?? "#111",
-        ),
-      ),
+      columns,
+      headerTints,
     };
     probe?.remove();
     return theme;
+  }
+
+  function holdTheme(node: HTMLElement) {
+    return watchSheetTheme(node, () => {
+      themeEpoch += 1;
+    });
   }
 
   function bodyIndex(row: number): number {
@@ -871,7 +889,7 @@
   }
 </script>
 
-<div class="csv-sheet-stage">
+<div class="csv-sheet-stage" {@attach holdTheme}>
   <CsvSheetToolbar
     {reference}
     commands={toolbarCommands}

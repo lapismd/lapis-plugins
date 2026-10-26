@@ -26,6 +26,7 @@ export type SheetPaintTheme = {
   accent: string;
   search: string;
   columns: readonly string[];
+  headerTints: readonly string[];
 };
 
 export type SheetPaintModel = {
@@ -132,7 +133,8 @@ function columnColor(model: SheetPaintModel, col: number): string {
 
 function headerFill(model: SheetPaintModel, col: number): string {
   if (!model.colours) return model.theme.header;
-  return `color-mix(in oklab, ${columnColor(model, col)} 8%, ${model.theme.header})`;
+  const tints = model.theme.headerTints;
+  return tints[col % Math.max(tints.length, 1)] || model.theme.header;
 }
 
 function fillSelection(
