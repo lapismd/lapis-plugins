@@ -130,9 +130,23 @@ function columnColor(model: SheetPaintModel, col: number): string {
   return colors[col % Math.max(colors.length, 1)] || model.theme.text;
 }
 
-function headerFill(model: SheetPaintModel, col: number, picked: boolean): string {
-  if (picked || !model.colours) return picked ? model.theme.selection : model.theme.header;
+function headerFill(model: SheetPaintModel, col: number): string {
+  if (!model.colours) return model.theme.header;
   return `color-mix(in oklab, ${columnColor(model, col)} 8%, ${model.theme.header})`;
+}
+
+function fillSelection(
+  ctx: CanvasRenderingContext2D,
+  model: SheetPaintModel,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+): void {
+  ctx.fillStyle = model.theme.background;
+  ctx.fillRect(x, y, width, height);
+  ctx.fillStyle = model.theme.selection;
+  ctx.fillRect(x, y, width, height);
 }
 
 function columnSelected(
@@ -279,8 +293,11 @@ export function paintSheet(
     const columnWidth = model.widths[col] ?? 0;
     const picked = columnSelected(model, col);
     const headerPicked = picked || headerRowSelected(model);
-    ctx.fillStyle = picked ? theme.selection : theme.header;
-    ctx.fillRect(x, 0, columnWidth, SHEET_LETTER_HEIGHT);
+    if (picked) fillSelection(ctx, model, x, 0, columnWidth, SHEET_LETTER_HEIGHT);
+    else {
+      ctx.fillStyle = theme.header;
+      ctx.fillRect(x, 0, columnWidth, SHEET_LETTER_HEIGHT);
+    }
     ctx.fillStyle = theme.muted;
     clipText(
       ctx,
@@ -292,8 +309,12 @@ export function paintSheet(
       "center",
     );
     if (model.headerRow) {
-      ctx.fillStyle = headerFill(model, col, headerPicked);
-      ctx.fillRect(x, SHEET_LETTER_HEIGHT, columnWidth, SHEET_HEADER_HEIGHT);
+      if (headerPicked) {
+        fillSelection(ctx, model, x, SHEET_LETTER_HEIGHT, columnWidth, SHEET_HEADER_HEIGHT);
+      } else {
+        ctx.fillStyle = headerFill(model, col);
+        ctx.fillRect(x, SHEET_LETTER_HEIGHT, columnWidth, SHEET_HEADER_HEIGHT);
+      }
       ctx.fillStyle = model.colours ? columnColor(model, col) : theme.text;
       clipText(
         ctx,
@@ -338,8 +359,12 @@ export function paintSheet(
   ctx.fillStyle = sheetSelected(model) ? theme.selection : theme.header;
   ctx.fillRect(0, 0, SHEET_GUTTER_WIDTH, chrome);
   if (model.headerRow) {
-    ctx.fillStyle = headerRowSelected(model) ? theme.selection : theme.gutter;
-    ctx.fillRect(0, SHEET_LETTER_HEIGHT, SHEET_GUTTER_WIDTH - 1, SHEET_HEADER_HEIGHT);
+    if (headerRowSelected(model)) {
+      fillSelection(ctx, model, 0, SHEET_LETTER_HEIGHT, SHEET_GUTTER_WIDTH - 1, SHEET_HEADER_HEIGHT);
+    } else {
+      ctx.fillStyle = theme.gutter;
+      ctx.fillRect(0, SHEET_LETTER_HEIGHT, SHEET_GUTTER_WIDTH - 1, SHEET_HEADER_HEIGHT);
+    }
     ctx.fillStyle = theme.muted;
     clipText(ctx, "1", 0, SHEET_LETTER_HEIGHT, SHEET_GUTTER_WIDTH - 1, SHEET_HEADER_HEIGHT, "center");
   }
