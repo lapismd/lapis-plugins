@@ -131,6 +131,7 @@ package, independently of the repository source layout.
 | LN-MD-112 | Reading mode's floating outline MUST resolve the actual document scroll owner. As the shared Scroll Area moves, the rail stroke and expanded outline item MUST both identify the current section without requiring outline interaction.                                                                                                                                                                    |
 | LN-MD-097 | Markdown `extractMetadata` MUST run off the renderer thread through a worker. Vault I/O, link resolution, `$state` apply, and `AppDatabase` writes MUST stay on the main thread. `read()` MAY use the same parse synchronously when a worker is unavailable.                                                                                                                                               |
 | LN-MD-099 | Published `parse-metadata` MUST construct its module worker with the standards-aligned `new Worker(new URL("./metadata-worker.js", import.meta.url), { type: "module" })` form. The package MUST NOT expose a Vite query-suffix worker import that dependency optimization can interpret as an ordinary module.                                                                                            |
+| LN-MD-116 | The media file view MUST display an image through a vault resource URL from `getResourceUrl` and revoke that URL when the view closes or the file changes. A URL that is not `blob:` or `http(s):` MUST fall back to a blob created from `readBinary` with the image MIME type, and that blob MUST be revoked instead. The view MUST receive `App` from its leaf and MUST NOT read or assign `globalThis.app`. It MUST NOT use the vault path as the image address. |
 
 File Properties value autocomplete and wikilink pills stay on the Lapis
 frontmatter adapter and Mira file adapter. Live Preview and Reading receive the
@@ -151,7 +152,9 @@ menu layers releases the document-level pointer lock.
 Reusable Plugin and Editor contracts remain in `@lapis-notes/api`. Markdown
 document policy lives in `@lapis-notes/markdown` and is implemented by Mira.
 Portable image URLs are leased through the owning vault using Mira's public
-`readAssetUrl`/`releaseAssetUrl` hooks; missing assets remain unresolved.
+`readAssetUrl`/`releaseAssetUrl` hooks; missing assets remain unresolved. The
+media file view leases the same vault URL and, when that URL is not fetchable,
+falls back to a typed blob from the file bytes (`LN-MD-116`).
 
 The Lapis package owns the app-bound `MiraFileAdapter` and reuses one instance
 per App; portable rendering and editor behavior remain Mira-owned. Markdown views, renderers, frontmatter, and

@@ -26,6 +26,8 @@ Shared disposable panel fixtures seed app, types, workspace and bookmark state
 under the API's `.lapis` directory. Their explicit configuration path and default
 workspace loader must select the same state; expected panel counts, placement
 assertions, timeouts and accessibility gates remain unchanged (LP-SPEC-006).
+`Assets/map.png` is a complete image, and the fixture vault leases it as a
+fetchable resource URL.
 
 Source Editor, Markdown and Graph also accept Design Core 0.5.1 through portable
 semver ranges. The 0.4 registry graph remains valid; current-source Desktop

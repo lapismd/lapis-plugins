@@ -478,6 +478,53 @@ export function createPanelDemoLayout(
 const HISTORY_WRAP_LINE =
   "History compare wrap probe: " + "word ".repeat(40).trim();
 
+const PANEL_IMAGE_TYPES: Record<string, string> = {
+  png: "image/png",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  gif: "image/gif",
+  webp: "image/webp",
+  svg: "image/svg+xml",
+  bmp: "image/bmp",
+};
+
+const PANEL_MAP_PNG =
+  "iVBORw0KGgoAAAANSUhEUgAAAKAAAABgCAYAAACaJ3mZAAACdUlEQVR4nO3cu00DURBAUSpyGYRUQEARlIIIKYCIamgHRGbBGn+0b+58bnDzt7OH8Upec3d4fvsyo7qjD2CzE6ChCdDQBGhoAjQ0ARqaAA1NgIYmQEMToKEJ0NAEaGgCNDQBGpoADU2AhiZAQxOgoQnQ0ARoaAI0NAEamgBv7P71/U/0mSo2HuAWpOjoGQgQhvb48oA1HWZLgNmQ7YmTnq0ALwBHw4lESc9+LMBJ6DpjLAVwOrhrQNL3qg1A0fXGmBag8GZATAdQeLMgpgEovJkQcYDCmw0RAyi8HNEQEYDiyxWJMByg8PJGIAwD6NarUfQ2DAEovlpFIgwFSA/2uM+Pp7PRZ8yAsDxAEt8lyG6NBtIF4VKA0fhWgpsKcjXCZQAjnvtIcBNA/lzH6ufB5QAnoeuAcev85QDuuf0yAegI8pLzrtyCSwFWB+d5129BHGC1G1jpevbc2GUAHq/rvQaQGVwUgsi2rmPVx3AZgDSk7hjPnX0cQBpLd5DXnrU9QBpDhjKBawmQvsGVo/+IywA8JH35wPYBuLcVAVpfgCLsUblvQtyCvSr3XbBbsE9l34ZxC/ao7PuAIqxf+TeiRVi3Nr8JOfg8WK52v4oTYZ1a/i54CyI9aDuNL9KD/xvGwrceDlCEeSLxoQCFOBteGoBCnAkvHUAhzoKXFqAQZ8BLD1CIveGVASjGfujKAjyFcSrI3zOg78kogFMxdkDXDuA5kFVRbl0HPVsB7ogyA87/zkXPTIAwzKjoGQiwYELaJwEamgANTYCGJkBDE6ChCdDQBGhoAjQ0ARqaAA1NgIYmQEMToKEJ0NAEaGgCNDQBGpoADe0bpaRio/92zFgAAAAASUVORK5CYII=";
+
+function bytesFromBase64(value: string): ArrayBuffer {
+  const binary = globalThis.atob(value);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+  return bytes.buffer;
+}
+
+class PanelDemoVaultAdapter extends MemoryVaultAdapter {
+  readonly #resourceUrls = new Set<string>();
+
+  async getResourceUrl(path: string): Promise<string> {
+    const data = await this.readBinary(path);
+    const extension = path.split(".").pop()?.toLowerCase() ?? "";
+    const type = PANEL_IMAGE_TYPES[extension];
+    const url = URL.createObjectURL(
+      new Blob([data], type ? { type } : undefined),
+    );
+    this.#resourceUrls.add(url);
+    return url;
+  }
+
+  revokeResourceUrl(url: string): void {
+    if (!this.#resourceUrls.delete(url)) return;
+    URL.revokeObjectURL(url);
+  }
+
+  disposeResourceUrls(): void {
+    for (const url of this.#resourceUrls) URL.revokeObjectURL(url);
+    this.#resourceUrls.clear();
+  }
+}
+
 export function createPanelDemoSeed(
   kind: PanelDemoKind,
   layout: PanelDemoLayout,
@@ -690,7 +737,7 @@ export function createPanelDemoSeed(
       null,
       2,
     ),
-    "Assets/map.png": new Uint8Array([137, 80, 78, 71]).buffer,
+    "Assets/map.png": bytesFromBase64(PANEL_MAP_PNG),
     ...(useRegistryGraphData ? createGraphSeed() : {}),
     ...(kind === "ai-history" ? createAiHistorySeed() : {}),
     ...(kind === "ai-catalog" ? createAiCatalogSeed() : {}),
@@ -991,7 +1038,7 @@ export async function bootPanelDemo(
     presetMainDocument(workspace, options.openDocument);
     seed[".lapis/workspace.json"] = JSON.stringify(workspace, null, 2);
   }
-  const adapter = new MemoryVaultAdapter(
+  const adapter = new PanelDemoVaultAdapter(
     seed,
     {
       name: `Lapis Panel ${kind} ${layout}`,
@@ -1134,6 +1181,7 @@ export async function bootPanelDemo(
         await plugin.disable().catch(() => undefined);
       }
       await app.workspace.disposeWorkspaceHost();
+      adapter.disposeResourceUrls();
       disposeApplicationCompatibility();
     },
   };

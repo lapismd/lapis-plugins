@@ -28,6 +28,9 @@ reproduction, signature verification and publication approval remain unchanged.
 
 The shared catalog's disposable `.lapis` state matches the current public API
 default. This fixture-only repair changes no plugin payload or migration gate.
+The shared panel fixture's `Assets/map.png` is a complete image leased through
+a fetchable vault resource URL. That fixture change does not alter a package
+payload or release gate.
 
 The Source Editor, Markdown and Graph dependency repair accepts Design Core
 `^0.4.0 || ^0.5.1`. Their independent patch release intent is recorded; local

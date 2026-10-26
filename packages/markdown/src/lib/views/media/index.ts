@@ -1,23 +1,11 @@
 import { FileView, TFile, type WorkspaceLeaf } from "@lapis-notes/api";
 import MediaViewComponent from "./media-view.svelte";
 import { mount, unmount } from "svelte";
+import { MIME_TYPES, openMediaSource, type MediaSource } from "./open-media-source";
 
 export const MediaViewType = "media";
 
-export const MIME_TYPES: Record<string, string> = Object.freeze({
-  gif: "image/gif",
-  tif: "image/tiff",
-  tiff: "image/tiff",
-  svg: "image/svg+xml",
-  webp: "image/webp",
-  apng: "image/apng",
-  avif: "image/avif",
-  bmp: "image/bmp",
-  ico: "image/vnd.microsoft.icon",
-  jpg: "image/jpeg",
-  jpeg: "image/jpeg",
-  png: "image/png",
-});
+export { MIME_TYPES };
 
 const IMAGE_EXTENSION = Object.keys(MIME_TYPES);
 
@@ -32,6 +20,8 @@ export function isImageAsset(file: TFile | string) {
 
 export class MediaView extends FileView {
   private component: unknown = null;
+  private source: MediaSource | null = null;
+  private generation = 0;
 
   constructor(leaf?: WorkspaceLeaf) {
     super(leaf);
@@ -69,6 +59,29 @@ export class MediaView extends FileView {
 
   private reload(): void {
     if (!this.containerEl) return;
+    const generation = ++this.generation;
+    this.revokeSource();
+    const file = this.file;
+    if (!file) {
+      this.render("");
+      return;
+    }
+    void openMediaSource(this.app, file)
+      .then((source) => {
+        if (generation !== this.generation) {
+          source.revoke();
+          return;
+        }
+        this.source = source;
+        this.render(source.url);
+      })
+      .catch(() => {
+        if (generation === this.generation) this.render("");
+      });
+  }
+
+  private render(resourceUrl: string): void {
+    if (!this.containerEl) return;
     if (this.component) {
       unmount(this.component as Parameters<typeof unmount>[0]);
       this.component = null;
@@ -76,8 +89,13 @@ export class MediaView extends FileView {
     this.containerEl.empty();
     this.component = mount(MediaViewComponent, {
       target: this.containerEl,
-      props: { file: this.file },
+      props: { file: this.file, resourceUrl },
     });
+  }
+
+  private revokeSource(): void {
+    this.source?.revoke();
+    this.source = null;
   }
 
   onload(): void {
@@ -86,6 +104,8 @@ export class MediaView extends FileView {
   }
 
   onunload(): void {
+    this.generation += 1;
+    this.revokeSource();
     if (this.component) {
       unmount(this.component as Parameters<typeof unmount>[0]);
       this.component = null;
