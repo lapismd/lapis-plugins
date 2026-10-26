@@ -2904,8 +2904,13 @@ if (toolbar) {
     titleEl.title = docTitle;
   };
 
+  let lastDirtyNotified: boolean | null = null;
   refreshSaveState = (): void => {
     const dirty = isDirty();
+    if (dirty !== lastDirtyNotified) {
+      lastDirtyNotified = dirty;
+      runtime.onDirtyChange?.(dirty);
+    }
     let cls: string;
     let text: string;
     let tip: string;

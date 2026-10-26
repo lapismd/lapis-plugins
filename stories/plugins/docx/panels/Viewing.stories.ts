@@ -232,6 +232,9 @@ async function waitForDocxPage(
       expect(getComputedStyle(editorStatus!).backgroundColor).toBe(
         getComputedStyle(workspaceStatus!).backgroundColor,
       );
+      const ribbon = viewer?.querySelector<HTMLElement>(".cw-toolbar");
+      expect(ribbon).not.toBeNull();
+      expect(getComputedStyle(ribbon!).display === "none").toBe(role === "embed");
       return viewer!;
     },
     { timeout: 45_000 },

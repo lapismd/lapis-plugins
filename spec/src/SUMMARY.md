@@ -10,6 +10,7 @@
   - [Plugins / Bookmarks](plugins/bookmarks/index.md)
   - [Plugins / Community](plugins/community/index.md)
   - [Plugins / CSV](plugins/csv/index.md)
+  - [Plugins / DOCX](plugins/docx/index.md)
   - [Plugins / Graph](plugins/graph/index.md)
   - [Plugins / History](plugins/history/index.md)
   - [Plugins / Markdown](plugins/markdown/index.md)

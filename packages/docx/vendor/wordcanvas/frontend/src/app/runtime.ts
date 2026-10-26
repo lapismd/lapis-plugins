@@ -186,6 +186,8 @@ export interface WordCanvasRuntime {
    *  Also makes Ctrl+S / the save-state indicator report a real persistence
    *  target (see `documentTitle`). */
   onSave?: SaveHandler | undefined;
+  /** Called when the unsaved-changes flag flips. */
+  onDirtyChange?: ((dirty: boolean) => void) | undefined;
   /** Human-readable document name shown in the chrome (top-left of the ribbon).
    *  Falls back to the opened .docx filename, then "Untitled document". Purely
    *  presentational — the model has no title field. */

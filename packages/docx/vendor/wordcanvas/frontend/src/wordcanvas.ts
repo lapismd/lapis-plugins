@@ -176,6 +176,9 @@ export interface WordCanvasOptions {
    *  (`Mod` = Ctrl on Windows/Linux, Cmd on macOS); the built-in editing chords
    *  (Ctrl+B/I/U/Z/Y, Ctrl+Enter) always take precedence. */
   commands?: EditorCommand[];
+  /** Notified when the document's unsaved state changes. The host uses this to
+   *  flush a dirty file view on close. Fires with the new value only. */
+  onDirtyChange?: (dirty: boolean) => void;
   /** Track first-load progress so you can show a loader while the big chunks
    *  stream. Fires for the editor JS chunk download (`phase: "bundle"`,
    *  indeterminate) and the bundled font fetch (`phase: "fonts"`, the dominant
@@ -217,6 +220,7 @@ export class WordCanvas {
         user: opts.user,
         onShareLink: opts.onShareLink,
         onSave: opts.onSave,
+        onDirtyChange: opts.onDirtyChange,
         documentTitle: opts.documentTitle,
         readonly: opts.readonly,
         mode: opts.mode,
