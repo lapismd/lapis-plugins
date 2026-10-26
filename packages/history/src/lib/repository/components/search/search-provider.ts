@@ -22,7 +22,7 @@ function hitModel(hit: IndexedHistoryHit, query: string): SearchProviderHit {
     checkpoint = record.revision.checkpoint;
   const path = record.path ?? undefined;
   const commit = record.deleted
-    ? record.previous ?? checkpoint.commit
+    ? (record.previous ?? checkpoint.commit)
     : checkpoint.commit;
   return {
     id: `${checkpoint.commit}/${path ?? "checkpoint"}`,
@@ -55,7 +55,7 @@ function hitModel(hit: IndexedHistoryHit, query: string): SearchProviderHit {
         text: hit.excerpt,
         ranges: historyRanges(
           hit.excerpt,
-          historyTerms(parseSearchQueryAst(query).expression)
+          historyTerms(parseSearchQueryAst(query).expression),
         ),
         line: hit.line ?? undefined,
         context:
@@ -75,11 +75,11 @@ function hitModel(hit: IndexedHistoryHit, query: string): SearchProviderHit {
 
 export function registerHistoryResultProvider(
   plugin: RepositoryPlugin,
-  service: IndexedHistoryService
+  service: IndexedHistoryService,
 ) {
   const index = new HistoryIndexController(
     service,
-    plugin.feedback("History search index", "history-search-index")
+    plugin.feedback("History search index", "history-search-index"),
   );
   const work = new BackgroundWork(plugin.app.notifications, plugin.id);
   const progress = work.follow("Indexing saved vault history", index);
@@ -99,14 +99,14 @@ export function registerHistoryResultProvider(
   });
   const activate = async (
     hit: SearchProviderHit,
-    _match?: SearchProviderMatch
+    _match?: SearchProviderMatch,
   ) => {
     if (closed) throw new Error("History search is closed");
     if (hit.target.path)
       await plugin.openBlame(
         hit.target.operation!,
         hit.target.commit!,
-        hit.target.path
+        hit.target.path,
       );
     else await plugin.open(hit.target.operation, hit.target.commit);
   };
@@ -129,10 +129,9 @@ export function registerHistoryResultProvider(
           case_sensitive: request.caseSensitive,
           cursor: request.cursor ?? null,
           limit: Math.min(100, request.limit),
-        })
+        }),
       );
       request.signal.throwIfAborted();
-      if (!page.status.complete && phase !== "paused") index.schedule();
       return {
         generation: String(page.status.generation),
         hits: page.hits.map((hit) => hitModel(hit, request.text)),
@@ -141,8 +140,8 @@ export function registerHistoryResultProvider(
           phase: page.status.complete
             ? "ready"
             : phase === "paused"
-            ? "paused"
-            : "indexing",
+              ? "paused"
+              : "indexing",
           description:
             phase === "paused"
               ? "Indexing paused; showing available saved history"
@@ -176,7 +175,7 @@ export function registerHistoryResultProvider(
         line: result.start + 1,
         ranges: historyRanges(
           result.text,
-          historyTerms(parseSearchQueryAst(hit.target.query ?? "").expression)
+          historyTerms(parseSearchQueryAst(hit.target.query ?? "").expression),
         ),
         context:
           result.before || result.after
@@ -185,10 +184,7 @@ export function registerHistoryResultProvider(
       };
     },
   });
-  index.schedule();
-  const capture = plugin.backup?.controller.subscribe((state) => {
-    if (state.checkpoint && state.phase === "ready") index.schedule();
-  });
+  index.start();
   plugin.app.workspace.onLayoutReady(() => {
     if (closed) return;
     plugin.app.workspace.iterateAllLeaves((leaf) => {
@@ -209,7 +205,7 @@ export function registerHistoryResultProvider(
               scope: "history",
             },
           },
-          { activatePlugins: false }
+          { activatePlugins: false },
         )
         .catch((error) => plugin.report(error));
     });
@@ -230,7 +226,6 @@ export function registerHistoryResultProvider(
   return async () => {
     closed = true;
     registration.dispose();
-    capture?.();
     changed();
     await index.close();
     progress();

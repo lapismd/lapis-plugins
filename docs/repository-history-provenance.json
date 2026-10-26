@@ -427,5 +427,29 @@
       ],
       "use": "Production adoption in E-REPO-015: Copied jj-store presentation first, adapted only to native-read/local draft/stage/delete/preview and public Design Core composition. Same header actions, Files/mode browser, nested shell, Left/Resolved/Right editor, sidebar icon and merge settings. Replaces custom approximation. Source internal sizing selectors are replaced by owned measured hosts/public slots; shell is disposed. Settings are memory-only and language adapts the explicit Markdown fixture. Native apply remains disabled, no conflicts are persisted or cleared. Native publication remains unavailable."
     }
-  ]
+  ],
+  "nativeHistoryObservation": {
+    "repository": "lapis-desktop",
+    "revision": "05d0e8abb802a7fc4ed1a762908b404406f2b9b6",
+    "license": "Apache-2.0",
+    "paths": [
+      {
+        "source": "src/lib/repository/history-index-controller.ts",
+        "destination": "packages/history/src/lib/repository/controllers/history-index-controller.ts"
+      },
+      {
+        "source": "src/lib/native/repository/indexed-search.ts",
+        "destination": "packages/history/src/lib/repository/controllers/indexed-search-validation.ts"
+      },
+      {
+        "source": "src/lib/native/repository/search.ts",
+        "destination": "packages/history/src/lib/repository/controllers/search-page.ts"
+      },
+      {
+        "source": "tests/renderer/repository-indexed-search.test.mjs",
+        "destination": "packages/history/test/repository/repository-indexed-search.test.mjs"
+      }
+    ],
+    "use": "Extract existing owner observation, immutable response validators and lifecycle regressions. Replace host IPC with the already admitted public NativeHistoryIndex port and generated DTOs. Native admission and lifetime remain host-owned; no history engine is copied."
+  }
 }

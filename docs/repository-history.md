@@ -26,3 +26,27 @@ inside existing editor and transcript protection, and its disposer follows the
 action. It permits observing already-held protection without reacquiring it;
 it neither replaces that protection nor authorizes saved writes. Dispose the
 App-owned observer during host teardown.
+
+Selected native indexed History uses the public API `NativeHistoryIndex` port.
+`nativeIndexedHistory` adapts start/status/query/context to the existing
+Repository Search provider, retaining Desktop's response validators and immutable
+saved identities. `HistoryIndexController` starts that owner once and polls its
+cached progress; queries and capture notifications never schedule batches.
+Closing the observer drains its accepted read and leaves native work running.
+Repeated failures are reported once and recover through status observation.
+
+The Repository plugin prefers an explicit `app.nativeHistoryIndex` port over
+legacy injected indexed Search services. The host still binds its admitted
+Repository reader and lifetime through `bindRepository`; a transport port alone
+does not mount a screen or grant history navigation. Hosts retaining their own
+Repository composition can consume the public adapter/controller directly.
+During migration these contracts require the recorded Notes API candidate that
+exports `native-history-index` and the optional App field. Source qualification,
+host adoption, final dependency floors and publication remain separate gates.
+
+Pure Node transport and controller code imports the public leaf entries:
+`@lapis-notes/history/repository/controllers/history-index-controller` and
+`@lapis-notes/history/repository/controllers/native-indexed-search`. The aggregate
+`repository` entry also exports Svelte presentation and therefore uses the
+normal application bundler. DTO aliases and validators remain available through
+the documented public controller wildcard; no source alias is needed.
