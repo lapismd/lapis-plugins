@@ -79,7 +79,7 @@
         }
       }
     >
-      <Select.Trigger class="bases-style-w-full-6da6a3">
+      <Select.Trigger aria-label="Layout" class="bases-style-w-full-6da6a3">
         <Icon name={selectedLayout.icon} />
         {selectedLayout.label}
       </Select.Trigger>
@@ -128,7 +128,7 @@
             }
           }
         >
-          <Select.Trigger class="bases-style-w-full-6da6a3">
+          <Select.Trigger aria-label={option.displayName} class="bases-style-w-full-6da6a3">
             {selectedOption.label}
           </Select.Trigger>
           <Select.Content>

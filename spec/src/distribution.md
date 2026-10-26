@@ -2,6 +2,11 @@
 
 ## Local validation contracts
 
+The Bases accessibility patch preserves independent package identity and
+published dependency ranges. Its nine Select controls carry explicit purpose
+names; source, same-revision npm/runtime artifacts and consumer acceptance remain
+separate from the recorded Zod advisory and publication approval.
+
 The 2026-10-25 isolated catalog qualification includes the approved Transcripts
 Markdown peer and development dependency correction under LP-SPEC-011. Its
 existing Zod 3 audit advisory is accepted only for this infrastructure change;
@@ -305,3 +310,7 @@ Npm import-containment checks inspect the actual packed JavaScript inventory.
 Excluded compiled tests cannot block a package; any shipped test remains subject
 to the same containment boundary. Clean package builds select the owning source
 root explicitly when it differs from `src/lib`.
+
+Archive-backed source qualification audits the actual installed dependency
+graph under LP-SPEC-057. Source manifests/lockfiles remain portable, and native
+service ownership and publication gates retain their existing contracts.

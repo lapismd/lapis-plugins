@@ -173,11 +173,45 @@ export const QueryControls: Story = {
 
     await userEvent.click(canvas.getByRole("button", { name: "Sort" }));
     await userEvent.click(canvas.getByRole("button", { name: /Filter/ }));
+    expect(
+      body.getByRole("combobox", { name: "Filter group match" }),
+    ).toHaveTextContent("All of the following are true");
+    expect(
+      body.getByRole("combobox", { name: "file filter operator" }),
+    ).toHaveTextContent("links to");
     const addFilter = body.getByRole("button", {
       name: "Add Filter",
       exact: true,
     });
     const filterGroup = addFilter.closest<HTMLElement>(".filter-group")!;
+    const propertyTrigger = within(filterGroup).getByRole("button", {
+      name: "file",
+      exact: true,
+    });
+    await userEvent.click(propertyTrigger);
+    const propertyPopup = await waitFor(() => {
+      const popup = canvasElement.ownerDocument.getElementById(
+        propertyTrigger.getAttribute("aria-controls")!,
+      );
+      expect(popup).toBeVisible();
+      return popup!;
+    });
+    const propertySearch = within(propertyPopup).getByPlaceholderText("Find or create");
+    const propertyList = await waitFor(() => {
+      const list = canvasElement.ownerDocument.getElementById(
+        propertySearch.getAttribute("aria-controls")!,
+      );
+      expect(list).toBeVisible();
+      return list!;
+    });
+    await userEvent.click(
+      within(propertyList).getByRole("option", { name: "Status", exact: true }),
+    );
+    await waitFor(() =>
+      expect(
+        body.getByRole("combobox", { name: "Status filter operator" }),
+      ).toBeVisible(),
+    );
     const visibleFilterRowCount = () =>
       [...filterGroup.querySelectorAll<HTMLElement>(".filter-row")].filter(
         (row) => row.getBoundingClientRect().height > 0,
@@ -215,6 +249,8 @@ export const SchemaAndViewSettings: Story = {
     await userEvent.click(body.getByRole("button", { name: "Edit current view" }));
     await waitFor(() => {
       expect(body.getByText("Presentation")).toBeVisible();
+      expect(body.getByRole("combobox", { name: "Layout" })).toBeVisible();
+      expect(body.getByRole("combobox", { name: "Tone" })).toBeVisible();
       for (const type of [
         "text",
         "multitext",
@@ -274,10 +310,7 @@ export const SchemaAndViewSettings: Story = {
     );
     await userEvent.click(canvas.getByRole("button", { name: "Table" }));
     await userEvent.click(body.getByRole("button", { name: "Edit current view" }));
-    const layoutLabel = body.getByText("Layout");
-    const layoutTrigger = layoutLabel.parentElement?.querySelector("button");
-    expect(layoutTrigger).toBeTruthy();
-    await userEvent.click(layoutTrigger!);
+    await userEvent.click(body.getByRole("combobox", { name: "Layout" }));
     await userEvent.click((await body.findAllByText("Cards")).at(-1)!);
     await waitFor(() => expect(addedView.type).toBe("cards"));
 
@@ -297,10 +330,8 @@ export const SchemaAndViewSettings: Story = {
     await userEvent.click(body.getByRole("button", { name: "Add formula" }));
     await waitFor(() => expect(document.formulas).toHaveProperty("Untitled"));
 
-    const summaryLabel = body.getByText("Summary in all views");
-    const summaryTrigger = summaryLabel.parentElement?.querySelector("button");
-    expect(summaryTrigger).toBeTruthy();
-    await userEvent.click(summaryTrigger!);
+    expect(body.getByRole("combobox", { name: "Summary in this view" })).toBeVisible();
+    await userEvent.click(body.getByRole("combobox", { name: "Summary in all views" }));
     await userEvent.click((await body.findAllByText("Count")).at(-1)!);
     await waitFor(() =>
       expect(document.summaries).toMatchObject({ "formula.Untitled": "count" }),

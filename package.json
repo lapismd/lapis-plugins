@@ -17,7 +17,7 @@
   "scripts": {
     "build": "node scripts/validation.mjs run build",
     "changeset": "changeset",
-    "audit": "pnpm audit",
+    "audit": "node scripts/audit.mjs",
     "check": "node scripts/validation.mjs run check",
     "check:app-ownership": "node scripts/validation.mjs run check:app-ownership",
     "check:no-tailwind": "node scripts/validation.mjs run check:no-tailwind",

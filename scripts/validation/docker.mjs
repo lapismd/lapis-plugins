@@ -8,7 +8,11 @@ import { execute } from "./process.mjs";
 export function contextArguments(config, args) {
   return [...(config.context ? ["--context", config.context] : []), ...args];
 }
-export function sshDockerCommand(endpoint, args) {
+export function sshDockerCommand(
+  endpoint,
+  args,
+  { multiplexing = true, controlPath } = {},
+) {
   const url = new URL(endpoint);
   if (
     url.protocol !== "ssh:" ||
@@ -28,12 +32,22 @@ export function sshDockerCommand(endpoint, args) {
       "ConnectTimeout=10",
       "-o",
       "ConnectionAttempts=5",
-      "-o",
-      "ControlMaster=auto",
-      "-o",
-      "ControlPersist=60",
-      "-o",
-      "ControlPath=/tmp/lapis-plugins-validation-ssh-%C",
+      ...(multiplexing
+        ? [
+            "-o",
+            "ControlMaster=auto",
+            "-o",
+            "ControlPersist=60",
+            "-o",
+            "ControlPath=" +
+              (controlPath ?? "/tmp/lapis-plugins-validation-ssh-%C"),
+          ]
+        : [
+            "-o",
+            "ControlMaster=no",
+            "-o",
+            "ControlPath=" + (controlPath ?? "none"),
+          ]),
       ...(url.port ? ["-p", url.port] : []),
       `${decodeURIComponent(url.username)}@${url.hostname}`,
       ["docker", ...args].map(quote).join(" "),
@@ -52,9 +66,12 @@ export function dockerCommand(config, args) {
       "--format",
       "{{.Endpoints.docker.Host}}",
     ]),
-    { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }
+    { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] },
   ).trim();
-  return sshDockerCommand(endpoint, args);
+  return sshDockerCommand(endpoint, args, {
+    multiplexing: config.sshMultiplexing !== false,
+    controlPath: config.sshControlPath,
+  });
 }
 export function dockerOutput(config, args) {
   const [cmd, argv] = dockerCommand(config, args);
@@ -84,7 +101,7 @@ export async function sendDirectory(config, args, directory) {
     ],
     {
       stdio: ["ignore", "pipe", "inherit"],
-    }
+    },
   );
   const child = spawn(cmd, argv, { stdio: ["pipe", "inherit", "inherit"] });
   await Promise.all([
@@ -96,7 +113,7 @@ export async function sendDirectory(config, args, directory) {
 export async function receiveDirectory(config, args, directory) {
   const [cmd, argv] = dockerCommand(config, args);
   const temporary = await mkdtemp(
-    join(tmpdir(), "lapis-plugins-validation-report-")
+    join(tmpdir(), "lapis-plugins-validation-report-"),
   );
   try {
     const archive = join(temporary, "reports.tar");
@@ -116,7 +133,7 @@ function finished(child) {
   return new Promise((accept, reject) => {
     child.once("error", reject);
     child.once("exit", (code) =>
-      code === 0 ? accept() : reject(Error(`Docker transfer exited ${code}`))
+      code === 0 ? accept() : reject(Error(`Docker transfer exited ${code}`)),
     );
   });
 }

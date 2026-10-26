@@ -16,6 +16,10 @@ Bases Command search inputs explicitly reference their result lists with stable
 per-instance IDs; property actions expose accessible names. Workflow acceptance
 waits for opening popovers and suggestions before checking visibility or
 geometry, retaining existing assertions and accessibility gates.
+Filter group and operator comboboxes carry explicit purpose names independently
+of their selected option text; operator names include the current property.
+Grouping and sorting directions, column summaries, layout and data-driven view
+options follow the same purpose-name contract across the complete Select surface.
 
 The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.
@@ -98,6 +102,8 @@ plugin shares the host's App and framework identity.
 | LN-BASE-029 | Advanced filter expressions MUST use the shared Lapis CodeMirror completion popover chrome in Storybook and production hosts. Focusing the inline query editor MUST NOT paint CodeMirror's default dotted outline; the surrounding segmented filter row remains the visible focus boundary.                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | LN-BASE-030 | Advanced filter source mode MUST validate non-empty expressions without preventing correction. Invalid drafts MUST mark the CodeMirror textbox invalid, show a destructive error label beneath it, and MUST NOT replace the last valid applied filter. Correcting the draft MUST clear the error and apply the valid expression.                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | LN-BASE-031 | Governed Bases Storybook coverage MUST start from persisted indexed rows, surface an async metadata query failure, and recover after a later committed invalidation without enumerating a MetadataCache snapshot.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| LN-BASE-032 | Filter group and operator comboboxes MUST expose explicit accessible names identifying their purpose independently of selected option text. An operator's name MUST include the current property display name and update when that property changes.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| LN-BASE-033 | Grouping and sorting directions, column summaries, layout and every data-driven view-option combobox MUST expose an explicit accessible purpose name. Property-specific sort names MUST include the current property display name.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 
 ## Public surface
 
@@ -172,3 +178,11 @@ local candidate until the separate release gate.
 Current App-backed catalog seeds and copyable host examples use `.lapis`
 for application state, matching the Notes-wide default. Historical vault data
 and the frozen Deno host are not migrated or edited.
+
+## File artwork
+
+<a id="lp-spec-056"></a>
+
+| ID | Requirement |
+| --- | --- |
+| LP-SPEC-056 | Bases MUST register its custom file SVG through the owning Plugin icon helper and contribute that ID for `.base` and `.bases` editor-view patterns. Plugin unload MUST release its artwork through the API lifecycle. Source and consumer qualification MUST use the public API archive containing that helper until the corresponding registry release is available. |

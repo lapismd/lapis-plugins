@@ -1,5 +1,11 @@
 # Specification Governance
 
+Bases LN-BASE-032 and LN-BASE-033 govern explicit purpose names across the full
+filter, grouping, sort, summary and data-driven settings Select surface. Exact
+and complete catalog counts, public-archive provenance and the inherited Zod
+advisory are recorded in `spec/records/2026-10-25-bases-filter-names.md`.
+The advisory requires fresh acceptance for this patch before commit.
+
 LP-SPEC-053 defaults local portable validation to isolated Docker workers;
 hosted CI explicitly uses its provisioned native runtime. The repository-owned
 composition plugin enforces LP-SPEC-054 and LP-SPEC-055 beside existing Docs,
@@ -381,3 +387,19 @@ the vault hook, and this governance chapter does not gain a new gate. The
 vendored DOCX editor follows that same split and does not add a governance gate.
 The DOCX PDF export polyfill follows that same split and does not add a
 governance gate.
+
+## Candidate dependency audit
+
+<a id="lp-spec-057"></a>
+
+| ID          | Requirement                                                                                                                                                                                                                                                                                                                                                                          |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| LP-SPEC-057 | Archive-backed validation MUST audit the resolved installed candidate graph with the ordinary pnpm advisory policy. It MUST preserve that lockfile before restoring portable source metadata. Registry validation without candidate archives MUST audit the tracked graph. A candidate audit MUST NOT add advisory ignores or silently substitute the old registry dependency graph. |
+
+Private Docker validation may select `sshMultiplexing: false` for a direct SSH
+connection. Agent authentication, literal arguments, endpoint validation,
+resource bounds and Docker-only qualification remain unchanged.
+
+An absolute private `sshControlPath` may reuse an already authenticated owned
+connection. This changes connection reuse only, retaining the same endpoint,
+agent credentials, source qualification and Docker-only runtime boundaries.

@@ -1,3 +1,4 @@
+import { BASES_FILE_ICON } from "./bases-file-icon";
 import {
   type App,
   MarkdownRenderChild,
@@ -29,12 +30,14 @@ export class BasesPlugin extends Plugin {
   }
 
   async onload() {
+    const fileIcon = this.registerIcon("file", BASES_FILE_ICON);
     this.registerView(BasesViewType, (leaf) => new BasesView(leaf), {
       kind: "file",
     });
     this.registerEditorView({
       id: BasesViewType,
       label: "Bases",
+      fileIcon,
       filenamePatterns: ["*.bases", "*.base"],
       priority: "default",
     });

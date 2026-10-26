@@ -283,6 +283,7 @@
               bind:value={getBaseSummary, setBaseSummary}
             >
               <Select.Trigger
+                aria-label="Summary in all views"
                 size="sm"
                 class="bases-style-bg-background-e6f9e3 bases-style-h-8-ed8a5d bases-style-justify-between-8ef226"
               >
@@ -306,6 +307,7 @@
               bind:value={getViewSummary, setViewSummary}
             >
               <Select.Trigger
+                aria-label="Summary in this view"
                 size="sm"
                 class="bases-style-bg-background-e6f9e3 bases-style-h-8-ed8a5d bases-style-justify-between-8ef226"
               >

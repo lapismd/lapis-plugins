@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, userEvent, waitFor, within } from "storybook/test";
 import type { App, WorkspaceLeaf } from "@lapis-notes/api";
+import { WorkspaceShell } from "@lapis-notes/workspace";
+import { canvasWorkspaceSource } from "./Canvas.example-sources";
 import { SAMPLE_CSV_PATH, SAMPLE_READING_NOTE_PATH } from "@lapis-notes/csv";
 import type { PanelDemoLayout } from "../../_shared/panels/create-panel-demo";
 import {
@@ -31,40 +33,36 @@ const PLACEMENT_SURFACE: Record<PanelDemoLayout, string> = {
 
 const meta = {
   title: "Plugins/CSV/Panels/Canvas",
-  component: TablePanelDemo,
+  component: WorkspaceShell,
+  args: { app: undefined as unknown as App },
+  argTypes: { app: { control: false } },
   tags: ["visual-pending"],
   parameters: {
     layout: "fullscreen",
     docs: {
       ...PANEL_DOCS_PARAMETERS,
+      source: {
+        code: canvasWorkspaceSource("middle-top-tabs"),
+        language: "tsx",
+        type: "code",
+      },
       description: {
         component:
           "A seeded CSV canvas in the shared workspace shell, in every governed panel placement. Middle (Top Tabs) also embeds that canvas in a note.",
       },
     },
   },
-} satisfies Meta<typeof TablePanelDemo>;
+} satisfies Meta<typeof WorkspaceShell>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
-const csvCanvasSource = `<script lang="ts">
-  import type { WorkspaceLeaf } from "@lapis-notes/api";
-
-  let { leaf }: { leaf: WorkspaceLeaf } = $props();
-
-  await leaf.setViewState({
-    type: "lapis-csv",
-    state: { file: "Sample.csv", mode: "canvas" },
-  });
-</script>`;
 
 function canvasParameters(layout: PanelDemoLayout, description: string) {
   const { visualDelta: _visualDelta, ...parameters } = placementParameters(
     "csv",
     layout,
-    csvCanvasSource,
-    description,
+    canvasWorkspaceSource(layout),
+    description
   );
   return parameters;
 }
@@ -80,33 +78,41 @@ function placementStory(layout: PanelDemoLayout, description: string): Story {
     play: async ({ canvasElement }) => {
       await waitFor(
         () =>
-          expect(canvasElement.querySelector('[data-status="ready"]')).not.toBeNull(),
-        { timeout: 30_000 },
+          expect(
+            canvasElement.querySelector('[data-status="ready"]')
+          ).not.toBeNull(),
+        { timeout: 30_000 }
       );
       const lapisApp = (
-        canvasElement.querySelector("[data-testid='panel-demo']") as HTMLDivElement & {
+        canvasElement.querySelector(
+          "[data-testid='panel-demo']"
+        ) as HTMLDivElement & {
           __lapisApp?: App;
         }
       ).__lapisApp;
       if (!lapisApp) throw new Error("Missing panel app");
       const fileLeaves = [...lapisApp.workspace.getLeavesOfType("lapis-csv")];
       if (layout === "middle-top-tabs") {
-        lapisApp.workspace.setActiveLeaf(csvCanvasLeaf(lapisApp), { focus: false });
+        lapisApp.workspace.setActiveLeaf(csvCanvasLeaf(lapisApp), {
+          focus: false,
+        });
       }
       const sheet = await waitForSheet(canvasElement, "file");
       expect(canvasElement.querySelector(".csv-data-table")).toBeNull();
-      const host = sheet.closest(`[data-ui-component="${PLACEMENT_HOST[layout]}"]`);
+      const host = sheet.closest(
+        `[data-ui-component="${PLACEMENT_HOST[layout]}"]`
+      );
       expect(host).not.toBeNull();
       expect(sheet.closest("[data-workspace-surface]")).toHaveAttribute(
         "data-workspace-surface",
-        PLACEMENT_SURFACE[layout],
+        PLACEMENT_SURFACE[layout]
       );
       expectSidebar(canvasElement, sheet, "left", layout === "left-sidebar");
       expectSidebar(
         canvasElement,
         sheet,
         "right",
-        layout === "right-sidebar" || layout === "sidebar-group",
+        layout === "right-sidebar" || layout === "sidebar-group"
       );
       if (layout === "middle-top-tabs") {
         await editAndResize(canvasElement, lapisApp, sheet);
@@ -118,15 +124,15 @@ function placementStory(layout: PanelDemoLayout, description: string): Story {
         const plain = await waitFor(
           () =>
             within(canvasElement).getByText(
-              /This seed drives focused Markdown panel stories/,
+              /This seed drives focused Markdown panel stories/
             ),
-          { timeout: 15_000 },
+          { timeout: 15_000 }
         );
         expect(plain.closest("[data-testid='csv-canvas']")).toBeNull();
         await closeCsvLeaves(lapisApp);
         await waitFor(() => {
           expect(
-            canvasElement.querySelector("[data-csv-role='file']"),
+            canvasElement.querySelector("[data-csv-role='file']")
           ).toBeNull();
           expect(embed.isConnected).toBe(true);
         });
@@ -152,7 +158,11 @@ function placementStory(layout: PanelDemoLayout, description: string): Story {
   };
 }
 
-async function editAndResize(canvasElement: HTMLElement, app: App, sheet: HTMLElement) {
+async function editAndResize(
+  canvasElement: HTMLElement,
+  app: App,
+  sheet: HTMLElement
+) {
   const file = app.vault.getFileByPath(SAMPLE_CSV_PATH);
   if (!file) throw new Error("Missing Sample.csv");
   const original = await app.vault.cachedRead(file);
@@ -160,7 +170,7 @@ async function editAndResize(canvasElement: HTMLElement, app: App, sheet: HTMLEl
   await userEvent.keyboard("{ArrowDown}{Enter}");
   const editor = await waitFor(() => {
     const field = canvasElement.querySelector<HTMLInputElement>(
-      "[data-testid='csv-sheet-editor']",
+      "[data-testid='csv-sheet-editor']"
     );
     expect(field).not.toBeNull();
     return field as HTMLInputElement;
@@ -184,7 +194,9 @@ async function editAndResize(canvasElement: HTMLElement, app: App, sheet: HTMLEl
   });
   await userEvent.pointer({ keys: "[/MouseLeft]" });
   await waitFor(() => {
-    expect(Number(sheet.getAttribute("data-column-width-0"))).toBeGreaterThan(140);
+    expect(Number(sheet.getAttribute("data-column-width-0"))).toBeGreaterThan(
+      140
+    );
   });
   await app.vault.modify(file, original);
 }
@@ -193,18 +205,22 @@ function expectSidebar(
   canvasElement: HTMLElement,
   sheet: HTMLElement,
   side: "left" | "right",
-  containsSheet: boolean,
+  containsSheet: boolean
 ) {
-  const dock = canvasElement.querySelector(`[data-workspace-sidebar-side="${side}"]`);
+  const dock = canvasElement.querySelector(
+    `[data-workspace-sidebar-side="${side}"]`
+  );
   expect(Boolean(dock?.contains(sheet))).toBe(containsSheet);
 }
 
 async function expectSheetRemoved(canvasElement: HTMLElement): Promise<void> {
   await waitFor(
     () => {
-      expect(canvasElement.querySelector("[data-testid='csv-canvas']")).toBeNull();
+      expect(
+        canvasElement.querySelector("[data-testid='csv-canvas']")
+      ).toBeNull();
     },
-    { timeout: 5_000 },
+    { timeout: 5_000 }
   );
 }
 
@@ -245,46 +261,50 @@ function markdownLeaf(app: App, path: string): WorkspaceLeaf {
 
 async function waitForSheet(
   canvasElement: HTMLElement,
-  role: "file" | "embed",
+  role: "file" | "embed"
 ): Promise<HTMLElement> {
   return waitFor(
     () => {
       const frame = canvasElement.querySelector<HTMLElement>(
-        `[data-testid="csv-canvas"][data-csv-role="${role}"]`,
+        `[data-testid="csv-canvas"][data-csv-role="${role}"]`
       );
-      const sheet = frame?.querySelector<HTMLElement>("[data-testid='csv-sheet']");
+      const sheet = frame?.querySelector<HTMLElement>(
+        "[data-testid='csv-sheet']"
+      );
       expect(frame).not.toBeNull();
       expect(frame?.querySelector("[data-csv-error]")).toBeNull();
       expect(sheet).not.toBeNull();
       expect(sheet?.clientWidth ?? 0).toBeGreaterThan(120);
-      expect(frame?.querySelector("canvas")?.clientHeight ?? 0).toBeGreaterThan(80);
-      return frame!;
+      expect(frame?.querySelector("canvas")?.clientHeight ?? 0).toBeGreaterThan(
+        80
+      );
+      return sheet!;
     },
-    { timeout: 30_000 },
+    { timeout: 30_000 }
   );
 }
 
 export const MiddleTopTabs = placementStory(
   "middle-top-tabs",
-  "Open the seeded CSV canvas in the middle pane, edit a cell, and embed that same sheet in a note.",
+  "Open the seeded CSV canvas in the middle pane, edit a cell, and embed that same sheet in a note."
 );
 export const StackedTabs = placementStory(
   "stacked-tabs",
-  "Open the seeded CSV canvas in stacked tabs.",
+  "Open the seeded CSV canvas in stacked tabs."
 );
 export const LeftSidebar = placementStory(
   "left-sidebar",
-  "Open the seeded CSV canvas in the left sidebar.",
+  "Open the seeded CSV canvas in the left sidebar."
 );
 export const RightSidebar = placementStory(
   "right-sidebar",
-  "Open the seeded CSV canvas in the right sidebar.",
+  "Open the seeded CSV canvas in the right sidebar."
 );
 export const BottomPanel = placementStory(
   "bottom-panel",
-  "Open the seeded CSV canvas in the bottom panel.",
+  "Open the seeded CSV canvas in the bottom panel."
 );
 export const SidebarGroup = placementStory(
   "sidebar-group",
-  "Open the seeded CSV canvas in a sidebar group.",
+  "Open the seeded CSV canvas in a sidebar group."
 );

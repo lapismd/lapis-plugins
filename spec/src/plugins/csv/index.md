@@ -136,6 +136,11 @@ publish the package and does not add it to a host profile.
 
 ## Verification
 
+The Canvas documentation identifies the public WorkspaceShell, uses an isolated
+700px Docs frame, and supplies a complete App/CSVPlugin/vault/layout example for
+each placement. Canvas and Registry Screenshots retain application composition
+declarations; current canvas embeds, theme repaint and placement plays remain.
+
 Package tests cover the runtime id, the exclusive `*.csv` and `*.tsv`
 association, both embed registrations, the Open CSV command, Toggle CSV
 source, the CSV language cells, quoted-cell colours, and separator, the Lapis

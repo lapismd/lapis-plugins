@@ -48,6 +48,12 @@ vi.mock("@lapis-notes/api", async () => {
       this.register(() => this.app.unregisterView?.(type, creator));
     }
 
+    registerIcon(localId: string, svg: string): string {
+      this.app.registerIcon(localId, svg);
+      this.register(() => this.app.removeIcon(localId));
+      return "registered-bases-icon";
+    }
+
     registerEditorView(config: unknown): void {
       this.app.registerEditorView?.(config);
     }
@@ -128,6 +134,8 @@ function createMockApp() {
     markdownProcessors,
     registerView: vi.fn(),
     unregisterView: vi.fn(),
+    registerIcon: vi.fn(),
+    removeIcon: vi.fn(),
     registerEditorView: vi.fn(),
     registerExtensions: vi.fn(),
     unregisterExtensions: vi.fn(),
@@ -163,11 +171,16 @@ describe("BasesPlugin", () => {
       id: "bases",
       name: "Bases",
       minAppVersion: "0.1.0",
-      description: "Build table, card, and grouped views from Markdown properties",
+      description:
+        "Build table, card, and grouped views from Markdown properties",
       author: "Lapis Notes Bases",
       authorUrl: "https://app.lapis.md",
       isDesktopOnly: false,
     });
+    expect(app.registerIcon).toHaveBeenCalledWith(
+      "file",
+      expect.stringContaining("M3 7h18v13H3z"),
+    );
     expect(app.registerView).toHaveBeenCalledWith(
       "bases",
       expect.any(Function),
@@ -175,6 +188,7 @@ describe("BasesPlugin", () => {
     expect(app.registerEditorView).toHaveBeenCalledWith({
       id: "bases",
       label: "Bases",
+      fileIcon: "registered-bases-icon",
       filenamePatterns: ["*.bases", "*.base"],
       priority: "default",
     });
@@ -199,6 +213,7 @@ describe("BasesPlugin", () => {
     await plugin.onload();
     plugin.unload();
 
+    expect(app.removeIcon).toHaveBeenCalledWith("file");
     expect(app.embedRegistry.get("base")).toBeNull();
     expect(app.embedRegistry.get("bases")).toBeNull();
     expect(app.markdownProcessors.base ?? []).toHaveLength(0);
