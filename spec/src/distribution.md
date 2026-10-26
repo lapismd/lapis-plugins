@@ -351,3 +351,7 @@ audit gates remain independent of lock generation.
 The CSV registry screenshot family participates in the existing application
 composition guard through its real public workspace shell. Recording that
 coverage class changes neither the capture stories nor signed plugin payloads.
+
+The optional Repository backup selection contract is an independent History
+patch under LN-HIST-018. Its public npm/controller exports and runtime archive
+retain one source identity; qualification keeps legacy services compatible.

@@ -1,5 +1,9 @@
 # Specification Governance
 
+LN-HIST-018 retains separate regressions for explicit native selection,
+passive observation, saved-state projection and lost acknowledgement. Its
+public package, runtime archive and hosted consumer evidence remain distinct.
+
 Search settings recovery maps its private configuration observer, plugin/panel
 lifecycle and production-shell scenario to LN-SRCH-006/011/016. Evidence retains
 the original stale-control failure, strict-check correction and every source and

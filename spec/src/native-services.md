@@ -38,6 +38,11 @@ contract or output; native service acceptance and registry-only release
 qualification remain separate. The native migration source stays pinned by
 Notes rather than being inferred from a mutable checkout.
 
+Repository backup services may expose LN-HIST-018's optional persisted
+selection contract. Plugin start/stop then observe passively, configuration
+events reconcile presentation, and native services own saved selection and
+capture lifetime. Legacy services retain their behavior.
+
 CSV externalizes `@lapis-notes/api/editor/core` and `@codemirror/search` as
 host peers. That metadata synchronization changes no native Markdown parser
 behavior. Its native migration contract remains the independently owned pure

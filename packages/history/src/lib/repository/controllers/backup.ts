@@ -11,6 +11,8 @@ export type BackupStatus = {
   error: string | null;
 };
 export interface BackupService {
+  /** Optional native selection persists the setting; start/stop only observe. */
+  setEnabled?(enabled: boolean): Promise<void>;
   start(changed: (status: BackupStatus) => void): Promise<BackupStatus>;
   capture(): Promise<BackupStatus>;
   stop(): Promise<void>;
@@ -28,7 +30,7 @@ export class BackupController {
   readonly feedback: { report(error: unknown): void; recovered(): void };
   constructor(
     service: BackupService,
-    feedback: { report(error: unknown): void; recovered(): void }
+    feedback: { report(error: unknown): void; recovered(): void },
   ) {
     this.service = service;
     this.feedback = feedback;

@@ -31,7 +31,7 @@ export class RepositoryStatus {
   #settings?: ReturnType<typeof createBackupSettings>;
   constructor(
     private readonly plugin: RepositoryPlugin,
-    private readonly services: RepositoryServices
+    private readonly services: RepositoryServices,
   ) {}
   async start(): Promise<void> {
     this.#data = (await this.plugin.loadData()) ?? {};
@@ -92,6 +92,18 @@ export class RepositoryStatus {
             typeof value !== "boolean"
           )
             throw new Error("Unknown repository setting");
+          if (
+            id === AUTOMATIC_BACKUP_SETTING &&
+            this.services.backup?.setEnabled
+          ) {
+            try {
+              await this.plugin.backup?.setEnabled(value);
+            } finally {
+              this.#data = (await this.plugin.loadData()) ?? {};
+              await this.#apply();
+            }
+            return;
+          }
           const key =
             id === AUTOMATIC_BACKUP_SETTING
               ? "automaticBackup"
@@ -114,7 +126,7 @@ export class RepositoryStatus {
                   : {};
               void this.#apply().catch((error) => this.plugin.report(error));
               listener();
-            }
+            },
           );
           return () => this.plugin.app.configuration.offref(ref);
         },
@@ -125,7 +137,7 @@ export class RepositoryStatus {
   #apply(): Promise<void> {
     return (this.#transition = this.#transition.then(async () => {
       if (!this.#closed)
-        await this.plugin.backup?.setEnabled(automaticBackup(this.#data));
+        await this.plugin.backup?.reconcile(automaticBackup(this.#data));
       if (this.#closed || !showWorkingCopyStatus(this.#data)) {
         await this.#hide();
         return;
@@ -161,16 +173,16 @@ export class RepositoryStatus {
       if (this.#controller || !this.services.workingCopy) return;
       const controller = new WorkingCopyController(
         this.services.workingCopy,
-        this.plugin.feedback("Working copy status")
+        this.plugin.feedback("Working copy status"),
       );
       this.#controller = controller;
       const activity = new BackgroundWork(
         this.plugin.app.notifications,
-        this.plugin.id
+        this.plugin.id,
       ).follow("Reading working copy status", {
         subscribe: (listener) =>
           controller.subscribe((state) =>
-            listener({ busy: state.busy, phase: state.status })
+            listener({ busy: state.busy, phase: state.status }),
           ),
       });
       this.#remove = this.plugin.app.statusBar.registerItem({
