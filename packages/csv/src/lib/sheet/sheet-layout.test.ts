@@ -141,7 +141,7 @@ describe("sheet layout", () => {
 
     const sort = hitTestSheet({
       x: SHEET_GUTTER_WIDTH + widths[0] - 10,
-      y: SHEET_LETTER_HEIGHT + 8,
+      y: 8,
       scrollLeft: 0,
       scrollTop: 0,
       widths,
@@ -149,6 +149,17 @@ describe("sheet layout", () => {
       bodyCount: 4,
     });
     expect(sort).toEqual({ kind: "sort", col: 0 });
+
+    const headerEdge = hitTestSheet({
+      x: SHEET_GUTTER_WIDTH + widths[0] - 10,
+      y: SHEET_LETTER_HEIGHT + 8,
+      scrollLeft: 0,
+      scrollTop: 0,
+      widths,
+      headerRow: true,
+      bodyCount: 4,
+    });
+    expect(headerEdge).toEqual({ kind: "header", col: 0 });
   });
 
   it("sizes a column to its text and still hides the rest", () => {

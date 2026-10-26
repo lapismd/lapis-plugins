@@ -269,38 +269,26 @@ export function paintSheet(
     const picked = columnSelected(model, col);
     ctx.fillStyle = picked ? theme.selection : theme.header;
     ctx.fillRect(x, 0, columnWidth, SHEET_LETTER_HEIGHT);
-    if (!model.headerRow && model.colours && !picked) {
-      ctx.fillStyle = headerFill(model, col, false);
-      ctx.fillRect(
-        x + Math.max(0, columnWidth - SHEET_SORT_HIT),
-        0,
-        Math.min(columnWidth, SHEET_SORT_HIT),
-        SHEET_LETTER_HEIGHT,
-      );
-    }
     ctx.fillStyle = theme.muted;
     clipText(
       ctx,
       columnLetter(col),
       x,
       0,
-      model.headerRow ? columnWidth : columnWidth - SHEET_SORT_HIT,
+      Math.max(0, columnWidth - SHEET_SORT_HIT),
       SHEET_LETTER_HEIGHT,
       "center",
     );
     if (model.headerRow) {
-      const labelWidth = Math.max(0, columnWidth - SHEET_SORT_HIT);
-      const fill = headerFill(model, col, picked);
-      ctx.fillStyle = fill;
-      ctx.fillRect(x, SHEET_LETTER_HEIGHT, labelWidth, SHEET_HEADER_HEIGHT);
-      ctx.fillRect(x + labelWidth, SHEET_LETTER_HEIGHT, SHEET_SORT_HIT, SHEET_HEADER_HEIGHT);
+      ctx.fillStyle = headerFill(model, col, picked);
+      ctx.fillRect(x, SHEET_LETTER_HEIGHT, columnWidth, SHEET_HEADER_HEIGHT);
       ctx.fillStyle = model.colours ? columnColor(model, col) : theme.text;
       clipText(
         ctx,
         model.headerLabels[col] ?? "",
         x,
         SHEET_LETTER_HEIGHT,
-        labelWidth,
+        columnWidth,
         SHEET_HEADER_HEIGHT,
       );
     }
@@ -354,7 +342,7 @@ export function paintSheet(
     const x = viewX(edges[col] ?? 0);
     const columnWidth = model.widths[col];
     if (columnWidth == null) return;
-    const boxWidth = header ? Math.max(0, columnWidth - SHEET_SORT_HIT) : columnWidth;
+    const boxWidth = columnWidth;
     ctx.strokeStyle = color;
     ctx.lineWidth = 2;
     ctx.strokeRect(

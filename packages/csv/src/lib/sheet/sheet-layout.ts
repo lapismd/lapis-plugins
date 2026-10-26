@@ -385,17 +385,12 @@ export function hitTestSheet(options: {
   if (y < SHEET_LETTER_HEIGHT) {
     const col = columnAt(x + options.scrollLeft, edges);
     if (col == null) return null;
-    if (!options.headerRow && inSortZone(x + options.scrollLeft, edges, col)) {
-      return { kind: "sort", col };
-    }
+    if (inSortZone(x + options.scrollLeft, edges, col)) return { kind: "sort", col };
     return { kind: "letter", col };
   }
   if (options.headerRow && y < chrome) {
     const col = columnAt(x + options.scrollLeft, edges);
     if (col == null) return null;
-    if (inSortZone(x + options.scrollLeft, edges, col)) {
-      return { kind: "sort", col };
-    }
     return { kind: "header", col };
   }
   const bodyY = y - chrome + options.scrollTop;

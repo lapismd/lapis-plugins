@@ -186,10 +186,7 @@
       selection.endIndex >= bodyRows.length - 1 &&
       col >= selection.startCol &&
       col <= selection.endCol;
-    if (picked) return theme.selection;
-    if (!colours) return "transparent";
-    const color = theme.columns[col % Math.max(theme.columns.length, 1)] || theme.text;
-    return `color-mix(in oklab, ${color} 8%, ${theme.header})`;
+    return picked ? theme.selection : "transparent";
   }
 
   function readTheme(node: HTMLCanvasElement | null): SheetPaintTheme {
@@ -243,7 +240,9 @@
   }
 
   function activeCellPaint() {
-    if (!active) return null;
+    if (!active || commandTarget === "column" || commandTarget === "row" || commandTarget === "sheet") {
+      return null;
+    }
     if (headerRow && active.row === 0) {
       return { index: 0, col: active.col, header: true };
     }
@@ -335,8 +334,8 @@
       viewportWidth: Math.max(viewportWidth, 1),
       widths,
     });
-    const bandTop = headerRow ? SHEET_LETTER_HEIGHT : 0;
-    const bandHeight = headerRow ? SHEET_HEADER_HEIGHT : SHEET_LETTER_HEIGHT;
+    const bandTop = 0;
+    const bandHeight = SHEET_LETTER_HEIGHT;
     const buttons = [];
     for (let col = range.start; col < range.end; col += 1) {
       const right = edges[col + 1];
@@ -345,9 +344,9 @@
       buttons.push({
         col,
         left: right - SHEET_SORT_HIT + SHEET_SORT_PAD - scrollLeft,
-        top: bandTop + SHEET_SORT_PAD,
+        top: bandTop + 1,
         width: Math.max(0, SHEET_SORT_HIT - SHEET_RESIZE_SLOP - SHEET_SORT_PAD * 2),
-        height: Math.max(0, bandHeight - SHEET_SORT_PAD * 2),
+        height: Math.max(0, bandHeight - 2),
         fill: sortFill(col),
         direction: sort?.index === col ? sort.direction : null,
         label: `Sort ${label || columnLetter(col)}`,
@@ -452,8 +451,8 @@
   function selectColumns(from: number, to: number) {
     const startCol = Math.min(from, to);
     const endCol = Math.max(from, to);
-    const row = headerRow ? 0 : gridRow(0);
-    if (row >= 0) active = { row, col: startCol };
+    const body = gridRow(0);
+    active = { row: body >= 0 ? body : 0, col: startCol };
     selection = {
       startIndex: 0,
       endIndex: Math.max(0, bodyRows.length - 1),
@@ -786,7 +785,7 @@
     if (editing) return;
     if (event.key === "Enter") {
       event.preventDefault();
-      beginEdit();
+      if (commandTarget === "cell") beginEdit();
       return;
     }
     if (event.key === "ArrowDown") {
@@ -805,10 +804,19 @@
       event.preventDefault();
       moveActive(0, event.shiftKey ? -1 : 1);
     } else if (event.key === "Backspace" || event.key === "Delete") {
-      if (!active) return;
       event.preventDefault();
+      if (
+        (commandTarget === "column" || commandTarget === "row" || commandTarget === "sheet") &&
+        commandAt
+      ) {
+        applyCommand("delete", commandAt.row, commandAt.col, commandTarget);
+        selection = null;
+        return;
+      }
+      if (!active) return;
       onCellChange(active.row, active.col, "");
     } else if (event.key.length === 1 && !event.metaKey && !event.ctrlKey && !event.altKey) {
+      if (commandTarget !== "cell") return;
       event.preventDefault();
       beginEdit(event.key);
     }
@@ -992,7 +1000,8 @@
     position: absolute;
     box-sizing: border-box;
     min-width: 0;
-    padding: 0.25rem;
+    min-height: 0;
+    padding: 1px;
     background: var(--csv-sort-fill, transparent);
     pointer-events: auto;
   }
