@@ -102,6 +102,12 @@ const rendererSharedDependencies = new Map(
       "svelte/internal/client",
       "svelte/internal/disclose-version",
     ],
+    canvas: [
+      "svelte",
+      "svelte/attachments",
+      "svelte/internal/client",
+      "svelte/internal/disclose-version",
+    ],
     docx: [
       "svelte",
       "svelte/attachments",
@@ -138,6 +144,7 @@ const descriptions = new Map([
   ["source-editor", "Source editing for text, JSON, and YAML files"],
   ["slides", "Presentation mode for Markdown notes"],
   ["pdf", "PDF file view and note embed for Lapis applications"],
+  ["canvas", "JSON Canvas file view and note embed for Lapis applications"],
   ["docx", "Word document file view and note embed for Lapis applications"],
   ["csv", "CSV and TSV table view and note embed for Lapis applications"],
   ["transcripts", "Speaker-separated reading view for Markdown transcripts"],
@@ -213,6 +220,7 @@ const sharedDependencies = new Map([
   ],
   ["slides", ["@lapis-notes/api", "@lapis-notes/markdown/embed"]],
   ["pdf", ["@lapis-notes/api"]],
+  ["canvas", ["@lapis-notes/api", "@lapis-notes/markdown/embed"]],
   ["docx", ["@lapis-notes/api"]],
   ["csv", ["@lapis-notes/api", "@lapis-notes/api/editor/core", "@lapis-notes/api/menu"]],
   ["transcripts", ["@lapis-notes/api"]],
@@ -296,6 +304,7 @@ const editorSharedDependencies = new Map(
     ],
     slides: [],
     pdf: [],
+    canvas: [],
     docx: [],
     csv: [
       "@codemirror/language",

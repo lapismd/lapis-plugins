@@ -59,6 +59,7 @@ export type PanelDemoKind =
   | "bookmarks"
   | "history"
   | "csv"
+  | "canvas"
   | "pdf"
   | "reading"
   | "tags";
@@ -119,6 +120,7 @@ export const PANEL_VIEW_TYPE: Record<PanelDemoKind, string> = {
   bookmarks: BookmarksViewType,
   history: HistoryViewType,
   csv: "lapis-csv",
+  canvas: "lapis-canvas",
   pdf: "lapis-pdf",
   reading: "lapis-transcripts-reading",
   tags: TagsViewType,
@@ -216,6 +218,12 @@ export const PANEL_LEAF_META: Record<
     title: "CSV",
     icon: "table",
     group: "CSV",
+    requiresFile: false,
+  },
+  canvas: {
+    title: "Canvas",
+    icon: "network",
+    group: "Canvas",
     requiresFile: false,
   },
   pdf: {

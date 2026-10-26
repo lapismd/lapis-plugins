@@ -321,6 +321,7 @@ function registryStoryTitle(directory) {
     spellcheck: "Spell Check",
     sync: "Sync",
     csv: "CSV",
+    canvas: "Canvas",
     pdf: "PDF",
     transcripts: "Transcripts",
     wordcount: "Word Count",

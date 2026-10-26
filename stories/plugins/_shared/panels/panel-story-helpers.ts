@@ -114,6 +114,7 @@ export function placementParameters(
     bookmarks: "bookmarks/panels/bookmarks",
     history: "history/panels/history",
     csv: "csv/panels/table",
+    canvas: "canvas/panels/viewing",
     pdf: "pdf/panels/viewing",
     reading: "transcripts/panels/reading",
     graph: "graph/panels/graph",
@@ -179,8 +180,10 @@ export async function expectPanelSource(
             ? 'from "@lapis-notes/history";'
             : kind === "reading"
               ? 'from "@lapis-notes/transcripts";'
-              : kind === "pdf"
+                : kind === "pdf"
                 ? 'from "@lapis-notes/pdf";'
+                : kind === "canvas"
+                  ? 'from "@lapis-notes/canvas";'
                 : kind === "csv"
                   ? 'from "@lapis-notes/csv";'
                   : kind === "explorer"

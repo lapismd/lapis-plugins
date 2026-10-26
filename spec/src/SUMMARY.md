@@ -8,6 +8,7 @@
   - [Plugins / AI](plugins/ai/index.md)
   - [Plugins / Bases](plugins/bases/index.md)
   - [Plugins / Bookmarks](plugins/bookmarks/index.md)
+  - [Plugins / Canvas](plugins/canvas/index.md)
   - [Plugins / Community](plugins/community/index.md)
   - [Plugins / CSV](plugins/csv/index.md)
   - [Plugins / DOCX](plugins/docx/index.md)

@@ -49,6 +49,12 @@
   "stories/plugins/bookmarks/panels/Bookmarks.stories.ts": {
     "kind": "application"
   },
+  "stories/plugins/canvas/RegistryScreenshots.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/canvas/panels/Viewing.stories.ts": {
+    "kind": "application"
+  },
   "stories/plugins/community/RegistryScreenshots.stories.ts": {
     "kind": "component",
     "subject": "@lapis-notes/community#CommunityPluginApplication"

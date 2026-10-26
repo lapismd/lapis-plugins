@@ -1,0 +1,89 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 2,
+  "categories": ["editing"],
+  "highlights": [
+    "Open a JSON Canvas in its own view.",
+    "Embed the same board in a note.",
+    "Keep text, file, link, and group nodes."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/canvas#readme",
+  "appearance": {
+    "icon": "network",
+    "accent": "#8B5CF6"
+  },
+  "releases": {},
+  "media": {
+    "banner": {
+      "alt": "Lapis Canvas showing a readings board with a text note, a file note, a link, a group, and a connector, both sidebars closed.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/banner.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/banner.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/banner.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/banner.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-canvas-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    }
+  },
+  "gallery": [
+    {
+      "id": "embedded-note",
+      "alt": "A reading note with both sidebars closed, embedding the canvas board beneath a short introduction.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/embedded-note.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/embedded-note.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/embedded-note.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/embedded-note.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-canvas-registry-screenshots--embedded",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "Embed the board",
+            "tone": "neutral"
+          },
+          {
+            "text": "in a note",
+            "tone": "violet"
+          }
+        ],
+        "description": [
+          {
+            "text": "Open a",
+            "tone": "neutral"
+          },
+          {
+            "text": "note",
+            "tone": "violet"
+          },
+          {
+            "text": "and keep the canvas inside it.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    }
+  ]
+}

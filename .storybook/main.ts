@@ -70,6 +70,8 @@ const packageAliases = [
   ["@lapis-notes/docx", "packages/docx/src/index.ts"],
   ["@lapis-notes/csv/styles.css", "packages/csv/src/styles.css"],
   ["@lapis-notes/csv", "packages/csv/src/index.ts"],
+  ["@lapis-notes/canvas/styles.css", "packages/canvas/src/styles.css"],
+  ["@lapis-notes/canvas", "packages/canvas/src/index.ts"],
   [
     "@lapis-notes/source-editor/styles.css",
     "packages/source-editor/src/styles.css",

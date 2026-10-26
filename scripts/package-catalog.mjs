@@ -10,6 +10,11 @@ const allPluginPackages = [
     pluginId: "bookmarks",
   },
   {
+    directory: "canvas",
+    packageName: "@lapis-notes/canvas",
+    pluginId: "lapis-canvas",
+  },
+  {
     directory: "community",
     packageName: "@lapis-notes/community",
     pluginId: "community",

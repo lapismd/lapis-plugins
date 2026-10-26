@@ -8,6 +8,7 @@ const packages = [
   "ai",
   "bases",
   "bookmarks",
+  "canvas",
   "community",
   "csv",
   "docx",
