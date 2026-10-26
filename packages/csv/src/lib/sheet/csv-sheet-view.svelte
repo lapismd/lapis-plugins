@@ -8,8 +8,14 @@
     noteCsvColumnMoved,
     noteCsvColumnSortEdit,
     toggleCsvColumnSort,
-    type CsvColumnSort,
-  } from "../model/csv-column-sort";
+  type CsvColumnSort,
+} from "../model/csv-column-sort";
+import {
+  emptySheetHistory,
+  recordSheetEdit,
+  redoSheetEdit,
+  undoSheetEdit,
+} from "./sheet-history";
   import { CsvGrid } from "../model/csv-grid";
   import { parseCsvText } from "../model/parse-csv";
   import {
@@ -63,6 +69,13 @@
   let active = $state(0);
   let columnSort = $state<CsvColumnSort | null>(null);
   let widthOverride = $state<{ path: string; widths: number[] } | null>(null);
+  let history = $state(emptySheetHistory<SheetSnapshot>());
+
+  type SheetSnapshot = {
+    text: string;
+    widths: number[];
+    sort: CsvColumnSort | null;
+  };
 
   const text = $derived(incoming ?? content);
   const delimiter = $derived(resolveDelimiter(settings, file.extension));
@@ -140,10 +153,46 @@
     return readSessionWidths(file.path, count);
   });
 
-  function publish(nextGrid: CsvGrid) {
+  function copySort(sort: CsvColumnSort | null): CsvColumnSort | null {
+    if (!sort) return null;
+    return {
+      index: sort.index,
+      direction: sort.direction,
+      baseline: sort.baseline.map((row) => [...row]),
+      order: [...sort.order],
+    };
+  }
+
+  function snapshot(): SheetSnapshot {
+    return { text, widths: [...widths], sort: copySort(columnSort) };
+  }
+
+  function publish(nextGrid: CsvGrid, before: SheetSnapshot) {
     const next = nextGrid.toText({ delimiter });
+    if (before.text !== next) history = recordSheetEdit(history, before);
     incoming = next;
     onContentChange?.(next);
+  }
+
+  function restore(entry: SheetSnapshot) {
+    incoming = entry.text;
+    columnSort = copySort(entry.sort);
+    rememberWidths([...entry.widths]);
+    onContentChange?.(entry.text);
+  }
+
+  function undoSheet() {
+    const step = undoSheetEdit(history, snapshot());
+    if (!step) return;
+    history = step.history;
+    restore(step.value);
+  }
+
+  function redoSheet() {
+    const step = redoSheetEdit(history, snapshot());
+    if (!step) return;
+    history = step.history;
+    restore(step.value);
   }
 
   function rememberWidths(next: number[]) {
@@ -152,13 +201,15 @@
   }
 
   function changeCell(row: number, col: number, value: string) {
+    const before = snapshot();
     const next = parsed.grid.clone();
     next.updateCell(row, col, value);
     if (columnSort) noteCsvColumnSortEdit(columnSort, row, col, value);
-    publish(next);
+    publish(next, before);
   }
 
   function sortColumn(col: number) {
+    const before = snapshot();
     const next = parsed.grid.clone();
     columnSort = toggleCsvColumnSort(
       next,
@@ -166,27 +217,30 @@
       col,
       settings.headerRow,
     );
-    publish(next);
+    publish(next, before);
   }
 
   function deleteRow(index: number) {
+    const before = snapshot();
     const next = parsed.grid.clone();
     next.deleteRowAt(index);
     columnSort = null;
-    publish(next);
+    publish(next, before);
   }
 
   function deleteColumn(index: number) {
+    const before = snapshot();
     const next = parsed.grid.clone();
     next.deleteColumnAt(index);
     columnSort = noteCsvColumnDeleted(columnSort, index);
     const stored = widths.filter((_, column) => column !== index);
     rememberWidths(stored.length > 0 ? stored : [SHEET_DEFAULT_COLUMN_WIDTH]);
-    publish(next);
+    publish(next, before);
   }
 
   function moveColumn(from: number, to: number) {
     if (from === to || to < 0 || to >= parsed.grid.getColCount()) return;
+    const before = snapshot();
     const next = parsed.grid.clone();
     next.moveColumnAt(from, to);
     columnSort = noteCsvColumnMoved(columnSort, from, to);
@@ -194,18 +248,20 @@
     const [width] = stored.splice(from, 1);
     stored.splice(to, 0, width ?? SHEET_DEFAULT_COLUMN_WIDTH);
     rememberWidths(stored);
-    publish(next);
+    publish(next, before);
   }
 
   function moveRow(from: number, to: number) {
     if (from === to || to < 0 || to >= parsed.grid.getRowCount()) return;
+    const before = snapshot();
     const next = parsed.grid.clone();
     next.moveRowAt(from, to);
     columnSort = null;
-    publish(next);
+    publish(next, before);
   }
 
   function clearCoordinates(coords: Array<[number, number]>) {
+    const before = snapshot();
     const next = parsed.grid.clone();
     next.clearCellsAt(coords);
     if (columnSort) {
@@ -213,7 +269,7 @@
         noteCsvColumnSortEdit(columnSort, row, col, "");
       }
     }
-    publish(next);
+    publish(next, before);
   }
 
   function clearColumn(col: number) {
@@ -246,13 +302,27 @@
     clearCoordinates(coords);
   }
 
+  function deleteSheet() {
+    const before = snapshot();
+    const next = parsed.grid.clone();
+    while (next.getRowCount() > 1) next.deleteRowAt(next.getRowCount() - 1);
+    if (!settings.headerRow) {
+      const coords: Array<[number, number]> = [];
+      for (let col = 0; col < next.getColCount(); col += 1) coords.push([0, col]);
+      next.clearCellsAt(coords);
+    }
+    columnSort = null;
+    publish(next, before);
+  }
+
   function replaceCells(edits: { row: number; col: number; value: string }[]) {
+    const before = snapshot();
     const next = parsed.grid.clone();
     for (const edit of edits) {
       next.updateCell(edit.row, edit.col, edit.value);
       if (columnSort) noteCsvColumnSortEdit(columnSort, edit.row, edit.col, edit.value);
     }
-    publish(next);
+    publish(next, before);
   }
 
   function openSearch() {
@@ -275,9 +345,28 @@
     openSearch();
   }
 
+  function onHistoryShortcut(event: KeyboardEvent) {
+    const target = event.target;
+    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) return;
+    const meta = event.metaKey || event.ctrlKey;
+    if (!meta || event.altKey) return;
+    const key = event.key.toLowerCase();
+    if (key === "z" && !event.shiftKey) {
+      event.preventDefault();
+      undoSheet();
+    } else if ((key === "z" && event.shiftKey) || key === "y") {
+      event.preventDefault();
+      redoSheet();
+    }
+  }
+
   const findShortcut: Attachment<HTMLElement> = (node) => {
     node.addEventListener("keydown", onFindShortcut, true);
-    return () => node.removeEventListener("keydown", onFindShortcut, true);
+    node.addEventListener("keydown", onHistoryShortcut);
+    return () => {
+      node.removeEventListener("keydown", onFindShortcut, true);
+      node.removeEventListener("keydown", onHistoryShortcut);
+    };
   };
 
   onMount(() => {
@@ -333,6 +422,11 @@
     onClearRow={clearRow}
     onClearCell={clearCell}
     onClearSheet={clearSheet}
+    onDeleteSheet={deleteSheet}
+    canUndo={history.past.length > 0}
+    canRedo={history.future.length > 0}
+    onUndo={undoSheet}
+    onRedo={redoSheet}
   />
   <CsvStatusBar
     columns={counts.columns}

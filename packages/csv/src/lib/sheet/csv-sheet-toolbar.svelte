@@ -10,19 +10,27 @@
     commands,
     wrap,
     colours,
+    canUndo,
+    canRedo,
     onAddress,
     onCommand,
     onWrap,
     onColours,
+    onUndo,
+    onRedo,
   }: {
     reference: string;
     commands: readonly SheetCommand[];
     wrap: boolean;
     colours: boolean;
+    canUndo: boolean;
+    canRedo: boolean;
     onAddress: (address: string) => void;
     onCommand: (id: SheetCommandId) => void;
     onWrap: (wrap: boolean) => void;
     onColours: (colours: boolean) => void;
+    onUndo: () => void;
+    onRedo: () => void;
   } = $props();
 
   let draft = $state<string | null>(null);
@@ -59,6 +67,42 @@
     onblur={commitAddress}
   />
   <Tooltip.Provider delayDuration={300}>
+    <Tooltip.Root>
+      <Tooltip.Trigger>
+        {#snippet child({ props })}
+          <Button
+            {...props}
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Undo"
+            data-sheet-undo
+            disabled={!canUndo}
+            onclick={onUndo}
+          >
+            <SheetGlyph command="undo" />
+          </Button>
+        {/snippet}
+      </Tooltip.Trigger>
+      <Tooltip.Content side="bottom">Undo</Tooltip.Content>
+    </Tooltip.Root>
+    <Tooltip.Root>
+      <Tooltip.Trigger>
+        {#snippet child({ props })}
+          <Button
+            {...props}
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Redo"
+            data-sheet-redo
+            disabled={!canRedo}
+            onclick={onRedo}
+          >
+            <SheetGlyph command="redo" />
+          </Button>
+        {/snippet}
+      </Tooltip.Trigger>
+      <Tooltip.Content side="bottom">Redo</Tooltip.Content>
+    </Tooltip.Root>
     {#each commands as command (command.id)}
       <Tooltip.Root>
         <Tooltip.Trigger>

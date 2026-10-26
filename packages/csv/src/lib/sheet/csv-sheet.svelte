@@ -57,6 +57,11 @@
     onClearRow,
     onClearCell,
     onClearSheet,
+    onDeleteSheet,
+    canUndo,
+    canRedo,
+    onUndo,
+    onRedo,
   }: {
     grid: CsvGrid;
     headerRow: boolean;
@@ -75,6 +80,11 @@
     onClearRow: (row: number) => void;
     onClearCell: (row: number, col: number) => void;
     onClearSheet: () => void;
+    onDeleteSheet: () => void;
+    canUndo: boolean;
+    canRedo: boolean;
+    onUndo: () => void;
+    onRedo: () => void;
   } = $props();
 
   let scroller = $state<HTMLDivElement | null>(null);
@@ -95,7 +105,7 @@
   let menu = $state<{
     x: number;
     y: number;
-    target: "column" | "row" | "cell";
+    target: "column" | "row" | "cell" | "sheet";
     row: number;
     col: number;
   } | null>(null);
@@ -347,19 +357,14 @@
   });
 
   const toolbarCommands = $derived.by(() => {
+    const bounds = { rows: grid.getRowCount(), cols: grid.getColCount() };
+    if (commandTarget === "sheet") {
+      return sheetCommands("sheet", { row: 0, col: 0 }, bounds);
+    }
     if (!commandTarget || !commandAt || commandAt.row < 0 || commandAt.col < 0) {
       return [];
     }
-    if (commandTarget === "sheet") {
-      return [
-        { id: "clear" as const, label: "Clear", disabled: false },
-        { id: "delete" as const, label: "Delete", disabled: false },
-      ];
-    }
-    return sheetCommands(commandTarget, commandAt, {
-      rows: grid.getRowCount(),
-      cols: grid.getColCount(),
-    });
+    return sheetCommands(commandTarget, commandAt, bounds);
   });
 
   const reference = $derived.by(() => {
@@ -393,6 +398,7 @@
     else if (id === "move-right") onMoveColumn(col, col + 1);
     else if (id === "move-up") onMoveRow(row, row - 1);
     else if (id === "move-down") onMoveRow(row, row + 1);
+    else if (target === "sheet" && id === "delete") onDeleteSheet();
     else if (target === "sheet") onClearSheet();
     else if (id === "delete" && target === "column") onDeleteColumn(col);
     else if (id === "delete" && target === "row") onDeleteRow(row);
@@ -728,9 +734,18 @@
     scroller?.focus();
     if (editing) commitEdit();
     const hit = hitAt(event as unknown as PointerEvent);
-    if (hit?.kind === "corner") {
+    const point = scroller?.getBoundingClientRect();
+    const x = point ? event.clientX - point.left : 0;
+    const y = point ? event.clientY - point.top : 0;
+    if (hit?.kind === "corner" || (commandTarget === "sheet" && hit)) {
       selectAll();
-      menu = null;
+      menu = {
+        x,
+        y,
+        target: "sheet",
+        row: headerRow ? 0 : Math.max(0, gridRow(0)),
+        col: 0,
+      };
       return;
     }
     const target = hit ? sheetMenuTarget(hit) : null;
@@ -738,9 +753,6 @@
       menu = null;
       return;
     }
-    const point = scroller?.getBoundingClientRect();
-    const x = point ? event.clientX - point.left : 0;
-    const y = point ? event.clientY - point.top : 0;
     if (target === "column" && "col" in hit) {
       selectColumns(hit.col, hit.col);
       menu = { x, y, target, row: headerRow ? 0 : Math.max(0, gridRow(0)), col: hit.col };
@@ -825,6 +837,10 @@
     commands={toolbarCommands}
     {wrap}
     {colours}
+    {canUndo}
+    {canRedo}
+    {onUndo}
+    {onRedo}
     onAddress={goToAddress}
     onCommand={(id) => {
       const at = commandAt;

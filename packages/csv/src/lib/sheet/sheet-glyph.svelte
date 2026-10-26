@@ -5,11 +5,13 @@
   import ArrowUp from "@lucide/svelte/icons/arrow-up";
   import Eraser from "@lucide/svelte/icons/eraser";
   import Palette from "@lucide/svelte/icons/palette";
+  import Redo2 from "@lucide/svelte/icons/redo-2";
   import Trash2 from "@lucide/svelte/icons/trash-2";
+  import Undo2 from "@lucide/svelte/icons/undo-2";
   import WrapText from "@lucide/svelte/icons/wrap-text";
   import type { SheetCommandId } from "./sheet-layout";
 
-  let { command }: { command: SheetCommandId | "wrap" | "colours" } = $props();
+  let { command }: { command: SheetCommandId | "wrap" | "colours" | "undo" | "redo" } = $props();
 </script>
 
 <span class="sheet-glyph" aria-hidden="true">
@@ -27,6 +29,10 @@
     <Trash2 />
   {:else if command === "colours"}
     <Palette />
+  {:else if command === "undo"}
+    <Undo2 />
+  {:else if command === "redo"}
+    <Redo2 />
   {:else}
     <WrapText />
   {/if}

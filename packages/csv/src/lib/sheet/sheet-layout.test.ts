@@ -193,6 +193,11 @@ describe("sheet layout", () => {
         (command) => command.id,
       ),
     ).toEqual(["clear", "delete"]);
+    expect(
+      sheetCommands("sheet", { row: 0, col: 0 }, { rows: 4, cols: 3 }).map(
+        (command) => command.id,
+      ),
+    ).toEqual(["clear", "delete"]);
   });
 
   it("chooses the context menu from the pointer target", () => {
@@ -201,7 +206,7 @@ describe("sheet layout", () => {
     expect(sheetMenuTarget({ kind: "sort", col: 2 })).toBe("column");
     expect(sheetMenuTarget({ kind: "row", index: 3 })).toBe("row");
     expect(sheetMenuTarget({ kind: "body", index: 1, col: 2 })).toBe("cell");
-    expect(sheetMenuTarget({ kind: "corner" })).toBeNull();
+    expect(sheetMenuTarget({ kind: "corner" })).toBe("sheet");
   });
 
   it("uses the default width when a file has no saved columns", () => {

@@ -230,12 +230,13 @@ export function rowIndexAt(offsets: readonly number[], position: number): number
 }
 
 export function sheetCommands(
-  target: "column" | "row" | "cell",
+  target: "column" | "row" | "cell" | "sheet",
   position: { row: number; col: number },
   bounds: { rows: number; cols: number },
 ): SheetCommand[] {
   const clear = { id: "clear" as const, label: "Clear", disabled: false };
   const remove = { id: "delete" as const, label: "Delete", disabled: false };
+  if (target === "sheet") return [clear, remove];
   if (target === "column") {
     return [
       {
@@ -321,7 +322,7 @@ export function visibleColumnRange(options: {
 
 export function sheetMenuTarget(
   hit: SheetHit,
-): "column" | "row" | "cell" | null {
+): "column" | "row" | "cell" | "sheet" | null {
   switch (hit.kind) {
     case "letter":
     case "header":
@@ -332,6 +333,8 @@ export function sheetMenuTarget(
       return "row";
     case "body":
       return "cell";
+    case "corner":
+      return "sheet";
     default:
       return null;
   }
