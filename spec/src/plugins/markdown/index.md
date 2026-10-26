@@ -247,3 +247,11 @@ retained TypeScript extractor through its JSON persistence boundary. It adds
 Unicode/scalar/alias/error cases without changing renderer behavior, published
 plugin exports or the browser's YAML implementation. Native source and either
 host's adoption remain separate evidence.
+
+Properties replacement and explicit recovery follow LN-MD-125 and LN-MD-126.
+Mira supplies the immutable displayed record and focused commit; the Lapis
+adapter forwards that baseline to the existing FileManager guard and refreshes
+only the captured controller on explicit recovery. Body-only changes remain
+compatible. The two governed persistence scenarios extend the existing File
+Properties shell family; [source evidence](../../../records/2026-10-26-properties-persistence.md)
+keeps provisional public-package diagnosis separate from final source/host intake.

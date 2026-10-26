@@ -1,5 +1,6 @@
 import {
   Notice,
+  getFrontMatterInfo,
   normalizeMetadataValue,
   type App,
   type MetadataType,
@@ -163,22 +164,33 @@ function recordsEqual(
 export async function commitLapisFrontmatterRecord(
   app: App,
   file: TFile,
-  commit: FrontmatterControllerCommit
+  commit: FrontmatterControllerCommit,
+  onReset?: (text: string) => void
 ): Promise<void> {
   try {
-    await app.fileManager.processFrontMatter(file, (frontmatter) => {
-      for (const key of Object.keys(frontmatter)) {
-        if (!Object.prototype.hasOwnProperty.call(commit.record, key)) {
-          delete frontmatter[key];
+    if (commit.previousRecord == null) {
+      throw new Error("Properties could not verify the displayed version.");
+    }
+    await app.fileManager.processFrontMatter(
+      file,
+      (frontmatter) => {
+        for (const key of Object.keys(frontmatter)) {
+          if (!Object.prototype.hasOwnProperty.call(commit.record, key)) {
+            delete frontmatter[key];
+          }
         }
+        for (const [key, value] of Object.entries(commit.record)) {
+          const declaredType = app.metadataTypeManager.types[key]?.type;
+          frontmatter[key] = declaredType
+            ? normalizeMetadataValue(declaredType, value)
+            : value;
+        }
+      },
+      {
+        expectedFrontmatter: commit.previousRecord,
+        ...(onReset ? { onReset } : {}),
       }
-      for (const [key, value] of Object.entries(commit.record)) {
-        const declaredType = app.metadataTypeManager.types[key]?.type;
-        frontmatter[key] = declaredType
-          ? normalizeMetadataValue(declaredType, value)
-          : value;
-      }
-    });
+    );
   } catch (error) {
     new Notice(
       error instanceof Error
@@ -186,6 +198,21 @@ export async function commitLapisFrontmatterRecord(
         : `Failed to update properties for ${file.path}`
     );
   }
+}
+
+function commitControllerRecord(
+  controller: FrontmatterController,
+  app: App,
+  file: TFile,
+  commit: FrontmatterControllerCommit
+): Promise<void> {
+  const path = file.path;
+  return commitLapisFrontmatterRecord(app, file, commit, (text) => {
+    if (controller.sourcePath !== path) return;
+    controller.syncYaml(getFrontMatterInfo(text).frontmatter, {
+      commit: false,
+    });
+  });
 }
 
 export function createLapisFrontmatterController(
@@ -198,7 +225,7 @@ export function createLapisFrontmatterController(
       ? { ...(app.metadataCache.getCache(file.path)?.frontmatter ?? {}) }
       : {};
 
-  return new FrontmatterController({
+  const controller: FrontmatterController = new FrontmatterController({
     record: seed,
     propertyManager,
     sourcePath: file?.path,
@@ -206,8 +233,9 @@ export function createLapisFrontmatterController(
       file == null
         ? undefined
         : (commit: FrontmatterControllerCommit) =>
-            commitLapisFrontmatterRecord(app, file, commit),
+            commitControllerRecord(controller, app, file, commit),
   });
+  return controller;
 }
 
 export function syncLapisFrontmatterController(
@@ -231,7 +259,7 @@ export function syncLapisFrontmatterController(
       file == null
         ? undefined
         : (commit: FrontmatterControllerCommit) =>
-            commitLapisFrontmatterRecord(app, file, commit),
+            commitControllerRecord(controller, app, file, commit),
   });
 
   if (!recordsEqual(controller.getRecord(), seed)) {

@@ -38,6 +38,9 @@ vi.mock("@lapismd/mira/preview/frontmatter", () => ({
 }));
 
 vi.mock("@lapis-notes/api", () => ({
+  getFrontMatterInfo: vi.fn(() => ({
+    frontmatter: "status: external\nowner: outside",
+  })),
   Notice: class Notice {
     constructor(public message: string) {}
   },
@@ -55,6 +58,7 @@ import {
   createLapisFrontmatterPropertyManager,
   syncLapisFrontmatterController,
 } from "./lapis-frontmatter-adapter";
+import { getFrontMatterInfo } from "@lapis-notes/api";
 
 function createAppFixture(frontmatter: Record<string, unknown>) {
   const types: Record<string, { name: string; type: string }> = {
@@ -95,6 +99,7 @@ function createAppFixture(frontmatter: Record<string, unknown>) {
     },
   };
   let current = structuredClone(frontmatter);
+  let rejectedDraft: Record<string, unknown> | undefined;
 
   return {
     app: {
@@ -130,10 +135,23 @@ function createAppFixture(frontmatter: Record<string, unknown>) {
         processFrontMatter: vi.fn(
           async (
             _file: { path: string },
-            mutate: (data: Record<string, unknown>) => void
+            mutate: (data: Record<string, unknown>) => void,
+            options?: {
+              expectedFrontmatter?: Readonly<Record<string, unknown>>;
+            }
           ) => {
             const next = structuredClone(current);
             mutate(next);
+            if (
+              options?.expectedFrontmatter !== undefined &&
+              JSON.stringify(current) !==
+                JSON.stringify(options.expectedFrontmatter)
+            ) {
+              rejectedDraft = next;
+              throw Object.assign(new Error("Displayed properties changed"), {
+                code: "ECONFLICT",
+              });
+            }
             current = next;
           }
         ),
@@ -143,6 +161,7 @@ function createAppFixture(frontmatter: Record<string, unknown>) {
       },
     } as any,
     getFrontmatter: () => current,
+    getRejectedDraft: () => rejectedDraft,
   };
 }
 
@@ -179,6 +198,7 @@ describe("lapis frontmatter adapter", () => {
     });
 
     await commitLapisFrontmatterRecord(app, { path: "note.md" } as any, {
+      previousRecord: { title: "Demo", count: "3" },
       record: { title: "Updated", count: "4" },
       yaml: "title: Updated\ncount: 4\n",
       replacement: "---\ntitle: Updated\ncount: 4\n---\n",
@@ -192,6 +212,111 @@ describe("lapis frontmatter adapter", () => {
       count: 4,
     });
   });
+
+  it("passes the captured displayed frontmatter baseline without requiring whole-file equality", async () => {
+    const previousRecord = Object.freeze({ status: "ready" });
+    const { app, getFrontmatter } = createAppFixture({ status: "ready" });
+    const commit = {
+      previousRecord,
+      record: { status: "local" },
+      yaml: "status: local\n",
+      replacement: "---\nstatus: local\n---\n",
+      from: null,
+      to: null,
+    };
+
+    await commitLapisFrontmatterRecord(app, { path: "note.md" } as any, commit);
+
+    expect(app.fileManager.processFrontMatter).toHaveBeenCalledWith(
+      { path: "note.md" },
+      expect.any(Function),
+      { expectedFrontmatter: previousRecord }
+    );
+    expect(getFrontmatter()).toEqual({ status: "local" });
+  });
+
+  it("refuses a stale whole-record replacement and retains newer external keys", async () => {
+    const external = { status: "external", owner: "outside" };
+    const { app, getFrontmatter, getRejectedDraft } =
+      createAppFixture(external);
+    const commit = {
+      previousRecord: Object.freeze({ status: "ready" }),
+      record: { status: "local" },
+      yaml: "status: local\n",
+      replacement: "---\nstatus: local\n---\n",
+      from: null,
+      to: null,
+    };
+
+    await commitLapisFrontmatterRecord(app, { path: "note.md" } as any, commit);
+
+    expect(getFrontmatter()).toEqual(external);
+    expect(getRejectedDraft()).toEqual({ status: "local" });
+  });
+
+  it("does not write when an older runtime omits the displayed baseline", async () => {
+    const { app, getFrontmatter } = createAppFixture({ status: "ready" });
+    const commit = {
+      previousRecord: Object.freeze({ status: "ready" }),
+      record: { status: "local" },
+      yaml: "status: local\n",
+      replacement: "---\nstatus: local\n---\n",
+      from: null,
+      to: null,
+    };
+    Reflect.deleteProperty(commit, "previousRecord");
+
+    await commitLapisFrontmatterRecord(app, { path: "note.md" } as any, commit);
+
+    expect(app.fileManager.processFrontMatter).not.toHaveBeenCalled();
+    expect(getFrontmatter()).toEqual({ status: "ready" });
+  });
+
+  for (const target of ["note.md", "other.md"]) {
+    it(`explicit recovery refreshes only its captured controller target (${target})`, async () => {
+      const { app } = createAppFixture({ status: "ready" });
+      const controller = {
+        sourcePath: "note.md",
+        getRecord: () => ({ status: "ready" }),
+        update: vi.fn(),
+        syncYaml: vi.fn(),
+        syncRecord: vi.fn(),
+      } as any;
+      const file = { path: "note.md" } as any;
+      syncLapisFrontmatterController(
+        controller,
+        app,
+        file,
+        createLapisFrontmatterPropertyManager(app),
+        { status: "ready" }
+      );
+      const commit = {
+        previousRecord: Object.freeze({ status: "ready" }),
+        record: { status: "local" },
+        yaml: "status: local\n",
+        replacement: "---\nstatus: local\n---\n",
+        from: null,
+        to: null,
+      };
+      await controller.update.mock.calls[0][0].onRecordChange(commit);
+      const options = app.fileManager.processFrontMatter.mock.calls[0][2];
+      expect(options?.onReset).toBeTypeOf("function");
+
+      controller.sourcePath = target;
+      const saved = "---\nstatus: external\nowner: outside\n---\nNew body\n";
+      options.onReset(saved);
+      if (target === "note.md") {
+        expect(getFrontMatterInfo).toHaveBeenCalledExactlyOnceWith(saved);
+        expect(controller.syncYaml).toHaveBeenCalledExactlyOnceWith(
+          "status: external\nowner: outside",
+          { commit: false }
+        );
+      } else {
+        expect(getFrontMatterInfo).not.toHaveBeenCalled();
+        expect(controller.syncYaml).not.toHaveBeenCalled();
+      }
+    });
+  }
 
   it("synchronizes from the refreshed metadata record instead of a stale cache", () => {
     const { app } = createAppFixture({ status: "planned" });

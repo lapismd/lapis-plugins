@@ -1,3 +1,4 @@
+import { propertiesPersistenceStory } from "./properties-persistence-scenarios";
 import type { App } from "@lapis-notes/api";
 import { FileProperties } from "@lapis-notes/markdown";
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
@@ -56,17 +57,15 @@ function renderPlacement(layout: PanelDemoLayout): StoryRender {
 
 function resizePanelTab(
   canvasElement: HTMLElement,
-  layout: PanelDemoLayout,
+  layout: PanelDemoLayout
 ): (() => void) | null {
   if (layout === "middle-top-tabs") {
     const split = canvasElement.querySelector<HTMLElement>(
-      '[data-workspace-split-id="main"]',
+      '[data-workspace-split-id="main"]'
     );
     const panes = split
-      ? Array.from(
-          split.querySelectorAll<HTMLElement>("[data-pane]"),
-        ).filter(
-          (pane) => pane.closest("[data-workspace-split-id]") === split,
+      ? Array.from(split.querySelectorAll<HTMLElement>("[data-pane]")).filter(
+          (pane) => pane.closest("[data-workspace-split-id]") === split
         )
       : [];
     if (panes.length !== 2) {
@@ -103,7 +102,7 @@ function resizePanelTab(
 function placementStory(
   layout: PanelDemoLayout,
   source: string,
-  description: string,
+  description: string
 ): Story {
   return {
     name: PANEL_PLACEMENTS[layout].name,
@@ -115,51 +114,51 @@ function placementStory(
         kind,
         layout,
         "file-properties-panel",
-        args,
+        args
       );
       const alignment = await expectPanelAlignment(
         canvasElement,
-        "file-properties-panel",
+        "file-properties-panel"
       );
       await waitFor(() => {
         expect(
-          panel.getByRole("combobox", { name: "status value" }),
+          panel.getByRole("combobox", { name: "status value" })
         ).toHaveTextContent("ready");
       });
       const editor = alignment.panelElement.querySelector<HTMLElement>(
-        '[data-testid="mira-frontmatter-editor"]',
+        '[data-testid="mira-frontmatter-editor"]'
       );
       const widgetShell = alignment.panelElement.querySelector<HTMLElement>(
-        ".markdown-widget-shell",
+        ".markdown-widget-shell"
       );
       expect(editor).not.toBeNull();
       expect(widgetShell).not.toBeNull();
       expect(getComputedStyle(widgetShell as HTMLElement).minWidth).toBe("0px");
       expect(getComputedStyle(widgetShell as HTMLElement).backgroundColor).toBe(
-        "rgba(0, 0, 0, 0)",
+        "rgba(0, 0, 0, 0)"
       );
       expect(
         Math.abs(
           (editor?.getBoundingClientRect().width ?? 0) -
-            alignment.availableContentWidth,
-        ),
+            alignment.availableContentWidth
+        )
       ).toBeLessThan(1);
 
       const tagsRow = alignment.panelElement.querySelector<HTMLElement>(
-        '[data-property="tags"]',
+        '[data-property="tags"]'
       );
       const aliasesRow = alignment.panelElement.querySelector<HTMLElement>(
-        '[data-property="aliases"]',
+        '[data-property="aliases"]'
       );
       const ownersRow = alignment.panelElement.querySelector<HTMLElement>(
-        '[data-property="owners"]',
+        '[data-property="owners"]'
       );
       expect(tagsRow).not.toBeNull();
       expect(aliasesRow).not.toBeNull();
       expect(ownersRow).not.toBeNull();
       const tagsTypeButton = within(tagsRow as HTMLElement).getByRole(
         "button",
-        { name: "Property options for tags" },
+        { name: "Property options for tags" }
       );
       const tagsTypeIcon = tagsTypeButton.querySelector<SVGElement>("svg");
       expect(tagsTypeIcon).not.toBeNull();
@@ -176,22 +175,22 @@ function placementStory(
         getComputedStyle(
           tags
             .getByText("demo", { exact: true })
-            .closest(".metadata-property-pill-chip") as HTMLElement,
-        ).backgroundColor,
+            .closest(".metadata-property-pill-chip") as HTMLElement
+        ).backgroundColor
       ).not.toBe("rgba(0, 0, 0, 0)");
       expect(aliases.getByText("Lapis Home", { exact: true })).toBeVisible();
       expect(aliases.getByText("Idea inbox", { exact: true })).toBeVisible();
       expect(
         aliases
           .getByText("Idea inbox", { exact: true })
-          .closest(".metadata-property-pill-link"),
+          .closest(".metadata-property-pill-link")
       ).not.toBeNull();
       const linkedAlias = aliases.getByRole("button", {
         name: "Idea inbox",
       });
       const linkedAliasBounds = linkedAlias.getBoundingClientRect();
       expect(linkedAliasBounds.width).toBeGreaterThan(
-        linkedAliasBounds.height * 2.5,
+        linkedAliasBounds.height * 2.5
       );
       let tagsInput = tags.getByRole("combobox", { name: "tags value" });
       await userEvent.click(tagsInput);
@@ -200,7 +199,7 @@ function placementStory(
         expect(
           within(canvasElement.ownerDocument.body).getByRole("option", {
             name: "ideas",
-          }),
+          })
         ).toBeVisible();
       });
       await userEvent.keyboard("{Escape}");
@@ -213,7 +212,7 @@ function placementStory(
       await userEvent.keyboard("{Enter}");
       const longTagLabel = tags.getByText(longTag, { exact: true });
       const longTagPill = longTagLabel.closest<HTMLElement>(
-        ".metadata-property-pill-chip",
+        ".metadata-property-pill-chip"
       );
       expect(longTagPill).not.toBeNull();
       const aliasPill = aliases
@@ -221,10 +220,10 @@ function placementStory(
         .closest<HTMLElement>(".metadata-property-pill-chip");
       expect(aliasPill).not.toBeNull();
       expect(
-        getComputedStyle(aliasPill as HTMLElement).backgroundColor,
+        getComputedStyle(aliasPill as HTMLElement).backgroundColor
       ).not.toBe(getComputedStyle(alignment.viewHost).backgroundColor);
       expect(
-        aliases.getByRole("button", { name: "Remove Lapis Home" }),
+        aliases.getByRole("button", { name: "Remove Lapis Home" })
       ).toBeVisible();
       expect(owners.getByText("Ada Lovelace", { exact: true })).toBeVisible();
       expect(owners.getByText("Grace Hopper", { exact: true })).toBeVisible();
@@ -233,7 +232,7 @@ function placementStory(
         .closest<HTMLElement>(".metadata-property-pill-chip");
       expect(ownersPill).not.toBeNull();
       expect(
-        getComputedStyle(ownersPill as HTMLElement).backgroundColor,
+        getComputedStyle(ownersPill as HTMLElement).backgroundColor
       ).not.toBe(getComputedStyle(alignment.viewHost).backgroundColor);
 
       for (const [scope, label] of [
@@ -247,13 +246,13 @@ function placementStory(
         const removeIcon = remove.querySelector<SVGElement>("svg");
         expect(removeIcon).not.toBeNull();
         expect(
-          removeIcon?.querySelector('path[d="M18 6 6 18"]'),
+          removeIcon?.querySelector('path[d="M18 6 6 18"]')
         ).not.toBeNull();
         expect(
-          removeIcon?.querySelector('path[d="m6 6 12 12"]'),
+          removeIcon?.querySelector('path[d="m6 6 12 12"]')
         ).not.toBeNull();
         expect(
-          removeIcon?.getBoundingClientRect().width ?? 0,
+          removeIcon?.getBoundingClientRect().width ?? 0
         ).toBeGreaterThanOrEqual(9);
       }
 
@@ -268,17 +267,17 @@ function placementStory(
       });
       await expect(ownerOption).toHaveAttribute("aria-selected", "false");
       const ownerSuggestions = ownerOption.closest<HTMLElement>(
-        ".mira-property-value-suggestions",
+        ".mira-property-value-suggestions"
       );
       expect(ownerSuggestions).not.toBeNull();
       expect((ownersRow as HTMLElement).contains(ownerSuggestions)).toBe(false);
       const ownerOptionBounds = ownerOption.getBoundingClientRect();
       const ownerOptionHit = canvasElement.ownerDocument.elementFromPoint(
         ownerOptionBounds.left + ownerOptionBounds.width / 2,
-        ownerOptionBounds.top + ownerOptionBounds.height / 2,
+        ownerOptionBounds.top + ownerOptionBounds.height / 2
       );
       expect(
-        ownerOptionHit === ownerOption || ownerOption.contains(ownerOptionHit),
+        ownerOptionHit === ownerOption || ownerOption.contains(ownerOptionHit)
       ).toBe(true);
       await userEvent.keyboard("{Enter}");
       await expect(owners.getByText("Mar", { exact: true })).toBeVisible();
@@ -291,12 +290,12 @@ function placementStory(
       await userEvent.keyboard("{Enter}");
       const longOwnerLabel = owners.getByText(longOwner, { exact: true });
       const longOwnerPill = longOwnerLabel.closest<HTMLElement>(
-        ".metadata-property-pill-chip",
+        ".metadata-property-pill-chip"
       );
       expect(longOwnerPill).not.toBeNull();
 
       expect(getComputedStyle(longTagPill as HTMLElement).borderRadius).toBe(
-        getComputedStyle(longOwnerPill as HTMLElement).borderRadius,
+        getComputedStyle(longOwnerPill as HTMLElement).borderRadius
       );
 
       for (const [label, pill] of [
@@ -324,7 +323,7 @@ function placementStory(
       });
       await userEvent.click(ownerOption);
       await expect(
-        owners.getByText("Margaret Hamilton", { exact: true }),
+        owners.getByText("Margaret Hamilton", { exact: true })
       ).toBeVisible();
 
       await userEvent.click(tagsTypeButton);
@@ -338,10 +337,10 @@ function placementStory(
       expect(
         within(optionsMenu)
           .getAllByRole("menuitem")
-          .map((item) => item.textContent?.trim()),
+          .map((item) => item.textContent?.trim())
       ).toEqual(["Property type", "Cut", "Copy", "Paste", "Remove"]);
       expect(
-        within(optionsMenu).queryByRole("menuitemcheckbox", { name: "Text" }),
+        within(optionsMenu).queryByRole("menuitemcheckbox", { name: "Text" })
       ).not.toBeInTheDocument();
 
       await userEvent.hover(propertyType);
@@ -359,55 +358,57 @@ function placementStory(
       await expect(textType).toHaveAttribute("aria-checked", "false");
       expect(textType.firstElementChild?.querySelector("svg")).toBeNull();
       expect(
-        textType.querySelector(".metadata-property-type-menu__type-icon"),
+        textType.querySelector(".metadata-property-type-menu__type-icon")
       ).not.toBeNull();
       await expect(tagsType).toHaveAttribute("aria-checked", "true");
       expect(tagsType.firstElementChild?.querySelector("svg")).not.toBeNull();
       expect(
-        tagsType.querySelector(".metadata-property-type-menu__type-icon"),
+        tagsType.querySelector(".metadata-property-type-menu__type-icon")
       ).not.toBeNull();
       expect((tagsRow as HTMLElement).contains(typeMenu)).toBe(false);
       expect(typeMenu.getBoundingClientRect().bottom).toBeGreaterThan(
-        (tagsRow as HTMLElement).getBoundingClientRect().bottom,
+        (tagsRow as HTMLElement).getBoundingClientRect().bottom
       );
       const textTypeBounds = textType.getBoundingClientRect();
       const hit = canvasElement.ownerDocument.elementFromPoint(
         textTypeBounds.left + textTypeBounds.width / 2,
-        textTypeBounds.top + textTypeBounds.height / 2,
+        textTypeBounds.top + textTypeBounds.height / 2
       );
       expect(
         hit === textType || textType.contains(hit),
-        `Expected the Text item to own its center point; hit ${hit?.tagName ?? "nothing"}.${hit instanceof HTMLElement ? hit.className : ""}`,
+        `Expected the Text item to own its center point; hit ${
+          hit?.tagName ?? "nothing"
+        }.${hit instanceof HTMLElement ? hit.className : ""}`
       ).toBe(true);
       await userEvent.keyboard("{Escape}");
       await userEvent.keyboard("{Escape}");
       await waitFor(() => {
         expect(
-          page.queryByRole("menu", { name: "Property options for tags" }),
+          page.queryByRole("menu", { name: "Property options for tags" })
         ).toBeNull();
         expect(
-          page.queryByRole("menu", { name: "Property type for tags" }),
+          page.queryByRole("menu", { name: "Property type for tags" })
         ).toBeNull();
         expect(
-          getComputedStyle(canvasElement.ownerDocument.body).pointerEvents,
+          getComputedStyle(canvasElement.ownerDocument.body).pointerEvents
         ).not.toBe("none");
       });
 
       const propertyContainer =
         alignment.panelElement.querySelector<HTMLElement>(
-          ".mira-frontmatter.metadata-container",
+          ".mira-frontmatter.metadata-container"
         );
       const tagsKey = tagsRow?.querySelector<HTMLElement>(
-        ".metadata-property-key",
+        ".metadata-property-key"
       );
       const tagsValue = tagsRow?.querySelector<HTMLElement>(
-        ".metadata-property-value",
+        ".metadata-property-value"
       );
       const tagsKeyInput = tagsRow?.querySelector<HTMLElement>(
-        ".metadata-property-key-input",
+        ".metadata-property-key-input"
       );
       const firstTagPill = tagsRow?.querySelector<HTMLElement>(
-        ".metadata-property-pill-chip",
+        ".metadata-property-pill-chip"
       );
       expect(propertyContainer).not.toBeNull();
       expect(tagsKey).not.toBeNull();
@@ -416,14 +417,11 @@ function placementStory(
       expect(firstTagPill).not.toBeNull();
       if ((propertyContainer?.getBoundingClientRect().width ?? 0) >= 250) {
         expect(getComputedStyle(tagsRow as HTMLElement).flexWrap).toBe(
-          "nowrap",
+          "nowrap"
         );
       }
 
-      const restorePanelTab = resizePanelTab(
-        canvasElement,
-        layout,
-      );
+      const restorePanelTab = resizePanelTab(canvasElement, layout);
       if (restorePanelTab) {
         try {
           await waitFor(() => {
@@ -437,28 +435,28 @@ function placementStory(
               Number.parseFloat(keyInputStyle.paddingInlineStart);
             const valueStart = firstTagPill?.getBoundingClientRect().left ?? 0;
             expect(
-              propertyContainer?.getBoundingClientRect().width ?? 0,
+              propertyContainer?.getBoundingClientRect().width ?? 0
             ).toBeLessThan(250);
             expect(getComputedStyle(tagsRow as HTMLElement).flexWrap).toBe(
-              "wrap",
+              "wrap"
             );
             expect(
               Math.abs((keyBounds?.width ?? 0) - (rowBounds?.width ?? 0)),
-              "narrow property key spans the row",
+              "narrow property key spans the row"
             ).toBeLessThanOrEqual(2);
             expect(
               Math.abs((valueBounds?.width ?? 0) - (rowBounds?.width ?? 0)),
-              "narrow property value spans the row",
+              "narrow property value spans the row"
             ).toBeLessThanOrEqual(2);
             expect(valueBounds?.top ?? 0).toBeGreaterThanOrEqual(
-              (keyBounds?.bottom ?? 0) - 1,
+              (keyBounds?.bottom ?? 0) - 1
             );
             expect(
               Math.abs(valueStart - labelTextStart),
-              "narrow property value aligns with the label text",
+              "narrow property value aligns with the label text"
             ).toBeLessThan(1);
             const ownersValue = ownersRow?.querySelector<HTMLElement>(
-              ".metadata-property-value",
+              ".metadata-property-value"
             );
             for (const [pill, valueContainer] of [
               [longTagPill, tagsValue],
@@ -468,20 +466,20 @@ function placementStory(
               const valueContainerBounds =
                 valueContainer?.getBoundingClientRect();
               expect(pillBounds?.right ?? 0).toBeLessThanOrEqual(
-                (valueContainerBounds?.right ?? 0) + 1,
+                (valueContainerBounds?.right ?? 0) + 1
               );
               expect(
-                (pill?.scrollWidth ?? 0) - (pill?.clientWidth ?? 0),
+                (pill?.scrollWidth ?? 0) - (pill?.clientWidth ?? 0)
               ).toBeLessThanOrEqual(1);
             }
             const scrollViewport =
               alignment.panelElement.querySelector<HTMLElement>(
-                '.markdown-sidebar-panel__scroll [data-ui-part="scroll-area-viewport"]',
+                '.markdown-sidebar-panel__scroll [data-ui-part="scroll-area-viewport"]'
               );
             expect(scrollViewport).not.toBeNull();
             expect(
               (scrollViewport?.scrollWidth ?? 0) -
-                (scrollViewport?.clientWidth ?? 0),
+                (scrollViewport?.clientWidth ?? 0)
             ).toBeLessThanOrEqual(1);
             expect(scrollViewport?.scrollLeft ?? 0).toBe(0);
           });
@@ -490,10 +488,10 @@ function placementStory(
         }
         await waitFor(() => {
           expect(
-            propertyContainer?.getBoundingClientRect().width ?? 0,
+            propertyContainer?.getBoundingClientRect().width ?? 0
           ).toBeGreaterThanOrEqual(250);
           expect(getComputedStyle(tagsRow as HTMLElement).flexWrap).toBe(
-            "nowrap",
+            "nowrap"
           );
         });
       }
@@ -508,7 +506,7 @@ function placementStory(
       await expect(plannedOption).toHaveAttribute("aria-selected", "false");
       const statusRow = status.closest<HTMLElement>(".metadata-property");
       const statusSuggestions = plannedOption.closest<HTMLElement>(
-        ".mira-property-value-suggestions",
+        ".mira-property-value-suggestions"
       );
       expect(statusRow).not.toBeNull();
       expect(statusSuggestions).not.toBeNull();
@@ -516,10 +514,10 @@ function placementStory(
       const plannedBounds = plannedOption.getBoundingClientRect();
       const plannedHit = canvasElement.ownerDocument.elementFromPoint(
         plannedBounds.left + plannedBounds.width / 2,
-        plannedBounds.top + plannedBounds.height / 2,
+        plannedBounds.top + plannedBounds.height / 2
       );
       expect(
-        plannedHit === plannedOption || plannedOption.contains(plannedHit),
+        plannedHit === plannedOption || plannedOption.contains(plannedHit)
       ).toBe(true);
       await userEvent.keyboard("{Enter}");
       status = panel.getByRole("combobox", { name: "status value" });
@@ -528,7 +526,7 @@ function placementStory(
       await userEvent.clear(status);
       await userEvent.type(status, "pla");
       await userEvent.click(
-        await page.findByRole("option", { name: "planned" }),
+        await page.findByRole("option", { name: "planned" })
       );
       status = panel.getByRole("combobox", { name: "status value" });
       await expect(status).toHaveTextContent("planned");
@@ -541,10 +539,10 @@ function placementStory(
         await waitFor(
           async () => {
             expect(await app.vault.cachedRead(file)).toMatch(
-              /(?:^|\n)status: planned(?:\n|$)/u,
+              /(?:^|\n)status: planned(?:\n|$)/u
             );
           },
-          { timeout: 5_000 },
+          { timeout: 5_000 }
         );
         await app.fileManager.processFrontMatter(file, (frontmatter) => {
           frontmatter.status = "review";
@@ -552,10 +550,10 @@ function placementStory(
         await waitFor(
           async () => {
             expect(await app.vault.cachedRead(file)).toMatch(
-              /(?:^|\n)status: review(?:\n|$)/u,
+              /(?:^|\n)status: review(?:\n|$)/u
             );
           },
-          { timeout: 5_000 },
+          { timeout: 5_000 }
         );
         status = panel.getByRole("combobox", { name: "status value" });
       }
@@ -564,36 +562,36 @@ function placementStory(
       await expect(status).toHaveAttribute("contenteditable", "true");
       const focusedProperty = status.closest<HTMLElement>(".metadata-property");
       const focusedValue = status.closest<HTMLElement>(
-        ".metadata-property-value",
+        ".metadata-property-value"
       );
       expect(focusedProperty).not.toBeNull();
       expect(focusedValue).not.toBeNull();
       const focusedPropertyStyle = getComputedStyle(
-        focusedProperty as HTMLElement,
+        focusedProperty as HTMLElement
       );
       expect(
-        Number.parseFloat(focusedPropertyStyle.borderTopWidth),
+        Number.parseFloat(focusedPropertyStyle.borderTopWidth)
       ).toBeGreaterThan(0.9);
       expect(focusedPropertyStyle.boxShadow).not.toBe("none");
       expect(focusedPropertyStyle.borderRadius).toBe("4px");
       const focusedValueBackground = getComputedStyle(
-        focusedValue as HTMLElement,
+        focusedValue as HTMLElement
       ).backgroundColor;
       expect(focusedValueBackground).not.toBe(
-        getComputedStyle(alignment.viewHost).backgroundColor,
+        getComputedStyle(alignment.viewHost).backgroundColor
       );
       expect(getComputedStyle(status).outlineStyle).toBe("none");
       expect(
         Array.from(
           alignment.panelElement.querySelectorAll<HTMLTextAreaElement>(
-            "textarea",
-          ),
-        ).every((textarea) => getComputedStyle(textarea).resize === "none"),
+            "textarea"
+          )
+        ).every((textarea) => getComputedStyle(textarea).resize === "none")
       ).toBe(true);
       expect(getComputedStyle(status).fontSize).toBe("12px");
       await userEvent.keyboard("{Escape}");
       await expect(
-        panel.getByRole("button", { name: /Add property/i }),
+        panel.getByRole("button", { name: /Add property/i })
       ).toBeVisible();
       await expectPanelSource(parameters, kind, layout);
     },
@@ -603,30 +601,33 @@ function placementStory(
 export const MiddleTopTabs = placementStory(
   "middle-top-tabs",
   sources.MiddleTopTabs,
-  "File Properties beside the minimal active Markdown note, with the panel receiving the larger middle split.",
+  "File Properties beside the minimal active Markdown note, with the panel receiving the larger middle split."
 );
 export const StackedTabs = placementStory(
   "stacked-tabs",
   sources.StackedTabs,
-  "File Properties selected in stacked tabs beside the minimal active note.",
+  "File Properties selected in stacked tabs beside the minimal active note."
 );
 export const LeftSidebar = placementStory(
   "left-sidebar",
   sources.LeftSidebar,
-  "File Properties in the left sidebar with only its required note in the body.",
+  "File Properties in the left sidebar with only its required note in the body."
 );
 export const RightSidebar = placementStory(
   "right-sidebar",
   sources.RightSidebar,
-  "File Properties in the right sidebar with only its required note in the body.",
+  "File Properties in the right sidebar with only its required note in the body."
 );
 export const BottomPanel = placementStory(
   "bottom-panel",
   sources.BottomPanel,
-  "File Properties inside real grouped bottom-panel chrome.",
+  "File Properties inside real grouped bottom-panel chrome."
 );
 export const SidebarGroup = placementStory(
   "sidebar-group",
   sources.SidebarGroup,
-  "File Properties as the only view in a grouped right-sidebar item.",
+  "File Properties as the only view in a grouped right-sidebar item."
 );
+
+export const StaleRecordAndRecovery = propertiesPersistenceStory("stale");
+export const ConcurrentBodyChange = propertiesPersistenceStory("body");
