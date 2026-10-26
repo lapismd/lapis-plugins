@@ -37,12 +37,12 @@ describe("sheet layout", () => {
   });
 
   it("numbers address rows with the row rail", () => {
-    expect(sheetRowNumber(1, true)).toBe(1);
-    expect(sheetRowNumber(0, true)).toBeNull();
-    expect(sheetRowNumber(0, false)).toBe(1);
-    expect(gridRowFromAddress(0, true, 4)).toBe(1);
-    expect(gridRowFromAddress(0, false, 4)).toBe(0);
-    expect(gridRowFromAddress(3, true, 4)).toBeNull();
+    expect(sheetRowNumber(0)).toBe(1);
+    expect(sheetRowNumber(1)).toBe(2);
+    expect(sheetRowNumber(-1)).toBeNull();
+    expect(gridRowFromAddress(0, 4)).toBe(0);
+    expect(gridRowFromAddress(3, 4)).toBe(3);
+    expect(gridRowFromAddress(4, 4)).toBeNull();
   });
 
   it("labels columns the way a sheet does", () => {
@@ -138,6 +138,28 @@ describe("sheet layout", () => {
       bodyCount: 4,
     });
     expect(letter).toEqual({ kind: "letter", col: 0 });
+
+    const corner = hitTestSheet({
+      x: 12,
+      y: 8,
+      scrollLeft: 0,
+      scrollTop: 0,
+      widths,
+      headerRow: true,
+      bodyCount: 4,
+    });
+    expect(corner).toEqual({ kind: "corner" });
+
+    const headerNumber = hitTestSheet({
+      x: 12,
+      y: SHEET_LETTER_HEIGHT + 8,
+      scrollLeft: 0,
+      scrollTop: 0,
+      widths,
+      headerRow: true,
+      bodyCount: 4,
+    });
+    expect(headerNumber).toEqual({ kind: "row", index: -1 });
 
     const sort = hitTestSheet({
       x: SHEET_GUTTER_WIDTH + widths[0] - 10,

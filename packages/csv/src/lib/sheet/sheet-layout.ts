@@ -75,22 +75,16 @@ export function parseSheetAddress(input: string): SheetAddress | null {
   return null;
 }
 
-/** Rail and address number for a grid row. The header row is not numbered. */
-export function sheetRowNumber(gridRow: number, headerRow: boolean): number | null {
+/** Rail and address number for a grid row. The first row is 1, including a fixed header. */
+export function sheetRowNumber(gridRow: number): number | null {
   if (gridRow < 0) return null;
-  if (!headerRow) return gridRow + 1;
-  return gridRow === 0 ? null : gridRow;
+  return gridRow + 1;
 }
 
-/** Grid row for a parsed address row (`A1` is 0). Null when it is not a body row. */
-export function gridRowFromAddress(
-  addressRow: number,
-  headerRow: boolean,
-  rowCount: number,
-): number | null {
-  const gridRow = headerRow ? addressRow + 1 : addressRow;
-  if (gridRow < 0 || gridRow >= rowCount) return null;
-  return gridRow;
+/** Grid row for a parsed address row (`A1` is the first row). */
+export function gridRowFromAddress(addressRow: number, rowCount: number): number | null {
+  if (addressRow < 0 || addressRow >= rowCount) return null;
+  return addressRow;
 }
 
 function columnIndex(letters: string): number | null {
@@ -381,7 +375,7 @@ export function hitTestSheet(options: {
       }
     }
   }
-  if (x < SHEET_GUTTER_WIDTH && y < chrome) return { kind: "corner" };
+  if (x < SHEET_GUTTER_WIDTH && y < SHEET_LETTER_HEIGHT) return { kind: "corner" };
   if (y < SHEET_LETTER_HEIGHT) {
     const col = columnAt(x + options.scrollLeft, edges);
     if (col == null) return null;
@@ -389,6 +383,7 @@ export function hitTestSheet(options: {
     return { kind: "letter", col };
   }
   if (options.headerRow && y < chrome) {
+    if (x < SHEET_GUTTER_WIDTH) return { kind: "row", index: -1 };
     const col = columnAt(x + options.scrollLeft, edges);
     if (col == null) return null;
     return { kind: "header", col };

@@ -10,12 +10,14 @@
     commands,
     wrap,
     colours,
+    headerRow,
     canUndo,
     canRedo,
     onAddress,
     onCommand,
     onWrap,
     onColours,
+    onHeaderRow,
     onUndo,
     onRedo,
   }: {
@@ -23,12 +25,14 @@
     commands: readonly SheetCommand[];
     wrap: boolean;
     colours: boolean;
+    headerRow: boolean;
     canUndo: boolean;
     canRedo: boolean;
     onAddress: (address: string) => void;
     onCommand: (id: SheetCommandId) => void;
     onWrap: (wrap: boolean) => void;
     onColours: (colours: boolean) => void;
+    onHeaderRow: (headerRow: boolean) => void;
     onUndo: () => void;
     onRedo: () => void;
   } = $props();
@@ -160,6 +164,25 @@
         {/snippet}
       </Tooltip.Trigger>
       <Tooltip.Content side="bottom">Column colours</Tooltip.Content>
+    </Tooltip.Root>
+    <Tooltip.Root>
+      <Tooltip.Trigger>
+        {#snippet child({ props })}
+          <Toggle
+            {...props}
+            pressed={headerRow}
+            size="sm"
+            variant="outline"
+            aria-label="Header row"
+            aria-pressed={headerRow}
+            data-sheet-header
+            onPressedChange={(pressed) => onHeaderRow(pressed === true)}
+          >
+            <SheetGlyph command="header" />
+          </Toggle>
+        {/snippet}
+      </Tooltip.Trigger>
+      <Tooltip.Content side="bottom">Header row</Tooltip.Content>
     </Tooltip.Root>
   </Tooltip.Provider>
 </div>

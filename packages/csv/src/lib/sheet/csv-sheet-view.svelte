@@ -47,6 +47,7 @@ import {
     onContentChange,
     onShowTable,
     onToggleSource,
+    onSettingsChange,
   }: {
     app: App;
     file: TFile;
@@ -56,6 +57,7 @@ import {
     onContentChange?: (text: string) => void;
     onShowTable?: () => void;
     onToggleSource?: () => void;
+    onSettingsChange?: (patch: { headerRow?: boolean }) => void;
   } = $props();
 
   let incoming = $state<string | null>(null);
@@ -427,6 +429,7 @@ import {
     canRedo={history.future.length > 0}
     onUndo={undoSheet}
     onRedo={redoSheet}
+    onHeaderRow={(headerRow) => onSettingsChange?.({ headerRow })}
   />
   <CsvStatusBar
     columns={counts.columns}

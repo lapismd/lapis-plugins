@@ -62,6 +62,7 @@
     canRedo,
     onUndo,
     onRedo,
+    onHeaderRow,
   }: {
     grid: CsvGrid;
     headerRow: boolean;
@@ -85,6 +86,7 @@
     canRedo: boolean;
     onUndo: () => void;
     onRedo: () => void;
+    onHeaderRow: (headerRow: boolean) => void;
   } = $props();
 
   let scroller = $state<HTMLDivElement | null>(null);
@@ -163,7 +165,7 @@
     widths,
     headerRow,
     headerLabels: grid.getRows()[0] ?? [],
-    rowLabels: bodyRows.map((row) => String(sheetRowNumber(row, headerRow) ?? "")),
+    rowLabels: bodyRows.map((row) => String(sheetRowNumber(row) ?? "")),
     body: bodyRows.map((row) => grid.getRows()[row] ?? []),
     scrollLeft,
     scrollTop,
@@ -302,7 +304,7 @@
   }
 
   const commandTarget = $derived.by((): "column" | "row" | "cell" | "sheet" | null => {
-    if (selection && widths.length > 0 && bodyRows.length > 0) {
+    if (selection && widths.length > 0 && (bodyRows.length > 0 || selection.startIndex < 0)) {
       const oneCol = selection.startCol === selection.endCol;
       const oneRow = selection.startIndex === selection.endIndex;
       const fullRows =
@@ -322,7 +324,8 @@
       return { row: active?.row ?? 0, col: selection.startCol };
     }
     if (commandTarget === "row" && selection) {
-      return { row: gridRow(selection.startIndex), col: active?.col ?? 0 };
+      const row = selection.startIndex < 0 ? 0 : gridRow(selection.startIndex);
+      return { row, col: active?.col ?? 0 };
     }
     return active;
   });
@@ -372,7 +375,7 @@
     }
     const letter = columnLetter(commandAt.col);
     if (commandTarget === "column") return letter;
-    const rowNumber = sheetRowNumber(commandAt.row, headerRow);
+    const rowNumber = sheetRowNumber(commandAt.row);
     if (rowNumber == null) return letter;
     if (commandTarget === "row") return String(rowNumber);
     return `${letter}${rowNumber}`;
@@ -416,7 +419,7 @@
       if (row >= 0) reveal(row, address.col);
       return;
     }
-    const row = gridRowFromAddress(address.row, headerRow, grid.getRowCount());
+    const row = gridRowFromAddress(address.row, grid.getRowCount());
     if (row == null) return;
     if (address.kind === "cell") {
       if (address.col >= grid.getColCount()) return;
@@ -424,8 +427,9 @@
       reveal(row, address.col);
       return;
     }
-    const index = bodyIndex(row);
-    if (index < 0) return;
+    const headerIndex = headerRow && row === 0;
+    const index = headerIndex ? -1 : bodyIndex(row);
+    if (!headerIndex && index < 0) return;
     selectRows(index, index);
     reveal(row, 0);
   }
@@ -465,7 +469,7 @@
   function selectRows(from: number, to: number) {
     const startIndex = Math.min(from, to);
     const endIndex = Math.max(from, to);
-    const row = gridRow(startIndex);
+    const row = startIndex < 0 ? 0 : gridRow(startIndex);
     const lastCol = Math.max(0, widths.length - 1);
     if (row >= 0) active = { row, col: 0 };
     selection = {
@@ -611,18 +615,32 @@
       selectAll();
       return;
     }
-    if (hit.kind === "letter" || hit.kind === "header") {
-      if (event.detail >= 2 && hit.kind === "header") {
-        selectCell(0, hit.col);
-        beginEdit();
-        return;
-      }
+    if (hit.kind === "header") {
+      selectCell(0, hit.col);
+      if (event.detail >= 2) beginEdit();
+      return;
+    }
+    if (hit.kind === "letter") {
       selectColumns(hit.col, hit.col);
       drag = {
         kind: "select",
         axis: "column",
         col: hit.col,
         index: 0,
+        startWidth: 0,
+        startX: event.clientX,
+        moved: true,
+      };
+      capturePointer(event.pointerId);
+      return;
+    }
+    if (hit.kind === "row" && hit.index < 0) {
+      selectRows(-1, -1);
+      drag = {
+        kind: "select",
+        axis: "row",
+        col: 0,
+        index: -1,
         startWidth: 0,
         startX: event.clientX,
         moved: true,
@@ -725,7 +743,12 @@
       fitColumn(hit.col);
       return;
     }
-    if ((hit?.kind === "header" || hit?.kind === "body") && active) beginEdit();
+    if (hit?.kind === "header") {
+      selectCell(0, hit.col);
+      beginEdit();
+      return;
+    }
+    if (hit?.kind === "body" && active) beginEdit();
   }
 
   function onContextMenu(event: MouseEvent) {
@@ -759,7 +782,7 @@
     }
     if (target === "row" && hit.kind === "row") {
       selectRows(hit.index, hit.index);
-      menu = { x, y, target, row: gridRow(hit.index), col: 0 };
+      menu = { x, y, target, row: hit.index < 0 ? 0 : gridRow(hit.index), col: 0 };
       return;
     }
     if (hit.kind !== "body") {
@@ -845,6 +868,7 @@
     commands={toolbarCommands}
     {wrap}
     {colours}
+    {headerRow}
     {canUndo}
     {canRedo}
     {onUndo}
@@ -863,6 +887,7 @@
     onColours={(value) => {
       colours = value;
     }}
+    onHeaderRow={(value) => onHeaderRow(value)}
   />
   <div class="csv-sheet-body">
   <div

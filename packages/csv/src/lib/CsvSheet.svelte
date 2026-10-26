@@ -2,7 +2,9 @@
   import type { App, TFile } from "@lapis-notes/api";
   import {
     DEFAULT_CSV_SETTINGS,
+    patchCsvSettings,
     type CsvPluginSettings,
+    type CsvPluginSettingsPatch,
   } from "../csv-settings";
   import CsvSheetView from "./sheet/csv-sheet-view.svelte";
 
@@ -24,6 +26,10 @@
   function handleContentChange(text: string) {
     void app.vault.modify(file, text);
   }
+
+  function handleSettingsChange(patch: CsvPluginSettingsPatch) {
+    settings = patchCsvSettings(settings, patch);
+  }
 </script>
 
 <div class="csv-table-frame" data-testid="csv-canvas" data-csv-role="file">
@@ -37,6 +43,7 @@
         {content}
         {settings}
         onContentChange={handleContentChange}
+        onSettingsChange={handleSettingsChange}
         {onShowTable}
         {onToggleSource}
       />
