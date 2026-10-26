@@ -172,6 +172,7 @@ async function expectColumnHeaderRing(table: HTMLElement) {
     expect(style.outlineStyle).toBe("solid");
     expect(parseFloat(style.outlineWidth)).toBeGreaterThanOrEqual(2);
     expect(style.outlineOffset).toBe("-1px");
+    expect(getComputedStyle(label).outlineStyle).toBe("none");
   });
   label.blur();
 }
@@ -191,6 +192,9 @@ async function expectQuotedCell(table: HTMLElement) {
   await expectColumnHeaderRing(table);
   expect(
     within(table).getAllByRole("button", { name: "Column actions" }).length,
+  ).toBeGreaterThan(0);
+  expect(
+    within(table).getAllByRole("button", { name: "Sort staff" }).length,
   ).toBeGreaterThan(0);
   const status = within(table).getByTestId("csv-status-bar");
   expect(status.textContent).toContain(`${totalRows.toLocaleString()} rows`);

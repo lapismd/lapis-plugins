@@ -13,6 +13,15 @@
   import { cn } from "@lapis-notes/ui";
   import { Menu } from "@lapis-notes/api";
   import { ContextMenu as MenuComponent } from "@lapis-notes/api/menu";
+  import {
+    applyCsvColumnSort,
+    noteCsvColumnDeleted,
+    noteCsvColumnInserted,
+    noteCsvColumnMoved,
+    noteCsvColumnSortEdit,
+    toggleCsvColumnSort,
+    type CsvColumnSort,
+  } from "../model/csv-column-sort";
   import { CsvGrid } from "../model/csv-grid";
   import {
     headerLabelsFromGrid,
@@ -122,6 +131,7 @@
   let dragSource: CsvTableDragSource | null = $state(null);
   let dragOverIndex: number | null = $state(null);
   let dragOverlayMetrics: CsvDragOverlayMetrics | null = $state(null);
+  let columnSort = $state<CsvColumnSort | null>(null);
 
   const selectedClasses = $derived(selectionClassesForCells(selected));
 
@@ -130,62 +140,96 @@
   }
 
   function updateCell(row: number, col: number, value: string) {
+    const before = grid.getRowCount();
     grid.updateCell(row, col, value);
+    if (columnSort && grid.getRowCount() === before) {
+      noteCsvColumnSortEdit(columnSort, row, col, value);
+    } else {
+      columnSort = null;
+    }
     emitChange();
   }
 
   function updateHeaderLabel(colIndex: number, value: string) {
     if (!headerRow) {
+      columnSort = null;
       const labels = headerLabelsFromGrid(grid, false, colCount);
       labels[colIndex] = value;
       grid.ensureHeaderRow(labels);
       onSettingsChange?.({ headerRow: true });
     }
     grid.updateCell(0, colIndex, value);
+    if (columnSort) noteCsvColumnSortEdit(columnSort, 0, colIndex, value);
     emitChange();
   }
 
   function insertRowAt(index: number) {
     grid.insertRowAt(index);
+    columnSort = null;
     emitChange();
   }
 
   function deleteRowAt(index: number) {
     grid.deleteRowAt(index);
+    columnSort = null;
     selected = [];
     emitChange();
   }
 
   function insertColumnAt(index: number) {
     grid.insertColumnAt(index);
+    columnSort = noteCsvColumnInserted(columnSort, index);
     emitChange();
   }
 
   function deleteColumnAt(index: number) {
     grid.deleteColumnAt(index);
+    columnSort = noteCsvColumnDeleted(columnSort, index);
     selected = [];
     emitChange();
   }
 
   function moveColumnAt(from: number, to: number) {
     grid.moveColumnAt(from, to);
+    columnSort = noteCsvColumnMoved(columnSort, from, to);
     emitChange();
   }
 
   function moveRowAt(from: number, to: number) {
     grid.moveRowAt(from, to);
+    columnSort = null;
     emitChange();
   }
 
   function sortColumn(index: number, ascending: boolean) {
-    grid.sortColumn(index, ascending, headerRow ? 1 : 0);
+    columnSort = applyCsvColumnSort(
+      grid,
+      columnSort,
+      index,
+      ascending ? "asc" : "desc",
+      headerRow,
+    );
+    emitChange();
+  }
+
+  function toggleSort(index: number) {
+    columnSort = toggleCsvColumnSort(grid, columnSort, index, headerRow);
     emitChange();
   }
 
   function clearCells(cells: CsvCellCoord[]) {
     grid.clearCellsAt(cells);
+    rememberClearedCells(cells);
     selected = [];
     emitChange();
+  }
+
+  function rememberClearedCells(cells: CsvCellCoord[]) {
+    if (columnSort && grid.getRowCount() === columnSort.baseline.length) {
+      for (const [row, col] of cells) noteCsvColumnSortEdit(columnSort, row, col, "");
+      return;
+    }
+    columnSort = null;
   }
 
   function deleteCells(cells: CsvCellCoord[]) {
@@ -195,10 +239,12 @@
       colCount,
     );
     if (fullRows.length + fullCols.length > 0) {
+      columnSort = null;
       fullRows.sort((a, b) => b - a).forEach((row) => grid.deleteRowAt(row));
       fullCols.sort((a, b) => b - a).forEach((col) => grid.deleteColumnAt(col));
     } else {
       grid.clearCellsAt(cells);
+      rememberClearedCells(cells);
     }
     selected = [];
     emitChange();
@@ -552,7 +598,7 @@
       if (
         target instanceof HTMLElement &&
         target.closest(
-          ".csv-data-table__col-grip, .csv-data-table__row-grip, .csv-data-table__header-menu, .csv-data-table__row-actions, [data-grab-handle], [role='menu'], [role='menuitem'], [data-slot='context-menu-content']",
+          ".csv-data-table__col-grip, .csv-data-table__row-grip, .csv-data-table__header-actions, .csv-data-table__header-menu, .csv-data-table__header-sort, .csv-data-table__row-actions, [data-grab-handle], [role='menu'], [role='menuitem'], [data-slot='context-menu-content']",
         )
       ) {
         selectionPos.isMouseDown = false;
@@ -620,6 +666,10 @@
                     onSelectColumn={() => selectColumn(colIndex)}
                     onLabelChange={(value) =>
                       updateHeaderLabel(colIndex, value)}
+                    sortDirection={columnSort?.index === colIndex
+                      ? columnSort.direction
+                      : null}
+                    onToggleSort={() => toggleSort(colIndex)}
                     onSortAsc={() => sortColumn(colIndex, true)}
                     onSortDesc={() => sortColumn(colIndex, false)}
                     onInsertLeft={() => insertColumnAt(colIndex)}

@@ -146,18 +146,27 @@ export class CsvGrid {
     );
   }
 
-  sortColumn(index: number, ascending: boolean, startRow = 0): void {
-    const body = this.rows.slice(startRow);
+  replaceRows(rows: readonly string[][]): void {
+    this.rows = rows.map((row) => [...row]);
+  }
+
+  /** Reorders body rows and returns the previous index now occupying each row. */
+  sortColumn(index: number, ascending: boolean, startRow = 0): number[] {
+    const current = this.rows;
+    const order = current.map((_, rowIndex) => rowIndex);
+    const body = order.slice(startRow);
     body.sort((left, right) => {
-      const a = left[index] ?? "";
-      const b = right[index] ?? "";
+      const a = current[left]?.[index] ?? "";
+      const b = current[right]?.[index] ?? "";
       const cmp = a.localeCompare(b, undefined, {
         numeric: true,
         sensitivity: "base",
       });
       return ascending ? cmp : -cmp;
     });
-    this.rows.splice(startRow, body.length, ...body);
+    const next = [...order.slice(0, startRow), ...body];
+    this.rows = next.map((rowIndex) => [...(current[rowIndex] ?? [])]);
+    return next;
   }
 
   toText(options: Pick<CsvGridOptions, "delimiter">): string {
