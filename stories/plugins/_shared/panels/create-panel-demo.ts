@@ -1182,10 +1182,12 @@ export async function bootPanelDemo(
     throw new Error(`Missing Markdown context leaf for ${kind} ${layout}`);
   }
   if (markdownLeaf) app.workspace.setActiveLeaf(markdownLeaf, { focus: false });
+  await app.vaultChanges.start();
 
   return {
     app,
     dispose: async () => {
+      await app.vaultChanges.stop();
       stopWatchingMetadata();
       for (const plugin of [...app.plugins.corePlugins].reverse()) {
         await plugin.disable().catch(() => undefined);

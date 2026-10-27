@@ -1,5 +1,11 @@
 # Native first-party plugin services
 
+The browser panel-story host starts and drains the API-owned vault-change
+service so managed renames rebind existing file views after writer guards
+release. This ordinary host projection adds no native writer, persistence
+fallback or alternate admission path. Native service qualification remains
+separate from the focused editor-chrome stories.
+
 Markdown preview admission adapts the App-owned native editing-intent port;
 it retains the public Mira input lease and existing conditional text writer.
 This binding adds no Tasks/plugin transformation engine, Rust policy or

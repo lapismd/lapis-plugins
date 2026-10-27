@@ -1,5 +1,11 @@
 # Distribution and Releases
 
+The shared App-backed panel host owns the public vault-change service from
+ready state through teardown. It starts reconciliation before exposing the
+ready App and drains/stops the service before disposing views and plugins.
+Local file renames therefore project into the existing editor, tab and
+breadcrumb through the same API lifecycle used by application hosts.
+
 The native editing-intent review family renders the public Markdown `FileEmbed`
 component with its real App and writer. Its classified component scenario keeps
 synthetic admission controls in the shared labelled fixture-controls surface;

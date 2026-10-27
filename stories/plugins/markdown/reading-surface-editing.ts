@@ -41,7 +41,7 @@ export async function verifyEditingAlignment(
   canvasElement: HTMLElement,
   mode: "live-preview" | "source"
 ) {
-  const { app, editor } = await editingNote(canvasElement, mode);
+  let { app, editor } = await editingNote(canvasElement, mode);
   const initial = app.configuration
     .getConfiguration()
     .get("editor.display.showLineNumbers");
@@ -78,8 +78,36 @@ export async function verifyEditingAlignment(
     await userEvent.click(title);
     await userEvent.clear(title);
     await userEvent.type(title, "Aligned{Enter}");
-    await waitFor(() => expect(editor.file?.name).toBe("Aligned.md"));
+    await waitFor(() => {
+      expect(app.vault.getFileByPath("Notes/Aligned.md")).not.toBeNull();
+      expect(app.vault.getFileByPath("Notes/Reading-surface.md")).toBeNull();
+      expect(app.workspace.getActiveFile()?.path).toBe("Notes/Aligned.md");
+    });
+    editor = (app.workspace.activeLeaf!.view as { editor: Editor }).editor;
+    const canvas = within(canvasElement);
+    expect(
+      canvas.getByRole("button", { name: "Rename Aligned.md", exact: true })
+    ).toBeVisible();
+    expect(
+      canvas.queryByRole("button", {
+        name: "Rename Reading-surface.md",
+        exact: true,
+      })
+    ).toBeNull();
+    expect(
+      editor.view.dom
+        .closest(".cm-sizer")!
+        .querySelector(".cm-editor-inline-title")
+    ).toHaveTextContent("Aligned.md");
     await assertTitleAligned(editor);
+    editor.view.dispatch({
+      changes: { from: editor.view.state.doc.length, insert: "\nAfter rename" },
+    });
+    await editor.flushChanges();
+    expect(
+      await app.vault.read(app.vault.getFileByPath("Notes/Aligned.md")!)
+    ).toContain("After rename");
+    expect(app.vault.getFileByPath("Notes/Reading-surface.md")).toBeNull();
 
     // A second, independently configured source editor also exercises real
     // fold gutters and resizing through the workspace's owning split.
@@ -112,7 +140,14 @@ export async function verifyEditingAlignment(
       await assertTitleAligned(secondEditor);
     } finally {
       renderer.setSplitSizes(layout.main.id, originalSizes);
-      secondLeaf.detach();
+      await userEvent.click(
+        within(canvasElement).getByRole("button", {
+          name: /^Close Alignment(?:\.yaml)?$/,
+        })
+      );
+      await waitFor(() =>
+        expect(secondEditor.view.dom.isConnected).toBe(false)
+      );
     }
   } finally {
     await app.configuration.updateConfigurationOption(

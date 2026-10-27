@@ -106,6 +106,10 @@ export const EditingTitleAlignment: Story = {
 export const SourceTitleAlignment: Story = {
   play: ({ canvasElement }) => verifyEditingAlignment(canvasElement, "source"),
 };
+export const EditingTitleAlignmentDark: Story = {
+  ...EditingTitleAlignment,
+  globals: { colorMode: "dark" },
+};
 export const EditingSearchSettings: Story = {
   play: ({ canvasElement }) => verifySearchUnderSettings(canvasElement),
 };

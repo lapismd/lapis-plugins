@@ -69,6 +69,10 @@ The Markdown plugin owns Markdown document behavior and its integration with the
 Lapis plugin, editor, metadata, and workspace APIs. Movable panel behavior is
 specified separately under [Panels](./panels/index.md).
 
+Targeted `Editing Title Alignment` and `Editing Search Settings` scenarios
+qualify the shared API and Mira editor contracts below. Source and dark-mode
+variants retain real App ownership and leave full-suite qualification deferred.
+
 | ID | Requirement |
 | --- | --- |
 | LN-MD-127 | Markdown editing MUST retain the API inline title's measured text-column alignment in Source and Live Preview. Opening Settings over Find/Replace MUST cover editor panels and gutters, retain modal focus, and preserve the search query and replacement after dismissal. The Reading surface editing stories MUST exercise these shared package contracts without plugin-local styling overrides. |

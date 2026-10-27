@@ -6,6 +6,13 @@ LN-HIST-018 retains separate regressions for explicit native selection,
 passive observation, saved-state projection and lost acknowledgement. Its
 public package, runtime archive and hosted consumer evidence remain distinct.
 
+The 2026-10-27 editor-chrome slice qualifies LN-MD-127 with focused Source,
+Live Preview and dark-mode stories against verified API/Mira archives. Shared
+story-host vault-change startup and teardown are included in those targets.
+The user explicitly defers full suites and wider consumer acceptance to a
+separate stage; the slice record retains exact before/after counts without
+claiming repository-wide or release qualification.
+
 The native Markdown editing-intent scenario is classified as a public
 FileEmbed component review under LP-SPEC-054/055. Its real App, Mira writer and
 labelled shared fixture controls preserve the distinction between source
