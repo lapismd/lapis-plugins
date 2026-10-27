@@ -168,7 +168,10 @@ export const Embed = featureStory(
   "A note embeds the feature canvas beside a plain markdown paragraph.",
   { focus: "note" },
   (root) => {
-    expect(root.querySelector("[data-canvas-embed]")).not.toBeNull();
+    const embed = root.querySelector("[data-canvas-embed]");
+    const node = embed?.querySelector<HTMLElement>(".svelte-flow__node");
+    expect(embed).not.toBeNull();
+    expect(node?.getBoundingClientRect().width ?? 0).toBeGreaterThan(40);
     expectText(root, "A plain paragraph stays a Markdown preview.");
     expectText(root, "Canvas test group");
   },

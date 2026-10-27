@@ -9,6 +9,7 @@
   } from "@xyflow/svelte";
 
   import CanvasEdge from "./canvas-view/canvas-edge.svelte";
+  import CanvasFitController from "./canvas-view/canvas-fit-controller.svelte";
   import CanvasEmbedNode from "./canvas-embed-node.svelte";
   import {
     CanvasFlowEdgeType,
@@ -138,6 +139,7 @@
       >
         <Background />
         <MiniMap />
+        <CanvasFitController />
       </SvelteFlow>
     </div>
   </div>

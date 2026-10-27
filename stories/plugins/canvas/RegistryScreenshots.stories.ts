@@ -90,7 +90,9 @@ export const Embedded: Story = {
     await waitFor(
       () => {
         const embed = canvasElement.querySelector("[data-canvas-embed]");
+        const node = embed?.querySelector<HTMLElement>(".svelte-flow__node");
         expect(embed?.querySelector(".svelte-flow")).not.toBeNull();
+        expect(node?.getBoundingClientRect().width ?? 0).toBeGreaterThan(40);
         expectClosedSidebars(canvasElement);
       },
       { timeout: 30_000 },
