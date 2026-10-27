@@ -117,22 +117,41 @@ export function resolveRegisteredMarkdownMiraExtensions(
   app: App,
   options: RegisteredMarkdownMiraExtensionOptions,
 ): MiraExtension[] {
-  return app.markdownExtensions.getAll().map((contribution) => ({
-    name: `${contribution.pluginId}:${contribution.id}`,
-    codeMirror: contribution.codeMirror
-      ? ({ mode }) => {
-          if (mode !== "source" && mode !== "live-preview") return null;
-          const extension = contribution.codeMirror?.({
-            app,
-            mode,
-            sourcePath: options.sourcePath,
-            surface: options.surface,
-          });
-          return extension ? [...[extension].flat()] : null;
-        }
-      : undefined,
-    postProcessors: contribution.postProcessor
-      ? [adaptPostProcessor(app, contribution.postProcessor, options)]
-      : undefined,
-  }));
+  const contributions: MiraExtension[] = app.markdownExtensions
+    .getAll()
+    .map((contribution) => ({
+      name: `${contribution.pluginId}:${contribution.id}`,
+      codeMirror: contribution.codeMirror
+        ? ({ mode }) => {
+            if (mode !== "source" && mode !== "live-preview") return null;
+            const extension = contribution.codeMirror?.({
+              app,
+              mode,
+              sourcePath: options.sourcePath,
+              surface: options.surface,
+            });
+            return extension ? [...[extension].flat()] : null;
+          }
+        : undefined,
+      postProcessors: contribution.postProcessor
+        ? [adaptPostProcessor(app, contribution.postProcessor, options)]
+        : undefined,
+    }));
+
+  // LN-MD-104: globally registered API post-processors
+  // (`Plugin.registerMarkdownPostProcessor`) compose into every Markdown
+  // surface with the same adapted context contract as per-contribution
+  // processors. The registry array is already sorted by `sortOrder` and is
+  // `$state`-tracked, so late registrations refresh derived surfaces.
+  const globalProcessors = app.mardownPostProcessor ?? [];
+  if (globalProcessors.length === 0) return contributions;
+  return [
+    ...contributions,
+    {
+      name: "api:markdown-post-processors",
+      postProcessors: globalProcessors.map((processor) =>
+        adaptPostProcessor(app, processor, options),
+      ),
+    },
+  ];
 }
