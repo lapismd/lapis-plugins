@@ -419,3 +419,8 @@ LP-SPEC-053 snapshot fixtures explicitly select a base from their own temporary
 repository in a child environment; an outer validation revision must not leak
 into that repository. Complete source, ancestry, deletion and dirty-file checks
 remain enforced. These fixture repairs change no production source exporter.
+
+Dependency-lock repair uses ordinary registry semver manifests with the local
+pnpm hook disabled. Existing Bits UI and text-layout patches share the workspace
+patch authority; tests keep both the lifecycle/hash and portable-lock guards.
+A generated lock or a temporary archive graph is not release qualification.

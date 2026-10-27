@@ -6,11 +6,6 @@
   "license": "Apache-2.0",
   "type": "module",
   "packageManager": "pnpm@10.34.5",
-  "pnpm": {
-    "patchedDependencies": {
-      "@chenglou/pretext@0.0.7": "patches/@chenglou__pretext@0.0.7.patch"
-    }
-  },
   "engines": {
     "node": ">=22"
   },

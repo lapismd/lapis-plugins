@@ -330,3 +330,13 @@ against independently read package names and runtime manifest IDs. It excludes
 cover changing active counts, private plugins, non-plugin folders and malformed
 runtime manifests. Payload source identity, parked selection and portable-lock
 checks remain enforced under LP-SPEC-049.
+
+## One dependency-patch authority
+
+Existing dependency patches are declared together in `pnpm-workspace.yaml`.
+Package-level `pnpm.patchedDependencies` must not shadow that workspace table.
+The committed registry lock retains each resolved lifecycle patch hash and no
+local pnpm-hook checksum or machine paths. Regeneration uses the pinned pnpm
+version with local hooks ignored; it changes no patch body, release coordinate,
+native algorithm or selected consumer archive. Required source, consumer and
+audit gates remain independent of lock generation.

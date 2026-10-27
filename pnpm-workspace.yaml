@@ -21,6 +21,7 @@ onlyBuiltDependencies:
   - esbuild
 
 overrides:
+  bits-ui: "2.19.5"
   # Match the Notes host's Turso 0.7.2 worker-runtime compatibility pins.
   "@napi-rs/wasm-runtime@1.0.7>@emnapi/core": "1.8.1"
   "@napi-rs/wasm-runtime@1.0.7>@emnapi/runtime": "1.8.1"
@@ -43,3 +44,4 @@ overrides:
   source-map-js@>=1.0.0 <1.2.2: ">=1.2.2 <2"
 patchedDependencies:
   bits-ui@2.19.5: patches/bits-ui@2.19.5.patch
+  "@chenglou/pretext@0.0.7": patches/@chenglou__pretext@0.0.7.patch

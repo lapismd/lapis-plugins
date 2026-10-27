@@ -2,12 +2,21 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { test } from "node:test";
 
+test("workspace patch declarations cannot be shadowed by package settings", async () => {
+  const manifest = JSON.parse(await readFile("package.json", "utf8"));
+  assert.equal(
+    manifest.pnpm?.patchedDependencies,
+    undefined,
+    "Keep dependency patches together in pnpm-workspace.yaml so one map cannot hide another"
+  );
+});
+
 test("tracks the Bits UI lifecycle patch for every resolved version", async () => {
   const workspace = await readFile("pnpm-workspace.yaml", "utf8");
   const lockfile = await readFile("pnpm-lock.yaml", "utf8");
 
   const resolvedVersions = new Set(
-    [...lockfile.matchAll(/^  bits-ui@([\d.]+):/gm)].map((match) => match[1]),
+    [...lockfile.matchAll(/^  bits-ui@([\d.]+):/gm)].map((match) => match[1])
   );
   assert.ok(resolvedVersions.size > 0, "lockfile must resolve Bits UI");
 
@@ -15,12 +24,12 @@ test("tracks the Bits UI lifecycle patch for every resolved version", async () =
     const patchPath = `patches/bits-ui@${version}.patch`;
     assert.ok(
       workspace.includes(`bits-ui@${version}: ${patchPath}`),
-      `${patchPath} must be wired in pnpm-workspace.yaml`,
+      `${patchPath} must be wired in pnpm-workspace.yaml`
     );
     assert.match(
       lockfile,
       new RegExp(`bits-ui@${version.replaceAll(".", "\\.")}:\\n\\s+hash:`),
-      `${patchPath} must have a locked patch hash`,
+      `${patchPath} must have a locked patch hash`
     );
 
     const patch = await readFile(patchPath, "utf8");

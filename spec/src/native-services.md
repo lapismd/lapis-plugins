@@ -59,3 +59,8 @@ Temporary Jujutsu snapshot fixtures retain their own exact base and source
 ancestry without importing an outer application-validation revision. Native
 Markdown/Search contracts, public archives and application lifetime remain under
 their existing independent qualification gates.
+
+Restoring registry-only npm dependency resolution and existing lifecycle-patch
+hashes does not select another native Markdown/Search implementation. Native
+crate prerequisites and application/consumer qualification remain separately
+pinned while the normal source graph is repaired and validated.
