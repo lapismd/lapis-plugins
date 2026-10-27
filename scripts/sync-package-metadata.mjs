@@ -117,8 +117,10 @@ const rendererSharedDependencies = new Map(
     csv: [
       "svelte",
       "svelte/attachments",
+      "svelte/events",
       "svelte/internal/client",
       "svelte/internal/disclose-version",
+      "svelte/reactivity",
     ],
     transcripts: [
       "svelte",
@@ -222,7 +224,7 @@ const sharedDependencies = new Map([
   ["pdf", ["@lapis-notes/api"]],
   ["canvas", ["@lapis-notes/api", "@lapis-notes/markdown/embed"]],
   ["docx", ["@lapis-notes/api"]],
-  ["csv", ["@lapis-notes/api", "@lapis-notes/api/editor/core", "@lapis-notes/api/menu"]],
+  ["csv", ["@lapis-notes/api", "@lapis-notes/api/editor/core", "@lapis-notes/api/menu", "@lapis-notes/api/workspace-host"]],
   ["transcripts", ["@lapis-notes/api"]],
   [
     "source-editor",

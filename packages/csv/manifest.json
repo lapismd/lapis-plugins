@@ -22,6 +22,7 @@
             "@lapis-notes/api",
             "@lapis-notes/api/editor/core",
             "@lapis-notes/api/menu",
+            "@lapis-notes/api/workspace-host",
             "@codemirror/language",
             "@codemirror/search",
             "@codemirror/state",
@@ -31,8 +32,10 @@
             "@lezer/lr",
             "svelte/renderer/5.56.10",
             "svelte/renderer/5.56.10/attachments",
+            "svelte/renderer/5.56.10/events",
             "svelte/renderer/5.56.10/internal/client",
-            "svelte/renderer/5.56.10/internal/disclose-version"
+            "svelte/renderer/5.56.10/internal/disclose-version",
+            "svelte/renderer/5.56.10/reactivity"
           ],
           "requiresReloadOnUpdate": false
         }
