@@ -43,7 +43,7 @@ const meta = {
       ...PANEL_DOCS_PARAMETERS,
       description: {
         component:
-          "A seeded JSON Canvas, with a text note, a file note, a link, a group, and a connector, in the shared workspace shell, in every governed panel placement. Middle (Top Tabs) also embeds that canvas in a note.",
+          "The legacy feature canvas, with a colored text note, two file notes, a link, a group, and three labeled connectors, in the shared workspace shell, in every governed panel placement. Middle (Top Tabs) also embeds that canvas in a note.",
       },
     },
   },
@@ -150,7 +150,7 @@ function expectSidebar(
 
 export const MiddleTopTabs = placementStory(
   "middle-top-tabs",
-  "The sample canvas in the middle pane, with the same board embedded in a note.",
+  "The feature canvas in the middle pane, with the same board embedded in a note.",
 );
 export const StackedTabs = placementStory(
   "stacked-tabs",

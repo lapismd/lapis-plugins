@@ -49,6 +49,9 @@
   "stories/plugins/bookmarks/panels/Bookmarks.stories.ts": {
     "kind": "application"
   },
+  "stories/plugins/canvas/Features.stories.ts": {
+    "kind": "application"
+  },
   "stories/plugins/canvas/RegistryScreenshots.stories.ts": {
     "kind": "application"
   },

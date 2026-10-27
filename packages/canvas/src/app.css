@@ -850,28 +850,42 @@
   pointer-events: auto;
 }
 
-.canvas-node-markdown-preview :global(p),
-.canvas-node-markdown-preview :global(ul),
-.canvas-node-markdown-preview :global(ol),
-.canvas-node-markdown-preview :global(blockquote),
-.canvas-node-markdown-preview :global(pre),
-.canvas-node-markdown-preview :global(h1),
-.canvas-node-markdown-preview :global(h2),
-.canvas-node-markdown-preview :global(h3),
-.canvas-node-markdown-preview :global(h4),
-.canvas-node-markdown-preview :global(h5),
-.canvas-node-markdown-preview :global(h6) {
-  margin: 0;
+.canvas-node-markdown-preview .markdown-preview-surface,
+.canvas-node-markdown-preview .markdown-embed-surface {
+  gap: 0;
+  padding: 0;
 }
 
-.canvas-node-markdown-preview :global(p + p),
-.canvas-node-markdown-preview :global(ul + p),
-.canvas-node-markdown-preview :global(p + ul),
-.canvas-node-markdown-preview :global(ol + p),
-.canvas-node-markdown-preview :global(p + ol),
-.canvas-node-markdown-preview :global(blockquote + p),
-.canvas-node-markdown-preview :global(p + blockquote) {
-  margin-top: 0.35rem;
+.canvas-node-markdown-preview .markdown-preview-surface .markdown :is(p, ul, ol, blockquote, pre, h1, h2, h3, h4, h5, h6),
+.canvas-node-markdown-preview .markdown-rendered :is(p, ul, ol, blockquote, pre, h1, h2, h3, h4, h5, h6) {
+  margin-block: 0;
+}
+
+.canvas-node-markdown-preview .mira-editable-markdown-preview,
+.canvas-node-markdown-preview .mira-editable-markdown-preview__preview,
+.canvas-node-markdown-preview .mira-editable-markdown-preview__editor-shell,
+.canvas-node-markdown-preview .mira-editable-markdown-preview__editor,
+.canvas-node-markdown-preview .mira-editable-markdown-preview__editor-host,
+.canvas-node-markdown-preview .mira-code-editor,
+.canvas-node-markdown-preview .cm-editor,
+.canvas-node-markdown-preview .cm-scroller {
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+  block-size: 100%;
+  min-block-size: 0;
+}
+
+.canvas-node-markdown-preview .cm-editor > .cm-scroller {
+  padding: 0;
+}
+
+/* Compact card rhythm: beat the reading-view block margins. */
+.canvas-node-markdown-preview .markdown-preview-surface .markdown :is(p, ul, ol, blockquote) + :is(p, ul, ol, blockquote),
+.canvas-node-markdown-preview .markdown-preview-surface .markdown :is(h1, h2, h3, h4, h5, h6) + :is(p, ul, ol),
+.canvas-node-markdown-preview .markdown-rendered :is(p, ul, ol, blockquote) + :is(p, ul, ol, blockquote),
+.canvas-node-markdown-preview .markdown-rendered :is(h1, h2, h3, h4, h5, h6) + :is(p, ul, ol) {
+  margin-block-start: 0.35rem;
 }
 
 .canvas-node-markdown-preview :global(.markdown),

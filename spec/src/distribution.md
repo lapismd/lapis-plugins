@@ -210,9 +210,10 @@ package, and this slice does not add it to a host profile.
 
 Canvas is an active catalog package so Storybook and metadata checks can see
 its preview. Registry media selection includes
-`Plugins/Canvas/Registry Screenshots`. The release workflow does not offer the
-package, and this slice does not add it to a host profile. `@xyflow/svelte` is
-bundled in the package and is not a host external.
+`Plugins/Canvas/Registry Screenshots`. `Plugins/Canvas/Features` is an
+application story family for each canvas node and connector. The release
+workflow does not offer the package, and this slice does not add it to a host
+profile. `@xyflow/svelte` is bundled in the package and is not a host external.
 
 CSV is an active catalog package so Storybook and metadata checks can see
 its table preview. Registry media selection includes

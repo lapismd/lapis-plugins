@@ -192,10 +192,11 @@ Tabs) MUST also show that PDF inside a note embed. Registry media selection
 includes `Plugins/PDF/Registry Screenshots`. Stories stay `visual-pending` and MUST
 NOT create Visual Delta baselines.
 The Canvas preview is visual-pending under `Plugins/Canvas/Panels`.
-It MUST show the seeded JSON Canvas in all six governed placements, and Middle
-(Top Tabs) MUST also show that canvas inside a note embed. Registry media
-selection includes `Plugins/Canvas/Registry Screenshots`. Stories stay
-`visual-pending` and MUST NOT create Visual Delta baselines.
+It MUST show the legacy feature board in all six governed placements, and Middle
+(Top Tabs) MUST also show that canvas inside a note embed. `Plugins/Canvas/Features`
+MUST isolate each node kind, a heading section, labeled connectors, and the note
+embed. Registry media selection includes `Plugins/Canvas/Registry Screenshots`.
+Stories stay `visual-pending` and MUST NOT create Visual Delta baselines.
 The CSV table preview is visual-pending under `Plugins/CSV/Panels/Table`.
 It MUST show the seeded CSV in all six governed placements, and Middle (Top
 Tabs) MUST also show that CSV inside a note embed. Registry media selection

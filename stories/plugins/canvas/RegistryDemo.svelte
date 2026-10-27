@@ -3,21 +3,14 @@
     CanvasPlugin,
     SAMPLE_CANVAS_PATH,
     SAMPLE_READING_NOTE_PATH,
-    SAMPLE_WELCOME_PATH,
-    sampleCanvasDocument,
-    sampleReadingMarkdown,
-    sampleWelcomeMarkdown,
+    sampleCanvasFiles,
   } from "@lapis-notes/canvas";
   import type { PanelDemoOpenDocument } from "../_shared/panels/create-panel-demo";
   import PanelDemo from "../_shared/panels/PanelDemo.svelte";
 
   let { document = "file" }: { document?: "file" | "embedded" } = $props();
 
-  const files = {
-    [SAMPLE_CANVAS_PATH]: sampleCanvasDocument(),
-    [SAMPLE_WELCOME_PATH]: sampleWelcomeMarkdown(),
-    [SAMPLE_READING_NOTE_PATH]: sampleReadingMarkdown(),
-  };
+  const files = sampleCanvasFiles();
 
   const openDocument = $derived<PanelDemoOpenDocument>(
     document === "embedded"

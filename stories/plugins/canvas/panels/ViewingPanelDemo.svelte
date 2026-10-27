@@ -8,10 +8,7 @@
     CanvasPlugin,
     SAMPLE_CANVAS_PATH,
     SAMPLE_READING_NOTE_PATH,
-    SAMPLE_WELCOME_PATH,
-    sampleCanvasDocument,
-    sampleReadingMarkdown,
-    sampleWelcomeMarkdown,
+    sampleCanvasFiles,
   } from "@lapis-notes/canvas";
   import {
     bootPanelDemo,
@@ -21,7 +18,15 @@
   import "@lapismd/mira/themes/obsidian.css";
   import "@lapismd/mira-editor/styles.css";
 
-  let { layout }: { layout: PanelDemoLayout } = $props();
+  let {
+    layout,
+    canvasPath = SAMPLE_CANVAS_PATH,
+    focus = "canvas",
+  }: {
+    layout: PanelDemoLayout;
+    canvasPath?: string;
+    focus?: "canvas" | "note";
+  } = $props();
 
   let app = $state<App | null>(null);
   let status = $state("booting");
@@ -41,11 +46,7 @@
     let cancelled = false;
     const runtimePromise = bootPanelDemo("bookmarks", layout, {
       diagnostics: "none",
-      files: {
-        [SAMPLE_CANVAS_PATH]: sampleCanvasDocument(),
-        [SAMPLE_WELCOME_PATH]: sampleWelcomeMarkdown(),
-        [SAMPLE_READING_NOTE_PATH]: sampleReadingMarkdown(),
-      },
+      files: sampleCanvasFiles(),
       plugins: [
         {
           plugin: CanvasPlugin,
@@ -64,12 +65,22 @@
       if (!canvasLeaf) {
         throw new Error("The workspace shell has no leaf for Canvas");
       }
+      if (focus === "note") {
+        const note = runtime.app.vault.getFileByPath(SAMPLE_READING_NOTE_PATH);
+        if (!note) throw new Error("Missing reading note");
+        await canvasLeaf.setViewState({
+          type: "markdown",
+          state: { file: note.path, mode: "preview" },
+        });
+        runtime.app.workspace.setActiveLeaf(canvasLeaf, { focus: false });
+        return runtime;
+      }
       await canvasLeaf.setViewState({
         type: "lapis-canvas",
-        state: { file: SAMPLE_CANVAS_PATH },
+        state: { file: canvasPath },
       });
       runtime.app.workspace.setActiveLeaf(canvasLeaf, { focus: false });
-      if (layout === "middle-top-tabs") {
+      if (layout === "middle-top-tabs" && canvasPath === SAMPLE_CANVAS_PATH) {
         const note = runtime.app.vault.getFileByPath(SAMPLE_READING_NOTE_PATH);
         if (!note) throw new Error("Missing reading note");
         const noteLeaf = runtime.app.workspace.getLeaf("tab");
