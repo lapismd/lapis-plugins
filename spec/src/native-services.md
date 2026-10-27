@@ -67,6 +67,12 @@ hashes does not select another native Markdown/Search implementation. Native
 crate prerequisites and application/consumer qualification remain separately
 pinned while the normal source graph is repaired and validated.
 
+Regenerating the tracked Bits UI lifecycle-patch hash for the Slider
+destroyed-state document-handler guards (LP-SPEC-058) keeps the same
+registry-only resolution and selects no other native Markdown/Search
+implementation; the native crate stages and their host selections stay
+separately pinned.
+
 ## Frontmatter source parity
 
 The shared retained corpus compares complete metadata through the existing JSON

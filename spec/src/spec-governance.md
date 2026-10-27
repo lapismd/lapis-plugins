@@ -230,10 +230,15 @@ interaction run falsely green.
 Until the affected Bits UI releases provide equivalent lifecycle cleanup, the
 root dependency graph applies reviewed pnpm patches to every resolved version.
 Release verification inventories the versions actually resolved in the frozen
-lockfile and checks their patch mappings, hashes and Link Preview selection-timer
-cleanup, so a dependency refresh cannot silently restore destroyed-effect reads.
+lockfile and checks their patch mappings, hashes, Link Preview selection-timer
+cleanup and the Slider destroyed-state document-handler guards, so a dependency
+refresh cannot silently restore destroyed-effect reads.
 Older versions also require Scroll Area resize-timer cancellation; 2.19.5 uses
-the upstream synchronous resize path. The user approved the scoped 2.19.5
+the upstream synchronous resize path. The renderer attaches pointer listeners
+one microtask late, so a Slider destroyed in the same tick it mounted leaks its
+document listeners past effect teardown; the tracked 2.19.5 patch keeps every
+leaked document pointer handler inert once its owning effect is destroyed
+(LP-SPEC-058). The user approved the scoped 2.19.5
 lifecycle-patch exception while an upstream fixed release remains unavailable.
 Mira 0.0.4 supplies pending-overlay registration and focus teardown through its
 published Bits UI 2.19.5 dependency. The consumer floor and frozen lockfile must
