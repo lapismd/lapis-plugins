@@ -794,6 +794,34 @@
   color: var(--text-normal);
   word-break: break-word;
   pointer-events: none;
+  --mira-background: transparent;
+  --mira-preview-background: transparent;
+  --mira-editor-background: transparent;
+  --mira-code-editor-background: transparent;
+  --background: transparent;
+  --background-primary: transparent;
+  --markdown-surface-background: transparent;
+}
+
+.canvas-node-label .canvas-node-markdown-preview :is(
+  .mira-markdown-preview,
+  .markdown-preview-surface,
+  .markdown-editor-surface,
+  .markdown-embed-surface,
+  .markdown-widget-shell,
+  .mira-code-editor,
+  .cm-editor,
+  .cm-gutters,
+  .cm-scroller
+) {
+  --mira-background: transparent;
+  --mira-preview-background: transparent;
+  --mira-editor-background: transparent;
+  --mira-code-editor-background: transparent;
+  --background: transparent;
+  --background-primary: transparent;
+  --markdown-surface-background: transparent;
+  background-color: transparent;
 }
 
 .canvas-node-markdown-preview-active {
