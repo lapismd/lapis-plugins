@@ -43,10 +43,8 @@ export const ProtectedAdmissionAndHandoff: Story = {
     await waitFor(() =>
       expect(editor).toHaveAttribute("contenteditable", "true")
     );
-    await userEvent.click(editor);
-    await userEvent.keyboard(
-      "{Control>}{End}{/Control}{Enter}A protected draft."
-    );
+    await userEvent.click(lastLine(editor));
+    await userEvent.keyboard("{Enter}A protected draft.");
     await fixture.app.fileEditingSessions.guard(fixture.file.path, async () => {
       expect(editor).toHaveAttribute("contenteditable", "false");
       expect(fixture.state()).toMatchObject({ active: false, dirty: false });
@@ -68,10 +66,8 @@ export const ProtectedAdmissionAndHandoff: Story = {
     await waitFor(() =>
       expect(editor).toHaveTextContent("Native saved change.")
     );
-    await userEvent.click(editor);
-    await userEvent.keyboard(
-      "{Control>}{End}{/Control}{Enter}Next local draft."
-    );
+    await userEvent.click(lastLine(editor));
+    await userEvent.keyboard("{Enter}Next local draft.");
     await fixture.app.fileEditingSessions.guard(
       fixture.file.path,
       async () => {}
@@ -81,3 +77,16 @@ export const ProtectedAdmissionAndHandoff: Story = {
     );
   },
 };
+
+/**
+ * CodeMirror renders one element child per line, and user-event's End-key
+ * fallback cannot set a selection inside a multi-node contenteditable (it
+ * throws "Not implemented. The result of this interaction is unreliable.").
+ * Whether the host editor absorbs Ctrl+End before that fallback is
+ * platform-dependent, so the caret is placed by clicking the last rendered
+ * line instead. Every assertion in this story is unchanged.
+ */
+function lastLine(editor: HTMLElement): HTMLElement {
+  const lines = editor.querySelectorAll<HTMLElement>(".cm-line");
+  return lines[lines.length - 1] ?? editor;
+}

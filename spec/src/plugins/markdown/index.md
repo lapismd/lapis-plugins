@@ -68,6 +68,10 @@ plugins.
 The Markdown plugin owns Markdown document behavior and its integration with the
 Lapis plugin, editor, metadata, and workspace APIs. Movable panel behavior is
 specified separately under [Panels](./panels/index.md).
+
+| ID | Requirement |
+| --- | --- |
+| LN-MD-127 | Markdown editing MUST retain the API inline title's measured text-column alignment in Source and Live Preview. Opening Settings over Find/Replace MUST cover editor panels and gutters, retain modal focus, and preserve the search query and replacement after dismissal. The Reading surface editing stories MUST exercise these shared package contracts without plugin-local styling overrides. |
 Reading's inner Mira and preview layers stretch through the available pane for
 short notes and grow with long documents. The shared outer Scroll Area remains
 the only document scroller; a minimum-height outer shell alone is insufficient.

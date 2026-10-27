@@ -2,6 +2,10 @@ import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, waitFor } from "storybook/test";
 import PanelDemo from "../_shared/panels/PanelDemo.svelte";
 import {
+  verifyEditingAlignment,
+  verifySearchUnderSettings,
+} from "./reading-surface-editing";
+import {
   openRegistryFile,
   registryPanelApp,
 } from "../_shared/registry/registry-story-helpers";
@@ -92,5 +96,20 @@ export const ShortNoteDark: Story = {
 };
 export const LongNoteDark: Story = {
   ...LongNote,
+  globals: { colorMode: "dark" },
+};
+
+export const EditingTitleAlignment: Story = {
+  play: ({ canvasElement }) =>
+    verifyEditingAlignment(canvasElement, "live-preview"),
+};
+export const SourceTitleAlignment: Story = {
+  play: ({ canvasElement }) => verifyEditingAlignment(canvasElement, "source"),
+};
+export const EditingSearchSettings: Story = {
+  play: ({ canvasElement }) => verifySearchUnderSettings(canvasElement),
+};
+export const EditingSearchSettingsDark: Story = {
+  ...EditingSearchSettings,
   globals: { colorMode: "dark" },
 };

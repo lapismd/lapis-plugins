@@ -1,5 +1,9 @@
 # Verification
 
+| ID | Chapter | Status | Evidence |
+| --- | --- | --- | --- |
+| LN-MD-127 | plugins/markdown/index | Implemented | Focused Reading surface editing/source title-alignment and Settings-over-search stories; source package archives and running Storybook acceptance. Full suites deferred by request. |
+
 This matrix preserves the implementation evidence migrated with each plugin
 and records repository-level extraction and release gates.
 
