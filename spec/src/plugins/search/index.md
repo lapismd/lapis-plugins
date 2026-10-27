@@ -209,6 +209,7 @@ files without a Search provider do not invalidate the checkpoint.
 | LN-SRCH-051 | Search MUST consume App-owned, lifecycle-managed result providers with cancellable pages, stable identities, declared capabilities and provider-owned navigation/context. Current-file queries and document providers MUST remain independent.                                                                                                        |
 | LN-SRCH-052 | Search MUST default to Current files and offer History and Everything scopes. Historical matches MUST group distinct versions beneath file rows, retain exact revision labels and distinguish saved versions, checkpoint metadata, deletions and unavailable text. Unsupported filters or retrieval modes MUST NOT silently broaden a provider query. |
 | LN-SRCH-053 | Search MUST publish provider pages incrementally, preserve successful peers after source failure, fence obsolete replies and generations, retain row expansion and loaded context, and keep incomplete indexing/paging distinguishable from a final empty result. Version activation and context expansion MUST remain provider-owned.                |
+| LN-SRCH-054 | Search MUST send command and background-indexing notices through its explicitly owned App. A concurrent compatibility host, delayed failure or vault switch MUST NOT redirect feedback to another App. |
 
 Saved-version rows use compact disclosures and matching snippet insets, without
 inheriting a second Sidebar sub-list indent. The sort control keeps its

@@ -45,6 +45,10 @@ export class SearchPlugin extends Plugin {
     this.currentSearchManager = new SearchManager(app, () => this.settings);
   }
 
+  private showNotice(message: string): void {
+    new Notice(message, undefined, this.app);
+  }
+
   get searchManager(): SearchManager {
     return this.currentSearchManager;
   }
@@ -117,7 +121,7 @@ export class SearchPlugin extends Plugin {
         this.settings = settings;
         void this.reconfigureSettings(previous).catch((error) => {
           if (this.nativeObserverDetached()) return;
-          new Notice(
+          this.showNotice(
             `Search settings recovery failed: ${error instanceof Error ? error.message : String(error)}`,
           );
         });
@@ -187,7 +191,7 @@ export class SearchPlugin extends Plugin {
       name: "Rebuild semantic search embeddings",
       callback: async () => {
         const status = await this.rebuildSemanticSearch();
-        new Notice(
+        this.showNotice(
           `Semantic search refreshed (${status.readyChunkCount}/${status.chunkCount} ready)`,
         );
       },
@@ -209,7 +213,7 @@ export class SearchPlugin extends Plugin {
         if (!this.app.session?.backgroundIndexing)
           await this.app.appDatabase.rebuildSearchIndex();
         await this.refreshIndex("rebuild");
-        new Notice("Search index rebuilt");
+        this.showNotice("Search index rebuilt");
       },
     });
     this.addCommand({
@@ -247,7 +251,7 @@ export class SearchPlugin extends Plugin {
         if (this.searchManager !== manager) return;
         this.startupRefreshStarted = false;
         if (this.nativeObserverDetached()) return;
-        new Notice(
+        this.showNotice(
           `Search index refresh failed: ${
             error instanceof Error ? error.message : String(error)
           }`,
@@ -280,7 +284,7 @@ export class SearchPlugin extends Plugin {
       .catch((error) => {
         if (this.searchManager !== manager) return;
         if (this.nativeObserverDetached()) return;
-        new Notice(
+        this.showNotice(
           `Search provider refresh failed: ${
             error instanceof Error ? error.message : String(error)
           }`,

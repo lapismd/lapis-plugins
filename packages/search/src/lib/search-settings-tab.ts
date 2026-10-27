@@ -216,10 +216,14 @@ export class SearchSettingsTab extends PluginSettingTab {
       const status = await this.searchPlugin.rebuildSemanticSearch();
       new Notice(
         `Semantic search refreshed (${status.readyChunkCount}/${status.chunkCount} ready)`,
+        undefined,
+        this.app,
       );
     } catch (error) {
       new Notice(
         `Semantic search refresh failed: ${error instanceof Error ? error.message : String(error)}`,
+        undefined,
+        this.app,
       );
     } finally {
       this.rebuilding = false;

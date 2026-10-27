@@ -457,3 +457,10 @@ Graph settings acceptance distinguishes coalescing from lifecycle admission.
 A source close-drain regression must prove the pending debounce remains owned;
 recovery must refresh mounted views without another write. Full session gates
 remain due after M7 implementation.
+
+Search notice-ownership qualification exercises the real Notice boundary with
+another compatibility host active. The original store-only view-state
+query-persistence qualification is superseded by the landed live query/scope
+snapshot design (LN-SRCH-006), and the renumbered LN-SRCH-054 requirement
+avoids the independently assigned LN-SRCH-051/052 identifiers; the rework
+record documents both decisions.

@@ -525,7 +525,7 @@
     const text = lines.join("\n");
     try {
       await navigator.clipboard.writeText(text);
-      new Notice("Search results copied");
+      new Notice("Search results copied", undefined, app);
     } catch {
       const textarea = document.createElement("textarea");
       textarea.value = text;
@@ -537,6 +537,8 @@
       textarea.remove();
       new Notice(
         copied ? "Search results copied" : "Unable to copy search results",
+        undefined,
+        app,
       );
     }
   }

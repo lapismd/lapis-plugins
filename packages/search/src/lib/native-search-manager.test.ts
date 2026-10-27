@@ -83,6 +83,7 @@ async function fixture(registerProvider = true) {
       cachedRead: vi.fn(async () => "# Original\n"),
     }),
     notifications: {
+      notify: vi.fn(() => ({ id: "fixture-notice" })),
       withProgress: async (
         _options: unknown,
         run: (progress: unknown) => unknown,
