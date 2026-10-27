@@ -72,7 +72,7 @@ export default defineConfig({
             api: { host: "127.0.0.1", port: 63422, strictPort: true },
             enabled: true,
             headless: true,
-            provider: playwright({}),
+            provider: playwright({ launchOptions: { channel: "chromium" } }),
             instances: [{ browser: "chromium" }],
           },
         },
