@@ -174,10 +174,10 @@ export const QueryControls: Story = {
     await userEvent.click(canvas.getByRole("button", { name: "Sort" }));
     await userEvent.click(canvas.getByRole("button", { name: /Filter/ }));
     expect(
-      body.getByRole("combobox", { name: "Filter group match" }),
+      body.getByRole("button", { name: "Filter group match" }),
     ).toHaveTextContent("All of the following are true");
     expect(
-      body.getByRole("combobox", { name: "file filter operator" }),
+      body.getByRole("button", { name: "file filter operator" }),
     ).toHaveTextContent("links to");
     const addFilter = body.getByRole("button", {
       name: "Add Filter",
@@ -209,7 +209,7 @@ export const QueryControls: Story = {
     );
     await waitFor(() =>
       expect(
-        body.getByRole("combobox", { name: "Status filter operator" }),
+        body.getByRole("button", { name: "Status filter operator" }),
       ).toBeVisible(),
     );
     const visibleFilterRowCount = () =>
@@ -249,8 +249,8 @@ export const SchemaAndViewSettings: Story = {
     await userEvent.click(body.getByRole("button", { name: "Edit current view" }));
     await waitFor(() => {
       expect(body.getByText("Presentation")).toBeVisible();
-      expect(body.getByRole("combobox", { name: "Layout" })).toBeVisible();
-      expect(body.getByRole("combobox", { name: "Tone" })).toBeVisible();
+      expect(body.getByRole("button", { name: "Layout" })).toBeVisible();
+      expect(body.getByRole("button", { name: "Tone" })).toBeVisible();
       for (const type of [
         "text",
         "multitext",
@@ -310,7 +310,7 @@ export const SchemaAndViewSettings: Story = {
     );
     await userEvent.click(canvas.getByRole("button", { name: "Table" }));
     await userEvent.click(body.getByRole("button", { name: "Edit current view" }));
-    await userEvent.click(body.getByRole("combobox", { name: "Layout" }));
+    await userEvent.click(body.getByRole("button", { name: "Layout" }));
     await userEvent.click((await body.findAllByText("Cards")).at(-1)!);
     await waitFor(() => expect(addedView.type).toBe("cards"));
 
@@ -330,8 +330,8 @@ export const SchemaAndViewSettings: Story = {
     await userEvent.click(body.getByRole("button", { name: "Add formula" }));
     await waitFor(() => expect(document.formulas).toHaveProperty("Untitled"));
 
-    expect(body.getByRole("combobox", { name: "Summary in this view" })).toBeVisible();
-    await userEvent.click(body.getByRole("combobox", { name: "Summary in all views" }));
+    expect(body.getByRole("button", { name: "Summary in this view" })).toBeVisible();
+    await userEvent.click(body.getByRole("button", { name: "Summary in all views" }));
     await userEvent.click((await body.findAllByText("Count")).at(-1)!);
     await waitFor(() =>
       expect(document.summaries).toMatchObject({ "formula.Untitled": "count" }),

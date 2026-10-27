@@ -619,7 +619,7 @@ export const EditableCells: Story = {
       ),
     ).toBeLessThan(1);
 
-    const groupTypeTrigger = body.getByRole("combobox", {
+    const groupTypeTrigger = body.getByRole("button", {
       name: "Filter group match",
     });
     expect(groupTypeTrigger).toHaveTextContent("All of the following are true");
@@ -661,7 +661,7 @@ export const EditableCells: Story = {
       ),
     );
 
-    const operatorTrigger = body.getByRole("combobox", {
+    const operatorTrigger = body.getByRole("button", {
       name: "file filter operator",
     });
     expect(operatorTrigger).toHaveTextContent("links to");
