@@ -409,3 +409,13 @@ resource bounds and Docker-only qualification remain unchanged.
 An absolute private `sshControlPath` may reuse an already authenticated owned
 connection. This changes connection reuse only, retaining the same endpoint,
 agent credentials, source qualification and Docker-only runtime boundaries.
+
+## Source-bound tooling fixtures
+
+LP-SPEC-049 release regressions compare complete active package/runtime
+coordinates against independently read manifests instead of a fixed count.
+Private and non-plugin fixtures remain excluded, and malformed manifests fail.
+LP-SPEC-053 snapshot fixtures explicitly select a base from their own temporary
+repository in a child environment; an outer validation revision must not leak
+into that repository. Complete source, ancestry, deletion and dirty-file checks
+remain enforced. These fixture repairs change no production source exporter.

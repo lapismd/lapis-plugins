@@ -50,3 +50,12 @@ export worker changes no native Markdown parser behavior.
 Archive-backed source qualification audits the actual installed dependency
 graph under LP-SPEC-057. Source manifests/lockfiles remain portable, and native
 service ownership and publication gates retain their existing contracts.
+
+## Release-test isolation
+
+The active/private manifest inventory used by release-tooling tests does not
+select a native plugin algorithm or change its recorded prerequisite revision.
+Temporary Jujutsu snapshot fixtures retain their own exact base and source
+ancestry without importing an outer application-validation revision. Native
+Markdown/Search contracts, public archives and application lifetime remain under
+their existing independent qualification gates.

@@ -321,3 +321,12 @@ root explicitly when it differs from `src/lib`.
 Archive-backed source qualification audits the actual installed dependency
 graph under LP-SPEC-057. Source manifests/lockfiles remain portable, and native
 service ownership and publication gates retain their existing contracts.
+
+## Active manifest regression coverage
+
+Release-tooling coverage compares metadata dispatch and active package selection
+against independently read package names and runtime manifest IDs. It excludes
+`private: true` plugins without assuming a fixed active-package count. Fixtures
+cover changing active counts, private plugins, non-plugin folders and malformed
+runtime manifests. Payload source identity, parked selection and portable-lock
+checks remain enforced under LP-SPEC-049.

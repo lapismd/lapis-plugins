@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { activePluginManifests } from "./test-support/plugin-manifest-inventory.mjs";
 
 import {
   dispatchPluginMetadata,
@@ -22,11 +23,11 @@ test("metadata dispatch payload is minimal and exact-commit scoped", () => {
   });
   assert.throws(
     () => metadataDispatchPayload(plugin, "short"),
-    /full Git source commit/,
+    /full Git source commit/
   );
 });
 
-test("metadata dispatch dry run covers all fifteen active packages without network access", async () => {
+test("metadata dispatch dry run covers every active manifest without network access", async () => {
   const payloads = await dispatchPluginMetadata({
     sourceCommit,
     dryRun: true,
@@ -34,10 +35,29 @@ test("metadata dispatch dry run covers all fifteen active packages without netwo
       throw new Error("network should not be used");
     },
   });
-  assert.equal(payloads.length, 15);
+  const expected = await activePluginManifests(
+    new URL("../packages/", import.meta.url)
+  );
+  assert.ok(expected.some((plugin) => plugin.directory === "csv"));
+  assert.deepEqual(
+    [...payloads].sort((left, right) =>
+      left.client_payload.package_name.localeCompare(
+        right.client_payload.package_name
+      )
+    ),
+    expected.map((plugin) => ({
+      event_type: "plugin_metadata",
+      client_payload: {
+        repository: "lapismd/lapis-plugins",
+        package_name: plugin.packageName,
+        plugin_id: plugin.pluginId,
+        source_commit: sourceCommit,
+      },
+    }))
+  );
   assert.equal(
     new Set(payloads.map((item) => item.client_payload.plugin_id)).size,
-    15,
+    expected.length
   );
   assert.deepEqual(
     payloads.find((item) => item.client_payload.plugin_id === "lapis-slides"),
@@ -49,7 +69,7 @@ test("metadata dispatch dry run covers all fifteen active packages without netwo
         plugin_id: "lapis-slides",
         source_commit: sourceCommit,
       },
-    },
+    }
   );
 });
 
@@ -60,6 +80,6 @@ test("metadata dispatch requires the scoped registry token before network access
       sourceCommit,
       token: "",
     }),
-    /REGISTRY_GITHUB_TOKEN is required/,
+    /REGISTRY_GITHUB_TOKEN is required/
   );
 });

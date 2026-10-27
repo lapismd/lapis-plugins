@@ -7,7 +7,7 @@ test("hosted CI installs Jujutsu only into runner-owned temporary paths", () => 
   assert.throws(() => ciToolDirectory({}), /runner-owned/);
   assert.equal(
     ciToolDirectory({ RUNNER_TEMP: "/tmp/runner", GITHUB_PATH: "/tmp/paths" }),
-    "/tmp/runner/lapis-plugins-validation-tools",
+    "/tmp/runner/lapis-plugins-validation-tools"
   );
 });
 
@@ -15,7 +15,7 @@ test("unknown lanes fail before contacting Docker", async () => {
   const { main } = await import("./validation.mjs");
   await assert.rejects(
     main(["run", "not-a-validation-lane"]),
-    /Unknown validation lane/,
+    /Unknown validation lane/
   );
 });
 
@@ -35,28 +35,28 @@ test("Docker is default and native must be explicit", () => {
   assert.equal(
     validationConfig({}, { LAPIS_PLUGINS_VALIDATION_RUNTIME: "native" })
       .runtime,
-    "native",
+    "native"
   );
   assert.throws(() => validationConfig({ runtime: "magic" }, {}), /runtime/);
 });
 
 test("Turbo preserves explicit runtime selection and separates worker cache identity", async () => {
   const turbo = JSON.parse(
-    await readFile(new URL("../turbo.json", import.meta.url)),
+    await readFile(new URL("../turbo.json", import.meta.url))
   );
   assert.ok(turbo.globalEnv.includes("LAPIS_PLUGINS_VALIDATION_WORKER"));
   assert.ok(turbo.globalPassThroughEnv.includes("PLAYWRIGHT_BROWSERS_PATH"));
   assert.ok(
-    turbo.globalPassThroughEnv.includes("LAPIS_PLUGINS_VALIDATION_RUNTIME"),
+    turbo.globalPassThroughEnv.includes("LAPIS_PLUGINS_VALIDATION_RUNTIME")
   );
 });
 
 test("public validation lanes route through Docker while preserving native commands", async () => {
   const pkg = JSON.parse(
-    await readFile(new URL("../package.json", import.meta.url)),
+    await readFile(new URL("../package.json", import.meta.url))
   );
   const lanes = JSON.parse(
-    await readFile(new URL("./validation/lanes.json", import.meta.url)),
+    await readFile(new URL("./validation/lanes.json", import.meta.url))
   );
   for (const name of Object.keys(pkg.scripts)) {
     if (
@@ -81,7 +81,7 @@ test("all hosted workflows explicitly select their provisioned native runtime", 
     if (!/\.ya?ml$/.test(name)) continue;
     assert.match(
       await readFile(new URL(name, dir), "utf8"),
-      /LAPIS_PLUGINS_VALIDATION_RUNTIME: native/,
+      /LAPIS_PLUGINS_VALIDATION_RUNTIME: native/
     );
   }
 });
@@ -98,7 +98,7 @@ test("image identity changes with recipe, dependency and architecture inputs", (
 test("archive inputs require identity, version and exact checksum", () => {
   assert.throws(
     () => validateArchives([{ name: "a", path: "a.tgz" }]),
-    /archive/,
+    /archive/
   );
   assert.throws(
     () =>
@@ -106,7 +106,7 @@ test("archive inputs require identity, version and exact checksum", () => {
         { name: "a", version: "1.0.0", path: "a.tgz", sha256: "a".repeat(64) },
         { name: "a", version: "1.0.0", path: "b.tgz", sha256: "a".repeat(64) },
       ]),
-    /Duplicate/,
+    /Duplicate/
   );
   assert.equal(
     validateArchives([
@@ -117,7 +117,7 @@ test("archive inputs require identity, version and exact checksum", () => {
         sha256: "a".repeat(64),
       },
     ]).length,
-    1,
+    1
   );
 });
 for (const workspace of [false, true])
@@ -130,7 +130,7 @@ for (const workspace of [false, true])
     const { tmpdir } = await import("node:os");
     const { join } = await import("node:path");
     const { execFileSync } = await import("node:child_process");
-    const { snapshot, snapshotFile } = await import("./validation/source.mjs");
+    const { snapshotFile } = await import("./validation/source.mjs");
     const directory = await mkdtemp(join(tmpdir(), "jj-validation-"));
     const primary = join(directory, "source"),
       repo = workspace ? join(directory, "workspace") : primary,
@@ -147,7 +147,7 @@ for (const workspace of [false, true])
           'user.email="validation@localhost"',
           ...args,
         ],
-        { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] },
+        { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }
       ).trim();
     try {
       jj(["git", "init", primary], directory);
@@ -157,16 +157,35 @@ for (const workspace of [false, true])
       if (workspace)
         jj(
           ["workspace", "add", repo, "--name", "validation", "-r", "@-"],
-          primary,
+          primary
         );
       await writeFile(join(repo, "kept.txt"), "dirty");
       await rm(join(repo, "removed.txt"));
       await writeFile(join(repo, "new.txt"), "new\n");
-      const manifest = await snapshot(repo, destination);
+      const base = jj(["log", "-r", "@-", "--no-graph", "-T", "commit_id"]);
+      const manifest = JSON.parse(
+        execFileSync(
+          process.execPath,
+          [
+            "--input-type=module",
+            "-e",
+            "const { snapshot } = await import(process.argv[1]); process.stdout.write(JSON.stringify(await snapshot(process.argv[2], process.argv[3])));",
+            new URL("./validation/source.mjs", import.meta.url).href,
+            repo,
+            destination,
+          ],
+          {
+            cwd: repo,
+            env: { ...process.env, LAPIS_PLUGINS_CHECK_BASE: base },
+            encoding: "utf8",
+          }
+        )
+      );
+      assert.equal(manifest.base, base);
       assert.equal(manifest.parents.length, 1);
       assert.equal(
         snapshotFile(repo, manifest.revision, "new.txt").toString(),
-        "new\n",
+        "new\n"
       );
       jj(["git", "init", restored], directory);
       execFileSync("git", ["index-pack", "--stdin"], {
@@ -177,17 +196,17 @@ for (const workspace of [false, true])
       execFileSync(
         "git",
         ["update-ref", "refs/heads/validation-snapshot", manifest.revision],
-        { cwd: restored },
+        { cwd: restored }
       );
       jj(["git", "import"], restored);
       jj(["edit", manifest.revision], restored);
       assert.equal(
         jj(["log", "-r", "@", "--no-graph", "-T", "commit_id"], restored),
-        manifest.revision,
+        manifest.revision
       );
       assert.equal(
         jj(["log", "-r", "@-", "--no-graph", "-T", "commit_id"], restored),
-        manifest.parents[0],
+        manifest.parents[0]
       );
       assert.equal(await readFile(join(restored, "kept.txt"), "utf8"), "dirty");
       assert.equal(await readFile(join(restored, "new.txt"), "utf8"), "new\n");
@@ -208,7 +227,7 @@ test("SSH context transport quotes arguments and rejects other endpoint types", 
   assert.match(args.at(-1), /'a; echo unexpected'/);
   assert.throws(
     () => sshDockerCommand("unix:///var/run/docker.sock", []),
-    /SSH Docker context/,
+    /SSH Docker context/
   );
 });
 
@@ -231,34 +250,34 @@ test("report collection drains trailing archive bytes and rejects corrupt archiv
     await writeFile(
       docker,
       `#!/usr/bin/env node\nprocess.stdout.on('error', () => process.exit(1));\nprocess.stdout.write(Buffer.from(${JSON.stringify(
-        archive.toString("base64"),
+        archive.toString("base64")
       )}, 'base64'));\nsetTimeout(() => process.stdout.end(Buffer.alloc(1024 * 1024)), 100);\n`,
-      { mode: 0o755 },
+      { mode: 0o755 }
     );
     process.env.PATH = `${bin}:${originalPath}`;
     await receiveDirectory({}, ["cp", "owned:/results/.", "-"], destination);
     assert.equal(
       await readFile(join(destination, "result.json"), "utf8"),
-      '{"status":"passed"}\n',
+      '{"status":"passed"}\n'
     );
     await writeFile(
       docker,
       "#!/usr/bin/env node\nprocess.stdout.end('invalid archive');\n",
-      { mode: 0o755 },
+      { mode: 0o755 }
     );
     await assert.rejects(
-      receiveDirectory({}, ["cp", "owned:/results/.", "-"], destination),
+      receiveDirectory({}, ["cp", "owned:/results/.", "-"], destination)
     );
     await writeFile(
       docker,
       `#!/usr/bin/env node\nprocess.stdout.end(Buffer.from(${JSON.stringify(
-        archive.toString("base64"),
+        archive.toString("base64")
       )}, 'base64'));\nprocess.exitCode = 1;\n`,
-      { mode: 0o755 },
+      { mode: 0o755 }
     );
     await assert.rejects(
       receiveDirectory({}, ["cp", "owned:/results/.", "-"], destination),
-      /Docker transfer exited 1/,
+      /Docker transfer exited 1/
     );
   } finally {
     if (originalPath === undefined) delete process.env.PATH;
@@ -280,21 +299,21 @@ test("native lane dispatch resolves project binaries and preserves literal argum
     await mkdir(join(directory, "node_modules/.bin"), { recursive: true });
     await writeFile(
       join(directory, "scripts/validation/lanes.json"),
-      JSON.stringify({ probe: "validation-probe" }),
+      JSON.stringify({ probe: "validation-probe" })
     );
     await writeFile(
       join(directory, "node_modules/.bin/validation-probe"),
       `#!/usr/bin/env node\nrequire('node:fs').writeFileSync('actual.json',JSON.stringify({args:process.argv.slice(2),runtime:process.env.LAPIS_PLUGINS_VALIDATION_RUNTIME}));\n`,
-      { mode: 0o755 },
+      { mode: 0o755 }
     );
     await runNative(
       "probe",
       ["space word", "; echo should-stay-literal"],
-      directory,
+      directory
     );
     assert.deepEqual(
       JSON.parse(await readFile(join(directory, "actual.json"), "utf8")),
-      { args: ["space word", "; echo should-stay-literal"], runtime: "native" },
+      { args: ["space word", "; echo should-stay-literal"], runtime: "native" }
     );
   } finally {
     await rm(directory, { recursive: true, force: true });
@@ -305,14 +324,14 @@ test("default browser suites run complete bounded shards without changing explic
   const { laneInvocations } = await import("./validation/model.mjs");
   assert.deepEqual(
     laneInvocations("test:storybook", []),
-    Array.from({ length: 4 }, (_, i) => [`--shard=${i + 1}/4`]),
+    Array.from({ length: 4 }, (_, i) => [`--shard=${i + 1}/4`])
   );
   assert.deepEqual(
     laneInvocations("test:storybook", [
       "Example.stories.svelte",
       "--shard=1/2",
     ]),
-    [["Example.stories.svelte", "--shard=1/2"]],
+    [["Example.stories.svelte", "--shard=1/2"]]
   );
   assert.deepEqual(laneInvocations("web:test", []), [[]]);
 });
@@ -321,28 +340,28 @@ test("explicit archive configuration reaches the isolated install", () => {
   assert.equal(
     validationConfig(
       {},
-      { LAPIS_PLUGINS_VALIDATION_ARCHIVES: "/tmp/packages.json" },
+      { LAPIS_PLUGINS_VALIDATION_ARCHIVES: "/tmp/packages.json" }
     ).archives,
-    "/tmp/packages.json",
+    "/tmp/packages.json"
   );
 });
 
 test("clean plugin browser installs retain private Sync dependencies and the repository export", async () => {
   const worker = await readFile(
     new URL("./validation/worker.mjs", import.meta.url),
-    "utf8",
+    "utf8"
   );
   assert.match(
     worker,
-    /"packages\/sync"[\s\S]*?"--ignore-workspace"[\s\S]*?"--frozen-lockfile"/,
+    /"packages\/sync"[\s\S]*?"--ignore-workspace"[\s\S]*?"--frozen-lockfile"/
   );
   const config = await readFile(
     new URL("../.storybook/main.ts", import.meta.url),
-    "utf8",
+    "utf8"
   );
   assert.ok(
     config.indexOf('"@lapis-notes/history/repository"') <
-      config.indexOf('"@lapis-notes/history",'),
+      config.indexOf('"@lapis-notes/history",')
   );
 });
 
@@ -351,7 +370,7 @@ test("SSH direct mode preserves authentication, port and argument boundaries", a
   const [, args] = sshDockerCommand(
     "ssh://steve@example.test:2222",
     ["logs", "a; echo unexpected"],
-    { multiplexing: false },
+    { multiplexing: false }
   );
   for (const option of [
     "BatchMode=yes",
@@ -371,15 +390,15 @@ test("SSH direct mode configuration rejects non-boolean values", async () => {
   const { validationConfig } = await import("./validation/model.mjs");
   assert.equal(
     validationConfig({ sshMultiplexing: false }, {}).sshMultiplexing,
-    false,
+    false
   );
   assert.equal(
     validationConfig({ sshMultiplexing: true }, {}).sshMultiplexing,
-    true,
+    true
   );
   assert.throws(
     () => validationConfig({ sshMultiplexing: "off" }, {}),
-    /SSH multiplexing/,
+    /SSH multiplexing/
   );
 });
 
@@ -399,11 +418,11 @@ test("SSH direct mode rejects invalid control connection paths", async () => {
   assert.equal(
     validationConfig({ sshControlPath: "/tmp/owned-ssh-%C" }, {})
       .sshControlPath,
-    "/tmp/owned-ssh-%C",
+    "/tmp/owned-ssh-%C"
   );
   for (const value of ["relative", "", 42, "/tmp/path\ncommand"])
     assert.throws(
       () => validationConfig({ sshControlPath: value }, {}),
-      /SSH control path/,
+      /SSH control path/
     );
 });
