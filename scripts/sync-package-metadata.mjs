@@ -105,8 +105,11 @@ const rendererSharedDependencies = new Map(
     canvas: [
       "svelte",
       "svelte/attachments",
+      "svelte/events",
       "svelte/internal/client",
       "svelte/internal/disclose-version",
+      "svelte/internal/flags/legacy",
+      "svelte/reactivity",
     ],
     docx: [
       "svelte",
@@ -306,7 +309,18 @@ const editorSharedDependencies = new Map(
     ],
     slides: [],
     pdf: [],
-    canvas: [],
+    canvas: [
+      "@codemirror/autocomplete",
+      "@codemirror/commands",
+      "@codemirror/language",
+      "@codemirror/lint",
+      "@codemirror/search",
+      "@codemirror/state",
+      "@codemirror/view",
+      "@lezer/common",
+      "@lezer/highlight",
+      "@lezer/lr",
+    ],
     docx: [],
     csv: [
       "@codemirror/language",
