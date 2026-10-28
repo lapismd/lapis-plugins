@@ -20,8 +20,12 @@
           "format": "esm",
           "sharedDependencies": [
             "@lapis-notes/api",
+            "@lapis-notes/markdown",
             "@codemirror/autocomplete",
+            "@codemirror/commands",
             "@codemirror/language",
+            "@codemirror/lint",
+            "@codemirror/search",
             "@codemirror/state",
             "@codemirror/view",
             "@lezer/common",

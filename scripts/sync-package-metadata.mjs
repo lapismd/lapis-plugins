@@ -233,7 +233,7 @@ const sharedDependencies = new Map([
   ["canvas", ["@lapis-notes/api", "@lapis-notes/markdown/embed"]],
   ["docx", ["@lapis-notes/api"]],
   ["csv", ["@lapis-notes/api", "@lapis-notes/api/editor/core", "@lapis-notes/api/menu", "@lapis-notes/api/workspace-host"]],
-  ["transcripts", ["@lapis-notes/api"]],
+  ["transcripts", ["@lapis-notes/api", "@lapis-notes/markdown"]],
   [
     "source-editor",
     [
@@ -338,7 +338,10 @@ const editorSharedDependencies = new Map(
     ],
     transcripts: [
       "@codemirror/autocomplete",
+      "@codemirror/commands",
       "@codemirror/language",
+      "@codemirror/lint",
+      "@codemirror/search",
       "@codemirror/state",
       "@codemirror/view",
       "@lezer/common",
