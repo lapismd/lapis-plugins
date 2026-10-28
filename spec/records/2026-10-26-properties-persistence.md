@@ -123,3 +123,16 @@ bytes. LN-MD-125 and LN-MD-126 are source-Implemented; final host intake,
 released-range qualification, publication and visual-baseline approval remain
 separate. No Desktop files, shared migration ledger or unrelated default
 workspace edits are included.
+
+Follow-up (2026-10-28): the Mira owner merged `cb8f2b2b` (on attachment
+`d24f79bf`) into the main lineage, and the unified candidate archive
+(SHA-256
+`012dcd4d6d21f043ed2e13d9a391e441cd6da0b376ec850216d7a3c852c8491a`, packed
+at mira-mde `13a93535`) now carries the captured-record contract together
+with the editor-stacking containment and `hold`; the ignored checkout hook
+pins it and the `03e15e02` archive bytes above stay preserved alongside.
+This record's qualification evidence is unchanged. Publication still
+requires released dependency ranges covering both guarded persistence and
+captured-record contracts, now also including a released API carrying
+lapis-notes `99c6012c`. See
+[Unified Mira candidate](2026-10-28-unified-candidate-integration.md).

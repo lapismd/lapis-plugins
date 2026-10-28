@@ -69,3 +69,17 @@ main, requalifying a new candidate archive through the Mira owner lanes, and
 updating the `.pnpmfile.cjs` annotation and both records above. Until then
 the documented `03e15e02` candidate remains authoritative and the
 editor-surface build stays preserved under `.local/editor-surface/packages/`.
+
+## Closure (2026-10-28)
+
+The cross-slice conflict is closed by the unified Mira candidate: mira-mde
+integrated the properties-edit-boundary line into the main lineage and the
+resulting archive (SHA-256
+`012dcd4d6d21f043ed2e13d9a391e441cd6da0b376ec850216d7a3c852c8491a`) carries
+both contracts and is now pinned by the ignored checkout hook, superseding
+the `03e15e02` candidate, whose bytes stay preserved alongside. Cold shard 1
+passes **76/76** including both Reading Surface isolation scenarios, the
+three File Properties stories above remain **3/3** (family 8/8), and the
+complete cold four-shard catalog passes **322/322**. Evidence, the temporary
+API-archive repair this closure also required, and ownership notes:
+[Unified Mira candidate](2026-10-28-unified-candidate-integration.md).
