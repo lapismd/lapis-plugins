@@ -224,7 +224,7 @@ const sharedDependencies = new Map([
     ],
   ],
   ["slides", ["@lapis-notes/api", "@lapis-notes/markdown/embed"]],
-  ["pdf", ["@lapis-notes/api"]],
+  ["pdf", ["@lapis-notes/api", "@lapis-notes/api/workspace-host"]],
   ["canvas", ["@lapis-notes/api", "@lapis-notes/markdown/embed"]],
   ["docx", ["@lapis-notes/api"]],
   ["csv", ["@lapis-notes/api", "@lapis-notes/api/editor/core", "@lapis-notes/api/menu", "@lapis-notes/api/workspace-host"]],
