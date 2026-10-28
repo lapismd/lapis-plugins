@@ -22,7 +22,11 @@ export const ProtectedAdmissionAndHandoff: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const root = await canvas.findByTestId("native-preview");
-    await waitFor(() => expect(root).toHaveAttribute("data-ready", "true"));
+    // The fixture boots a complete App; cold shard-context browsers exceed the
+    // default one-second waitFor budget, matching the shared panel-host waits.
+    await waitFor(() => expect(root).toHaveAttribute("data-ready", "true"), {
+      timeout: 20_000,
+    });
     const fixture = (root as HTMLElement & { fixture: NativePreviewFixture })
       .fixture;
     let editor!: HTMLElement;
