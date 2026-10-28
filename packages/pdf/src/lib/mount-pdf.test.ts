@@ -11,12 +11,9 @@ vi.mock("@embedpdf/snippet", () => ({
   default: { init: harness.init },
 }));
 
-vi.mock(
-  "../../../../node_modules/.pnpm/@embedpdf+pdfium@2.15.1/node_modules/@embedpdf/pdfium/dist/pdfium.wasm?url",
-  () => ({
-    default: "https://files.example/pdfium.wasm",
-  }),
-);
+vi.mock("@embedpdf/pdfium/pdfium.wasm?url", () => ({
+  default: "https://files.example/pdfium.wasm",
+}));
 
 import { mountPdfViewer, openPdfSource } from "./mount-pdf";
 

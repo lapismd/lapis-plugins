@@ -1,6 +1,6 @@
 import type { App, TFile } from "@lapis-notes/api";
 // The installed PDFium build, served as a URL so the viewer does not fetch a CDN.
-import pdfiumWasmUrl from "../../../../node_modules/.pnpm/@embedpdf+pdfium@2.15.1/node_modules/@embedpdf/pdfium/dist/pdfium.wasm?url";
+import pdfiumWasmUrl from "@embedpdf/pdfium/pdfium.wasm?url";
 import { PDF_VIEWER_DEFAULTS } from "./ids";
 import {
   PDF_SETTING_IDS,

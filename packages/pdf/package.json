@@ -43,6 +43,7 @@
     "./registry.json": "./registry.json"
   },
   "dependencies": {
+    "@embedpdf/pdfium": "^2.15.1",
     "@embedpdf/snippet": "^2.0.0"
   },
   "peerDependencies": {
