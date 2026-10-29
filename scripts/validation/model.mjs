@@ -71,9 +71,9 @@ export function validateArchives(entries) {
 }
 export const laneImage = () => "ui";
 
-/** Bound full-suite browser lifetime; explicit targets and caller shards stay exact. */
+/** Eight shards bound full-suite browser lifetime; explicit targets stay exact. */
 export function laneInvocations(lane, args) {
   return lane === "test:storybook" && args.length === 0
-    ? Array.from({ length: 4 }, (_, index) => [`--shard=${index + 1}/4`])
+    ? Array.from({ length: 8 }, (_, index) => [`--shard=${index + 1}/8`])
     : [[...args]];
 }

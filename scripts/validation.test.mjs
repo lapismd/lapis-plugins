@@ -335,7 +335,7 @@ test("default browser suites run complete bounded shards without changing explic
   const { laneInvocations } = await import("./validation/model.mjs");
   assert.deepEqual(
     laneInvocations("test:storybook", []),
-    Array.from({ length: 4 }, (_, i) => [`--shard=${i + 1}/4`])
+    Array.from({ length: 8 }, (_, i) => [`--shard=${i + 1}/8`])
   );
   assert.deepEqual(
     laneInvocations("test:storybook", [

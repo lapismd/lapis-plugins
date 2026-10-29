@@ -306,7 +306,7 @@ protected by LP-SPEC-048: root `check`, `ci:release`, and the quality job run
 `pnpm audit` against the committed lockfile, and only recorded
 `auditConfig.ignoreCves` entries may suppress recorded unpatched advisories. Functional Storybook and
 axe failures remain blocking in their own lane; visual baselines do not become
-a deployment gate through this infrastructure change. Container setup marks
+a deployment gate through this infrastructure change. The local suite uses eight browser shards. Container setup marks
 the checked-out workspace as a trusted Git directory before specification
 tools inspect tracked files; this trust is scoped to the exact workspace path.
 The reusable validation, production-candidate handoff, and downloaded-artifact

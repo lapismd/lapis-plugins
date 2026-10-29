@@ -76,7 +76,7 @@ export worker changes no native Markdown parser behavior.
 
 Archive-backed source qualification audits the actual installed dependency
 graph under LP-SPEC-057. Recorded unpatched audit exceptions add no native
-service. Source manifests/lockfiles remain portable, and native
+service. Local Storybook interaction uses eight browser shards. Source manifests/lockfiles remain portable, and native
 service ownership and publication gates retain their existing contracts.
 
 ## Release-test isolation
