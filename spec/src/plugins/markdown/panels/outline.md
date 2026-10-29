@@ -2,6 +2,9 @@
 
 Outline follows the active note and presents its headings as a navigable tree.
 
+The empty and filtered-empty state under LN-MD-022 MUST display its explanation
+outside the heading list. List containers retain valid list-item children.
+
 The persisted canonical view type is `outline`; `file:outline` remains a
 load-only alias under `LN-MD-085`.
 

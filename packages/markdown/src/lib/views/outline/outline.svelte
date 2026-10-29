@@ -214,13 +214,15 @@
       class="markdown-outline__fill"
     >
       <Sidebar.Content class="markdown-outline__menu-host">
-        <Sidebar.Menu class="markdown-outline__menu">
-          {#each filteredTree as node (node.id)}
-            {@render OutlineTree({ node })}
-          {:else}
-            <p class="markdown-sidebar-panel__empty">No headings found.</p>
-          {/each}
-        </Sidebar.Menu>
+        {#if filteredTree.length}
+          <Sidebar.Menu class="markdown-outline__menu">
+            {#each filteredTree as node (node.id)}
+              {@render OutlineTree({ node })}
+            {/each}
+          </Sidebar.Menu>
+        {:else}
+          <p class="markdown-sidebar-panel__empty">No headings found.</p>
+        {/if}
       </Sidebar.Content>
     </Sidebar.NestedProvider>
   </div>

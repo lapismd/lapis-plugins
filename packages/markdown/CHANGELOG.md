@@ -1,5 +1,11 @@
 # Markdown changelog
 
+## 0.1.7
+
+### Patch Changes
+
+- Keep the empty Outline explanation outside its heading list so the menu remains valid accessible markup.
+
 ## 0.1.6
 
 ### Patch Changes
