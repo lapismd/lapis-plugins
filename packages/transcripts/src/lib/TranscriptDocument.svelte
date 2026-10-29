@@ -36,6 +36,7 @@
     getMessageActions,
     markdown,
     resolveFileLink,
+    readerExtensions,
     label = "Transcript",
     commentSend = $bindable(idleCommentSend),
     searchOpen = $bindable(false),
@@ -47,6 +48,7 @@
     commentSend?: TranscriptCommentSend;
     markdown?: TranscriptProps["markdown"];
     resolveFileLink?: TranscriptProps["resolveFileLink"];
+    readerExtensions?: TranscriptProps["readerExtensions"];
     label?: string;
     searchOpen?: boolean;
     onSend?: (
@@ -67,6 +69,7 @@
       ...(onSend ? { canEditComment: () => true, onSend } : {}),
       ...(getMessageActions ? { getMessageActions } : {}),
       ...(resolveFileLink ? { resolveFileLink } : {}),
+      ...(readerExtensions ? { readerExtensions } : {}),
     }),
     [...threads],
   );
@@ -99,6 +102,7 @@
 <Transcript
   {items}
   {markdown}
+  {readerExtensions}
   author={sampleReader}
   canComment={true}
   commentState={comments}

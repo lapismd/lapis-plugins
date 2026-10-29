@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, untrack } from "svelte";
+  import { onMount, setContext, untrack } from "svelte";
   import type { App, TAbstractFile, WorkspaceLeaf } from "@lapis-notes/api";
   import { createLapisMiraFileAdapter } from "@lapis-notes/markdown";
   import {
@@ -13,6 +13,10 @@
   import TranscriptDocument, {
     type TranscriptCommentSend,
   } from "./TranscriptDocument.svelte";
+  import TranscriptFileEmbed, {
+    transcriptFileAdapterKey,
+  } from "./TranscriptFileEmbed.svelte";
+  import { transcriptEmbedRanges } from "./transcript-embed-reader";
   import {
   audioPathCandidates,
   playableMediaUrl,
@@ -84,6 +88,7 @@ import {
   const fileAdapter = $derived(
     app ? createLapisMiraFileAdapter(app) : undefined,
   );
+  setContext(transcriptFileAdapterKey, () => fileAdapter);
 
   const playbackRates = [0.75, 1, 1.25, 1.5, 2] as const;
   const skipSeconds = 10;
@@ -155,7 +160,24 @@ import {
   );
   const notePath = $derived(mode === "file" ? filePath : sampleTranscriptPath);
   const renderedMarkdown = $derived<TranscriptProps["markdown"]>(
-    notePath ? { sourcePath: notePath } : undefined,
+    notePath
+      ? { sourcePath: notePath, components: { embed: TranscriptFileEmbed } }
+      : undefined,
+  );
+  const fileEmbeds = $derived(
+    mode === "file"
+      ? displayItems.flatMap((item) =>
+          item.blocks.flatMap((block) =>
+            block.kind === "markdown"
+              ? transcriptEmbedRanges(block.text).map((range) => ({
+                  key: `${block.id}:${range.from}`,
+                  target: range.target,
+                  label: range.label,
+                }))
+              : [],
+          ),
+        )
+      : [],
   );
   const resolveFileLink = (
     _block: TranscriptBlock,
@@ -427,7 +449,7 @@ import {
     if (!(target instanceof Element)) return;
     const label = target.closest("button")?.getAttribute("aria-label") ?? "";
     const match = /^Preview turn (\d+)$/.exec(label);
-    if (match) hoveredTurn = Number(match[1]);
+    hoveredTurn = match ? Number(match[1]) : null;
   }
 
   function openFind(event: KeyboardEvent) {
@@ -694,6 +716,19 @@ import {
       {/key}
     {/if}
   </div>
+  {#if fileEmbeds.length > 0}
+    <div class="transcript-file-embeds">
+      {#each fileEmbeds as embed (embed.key)}
+        <TranscriptFileEmbed
+          adapter={fileAdapter}
+          {app}
+          href={embed.target}
+          label={embed.label}
+          sourcePath={notePath}
+        />
+      {/each}
+    </div>
+  {/if}
   {#if detailTurn}
     <div class="transcript-turn-details" role="group" aria-label="Turn details">
       <p>{detailTurn.turn?.prompt ?? detailTurn.label}</p>
@@ -884,6 +919,7 @@ import {
 
 <style>
   .transcript-reading {
+    position: relative;
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
@@ -897,10 +933,46 @@ import {
     container-type: inline-size;
   }
 
+  .transcript-turn-details {
+    position: absolute;
+    z-index: 3;
+    inset-block-start: 0.75rem;
+    inset-inline-start: 0.75rem;
+    display: grid;
+    gap: 0.25rem;
+    max-width: min(22rem, calc(100% - 1.5rem));
+    margin: 0;
+    padding: 0.75rem;
+    pointer-events: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm, calc(var(--radius) * 0.6));
+    background: var(--popover, var(--background));
+    color: var(--popover-foreground, var(--foreground));
+    box-shadow: 0 6px 22px #0002;
+  }
+
+  .transcript-turn-details p,
+  .transcript-turn-details div {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0;
+  }
+
+  .transcript-turn-details dd {
+    margin: 0;
+  }
+
   .transcript-reading-embedded {
     box-sizing: border-box;
     border: 1px solid var(--border);
     border-radius: var(--radius-sm, calc(var(--radius) * 0.6));
+  }
+
+  .transcript-file-embeds {
+    flex: 0 1 auto;
+    min-height: 8rem;
+    max-height: 50%;
+    overflow: auto;
   }
 
   .transcript-reading-frame {
@@ -1162,6 +1234,22 @@ import {
   @container transcript-reading (max-width: 26rem) {
     .transcript-reading-duration {
       display: none;
+    }
+  }
+
+  /* A nested embed sits inside the parent turn, so the parent focus rule would
+     reveal every action in the embed. Only the hovered or focused turn shows. */
+  @media (hover: hover) {
+    .transcript-reading :global(.ui-transcript-text-block .ui-transcript-text-actions) {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .transcript-reading :global(.ui-transcript-text-block:hover > .ui-transcript-text-actions),
+    .transcript-reading :global(.ui-transcript-text-block:focus-within > .ui-transcript-text-actions),
+    .transcript-reading :global(.ui-transcript-text-actions:has([data-visible="true"])) {
+      opacity: 1;
+      pointer-events: auto;
     }
   }
 </style>

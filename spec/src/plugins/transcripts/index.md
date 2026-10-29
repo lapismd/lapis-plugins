@@ -13,7 +13,9 @@ uses the Markdown embed's left border and file name, and frames the reading
 with the theme border and a small theme radius. Inside a transcript,
 Markdown links render as links and a wiki embed renders through the same file
 adapter. Find and replace and the turn-details card are package-owned against the
-published Design Core chat document. Playback starts at the beginning of the note. Find and replace searches
+published Design Core chat document. The card overlays the reading surface
+while the pointer is on that turn's marker and does not resize the transcript
+pane. Playback starts at the beginning of the note. Find and replace searches
 every spoken turn, and a replacement is written back into the note. A timestamp
 seeks to that spoken turn and plays, the active turn is highlighted without
 moving its avatar, and its metadata shows an animated playback icon with a
@@ -59,7 +61,7 @@ unchanged.
 
 Package tests cover the runtime id, the `*transcript.md` editor association, both transcript header styles, fenced code, timestamp formats, comment send, edit, and removal, unavailable quotes, recording paths, the Open transcript command, the Markdown view-menu action, the transcript Markdown embedder, and return to the source leaf. Each Reading placement asserts the transcript region, a
 speaker, slightly larger circular avatars, the comment at the shared avatar size, the compact theme-surface footer, scroll overflow inside the pane, the
-workspace surface, and the source icon opening the Markdown editor. Every placement exposes seek and mute. The wide middle placement also exposes volume, playback speed, and ten-second skip. Middle (Top Tabs) also runs Open Explorer, starts with the spoken sample and the time-first transcript open in the reading view, opens Draft meeting.md in the Markdown editor, opens the spoken sample from that explorer in the existing main tab, and opens the centisecond and single-turn notes before returning to the spoken sample and then the draft. Reading that draft shows the embedded contract transcript, including the spoken sample text, without ordered-list markers, and keeps an embedded ordinary note as a Markdown preview. The spoken sample seeks from a timestamp and pauses follow-along after a manual scroll. That recording is `packages/transcripts/assets/sample-meeting.m4a`, declared as front matter `audio: recordings/meeting.m4a`. The time-first, centisecond, and single-turn notes have no recording, so their footers omit playback controls and keep Source at the trailing edge.
+workspace surface, and the source icon opening the Markdown editor. Every placement exposes seek and mute. The wide middle placement also exposes volume, playback speed, and ten-second skip. Middle (Top Tabs) also runs Open Explorer, starts with the spoken sample and the time-first transcript open in the reading view, opens Draft meeting.md in the Markdown editor, opens the spoken sample from that explorer in the existing main tab, and opens the centisecond and single-turn notes before returning to the spoken sample and then the draft. Reading that draft shows the embedded contract transcript, including the spoken sample text, without ordered-list markers, and keeps an embedded ordinary note as a Markdown preview. Those wiki embeds mount through the package file embed. The spoken sample seeks from a timestamp and pauses follow-along after a manual scroll. That recording is `packages/transcripts/assets/sample-meeting.m4a`, declared as front matter `audio: recordings/meeting.m4a`. The time-first, centisecond, and single-turn notes have no recording, so their footers omit playback controls and keep Source at the trailing edge.
 
 Catalog fixtures declare their actual composition under LP-SPEC-054. Synthetic
 setup actions use the separate LP-SPEC-055 fixture-controls surface; application
