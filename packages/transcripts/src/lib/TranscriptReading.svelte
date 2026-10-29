@@ -1237,6 +1237,11 @@ import {
     }
   }
 
+  /* Turn markers occupy the right edge. Hidden message actions must not cover them. */
+  .transcript-reading :global(.ui-transcript-text-actions) {
+    right: 2.5rem;
+  }
+
   /* A nested embed sits inside the parent turn, so the parent focus rule would
      reveal every action in the embed. Only the hovered or focused turn shows. */
   @media (hover: hover) {
