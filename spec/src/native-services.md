@@ -16,6 +16,8 @@ The private `crates/lapis-plugin-services` crate owns transport-independent
 first-party algorithms for the shared Rust migration. It has no Tauri, HTTP,
 database, application scheduler or renderer dependency. Published npm plugin
 contracts and the standalone browser implementation remain unchanged.
+Specification search uses that published validator and the system QMD binary.
+It adds no native service, writer, or renderer owner.
 
 Search settings recovery refreshes its retained plugin and mounted panels through
 the public owning-App configuration events. Changed embedding and chunking data

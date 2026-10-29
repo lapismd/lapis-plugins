@@ -13,6 +13,9 @@ source and host acceptance remain separate.
 
 ## Local validation contracts
 
+Shared specification tooling resolves published `@lapismd/spec-validator` 0.2.0.
+Host `spec:search` uses the system QMD binary and is not a Docker release lane.
+
 Search settings recovery preserves the existing package identity, semver ranges
 and independent patch release. Its private observer uses the public owning-App
 configuration contract; it adds no host API or bundled dependency. Source checks,

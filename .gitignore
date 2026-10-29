@@ -10,6 +10,7 @@ storybook-static/
 .release/
 .local/
 spec/book/
+.qmd/index.sqlite*
 .visual-delta/cache/
 *.tsbuildinfo
 pnpm-debug.log*

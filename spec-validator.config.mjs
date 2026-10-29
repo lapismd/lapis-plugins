@@ -37,6 +37,7 @@ export default defineConfig(tableRequirements(), {
     bookIgnore: "LP-SPEC-001",
     specFirst: "LP-SPEC-002",
     internal: "LP-SPEC-003",
+    qmd: "LP-SPEC-001",
     storybookCatalog: "LP-SPEC-045",
   },
   diagnostics: {
@@ -69,6 +70,10 @@ export default defineConfig(tableRequirements(), {
       statuses: ["Implemented", "In progress", "Planned", "Visual pending"],
     }),
     book: true,
+    qmd: {
+      collection: "lapis-plugins-spec",
+      configPath: ".qmd/index.yml",
+    },
     storybookCatalog: {
       roots: ["stories"],
       packageRoots: ["packages"],

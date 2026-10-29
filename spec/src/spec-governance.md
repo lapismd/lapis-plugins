@@ -149,7 +149,7 @@ deferred relay route keep independent activation and approval gates.
 
 Dependency acceptance now uses published Design Core `0.3.1` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
 unchanged; local overrides for these released packages are retired.
-Shared specification tooling resolves `@lapismd/spec-validator@0.1.4` from npm.
+Shared specification tooling resolves `@lapismd/spec-validator@0.2.0` from npm.
 
 Shared UI dependency refreshes advance portable package ranges and the committed
 lockfile together without adding checkout-specific package paths.
@@ -294,8 +294,8 @@ so both sides of moves are checked. Empty, malformed, ambiguous or unavailable
 comparisons, executable files, symlinks, other spec files and mixed changes
 retain full validation. Pushes, manual runs and reusable release calls retain
 full validation. The fast lane uses the pinned toolchain and frozen graph and
-runs the existing `pnpm spec:check`, including validation, mdBook, spec-first
-and App ownership, without package builds or publication prerequisites.
+runs the existing `pnpm spec:check` (validation, mdBook, and spec-first)
+and `pnpm check:app-ownership`, without package builds or publication prerequisites.
 Validate requires successful classification and image resolution. It accepts
 the fast route only when specification checks succeed and every full lane is
 skipped; otherwise every full lane must succeed. Unexpected skips, cancellations

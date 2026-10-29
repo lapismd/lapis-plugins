@@ -1,9 +1,10 @@
 # Local validation
 
-`pnpm check`, `pnpm test`, `pnpm build`, `pnpm spec:check`,
-`pnpm test:storybook` and the other portable lanes in
-`scripts/validation/lanes.json` default to Docker. A missing image is built
-automatically. Docker errors fail the command; they never rerun on macOS.
+`pnpm check`, `pnpm test`, `pnpm build`, `pnpm test:storybook` and the other
+portable lanes in `scripts/validation/lanes.json` default to Docker. The
+`spec:*` package aliases call the installed `spec-validator` binary. A missing
+image is built automatically. Docker errors fail the command; they never rerun
+on macOS.
 This includes the separate deferred `pnpm test:release:nostr` tooling suite;
 running its tests does not enable Nostr publication.
 Hosted CI explicitly selects its already-provisioned native environment.
