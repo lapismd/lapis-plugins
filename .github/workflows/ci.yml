@@ -132,6 +132,8 @@ jobs:
         run: node scripts/run-turbo.mjs build test --summarize
       - name: Report cache restoration
         run: node scripts/report-turbo-cache.mjs --github-summary
+      - name: Install pinned upstream JJ for repository fixtures
+        run: node scripts/validation/install-tools.mjs --ci
       - run: pnpm test:release
 
   storybook-static:
