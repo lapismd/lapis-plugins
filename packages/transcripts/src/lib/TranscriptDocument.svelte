@@ -36,9 +36,7 @@
     getMessageActions,
     markdown,
     resolveFileLink,
-    replaceBlockText,
     label = "Transcript",
-    navigationStats,
     commentSend = $bindable(idleCommentSend),
     searchOpen = $bindable(false),
   }: {
@@ -49,9 +47,7 @@
     commentSend?: TranscriptCommentSend;
     markdown?: TranscriptProps["markdown"];
     resolveFileLink?: TranscriptProps["resolveFileLink"];
-    replaceBlockText?: TranscriptProps["replaceBlockText"];
     label?: string;
-    navigationStats?: TranscriptProps["navigationStats"];
     searchOpen?: boolean;
     onSend?: (
       snapshot: TranscriptSubmission,
@@ -71,7 +67,6 @@
       ...(onSend ? { canEditComment: () => true, onSend } : {}),
       ...(getMessageActions ? { getMessageActions } : {}),
       ...(resolveFileLink ? { resolveFileLink } : {}),
-      ...(replaceBlockText ? { replaceBlockText } : {}),
     }),
     [...threads],
   );
@@ -97,6 +92,10 @@
   <CommentQueue state={comments} />
 {/snippet}
 
+{#snippet findField()}
+  <input class="transcript-find" type="text" aria-label="Find" />
+{/snippet}
+
 <Transcript
   {items}
   {markdown}
@@ -106,8 +105,7 @@
   view="document"
   scrollButton={true}
   label={label}
-  {navigationStats}
-  bind:searchOpen
+  beforeItems={searchOpen ? findField : undefined}
   logLabel="Transcript turns"
   afterItems={comments.pending.length > 0 ? queuedSection : undefined}
 >

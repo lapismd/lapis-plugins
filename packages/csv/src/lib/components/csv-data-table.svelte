@@ -673,7 +673,7 @@
   <ContextMenu.Root>
     <ContextMenu.Trigger class="csv-data-table__shell group/trigger">
       <Table.Root
-        class="csv-data-table overflow-visible"
+        class="csv-data-table"
         data-csv-row-count={tableData.length}
         data-csv-rendered-rows={visibleRows.length}
       >
@@ -759,7 +759,7 @@
             <CsvDataTableRow
               rowIndex={row.rowIndex}
               virtualIndex={virtualRow.index}
-              class="csv-data-table__row group"
+              class="csv-data-table__row"
               isRowDragSource={dragSource?.type === "csv-table-row" &&
                 dragSource.index === row.rowIndex}
             >

@@ -175,9 +175,10 @@ remain portable.
 
 Repository exports require the released API 0.2.0 contract. The independent
 package metadata retains that peer prerequisite; legacy History
-behaviors remain compatible. `jj-history` is an optional feature peer: hosts
+behaviors remain compatible. `jj-history` is an optional feature peer. Hosts
 using repository exports supply its public client, while legacy file-history
-users do not need it.
+users do not need it. The package check installs published
+`@lapismd/jj-history` 0.1.0 so repository types resolve from the registry.
 
 The [shared repository guide](../../../../docs/repository-history.md) documents
 public entrypoints, host ownership, optional clients and provenance.

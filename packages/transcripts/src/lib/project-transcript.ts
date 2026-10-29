@@ -87,10 +87,8 @@ function projectTurn(
     turn: {
       id,
       author: author.name,
-      initials: author.initials,
       prompt: transcriptTurnPreview(turn.body),
       summary: "",
-      timeLabel: turn.timestamp,
     },
     blocks: [
       {

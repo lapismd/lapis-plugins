@@ -20,7 +20,7 @@
     {#snippet child({ props }: { props: Record<string, unknown> })}
       <Button
         {...props}
-        class="csv-data-table__row-actions opacity-0 group-hover:opacity-100"
+        class="csv-data-table__row-actions"
         size="icon"
         variant="ghost"
         aria-label="Row actions"

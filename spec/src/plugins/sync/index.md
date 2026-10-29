@@ -179,5 +179,5 @@ and the frozen Deno host are not migrated or edited.
 
 The private catalog install is frozen separately from the root workspace. Its
 validation tooling consumes patched Vitest, body-parser and fast-uri registry
-versions; the released API Zod 3 advisory remains an explicitly recorded
-upstream release gate rather than a new audit suppression.
+versions. Zod 3 stays an upstream release gate. Deepmerge CVE-2026-93753 is
+ignored until a patched release exists.

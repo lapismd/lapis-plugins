@@ -12,6 +12,13 @@ auditConfig:
     # removal conditions: spec/records/2026-10-11-plugin-test-unblock.md.
     - CVE-2026-93687
     - CVE-2026-97058
+    # elliptic GHSA-848j-6mx2-7j84 via vite-plugin-node-polyfills >
+    # node-stdlib-browser > crypto-browserify > browserify-sign.
+    # deepmerge GHSA-gcqx-w48m-w2h4 via @sveltejs/vite-plugin-svelte.
+    # Both patched versions are <0.0.0. Removal conditions:
+    # spec/records/2026-10-29-unpatched-audit-exceptions.md
+    - CVE-2025-14505
+    - CVE-2026-93753
 
 linkWorkspacePackages: true
 # Hosts explicitly supply optional feature peers, including unpublished migration clients.
@@ -21,6 +28,15 @@ onlyBuiltDependencies:
   - esbuild
 
 overrides:
+  # One installed editor, parser, TypeScript, and Node types set so
+  # @lapis-notes/api is not duplicated across published Markdown peers
+  # and the workspace root.
+  "@codemirror/autocomplete": "6.20.4"
+  "@codemirror/view": "6.43.15"
+  "@lezer/common": "1.5.4"
+  "@lezer/markdown": "1.8.1"
+  "@types/node": "24.19.2"
+  typescript: "5.9.3"
   bits-ui: "2.19.5"
   # Match the Notes host's Turso 0.7.2 worker-runtime compatibility pins.
   "@napi-rs/wasm-runtime@1.0.7>@emnapi/core": "1.8.1"

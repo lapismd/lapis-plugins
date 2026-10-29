@@ -304,7 +304,7 @@ acceptance into a successful aggregate. Executable regressions cover both routes
 and their failure states. Community is not a CI prerequisite. Dependency auditing is
 protected by LP-SPEC-048: root `check`, `ci:release`, and the quality job run
 `pnpm audit` against the committed lockfile, and only recorded
-`auditConfig.ignoreCves` entries may suppress an unpatched advisory. Functional Storybook and
+`auditConfig.ignoreCves` entries may suppress recorded unpatched advisories. Functional Storybook and
 axe failures remain blocking in their own lane; visual baselines do not become
 a deployment gate through this infrastructure change. Container setup marks
 the checked-out workspace as a trusted Git directory before specification

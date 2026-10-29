@@ -1,4 +1,9 @@
-import type { TranscriptNavigationStats } from "@lapismd/design-core/chat";
+export interface TranscriptNavigationStats {
+  speakers: number;
+  durationSeconds: number;
+  audioPath?: string;
+  byteSize: number;
+}
 
 /** Plain preview of a spoken turn, without emphasis markers or link targets. */
 export function transcriptTurnPreview(text: string): string {

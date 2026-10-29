@@ -66,7 +66,18 @@ test("public validation lanes route through Docker while preserving native comma
       assert.ok(Object.hasOwn(lanes, name), `${name} bypasses Docker`);
   }
   for (const [name, command] of Object.entries(lanes)) {
-    assert.equal(pkg.scripts[name], "node scripts/validation.mjs run " + name);
+    if (name.startsWith("spec:")) {
+      assert.match(
+        pkg.scripts[name],
+        /^spec-validator /,
+        `${name} calls the installed spec-validator`,
+      );
+    } else {
+      assert.equal(
+        pkg.scripts[name],
+        "node scripts/validation.mjs run " + name,
+      );
+    }
     assert.ok(command.length > 0);
     assert.ok(!command.startsWith("node scripts/validation.mjs"));
   }

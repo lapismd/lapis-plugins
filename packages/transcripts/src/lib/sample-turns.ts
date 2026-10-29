@@ -56,10 +56,8 @@ function turn(
     turn: {
       id,
       author: speaker.name,
-      initials: speaker.initials,
       prompt: transcriptTurnPreview(text),
       summary: "",
-      timeLabel: timestamp,
     },
     blocks: [
       {

@@ -85,6 +85,11 @@
     "svelte": "^5.0.0"
   },
   "pnpm": {
+    "auditConfig": {
+      "ignoreCves": [
+        "CVE-2026-93753"
+      ]
+    },
     "overrides": {
       "katex@>=0.11.0 <0.18.2": ">=0.18.2 <0.19",
       "body-parser@>=2.0.0 <2.4.0": ">=2.4.0 <3",

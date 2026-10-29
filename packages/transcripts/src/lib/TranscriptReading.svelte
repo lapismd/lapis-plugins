@@ -34,6 +34,7 @@
   import {
     replaceTranscriptSource,
     shiftCommentsForEdits,
+    type TranscriptTextEdit,
   } from "./replace-transcript-text";
   import FileCodeIcon from "@lucide/svelte/icons/file-code";
   import MessageSquareXIcon from "@lucide/svelte/icons/message-square-x";
@@ -117,6 +118,7 @@ import {
     send: () => undefined,
   });
   let searchOpen = $state(false);
+  let hoveredTurn = $state<number | null>(null);
   let audio: HTMLAudioElement | undefined;
   let programmaticScroll = false;
   let lastScrolledTurnId = "";
@@ -153,7 +155,7 @@ import {
   );
   const notePath = $derived(mode === "file" ? filePath : sampleTranscriptPath);
   const renderedMarkdown = $derived<TranscriptProps["markdown"]>(
-    fileAdapter ? { sourcePath: notePath, fileAdapter } : undefined,
+    notePath ? { sourcePath: notePath } : undefined,
   );
   const resolveFileLink = (
     _block: TranscriptBlock,
@@ -384,9 +386,7 @@ import {
     loading = false;
   }
 
-  async function replaceBlockText(
-    edits: Parameters<NonNullable<TranscriptProps["replaceBlockText"]>>[0],
-  ) {
+  async function replaceBlockText(edits: readonly TranscriptTextEdit[]) {
     if (mode !== "file" || !app || !filePath || edits.length === 0) return;
     const file = app.vault.getFileByPath(filePath);
     if (!file) return;
@@ -414,6 +414,32 @@ import {
       },
     );
   }
+
+  function formatByteSize(bytes: number): string {
+    if (bytes < 1024) return `${bytes} B`;
+    const kilobytes = bytes / 1024;
+    if (kilobytes < 1024) return `${Number(kilobytes.toFixed(1))} KB`;
+    return `${Number((kilobytes / 1024).toFixed(1))} MB`;
+  }
+
+  function previewTurn(event: MouseEvent) {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const label = target.closest("button")?.getAttribute("aria-label") ?? "";
+    const match = /^Preview turn (\d+)$/.exec(label);
+    if (match) hoveredTurn = Number(match[1]);
+  }
+
+  function openFind(event: KeyboardEvent) {
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "f") {
+      event.preventDefault();
+      searchOpen = true;
+    }
+  }
+
+  const detailTurn = $derived(
+    hoveredTurn ? displayItems[hoveredTurn - 1] : undefined,
+  );
 
   async function persistComments(
     snapshot: TranscriptSubmission,
@@ -499,6 +525,7 @@ import {
   }
 
   function onReadingKeydown(event: KeyboardEvent): void {
+    openFind(event);
     if (!playbackUrl) return;
     if (event.key !== "Enter" && event.key !== " ") return;
     const id = turnIdFrom(event.target);
@@ -601,6 +628,7 @@ import {
     const onKeydown = (event: Event) => onReadingKeydown(event as KeyboardEvent);
     readingRoot?.addEventListener("click", onClick);
     readingRoot?.addEventListener("keydown", onKeydown);
+    readingRoot?.addEventListener("mouseover", previewTurn);
     const watchedPath = filePath;
     const onNote = (file: TAbstractFile) => {
       if (file.path === watchedPath) void refreshNote();
@@ -613,6 +641,7 @@ import {
     return () => {
       readingRoot?.removeEventListener("click", onClick);
       readingRoot?.removeEventListener("keydown", onKeydown);
+      readingRoot?.removeEventListener("mouseover", previewTurn);
       if (modify) app?.vault.offref(modify);
       if (changed) app?.metadataCache.offref(changed);
       releaseOwnedAudio();
@@ -642,7 +671,6 @@ import {
         markdown={renderedMarkdown}
         {resolveFileLink}
         {label}
-        {navigationStats}
         bind:commentSend
         bind:searchOpen
       />
@@ -658,16 +686,29 @@ import {
           markdown={renderedMarkdown}
           {resolveFileLink}
           {label}
-          {navigationStats}
           onSend={persistComments}
           getMessageActions={messageActions}
-          replaceBlockText={replaceBlockText}
           bind:commentSend
-        bind:searchOpen
+          bind:searchOpen
         />
       {/key}
     {/if}
   </div>
+  {#if detailTurn}
+    <div class="transcript-turn-details" role="group" aria-label="Turn details">
+      <p>{detailTurn.turn?.prompt ?? detailTurn.label}</p>
+      <div><span>Speakers</span><dd>{navigationStats.speakers}</dd></div>
+      <div>
+        <span>Duration</span><dd>{formatPlayhead(navigationStats.durationSeconds)}</dd>
+      </div>
+      {#if navigationStats.audioPath}
+        <div><span>Audio</span><dd>{navigationStats.audioPath}</dd></div>
+      {:else}
+        <p>No recording</p>
+      {/if}
+      <div><span>Size</span><dd>{formatByteSize(navigationStats.byteSize)}</dd></div>
+    </div>
+  {/if}
   <div
     class={[
       "transcript-reading-status",

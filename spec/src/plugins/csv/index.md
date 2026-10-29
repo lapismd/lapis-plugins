@@ -106,7 +106,8 @@ It stays `visual-pending`.
 
 The source editor uses the Lapis markup editor, the same shell as the source
 editor, with the CSV language layered on it, so the editor keeps the configured
-monospace face and the host editor settings. Each column, including a quoted
+monospace face and the host editor settings. The editor and the CSV language
+share one `@codemirror/view`. Each column, including a quoted
 cell, keeps `cm-csv-cell1` through `cm-csv-cell5`, and separators keep
 `cm-csv-separator`.
 
@@ -155,7 +156,7 @@ declarations; current canvas embeds, theme repaint and placement plays remain.
 Package tests cover the runtime id, the exclusive `*.csv` and `*.tsv`
 association, both embed registrations, the Open CSV command, Toggle CSV
 source, the CSV language cells, quoted-cell colours, and separator, the Lapis
-markup editor shell, cell search and replacement, the original grid parser,
+markup editor shell after layout, cell search and replacement, the original grid parser,
 quoted commas, quoted line breaks, column sort, and drag-selection bounds.
 `Plugins/CSV/Panels/Table` asserts the header, that the header stays in place
 after the table body scrolls, that a later row replaces the quoted cell and
