@@ -24,8 +24,8 @@
     "./registry.json": "./registry.json"
   },
   "peerDependencies": {
-    "@lapis-notes/api": "^0.1.2",
-    "@lapis-notes/language-service": "^0.1.1"
+    "@lapis-notes/api": "^0.2.0",
+    "@lapis-notes/language-service": "^0.1.2"
   },
   "devDependencies": {
     "@sveltejs/package": "^2.5.0",

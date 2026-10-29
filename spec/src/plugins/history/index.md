@@ -1,6 +1,6 @@
 # History Plugin
 
-The package requires published Design Core `^0.6.0` for prepared browser CSS
+The package requires published Design Core `^0.7.0` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
 behavior retain their owning contracts.
 
@@ -11,13 +11,13 @@ Version 0.1.4 includes the responsive comparison toolbar layout. Its generated
 manifest, README installation coordinate and Changesets changelog agree on
 the independent release version.
 
-This candidate requires API 0.1.4 through its portable peer range.
-Shared shell qualification uses UI and File Explorer 0.1.2 and Workspace 0.2.0.
+This candidate requires API 0.2.0 through its portable peer range.
+Shared shell qualification uses UI 0.1.4, File Explorer 0.2.0 and Workspace 0.3.0.
 Mobile shell acceptance uses the published count-bearing dock label, opens the
 workspace tab chooser and returns with Done. It retains real-App plugin and
 collapsed-sidebar assertions; this repairs a stale story selector.
 
-Release qualification uses `@lapis-notes/api@^0.1.2` for the shared renderer,
+Release qualification uses `@lapis-notes/api@^0.2.0` for the shared renderer,
 diagnostics invalidation and selected metadata fingerprint contracts. Portable
 consumers must resolve this prerequisite from npm before plugin publication.
 
@@ -173,8 +173,8 @@ compiler-versioned renderer contracts in LP-SPEC-014 and LP-SPEC-047. Host-owned
 components and archived components share that renderer graph; npm package peers
 remain portable.
 
-Repository exports require the released API 0.1.4 contract. The independent
-package metadata retains that stronger peer prerequisite; legacy History
+Repository exports require the released API 0.2.0 contract. The independent
+package metadata retains that peer prerequisite; legacy History
 behaviors remain compatible. `jj-history` is an optional feature peer: hosts
 using repository exports supply its public client, while legacy file-history
 users do not need it.

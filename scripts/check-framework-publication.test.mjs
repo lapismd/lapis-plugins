@@ -17,8 +17,11 @@ test("checks the published framework ranges and controller without Community", (
       };
     },
   });
-  assert.ok(coordinates.includes("@lapis-notes/api@^0.1.2"));
-  assert.ok(coordinates.includes("@lapis-notes/workspace@^0.2.0"));
+  assert.ok(coordinates.includes("@lapis-notes/api@^0.2.0"));
+  assert.ok(coordinates.includes("@lapis-notes/workspace@^0.3.0"));
+  assert.ok(coordinates.includes("@lapis-notes/file-explorer@^0.2.0"));
+  assert.ok(coordinates.includes("@lapis-notes/ui@^0.1.4"));
+  assert.ok(coordinates.includes("@lapis-notes/language-service@^0.1.2"));
   assert.ok(coordinates.includes("@lapismd/ai-controller@^0.1.0"));
   assert.equal(coordinates.length, 6);
   assert.ok(

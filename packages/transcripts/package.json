@@ -43,7 +43,7 @@
     "./registry.json": "./registry.json"
   },
   "dependencies": {
-    "@lapismd/design-core": "^0.6.0",
+    "@lapismd/design-core": "^0.7.0",
     "@lucide/svelte": "^0.523.0"
   },
   "peerDependencies": {
@@ -54,15 +54,15 @@
     "@codemirror/search": "^6.5.11",
     "@codemirror/state": "^6.6.0",
     "@codemirror/view": "^6.42.1",
-    "@lapis-notes/api": "^0.1.2",
-    "@lapis-notes/markdown": "^0.1.6",
+    "@lapis-notes/api": "^0.2.0",
+    "@lapis-notes/markdown": "^0.1.7",
     "@lezer/common": "^1.5.2",
     "@lezer/highlight": "^1.2.3",
     "@lezer/lr": "^1.4.2",
     "svelte": "^5.0.0"
   },
   "devDependencies": {
-    "@lapis-notes/markdown": "^0.1.6",
+    "@lapis-notes/markdown": "^0.1.7",
     "@sveltejs/package": "^2.5.0",
     "@sveltejs/vite-plugin-svelte": "^5.1.1",
     "@tsconfig/svelte": "^5.0.5",

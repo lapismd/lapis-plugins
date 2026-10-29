@@ -53,8 +53,8 @@
     "./registry.json": "./registry.json"
   },
   "dependencies": {
-    "@lapismd/design-core": "^0.6.0",
-    "@lapismd/mira": "~0.0.4 || ~0.1.0",
+    "@lapismd/design-core": "^0.7.0",
+    "@lapismd/mira": "~0.1.2",
     "@lapismd/mira-editor": "~0.0.2 || ~0.0.3",
     "@lapismd/mira-plugin-ai": "~0.0.2 || ~0.0.3",
     "@lapismd/mira-plugin-mermaid": "~0.0.2 || ~0.0.3",
@@ -70,8 +70,8 @@
     "@codemirror/search": "^6.5.11",
     "@codemirror/state": "^6.6.0",
     "@codemirror/view": "^6.42.1",
-    "@lapis-notes/api": "^0.1.2",
-    "@lapis-notes/ui": "^0.1.2",
+    "@lapis-notes/api": "^0.2.0",
+    "@lapis-notes/ui": "^0.1.4",
     "@lezer/common": "^1.5.2",
     "@lezer/highlight": "^1.2.3",
     "@lezer/lr": "^1.4.2",

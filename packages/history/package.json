@@ -66,12 +66,12 @@
     "./repository/styles/*.css": "./dist/repository/components/*.css"
   },
   "dependencies": {
-    "@lapismd/design-core": "^0.6.0",
+    "@lapismd/design-core": "^0.7.0",
     "@lucide/svelte": "^1.57.0",
     "@tanstack/svelte-virtual": "^3.13.46"
   },
   "peerDependencies": {
-    "@lapis-notes/api": "^0.1.4",
+    "@lapis-notes/api": "^0.2.0",
     "@lapismd/jj-history": "^0.1.0",
     "svelte": "^5.0.0"
   },

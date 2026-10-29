@@ -7,7 +7,7 @@ Shell geometry measures ordinary spacing from the resolved composer dock padding
 under LN-AI-027, without carrying forward a former footer's fixed 20px allowance.
 The panel still has no bottom padding and the composer cannot overlap messages.
 
-The package requires published Design Core `^0.6.0` for prepared browser CSS
+The package requires published Design Core `^0.7.0` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
 behavior retain their owning contracts.
 
@@ -26,13 +26,13 @@ Version 0.1.5 includes the harness catalog refresh and vault-scoped controller
 readiness fixes. Its Markdown peer and development dependency both require
 `^0.1.6`; generated metadata and changelog notes retain those coordinates.
 
-This candidate consumes published API 0.1.2 through its portable peer range.
-Shared shell qualification uses UI and File Explorer 0.1.2 and Workspace 0.2.0.
+This candidate consumes published API 0.2.0 through its portable peer range.
+Shared shell qualification uses UI 0.1.4, File Explorer 0.2.0 and Workspace 0.3.0.
 Mobile shell acceptance uses the published count-bearing dock label, opens the
 workspace tab chooser and returns with Done. It retains real-App plugin and
 collapsed-sidebar assertions; this repairs a stale story selector.
 
-Release qualification uses `@lapis-notes/api@^0.1.2` for the shared renderer,
+Release qualification uses `@lapis-notes/api@^0.2.0` for the shared renderer,
 diagnostics invalidation and selected metadata fingerprint contracts. Portable
 consumers must resolve this prerequisite from npm before plugin publication.
 

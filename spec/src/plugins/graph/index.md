@@ -1,6 +1,6 @@
 # Graph Plugin
 
-The package requires Design Core `^0.6.0` for prepared browser CSS
+The package requires Design Core `^0.7.0` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
 behavior retain their owning contracts.
 
@@ -14,10 +14,10 @@ not assume that an empty workspace has an active note.
 The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.
 
-This candidate consumes published API 0.1.2 through its portable peer range.
-Shared shell qualification uses UI and File Explorer 0.1.2 and Workspace 0.2.0.
+This candidate consumes published API 0.2.0 through its portable peer range.
+Shared shell qualification uses UI 0.1.4, File Explorer 0.2.0 and Workspace 0.3.0.
 
-Release qualification uses `@lapis-notes/api@^0.1.2` for the shared renderer,
+Release qualification uses `@lapis-notes/api@^0.2.0` for the shared renderer,
 diagnostics invalidation and selected metadata fingerprint contracts. Portable
 consumers must resolve this prerequisite from npm before plugin publication.
 

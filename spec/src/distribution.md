@@ -243,9 +243,9 @@ change how packages are published. Storybook and the plugin release build
 polyfill the Node builtins that the DOCX PDF export worker imports. That
 polyfill is a build-host detail and does not change how packages are published.
 
-The shared development host resolves published Mira `~0.1.0` together with
+The shared development host resolves published Mira `~0.1.2` together with
 mira-editor, mira-plugin-ai, and mira-plugin-mermaid `~0.0.3`. Design Core
-stays on the published `^0.6.0` range. Storybook keeps prebundling
+stays on the published `^0.7.0` range. Storybook keeps prebundling
 `@lapismd/mira/**`, including that line's CommonJS highlighter dependencies.
 
 Shared Storybook imports API's public `build/vite` helper for prebuilt Turso

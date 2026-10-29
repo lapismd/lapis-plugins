@@ -553,15 +553,12 @@ function normalizeScripts(scripts) {
   return normalized;
 }
 
-function normalizeDependencies(dependencies, plugin) {
+function normalizeDependencies(dependencies, _plugin) {
   const normalized = {};
   for (const [name, version] of Object.entries(dependencies).sort(([a], [b]) =>
     a.localeCompare(b)
   )) {
-    normalized[name] =
-      plugin === "history" && name === "@lapis-notes/api"
-        ? "^0.1.4"
-        : frameworkPackageVersions.get(name) ?? version;
+    normalized[name] = frameworkPackageVersions.get(name) ?? version;
   }
   return normalized;
 }

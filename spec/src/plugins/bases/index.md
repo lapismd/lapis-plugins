@@ -4,11 +4,12 @@ A standalone Bases patch carries the picker accessibility repair before the
 Design Core 0.4.0 framework refresh. Search inputs explicitly reference unique
 result lists and property icon actions expose accessible names. The property
 popup uses grid rows with independent visibility/edit controls in grid cells,
-preserving search and keyboard actions without buttons nested in options. The patch
-retains the existing published dependency ranges, so Notes can consume the
-released fix without waiting for its own API/UI compatibility release.
+preserving search and keyboard actions without buttons nested in options.
 
-The package requires published Design Core `^0.6.0` for prepared browser CSS
+The package now requires the published API `^0.2.0` and Design Core `^0.7.0`
+floors.
+
+The package requires published Design Core `^0.7.0` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
 behavior retain their owning contracts.
 
@@ -25,13 +26,13 @@ options follow the same purpose-name contract across the complete Select surface
 The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.
 
-This candidate consumes published API 0.1.2 through its portable peer range.
-Shared shell qualification uses UI and File Explorer 0.1.2 and Workspace 0.2.0.
+This candidate consumes published API 0.2.0 through its portable peer range.
+Shared shell qualification uses UI 0.1.4, File Explorer 0.2.0 and Workspace 0.3.0.
 Mobile shell acceptance uses the published count-bearing dock label, opens the
 workspace tab chooser and returns with Done. It retains real-App plugin and
 collapsed-sidebar assertions; this repairs a stale story selector.
 
-Release qualification uses `@lapis-notes/api@^0.1.2` for the shared renderer,
+Release qualification uses `@lapis-notes/api@^0.2.0` for the shared renderer,
 diagnostics invalidation and selected metadata fingerprint contracts. Portable
 consumers must resolve this prerequisite from npm before plugin publication.
 

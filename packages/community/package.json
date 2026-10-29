@@ -46,7 +46,7 @@
     "@lapismd/lapis-community": "^0.1.0"
   },
   "peerDependencies": {
-    "@lapis-notes/api": "^0.1.0",
+    "@lapis-notes/api": "^0.2.0",
     "svelte": "^5.0.0"
   },
   "devDependencies": {
