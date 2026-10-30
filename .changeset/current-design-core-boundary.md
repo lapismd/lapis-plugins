@@ -1,5 +1,4 @@
 ---
-"@lapis-notes/markdown": patch
 "@lapis-notes/graph": patch
 "@lapis-notes/bases": patch
 "@lapis-notes/search": patch

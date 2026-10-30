@@ -4,7 +4,6 @@
 "@lapis-notes/bookmarks": patch
 "@lapis-notes/graph": patch
 "@lapis-notes/history": patch
-"@lapis-notes/markdown": patch
 "@lapis-notes/search": patch
 "@lapis-notes/source-editor": patch
 ---
