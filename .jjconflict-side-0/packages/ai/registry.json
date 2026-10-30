@@ -1,0 +1,221 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 2,
+  "categories": ["ai", "productivity"],
+  "highlights": [
+    "Chat with provider-neutral agents inside the workspace.",
+    "Review tool calls, reasoning, approvals, and results in one transcript.",
+    "Switch compatible ACP agents without moving conversation ownership out of Lapis."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/ai#readme",
+  "appearance": {
+    "icon": "sparkles",
+    "accent": "#A855F7"
+  },
+  "media": {
+    "banner": {
+      "alt": "Lapis AI with conversation History on the left, a populated Chat in the main workspace, and the capability Catalog on the right.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/banner.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/banner.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/banner.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/banner.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-ai-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    },
+    "overview": {
+      "alt": "Focused Lapis AI chat showing a completed tool call and its result in the full workspace.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/overview.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/overview.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/overview.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/overview.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-ai-registry-screenshots--chat-with-tool-activity",
+        "focus": "full-shell"
+      }
+    }
+  },
+  "gallery": [
+    {
+      "id": "chat-tool-activity",
+      "alt": "Focused Lapis AI chat showing a completed vault read tool call and a concise response.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/chat-tool-activity.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/chat-tool-activity.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/chat-tool-activity.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/chat-tool-activity.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-ai-registry-screenshots--chat-with-tool-activity",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "Work with agents",
+            "tone": "neutral"
+          },
+          {
+            "text": "without leaving your notes",
+            "tone": "violet"
+          }
+        ],
+        "description": [
+          {
+            "text": "Follow",
+            "tone": "neutral"
+          },
+          {
+            "text": "tool activity,",
+            "tone": "violet"
+          },
+          {
+            "text": "reasoning,",
+            "tone": "cyan"
+          },
+          {
+            "text": "and the final answer in one app-owned conversation.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    },
+    {
+      "id": "history",
+      "alt": "AI conversation history organized by note scope in the right sidebar.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/history.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/history.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/history.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/history.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-ai-registry-screenshots--history",
+        "focus": "right-sidebar"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "Conversations stay",
+            "tone": "neutral"
+          },
+          {
+            "text": "close to their context",
+            "tone": "cyan"
+          }
+        ],
+        "description": [
+          {
+            "text": "Find",
+            "tone": "neutral"
+          },
+          {
+            "text": "active and archived chats",
+            "tone": "cyan"
+          },
+          {
+            "text": "by folder while Lapis keeps the",
+            "tone": "neutral"
+          },
+          {
+            "text": "transcript portable.",
+            "tone": "violet"
+          }
+        ]
+      }
+    },
+    {
+      "id": "catalog",
+      "alt": "AI catalog in the right sidebar listing tools, commands, and skills.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/catalog.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/catalog.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/catalog.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/catalog.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-ai-registry-screenshots--catalog",
+        "focus": "right-sidebar"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "Choose the capabilities",
+            "tone": "neutral"
+          },
+          {
+            "text": "each chat can use",
+            "tone": "green"
+          }
+        ],
+        "description": [
+          {
+            "text": "Browse",
+            "tone": "neutral"
+          },
+          {
+            "text": "application tools,",
+            "tone": "green"
+          },
+          {
+            "text": "slash commands, and",
+            "tone": "neutral"
+          },
+          {
+            "text": "vault skills",
+            "tone": "violet"
+          },
+          {
+            "text": "from one live catalog.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    }
+  ]
+}

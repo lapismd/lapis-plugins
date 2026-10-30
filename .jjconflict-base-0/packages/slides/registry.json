@@ -1,0 +1,76 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 2,
+  "categories": ["presentation", "markdown"],
+  "highlights": [
+    "Turn the active Markdown note into a full-screen Reveal.js presentation.",
+    "Build horizontal and vertical slide trees with speaker notes and attributes.",
+    "Keep the presentation synchronized with live editor changes."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/slides#readme",
+  "appearance": {
+    "icon": "presentation",
+    "accent": "#42AFFA"
+  },
+  "media": {
+    "banner": {
+      "alt": "Slides full-screen presentation showing the Goals slide from the Release Walkthrough Markdown fixture.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/banner.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/banner.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/banner.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/banner.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-slides-registry-screenshots--presentation",
+        "focus": "full-shell"
+      }
+    }
+  },
+  "gallery": [
+    {
+      "id": "presentation",
+      "alt": "Slides full-screen presentation showing the Goals slide from the Release Walkthrough Markdown fixture.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/presentation.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/presentation.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/presentation.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/presentation.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-slides-registry-screenshots--presentation",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "Turn Markdown into presentations.",
+            "tone": "neutral"
+          }
+        ],
+        "description": [
+          {
+            "text": "Open the active note as a Reveal.js deck with horizontal, vertical, and speaker-note slides.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    }
+  ]
+}

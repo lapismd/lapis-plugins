@@ -1,0 +1,305 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  LAPIS_PLUGINS_VALIDATION_RUNTIME: native
+  TURBO_API: ${{ vars.TURBO_API }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_REMOTE_CACHE_SIGNATURE_KEY: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      spec_only: ${{ steps.changes.outputs.spec_only }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Classify the complete pull-request diff
+        id: changes
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: node scripts/classify-ci-changes.mjs
+
+  prerequisite:
+    needs: changes
+    if: needs.changes.outputs.spec_only == 'false'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Verify published framework prerequisites
+        run: node scripts/check-framework-publication.mjs
+
+  image-pin:
+    runs-on: ubuntu-latest
+    outputs:
+      reference: ${{ steps.image.outputs.reference }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Resolve the verified dependency image
+        id: image
+        run: |
+          set -euo pipefail
+          reference="$(jq -er '.dependencies | select(.image and (.digest | test("^sha256:[a-f0-9]{64}$"))) | .image + "@" + .digest' .ci/images.json)"
+          echo "reference=$reference" >> "$GITHUB_OUTPUT"
+
+  build-cache:
+    needs:
+      - changes
+      - prerequisite
+      - image-pin
+    if: needs.changes.outputs.spec_only == 'false'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      image: ${{ needs.image-pin.outputs.reference }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/ci-setup
+      - name: Populate signed remote build cache
+        run: node scripts/run-turbo.mjs build --summarize
+      - name: Report build-cache result
+        run: node scripts/report-turbo-cache.mjs --github-summary
+
+  quality:
+    needs:
+      - changes
+      - build-cache
+      - image-pin
+    if: needs.changes.outputs.spec_only == 'false'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      image: ${{ needs.image-pin.outputs.reference }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/ci-setup
+      - run: pnpm audit
+      - run: pnpm --dir packages/sync audit --ignore-workspace
+      - run: pnpm packages:check
+      - run: pnpm spec:check
+      - run: pnpm check:app-ownership
+      - run: pnpm check:no-tailwind
+      - name: Run package checks
+        run: node scripts/run-turbo.mjs build check --summarize
+      - name: Report cache restoration
+        run: node scripts/report-turbo-cache.mjs --github-summary
+
+  unit:
+    needs:
+      - changes
+      - build-cache
+      - image-pin
+    if: needs.changes.outputs.spec_only == 'false'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    container:
+      image: ${{ needs.image-pin.outputs.reference }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/ci-setup
+      - name: Run package unit tests
+        run: node scripts/run-turbo.mjs build test --summarize
+      - name: Report cache restoration
+        run: node scripts/report-turbo-cache.mjs --github-summary
+      - name: Install pinned upstream JJ for repository fixtures
+        run: node scripts/validation/install-tools.mjs --ci
+      - run: pnpm test:release
+
+  storybook-static:
+    needs:
+      - changes
+      - build-cache
+      - image-pin
+    if: needs.changes.outputs.spec_only == 'false'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      image: ${{ needs.image-pin.outputs.reference }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/ci-setup
+      - name: Restore package builds
+        run: node scripts/run-turbo.mjs build --summarize
+      - name: Report cache restoration
+        run: node scripts/report-turbo-cache.mjs --github-summary
+      - run: pnpm build-storybook
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+
+  storybook-interaction:
+    needs:
+      - changes
+      - build-cache
+      - image-pin
+    if: needs.changes.outputs.spec_only == 'false'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    container:
+      image: ${{ needs.image-pin.outputs.reference }}
+      # Docker's 64 MiB default closes Chromium before this shard finishes.
+      options: --shm-size=2g
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/ci-setup
+      - name: Restore package builds
+        run: node scripts/run-turbo.mjs build --summarize
+      - name: Report cache restoration
+        run: node scripts/report-turbo-cache.mjs --github-summary
+      - run: pnpm test:storybook -- --shard=${{ matrix.shard }}/4
+
+  release-artifacts:
+    needs:
+      - changes
+      - build-cache
+      - image-pin
+    if: needs.changes.outputs.spec_only == 'false'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container:
+      image: ${{ needs.image-pin.outputs.reference }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/ci-setup
+      - name: Restore package builds
+        run: node scripts/run-turbo.mjs build --summarize
+      - name: Report cache restoration
+        run: node scripts/report-turbo-cache.mjs --github-summary
+      - run: pnpm packages:pack -- --already-built
+      - run: pnpm plugin:build
+      - run: pnpm plugin:verify
+      - run: node scripts/create-registry-acceptance-fixture.mjs
+      - uses: actions/upload-artifact@v7
+        with:
+          name: first-party-plugin-candidate-artifacts
+          path: |
+            .release/npm/*.tgz
+            .release/npm/*.sha256
+            .release/npm/manifest.json
+            .release/plugins/**/*.lapis-plugin
+            .release/plugins/**/*.sha256
+            .release/release-plan.json
+          if-no-files-found: error
+          retention-days: 14
+
+  specification:
+    needs:
+      - changes
+      - image-pin
+    if: needs.changes.outputs.spec_only == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    container:
+      image: ${{ needs.image-pin.outputs.reference }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/ci-setup
+      - run: pnpm spec:check
+      - run: pnpm check:app-ownership
+
+  validate:
+    if: always()
+    needs:
+      - changes
+      - specification
+      - prerequisite
+      - image-pin
+      - build-cache
+      - quality
+      - unit
+      - storybook-static
+      - storybook-interaction
+      - release-artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aggregate blocking validation lanes
+        env:
+          CHANGES: ${{ needs.changes.result }}
+          SPEC_ONLY: ${{ needs.changes.outputs.spec_only }}
+          SPECIFICATION: ${{ needs.specification.result }}
+          PREREQUISITE: ${{ needs.prerequisite.result }}
+          IMAGE_PIN: ${{ needs.image-pin.result }}
+          BUILD_CACHE: ${{ needs.build-cache.result }}
+          QUALITY: ${{ needs.quality.result }}
+          UNIT: ${{ needs.unit.result }}
+          STORYBOOK_STATIC: ${{ needs.storybook-static.result }}
+          STORYBOOK_INTERACTION: ${{ needs.storybook-interaction.result }}
+          RELEASE_ARTIFACTS: ${{ needs.release-artifacts.result }}
+        run: |
+          set -euo pipefail
+          if [ "$CHANGES" != "success" ] || [ "$IMAGE_PIN" != "success" ]; then
+            echo "CI routing or image resolution failed: ${CHANGES} / ${IMAGE_PIN}" >&2
+            exit 1
+          fi
+          functional_results=(
+            "$PREREQUISITE"
+            "$BUILD_CACHE"
+            "$QUALITY"
+            "$UNIT"
+            "$STORYBOOK_STATIC"
+            "$STORYBOOK_INTERACTION"
+            "$RELEASE_ARTIFACTS"
+          )
+          if [ "$SPEC_ONLY" = "true" ]; then
+            test "$SPECIFICATION" = "success"
+            for result in "${functional_results[@]}"; do
+              test "$result" = "skipped"
+            done
+            echo "Spec-only pull request: all specification checks passed."
+            exit 0
+          fi
+          test "$SPEC_ONLY" = "false"
+          test "$SPECIFICATION" = "skipped"
+          for result in "${functional_results[@]}"; do
+            if [ "$result" != "success" ]; then
+              echo "A required CI lane finished with: $result" >&2
+              exit 1
+            fi
+          done
+          echo "All blocking Lapis Plugins validation lanes passed."

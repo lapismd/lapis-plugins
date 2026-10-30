@@ -1,0 +1,247 @@
+<script lang="ts">
+  import { onMount } from "svelte";
+  import type { App, WorkspaceLeaf } from "@lapis-notes/api";
+  import { WorkspaceShell } from "@lapis-notes/workspace";
+  import { BookmarksViewType } from "@lapis-notes/bookmarks";
+  import { FileExplorerView } from "@lapis-notes/file-explorer";
+  import {
+    sampleEmbeddedNote,
+    samplePlainTranscript,
+    sampleSavedComment,
+    sampleTranscriptFormats,
+    sampleTranscriptMarkdown,
+    sampleTranscriptPath,
+    TRANSCRIPT_READING_VIEW,
+    TranscriptsPlugin,
+  } from "@lapis-notes/transcripts";
+  import {
+    bootPanelDemo,
+    type PanelDemoLayout,
+  } from "../../_shared/panels/create-panel-demo";
+  import "../../../workspace/lapis-editor-demo/lapis-editor-demo.css";
+  import "@lapismd/mira/themes/obsidian.css";
+  import "@lapismd/mira-editor/styles.css";
+  import sampleMeetingUrl from "../../../../packages/transcripts/assets/sample-meeting.m4a?url";
+
+  let { layout }: { layout: PanelDemoLayout } = $props();
+
+  let app = $state<App | null>(null);
+  let status = $state("booting");
+  let root = $state<HTMLDivElement>();
+
+  $effect(() => {
+    if (!root || !app) return;
+    const ownedRoot = root as HTMLDivElement & { __lapisApp?: App };
+    ownedRoot.__lapisApp = app;
+    return () => {
+      if (ownedRoot.__lapisApp === app) delete ownedRoot.__lapisApp;
+    };
+  });
+
+  onMount(() => {
+    let cancelled = false;
+    const runtimePromise = bootPanelDemo("bookmarks", layout, {
+      diagnostics: "none",
+      plugins: [
+        {
+          plugin: TranscriptsPlugin,
+          required: false,
+          enabledByDefault: true,
+          distribution: "bundled",
+        },
+      ],
+    }).then(async (runtime) => {
+      let readingLeaf: WorkspaceLeaf | null = null;
+      runtime.app.workspace.iterateAllLeaves((leaf) => {
+        if (!readingLeaf && leaf.view.getViewType() === BookmarksViewType) {
+          readingLeaf = leaf;
+        }
+      });
+      if (!readingLeaf) {
+        throw new Error("The workspace shell has no main leaf for Transcripts");
+      }
+      if (!runtime.app.vault.getAbstractFileByPath(sampleTranscriptPath)) {
+        await runtime.app.vault.create(
+          sampleTranscriptPath,
+          sampleTranscriptMarkdown(),
+        );
+      }
+      for (const format of [
+        ...sampleTranscriptFormats,
+        samplePlainTranscript,
+        sampleEmbeddedNote,
+      ]) {
+        if (!runtime.app.vault.getAbstractFileByPath(format.path)) {
+          await runtime.app.vault.create(format.path, format.markdown);
+        }
+      }
+      const recordingPath = "Notes/recordings/meeting.m4a";
+      if (!runtime.app.vault.getAbstractFileByPath(recordingPath)) {
+        if (!runtime.app.vault.getAbstractFileByPath("Notes/recordings")) {
+          await runtime.app.vault.createFolder("Notes/recordings");
+        }
+        const recording = await fetch(sampleMeetingUrl);
+        await runtime.app.vault.createBinary(
+          recordingPath,
+          await recording.arrayBuffer(),
+        );
+      }
+      const transcript = runtime.app.vault.getFileByPath(sampleTranscriptPath);
+      if (!transcript) throw new Error("Missing sample transcript");
+      await runtime.app.fileManager.processFrontMatter(
+        transcript,
+        (frontmatter: Record<string, unknown>) => {
+          frontmatter.comments = [sampleSavedComment()];
+        },
+      );
+      await waitForSavedComment(runtime.app, sampleTranscriptPath);
+      if (layout === "middle-top-tabs") {
+        await showExplorerForSample(runtime.app, readingLeaf);
+      } else {
+        await readingLeaf.setViewState({
+          type: TRANSCRIPT_READING_VIEW,
+          state: { file: transcript.path },
+        });
+        runtime.app.workspace.setActiveLeaf(readingLeaf, { focus: false });
+      }
+      return runtime;
+    });
+    void runtimePromise
+      .then((runtime) => {
+        if (cancelled) return;
+        app = runtime.app;
+        status = "ready";
+      })
+      .catch((reason: unknown) => {
+        if (!cancelled) {
+          status = reason instanceof Error ? reason.message : "failed";
+        }
+      });
+    return () => {
+      cancelled = true;
+      void runtimePromise
+        .then(async (runtime) => {
+          await runtime.dispose();
+        })
+        .catch(() => undefined);
+    };
+  });
+
+  const OPEN_EXPLORER_COMMAND = "lapis-file-explorer:open-explorer";
+
+  async function showExplorerForSample(
+    app: App,
+    documentLeaf: WorkspaceLeaf,
+  ): Promise<void> {
+    const timeFirst = sampleTranscriptFormats[0];
+    if (!timeFirst) throw new Error("Missing time-first transcript");
+    await documentLeaf.setViewState({
+      type: TRANSCRIPT_READING_VIEW,
+      state: { file: sampleTranscriptPath },
+    });
+    const timeFirstLeaf = app.workspace.getLeaf("tab");
+    await timeFirstLeaf.setViewState({
+      type: TRANSCRIPT_READING_VIEW,
+      state: { file: timeFirst.path },
+    });
+    const plainFile = app.vault.getFileByPath(samplePlainTranscript.path);
+    if (!plainFile) throw new Error("Missing draft transcript");
+    const plainLeaf = app.workspace.getLeaf("tab");
+    await plainLeaf.openFile(plainFile);
+    app.workspace.setActiveLeaf(plainLeaf, { focus: false });
+    await app.commands.executeCommand(OPEN_EXPLORER_COMMAND);
+    const explorerLeaf = await waitForFileExplorer(app);
+    if (explorerLeaf.view instanceof FileExplorerView) {
+      explorerLeaf.view.revealPath(samplePlainTranscript.path);
+    }
+  }
+
+  async function waitForSavedComment(app: App, path: string): Promise<void> {
+    const started = Date.now();
+    while (Date.now() - started < 5_000) {
+      const comments =
+        app.metadataCache.getCache(path)?.frontmatter?.comments;
+      if (Array.isArray(comments) && comments.length > 0) return;
+      await new Promise((resolve) => setTimeout(resolve, 20));
+    }
+    throw new Error("Saved transcript comment was not indexed");
+  }
+
+  async function waitForFileExplorer(app: App): Promise<WorkspaceLeaf> {
+    const started = Date.now();
+    while (Date.now() - started < 5_000) {
+      const leaf = app.workspace.getLeavesOfType("file-explorer")[0];
+      if (leaf?.view instanceof FileExplorerView) return leaf;
+      await new Promise((resolve) => setTimeout(resolve, 20));
+    }
+    throw new Error("Open Explorer did not create a file explorer leaf");
+  }
+</script>
+
+<div
+  bind:this={root}
+  class="panel-demo"
+  data-testid="panel-demo"
+  data-panel-kind="transcripts"
+  data-panel-layout={layout}
+  data-status={status}
+>
+  <div class="panel-demo__status" data-testid="panel-demo-status">{status}</div>
+  {#if app}
+    <WorkspaceShell {app} />
+  {/if}
+</div>
+
+<style>
+  :global(
+      body.sb-main-fullscreen:has(#storybook-root .panel-demo) #storybook-root
+    ) {
+    box-sizing: border-box;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0 !important;
+  }
+
+  :global(html:has(#storybook-root .panel-demo)),
+  :global(body:has(#storybook-root .panel-demo)) {
+    overflow: hidden;
+  }
+
+  .panel-demo {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    max-width: 100%;
+    max-height: 100vh;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .panel-demo > :global([data-ui-component="lapis-workspace-shell"]) {
+    flex: 1 1 0;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  :global(.panel-demo-docs-canvas) .panel-demo {
+    height: 700px;
+    max-height: 700px;
+    min-height: 700px;
+  }
+
+  .panel-demo__status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+</style>

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "remoteCache": {
+    "signature": true,
+    "timeout": 10,
+    "uploadTimeout": 30
+  },
+  "futureFlags": {
+    "longerSignatureKey": true
+  },
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
+    "check": {
+      "dependsOn": ["^build", "@lapis-notes/markdown#build"],
+      "outputs": []
+    },
+    "check:types": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "check:svelte": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    }
+  },
+  "globalEnv": ["LAPIS_PLUGINS_VALIDATION_WORKER"],
+  "globalPassThroughEnv": [
+    "LAPIS_PLUGINS_VALIDATION_RUNTIME",
+    "PLAYWRIGHT_BROWSERS_PATH"
+  ]
+}

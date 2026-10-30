@@ -1,0 +1,2733 @@
+[
+  {
+    "name": "Tasks JSON quoted NEL",
+    "input": "---\n{\"type\": \"task\", \"id\": \"metadata\", \"extra\": \"ab\", \"task\": {\"status\": \"open\", \"custom\": \"ab\", \"comments\": [{\"id\": \"comment\", \"at\": \"explicit\", \"text\": \"ab\"}]}}\n---\n\n# Metadata\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "metadata",
+        "extra": "ab",
+        "task": {
+          "status": "open",
+          "custom": "ab",
+          "comments": [
+            {
+              "id": "comment",
+              "at": "explicit",
+              "text": "ab"
+            }
+          ]
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 3,
+          "col": 0,
+          "offset": 170
+        }
+      },
+      "headings": [
+        {
+          "heading": "Metadata",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 4,
+              "col": 0,
+              "offset": 171
+            },
+            "end": {
+              "line": 4,
+              "col": 10,
+              "offset": 181
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks YAML quoted NEL after retained serialization",
+    "input": "---\nextra: \"ab\"\ntask:\n  custom: \"ab\"\n  status: canceled\n  inbox: false\n  start: anytime\n  comments:\n    - id: comment\n      at: explicit\n      text: \"ab\"\ntype: task\nid: metadata\nupdated: 2026-10-25T00:00:00Z\n---\n\n# Metadata\n",
+    "expected": {
+      "frontmatter": {
+        "extra": "ab",
+        "task": {
+          "custom": "ab",
+          "status": "canceled",
+          "inbox": false,
+          "start": "anytime",
+          "comments": [
+            {
+              "id": "comment",
+              "at": "explicit",
+              "text": "ab"
+            }
+          ]
+        },
+        "type": "task",
+        "id": "metadata",
+        "updated": "2026-10-25T00:00:00Z"
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 15,
+          "col": 0,
+          "offset": 215
+        }
+      },
+      "headings": [
+        {
+          "heading": "Metadata",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 16,
+              "col": 0,
+              "offset": 216
+            },
+            "end": {
+              "line": 16,
+              "col": 10,
+              "offset": 226
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks NEL / double",
+    "input": "---\ntype: task\nid: unicode\ntask:\n  comments:\n    - id: unicode\n      at: explicit\n      text: \"beforeafter\"\n---\n\n# Unicode\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "unicode",
+        "task": {
+          "comments": [
+            {
+              "id": "unicode",
+              "at": "explicit",
+              "text": "beforeafter"
+            }
+          ]
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 9,
+          "col": 0,
+          "offset": 113
+        }
+      },
+      "headings": [
+        {
+          "heading": "Unicode",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 10,
+              "col": 0,
+              "offset": 114
+            },
+            "end": {
+              "line": 10,
+              "col": 9,
+              "offset": 123
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks NEL / single",
+    "input": "---\ntype: task\nid: unicode\ntask:\n  comments:\n    - id: unicode\n      at: explicit\n      text: 'beforeafter'\n---\n\n# Unicode\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "unicode",
+        "task": {
+          "comments": [
+            {
+              "id": "unicode",
+              "at": "explicit",
+              "text": "beforeafter"
+            }
+          ]
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 9,
+          "col": 0,
+          "offset": 113
+        }
+      },
+      "headings": [
+        {
+          "heading": "Unicode",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 10,
+              "col": 0,
+              "offset": 114
+            },
+            "end": {
+              "line": 10,
+              "col": 9,
+              "offset": 123
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks NEL / plain",
+    "input": "---\ntype: task\nid: unicode\ntask:\n  comments:\n    - id: unicode\n      at: explicit\n      text: beforeafter\n---\n\n# Unicode\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "unicode",
+        "task": {
+          "comments": [
+            {
+              "id": "unicode",
+              "at": "explicit",
+              "text": "beforeafter"
+            }
+          ]
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 9,
+          "col": 0,
+          "offset": 111
+        }
+      },
+      "headings": [
+        {
+          "heading": "Unicode",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 10,
+              "col": 0,
+              "offset": 112
+            },
+            "end": {
+              "line": 10,
+              "col": 9,
+              "offset": 121
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks NEL / literal",
+    "input": "---\ntype: task\nid: unicode\ntask:\n  comments:\n    - id: unicode\n      at: explicit\n      text: |\n      beforeafter\n---\n\n# Unicode\n",
+    "expected": {
+      "frontmatter": {},
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 10,
+          "col": 0,
+          "offset": 119
+        }
+      },
+      "headings": [
+        {
+          "heading": "Unicode",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 11,
+              "col": 0,
+              "offset": 120
+            },
+            "end": {
+              "line": 11,
+              "col": 9,
+              "offset": 129
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks line separator / double",
+    "input": "---\ntype: task\nid: unicode\ntask:\n  comments:\n    - id: unicode\n      at: explicit\n      text: \"before after\"\n---\n\n# Unicode\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "unicode",
+        "task": {
+          "comments": [
+            {
+              "id": "unicode",
+              "at": "explicit",
+              "text": "before after"
+            }
+          ]
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 9,
+          "col": 0,
+          "offset": 113
+        }
+      },
+      "headings": [
+        {
+          "heading": "Unicode",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 10,
+              "col": 0,
+              "offset": 114
+            },
+            "end": {
+              "line": 10,
+              "col": 9,
+              "offset": 123
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks line separator / single",
+    "input": "---\ntype: task\nid: unicode\ntask:\n  comments:\n    - id: unicode\n      at: explicit\n      text: 'before after'\n---\n\n# Unicode\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "unicode",
+        "task": {
+          "comments": [
+            {
+              "id": "unicode",
+              "at": "explicit",
+              "text": "before after"
+            }
+          ]
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 9,
+          "col": 0,
+          "offset": 113
+        }
+      },
+      "headings": [
+        {
+          "heading": "Unicode",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 10,
+              "col": 0,
+              "offset": 114
+            },
+            "end": {
+              "line": 10,
+              "col": 9,
+              "offset": 123
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks line separator / plain",
+    "input": "---\ntype: task\nid: unicode\ntask:\n  comments:\n    - id: unicode\n      at: explicit\n      text: before after\n---\n\n# Unicode\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "unicode",
+        "task": {
+          "comments": [
+            {
+              "id": "unicode",
+              "at": "explicit",
+              "text": "before after"
+            }
+          ]
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 9,
+          "col": 0,
+          "offset": 111
+        }
+      },
+      "headings": [
+        {
+          "heading": "Unicode",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 10,
+              "col": 0,
+              "offset": 112
+            },
+            "end": {
+              "line": 10,
+              "col": 9,
+              "offset": 121
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks line separator / literal",
+    "input": "---\ntype: task\nid: unicode\ntask:\n  comments:\n    - id: unicode\n      at: explicit\n      text: |\n      before after\n---\n\n# Unicode\n",
+    "expected": {
+      "frontmatter": {},
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 10,
+          "col": 0,
+          "offset": 119
+        }
+      },
+      "headings": [
+        {
+          "heading": "Unicode",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 11,
+              "col": 0,
+              "offset": 120
+            },
+            "end": {
+              "line": 11,
+              "col": 9,
+              "offset": 129
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks paragraph separator / double",
+    "input": "---\ntype: task\nid: unicode\ntask:\n  comments:\n    - id: unicode\n      at: explicit\n      text: \"before after\"\n---\n\n# Unicode\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "unicode",
+        "task": {
+          "comments": [
+            {
+              "id": "unicode",
+              "at": "explicit",
+              "text": "before after"
+            }
+          ]
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 9,
+          "col": 0,
+          "offset": 113
+        }
+      },
+      "headings": [
+        {
+          "heading": "Unicode",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 10,
+              "col": 0,
+              "offset": 114
+            },
+            "end": {
+              "line": 10,
+              "col": 9,
+              "offset": 123
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks paragraph separator / single",
+    "input": "---\ntype: task\nid: unicode\ntask:\n  comments:\n    - id: unicode\n      at: explicit\n      text: 'before after'\n---\n\n# Unicode\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "unicode",
+        "task": {
+          "comments": [
+            {
+              "id": "unicode",
+              "at": "explicit",
+              "text": "before after"
+            }
+          ]
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 9,
+          "col": 0,
+          "offset": 113
+        }
+      },
+      "headings": [
+        {
+          "heading": "Unicode",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 10,
+              "col": 0,
+              "offset": 114
+            },
+            "end": {
+              "line": 10,
+              "col": 9,
+              "offset": 123
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks paragraph separator / plain",
+    "input": "---\ntype: task\nid: unicode\ntask:\n  comments:\n    - id: unicode\n      at: explicit\n      text: before after\n---\n\n# Unicode\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "unicode",
+        "task": {
+          "comments": [
+            {
+              "id": "unicode",
+              "at": "explicit",
+              "text": "before after"
+            }
+          ]
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 9,
+          "col": 0,
+          "offset": 111
+        }
+      },
+      "headings": [
+        {
+          "heading": "Unicode",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 10,
+              "col": 0,
+              "offset": 112
+            },
+            "end": {
+              "line": 10,
+              "col": 9,
+              "offset": 121
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks paragraph separator / literal",
+    "input": "---\ntype: task\nid: unicode\ntask:\n  comments:\n    - id: unicode\n      at: explicit\n      text: |\n      before after\n---\n\n# Unicode\n",
+    "expected": {
+      "frontmatter": {},
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 10,
+          "col": 0,
+          "offset": 119
+        }
+      },
+      "headings": [
+        {
+          "heading": "Unicode",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 11,
+              "col": 0,
+              "offset": 120
+            },
+            "end": {
+              "line": 11,
+              "col": 9,
+              "offset": 129
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks yes-no",
+    "input": "---\ntype: task\nid: extra\nyes: yes\nno: no\non: on\noff: off\n---\n\n# Extra\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "extra",
+        "yes": "yes",
+        "no": "no",
+        "on": "on",
+        "off": "off"
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 8,
+          "col": 0,
+          "offset": 61
+        }
+      },
+      "headings": [
+        {
+          "heading": "Extra",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 9,
+              "col": 0,
+              "offset": 62
+            },
+            "end": {
+              "line": 9,
+              "col": 7,
+              "offset": 69
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks numeric",
+    "input": "---\ntype: task\nid: extra\nnumeric: 1e3\nnan: .nan\ninf: .inf\n---\n\n# Extra\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "extra",
+        "numeric": 1000,
+        "nan": null,
+        "inf": null
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 7,
+          "col": 0,
+          "offset": 62
+        }
+      },
+      "headings": [
+        {
+          "heading": "Extra",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 8,
+              "col": 0,
+              "offset": 63
+            },
+            "end": {
+              "line": 8,
+              "col": 7,
+              "offset": 70
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks alias",
+    "input": "---\ntype: task\nid: extra\nvalue: &value keep\nalias: *value\n---\n\n# Extra\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "extra",
+        "value": "keep",
+        "alias": "keep"
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 6,
+          "col": 0,
+          "offset": 62
+        }
+      },
+      "headings": [
+        {
+          "heading": "Extra",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 0,
+              "offset": 63
+            },
+            "end": {
+              "line": 7,
+              "col": 7,
+              "offset": 70
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks duplicate",
+    "input": "---\ntype: task\nid: extra\nid: duplicate\n---\n\n# Extra\n",
+    "expected": {
+      "frontmatter": {},
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 5,
+          "col": 0,
+          "offset": 43
+        }
+      },
+      "headings": [
+        {
+          "heading": "Extra",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 6,
+              "col": 0,
+              "offset": 44
+            },
+            "end": {
+              "line": 6,
+              "col": 7,
+              "offset": 51
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks inbox scalar true",
+    "input": "---\ntype: task\nid: scalar\ntask:\n  inbox: true\n---\n\n# Scalar\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "scalar",
+        "task": {
+          "inbox": true
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 6,
+          "col": 0,
+          "offset": 50
+        }
+      },
+      "headings": [
+        {
+          "heading": "Scalar",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 0,
+              "offset": 51
+            },
+            "end": {
+              "line": 7,
+              "col": 8,
+              "offset": 59
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks inbox scalar True",
+    "input": "---\ntype: task\nid: scalar\ntask:\n  inbox: True\n---\n\n# Scalar\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "scalar",
+        "task": {
+          "inbox": true
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 6,
+          "col": 0,
+          "offset": 50
+        }
+      },
+      "headings": [
+        {
+          "heading": "Scalar",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 0,
+              "offset": 51
+            },
+            "end": {
+              "line": 7,
+              "col": 8,
+              "offset": 59
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks inbox scalar TRUE",
+    "input": "---\ntype: task\nid: scalar\ntask:\n  inbox: TRUE\n---\n\n# Scalar\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "scalar",
+        "task": {
+          "inbox": true
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 6,
+          "col": 0,
+          "offset": 50
+        }
+      },
+      "headings": [
+        {
+          "heading": "Scalar",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 0,
+              "offset": 51
+            },
+            "end": {
+              "line": 7,
+              "col": 8,
+              "offset": 59
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks inbox scalar tRuE",
+    "input": "---\ntype: task\nid: scalar\ntask:\n  inbox: tRuE\n---\n\n# Scalar\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "scalar",
+        "task": {
+          "inbox": "tRuE"
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 6,
+          "col": 0,
+          "offset": 50
+        }
+      },
+      "headings": [
+        {
+          "heading": "Scalar",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 0,
+              "offset": 51
+            },
+            "end": {
+              "line": 7,
+              "col": 8,
+              "offset": 59
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks inbox scalar TrUe",
+    "input": "---\ntype: task\nid: scalar\ntask:\n  inbox: TrUe\n---\n\n# Scalar\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "scalar",
+        "task": {
+          "inbox": "TrUe"
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 6,
+          "col": 0,
+          "offset": 50
+        }
+      },
+      "headings": [
+        {
+          "heading": "Scalar",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 0,
+              "offset": 51
+            },
+            "end": {
+              "line": 7,
+              "col": 8,
+              "offset": 59
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks inbox scalar false",
+    "input": "---\ntype: task\nid: scalar\ntask:\n  inbox: false\n---\n\n# Scalar\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "scalar",
+        "task": {
+          "inbox": false
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 6,
+          "col": 0,
+          "offset": 51
+        }
+      },
+      "headings": [
+        {
+          "heading": "Scalar",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 0,
+              "offset": 52
+            },
+            "end": {
+              "line": 7,
+              "col": 8,
+              "offset": 60
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks inbox scalar False",
+    "input": "---\ntype: task\nid: scalar\ntask:\n  inbox: False\n---\n\n# Scalar\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "scalar",
+        "task": {
+          "inbox": false
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 6,
+          "col": 0,
+          "offset": 51
+        }
+      },
+      "headings": [
+        {
+          "heading": "Scalar",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 0,
+              "offset": 52
+            },
+            "end": {
+              "line": 7,
+              "col": 8,
+              "offset": 60
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks inbox scalar FALSE",
+    "input": "---\ntype: task\nid: scalar\ntask:\n  inbox: FALSE\n---\n\n# Scalar\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "scalar",
+        "task": {
+          "inbox": false
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 6,
+          "col": 0,
+          "offset": 51
+        }
+      },
+      "headings": [
+        {
+          "heading": "Scalar",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 0,
+              "offset": 52
+            },
+            "end": {
+              "line": 7,
+              "col": 8,
+              "offset": 60
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks inbox scalar fAlSe",
+    "input": "---\ntype: task\nid: scalar\ntask:\n  inbox: fAlSe\n---\n\n# Scalar\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "scalar",
+        "task": {
+          "inbox": "fAlSe"
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 6,
+          "col": 0,
+          "offset": 51
+        }
+      },
+      "headings": [
+        {
+          "heading": "Scalar",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 0,
+              "offset": 52
+            },
+            "end": {
+              "line": 7,
+              "col": 8,
+              "offset": 60
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks inbox scalar yes",
+    "input": "---\ntype: task\nid: scalar\ntask:\n  inbox: yes\n---\n\n# Scalar\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "scalar",
+        "task": {
+          "inbox": "yes"
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 6,
+          "col": 0,
+          "offset": 49
+        }
+      },
+      "headings": [
+        {
+          "heading": "Scalar",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 0,
+              "offset": 50
+            },
+            "end": {
+              "line": 7,
+              "col": 8,
+              "offset": 58
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks inbox scalar Yes",
+    "input": "---\ntype: task\nid: scalar\ntask:\n  inbox: Yes\n---\n\n# Scalar\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "scalar",
+        "task": {
+          "inbox": "Yes"
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 6,
+          "col": 0,
+          "offset": 49
+        }
+      },
+      "headings": [
+        {
+          "heading": "Scalar",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 0,
+              "offset": 50
+            },
+            "end": {
+              "line": 7,
+              "col": 8,
+              "offset": 58
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks inbox scalar YES",
+    "input": "---\ntype: task\nid: scalar\ntask:\n  inbox: YES\n---\n\n# Scalar\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "scalar",
+        "task": {
+          "inbox": "YES"
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 6,
+          "col": 0,
+          "offset": 49
+        }
+      },
+      "headings": [
+        {
+          "heading": "Scalar",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 0,
+              "offset": 50
+            },
+            "end": {
+              "line": 7,
+              "col": 8,
+              "offset": 58
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks inbox scalar on",
+    "input": "---\ntype: task\nid: scalar\ntask:\n  inbox: on\n---\n\n# Scalar\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "scalar",
+        "task": {
+          "inbox": "on"
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 6,
+          "col": 0,
+          "offset": 48
+        }
+      },
+      "headings": [
+        {
+          "heading": "Scalar",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 0,
+              "offset": 49
+            },
+            "end": {
+              "line": 7,
+              "col": 8,
+              "offset": 57
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks inbox scalar ON",
+    "input": "---\ntype: task\nid: scalar\ntask:\n  inbox: ON\n---\n\n# Scalar\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "scalar",
+        "task": {
+          "inbox": "ON"
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 6,
+          "col": 0,
+          "offset": 48
+        }
+      },
+      "headings": [
+        {
+          "heading": "Scalar",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 0,
+              "offset": 49
+            },
+            "end": {
+              "line": 7,
+              "col": 8,
+              "offset": 57
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks inbox scalar off",
+    "input": "---\ntype: task\nid: scalar\ntask:\n  inbox: off\n---\n\n# Scalar\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "scalar",
+        "task": {
+          "inbox": "off"
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 6,
+          "col": 0,
+          "offset": 49
+        }
+      },
+      "headings": [
+        {
+          "heading": "Scalar",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 0,
+              "offset": 50
+            },
+            "end": {
+              "line": 7,
+              "col": 8,
+              "offset": 58
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks inbox scalar no",
+    "input": "---\ntype: task\nid: scalar\ntask:\n  inbox: no\n---\n\n# Scalar\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "scalar",
+        "task": {
+          "inbox": "no"
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 6,
+          "col": 0,
+          "offset": 48
+        }
+      },
+      "headings": [
+        {
+          "heading": "Scalar",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 0,
+              "offset": 49
+            },
+            "end": {
+              "line": 7,
+              "col": 8,
+              "offset": 57
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks id scalar yes",
+    "input": "---\ntype: task\nid: yes\n---\n\n# Scalar\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "yes"
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 4,
+          "col": 0,
+          "offset": 27
+        }
+      },
+      "headings": [
+        {
+          "heading": "Scalar",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 5,
+              "col": 0,
+              "offset": 28
+            },
+            "end": {
+              "line": 5,
+              "col": 8,
+              "offset": 36
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks id scalar no",
+    "input": "---\ntype: task\nid: no\n---\n\n# Scalar\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "no"
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 4,
+          "col": 0,
+          "offset": 26
+        }
+      },
+      "headings": [
+        {
+          "heading": "Scalar",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 5,
+              "col": 0,
+              "offset": 27
+            },
+            "end": {
+              "line": 5,
+              "col": 8,
+              "offset": 35
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks ordinary merge key",
+    "input": "---\ntype: task\nbase: &base {id: inherited}\n<<: *base\n---\n\n# Scalar\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "base": {
+          "id": "inherited"
+        },
+        "<<": {
+          "id": "inherited"
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 5,
+          "col": 0,
+          "offset": 57
+        }
+      },
+      "headings": [
+        {
+          "heading": "Scalar",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 6,
+              "col": 0,
+              "offset": 58
+            },
+            "end": {
+              "line": 6,
+              "col": 8,
+              "offset": 66
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks scalar alias",
+    "input": "---\ntype: task\nid: &identity aliased\ntitle: *identity\n---\n\n# Scalar\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "id": "aliased",
+        "title": "aliased"
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 5,
+          "col": 0,
+          "offset": 58
+        }
+      },
+      "headings": [
+        {
+          "heading": "Scalar",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 6,
+              "col": 0,
+              "offset": 59
+            },
+            "end": {
+              "line": 6,
+              "col": 8,
+              "offset": 67
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Tasks duplicate known id",
+    "input": "---\ntype: task\nid: first\nid: second\n---\n\n# Scalar\n",
+    "expected": {
+      "frontmatter": {},
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 5,
+          "col": 0,
+          "offset": 40
+        }
+      },
+      "headings": [
+        {
+          "heading": "Scalar",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 6,
+              "col": 0,
+              "offset": 41
+            },
+            "end": {
+              "line": 6,
+              "col": 8,
+              "offset": 49
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Docs frontmatter-yaml-nel-quoted",
+    "input": "---\ntitle: \"beforeafter\"\n---\n",
+    "expected": {
+      "frontmatter": {
+        "title": "beforeafter"
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 3,
+          "col": 0,
+          "offset": 30
+        }
+      }
+    }
+  },
+  {
+    "name": "Docs frontmatter-yaml-nel-plain",
+    "input": "---\ntitle: beforeafter\n---\n",
+    "expected": {
+      "frontmatter": {
+        "title": "beforeafter"
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 3,
+          "col": 0,
+          "offset": 28
+        }
+      }
+    }
+  },
+  {
+    "name": "Docs frontmatter-yaml-nel-block",
+    "input": "---\ntitle: |-\n  beforeafter\n---\n",
+    "expected": {
+      "frontmatter": {
+        "title": "beforeafter"
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 4,
+          "col": 0,
+          "offset": 33
+        }
+      }
+    }
+  },
+  {
+    "name": "Docs frontmatter-yaml-nel-json",
+    "input": "---\n{\"title\":\"beforeafter\"}\n---\n",
+    "expected": {
+      "frontmatter": {
+        "title": "beforeafter"
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 3,
+          "col": 0,
+          "offset": 33
+        }
+      }
+    }
+  },
+  {
+    "name": "Markdown nonfinite values",
+    "input": "---\nnan: .nan\npositive: .inf\nnegative: -.inf\ntext: value\n---\n# Metadata\n[[Target]] #tag\n",
+    "expected": {
+      "frontmatter": {
+        "nan": null,
+        "positive": null,
+        "negative": null,
+        "text": "value"
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 6,
+          "col": 0,
+          "offset": 61
+        }
+      },
+      "headings": [
+        {
+          "heading": "Metadata",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 6,
+              "col": 0,
+              "offset": 61
+            },
+            "end": {
+              "line": 6,
+              "col": 10,
+              "offset": 71
+            }
+          }
+        }
+      ],
+      "links": [
+        {
+          "link": "Target",
+          "original": "[[Target]]",
+          "displayText": "Target",
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 0,
+              "offset": 72
+            },
+            "end": {
+              "line": 7,
+              "col": 10,
+              "offset": 82
+            }
+          },
+          "heading": "Metadata"
+        }
+      ],
+      "tags": [
+        {
+          "tag": "#tag",
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 11,
+              "offset": 83
+            },
+            "end": {
+              "line": 7,
+              "col": 15,
+              "offset": 87
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Markdown ordinary merge key",
+    "input": "---\nbase: &base {name: one}\nvalue: {<<: *base, name: two}\n---\n# Metadata\n[[Target]] #tag\n",
+    "expected": {
+      "frontmatter": {
+        "base": {
+          "name": "one"
+        },
+        "value": {
+          "<<": {
+            "name": "one"
+          },
+          "name": "two"
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 4,
+          "col": 0,
+          "offset": 62
+        }
+      },
+      "headings": [
+        {
+          "heading": "Metadata",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 4,
+              "col": 0,
+              "offset": 62
+            },
+            "end": {
+              "line": 4,
+              "col": 10,
+              "offset": 72
+            }
+          }
+        }
+      ],
+      "links": [
+        {
+          "link": "Target",
+          "original": "[[Target]]",
+          "displayText": "Target",
+          "position": {
+            "start": {
+              "line": 5,
+              "col": 0,
+              "offset": 73
+            },
+            "end": {
+              "line": 5,
+              "col": 10,
+              "offset": 83
+            }
+          },
+          "heading": "Metadata"
+        }
+      ],
+      "tags": [
+        {
+          "tag": "#tag",
+          "position": {
+            "start": {
+              "line": 5,
+              "col": 11,
+              "offset": 84
+            },
+            "end": {
+              "line": 5,
+              "col": 15,
+              "offset": 88
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Markdown alias array",
+    "input": "---\nbase: &base [one, two]\nvalue: *base\n---\n# Metadata\n[[Target]] #tag\n",
+    "expected": {
+      "frontmatter": {
+        "base": [
+          "one",
+          "two"
+        ],
+        "value": [
+          "one",
+          "two"
+        ]
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 4,
+          "col": 0,
+          "offset": 44
+        }
+      },
+      "headings": [
+        {
+          "heading": "Metadata",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 4,
+              "col": 0,
+              "offset": 44
+            },
+            "end": {
+              "line": 4,
+              "col": 10,
+              "offset": 54
+            }
+          }
+        }
+      ],
+      "links": [
+        {
+          "link": "Target",
+          "original": "[[Target]]",
+          "displayText": "Target",
+          "position": {
+            "start": {
+              "line": 5,
+              "col": 0,
+              "offset": 55
+            },
+            "end": {
+              "line": 5,
+              "col": 10,
+              "offset": 65
+            }
+          },
+          "heading": "Metadata"
+        }
+      ],
+      "tags": [
+        {
+          "tag": "#tag",
+          "position": {
+            "start": {
+              "line": 5,
+              "col": 11,
+              "offset": 66
+            },
+            "end": {
+              "line": 5,
+              "col": 15,
+              "offset": 70
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Markdown mixed booleans",
+    "input": "---\na: TRUE\nb: tRuE\nc: FALSE\nd: fAlSe\n---\n# Metadata\n[[Target]] #tag\n",
+    "expected": {
+      "frontmatter": {
+        "a": true,
+        "b": "tRuE",
+        "c": false,
+        "d": "fAlSe"
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 6,
+          "col": 0,
+          "offset": 42
+        }
+      },
+      "headings": [
+        {
+          "heading": "Metadata",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 6,
+              "col": 0,
+              "offset": 42
+            },
+            "end": {
+              "line": 6,
+              "col": 10,
+              "offset": 52
+            }
+          }
+        }
+      ],
+      "links": [
+        {
+          "link": "Target",
+          "original": "[[Target]]",
+          "displayText": "Target",
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 0,
+              "offset": 53
+            },
+            "end": {
+              "line": 7,
+              "col": 10,
+              "offset": 63
+            }
+          },
+          "heading": "Metadata"
+        }
+      ],
+      "tags": [
+        {
+          "tag": "#tag",
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 11,
+              "offset": 64
+            },
+            "end": {
+              "line": 7,
+              "col": 15,
+              "offset": 68
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Markdown numeric scalars",
+    "input": "---\nhex: 0x10\noctal: 0o10\nleading: 01\nexponent: 1e+21\nsmall: 1e-7\n---\n# Metadata\n[[Target]] #tag\n",
+    "expected": {
+      "frontmatter": {
+        "hex": 16,
+        "octal": 8,
+        "leading": 1,
+        "exponent": 1e+21,
+        "small": 1e-7
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 7,
+          "col": 0,
+          "offset": 70
+        }
+      },
+      "headings": [
+        {
+          "heading": "Metadata",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 0,
+              "offset": 70
+            },
+            "end": {
+              "line": 7,
+              "col": 10,
+              "offset": 80
+            }
+          }
+        }
+      ],
+      "links": [
+        {
+          "link": "Target",
+          "original": "[[Target]]",
+          "displayText": "Target",
+          "position": {
+            "start": {
+              "line": 8,
+              "col": 0,
+              "offset": 81
+            },
+            "end": {
+              "line": 8,
+              "col": 10,
+              "offset": 91
+            }
+          },
+          "heading": "Metadata"
+        }
+      ],
+      "tags": [
+        {
+          "tag": "#tag",
+          "position": {
+            "start": {
+              "line": 8,
+              "col": 11,
+              "offset": 92
+            },
+            "end": {
+              "line": 8,
+              "col": 15,
+              "offset": 96
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Markdown empty frontmatter",
+    "input": "---\n\n---\n# Metadata\n[[Target]] #tag\n",
+    "expected": {
+      "frontmatter": {},
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 3,
+          "col": 0,
+          "offset": 9
+        }
+      },
+      "headings": [
+        {
+          "heading": "Metadata",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 3,
+              "col": 0,
+              "offset": 9
+            },
+            "end": {
+              "line": 3,
+              "col": 10,
+              "offset": 19
+            }
+          }
+        }
+      ],
+      "links": [
+        {
+          "link": "Target",
+          "original": "[[Target]]",
+          "displayText": "Target",
+          "position": {
+            "start": {
+              "line": 4,
+              "col": 0,
+              "offset": 20
+            },
+            "end": {
+              "line": 4,
+              "col": 10,
+              "offset": 30
+            }
+          },
+          "heading": "Metadata"
+        }
+      ],
+      "tags": [
+        {
+          "tag": "#tag",
+          "position": {
+            "start": {
+              "line": 4,
+              "col": 11,
+              "offset": 31
+            },
+            "end": {
+              "line": 4,
+              "col": 15,
+              "offset": 35
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Markdown sequence root",
+    "input": "---\n- one\n- two\n---\n# Metadata\n[[Target]] #tag\n",
+    "expected": {
+      "frontmatter": {},
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 4,
+          "col": 0,
+          "offset": 20
+        }
+      },
+      "headings": [
+        {
+          "heading": "Metadata",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 4,
+              "col": 0,
+              "offset": 20
+            },
+            "end": {
+              "line": 4,
+              "col": 10,
+              "offset": 30
+            }
+          }
+        }
+      ],
+      "links": [
+        {
+          "link": "Target",
+          "original": "[[Target]]",
+          "displayText": "Target",
+          "position": {
+            "start": {
+              "line": 5,
+              "col": 0,
+              "offset": 31
+            },
+            "end": {
+              "line": 5,
+              "col": 10,
+              "offset": 41
+            }
+          },
+          "heading": "Metadata"
+        }
+      ],
+      "tags": [
+        {
+          "tag": "#tag",
+          "position": {
+            "start": {
+              "line": 5,
+              "col": 11,
+              "offset": 42
+            },
+            "end": {
+              "line": 5,
+              "col": 15,
+              "offset": 46
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Markdown scalar root",
+    "input": "---\nplain\n---\n# Metadata\n[[Target]] #tag\n",
+    "expected": {
+      "frontmatter": {},
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 3,
+          "col": 0,
+          "offset": 14
+        }
+      },
+      "headings": [
+        {
+          "heading": "Metadata",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 3,
+              "col": 0,
+              "offset": 14
+            },
+            "end": {
+              "line": 3,
+              "col": 10,
+              "offset": 24
+            }
+          }
+        }
+      ],
+      "links": [
+        {
+          "link": "Target",
+          "original": "[[Target]]",
+          "displayText": "Target",
+          "position": {
+            "start": {
+              "line": 4,
+              "col": 0,
+              "offset": 25
+            },
+            "end": {
+              "line": 4,
+              "col": 10,
+              "offset": 35
+            }
+          },
+          "heading": "Metadata"
+        }
+      ],
+      "tags": [
+        {
+          "tag": "#tag",
+          "position": {
+            "start": {
+              "line": 4,
+              "col": 11,
+              "offset": 36
+            },
+            "end": {
+              "line": 4,
+              "col": 15,
+              "offset": 40
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Markdown multiple documents",
+    "input": "---\na: one\n...\n---\nb: two\n---\n# Metadata\n[[Target]] #tag\n",
+    "expected": {
+      "frontmatter": {
+        "a": "one"
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 4,
+          "col": 0,
+          "offset": 19
+        }
+      },
+      "headings": [
+        {
+          "heading": "Metadata",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 6,
+              "col": 0,
+              "offset": 30
+            },
+            "end": {
+              "line": 6,
+              "col": 10,
+              "offset": 40
+            }
+          }
+        }
+      ],
+      "links": [
+        {
+          "link": "Target",
+          "original": "[[Target]]",
+          "displayText": "Target",
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 0,
+              "offset": 41
+            },
+            "end": {
+              "line": 7,
+              "col": 10,
+              "offset": 51
+            }
+          },
+          "heading": "Metadata"
+        }
+      ],
+      "tags": [
+        {
+          "tag": "#tag",
+          "position": {
+            "start": {
+              "line": 7,
+              "col": 11,
+              "offset": 52
+            },
+            "end": {
+              "line": 7,
+              "col": 15,
+              "offset": 56
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Markdown duplicate key",
+    "input": "---\na: one\na: two\n---\n# Metadata\n[[Target]] #tag\n",
+    "expected": {
+      "frontmatter": {},
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 4,
+          "col": 0,
+          "offset": 22
+        }
+      },
+      "headings": [
+        {
+          "heading": "Metadata",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 4,
+              "col": 0,
+              "offset": 22
+            },
+            "end": {
+              "line": 4,
+              "col": 10,
+              "offset": 32
+            }
+          }
+        }
+      ],
+      "links": [
+        {
+          "link": "Target",
+          "original": "[[Target]]",
+          "displayText": "Target",
+          "position": {
+            "start": {
+              "line": 5,
+              "col": 0,
+              "offset": 33
+            },
+            "end": {
+              "line": 5,
+              "col": 10,
+              "offset": 43
+            }
+          },
+          "heading": "Metadata"
+        }
+      ],
+      "tags": [
+        {
+          "tag": "#tag",
+          "position": {
+            "start": {
+              "line": 5,
+              "col": 11,
+              "offset": 44
+            },
+            "end": {
+              "line": 5,
+              "col": 15,
+              "offset": 48
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Markdown nonstring scalar keys",
+    "input": "---\n1: number\ntrue: boolean\nnull: nothing\n---\n# Metadata\n[[Target]] #tag\n",
+    "expected": {
+      "frontmatter": {
+        "1": "number",
+        "true": "boolean",
+        "": "nothing"
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 5,
+          "col": 0,
+          "offset": 46
+        }
+      },
+      "headings": [
+        {
+          "heading": "Metadata",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 5,
+              "col": 0,
+              "offset": 46
+            },
+            "end": {
+              "line": 5,
+              "col": 10,
+              "offset": 56
+            }
+          }
+        }
+      ],
+      "links": [
+        {
+          "link": "Target",
+          "original": "[[Target]]",
+          "displayText": "Target",
+          "position": {
+            "start": {
+              "line": 6,
+              "col": 0,
+              "offset": 57
+            },
+            "end": {
+              "line": 6,
+              "col": 10,
+              "offset": 67
+            }
+          },
+          "heading": "Metadata"
+        }
+      ],
+      "tags": [
+        {
+          "tag": "#tag",
+          "position": {
+            "start": {
+              "line": 6,
+              "col": 11,
+              "offset": 68
+            },
+            "end": {
+              "line": 6,
+              "col": 15,
+              "offset": 72
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Markdown unknown tag",
+    "input": "---\nvalue: !custom unchanged\n---\n# Metadata\n[[Target]] #tag\n",
+    "expected": {
+      "frontmatter": {
+        "value": "unchanged"
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 3,
+          "col": 0,
+          "offset": 33
+        }
+      },
+      "headings": [
+        {
+          "heading": "Metadata",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 3,
+              "col": 0,
+              "offset": 33
+            },
+            "end": {
+              "line": 3,
+              "col": 10,
+              "offset": 43
+            }
+          }
+        }
+      ],
+      "links": [
+        {
+          "link": "Target",
+          "original": "[[Target]]",
+          "displayText": "Target",
+          "position": {
+            "start": {
+              "line": 4,
+              "col": 0,
+              "offset": 44
+            },
+            "end": {
+              "line": 4,
+              "col": 10,
+              "offset": 54
+            }
+          },
+          "heading": "Metadata"
+        }
+      ],
+      "tags": [
+        {
+          "tag": "#tag",
+          "position": {
+            "start": {
+              "line": 4,
+              "col": 11,
+              "offset": 55
+            },
+            "end": {
+              "line": 4,
+              "col": 15,
+              "offset": 59
+            }
+          }
+        }
+      ]
+    }
+  }
+]

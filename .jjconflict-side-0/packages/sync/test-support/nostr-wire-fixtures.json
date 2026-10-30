@@ -1,0 +1,95 @@
+{
+  "sourceCommit": "665cf7f4",
+  "payload": {
+    "schemaVersion": 2,
+    "vaultId": "fixture-vault",
+    "keyEpoch": 1,
+    "currentEpoch": 1,
+    "membershipGeneration": 2,
+    "parents": [
+      {
+        "eventId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "archiveHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    ],
+    "root": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "changes": [
+      {
+        "fileId": "fixture-file",
+        "operation": "modify"
+      }
+    ],
+    "message": "Encrypted checkpoint fixture",
+    "reason": "checkpoint",
+    "client": {
+      "protocolVersion": 3
+    }
+  },
+  "headPayload": {
+    "schemaVersion": 2,
+    "vaultId": "fixture-vault",
+    "revisionEventId": "7d655506af18f6f9785abdaea37ce753c9dff614b79c8c222e3dd0726e7490e0",
+    "revisionArchiveHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "root": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "keyEpoch": 1,
+    "currentEpoch": 1,
+    "membershipGeneration": 2
+  },
+  "revision": {
+    "kind": 78,
+    "created_at": 1700000000,
+    "tags": [["d", "lapis-sync-v1:fixture-vault"]],
+    "content": "{\"deviceEvent\":{\"content\":\"01040a6154d7a2997688c9bf587d20414cecc00bc702a447c5efd60fe5648c6436411ac881f2f9561a21c4b518ccc01c1e93784b4842bef1b5c202390f2b1ac23a5acf7676d2f71d349c10c04674d75d862225e0718bd9d6d832fd0feba24bfa09abe4187655feaefcbd92fcd9619782ed0cea1931287bb7444fb31ef0452a8e4ff3626581b0f633605b9c5c7ddd44c80f3bebe269a922b7e8c1f82ed0f95bf62aa16de376b6952ce0a4b9d345a9d09a3f0861c536c87cfa20f2147ef424b764365d00c66457f7f17c0c19203fef5fb2ed416628859b5e9ffb0288caae23f1a8c8ba0b2d74c1a2f164d90328b4fec3133c880577583a0ded44a07a43b593b5fbfc772a316a73bbff3ddf31679cee79d10d2b17747945065a73ed815023e5455dd804b8442c2fe193b1dc63fe80a9901ad33ba8ce6a46ee08c56501fecbff47cb9768cc46eac33f126b532bb5fa0344ea5bf75b635f0d76b09c5c9232bc229101024ba47abb7f9205209c2f672de54351905a318e80ebffaa83236021a262c5f03c2fc6a76b6098ee4b80cc77f21edb2438c1e0557906ec0cc5436437a6b363467dad483517de6566ac8d68e178686ed9b0dbd91354ca1df2094f3cd2bbeb2c49bfce5fba9deee774d4382adead4510b9db3d06e764a2031dffd420e3229cd8ac40b50d40a4f47eaf8e2eb8e9ce6f077ac197b040e7402441cad8b55a506e1f7a711cc27e2f1d93e86420a59a6bf82db5f088fbed7893f76e176e837345\",\"created_at\":1700000000,\"id\":\"9acd769b605d51afec30b3b5ab10007f40ba30db3ba422adbb05bea25be66628\",\"kind\":78,\"pubkey\":\"4d4b6cd1361032ca9bd2aeb9d900aa4d45d9ead80ac9423374c451a7254d0766\",\"sig\":\"b03479c87ef2cea3cd73deb23964330b510f68cd9b930f4daf0ca0b0ea68b04d0ac221b8154bbe0e075be4f216c847ebcf6043e40d856c9b4e9cc15ea0152261\",\"tags\":[[\"d\",\"lapis-sync-v1:fixture-vault\"]]},\"schemaVersion\":1,\"type\":\"lapis-sync-device-attestation\"}",
+    "pubkey": "531fe6068134503d2723133227c867ac8fa6c83c537e9a44c3c5bdbdcb1fe337",
+    "id": "7d655506af18f6f9785abdaea37ce753c9dff614b79c8c222e3dd0726e7490e0",
+    "sig": "ce58f7387dce2ff5318be81357f3026d1fe2ec7cd307bd0ccdb431b1ba81e0a3fe9ec4d7bb93aeb97a5682f6e302d2e086c7165f1830929bc66b9e89f196680a"
+  },
+  "head": {
+    "kind": 30078,
+    "created_at": 1700000001,
+    "tags": [
+      [
+        "d",
+        "lapis-sync-v1:fixture-vault:head:4d4b6cd1361032ca9bd2aeb9d900aa4d45d9ead80ac9423374c451a7254d0766"
+      ],
+      ["v", "lapis-sync-v1:fixture-vault"]
+    ],
+    "content": "{\"deviceEvent\":{\"content\":\"01064f6e57c009fd7cab85a40b3afa849134044ffa83fde234126fe8ad292cd542af4b2647ee45b63a3b3119dd9271978b556205d13f6a9fda00a4f181d96e5f6b13e1bfe9c1f410a002d221df2ee90ae890bf5d27baa255ac668616d50a55029e8fcc4cd002a86b6b91ec5f6cced2c942def716c8f70a7a535898e337f6b917f47935120070ef03bfa1a27f50ffb8af26c5061a62bfa8f1419cd5b4186791685b025cfa1d8c2a1ecc6b0ecfdef87ec6cdd3893d12b30be2416df9f1621af47f61139635713347ab47b8233179532d5f7fa1f0b3c7be46cd170d40dd72d8e723e98dd7c1a8a2565d3b0ae86ef1987739fa84fe0397b6db86ca731c1d88c65b29d0e8823c6abaf1306ed261ebd8bb01ae0f593088089c04b334200fe2f27181d2999a09105e5be333dcf7f050525462c736e0f21218189773e34875aa0bbef4eb3438d27101f4ed1f71eed46ecbb82d0f5aefbb779cdde8bf711bf4501cf880beb629c4f1574f143ed2b0923d4c7fb8975162080beda46a56d3ab964decb8567243f6cda95d63\",\"created_at\":1700000001,\"id\":\"aa677f47723022520587d1c42a640128930ba63ca589a3fb4dadd4bcbd3eb54f\",\"kind\":30078,\"pubkey\":\"4d4b6cd1361032ca9bd2aeb9d900aa4d45d9ead80ac9423374c451a7254d0766\",\"sig\":\"b032fa212710ec05ff5a95f828a82139375f11dc4b92e2315bf135765efd0b9cb6e72e0727d0f838d50d222a62e8a813dd7574d63a3b0efadc8e50bcabb3d6f6\",\"tags\":[[\"d\",\"lapis-sync-v1:fixture-vault:head:4d4b6cd1361032ca9bd2aeb9d900aa4d45d9ead80ac9423374c451a7254d0766\"],[\"v\",\"lapis-sync-v1:fixture-vault\"]]},\"schemaVersion\":1,\"type\":\"lapis-sync-device-attestation\"}",
+    "pubkey": "531fe6068134503d2723133227c867ac8fa6c83c537e9a44c3c5bdbdcb1fe337",
+    "id": "966b6f10974ab5bc050760f39318152e445f708abd74b7c42e0b1303d5717658",
+    "sig": "252d3eb542d3591a4f98aed47630ce5239e7e0c3788ad02042c3702e0ea8689ee904407a049bf9782fc3354e0cfe23f961772bc2adf936c1ba5515dbb6a220d9"
+  },
+  "secondHead": {
+    "kind": 30078,
+    "created_at": 1700000002,
+    "tags": [
+      [
+        "d",
+        "lapis-sync-v1:fixture-vault:head:462779ad4aad39514614751a71085f2f10e1c7a593e4e030efb5b8721ce55b0b"
+      ],
+      ["v", "lapis-sync-v1:fixture-vault"]
+    ],
+    "content": "{\"deviceEvent\":{\"content\":\"010622cf318d6114d29b0a7b9c9e5432a51df1696a8ebc15b1f1268ed651a24d8844e85958b8c658951bbab4643a91fc1d78b64448fa17cdd171ed79b92795f98fbab25b8056549e738380698239bcdf17ab2a97e9916d4ba141ab50cc86709a9f166976391f52203e0bd1e8a45e433e5389b42868fcdc7bdb3f10b9677c7fb7d557460435614aa1a91b3cf368c405cfb0c273d8ef5ebd495981ded212a230c8323f877895fa31058aac9ca741e578683c77a4119189d58bc0278561ef007ba9167e28973f7d2977e4b2bb45b452cfedad9a604078942bac5e96478be833349f18ca1c6e6c94146c08ba529012dcec87c65803a007f3efef739db1634be3f1770305b4a658f7840af8e378402e60a8b25d0b62155934bebef4a6df69be58869806fb9a5cf94165c8e659d085c2232f066559076554425ebefd1dcc2bfb8a96a662fe80495a7048c16321134739d63978d6ab9b40432fb103d9f578099c975ff81d1ba652e9ae11c342e995f031e0028f9a981bbff8aeb92bcc02ec1d1c6ee8b0199cae09707a\",\"created_at\":1700000002,\"id\":\"d759edc686ee7fbd06d1dbcd666cea0c6989f582001da76f109625fb0c109f7b\",\"kind\":30078,\"pubkey\":\"462779ad4aad39514614751a71085f2f10e1c7a593e4e030efb5b8721ce55b0b\",\"sig\":\"e6eae486ec3d75d747b5b643fbf7877ab1b045c47f31ea6b2c6364cdacae5e893285ba04fb0f167a150d371a5361d9c8ab991d667937298667de5d028376d8a5\",\"tags\":[[\"d\",\"lapis-sync-v1:fixture-vault:head:462779ad4aad39514614751a71085f2f10e1c7a593e4e030efb5b8721ce55b0b\"],[\"v\",\"lapis-sync-v1:fixture-vault\"]]},\"schemaVersion\":1,\"type\":\"lapis-sync-device-attestation\"}",
+    "pubkey": "531fe6068134503d2723133227c867ac8fa6c83c537e9a44c3c5bdbdcb1fe337",
+    "id": "0a0397dd421bcb8b4ac2c17e6928b46b4cf31ecb322d465ac1e480da427c2539",
+    "sig": "1c401060198b0d1925e00519df2434ca2a365207e7f6c28d377ee61f5ecc1b2d04481b13d225ac0f90786f3e562c009573b63bc6712ea2b61b735249227c8725"
+  },
+  "membership": {
+    "kind": 30079,
+    "created_at": 1700000003,
+    "tags": [["d", "lapis-sync-v1:fixture-vault:membership"]],
+    "content": "{\"rootEvent\":{\"content\":\"01077fe682da160755f853fbaf7ce8388647b6b1fb37ec3faf0276834dff270fcbb8d827de05634947d8b07cd86a6daf4d50e13ef4ccdf7313a8\",\"created_at\":1700000003,\"id\":\"a85b9cf4efda670250621d70b5d01f1ad9df1e953539cc835a63164cf7e551e9\",\"kind\":30079,\"pubkey\":\"62c0a046dacce86ddd0343c6d3c7c79c2208ba0d9c9cf24a6d046d21d21f90f7\",\"sig\":\"fddbeecb9f4a4e932b2dd2d8b7d15410bac75ee1874736c0e74c9702c078bb28df9d871bdf2c3be46e1d27960538596a299f312966ff18a27dfebee7fd8615d6\",\"tags\":[[\"d\",\"lapis-sync-v1:fixture-vault:membership\"]]},\"schemaVersion\":1,\"type\":\"lapis-sync-root-attestation\"}",
+    "pubkey": "531fe6068134503d2723133227c867ac8fa6c83c537e9a44c3c5bdbdcb1fe337",
+    "id": "28a553f03a0fc370e4bca21874fee5a2718eca2f2106d91101c8bfa86ba1e8af",
+    "sig": "a54796f764c88d6d81436b2ae40a7ba1658bffd57281f83f2b85edd1c44bde1bdcad2c125c1ac04f7a0828cf45052fe6233b64fae96bc7abd4213a7bbe80531c"
+  },
+  "legacyRevision": {
+    "content": "01040a6154d7a2997688c9bf587d20414cecc00bc702a447c5efd60fe5648c6436411ac881f2f9561a21c4b518ccc01c1e93784b4842bef1b5c202390f2b1ac23a5acf7676d2f71d349c10c04674d75d862225e0718bd9d6d832fd0feba24bfa09abe4187655feaefcbd92fcd9619782ed0cea1931287bb7444fb31ef0452a8e4ff3626581b0f633605b9c5c7ddd44c80f3bebe269a922b7e8c1f82ed0f95bf62aa16de376b6952ce0a4b9d345a9d09a3f0861c536c87cfa20f2147ef424b764365d00c66457f7f17c0c19203fef5fb2ed416628859b5e9ffb0288caae23f1a8c8ba0b2d74c1a2f164d90328b4fec3133c880577583a0ded44a07a43b593b5fbfc772a316a73bbff3ddf31679cee79d10d2b17747945065a73ed815023e5455dd804b8442c2fe193b1dc63fe80a9901ad33ba8ce6a46ee08c56501fecbff47cb9768cc46eac33f126b532bb5fa0344ea5bf75b635f0d76b09c5c9232bc229101024ba47abb7f9205209c2f672de54351905a318e80ebffaa83236021a262c5f03c2fc6a76b6098ee4b80cc77f21edb2438c1e0557906ec0cc5436437a6b363467dad483517de6566ac8d68e178686ed9b0dbd91354ca1df2094f3cd2bbeb2c49bfce5fba9deee774d4382adead4510b9db3d06e764a2031dffd420e3229cd8ac40b50d40a4f47eaf8e2eb8e9ce6f077ac197b040e7402441cad8b55a506e1f7a711cc27e2f1d93e86420a59a6bf82db5f088fbed7893f76e176e837345",
+    "created_at": 1700000000,
+    "id": "9acd769b605d51afec30b3b5ab10007f40ba30db3ba422adbb05bea25be66628",
+    "kind": 78,
+    "pubkey": "4d4b6cd1361032ca9bd2aeb9d900aa4d45d9ead80ac9423374c451a7254d0766",
+    "sig": "b03479c87ef2cea3cd73deb23964330b510f68cd9b930f4daf0ca0b0ea68b04d0ac221b8154bbe0e075be4f216c847ebcf6043e40d856c9b4e9cc15ea0152261",
+    "tags": [["d", "lapis-sync-v1:fixture-vault"]]
+  }
+}

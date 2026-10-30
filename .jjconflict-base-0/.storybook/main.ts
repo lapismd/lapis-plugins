@@ -1,0 +1,273 @@
+import { tursoBundleBuildPlugin } from "@lapis-notes/api/build/vite";
+import type { StorybookConfig } from "@storybook/svelte-vite";
+import { svelte, vitePreprocess } from "@sveltejs/vite-plugin-svelte";
+import tailwindcss from "@tailwindcss/vite";
+import { existsSync, realpathSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { mergeConfig, searchForWorkspaceRoot } from "vite";
+
+import { docxExportPolyfills } from "../scripts/lib/docx-export-polyfills.mjs";
+import { pluginPackages } from "../scripts/package-catalog.mjs";
+
+const storybookDir = path.dirname(fileURLToPath(import.meta.url));
+const repoRoot = path.resolve(storybookDir, "..");
+
+const packageAliases = [
+  [
+    "@lapis-notes/lapis-plugin-sync/components",
+    "packages/sync/src/components.ts",
+  ],
+  ["@lapis-notes/lapis-plugin-sync/styles.css", "packages/sync/src/styles.css"],
+  ["@lapis-notes/lapis-plugin-sync", "packages/sync/src/index.ts"],
+  ["@lapis-notes/ai/runtimes", "packages/ai/src/lib/runtime-adapters.ts"],
+  ["@lapis-notes/ai/styles.css", "packages/ai/src/lib/styles.css"],
+  ["@lapis-notes/ai", "packages/ai/src/lib/index.ts"],
+  ["@lapis-notes/bases/styles.css", "packages/bases/src/lib/styles.css"],
+  ["@lapis-notes/bases", "packages/bases/src/lib/index.ts"],
+  [
+    "@lapis-notes/bookmarks/styles.css",
+    "packages/bookmarks/src/lib/styles.css",
+  ],
+  ["@lapis-notes/bookmarks", "packages/bookmarks/src/lib/index.ts"],
+  ["@lapis-notes/graph/embed", "packages/graph/src/lib/embed.ts"],
+  ["@lapis-notes/graph/styles.css", "packages/graph/src/lib/styles.css"],
+  ["@lapis-notes/graph", "packages/graph/src/lib/index.ts"],
+  [
+    "@lapis-notes/history/repository",
+    "packages/history/src/lib/repository/index.ts",
+  ],
+  ["@lapis-notes/history/styles.css", "packages/history/src/lib/styles.css"],
+  ["@lapis-notes/history", "packages/history/src/lib/index.ts"],
+  [
+    "@lapis-notes/markdown/agent-tools",
+    "packages/markdown/src/lib/agent-tools.ts",
+  ],
+  ["@lapis-notes/markdown/embed", "packages/markdown/src/lib/embed.ts"],
+  ["@lapis-notes/markdown/styles.css", "packages/markdown/src/lib/styles.css"],
+  ["@lapis-notes/markdown", "packages/markdown/src/lib/index.ts"],
+  [
+    "@lapis-notes/markdown-lint/styles.css",
+    "packages/markdown-lint/src/styles.css",
+  ],
+  ["@lapis-notes/markdown-lint", "packages/markdown-lint/src/index.ts"],
+  ["@lapis-notes/search/agent-tools", "packages/search/src/lib/agent-tools.ts"],
+  ["@lapis-notes/search/styles.css", "packages/search/src/lib/styles.css"],
+  ["@lapis-notes/search", "packages/search/src/lib/index.ts"],
+  [
+    "@lapis-notes/slides/styles.css",
+    "packages/slides/src/lib/views/slides/slides.css",
+  ],
+  ["@lapis-notes/slides", "packages/slides/src/lib/index.ts"],
+  [
+    "@lapis-notes/transcripts/styles.css",
+    "packages/transcripts/src/styles.css",
+  ],
+  ["@lapis-notes/transcripts", "packages/transcripts/src/index.ts"],
+  ["@lapis-notes/pdf/styles.css", "packages/pdf/src/styles.css"],
+  ["@lapis-notes/pdf", "packages/pdf/src/index.ts"],
+  ["@lapis-notes/docx/styles.css", "packages/docx/src/styles.css"],
+  ["@lapis-notes/docx", "packages/docx/src/index.ts"],
+  ["@lapis-notes/csv/styles.css", "packages/csv/src/styles.css"],
+  ["@lapis-notes/csv", "packages/csv/src/index.ts"],
+  ["@lapis-notes/canvas/styles.css", "packages/canvas/src/styles.css"],
+  ["@lapis-notes/canvas", "packages/canvas/src/index.ts"],
+  [
+    "@lapis-notes/source-editor/styles.css",
+    "packages/source-editor/src/styles.css",
+  ],
+  ["@lapis-notes/source-editor", "packages/source-editor/src/index.ts"],
+  ["@lapis-notes/spellcheck/styles.css", "packages/spellcheck/src/styles.css"],
+  ["@lapis-notes/spellcheck", "packages/spellcheck/src/index.ts"],
+  ["@lapis-notes/wordcount/styles.css", "packages/wordcount/src/styles.css"],
+  ["@lapis-notes/wordcount", "packages/wordcount/src/index.ts"],
+] as const;
+
+const linkedPackages = [
+  "@lapis-notes/api",
+  "@lapis-notes/file-explorer",
+  "@lapis-notes/language-service",
+  "@lapis-notes/ui",
+  "@lapis-notes/workspace",
+  "@lapismd/design-core",
+  "@lapismd/mira",
+  "@lapismd/mira-editor",
+] as const;
+const linkedRoots = linkedPackages.flatMap((packageName) => {
+  const candidate = path.join(repoRoot, "node_modules", packageName);
+  return existsSync(candidate) ? [realpathSync(candidate)] : [];
+});
+const linkedWorkspaceRoots = [
+  ...new Set(linkedRoots.map((root) => searchForWorkspaceRoot(root))),
+];
+const siblingDesignCore = path.resolve(repoRoot, "../design-core");
+const usesSiblingDesignCore = linkedRoots.some((root) =>
+  root.includes(`${path.sep}@lapismd+design-core@file+..+design-core`)
+);
+const siblingDesignCoreAliases = usesSiblingDesignCore
+  ? [
+      ["tw-animate-css", "node_modules/tw-animate-css/dist/tw-animate.css"],
+      [
+        "@fontsource-variable/dm-sans",
+        "node_modules/@fontsource-variable/dm-sans/index.css",
+      ],
+      [
+        "@fontsource-variable/source-code-pro",
+        "node_modules/@fontsource-variable/source-code-pro/index.css",
+      ],
+      [
+        "shadcn-svelte/tailwind.css",
+        "node_modules/shadcn-svelte/dist/tailwind.css",
+      ],
+    ].map(([find, relativePath]) => ({
+      find,
+      replacement: path.join(siblingDesignCore, relativePath),
+    }))
+  : [];
+
+const config: StorybookConfig = {
+  stories: [
+    ...pluginPackages.map(
+      (plugin) =>
+        `../stories/plugins/${plugin.directory}/**/*.stories.@(js|ts|svelte)`
+    ),
+    // Private UI qualification; this does not activate Sync or release selection.
+    "../stories/plugins/sync/**/*.stories.@(js|ts|svelte)",
+  ],
+  addons: [
+    "@storybook/addon-docs",
+    "@storybook/addon-a11y",
+    "@storybook/addon-svelte-csf",
+    "@storybook/addon-themes",
+    "@storybook/addon-vitest",
+    {
+      name: "@lapismd/storybook-addon-visual-delta",
+      options: {
+        visualDelta: {
+          snapshotDir: ".visual-delta/artifacts",
+          readOnly: true,
+          affectedTests: false,
+        },
+      },
+    },
+  ],
+  framework: {
+    name: "@storybook/svelte-vite",
+    options: {},
+  },
+  viteFinal: async (viteConfig) => {
+    const plugins = (viteConfig.plugins ?? []).flat(Infinity);
+    const nonSveltePlugins = plugins.filter(
+      (plugin) =>
+        !plugin?.name?.startsWith("vite-plugin-svelte") &&
+        plugin?.name !== "sveltekit-autoimport-configuration"
+    );
+    viteConfig.plugins = [
+      tursoBundleBuildPlugin(),
+      docxExportPolyfills({ process: false }),
+      svelte({
+        preprocess: vitePreprocess(),
+        emitCss: false,
+        compilerOptions: { runes: undefined },
+      }),
+      tailwindcss(),
+      ...nonSveltePlugins,
+    ];
+    return mergeConfig(viteConfig, {
+      define: {
+        "import.meta.env.LAPIS_AGENT_RUNTIME_URL": JSON.stringify(
+          process.env.LAPIS_AGENT_RUNTIME_URL ?? ""
+        ),
+        "import.meta.env.LAPIS_AGENT_RUNTIME_TOKEN": JSON.stringify(
+          process.env.LAPIS_AGENT_RUNTIME_TOKEN ?? ""
+        ),
+      },
+      resolve: {
+        dedupe: [
+          "svelte",
+          "@lapis-notes/api",
+          "@codemirror/state",
+          "@codemirror/view",
+          "@codemirror/language",
+          "@lezer/common",
+        ],
+        alias: [
+          {
+            find: /^@cw\/shared$/,
+            replacement: path.join(
+              repoRoot,
+              "packages/docx/vendor/wordcanvas/shared/src/index.ts",
+            ),
+          },
+          {
+            find: /^harper\.js\/binaryInlined$/,
+            replacement: path.join(
+              repoRoot,
+              "packages/spellcheck/node_modules/harper.js/dist/binaryInlined.js"
+            ),
+          },
+          {
+            find: /^harper\.js\/binary$/,
+            replacement: path.join(storybookDir, "harper-binary.ts"),
+          },
+          ...siblingDesignCoreAliases,
+          ...packageAliases.map(([find, replacement]) => ({
+            find: new RegExp(
+              `^${find.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`
+            ),
+            replacement: path.join(repoRoot, replacement),
+          })),
+          {
+            find: /^\$lib(?:\/(.*))?$/,
+            replacement: `${path.join(
+              repoRoot,
+              "packages/markdown/src/lib"
+            )}/$1`,
+          },
+        ],
+      },
+      esbuild: { target: "esnext" },
+      worker: {
+        plugins: () => [tursoBundleBuildPlugin(), docxExportPolyfills()],
+        format: "es",
+        rollupOptions: { output: { inlineDynamicImports: true } },
+      },
+      optimizeDeps: {
+        exclude: [
+          "@storybook/svelte",
+          "@lapis-notes/api",
+          "@lapis-notes/language-service",
+          "@lapismd/design-core",
+        ],
+        esbuildOptions: { target: "esnext" },
+        include: [
+          "aria-query",
+          "react",
+          "react-dom",
+          "react-dom/client",
+          "@storybook/addon-themes",
+          "character-entities",
+          "@codemirror/lint",
+          "@lapis-notes/api > eventemitter3",
+          "@lapismd/mira/**",
+          "debug",
+          "extend",
+          "markdownlint",
+          "markdownlint/sync",
+        ],
+      },
+      server: {
+        fs: {
+          allow: [
+            repoRoot,
+            ...linkedRoots,
+            ...linkedWorkspaceRoots,
+            ...(usesSiblingDesignCore ? [siblingDesignCore] : []),
+          ],
+        },
+      },
+    });
+  },
+};
+
+export default config;

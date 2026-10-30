@@ -1,0 +1,322 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 2,
+  "categories": ["editing"],
+  "highlights": [
+    "Open a vault CSV or TSV as a table.",
+    "Embed the same table in a note.",
+    "Keep a quoted comma in one cell."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/csv#readme",
+  "appearance": {
+    "icon": "table-2",
+    "accent": "#06B6D4"
+  },
+  "releases": {},
+  "media": {
+    "banner": {
+      "alt": "Lapis CSV showing a staff-readings table with rainbow columns, a quoted comma cell, and the row count, both sidebars closed.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/banner.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/banner.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/banner.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/banner.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-csv-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    },
+    "overview": {
+      "alt": "Lapis CSV source showing the same staff readings as rainbow-coloured columns in the editor, both sidebars closed.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/overview.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/overview.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/overview.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/overview.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-csv-registry-screenshots--source",
+        "focus": "full-shell"
+      }
+    }
+  },
+  "gallery": [
+    {
+      "id": "source",
+      "alt": "The staff-readings CSV open as coloured source, with each column in its own colour and both sidebars closed.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/source.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/source.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/source.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/source.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-csv-registry-screenshots--source",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "Colour the source",
+            "tone": "neutral"
+          },
+          {
+            "text": "by column",
+            "tone": "cyan"
+          }
+        ],
+        "description": [
+          {
+            "text": "Keep the",
+            "tone": "neutral"
+          },
+          {
+            "text": "theme mono",
+            "tone": "cyan"
+          },
+          {
+            "text": "and paint each column.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    },
+    {
+      "id": "embedded-note",
+      "alt": "A staff-readings note with both sidebars closed, embedding the same CSV table beneath a short introduction.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/embedded-note.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/embedded-note.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/embedded-note.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/embedded-note.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-csv-registry-screenshots--embedded",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "Embed the table",
+            "tone": "neutral"
+          },
+          {
+            "text": "in a note",
+            "tone": "violet"
+          }
+        ],
+        "description": [
+          {
+            "text": "Open a",
+            "tone": "neutral"
+          },
+          {
+            "text": "note",
+            "tone": "violet"
+          },
+          {
+            "text": "and keep the",
+            "tone": "neutral"
+          },
+          {
+            "text": "table",
+            "tone": "cyan"
+          },
+          {
+            "text": "inside it.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    },
+    {
+      "id": "find",
+      "alt": "Find open on the staff-readings table, showing the one quoted cell that contains culvert.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/find.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/find.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/find.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/find.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-csv-registry-screenshots--find",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "Find a cell",
+            "tone": "neutral"
+          },
+          {
+            "text": "and replace it",
+            "tone": "green"
+          }
+        ],
+        "description": [
+          {
+            "text": "Search the table and write the",
+            "tone": "neutral"
+          },
+          {
+            "text": "match",
+            "tone": "green"
+          },
+          {
+            "text": "back to the file.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    },
+    {
+      "id": "canvas",
+      "alt": "The staff-readings CSV open as a canvas sheet, with column letters, a fixed header, and both sidebars closed.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/canvas.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/canvas.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/canvas.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/canvas.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-csv-registry-screenshots--canvas",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "Open the canvas",
+            "tone": "neutral"
+          },
+          {
+            "text": "sheet",
+            "tone": "cyan"
+          }
+        ],
+        "description": [
+          {
+            "text": "Select a",
+            "tone": "neutral"
+          },
+          {
+            "text": "column",
+            "tone": "cyan"
+          },
+          {
+            "text": "and keep the first row",
+            "tone": "neutral"
+          },
+          {
+            "text": "fixed.",
+            "tone": "violet"
+          }
+        ]
+      }
+    },
+    {
+      "id": "embedded-canvas",
+      "alt": "A staff-readings note with both sidebars closed, embedding the same CSV as a canvas sheet beneath a short introduction.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/embedded-canvas.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/embedded-canvas.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/embedded-canvas.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/embedded-canvas.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-csv-registry-screenshots--embedded-canvas",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "Embed the sheet",
+            "tone": "neutral"
+          },
+          {
+            "text": "in a note",
+            "tone": "violet"
+          }
+        ],
+        "description": [
+          {
+            "text": "Open a",
+            "tone": "neutral"
+          },
+          {
+            "text": "note",
+            "tone": "violet"
+          },
+          {
+            "text": "and keep the",
+            "tone": "neutral"
+          },
+          {
+            "text": "sheet",
+            "tone": "cyan"
+          },
+          {
+            "text": "inside it.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    }
+  ]
+}

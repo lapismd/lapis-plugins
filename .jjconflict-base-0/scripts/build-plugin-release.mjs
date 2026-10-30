@@ -1,0 +1,294 @@
+#!/usr/bin/env node
+import { createHash } from "node:crypto";
+import { existsSync } from "node:fs";
+import {
+  copyFile,
+  mkdir,
+  readFile,
+  readdir,
+  rename,
+  rm,
+  writeFile,
+} from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { svelte, vitePreprocess } from "@sveltejs/vite-plugin-svelte";
+import { build as viteBuild } from "vite";
+
+import {
+  buildPluginPayload,
+  packageOfficialPlugin,
+} from "./plugin-release.mjs";
+import {
+  approvedWorkspaceHostModules,
+  pluginPackageBySelector,
+  pluginPackages,
+} from "./package-catalog.mjs";
+import {
+  assertRendererCompilerVersion,
+  assertRendererHostVersion,
+  rendererHostExternalizationPlugin,
+  assertWorkspaceHostDependencies,
+  isPluginSelfReference,
+  pluginRuntimeViteBase,
+  pluginRuntimeBrowserDefines,
+  pluginRuntimeEntryBuildOptions,
+  rendererCompilerVersionFromLockfile,
+} from "./lib/runtime-host-modules.mjs";
+import { resolveWorkerLimit, runBoundedWorkers } from "./lib/concurrency.mjs";
+import { scanRuntimeBareImports } from "./lib/plugin-runtime-imports.mjs";
+import { docxExportPolyfills } from "./lib/docx-export-polyfills.mjs";
+import { preparePluginReleaseRoot } from "./lib/release-output.mjs";
+import { resolveSourceCommit } from "./lib/source-commit.mjs";
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const expectedRendererVersion = rendererCompilerVersionFromLockfile(
+  await readFile(path.join(root, "pnpm-lock.yaml"), "utf8"),
+);
+const installedRenderer = JSON.parse(
+  await readFile(
+    path.join(root, "node_modules", "svelte", "package.json"),
+    "utf8",
+  ),
+);
+assertRendererCompilerVersion({
+  expected: expectedRendererVersion,
+  actual: installedRenderer.version,
+});
+const options = parseOptions(process.argv.slice(2));
+const selected = options.plugin
+  ? [requiredPlugin(options.plugin)]
+  : pluginPackages;
+const releaseRoot = path.resolve(root, options.outDir ?? ".release/plugins");
+const runtimeRoot = path.resolve(root, ".release/runtime");
+const sourceCommit =
+  options.commit ?? (await resolveSourceCommit({ cwd: root }));
+
+await preparePluginReleaseRoot({
+  releaseRoot,
+  clean: !options.plugin,
+});
+await mkdir(runtimeRoot, { recursive: true });
+const workerLimit = resolveWorkerLimit("LAPIS_PLUGIN_BUILD_WORKERS", 2);
+const results = await runBoundedWorkers(selected, workerLimit, buildPlugin);
+for (const result of [...results].sort((left, right) =>
+  left.packageName.localeCompare(right.packageName),
+)) {
+  console.log(result.log);
+}
+
+async function buildPlugin(plugin) {
+  const packageRoot = path.join(root, "packages", plugin.directory);
+  const packageJson = JSON.parse(
+    await readFile(path.join(packageRoot, "package.json"), "utf8"),
+  );
+  const manifest = JSON.parse(
+    await readFile(path.join(packageRoot, "manifest.json"), "utf8"),
+  );
+  if (
+    packageJson.version !== manifest.version ||
+    manifest.id !== plugin.pluginId
+  ) {
+    throw new Error(
+      `${plugin.packageName} package and runtime metadata differ.`,
+    );
+  }
+
+  assertWorkspaceHostDependencies(
+    packageJson,
+    manifest.lapis.runtime.entries.workspace.sharedDependencies,
+  );
+
+  assertRendererHostVersion(
+    manifest.lapis.runtime.entries.workspace.sharedDependencies,
+    expectedRendererVersion,
+  );
+
+  const runtimeDir = path.join(
+    runtimeRoot,
+    `${plugin.pluginId}-${packageJson.version}`,
+  );
+  await rm(runtimeDir, { recursive: true, force: true });
+  await buildRuntime(plugin, packageRoot, runtimeDir, manifest);
+  await copyFile(
+    path.join(packageRoot, "manifest.json"),
+    path.join(runtimeDir, "manifest.json"),
+  );
+  const stylesPath = path.join(runtimeDir, "styles.css");
+  if (!existsSync(stylesPath)) await writeFile(stylesPath, "");
+
+  const packaged = await packageOfficialPlugin({
+    pluginId: plugin.pluginId,
+    version: packageJson.version,
+    inputDir: runtimeDir,
+    outDir: releaseRoot,
+    packageName: plugin.packageName,
+    commit: sourceCommit,
+  });
+  const built = await buildPluginPayload({
+    pluginId: plugin.pluginId,
+    version: packageJson.version,
+    releaseDir: packaged.releaseDir,
+  });
+
+  const reproductionPath = `${built.bundlePath}.reproduction`;
+  await buildPluginPayload({
+    pluginId: plugin.pluginId,
+    version: packageJson.version,
+    releaseDir: packaged.releaseDir,
+    out: reproductionPath,
+  });
+  const [first, second] = await Promise.all([
+    readFile(built.bundlePath),
+    readFile(reproductionPath),
+  ]);
+  await rm(reproductionPath, { force: true });
+  if (!first.equals(second)) {
+    throw new Error(
+      `${plugin.pluginId} bundle reproduction was not deterministic.`,
+    );
+  }
+  const checksum = createHash("sha256").update(first).digest("hex");
+  await writeFile(
+    `${built.bundlePath}.sha256`,
+    `${checksum}  ${path.basename(built.bundlePath)}\n`,
+  );
+  return {
+    packageName: plugin.packageName,
+    log: `${plugin.packageName}@${packageJson.version}: ${path.relative(
+      root,
+      built.bundlePath,
+    )} ${checksum}`,
+  };
+}
+
+async function buildRuntime(plugin, packageRoot, outDir, manifest) {
+  const sourceEntry = existsSync(path.join(packageRoot, "src/lib/index.ts"))
+    ? path.join(packageRoot, "src/lib/index.ts")
+    : path.join(packageRoot, "src/index.ts");
+  const declaredHostModules = new Set(
+    manifest.lapis.runtime.entries.workspace.sharedDependencies,
+  );
+  const entryBuildOptions = pluginRuntimeEntryBuildOptions(sourceEntry);
+  await viteBuild({
+    root: packageRoot,
+    base: pluginRuntimeViteBase,
+    define: pluginRuntimeBrowserDefines,
+    configFile: false,
+    publicDir: false,
+    plugins: [
+      rendererHostExternalizationPlugin(expectedRendererVersion),
+      svelte({
+        preprocess: vitePreprocess(),
+        compilerOptions: { runes: undefined },
+      }),
+      ...(plugin.packageName === "@lapis-notes/docx"
+        ? [docxExportPolyfills()]
+        : []),
+    ],
+    resolve: {
+      alias: [
+        {
+          find: /^\$lib(?:\/(.*))?$/,
+          replacement: `${path.join(packageRoot, "src/lib")}/$1`,
+        },
+        ...(plugin.packageName === "@lapis-notes/docx"
+          ? [
+              {
+                find: /^@cw\/shared$/,
+                replacement: path.join(
+                  packageRoot,
+                  "vendor/wordcanvas/shared/src/index.ts",
+                ),
+              },
+            ]
+          : []),
+      ],
+      dedupe: ["svelte"],
+    },
+    worker: {
+      format: "es",
+      plugins: () =>
+        plugin.packageName === "@lapis-notes/docx" ? [docxExportPolyfills()] : [],
+    },
+    build: {
+      ...entryBuildOptions,
+      outDir,
+      emptyOutDir: true,
+      copyPublicDir: false,
+      cssCodeSplit: false,
+      sourcemap: false,
+      minify: false,
+      target: "es2022",
+      rollupOptions: {
+        ...entryBuildOptions.rollupOptions,
+        external: (specifier) =>
+          !isPluginSelfReference(plugin.packageName, specifier) &&
+          isApprovedHostModule(specifier),
+        output: {
+          entryFileNames: "main.mjs",
+          chunkFileNames: "assets/[name]-[hash].mjs",
+          assetFileNames: (asset) =>
+            asset.name?.endsWith(".css")
+              ? "styles.css"
+              : "assets/[name]-[hash][extname]",
+        },
+      },
+    },
+    logLevel: "warn",
+  });
+
+  const mainPath = path.join(outDir, "main.mjs");
+  if (!existsSync(mainPath)) {
+    const candidate = (await readdir(outDir)).find((file) =>
+      file.endsWith(".mjs"),
+    );
+    if (!candidate)
+      throw new Error(`${plugin.packageName} did not emit an ESM entry.`);
+    await rename(path.join(outDir, candidate), mainPath);
+  }
+  const bareImportsByFile = await scanRuntimeBareImports(outDir);
+  const findings = [];
+  for (const [file, specifiers] of bareImportsByFile) {
+    for (const specifier of specifiers) {
+      if (!isApprovedHostModule(specifier)) {
+        findings.push(
+          `${plugin.packageName} left non-host dependency ${specifier} external in ${file}. Plugin ESM runtime assets must bundle non-host dependencies or rewrite imports to relative URLs.`,
+        );
+      }
+      if (!declaredHostModules.has(specifier)) {
+        findings.push(
+          `${plugin.packageName} imported host module ${specifier} in ${file} without declaring it as a shared dependency.`,
+        );
+      }
+    }
+  }
+  if (findings.length) throw new Error([...new Set(findings)].join("\n"));
+}
+
+function isApprovedHostModule(specifier) {
+  return approvedWorkspaceHostModules.some((pattern) =>
+    pattern.test(specifier),
+  );
+}
+
+function requiredPlugin(selector) {
+  const plugin = pluginPackageBySelector(selector);
+  if (!plugin) throw new Error(`Unknown plugin selector: ${selector}`);
+  return plugin;
+}
+
+function parseOptions(args) {
+  const options = {};
+  for (let index = 0; index < args.length; index += 1) {
+    const arg = args[index];
+    if (arg === "--") continue;
+    if (!arg.startsWith("--")) throw new Error(`Unexpected argument: ${arg}`);
+    const key = arg
+      .slice(2)
+      .replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+    options[key] = args[index + 1];
+    index += 1;
+  }
+  return options;
+}

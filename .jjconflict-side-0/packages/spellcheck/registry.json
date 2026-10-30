@@ -1,0 +1,157 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 2,
+  "categories": ["diagnostics", "writing"],
+  "highlights": [
+    "Check spelling and grammar in open notes with Harper.",
+    "Review diagnostics and suggestions in editor and Problems surfaces.",
+    "Configure dialect, dictionaries, rules, and file scopes per vault."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/spellcheck#readme",
+  "appearance": {
+    "icon": "spell-check-2",
+    "accent": "#22C55E"
+  },
+  "media": {
+    "banner": {
+      "alt": "Lapis Spell Check showing Harper errors and a populated Problems panel with both sidebars closed.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/banner.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/banner.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/banner.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/banner.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-spell-check-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    },
+    "overview": {
+      "alt": "Lapis Spell Check showing a real editor diagnostic with its correction action popover open.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/overview.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/overview.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/overview.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/overview.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-spell-check-registry-screenshots--editor-action-popover",
+        "focus": "full-shell"
+      }
+    }
+  },
+  "gallery": [
+    {
+      "id": "suggestions-problems",
+      "alt": "Focused writing note with visible spelling diagnostics and a populated shared Problems panel.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/suggestions-problems.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/suggestions-problems.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/suggestions-problems.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/suggestions-problems.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-spell-check-registry-screenshots--suggestions-and-problems",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "Polish the draft",
+            "tone": "neutral"
+          },
+          {
+            "text": "without sharing it",
+            "tone": "green"
+          }
+        ],
+        "description": [
+          {
+            "text": "Review",
+            "tone": "neutral"
+          },
+          {
+            "text": "private spelling and grammar suggestions",
+            "tone": "green"
+          },
+          {
+            "text": "in the editor and Problems panel.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    },
+    {
+      "id": "editor-action-popover",
+      "alt": "Focused writing note with a spelling diagnostic action popover and Quick Fix control visible.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/editor-action-popover.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/editor-action-popover.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/editor-action-popover.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/editor-action-popover.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-spell-check-registry-screenshots--editor-action-popover",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "Fix a suggestion",
+            "tone": "neutral"
+          },
+          {
+            "text": "where it appears",
+            "tone": "amber"
+          }
+        ],
+        "description": [
+          {
+            "text": "Hover a marked phrase to review",
+            "tone": "neutral"
+          },
+          {
+            "text": "private local suggestions",
+            "tone": "green"
+          },
+          {
+            "text": "and apply the right action in place.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    }
+  ]
+}

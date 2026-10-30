@@ -1,0 +1,313 @@
+/* Same search bar as the transcript reader. */
+.ui-transcript-search {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid
+    var(
+      --mira-code-editor-border,
+      var(--background-modifier-border, var(--border))
+    );
+  background: var(
+    --mira-code-editor-background,
+    var(--background-primary, var(--background))
+  );
+  color: var(
+    --mira-code-editor-foreground,
+    var(--text-normal, var(--foreground))
+  );
+  font-family: var(--font-interface, var(--font-sans, inherit));
+  font-size: var(--mira-code-editor-search-font-size, 0.875rem);
+}
+
+.ui-transcript-search__body,
+.ui-transcript-search__row {
+  display: flex;
+  align-items: center;
+}
+
+.ui-transcript-search__body {
+  justify-content: center;
+  gap: 0.25rem;
+  max-width: 100%;
+}
+
+.ui-transcript-search__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.ui-transcript-search__row {
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.ui-transcript-search__replace-row {
+  padding-right: 2.5rem;
+}
+
+.ui-transcript-search__field,
+.ui-transcript-search__replace-input {
+  box-sizing: border-box;
+  height: 2rem;
+  min-width: 10rem;
+  width: min(22rem, 42vw);
+  border: 1px solid
+    var(
+      --mira-code-editor-search-input-border,
+      var(
+        --mira-code-editor-border,
+        var(--background-modifier-border, var(--border))
+      )
+    );
+  border-radius: var(--mira-code-editor-search-radius, 999px);
+  background: var(
+    --mira-code-editor-search-input-background,
+    var(
+      --mira-code-editor-background,
+      var(--background-primary, var(--background))
+    )
+  );
+  color: var(
+    --mira-code-editor-search-input-foreground,
+    var(--mira-code-editor-foreground, var(--text-normal, var(--foreground)))
+  );
+}
+
+.ui-transcript-search__field {
+  display: flex;
+  align-items: center;
+  padding-inline-start: 0.5rem;
+}
+
+.ui-transcript-search__replace-input {
+  flex: 0 0 auto;
+  height: 2rem;
+  padding: 0 0.625rem;
+}
+
+.ui-transcript-search__find-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  color: var(
+    --mira-code-editor-search-muted,
+    var(--text-muted, var(--muted-foreground))
+  );
+}
+
+.ui-transcript-search__input {
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: var(--mira-code-editor-search-font-size, 0.875rem);
+}
+
+.ui-transcript-search__field > .ui-transcript-search__input {
+  flex: 1 1 auto;
+  height: 100%;
+  padding-inline: 0.375rem 0.25rem;
+}
+
+.ui-transcript-search__input.ui-transcript-search__replace-input {
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  width: min(22rem, 42vw);
+  height: 2rem;
+  padding: 0 0.625rem;
+  border: 1px solid
+    var(
+      --mira-code-editor-search-input-border,
+      var(
+        --mira-code-editor-border,
+        var(--background-modifier-border, var(--border))
+      )
+    );
+  border-radius: var(--mira-code-editor-search-radius, 999px);
+  background: var(
+    --mira-code-editor-search-input-background,
+    var(
+      --mira-code-editor-background,
+      var(--background-primary, var(--background))
+    )
+  );
+  color: var(
+    --mira-code-editor-search-input-foreground,
+    var(--mira-code-editor-foreground, var(--text-normal, var(--foreground)))
+  );
+}
+
+.ui-transcript-search__input::placeholder {
+  color: var(
+    --mira-code-editor-search-muted,
+    var(--text-muted, var(--muted-foreground))
+  );
+}
+
+.ui-transcript-search__count {
+  flex: 0 0 auto;
+  padding-inline-end: 0.25rem;
+  color: var(
+    --mira-code-editor-search-muted,
+    var(--text-muted, var(--muted-foreground))
+  );
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.ui-transcript-search__options {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding-inline-end: 0.25rem;
+}
+
+.ui-transcript-search__field:hover,
+.ui-transcript-search__replace-input:hover {
+  border-color: var(
+    --mira-code-editor-search-input-hover-border,
+    var(--background-modifier-border-hover, var(--ring, var(--border)))
+  );
+}
+
+.ui-transcript-search__field:focus-within,
+.ui-transcript-search__button:focus-visible,
+.ui-transcript-search__input.ui-transcript-search__replace-input:focus {
+  border-color: transparent;
+  outline: none;
+  box-shadow: 0 0 0 2px
+    color-mix(
+      in srgb,
+      var(
+          --mira-code-editor-search-focus-ring,
+          var(
+            --mira-code-editor-focus-ring,
+            var(--interactive-accent, var(--ring, var(--primary)))
+          )
+        )
+        30%,
+      transparent
+    );
+}
+
+.ui-transcript-search__field > .ui-transcript-search__input:focus,
+.ui-transcript-search__field > .ui-transcript-search__input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.ui-transcript-search__field--invalid {
+  border-color: var(--destructive, rgb(220, 38, 38));
+}
+
+.ui-transcript-search__button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--mira-code-editor-search-button-border, transparent);
+  border-radius: var(
+    --mira-code-editor-radius,
+    var(--radius-s, var(--radius, 0.375rem))
+  );
+  background: var(--mira-code-editor-search-button-background, transparent);
+  color: var(
+    --mira-code-editor-search-button-foreground,
+    var(
+      --mira-code-editor-search-muted,
+      var(--text-muted, var(--muted-foreground))
+    )
+  );
+  cursor: pointer;
+}
+
+.ui-transcript-search__button:hover,
+.ui-transcript-search__button--active {
+  border-color: var(--mira-code-editor-search-button-hover-border, transparent);
+  background: var(
+    --mira-code-editor-search-button-hover-background,
+    var(
+      --mira-code-editor-active-line,
+      var(--background-modifier-hover, var(--accent))
+    )
+  );
+  color: var(
+    --mira-code-editor-search-button-hover-foreground,
+    var(--mira-code-editor-foreground, var(--text-normal, var(--foreground)))
+  );
+}
+
+.ui-transcript-search__toggle {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-color: transparent;
+  border-radius: 0.375rem;
+}
+
+.ui-transcript-search__button--active.ui-transcript-search__toggle {
+  border-color: transparent;
+  box-shadow: none;
+  background: var(
+    --mira-code-editor-search-active-background,
+    var(
+      --mira-code-editor-active-line,
+      var(--background-modifier-hover, var(--accent))
+    )
+  );
+}
+
+.ui-transcript-search svg {
+  width: 1rem;
+  height: 1rem;
+  pointer-events: none;
+}
+
+.ui-transcript-search__status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .ui-transcript-search {
+    align-items: stretch;
+    padding-inline: 0.5rem;
+  }
+
+  .ui-transcript-search__body {
+    align-items: flex-start;
+  }
+
+  .ui-transcript-search__row {
+    flex-wrap: wrap;
+  }
+
+  .ui-transcript-search__field,
+  .ui-transcript-search__replace-input {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .ui-transcript-search__replace-row {
+    padding-right: 0;
+  }
+}

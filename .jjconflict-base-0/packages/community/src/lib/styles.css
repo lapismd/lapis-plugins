@@ -1,0 +1,34 @@
+.community-plugin-application {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ui-workspace-tab[data-view-type="community"][data-active="true"] {
+  background: var(--muted);
+}
+
+.ui-workspace-tab[data-view-type="community"][data-active="true"]::before,
+.ui-workspace-tab[data-view-type="community"][data-active="true"]::after {
+  box-shadow:
+    inset 0 0 0 var(--workspace-tab-outline-width)
+      var(--ui-workspace-tab-divider),
+    0 0 0 calc(var(--ui-workspace-tab-curve) * 4) var(--muted);
+}
+
+.ui-workspace-tab[data-view-type="community"][data-active="true"]
+  .ui-workspace-tab__inner:hover {
+  background: var(--muted);
+}
+
+[data-ui-part="leaf-content"]:has(
+    [data-ui-component="community-plugin-application"]
+  )
+  > [data-ui-component="workspace-view-header"],
+[data-ui-part="stacked-tab-content"]:has(
+    [data-ui-component="community-plugin-application"]
+  )
+  [data-ui-component="workspace-view-header"] {
+  display: none;
+}

@@ -1,0 +1,185 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 2,
+  "categories": ["data", "database", "editor"],
+  "highlights": [
+    "Create structured views over notes and front matter.",
+    "Filter and organize vault data without leaving the workspace.",
+    "Keep editable views backed by ordinary Lapis content."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/bases#readme",
+  "appearance": {
+    "icon": "table-2",
+    "accent": "#14B8A6"
+  },
+  "media": {
+    "banner": {
+      "alt": "Lapis Bases showing a populated project cover-card view with real artwork and useful properties.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/banner.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/banner.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/banner.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/banner.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-bases-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    },
+    "overview": {
+      "alt": "Lapis Bases grouped list view with populated project records and grouping controls open.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/overview.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/overview.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/overview.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/overview.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-bases-registry-screenshots--grouped-list",
+        "focus": "full-shell"
+      }
+    }
+  },
+  "gallery": [
+    {
+      "id": "table",
+      "alt": "Focused projects table with the Filter panel open to an Active status rule.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/table.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/table.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/table.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/table.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-bases-registry-screenshots--filter-options",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "Filter the work",
+            "tone": "neutral"
+          },
+          {
+            "text": "to what matters now",
+            "tone": "cyan"
+          }
+        ],
+        "description": [
+          {
+            "text": "Combine property rules across one view or every view while the source stays",
+            "tone": "neutral"
+          },
+          {
+            "text": "ordinary Markdown.",
+            "tone": "green"
+          }
+        ]
+      }
+    },
+    {
+      "id": "cards",
+      "alt": "Focused projects base displayed as visual cards with actual cover artwork, owner, status, and score.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/cards.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/cards.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/cards.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/cards.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-bases-registry-screenshots--cover-cards",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "See the work",
+            "tone": "neutral"
+          },
+          {
+            "text": "at a glance",
+            "tone": "violet"
+          }
+        ],
+        "description": [
+          {
+            "text": "Use cover images and selected properties to build a compact project portfolio.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    },
+    {
+      "id": "grouped-list",
+      "alt": "Focused projects list grouped into Active and Planning sections with the Group by controls open.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/grouped-list.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/grouped-list.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/grouped-list.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/grouped-list.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-bases-registry-screenshots--grouped-list",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "Group related notes",
+            "tone": "neutral"
+          },
+          {
+            "text": "around the next decision",
+            "tone": "green"
+          }
+        ],
+        "description": [
+          {
+            "text": "Shape the same source data into a grouped list when a table is more than you need.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,268 @@
+# Markdown Plugin
+
+Writable preview sessions use the App-owned captured-source binding described
+in [link-preview persistence and native admission](panels/link-previews.md).
+The native input lease gates existing conditional persistence; it neither
+replaces Markdown embedders nor selects either application host.
+Protected native saved-state refresh reuses the same public Mira text lease
+under LN-MD-124; source qualification and actual host adoption remain separate.
+The protected admission story MUST wait for its booted App fixture with the
+explicit cold-shard budget shared by App-backed story boots; its
+admitted-contract assertions are unchanged.
+
+LN-MD-022's empty Outline explains the missing headings outside its semantic
+list. The real-App No headings story retains interaction and axe qualification.
+
+The package requires Design Core `^0.7.0` for prepared browser CSS
+and bundled fonts through public exports. Application state and existing plugin
+behavior retain their owning contracts. A full-file Markdown embed asks
+registered Markdown embedders in order for `md` and `markdown`. The first
+embedder that accepts the file owns it. When every embedder declines, the
+portable Markdown preview remains. Extension renderers stay on their own
+extensions.
+
+The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
+with size 256 and initials fallback, as governed by LP-SPEC-041.
+
+Version 0.2.0 consumes published Mira `~0.1.2` and the matching 0.0.3 editor
+and optional plugin releases.
+Its generated manifest, README installation coordinate and authentic Changesets
+changelog agree on the independent release version.
+
+This candidate consumes published API 0.2.0 through its portable peer range.
+Shared shell qualification uses UI 0.1.4, File Explorer 0.2.0 and Workspace 0.3.0.
+
+Release qualification uses `@lapis-notes/api@^0.2.0` for the shared renderer,
+diagnostics invalidation and selected metadata fingerprint contracts. Portable
+consumers must resolve this prerequisite from npm before plugin publication.
+
+Earlier dependency acceptance used Design Core `0.3.2` and Mira `0.0.4` through portable npm ranges. Source ownership and public contracts remain
+unchanged; local overrides for these released packages are retired.
+
+The published Mira floor retains its upstream pending-menu teardown correction,
+including File Properties replacement and pane disposal. The consumer continues
+to use the public FrontmatterEditor and never patches dismissible-layer code.
+
+Markdown presentation resolves Design Core through the repository's current
+published semver range and committed lockfile.
+
+The package-owned `registry.json` is the source for curated categories,
+highlights, and registry-only Overview content under LP-SPEC-021 and LP-SPEC-033. Manifest and package
+metadata remain authoritative for the fields defined by LP-SPEC-022.
+Registry identity and capture-backed gallery media remain package-owned under
+LP-SPEC-030 and LP-SPEC-031. Governed `Registry Screenshots` stories cover Live
+Preview beside the right Outline, Source beside right File Properties, Reading,
+and Backlinks; all stay `visual-pending` until separate visual approval.
+Each capture MUST assert its final editor mode and adjacent panel before the
+shared readiness marker permits media generation.
+Reading preserves the complete full-shell capture, while the editor-and-panel
+cards retain their declared right-sidebar crops. Every frame retains the shared
+dark right-edge gutter.
+The fixed banner state places Backlinks left, Live Preview in the main area,
+and File Properties right. The separate Overview image uses the Reading story
+so the body adds a materially different full-screen view.
+
+Daily notes remain ordinary authoritative Markdown documents. The Markdown
+plugin parses and edits them through its existing file surfaces while the
+API-owned daily-document provider supplies identity and path policy to domain
+plugins.
+
+The Markdown plugin owns Markdown document behavior and its integration with the
+Lapis plugin, editor, metadata, and workspace APIs. Movable panel behavior is
+specified separately under [Panels](./panels/index.md).
+
+Targeted `Editing Title Alignment` and `Editing Search Settings` scenarios
+qualify the shared API and Mira editor contracts below. Source and dark-mode
+variants retain real App ownership and leave full-suite qualification deferred.
+
+| ID        | Requirement                                                                                                                                                                                                                                                                                                                                                                                         |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| LN-MD-127 | Markdown editing MUST retain the API inline title's measured text-column alignment in Source and Live Preview. Opening Settings over Find/Replace MUST cover editor panels and gutters, retain modal focus, and preserve the search query and replacement after dismissal. The Reading surface editing stories MUST exercise these shared package contracts without plugin-local styling overrides. |
+
+Reading's inner Mira and preview layers stretch through the available pane for
+short notes and grow with long documents. The shared outer Scroll Area remains
+the only document scroller; a minimum-height outer shell alone is insufficient.
+See the [reading-view review](../../../records/2026-10-17-reading-surface-fill.md)
+for source and consumer evidence and deferred qualification.
+Lapis API and UI host modules are peer-provided by the application so the
+packed plugin shares the host's App and framework identity.
+
+The production plugin also owns the Tags panel. Its persisted panel IDs follow
+the canonical Obsidian-compatible names governed by `LN-MD-085` and
+`LN-MD-086`, while former Lapis IDs remain load-only compatibility aliases.
+The Deno desktop host loads the same public Markdown package and verified asset
+metadata as web; Markdown does not own a desktop-specific loader or asset URL.
+Package acceptance resolves Markdown manifest metadata from the packed npm
+package, independently of the repository source layout.
+
+## Requirements
+
+| ID        | Requirement                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| LN-MD-001 | The repo MUST ship `@lapis-notes/markdown` at `packages/markdown` as an independently versioned first-party plugin. Markdownlint remains separately packaged; applications own whether either package appears in a static profile.                                                                                                                                                                                                                                  |
+| LN-MD-002 | `@lapis-notes/markdown` MUST register through the existing API `Plugin` surface: `registerView`, `registerEditorView`, `registerExtensions`, `registerEditorExtension`, commands, and settings schema.                                                                                                                                                                                                                                                              |
+| LN-MD-003 | The Plugin triad (`plugin.ts`, `plugin-manager.ts`, and `lapis-extension.ts`) MUST remain authoritative. Markdown MUST NOT introduce parallel loader, override-stack, or settings-framework APIs.                                                                                                                                                                                                                                                                   |
+| LN-MD-004 | Markdown document rendering MUST be provided by published Mira packages through their built public exports, without consumer-owned source aliases or sibling-path assumptions. The full-repo local `richEditor` and `MarkdownPreview` stacks MUST NOT be retained.                                                                                                                                                                                                  |
+| LN-MD-005 | When enabled, the Markdown plugin MUST own view type `markdown` with `source`, `live-preview`, and `preview` modes, View-menu mode toggles, and leaf-state mode persistence from full-repo behavior.                                                                                                                                                                                                                                                                |
+| LN-MD-006 | Lapis Path A (`EditorConfig` plus configuration `updated`) and Path B (`registerEditorExtension`, `workspace.updateOptions`, and `editor.updateExtensions`) MUST remain the extension-reload authority.                                                                                                                                                                                                                                                             |
+| LN-MD-007 | Existing editor and workspace events (`editor-updated`, Editor `change`, file-change listeners, `active-leaf-change`, `editor-menu`, and `file-open`) MUST remain wired; Mira MUST NOT replace them.                                                                                                                                                                                                                                                                |
+| LN-MD-009 | Markdown settings MUST expose Mira feature and Mira plugin toggles, including Mermaid and AI, under a Markdown settings section through the existing configuration schema and settings-section APIs.                                                                                                                                                                                                                                                                |
+| LN-MD-010 | Living parity with the extracted implementation MUST be tracked in `packages/markdown/PARITY.md` and linked from repository migration guidance when that guidance exists.                                                                                                                                                                                                                                                                                           |
+| LN-MD-012 | The editor demo MUST register the source-editor plugin first, then `@lapis-notes/markdown` with Markdown associations enabled by default and exclusive priority, then Tags.                                                                                                                                                                                                                                                                                         |
+| LN-MD-013 | The Markdown `MetadataProcessor.write` contract MUST serialize the frontmatter map passed by `MetadataCache.writeFrontmatter`, not a nested `{ frontmatter }` wrapper.                                                                                                                                                                                                                                                                                              |
+| LN-MD-014 | When enabled, the Markdown plugin MUST register Lapis property type widgets (`unknown`, `text`, `number`, `checkbox`, `tags`, `aliases`, `multitext`, `date`, `datetime`, `array`, and `object`) through `Plugin.registerTypeWidget`.                                                                                                                                                                                                                               |
+| LN-MD-015 | Storybook and demo hosts that load Markdown MUST call `metadataTypeManager.trackChanges()` or an equivalent `watchMetadata` helper after plugins load and dispose the watcher on teardown.                                                                                                                                                                                                                                                                          |
+| LN-MD-025 | The Markdown editor integration MUST compose Mira's public `createMarkdownCodeMirrorExtensions` source-decoration contract, not only its language parser.                                                                                                                                                                                                                                                                                                           |
+| LN-MD-051 | Markdown body text MAY retain the Lapis sans face, but revealed and source-mode frontmatter lines MUST resolve Mira's monospace token, using Source Code Pro under the Obsidian theme.                                                                                                                                                                                                                                                                              |
+| LN-MD-052 | Mira's inline fold controls MUST be the only visible Markdown fold presentation. Rendered frontmatter disclosure MUST collapse and expand its property content.                                                                                                                                                                                                                                                                                                     |
+| LN-MD-053 | API editor note-column spacing MUST NOT inset an embedded frontmatter preview. Its surface and disclosure chevron MUST share the Markdown content start.                                                                                                                                                                                                                                                                                                            |
+| LN-MD-071 | Lapis Markdown editing MUST compose `createMiraCodeMirrorExtensions` with `includeBaseExtensions: false` inside the API editor shell. The composed stack MUST retain Mira slash commands, command keymaps, parsing, tables, image handling, authoring helpers, rich editing, block controls, and extension contributions.                                                                                                                                           |
+| LN-MD-072 | Markdown Mira settings MUST derive schema properties, Settings fields, labels, and defaults from one typed descriptor list. Runtime resolution MUST use those declared defaults, and the superseded `markdown.mira.features.toolbar` value MUST remain unregistered and unread.                                                                                                                                                                                     |
+| LN-MD-073 | Selection tools, standard block handles with drag and keyboard movement, block context actions, slash commands, Live Preview heading controls, tables, images, completions, smart paste, and input handlers MUST default on. The contextual block-type toolbar and AI MUST default off.                                                                                                                                                                             |
+| LN-MD-074 | `markdown.mira.editor.toolbar.enabled` MUST default to `false` and control a public Mira toolbar above the API `NoteEditor` only in Source and Live Preview. Its actions MUST delegate to the existing Lapis `Editor`, configuration, image picker, and mode lifecycle. The Lapis editing surface MUST remain borderless.                                                                                                                                           |
+| LN-MD-075 | `markdown.mira.editor.doodleDividers.enabled` MUST default to `false`. When enabled, Lapis MUST add Mira's public Doodle Dividers extension and its styles without recreating divider parsing, drawing, commands, or controls.                                                                                                                                                                                                                                      |
+| LN-MD-076 | While editing, Markdown MUST contribute a `book-open` title-bar action for Reading view; while reading, it MUST contribute a `pencil` action for editing. A plain click switches the current leaf, while Mod+click opens the target mode in a right split.                                                                                                                                                                                                          |
+| LN-MD-077 | Markdown's pane menu MUST expose Reading view, expose Source mode outside Reading view, persist mode changes, and append every registered `markdownViewMenuItems` provider contribution.                                                                                                                                                                                                                                                                            |
+| LN-MD-078 | The Mira Reading surface MUST fill its workspace view without the framework editor border or radius. Rendered Markdown retains its own content styling.                                                                                                                                                                                                                                                                                                             |
+| LN-MD-079 | Markdown's pane menu MUST place its View section before provider contributions and generic workspace actions. Reading view is first, followed by Source mode while editing.                                                                                                                                                                                                                                                                                         |
+| LN-MD-080 | While editing, Markdown's View section MUST expose a checked `Show editor toolbar` item that toggles and persists `markdown.mira.editor.toolbar.enabled`.                                                                                                                                                                                                                                                                                                           |
+| LN-MD-081 | Mira toolbar changes to indentation guides, indentation type, and indentation width MUST persist through Lapis configuration before their updated state is reported.                                                                                                                                                                                                                                                                                                |
+| LN-MD-082 | The 20 Mira capability flags MUST appear in one top-level Settings group with ID `markdown.mira.features` and `toggle-table` presentation. Every Boolean row MUST use an explicit proper-case label and a concise capability description. The Mermaid row MUST state that authoring also requires the Mermaid plugin setting.                                                                                                                                       |
+| LN-MD-083 | Grouped feature presentation MUST preserve every existing dotted feature key, default, and runtime gate. The configuration schema MUST remain flat and MUST NOT register or persist a `markdown.mira.features` group object.                                                                                                                                                                                                                                        |
+| LN-MD-084 | Markdown Source and Live Preview editors MUST compose the API language-service diagnostic extension with completion and hover disabled. Reading mode MUST remain outside the CodeMirror diagnostic lifecycle.                                                                                                                                                                                                                                                       |
+| LN-MD-090 | Markdown's full editing surface MUST compose the public API embedded editor surface so file views and plugin-owned embedded editors resolve the same registered Markdown extension stack, configuration refresh, scrolling, and source fallback lifecycle. In a file leaf, its flex wrapper MUST constrain that surface so its Design Core Scroll Area owns the one usable vertical document scroll range.                                                          |
+| LN-MD-091 | A Markdown file leaf MAY receive a serialized return target containing a registered view type, label, icon, and state. While editing, the title action MUST restore that view in the same leaf, preserve the current file, support Mod+click in a right split, and leave Markdown Reading and Source controls available in the pane menu.                                                                                                                           |
+| LN-MD-093 | Markdown MUST register `notes_list` through the application tool registry. It MUST accept only normalized Markdown paths inside the trusted conversation scope, reject application-private directories, and return deterministically ordered bounded results.                                                                                                                                                                                                       |
+| LN-MD-094 | Markdown MUST NOT register `notes_patch`. Unique exact-hunk replacement belongs to API `edit`. Invalid scope, conflicts, cancellation, and denial MUST leave the target file unchanged.                                                                                                                                                                                                                                                                             |
+| LN-MD-100 | Markdown MUST NOT register `notes_read`. Bounded scoped file reads belong to the API `read` tool.                                                                                                                                                                                                                                                                                                                                                                   |
+| LN-MD-101 | Public `MarkdownEmbed` MUST render through Mira's embed preview using the owning App's `createLapisMiraFileAdapter` and `resolveMarkdownMiraExtensions`. It MUST refresh those extensions when configuration changes. Consumers MAY set `htmlPolicy`.                                                                                                                                                                                                               |
+| LN-MD-102 | `extractMetadata` MUST parse nested YAML maps and arrays in front matter, including `task:` objects.                                                                                                                                                                                                                                                                                                                                                                |
+| LN-MD-103 | `extractMetadata` MUST index wiki links and standard Markdown links with the nearest preceding heading.                                                                                                                                                                                                                                                                                                                                                             |
+| LN-MD-104 | Markdown MUST compose every registered API Markdown contribution — including global post-processors registered through `registerMarkdownPostProcessor` — into workspace Source or Live Preview, Reading mode, `MarkdownEmbed`, `FileEmbed`, and editable file surfaces. Each processor context MUST identify its mode, source path, front matter, source section, and owning surface.                                                                               |
+| LN-MD-105 | Markdown MUST register the API full-file surface provider. It MUST mount the real `TFile`, preserve serialized Mira writes and dirty-buffer protection, expose enter, flush, exit, and dispose controls, and report editing-state changes.                                                                                                                                                                                                                          |
+| LN-MD-106 | A Markdown file surface MUST support manual, single-click, or double-click activation and configurable blur return. Double-click activation MUST ignore interactive descendants, and failed persistence MUST retain the dirty editor with an accessible error. Its root MUST establish the effective Mira `obsidian` theme for preview and live-edit descendants.                                                                                                   |
+| LN-MD-107 | A full-file surface MUST use a Design Core Scroll Area as its outer consumer scroll while previewing and its CodeMirror scroll while editing. The preview MUST inherit the application scrollbar visibility preference and MUST NOT retain Mira's native inner scroll owner. It MUST NOT create two active vertical document scrollers in either state.                                                                                                             |
+| LN-MD-108 | `markdown.mira.frontmatter.defaultOpen` MUST default to `false` and supply the initial frontmatter disclosure state for newly opened Live Preview and Reading surfaces. Manual disclosure changes MUST remain available. Explicit embed `frontmatterOpen` inputs MUST remain independent and default collapsed.                                                                                                                                                     |
+| LN-MD-109 | `markdown.mira.features.outline-navigation` MUST remain a flat Boolean setting in the Markdown Features toggle table and default to `true`. Reading mode MUST pass it to Mira's `floating` outline. The standalone Outline workspace view and command MUST remain independent.                                                                                                                                                                                      |
+| LN-MD-110 | Reading mode's floating outline MUST stay vertically centered in the visible document pane while its shared Scroll Area scrolls. The reading document MUST reserve inline-end clearance so the collapsed heading-marker rail does not cover body content.                                                                                                                                                                                                           |
+| LN-MD-111 | Frontmatter property controls in Live Preview and File Properties MUST expose Mira's standard portalled dropdown with a `Property type` submenu above Cut, Copy, Paste, and Remove. Each type choice MUST show its registered icon. Both menus MUST remain visible and hit-testable outside the property row and workspace viewport; types MUST NOT be flattened into a custom panel.                                                                               |
+| LN-MD-112 | Reading mode's floating outline MUST resolve the actual document scroll owner. As the shared Scroll Area moves, the rail stroke and expanded outline item MUST both identify the current section without requiring outline interaction.                                                                                                                                                                                                                             |
+| LN-MD-097 | Markdown `extractMetadata` MUST run off the renderer thread through a worker. Vault I/O, link resolution, `$state` apply, and `AppDatabase` writes MUST stay on the main thread. `read()` MAY use the same parse synchronously when a worker is unavailable.                                                                                                                                                                                                        |
+| LN-MD-099 | Published `parse-metadata` MUST construct its module worker with the standards-aligned `new Worker(new URL("./metadata-worker.js", import.meta.url), { type: "module" })` form. The package MUST NOT expose a Vite query-suffix worker import that dependency optimization can interpret as an ordinary module.                                                                                                                                                     |
+| LN-MD-116 | The media file view MUST display an image through a vault resource URL from `getResourceUrl` and revoke that URL when the view closes or the file changes. A URL that is not `blob:` or `http(s):` MUST fall back to a blob created from `readBinary` with the image MIME type, and that blob MUST be revoked instead. The view MUST receive `App` from its leaf and MUST NOT read or assign `globalThis.app`. It MUST NOT use the vault path as the image address. |
+
+File Properties value autocomplete and wikilink pills stay on the Lapis
+frontmatter adapter and Mira file adapter. Live Preview and Reading receive the
+same App-scoped configuration so text and list property values can be completed
+from metadata across the vault; Mira owns the portalled editor UI. Metadata parse uses a Markdown
+worker whose packaged URL stays on the emitted JavaScript file; heavy type widgets remain deferred. File-scoped Outline, Backlinks, and
+Outgoing Links share one follow helper under `LN-MD-098` and do not rewrite
+state when a leaf event repeats the same followed path.
+Linked mentions paint from `getCache`/`getFileCache` even when `getAllItems()`
+is still empty. Backlinks also read `resolvedLinks` for inbound sources.
+
+The governed File Properties interaction opens Mira's nested `Property type`
+menu through its standard pointer-hover trigger and verifies that closing both
+menu layers releases the document-level pointer lock.
+
+## Ownership
+
+Reusable Plugin and Editor contracts remain in `@lapis-notes/api`. Markdown
+document policy lives in `@lapis-notes/markdown` and is implemented by Mira.
+Portable image URLs are leased through the owning vault using Mira's public
+`readAssetUrl`/`releaseAssetUrl` hooks; missing assets remain unresolved. The
+media file view leases the same vault URL and, when that URL is not fetchable,
+falls back to a typed blob from the file bytes (`LN-MD-116`).
+
+The Lapis package owns the app-bound `MiraFileAdapter` and reuses one instance
+per App; portable rendering and editor behavior remain Mira-owned. Markdown views, renderers, frontmatter, and
+Mira extension factories receive that App explicitly; static compatibility
+entrypoints resolve only through the documented fallback. The diagnostics extension reference-counts
+open editor views and reuses the manager's cached code actions; it does not
+replace Mira completion or hover behavior.
+The generic Problems leaf renders its live total through Design Core's
+ephemeral view badge; Markdown and Markdownlint contribute diagnostics but do
+not construct or persist that presentation.
+Markdown also owns `notes_list`. That callback captures the plugin's Vault,
+accepts only scoped portable Markdown paths outside `.obsidian`, `.lapis`, and
+`.trash`, and returns bounded transport-neutral records. The list description
+tells the agent to prefer it over host-cwd directory walking (LN-AI-108).
+Bounded reads and mutating file edits belong to API `read`, `write`, `edit`,
+and `apply_patch`.
+The narrow `@lapis-notes/markdown/agent-tools` entry exposes the list factory
+for package tests and explicit diagnostics; the root plugin remains responsible
+for registering it in production.
+
+Panel registration, package exports, and per-panel behavior are documented in
+the [Markdown panel specification](./panels/index.md). Shared
+workspace presentation and Storybook rules live under
+[Lapis Notes Workspace Shell / Panels](https://github.com/lapismd/lapis-notes/blob/main/spec/src/workspace-shell/panels.md).
+The panel registry is also the command-discovery authority required by
+`LN-MD-089`; document views continue to open through their file associations.
+
+Tags and All Properties remain Markdown-owned metadata views. Their vault-wide
+navigation delegates through the registered Search command described by the
+[Search Plugin](../search/index.md); Markdown does not import Search internals.
+These first-party views use persisted metadata facets and paged rows directly;
+file-scoped Outline, File Properties, Backlinks, and Outgoing Links fetch their
+current path asynchronously and discard results superseded by a later followed
+file or revision. Markdown does not acquire the third-party snapshot lease.
+File Properties hydrates indexed suggestion values before its first Mira mount.
+Its refresh callback re-resolves and synchronizes the visible record before
+background rehydration, so a committed same-path metadata change is applied
+even when the followed `TFile` identity remains stable.
+The six canonical Markdown panels register `ViewAccess.command` openers from
+their registry. Markdown and Media remain `ViewAccess.file`, and legacy panel
+view types remain `ViewAccess.alias` without palette duplicates.
+The canonical registry is mirrored by the generic Storybook command-panel
+catalog, replacing Markdown-specific catalog arrays while retaining the same
+real registrations and one instance per placement.
+Markdown panels treat database readiness as sufficient to paint persisted
+metadata. Their async refresh paths react to committed revisions, retain the
+newest generation, and surface query failures without snapshot fallback.
+Core tag projection combines inline Markdown tags with normalized frontmatter
+tags, including hierarchy ancestors, before Tags or Search facets query the
+database.
+
+Markdown registry-media Autodocs use the shared full-workspace framing
+governed by LP-SPEC-044, show public plugin setup under LP-SPEC-045, and
+provide component and story descriptions under LP-SPEC-046.
+
+LP-SPEC-014 governs the signed runtime editor boundary. This package declares
+`@codemirror/autocomplete`, `@codemirror/commands`, `@codemirror/language`, `@codemirror/lint`, `@codemirror/search`, `@codemirror/state`, `@codemirror/view`, `@lezer/common`, `@lezer/highlight`, `@lezer/lr`
+as shared host modules and portable npm peers. Its bundled language grammars
+reuse these host-owned editor and parser core instances.
+
+The signed runtime declares its compiled Svelte imports through the exact
+compiler-versioned renderer contracts in LP-SPEC-014 and LP-SPEC-047. Host-owned
+components and archived components share that renderer graph; npm package peers
+remain portable.
+
+Panel preview acceptance observes settled entrance geometry before checking the
+existing 400px minimum. Initial Hover Card visibility can precede the end of its
+animation; Backlinks and Outgoing Links retain their navigation, editing and
+pointer-handoff assertions while waiting for that public geometry contract.
+
+The package test toolchain uses patched Vite 6.4.4 and Vitest 4.1.12
+or newer within the existing major versions. Shared catalog qualification uses
+the patched Storybook toolchain described in distribution; application behavior
+and public package ownership remain unchanged.
+
+Current shared-shell qualification uses the released Design Core 0.6
+public boundary and matching Notes framework archives. Published dependency
+ranges now admit that boundary directly; the Avatar repair remains a recorded
+local candidate until the separate release gate.
+
+The native frontmatter parity corpus under LN-NATIVE-001 also qualifies the
+retained TypeScript extractor through its JSON persistence boundary. It adds
+Unicode/scalar/alias/error cases without changing renderer behavior, published
+plugin exports or the browser's YAML implementation. Native source and either
+host's adoption remain separate evidence.
+
+Properties replacement and explicit recovery follow LN-MD-125 and LN-MD-126.
+Mira supplies the immutable displayed record and focused commit; the Lapis
+adapter forwards that baseline to the existing FileManager guard and refreshes
+only the captured controller on explicit recovery. Body-only changes remain
+compatible. The two governed persistence scenarios extend the existing File
+Properties shell family; [source evidence](../../../records/2026-10-26-properties-persistence.md)
+keeps provisional public-package diagnosis separate from final source/host intake.

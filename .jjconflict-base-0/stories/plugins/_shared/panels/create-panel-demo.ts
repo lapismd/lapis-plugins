@@ -1,0 +1,1200 @@
+import {
+  App,
+  FileView,
+  installApplicationCompatibility,
+  md5,
+  MemoryAppDatabase,
+  MemoryVaultAdapter,
+  TFile,
+  type WorkspaceLeaf,
+} from "@lapis-notes/api";
+import { BookmarksPlugin, BookmarksViewType } from "@lapis-notes/bookmarks";
+import {
+  GraphPlugin,
+  GraphViewType,
+  LocalGraphViewType,
+} from "@lapis-notes/graph";
+import "@lapis-notes/graph/styles.css";
+import { HistoryPlugin, HistoryViewType } from "@lapis-notes/history";
+import {
+  AiCatalogViewType,
+  AiHistoryViewType,
+  AiPlugin,
+  AiViewType,
+} from "@lapis-notes/ai";
+import {
+  FileExplorerPlugin,
+  FileExplorerViewType,
+} from "@lapis-notes/file-explorer";
+import {
+  AllPropertiesViewType,
+  BacklinksViewType,
+  FilePropertiesViewType,
+  MarkdownPlugin,
+  MarkdownView,
+  OutlineViewType,
+  OutgoingLinksViewType,
+  TagsViewType,
+} from "@lapis-notes/markdown";
+import { SourceEditorPlugin } from "@lapis-notes/source-editor";
+import { MarkdownLintPlugin } from "@lapis-notes/markdown-lint";
+import { SpellcheckPlugin } from "@lapis-notes/spellcheck";
+import { SearchPlugin, SearchViewType } from "@lapis-notes/search";
+import { WordCountPlugin } from "@lapis-notes/wordcount";
+import { watchMetadata } from "../../../workspace/watch-metadata";
+
+export type PanelDemoKind =
+  | "ai-history"
+  | "ai-catalog"
+  | "ai-chat"
+  | "all-properties"
+  | "explorer"
+  | "file-properties"
+  | "outline"
+  | "backlinks"
+  | "outgoing-links"
+  | "search"
+  | "graph"
+  | "local-graph"
+  | "bookmarks"
+  | "history"
+  | "csv"
+  | "canvas"
+  | "pdf"
+  | "reading"
+  | "tags";
+
+export type PanelDemoLayout =
+  | "middle-top-tabs"
+  | "stacked-tabs"
+  | "left-sidebar"
+  | "right-sidebar"
+  | "bottom-panel"
+  | "sidebar-group";
+
+export type PanelDemoDiagnostics =
+  | "all"
+  | "none"
+  | "markdownlint"
+  | "spellcheck";
+
+export interface PanelDemoOpenDocument {
+  title: string;
+  icon: string;
+  type: string;
+  state: Record<string, unknown>;
+}
+
+export interface PanelDemoOptions {
+  hideSidebars?: boolean;
+  diagnostics?: PanelDemoDiagnostics;
+  graphData?: "default" | "registry-rich";
+  plugins?: Parameters<App["plugins"]["registerCorePlugins"]>[0];
+  files?: Record<string, string | ArrayBuffer>;
+  openDocument?: PanelDemoOpenDocument;
+  configuration?: Record<string, unknown>;
+}
+
+export const PANEL_DEMO_LAYOUTS: PanelDemoLayout[] = [
+  "middle-top-tabs",
+  "stacked-tabs",
+  "left-sidebar",
+  "right-sidebar",
+  "bottom-panel",
+  "sidebar-group",
+];
+
+export const PANEL_VIEW_TYPE: Record<PanelDemoKind, string> = {
+  "ai-history": AiHistoryViewType,
+  "ai-catalog": AiCatalogViewType,
+  "ai-chat": AiViewType,
+  "all-properties": AllPropertiesViewType,
+  explorer: FileExplorerViewType,
+  "file-properties": FilePropertiesViewType,
+  outline: OutlineViewType,
+  backlinks: BacklinksViewType,
+  "outgoing-links": OutgoingLinksViewType,
+  search: SearchViewType,
+  graph: GraphViewType,
+  "local-graph": LocalGraphViewType,
+  bookmarks: BookmarksViewType,
+  history: HistoryViewType,
+  csv: "lapis-csv",
+  canvas: "lapis-canvas",
+  pdf: "lapis-pdf",
+  reading: "lapis-transcripts-reading",
+  tags: TagsViewType,
+};
+
+export const PANEL_LEAF_META: Record<
+  PanelDemoKind,
+  { title: string; icon: string; group: string; requiresFile: boolean }
+> = {
+  "ai-history": {
+    title: "AI conversations",
+    icon: "history",
+    group: "AI",
+    requiresFile: true,
+  },
+  "ai-catalog": {
+    title: "Catalog",
+    icon: "library",
+    group: "AI",
+    requiresFile: true,
+  },
+  "ai-chat": {
+    title: "AI chat",
+    icon: "bot",
+    group: "AI",
+    requiresFile: false,
+  },
+  "all-properties": {
+    title: "All properties",
+    icon: "archive",
+    group: "Properties",
+    requiresFile: false,
+  },
+  explorer: {
+    title: "Files",
+    icon: "folder-closed",
+    group: "Explorer",
+    requiresFile: false,
+  },
+  "file-properties": {
+    title: "File properties",
+    icon: "info",
+    group: "Properties",
+    requiresFile: true,
+  },
+  outline: {
+    title: "Outline",
+    icon: "list",
+    group: "Outline",
+    requiresFile: true,
+  },
+  backlinks: {
+    title: "Backlinks",
+    icon: "link-2",
+    group: "Links",
+    requiresFile: true,
+  },
+  "outgoing-links": {
+    title: "Outgoing links",
+    icon: "external-link",
+    group: "Links",
+    requiresFile: true,
+  },
+  search: {
+    title: "Search",
+    icon: "search",
+    group: "Search",
+    requiresFile: false,
+  },
+  graph: {
+    title: "Graph",
+    icon: "waypoints",
+    group: "Graph",
+    requiresFile: false,
+  },
+  "local-graph": {
+    title: "Local graph",
+    icon: "git-branch-plus",
+    group: "Graph",
+    requiresFile: true,
+  },
+  bookmarks: {
+    title: "Bookmarks",
+    icon: "bookmark",
+    group: "Bookmarks",
+    requiresFile: false,
+  },
+  history: {
+    title: "History",
+    icon: "history",
+    group: "History",
+    requiresFile: true,
+  },
+  csv: {
+    title: "CSV",
+    icon: "table",
+    group: "CSV",
+    requiresFile: false,
+  },
+  canvas: {
+    title: "Canvas",
+    icon: "network",
+    group: "Canvas",
+    requiresFile: false,
+  },
+  pdf: {
+    title: "PDF",
+    icon: "file-text",
+    group: "PDF",
+    requiresFile: false,
+  },
+  reading: {
+    title: "Transcript",
+    icon: "audio-lines",
+    group: "Transcripts",
+    requiresFile: true,
+  },
+  tags: {
+    title: "Tags",
+    icon: "tags",
+    group: "Tags",
+    requiresFile: false,
+  },
+};
+
+const PANEL_APP_CONFIGURATION = {
+  "editor.display.showLineNumbers": true,
+  "editor.defaultViewForNewTabs": "editing",
+  "editor.defaultEditingMode": "live-preview",
+  "markdown.mira.plugins.mermaid.enabled": true,
+  "markdown.mira.plugins.ai.enabled": false,
+  "outline.autoScrollToCurrentSection": false,
+  "appearence.interface.showInlineTitle": true,
+  "appearence.interface.showTabTitleBar": true,
+  "workspace.fileExplorer.showHiddenFiles": false,
+};
+
+function leaf(
+  id: string,
+  title: string,
+  icon: string,
+  type: string,
+  state: Record<string, unknown> = {},
+) {
+  return { id, type: "leaf", state: { type, state, icon, title } };
+}
+
+type DemoLeaf = ReturnType<typeof leaf>;
+
+function sidebarGroup(
+  id: string,
+  name: string,
+  icon: string,
+  children: DemoLeaf[],
+) {
+  return {
+    id,
+    type: "sidebar-group",
+    name,
+    icon,
+    children,
+    collapsed: Object.fromEntries(children.map((child) => [child.id, false])),
+    panelSizes: Object.fromEntries(children.map((child) => [child.id, 100])),
+  };
+}
+
+type DemoTabItem = DemoLeaf | ReturnType<typeof sidebarGroup>;
+
+function tabs(
+  id: string,
+  children: DemoTabItem[],
+  options: { stacked?: boolean; currentTab?: number } = {},
+) {
+  return {
+    id,
+    type: "tabs",
+    stacked: options.stacked ?? false,
+    currentTab: options.currentTab ?? 0,
+    children,
+  };
+}
+
+function split(
+  id: string,
+  direction: "horizontal" | "vertical",
+  children: ReturnType<typeof tabs>[],
+  options: { width?: string; sizes?: number[] } = {},
+) {
+  return {
+    id,
+    type: "split",
+    direction,
+    sizes:
+      options.sizes ?? children.map(() => 100 / Math.max(children.length, 1)),
+    children,
+    ...(options.width ? { width: options.width } : {}),
+  };
+}
+
+function emptyDock(id: string) {
+  return split(id, "vertical", [], { width: "0px" });
+}
+
+function emptyBottom() {
+  return { ...tabs("bottom-panel", []), height: "0px" };
+}
+
+function emptyWorkspaceTabs(id = "main-empty-tabs") {
+  return tabs(id, [leaf("main-empty", "Workspace", "file", "empty")]);
+}
+
+function markdownTabs(id = "main-document-tabs") {
+  return tabs(id, [
+    leaf("welcome", "Welcome", "file-text", "markdown", {
+      file: "Notes/Welcome.md",
+      mode: "live-preview",
+    }),
+  ]);
+}
+
+function mainContext(requiresFile: boolean) {
+  return split("main", "horizontal", [
+    requiresFile ? markdownTabs() : emptyWorkspaceTabs(),
+  ]);
+}
+
+export function panelLayoutMarker(
+  kind: PanelDemoKind,
+  layout: PanelDemoLayout,
+): string {
+  if (layout === "stacked-tabs") return "main-stacked-tabs";
+  if (layout === "bottom-panel") return `${kind}-bottom-group`;
+  if (layout === "sidebar-group") return `${kind}-sidebar-group`;
+  return {
+    "middle-top-tabs": "panel-middle",
+    "left-sidebar": "panel-left",
+    "right-sidebar": "panel-right",
+  }[layout];
+}
+
+export function createPanelDemoLayout(
+  kind: PanelDemoKind,
+  layout: PanelDemoLayout,
+): Record<string, unknown> {
+  const panelType = PANEL_VIEW_TYPE[kind];
+  const meta = PANEL_LEAF_META[kind];
+  const panel = (id: string) => leaf(id, meta.title, meta.icon, panelType);
+  const contextTabs = () =>
+    meta.requiresFile ? markdownTabs() : emptyWorkspaceTabs();
+
+  if (layout === "middle-top-tabs") {
+    const panelTabs = tabs("main-panel-tabs", [panel("panel-middle")]);
+    return {
+      main: split(
+        "main",
+        "horizontal",
+        meta.requiresFile ? [contextTabs(), panelTabs] : [panelTabs],
+        { sizes: meta.requiresFile ? [35, 65] : undefined },
+      ),
+      left: emptyDock("left"),
+      right: emptyDock("right"),
+      bottom: emptyBottom(),
+      floating: [],
+      active: "panel-middle",
+    };
+  }
+
+  if (layout === "stacked-tabs") {
+    const panelTabs = tabs(
+      "main-stacked-tabs",
+      [
+        leaf("stacked-workspace", "Workspace", "layout-template", "empty"),
+        panel("panel-stacked"),
+        leaf("stacked-reference", "Reference", "book-open", "empty"),
+      ],
+      { stacked: true, currentTab: 1 },
+    );
+    return {
+      main: split(
+        "main",
+        "horizontal",
+        meta.requiresFile ? [contextTabs(), panelTabs] : [panelTabs],
+        { sizes: meta.requiresFile ? [35, 65] : undefined },
+      ),
+      left: emptyDock("left"),
+      right: emptyDock("right"),
+      bottom: emptyBottom(),
+      floating: [],
+      active: "panel-stacked",
+    };
+  }
+
+  if (layout === "left-sidebar") {
+    return {
+      main: mainContext(meta.requiresFile),
+      left: split(
+        "left",
+        "vertical",
+        [tabs("left-panel-tabs", [panel("panel-left")])],
+        { width: "22rem" },
+      ),
+      right: emptyDock("right"),
+      bottom: emptyBottom(),
+      floating: [],
+      active: "panel-left",
+    };
+  }
+
+  if (layout === "right-sidebar") {
+    return {
+      main: mainContext(meta.requiresFile),
+      left: emptyDock("left"),
+      right: split(
+        "right",
+        "vertical",
+        [tabs("right-panel-tabs", [panel("panel-right")])],
+        { width: "22rem" },
+      ),
+      bottom: emptyBottom(),
+      floating: [],
+      active: "panel-right",
+    };
+  }
+
+  if (layout === "bottom-panel") {
+    return {
+      main: mainContext(meta.requiresFile),
+      left: emptyDock("left"),
+      right: emptyDock("right"),
+      bottom: {
+        ...tabs("bottom-panel", [
+          sidebarGroup(`${kind}-bottom-group`, meta.group, meta.icon, [
+            panel("panel-bottom"),
+          ]),
+        ]),
+        height: "22rem",
+      },
+      floating: [],
+      active: "panel-bottom",
+    };
+  }
+
+  return {
+    main: mainContext(meta.requiresFile),
+    left: emptyDock("left"),
+    right: split(
+      "right",
+      "vertical",
+      [
+        tabs("right-panel-tabs", [
+          sidebarGroup(`${kind}-sidebar-group`, meta.group, meta.icon, [
+            panel("panel-grouped"),
+          ]),
+        ]),
+      ],
+      { width: "24rem" },
+    ),
+    bottom: emptyBottom(),
+    floating: [],
+    active: "panel-grouped",
+  };
+}
+
+const HISTORY_WRAP_LINE =
+  "History compare wrap probe: " + "word ".repeat(40).trim();
+
+const PANEL_IMAGE_TYPES: Record<string, string> = {
+  png: "image/png",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  gif: "image/gif",
+  webp: "image/webp",
+  svg: "image/svg+xml",
+  bmp: "image/bmp",
+};
+
+const PANEL_MAP_PNG =
+  "iVBORw0KGgoAAAANSUhEUgAAAKAAAABgCAYAAACaJ3mZAAACdUlEQVR4nO3cu00DURBAUSpyGYRUQEARlIIIKYCIamgHRGbBGn+0b+58bnDzt7OH8Upec3d4fvsyo7qjD2CzE6ChCdDQBGhoAjQ0ARqaAA1NgIYmQEMToKEJ0NAEaGgCNDQBGpoADU2AhiZAQxOgoQnQ0ARoaAI0NAEamgBv7P71/U/0mSo2HuAWpOjoGQgQhvb48oA1HWZLgNmQ7YmTnq0ALwBHw4lESc9+LMBJ6DpjLAVwOrhrQNL3qg1A0fXGmBag8GZATAdQeLMgpgEovJkQcYDCmw0RAyi8HNEQEYDiyxWJMByg8PJGIAwD6NarUfQ2DAEovlpFIgwFSA/2uM+Pp7PRZ8yAsDxAEt8lyG6NBtIF4VKA0fhWgpsKcjXCZQAjnvtIcBNA/lzH6ufB5QAnoeuAcev85QDuuf0yAegI8pLzrtyCSwFWB+d5129BHGC1G1jpevbc2GUAHq/rvQaQGVwUgsi2rmPVx3AZgDSk7hjPnX0cQBpLd5DXnrU9QBpDhjKBawmQvsGVo/+IywA8JH35wPYBuLcVAVpfgCLsUblvQtyCvSr3XbBbsE9l34ZxC/ao7PuAIqxf+TeiRVi3Nr8JOfg8WK52v4oTYZ1a/i54CyI9aDuNL9KD/xvGwrceDlCEeSLxoQCFOBteGoBCnAkvHUAhzoKXFqAQZ8BLD1CIveGVASjGfujKAjyFcSrI3zOg78kogFMxdkDXDuA5kFVRbl0HPVsB7ogyA87/zkXPTIAwzKjoGQiwYELaJwEamgANTYCGJkBDE6ChCdDQBGhoAjQ0ARqaAA1NgIYmQEMToKEJ0NAEaGgCNDQBGpoADe0bpaRio/92zFgAAAAASUVORK5CYII=";
+
+function bytesFromBase64(value: string): ArrayBuffer {
+  const binary = globalThis.atob(value);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+  return bytes.buffer;
+}
+
+class PanelDemoVaultAdapter extends MemoryVaultAdapter {
+  readonly #resourceUrls = new Set<string>();
+
+  async getResourceUrl(path: string): Promise<string> {
+    const data = await this.readBinary(path);
+    const extension = path.split(".").pop()?.toLowerCase() ?? "";
+    const type = PANEL_IMAGE_TYPES[extension];
+    const url = URL.createObjectURL(
+      new Blob([data], type ? { type } : undefined),
+    );
+    this.#resourceUrls.add(url);
+    return url;
+  }
+
+  revokeResourceUrl(url: string): void {
+    if (!this.#resourceUrls.delete(url)) return;
+    URL.revokeObjectURL(url);
+  }
+
+  disposeResourceUrls(): void {
+    for (const url of this.#resourceUrls) URL.revokeObjectURL(url);
+    this.#resourceUrls.clear();
+  }
+}
+
+export function createPanelDemoSeed(
+  kind: PanelDemoKind,
+  layout: PanelDemoLayout,
+  options: PanelDemoOptions = {},
+): Record<string, string | ArrayBuffer> {
+  const welcomeSections =
+    kind === "outline"
+      ? [
+          "## Links",
+          "",
+          "See [[Ideas]] and ![[Ideas]] while #project/alpha stays searchable.",
+          "The unresolved [[Missing graph note]] remains visible in Graph.",
+          "",
+          "### Link details",
+          "",
+          "The nested heading proves disclosure and search behavior.",
+          "",
+          "#### Basic links",
+          "",
+          "A leaf child demonstrates parent-label alignment.",
+          "",
+          "#### Rich links",
+          "",
+          "##### Aliases and labels",
+          "",
+          "##### Embedded notes",
+          "",
+          "### Related notes",
+          "",
+          "## Checklist",
+          "",
+          "- Properties, Outline, Tags",
+          "- Backlinks and outgoing links",
+          "",
+          "## Reference",
+          "",
+          "### Commands",
+          "",
+          "### Settings",
+          "",
+          "#### Editor behavior",
+          "",
+          "#### Appearance",
+          "",
+        ]
+      : [
+          "## Links",
+          "",
+          "See [[Ideas]] and ![[Ideas]] while #project/alpha stays searchable.",
+          "The unresolved [[Missing graph note]] remains visible in Graph.",
+          "",
+          "### Link details",
+          "",
+          "The nested heading proves disclosure and search behavior.",
+          "",
+          "## Checklist",
+          "",
+          "- Properties, Outline, Tags",
+          "- Backlinks and outgoing links",
+          "",
+        ];
+
+  const workspaceLayout = createPanelDemoLayout(kind, layout);
+  const useRegistryGraphData =
+    (kind === "graph" || kind === "local-graph") &&
+    options.graphData === "registry-rich";
+  if (options.hideSidebars) {
+    for (const side of ["left", "right"] as const) {
+      const dock = workspaceLayout[side];
+      if (dock && typeof dock === "object") {
+        (dock as Record<string, unknown>).width = "0px";
+      }
+    }
+  }
+
+  return {
+    ".lapis/app.json": JSON.stringify(
+      {
+        ...PANEL_APP_CONFIGURATION,
+        ...(options.configuration ?? {}),
+        ...(kind === "bookmarks"
+          ? { pluginData: { bookmarks: createBookmarksDocument() } }
+          : {}),
+      },
+      null,
+      2,
+    ),
+    ".env": "DEMO=1\n",
+    ".lapis/types.json": JSON.stringify(
+      {
+        types: {
+          title: "text",
+          aliases: "aliases",
+          tags: "tags",
+          owners: "multitext",
+          status: "text",
+          priority: "text",
+          area: "text",
+        },
+      },
+      null,
+      2,
+    ),
+    ".lapis/workspace.json": JSON.stringify(workspaceLayout, null, 2),
+    "Notes/Welcome.md": [
+      "---",
+      "title: Welcome",
+      'aliases: [Lapis Home, "[[Ideas|Idea inbox]]"]',
+      'tags: [demo, markdown, project/alpha, "project alpha"]',
+      "owners: [Ada Lovelace, Grace Hopper]",
+      "status: ready",
+      "priority: high",
+      "---",
+      "",
+      "# **Welcome** to Lapis Notes",
+      "",
+      "This seed drives focused Markdown panel stories and names Research plainly.",
+      "",
+      ...welcomeSections,
+      ...(useRegistryGraphData
+        ? [
+            "",
+            "## Connected work",
+            "",
+            "Follow [[Projects/Aurora]], [[Projects/Harbor]], [[Notes/Research]], and [[People/Maya Chen]] across #project/atlas and #knowledge-graph.",
+            "",
+          ]
+        : []),
+      ...(kind === "history" ? ["", HISTORY_WRAP_LINE, ""] : []),
+    ].join("\n"),
+    "Notes/Ideas.markdown": [
+      "---",
+      "tags: [ideas, demo, project/beta]",
+      "owners: [Grace Hopper, Margaret Hamilton]",
+      "status: planned",
+      "area: research",
+      "---",
+      "",
+      "# Ideas",
+      "",
+      "## Capture",
+      "",
+      "Link back to [[Welcome]] and embed ![[Assets/map.png]] from the ideas note.",
+      "",
+      "## Next",
+      "",
+      "Lapis Home also appears as an exact alias mention.",
+      "",
+    ].join("\n"),
+    "Notes/Research.md": [
+      "---",
+      "tags: [research, project/alpha]",
+      "---",
+      "",
+      "# Research",
+      "",
+      "Welcome appears here without a link for unlinked backlink coverage.",
+      "",
+      "## Sources",
+      "",
+      "Review the project notes.",
+      "",
+    ].join("\n"),
+    "Notes/FilenameOnly.md":
+      "# Quiet note\n\nThe body deliberately omits the filename token.\n",
+    "Notes/Editorial review.md": [
+      "# Editorial review",
+      "",
+      "A polished product update should be concise, useful, and easy to scan.",
+      "",
+      "# A second title",
+      "",
+      "##missing heading space",
+      "",
+      "The release note includes a clear owner, an outcome, and the next decision.",
+      "",
+    ].join("\n"),
+    "Notes/Field notes.md": [
+      "---",
+      "title: Field notes",
+      "tags: [writing, research]",
+      "status: draft",
+      "---",
+      "",
+      "# Field notes",
+      "",
+      "The team recieved the first accesibility review yesterday.",
+      "",
+      "We can definately simplify the navigation and seperate the advanced controls.",
+      "",
+      "## Next interview",
+      "",
+      "Ask participants which labels feel natural and where they expect history to live.",
+      "",
+    ].join("\n"),
+    "Notes/Word count draft.md": [
+      "# A small writing goal",
+      "",
+      "Write one clear page about the project, then review it once for flow.",
+      "",
+      "Keep the language direct, preserve the useful details, and stop when the idea feels complete.",
+      "",
+    ].join("\n"),
+    "Projects/settings.json": JSON.stringify(
+      {
+        workspace: "Research",
+        autosave: true,
+        reviewers: ["Maya Chen", "Priya Shah"],
+        export: { format: "markdown", includeMetadata: true },
+      },
+      null,
+      2,
+    ),
+    "Assets/map.png": bytesFromBase64(PANEL_MAP_PNG),
+    ...(useRegistryGraphData ? createGraphSeed() : {}),
+    ...(kind === "ai-history" ? createAiHistorySeed() : {}),
+    ...(kind === "ai-catalog" ? createAiCatalogSeed() : {}),
+    ...(kind === "history" ? createHistorySeed() : {}),
+    ...(kind === "bookmarks" ? createBookmarksSeed() : {}),
+  };
+}
+
+function createGraphSeed(): Record<string, string> {
+  return {
+    "Projects/Aurora.md": [
+      "---",
+      "tags: [project/atlas, product, active]",
+      "---",
+      "",
+      "# Aurora",
+      "",
+      "Aurora connects [[Welcome]], [[Projects/Harbor]], [[Projects/Roadmap]], and [[People/Maya Chen]].",
+      "",
+    ].join("\n"),
+    "Projects/Harbor.md": [
+      "---",
+      "tags: [project/atlas, platform]",
+      "---",
+      "",
+      "# Harbor",
+      "",
+      "Harbor supports [[Projects/Aurora]], [[Projects/Roadmap]], and [[Notes/Ideas]].",
+      "",
+    ].join("\n"),
+    "Projects/Roadmap.md": [
+      "---",
+      "tags: [project/atlas, planning]",
+      "---",
+      "",
+      "# Roadmap",
+      "",
+      "The roadmap links [[Projects/Aurora]], [[Projects/Harbor]], [[Notes/Research]], and [[Meetings/Launch review]].",
+      "",
+    ].join("\n"),
+    "People/Maya Chen.md": [
+      "---",
+      "tags: [people, design]",
+      "---",
+      "",
+      "# Maya Chen",
+      "",
+      "Maya owns [[Projects/Aurora]] and contributes to [[Meetings/Launch review]].",
+      "",
+    ].join("\n"),
+    "Meetings/Launch review.md": [
+      "---",
+      "tags: [meeting, project/atlas]",
+      "---",
+      "",
+      "# Launch review",
+      "",
+      "Review [[Projects/Roadmap]], [[Projects/Aurora]], and [[Notes/Research]] with [[People/Maya Chen]].",
+      "",
+    ].join("\n"),
+  };
+}
+
+function createBookmarksDocument() {
+  return {
+    items: [
+      {
+        type: "file",
+        ctime: 1_700_000_000_001,
+        path: "Notes/Welcome.md",
+        title: "Welcome",
+      },
+      {
+        type: "file",
+        ctime: 1_700_000_000_002,
+        path: "Notes/Welcome.md",
+        subpath: "#Links",
+        title: "Welcome links",
+      },
+      {
+        type: "folder",
+        ctime: 1_700_000_000_003,
+        path: "Notes",
+      },
+      {
+        type: "group",
+        ctime: 1_700_000_000_004,
+        title: "Reading list",
+        items: [],
+      },
+      {
+        type: "search",
+        ctime: 1_700_000_000_005,
+        query: "Welcome",
+        title: "Find Welcome",
+      },
+      {
+        type: "url",
+        ctime: 1_700_000_000_006,
+        url: "https://example.com",
+        title: "Example",
+      },
+      {
+        type: "graph",
+        ctime: 1_700_000_000_007,
+        title: "Vault graph",
+      },
+    ],
+  };
+}
+
+function createBookmarksSeed(): Record<string, string> {
+  return {
+    ".lapis/bookmarks.json": JSON.stringify(
+      createBookmarksDocument(),
+      null,
+      2,
+    ),
+  };
+}
+
+function createHistorySeed(): Record<string, string> {
+  return {
+    ".lapis/ignored.md": "Internal conversation that History must skip.\n",
+    ".jj/config": "jj-metadata-should-not-be-snapshotted\n",
+  };
+}
+
+async function seedHistoryRevisions(app: App): Promise<void> {
+  const path = "Notes/Welcome.md";
+  const file = app.vault.getFileByPath(path);
+  const current =
+    file instanceof TFile ? await app.vault.cachedRead(file) : "# Welcome\n";
+  const older = `${current}\n\nOlder tracked snapshot.\n${HISTORY_WRAP_LINE}\n`;
+  await app.appDatabase.storeFileHistoryRevision({
+    path,
+    eventType: "baseline",
+    createdAt: 1_700_000_000_000,
+    contentHash: md5(older),
+    content: older,
+    maxRevisions: 50,
+  });
+  await app.appDatabase.storeFileHistoryRevision({
+    path,
+    eventType: "modify",
+    createdAt: 1_700_000_100_000,
+    contentHash: md5(current),
+    content: current,
+    maxRevisions: 50,
+  });
+}
+
+function createAiCatalogSeed(): Record<string, string> {
+  return {
+    "Notes/.agents/skills/daily/SKILL.md": [
+      "---",
+      "name: daily",
+      "description: Daily notes",
+      "---",
+      "",
+      "Daily skill body.",
+      "",
+    ].join("\n"),
+    "Notes/.agents/commands/review.md": [
+      "---",
+      "description: Review the current note for gaps",
+      "kind: prompt",
+      "---",
+      "",
+      "Review $ARGUMENTS. Report missing tests first.",
+      "",
+    ].join("\n"),
+  };
+}
+
+function createAiHistorySeed(): Record<string, string> {
+  return {
+    ...conversationSeed({
+      scopeDir: "Notes",
+      id: "123e4567-e89b-42d3-a456-426614174000",
+      title: "Summarize project notes",
+      status: "active",
+      message: "Summarize the project notes and identify the next milestone.",
+      updatedAt: "2026-08-16T11:30:00.000Z",
+    }),
+    ...conversationSeed({
+      scopeDir: "Notes",
+      id: "223e4567-e89b-42d3-a456-426614174001",
+      title: "Archived planning chat",
+      status: "archived",
+      message: "Review the planning notes from last week.",
+      updatedAt: "2026-08-15T09:00:00.000Z",
+    }),
+    ...conversationSeed({
+      scopeDir: "Projects/Atlas",
+      id: "323e4567-e89b-42d3-a456-426614174002",
+      title: "Fix parser errors",
+      status: "active",
+      message: "Find the parser error in the Atlas import pipeline.",
+      updatedAt: "2026-08-16T10:00:00.000Z",
+    }),
+    ...conversationSeed({
+      scopeDir: "",
+      id: "423e4567-e89b-42d3-a456-426614174003",
+      title: "Plan vault release",
+      status: "active",
+      message: "Draft a release checklist for the whole vault.",
+      updatedAt: "2026-08-14T13:00:00.000Z",
+    }),
+  };
+}
+
+function conversationSeed(input: {
+  scopeDir: string;
+  id: string;
+  title: string;
+  status: "active" | "archived";
+  message: string;
+  updatedAt: string;
+}): Record<string, string> {
+  const scopePrefix = input.scopeDir ? `${input.scopeDir}/` : "";
+  const root = `${scopePrefix}.lapis/agents/sessions/${input.id}`;
+  return {
+    [`${root}/metadata.yaml`]: [
+      "schemaVersion: 1",
+      `id: ${input.id}`,
+      `title: ${JSON.stringify(input.title)}`,
+      'createdAt: "2026-08-14T08:00:00.000Z"',
+      `updatedAt: ${JSON.stringify(input.updatedAt)}`,
+      `status: ${input.status}`,
+      "",
+    ].join("\n"),
+    [`${root}/agents.jsonl`]: "",
+    [`${root}/transcript.jsonl`]: `${JSON.stringify({
+      schemaVersion: 1,
+      id: `message-${input.id}`,
+      type: "message",
+      role: "user",
+      text: input.message,
+      createdAt: input.updatedAt,
+    })}\n`,
+  };
+}
+
+function findMarkdownLeaf(app: App): WorkspaceLeaf | null {
+  let found: WorkspaceLeaf | null = null;
+  app.workspace.iterateRootLeaves((leaf) => {
+    if (!found && leaf.view instanceof MarkdownView && leaf.view.file)
+      found = leaf;
+  });
+  if (found) return found;
+  app.workspace.iterateRootLeaves((leaf) => {
+    if (!found && leaf.view instanceof FileView && leaf.view.file) found = leaf;
+  });
+  return found;
+}
+
+function countPanelLeaves(app: App, panelType: string): number {
+  let count = 0;
+  app.workspace.iterateAllLeaves((leaf) => {
+    if (leaf.view?.getViewType?.() === panelType) count += 1;
+  });
+  return count;
+}
+
+function presetMainDocument(
+  layout: Record<string, unknown>,
+  document: PanelDemoOpenDocument,
+): void {
+  const main = layout.main as {
+    children?: Array<{ children?: Array<Record<string, unknown>> }>;
+  };
+  const leafNode = main.children?.[0]?.children?.[0];
+  if (!leafNode || leafNode.type !== "leaf" || typeof leafNode.id !== "string") {
+    throw new Error("Panel demo has no main document leaf to preset");
+  }
+  leafNode.state = {
+    type: document.type,
+    state: document.state,
+    icon: document.icon,
+    title: document.title,
+  };
+  layout.active = leafNode.id;
+}
+
+export async function bootPanelDemo(
+  kind: PanelDemoKind,
+  layout: PanelDemoLayout,
+  options: PanelDemoOptions = {},
+): Promise<{ app: App; dispose: () => Promise<void> }> {
+  const seed = createPanelDemoSeed(kind, layout, options);
+  if (options.files) Object.assign(seed, options.files);
+  if (options.openDocument) {
+    const workspace = JSON.parse(String(seed[".lapis/workspace.json"])) as Record<
+      string,
+      unknown
+    >;
+    presetMainDocument(workspace, options.openDocument);
+    seed[".lapis/workspace.json"] = JSON.stringify(workspace, null, 2);
+  }
+  const adapter = new PanelDemoVaultAdapter(
+    seed,
+    {
+      name: `Lapis Panel ${kind} ${layout}`,
+      vaultId: `lapis-panel-${kind}-${layout}`,
+      clock: 1_700_000_000_000,
+    },
+  );
+  const app = new App({
+    version: "0.0.1-story",
+    configPath: ".lapis/app.json",
+    adapter,
+    appDatabase: new MemoryAppDatabase(`lapis-panel-${kind}-${layout}`),
+    workspaceShell: { application: { name: "Lapis Notes" } },
+    markdownRenderer: async () => {},
+  });
+  const disposeApplicationCompatibility = installApplicationCompatibility(app);
+  const diagnostics = options.diagnostics ?? "all";
+
+  app.plugins.registerCorePlugins([
+    { plugin: SourceEditorPlugin, required: true },
+    { plugin: MarkdownPlugin, required: false, enabledByDefault: true },
+    {
+      plugin: MarkdownLintPlugin,
+      required: false,
+      enabledByDefault: diagnostics === "all" || diagnostics === "markdownlint",
+    },
+    {
+      plugin: SpellcheckPlugin,
+      required: false,
+      enabledByDefault: diagnostics === "all" || diagnostics === "spellcheck",
+    },
+    { plugin: WordCountPlugin, required: false, enabledByDefault: true },
+    { plugin: FileExplorerPlugin, required: false, enabledByDefault: true },
+    { plugin: SearchPlugin, required: false, enabledByDefault: true },
+    {
+      plugin: GraphPlugin,
+      required: false,
+      enabledByDefault: true,
+      distribution: "bundled",
+    },
+    { plugin: BookmarksPlugin, required: false, enabledByDefault: true },
+    { plugin: HistoryPlugin, required: false, enabledByDefault: true },
+    {
+      plugin: AiPlugin,
+      required: false,
+      enabledByDefault: true,
+      distribution: "bundled",
+    },
+    ...(options.plugins ?? []),
+  ]);
+
+  await app.vault.load();
+  await app.configuration.load();
+  await app.plugins.loadPlugins({
+    communityPlugins: "disabled",
+    optionalCorePlugins: "configured",
+  });
+  const stopWatchingMetadata = watchMetadata(app);
+  await app.metadataCache.load();
+  const persistedMetadata = await app.metadataCache.queryMetadataPage({
+    limit: 100,
+  });
+  const persistedPaths = new Set(
+    persistedMetadata.rows.map((row) => row.file.path),
+  );
+  for (const expectedPath of [
+    "Notes/Welcome.md",
+    "Notes/Ideas.markdown",
+    "Notes/Research.md",
+  ]) {
+    if (!persistedPaths.has(expectedPath)) {
+      throw new Error(
+        `Panel fixture metadata index is missing ${expectedPath}; indexed ${
+          [...persistedPaths].join(", ") || "nothing"
+        }`,
+      );
+    }
+  }
+  await app.metadataTypeManager.updateProperties();
+  const searchPlugin = app.plugins.plugins.get("search");
+  if (searchPlugin instanceof SearchPlugin) {
+    await searchPlugin.refreshIndex("storybook-panel-demo");
+  }
+  const graphPlugin = app.plugins.plugins.get("lapis-graph");
+  if (
+    graphPlugin instanceof GraphPlugin &&
+    options.graphData === "registry-rich"
+  ) {
+    const settings = graphPlugin.getSettings();
+    await graphPlugin.updateSettings({
+      ...settings,
+      filters: {
+        ...settings.filters,
+        showTags: true,
+        showAttachments: true,
+      },
+      localGraph: { depth: 2 },
+    });
+  }
+  const persistedTags = await app.metadataCache.queryFacets({
+    kind: "tag",
+    limit: 100,
+  });
+  if (!persistedTags.some((tag) => tag.value === "demo")) {
+    throw new Error(
+      `Panel fixture metadata facets are incomplete; indexed tags ${
+        persistedTags.map((tag) => String(tag.value)).join(", ") || "nothing"
+      }`,
+    );
+  }
+  if (kind === "history") {
+    await seedHistoryRevisions(app);
+  }
+  const aiPlugin = app.plugins.plugins.get("ai");
+  if (aiPlugin instanceof AiPlugin) {
+    await aiPlugin.updateSettings({ defaultRuntime: "fake" });
+    await aiPlugin.conversationIndex.rebuild();
+  }
+  await app.workspace.loadLayout();
+
+  const panelType = PANEL_VIEW_TYPE[kind];
+  const panelCount = countPanelLeaves(app, panelType);
+  if (panelCount !== 1) {
+    throw new Error(
+      `Expected one ${panelType} panel leaf for ${layout}, found ${panelCount}`,
+    );
+  }
+
+  const markdownLeaf = findMarkdownLeaf(app);
+  if (PANEL_LEAF_META[kind].requiresFile && !markdownLeaf) {
+    throw new Error(`Missing Markdown context leaf for ${kind} ${layout}`);
+  }
+  if (markdownLeaf) app.workspace.setActiveLeaf(markdownLeaf, { focus: false });
+  await app.vaultChanges.start();
+
+  return {
+    app,
+    dispose: async () => {
+      await app.vaultChanges.stop();
+      stopWatchingMetadata();
+      for (const plugin of [...app.plugins.corePlugins].reverse()) {
+        await plugin.disable().catch(() => undefined);
+      }
+      await app.workspace.disposeWorkspaceHost();
+      adapter.disposeResourceUrls();
+      disposeApplicationCompatibility();
+    },
+  };
+}

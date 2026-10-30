@@ -1,0 +1,237 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 2,
+  "categories": ["editor", "markdown"],
+  "highlights": [
+    "Edit Markdown in source, live preview, and reading modes.",
+    "Use Mira-powered authoring, metadata, embeds, and workspace panels.",
+    "Keep files portable as ordinary Markdown in the active vault."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/markdown#readme",
+  "appearance": {
+    "icon": "file-text",
+    "accent": "#2563EB"
+  },
+  "media": {
+    "banner": {
+      "alt": "Lapis Markdown with Backlinks on the left, Live Preview in the main workspace, and File Properties on the right.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/banner.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/banner.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/banner.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/banner.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-markdown-registry-screenshots--overview",
+        "focus": "full-shell"
+      }
+    },
+    "overview": {
+      "alt": "Lapis Markdown Reading view rendering a richly structured project note in the full workspace.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/overview.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/overview.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/overview.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/overview.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-markdown-registry-screenshots--reading",
+        "focus": "full-shell"
+      }
+    }
+  },
+  "gallery": [
+    {
+      "id": "live-preview",
+      "alt": "Welcome note open in live preview with its nested Outline visible in the right sidebar.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/live-preview.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/live-preview.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/live-preview.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/live-preview.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-markdown-registry-screenshots--live-preview",
+        "focus": "right-sidebar"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "Write with structure",
+            "tone": "neutral"
+          },
+          {
+            "text": "and stay in the flow",
+            "tone": "violet"
+          }
+        ],
+        "description": [
+          {
+            "text": "Live Preview keeps",
+            "tone": "neutral"
+          },
+          {
+            "text": "Markdown portable",
+            "tone": "violet"
+          },
+          {
+            "text": "while formatting the document around your cursor.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    },
+    {
+      "id": "source",
+      "alt": "Welcome note open as syntax-highlighted Markdown source with file properties in the right sidebar.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/source.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/source.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/source.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/source.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-markdown-registry-screenshots--source",
+        "focus": "right-sidebar"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "The source is always",
+            "tone": "neutral"
+          },
+          {
+            "text": "yours",
+            "tone": "cyan"
+          }
+        ],
+        "description": [
+          {
+            "text": "Edit",
+            "tone": "neutral"
+          },
+          {
+            "text": "front matter, links, and embeds",
+            "tone": "cyan"
+          },
+          {
+            "text": "directly with a syntax-aware source view.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    },
+    {
+      "id": "reading",
+      "alt": "Welcome note rendered in reading mode with Explorer open on the left.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/reading.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/reading.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/reading.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/reading.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-markdown-registry-screenshots--reading",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "Read without the",
+            "tone": "neutral"
+          },
+          {
+            "text": "editing chrome",
+            "tone": "green"
+          }
+        ],
+        "description": [
+          {
+            "text": "Switch the same file into a calm rendered view for review, navigation, and reference.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    },
+    {
+      "id": "backlinks-sidebar",
+      "alt": "Backlinks sidebar showing linked and unlinked references to the active note.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/backlinks-sidebar.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/backlinks-sidebar.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/backlinks-sidebar.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/backlinks-sidebar.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-markdown-registry-screenshots--backlinks-sidebar",
+        "focus": "right-sidebar"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "Find every mention",
+            "tone": "neutral"
+          },
+          {
+            "text": "in context",
+            "tone": "rose"
+          }
+        ],
+        "description": [
+          {
+            "text": "Review linked and unlinked references without navigating away from the active document.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    }
+  ]
+}

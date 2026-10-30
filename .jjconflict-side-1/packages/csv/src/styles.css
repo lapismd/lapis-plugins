@@ -1,0 +1,37 @@
+@import "./app.css";
+
+.csv-table-frame {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.csv-table-frame > .csv-table-view,
+.csv-table-frame > .csv-sheet-view {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.csv-sheet,
+.csv-sheet__canvas,
+.csv-sheet__editor {
+  font-family: var(--csv-font-mono);
+}
+
+.csv-table-frame[data-csv-role="embed"] {
+  height: 24rem;
+  max-height: 24rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, calc(var(--radius) * 0.6));
+}
+
+.csv-table-status {
+  margin: 0;
+  padding: 0.75rem;
+}

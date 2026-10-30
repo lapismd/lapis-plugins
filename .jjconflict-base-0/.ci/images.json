@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "base": {
+    "image": "ghcr.io/lapismd/lapis-ci",
+    "tag": "2026.10.14.1",
+    "digest": "sha256:91341a81cc9306eed818c4c433cd29ed11d2ea64c703f32685391befe0eca503"
+  },
+  "dependencies": {
+    "image": "ghcr.io/lapismd/lapis-plugins-ci",
+    "tag": "lock-92a112cc27bfe4e3",
+    "lockfileSha256": "92a112cc27bfe4e3e0f1236857556d9c6b8ff47a7f10a85b11773e1b48cd2f2f",
+    "digest": "sha256:36130d7b37335882c5ec8478a99a224416072d13bb702211d8b533f5c8681fe7"
+  }
+}

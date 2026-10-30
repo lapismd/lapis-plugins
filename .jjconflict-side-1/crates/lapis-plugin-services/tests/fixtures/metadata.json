@@ -1,0 +1,475 @@
+[
+  {
+    "name": "nested YAML and linked headings",
+    "input": "---\ntype: task\ntask:\n  status: open\n  plan:\n    date: 2026-08-21\n---\n\n# Release\n## Subtasks\n- [Parser](./parser.md)\nSee [[Ideas|Idea inbox]]\n",
+    "expected": {
+      "frontmatter": {
+        "type": "task",
+        "task": {
+          "status": "open",
+          "plan": {
+            "date": "2026-08-21"
+          }
+        }
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 7,
+          "col": 0,
+          "offset": 69
+        }
+      },
+      "headings": [
+        {
+          "heading": "Release",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 8,
+              "col": 0,
+              "offset": 70
+            },
+            "end": {
+              "line": 8,
+              "col": 9,
+              "offset": 79
+            }
+          }
+        },
+        {
+          "heading": "Subtasks",
+          "level": 2,
+          "position": {
+            "start": {
+              "line": 9,
+              "col": 0,
+              "offset": 80
+            },
+            "end": {
+              "line": 9,
+              "col": 11,
+              "offset": 91
+            }
+          }
+        }
+      ],
+      "links": [
+        {
+          "link": "./parser.md",
+          "original": "[Parser](./parser.md)",
+          "displayText": "Parser",
+          "position": {
+            "start": {
+              "line": 10,
+              "col": 2,
+              "offset": 94
+            },
+            "end": {
+              "line": 10,
+              "col": 23,
+              "offset": 115
+            }
+          },
+          "heading": "Subtasks"
+        },
+        {
+          "link": "Ideas|Idea inbox",
+          "original": "[[Ideas|Idea inbox]]",
+          "displayText": "Idea inbox",
+          "position": {
+            "start": {
+              "line": 11,
+              "col": 4,
+              "offset": 120
+            },
+            "end": {
+              "line": 11,
+              "col": 24,
+              "offset": 140
+            }
+          },
+          "heading": "Subtasks"
+        }
+      ]
+    }
+  },
+  {
+    "name": "unicode UTF16 offsets and CRLF",
+    "input": "---\r\ntitle: café 📝\r\ntags: [work, team/notes]\r\n---\r\n# Café 📝\r\n📝 [[Ideas|Idée]] [Guide](guide.md) #team/notes\r\n",
+    "expected": {
+      "frontmatter": {
+        "title": "café 📝",
+        "tags": [
+          "work",
+          "team/notes"
+        ]
+      },
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 4,
+          "col": 0,
+          "offset": 52
+        }
+      },
+      "headings": [
+        {
+          "heading": "Café 📝",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 4,
+              "col": 0,
+              "offset": 52
+            },
+            "end": {
+              "line": 4,
+              "col": 10,
+              "offset": 62
+            }
+          }
+        }
+      ],
+      "links": [
+        {
+          "link": "Ideas|Idée",
+          "original": "[[Ideas|Idée]]",
+          "displayText": "Idée",
+          "position": {
+            "start": {
+              "line": 5,
+              "col": 3,
+              "offset": 66
+            },
+            "end": {
+              "line": 5,
+              "col": 17,
+              "offset": 80
+            }
+          },
+          "heading": "Café 📝"
+        },
+        {
+          "link": "guide.md",
+          "original": "[Guide](guide.md)",
+          "displayText": "Guide",
+          "position": {
+            "start": {
+              "line": 5,
+              "col": 18,
+              "offset": 81
+            },
+            "end": {
+              "line": 5,
+              "col": 35,
+              "offset": 98
+            }
+          },
+          "heading": "Café 📝"
+        }
+      ],
+      "tags": [
+        {
+          "tag": "#team/notes",
+          "position": {
+            "start": {
+              "line": 5,
+              "col": 36,
+              "offset": 99
+            },
+            "end": {
+              "line": 5,
+              "col": 47,
+              "offset": 110
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "invalid YAML and no image metadata",
+    "input": "---\nbroken: [\n---\n![image](image.png) [[Note]] #one #one\n",
+    "expected": {
+      "frontmatter": {},
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 3,
+          "col": 0,
+          "offset": 18
+        }
+      },
+      "links": [
+        {
+          "link": "Note",
+          "original": "[[Note]]",
+          "displayText": "Note",
+          "position": {
+            "start": {
+              "line": 3,
+              "col": 20,
+              "offset": 38
+            },
+            "end": {
+              "line": 3,
+              "col": 28,
+              "offset": 46
+            }
+          }
+        }
+      ],
+      "tags": [
+        {
+          "tag": "#one",
+          "position": {
+            "start": {
+              "line": 3,
+              "col": 29,
+              "offset": 47
+            },
+            "end": {
+              "line": 3,
+              "col": 33,
+              "offset": 51
+            }
+          }
+        },
+        {
+          "tag": "#one",
+          "position": {
+            "start": {
+              "line": 3,
+              "col": 34,
+              "offset": 52
+            },
+            "end": {
+              "line": 3,
+              "col": 38,
+              "offset": 56
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "empty plain text",
+    "input": "plain text",
+    "expected": {}
+  },
+  {
+    "name": "frontmatter arrays and primitives",
+    "input": "---\n- one\n- two\n---\n## Done\n(#nested/tag) #under_score\n",
+    "expected": {
+      "frontmatter": {},
+      "frontmatterPosition": {
+        "start": {
+          "line": 0,
+          "col": 0,
+          "offset": 0
+        },
+        "end": {
+          "line": 4,
+          "col": 0,
+          "offset": 20
+        }
+      },
+      "headings": [
+        {
+          "heading": "Done",
+          "level": 2,
+          "position": {
+            "start": {
+              "line": 4,
+              "col": 0,
+              "offset": 20
+            },
+            "end": {
+              "line": 4,
+              "col": 7,
+              "offset": 27
+            }
+          }
+        }
+      ],
+      "tags": [
+        {
+          "tag": "#nested/tag",
+          "position": {
+            "start": {
+              "line": 5,
+              "col": 1,
+              "offset": 29
+            },
+            "end": {
+              "line": 5,
+              "col": 12,
+              "offset": 40
+            }
+          }
+        },
+        {
+          "tag": "#under_score",
+          "position": {
+            "start": {
+              "line": 5,
+              "col": 14,
+              "offset": 42
+            },
+            "end": {
+              "line": 5,
+              "col": 26,
+              "offset": 54
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "adjacent links and heading retention",
+    "input": "# One\n[[A]][[B|Bee]] [one](a.md)[two](b.md)\n### Two\nSee [C](c.md)\n",
+    "expected": {
+      "headings": [
+        {
+          "heading": "One",
+          "level": 1,
+          "position": {
+            "start": {
+              "line": 0,
+              "col": 0,
+              "offset": 0
+            },
+            "end": {
+              "line": 0,
+              "col": 5,
+              "offset": 5
+            }
+          }
+        },
+        {
+          "heading": "Two",
+          "level": 3,
+          "position": {
+            "start": {
+              "line": 2,
+              "col": 0,
+              "offset": 44
+            },
+            "end": {
+              "line": 2,
+              "col": 7,
+              "offset": 51
+            }
+          }
+        }
+      ],
+      "links": [
+        {
+          "link": "A",
+          "original": "[[A]]",
+          "displayText": "A",
+          "position": {
+            "start": {
+              "line": 1,
+              "col": 0,
+              "offset": 6
+            },
+            "end": {
+              "line": 1,
+              "col": 5,
+              "offset": 11
+            }
+          },
+          "heading": "One"
+        },
+        {
+          "link": "B|Bee",
+          "original": "[[B|Bee]]",
+          "displayText": "Bee",
+          "position": {
+            "start": {
+              "line": 1,
+              "col": 5,
+              "offset": 11
+            },
+            "end": {
+              "line": 1,
+              "col": 14,
+              "offset": 20
+            }
+          },
+          "heading": "One"
+        },
+        {
+          "link": "a.md",
+          "original": "[one](a.md)",
+          "displayText": "one",
+          "position": {
+            "start": {
+              "line": 1,
+              "col": 15,
+              "offset": 21
+            },
+            "end": {
+              "line": 1,
+              "col": 26,
+              "offset": 32
+            }
+          },
+          "heading": "One"
+        },
+        {
+          "link": "b.md",
+          "original": "[two](b.md)",
+          "displayText": "two",
+          "position": {
+            "start": {
+              "line": 1,
+              "col": 26,
+              "offset": 32
+            },
+            "end": {
+              "line": 1,
+              "col": 37,
+              "offset": 43
+            }
+          },
+          "heading": "One"
+        },
+        {
+          "link": "c.md",
+          "original": "[C](c.md)",
+          "displayText": "C",
+          "position": {
+            "start": {
+              "line": 3,
+              "col": 4,
+              "offset": 56
+            },
+            "end": {
+              "line": 3,
+              "col": 13,
+              "offset": 65
+            }
+          },
+          "heading": "Two"
+        }
+      ]
+    }
+  }
+]

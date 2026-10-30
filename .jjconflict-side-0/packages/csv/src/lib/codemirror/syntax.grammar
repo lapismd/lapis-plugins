@@ -1,0 +1,36 @@
+@top Program { (Row newline)* (Row (newline | eof)) }
+
+@skip {}
+
+Row { group }
+
+group { Cell1 (Separator Cell2 (Separator Cell3 (Separator Cell4 (Separator Cell5 (Separator group)?)?)?)?)? }
+
+Cell1 { expression }
+Cell2 { expression }
+Cell3 { expression }
+Cell4 { expression }
+Cell5 { expression }
+
+expression {
+ empty |
+ string |
+ value
+}
+
+empty { }
+
+@tokens {
+ Separator { $[,;\t|] }
+
+ value { ![,;\t|\r\n]+ }
+
+ string { '"' (!["\\] | "\\" _)* '"' }
+
+ newline { '\r'? '\n' }
+ eof { @eof }
+
+ @precedence { string, Separator, value }
+}
+
+@detectDelim
