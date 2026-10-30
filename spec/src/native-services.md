@@ -126,4 +126,4 @@ selections and full provider/configuration scheduling remain separate. A release
 rerun skips an npm version already on the registry, verifies that tarball, and
 creates any missing GitHub release without publishing again. Markdown dependents
 declare `^0.2.0` and the workspace install links the local package until that
-release exists.
+release exists. Package checks wait for its build so the embed export exists.

@@ -49,6 +49,9 @@ test("Turbo preserves explicit runtime selection and separates worker cache iden
   assert.ok(
     turbo.globalPassThroughEnv.includes("LAPIS_PLUGINS_VALIDATION_RUNTIME")
   );
+  assert.ok(
+    turbo.tasks.check.dependsOn.includes("@lapis-notes/markdown#build")
+  );
 });
 
 test("public validation lanes route through Docker while preserving native commands", async () => {

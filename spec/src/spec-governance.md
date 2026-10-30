@@ -139,7 +139,7 @@ remain excluded.
 The final version batch records AI 0.1.5, History 0.1.4 and Markdown 0.1.6 in
 their manifests, generated documentation and authentic Changesets changelogs.
 The committed lockfile retains the qualified dependency graph and advances AI's
-local Markdown development edge through the ^0.2.0 peer. CI owns the complete
+local Markdown development edge through the ^0.2.0 peer. Checks follow the Markdown build. CI owns the complete
 verification lanes for this candidate; publication remains separately approved.
 
 Checkpoint repairs require owning API regressions and plugin regressions for
@@ -346,9 +346,9 @@ contract required by LP-SPEC-046 because those semantics are repository-owned.
 
 The AI Controller migration covers AI's execution facade, domain tool endpoints and
 deferred context preparation. Shared Storybook preview publishes a controller
-connection bridge only when an explicit URL and token are configured; default
+connection bridge only when a URL and token are configured; default
 stories stay Fake. The shared Storybook build uses Community's public
-Turso helper in both client and worker graphs; full static-build and interaction
+Turso helper in both graphs; full static-build and interaction
 acceptance accompanies that configuration change.
 
 Pull-request CI runs four parallel interaction shards. Each quarter is two browser eighths with a 2 GiB shared-memory mount. Files stay sequential inside a browser, and every story and accessibility assertion remains selected.

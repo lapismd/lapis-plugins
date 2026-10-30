@@ -14,7 +14,7 @@
       "outputs": ["dist/**"]
     },
     "check": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "@lapis-notes/markdown#build"],
       "outputs": []
     },
     "check:types": {
