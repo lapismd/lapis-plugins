@@ -351,8 +351,7 @@ stories stay Fake. The shared Storybook build uses Community's public
 Turso helper in both client and worker graphs; full static-build and interaction
 acceptance accompanies that configuration change.
 
-Pull-request CI runs four parallel interaction shards, each in a fresh browser.
-Files stay sequential inside a shard, and every story and accessibility assertion remains selected.
+Pull-request CI runs four parallel interaction shards. Each quarter is two browser eighths with a 2 GiB shared-memory mount. Files stay sequential inside a browser, and every story and accessibility assertion remains selected.
 
 Deferred publication retains the release and renewal workflows in source.
 The workflow regression test MUST verify explicit activation on every job,

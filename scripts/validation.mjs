@@ -2,7 +2,7 @@
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { root, localRoot, json } from "./validation/paths.mjs";
-import { validationConfig, label } from "./validation/model.mjs";
+import { validationConfig, label, laneInvocations } from "./validation/model.mjs";
 import { execute } from "./validation/process.mjs";
 import { image } from "./validation/images.mjs";
 import { owned, collect, remoteRun } from "./validation/runs.mjs";
@@ -47,8 +47,11 @@ export async function main(argv = process.argv.slice(2)) {
     if (
       config.runtime === "native" ||
       process.env.LAPIS_PLUGINS_VALIDATION_WORKER === "1"
-    )
-      return runNative(lane, rest);
+    ) {
+      for (const invocation of laneInvocations(lane, rest))
+        await runNative(lane, invocation);
+      return;
+    }
     return remoteRun(config, lane, rest);
   }
   if (command === "images") {

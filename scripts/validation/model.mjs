@@ -71,9 +71,17 @@ export function validateArchives(entries) {
 }
 export const laneImage = () => "ui";
 
-/** Eight shards bound full-suite browser lifetime; explicit targets stay exact. */
+/** Eight shards bound browser lifetime. A CI quarter is two of those eighths. */
 export function laneInvocations(lane, args) {
-  return lane === "test:storybook" && args.length === 0
-    ? Array.from({ length: 8 }, (_, index) => [`--shard=${index + 1}/8`])
-    : [[...args]];
+  if (lane !== "test:storybook") return [[...args]];
+  if (args.length === 0)
+    return Array.from({ length: 8 }, (_, index) => [`--shard=${index + 1}/8`]);
+  const quarter = args.findIndex((arg) => /^--shard=[1-4]\/4$/.test(arg));
+  if (quarter < 0) return [[...args]];
+  const index = Number(args[quarter].slice("--shard=".length, -"/4".length));
+  const rest = args.filter((_, position) => position !== quarter);
+  return [index * 2 - 1, index * 2].map((eighth) => [
+    `--shard=${eighth}/8`,
+    ...rest,
+  ]);
 }

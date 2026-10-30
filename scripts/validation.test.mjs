@@ -344,6 +344,17 @@ test("default browser suites run complete bounded shards without changing explic
     ]),
     [["Example.stories.svelte", "--shard=1/2"]]
   );
+  assert.deepEqual(laneInvocations("test:storybook", ["--shard=4/4"]), [
+    ["--shard=7/8"],
+    ["--shard=8/8"],
+  ]);
+  assert.deepEqual(
+    laneInvocations("test:storybook", ["--shard=1/4", "--reporter=default"]),
+    [
+      ["--shard=1/8", "--reporter=default"],
+      ["--shard=2/8", "--reporter=default"],
+    ]
+  );
   assert.deepEqual(laneInvocations("web:test", []), [[]]);
 });
 
