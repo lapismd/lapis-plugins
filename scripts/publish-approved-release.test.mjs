@@ -7,6 +7,7 @@ import path from "node:path";
 
 import {
   assertRegistryDoesNotContainRelease,
+  npmVersionAlreadyPublished,
   parseOptions,
   selectReleases,
   verifyApprovedArtifacts,
@@ -66,6 +67,16 @@ test("rejects altered approved npm and bundle bytes before any publication", asy
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
+});
+
+test("a duplicate npm publish is an already-published version", () => {
+  assert.equal(
+    npmVersionAlreadyPublished(
+      new Error("npm publish failed\nnpm error code E409\npreviously published"),
+    ),
+    true,
+  );
+  assert.equal(npmVersionAlreadyPublished(new Error("network down")), false);
 });
 
 test("replacement safety checks the archived V1 and current V2 catalogs", async () => {

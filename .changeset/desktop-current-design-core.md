@@ -1,5 +1,6 @@
 ---
 "@lapis-notes/source-editor": patch
+"@lapis-notes/markdown": patch
 "@lapis-notes/graph": patch
 ---
 

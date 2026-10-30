@@ -122,4 +122,6 @@ duplicates and original nonblank strings. Blankness follows ECMAScript trim,
 including its distinction between U+0085 and U+FEFF. Failed JSON parsing or
 invalid collection/field operations return the original source. This stage
 introduces no application writer, callback runtime or npm API; both host
-selections and full provider/configuration scheduling remain separate.
+selections and full provider/configuration scheduling remain separate. A release
+rerun skips an npm version already on the registry, verifies that tarball, and
+creates any missing GitHub release without publishing again.

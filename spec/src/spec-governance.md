@@ -145,7 +145,7 @@ verification lanes for this candidate; publication remains separately approved.
 Checkpoint repairs require owning API regressions and plugin regressions for
 both invalidation and warm reuse. Release intent must name the affected plugin
 and retain prerequisite API version qualification. Static publication and the
-deferred relay route keep independent activation and approval gates.
+deferred relay route keep independent gates. Reruns skip published npm versions.
 
 Dependency acceptance now uses published Design Core `0.3.1` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
 unchanged; local overrides for these released packages are retired.

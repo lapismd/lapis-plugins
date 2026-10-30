@@ -79,29 +79,50 @@ function requireApproval() {
   }
 }
 
+export function npmVersionAlreadyPublished(error) {
+  return /E409|EPUBLISHCONFLICT|previously published|cannot publish over/i.test(
+    String(error?.message ?? error),
+  );
+}
+
+function assertNpmIntegrity(release, existing, expectedIntegrity) {
+  if (existing !== expectedIntegrity) {
+    throw new Error(
+      `${release.packageName}@${release.version} exists with different npm integrity.`,
+    );
+  }
+}
+
 async function publishNpm(release) {
   const tarball = path.join(root, release.npm.path);
   const bytes = await readFile(tarball);
   const expectedIntegrity = `sha512-${createHash("sha512")
     .update(bytes)
     .digest("base64")}`;
+  const skip = () => {
+    console.log(
+      `Skipping ${release.packageName}@${release.version}; npm already has this version.`,
+    );
+  };
   const existing = await npmIntegrity(release);
   if (existing) {
-    if (existing !== expectedIntegrity) {
-      throw new Error(
-        `${release.packageName}@${release.version} exists with different npm integrity.`,
-      );
-    }
-    console.log(
-      `${release.packageName}@${release.version} already matches npm.`,
-    );
+    assertNpmIntegrity(release, existing, expectedIntegrity);
+    skip();
     return;
   }
-  await execFileAsync(
-    "npm",
-    ["publish", tarball, "--access", "public", "--provenance"],
-    { cwd: root, env: process.env, maxBuffer: 20 * 1024 * 1024 },
-  );
+  try {
+    await execFileAsync(
+      "npm",
+      ["publish", tarball, "--access", "public", "--provenance"],
+      { cwd: root, env: process.env, maxBuffer: 20 * 1024 * 1024 },
+    );
+  } catch (error) {
+    if (!npmVersionAlreadyPublished(error)) throw error;
+    const confirmed = await npmIntegrity(release);
+    if (!confirmed) throw error;
+    assertNpmIntegrity(release, confirmed, expectedIntegrity);
+    skip();
+  }
 }
 
 async function npmIntegrity(release) {

@@ -261,7 +261,7 @@ controller migration acceptance uses documented temporary tarballs until their
 approved registry releases.
 The AI Chat catalog also exercises the two OpenCode harness choices through its public composer while keeping the Storybook execution fixture deterministic.
 
-Nostr release publication and head renewal remain deferred behind `NOSTR_RELEASE_ENABLED`. Static publication uses the separate `STATIC_RELEASE_ENABLED` switch, the existing `release.yml` trusted-publisher identity, and the protected first-publication gate.
+Nostr release publication and head renewal remain deferred behind `NOSTR_RELEASE_ENABLED`. Static publication uses the separate `STATIC_RELEASE_ENABLED` switch, the existing `release.yml` trusted-publisher identity, and the protected first-publication gate. A rerun skips an npm version already on the registry, verifies that tarball, and creates any missing GitHub release without publishing again.
 
 Compiled renderer archives use `svelte/renderer/<compiler-version>` host contracts
 for Svelte and its declared browser runtime exports. The host provides these
