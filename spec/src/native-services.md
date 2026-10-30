@@ -76,7 +76,7 @@ export worker changes no native Markdown parser behavior.
 
 Archive-backed source qualification audits the actual installed dependency
 graph under LP-SPEC-057. Recorded unpatched audit exceptions add no native
-service. Local Storybook interaction uses eight browser shards. Pull-request CI runs four parallel shards. Each quarter is two sequential browser eighths with a 2 GiB shared-memory mount. The pull-request unit job and static publish install checksum-verified jj 0.45.1 before release checks. Story composition lists tracked files with git when that checkout has no jj repository. An already published npm version whose tarball differs stays on the registry and later packages continue. Sync tests are skipped. Source manifests and the root lockfile stay portable and omit the local pnpmfile checksum, and native
+service. Local Storybook interaction uses eight browser shards. Pull-request CI runs four parallel shards. Each quarter is two sequential browser eighths with a 2 GiB shared-memory mount. The pull-request unit job and static publish install checksum-verified jj 0.45.1 before release checks. Story composition lists tracked files with git when that checkout has no jj repository. An already published npm version whose tarball differs stays on the registry, later packages continue, and a missing GitHub release is still created. Sync tests are skipped. Source manifests and the root lockfile stay portable and omit the local pnpmfile checksum, and native
 service ownership and publication gates retain their existing contracts.
 
 ## Release-test isolation

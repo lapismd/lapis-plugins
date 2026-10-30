@@ -30,8 +30,7 @@ export async function main(args) {
   for (const release of releases) await verifyApprovedArtifacts(release);
 
   for (const release of releases) {
-    const decision = await publishNpm(release);
-    if (decision === "skip-different") continue;
+    await publishNpm(release);
     await publishGitHubRelease(release, options);
     console.log(`Published ${release.packageName}@${release.version}.`);
   }
