@@ -3,7 +3,7 @@
   "name": "Markdown",
   "author": "Lapis Notes",
   "authorAvatarUrl": "https://gravatar.com/avatar/f7226d5f9cf07af2a6a60d3ab11413abb9d2e2eb60f2d5cce17356845a166155?size=256&d=initials",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "minAppVersion": "0.1.0",
   "description": "Mira-powered Markdown editing with source, live preview, and reading modes.",
   "isDesktopOnly": false,

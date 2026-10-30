@@ -24,7 +24,7 @@ extensions.
 The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.
 
-Version 0.1.6 consumes published Mira `~0.1.2` and the matching 0.0.3 editor
+Version 0.2.0 consumes published Mira `~0.1.2` and the matching 0.0.3 editor
 and optional plugin releases.
 Its generated manifest, README installation coordinate and authentic Changesets
 changelog agree on the independent release version.

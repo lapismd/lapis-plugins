@@ -1,5 +1,27 @@
 # Markdown changelog
 
+## 0.2.0
+
+### Minor Changes
+
+- [#28](https://github.com/lapismd/lapis-plugins/pull/28) [`ae5b5d9`](https://github.com/lapismd/lapis-plugins/commit/ae5b5d9bf7d8f84296280581a8f95fd198265e62) Thanks [@stevejuma](https://github.com/stevejuma)! - Compose globally registered `registerMarkdownPostProcessor` callbacks into every Markdown surface, with the same mode, source, front matter, section, and surface context as per-contribution processors.
+
+### Patch Changes
+
+- [#28](https://github.com/lapismd/lapis-plugins/pull/28) [`d27467e`](https://github.com/lapismd/lapis-plugins/commit/d27467ee80c273011b7eb6ae792fa8e0330a11c1) Thanks [@stevejuma](https://github.com/stevejuma)! - Align shared presentation dependencies with the Design Core 0.6 public boundary used by current Notes hosts.
+
+- [#28](https://github.com/lapismd/lapis-plugins/pull/28) [`f4b9136`](https://github.com/lapismd/lapis-plugins/commit/f4b9136e4f47965700e06f52f82e8e2bc884eb11) Thanks [@stevejuma](https://github.com/stevejuma)! - Accept Design Core 0.5.1 alongside the existing 0.4 release line so current local
+  Desktop builds can use one compatible framework graph.
+
+- [#28](https://github.com/lapismd/lapis-plugins/pull/28) [`ae5b5d9`](https://github.com/lapismd/lapis-plugins/commit/ae5b5d9bf7d8f84296280581a8f95fd198265e62) Thanks [@stevejuma](https://github.com/stevejuma)! - Keep the empty Outline explanation outside its heading list for valid accessible markup.
+
+- [#28](https://github.com/lapismd/lapis-plugins/pull/28) [`ae5b5d9`](https://github.com/lapismd/lapis-plugins/commit/ae5b5d9bf7d8f84296280581a8f95fd198265e62) Thanks [@stevejuma](https://github.com/stevejuma)! - Resolve ordinary Markdown images through the owning vault's resource URL lease,
+  including native desktop URLs, and release those leases when Mira disposes them.
+
+- [#28](https://github.com/lapismd/lapis-plugins/pull/28) [`56b5d6c`](https://github.com/lapismd/lapis-plugins/commit/56b5d6c1a016ef9bca43703b5fecf57f8234d1af) Thanks [@stevejuma](https://github.com/stevejuma)! - Consume published Design Core 0.4.0 with prepared browser CSS and bundled font assets through normal npm ranges.
+
+  Restore Bases picker input/list accessibility relationships and name property actions.
+
 ## 0.1.6
 
 ### Patch Changes

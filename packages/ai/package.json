@@ -1,6 +1,6 @@
 {
   "name": "@lapis-notes/ai",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Lapis Notes provider-agnostic AI agent plugin",
   "license": "Apache-2.0",
   "type": "module",
