@@ -1,8 +1,0 @@
-[book]
-title = "Lapis First-Party Plugins Specification"
-authors = ["LapisMD"]
-language = "en"
-src = "src"
-
-[build]
-build-dir = "book"
