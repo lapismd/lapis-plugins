@@ -42,6 +42,13 @@ export function renderChangeset(entries, body) {
   return `---\n${lines.join("\n")}\n---\n${body}`;
 }
 
+export function changesetIsReleasable(source, held = heldPackageNames) {
+  const parsed = partitionChangeset(source, held);
+  if (!parsed) return false;
+  if (parsed.held.length === 0) return true;
+  return parsed.rest.length > 0;
+}
+
 function changesetFiles() {
   return readdirSync(changesetDir).filter(
     (name) => name.endsWith(".md") && name.toLowerCase() !== "readme.md",
@@ -67,7 +74,7 @@ export function versionPublicPackages() {
       const source = readFileSync(file, "utf8");
       const parsed = partitionChangeset(source);
       if (!parsed || parsed.held.length === 0) {
-        releasable ||= parsed !== null;
+        releasable ||= changesetIsReleasable(source);
         continue;
       }
       snapshots.set(name, source);
@@ -109,6 +116,25 @@ export function versionPublicPackages() {
   }
 }
 
+function reportReleasable(releasable) {
+  const value = releasable ? "true" : "false";
+  if (process.env.GITHUB_OUTPUT) {
+    writeFileSync(process.env.GITHUB_OUTPUT, `releasable=${value}\n`, { flag: "a" });
+  }
+  console.log(
+    releasable
+      ? "A pending changeset can bump a published package."
+      : "No pending changeset can bump a published package.",
+  );
+}
+
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  versionPublicPackages();
+  if (process.argv.includes("--check")) {
+    const releasable = changesetFiles().some((name) =>
+      changesetIsReleasable(readFileSync(path.join(changesetDir, name), "utf8")),
+    );
+    reportReleasable(releasable);
+  } else {
+    versionPublicPackages();
+  }
 }
