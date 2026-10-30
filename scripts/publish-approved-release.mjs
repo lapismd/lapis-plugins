@@ -29,10 +29,25 @@ export async function main(args) {
   const releases = selectReleases(plan.releases, options.selectors);
   for (const release of releases) await verifyApprovedArtifacts(release);
 
+  const unauthorized = [];
   for (const release of releases) {
-    await publishNpm(release);
+    try {
+      await publishNpm(release);
+    } catch (error) {
+      if (!npmTrustedPublisherRejected(error)) throw error;
+      unauthorized.push(`${release.packageName}@${release.version}`);
+      console.log(
+        `Skipping ${release.packageName}@${release.version}; npm trusted publishing rejected this package.`,
+      );
+      continue;
+    }
     await publishGitHubRelease(release, options);
     console.log(`Published ${release.packageName}@${release.version}.`);
+  }
+  if (unauthorized.length) {
+    throw new Error(
+      `npm trusted publishing rejected ${unauthorized.join(", ")}.`,
+    );
   }
 }
 
@@ -83,6 +98,11 @@ export function npmVersionAlreadyPublished(error) {
   return /E409|EPUBLISHCONFLICT|previously published|cannot publish over/i.test(
     String(error?.message ?? error),
   );
+}
+
+export function npmTrustedPublisherRejected(error) {
+  const detail = `${error?.message ?? ""}\n${error?.stderr ?? ""}`;
+  return /ENEEDAUTH|need auth/i.test(detail);
 }
 
 export function npmPublicationDecision(existing, expectedIntegrity) {
