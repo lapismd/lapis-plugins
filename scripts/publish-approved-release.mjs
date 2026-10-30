@@ -90,6 +90,12 @@ export function npmPublicationDecision(existing, expectedIntegrity) {
   return existing === expectedIntegrity ? "skip-same" : "skip-different";
 }
 
+export function githubExistingAssetDecision(assetName, matches, replace) {
+  if (matches) return "match";
+  if (replace || !assetName.endsWith(".lapis-plugin")) return "mismatch";
+  return "skip-different";
+}
+
 async function publishNpm(release) {
   const tarball = path.join(root, release.npm.path);
   const bytes = await readFile(tarball);
@@ -240,10 +246,14 @@ async function publishGitHubAssets(release, options, releaseAssets) {
     );
   }
 
-  await verifyGitHubReleaseAssets(release, releaseAssets);
+  await verifyGitHubReleaseAssets(
+    release,
+    releaseAssets,
+    options.replaceGithubAssets,
+  );
 }
 
-async function verifyGitHubReleaseAssets(release, releaseAssets) {
+async function verifyGitHubReleaseAssets(release, releaseAssets, replace) {
   const directory = await mkdtemp(path.join(tmpdir(), "lapis-release-assets-"));
   try {
     await execFileAsync(
@@ -265,13 +275,20 @@ async function verifyGitHubReleaseAssets(release, releaseAssets) {
         readFile(expected),
         readFile(remote),
       ]);
-      if (!expectedBytes.equals(remoteBytes)) {
-        throw new Error(
-          `${release.releaseTag} has a different ${path.basename(
-            expected,
-          )} asset.`,
+      const asset = path.basename(expected);
+      const decision = githubExistingAssetDecision(
+        asset,
+        expectedBytes.equals(remoteBytes),
+        replace,
+      );
+      if (decision === "match") continue;
+      if (decision === "skip-different") {
+        console.log(
+          `Skipping ${release.releaseTag}; GitHub already has a different ${asset} asset.`,
         );
+        return;
       }
+      throw new Error(`${release.releaseTag} has a different ${asset} asset.`);
     }
   } finally {
     await rm(directory, { recursive: true, force: true });
