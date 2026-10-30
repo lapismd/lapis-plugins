@@ -1245,14 +1245,18 @@ import {
   /* A nested embed sits inside the parent turn, so the parent focus rule would
      reveal every action in the embed. Only the hovered or focused turn shows. */
   @media (hover: hover) {
-    .transcript-reading :global(.ui-transcript-text-block .ui-transcript-text-actions) {
+    .transcript-reading :global(.ui-transcript-text-block .ui-transcript-text-actions),
+    .transcript-reading :global(.ui-transcript-text-block .ui-transcript-text-actions *) {
       opacity: 0;
       pointer-events: none;
     }
 
     .transcript-reading :global(.ui-transcript-text-block:hover > .ui-transcript-text-actions),
+    .transcript-reading :global(.ui-transcript-text-block:hover > .ui-transcript-text-actions *),
     .transcript-reading :global(.ui-transcript-text-block:focus-within > .ui-transcript-text-actions),
-    .transcript-reading :global(.ui-transcript-text-actions:has([data-visible="true"])) {
+    .transcript-reading :global(.ui-transcript-text-block:focus-within > .ui-transcript-text-actions *),
+    .transcript-reading :global(.ui-transcript-text-actions:has([data-visible="true"])),
+    .transcript-reading :global(.ui-transcript-text-actions:has([data-visible="true"]) *) {
       opacity: 1;
       pointer-events: auto;
     }
