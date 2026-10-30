@@ -139,7 +139,7 @@ remain excluded.
 The final version batch records AI 0.1.5, History 0.1.4 and Markdown 0.1.6 in
 their manifests, generated documentation and authentic Changesets changelogs.
 The committed lockfile retains the qualified dependency graph and advances AI's
-local Markdown development edge with its public peer. CI owns the complete
+local Markdown development edge through the ^0.2.0 peer. CI owns the complete
 verification lanes for this candidate; publication remains separately approved.
 
 Checkpoint repairs require owning API regressions and plugin regressions for

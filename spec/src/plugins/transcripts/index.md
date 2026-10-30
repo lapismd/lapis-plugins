@@ -1,7 +1,7 @@
 # Transcripts Plugin
 
 `@lapis-notes/transcripts` is the first-party reading view for Markdown
-transcripts. The Storybook shell loads the plugin, so Open transcript is in the command palette, with the audio-lines icon, and in the Markdown view menu, and opens parsed vault notes. Pending comments collect in a collapsible section at the end of the note, with the transcript controls that return to each comment's source. The transcript send control appears in the reading footer, to the right of Source, while a comment is active or waiting to be sent. The spoken sample
+transcripts. Its Markdown peer and development dependency both accept `^0.2.0`. The Storybook shell loads the plugin, so Open transcript is in the command palette, with the audio-lines icon, and in the Markdown view menu, and opens parsed vault notes. Pending comments collect in a collapsible section at the end of the note, with the transcript controls that return to each comment's source. The transcript send control appears in the reading footer, to the right of Source, while a comment is active or waiting to be sent. The spoken sample
 uses speaker-then-time and time-then-speaker headers in `mm:ss`, a saved
 front-matter comment, and a vault recording. Separate notes cover
 time-then-speaker `hh:mm:ss`, `mm:ss:cs`, and a single turn declared with

@@ -124,4 +124,6 @@ invalid collection/field operations return the original source. This stage
 introduces no application writer, callback runtime or npm API; both host
 selections and full provider/configuration scheduling remain separate. A release
 rerun skips an npm version already on the registry, verifies that tarball, and
-creates any missing GitHub release without publishing again.
+creates any missing GitHub release without publishing again. Markdown dependents
+declare `^0.2.0` and the workspace install links the local package until that
+release exists.

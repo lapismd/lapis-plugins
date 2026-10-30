@@ -2,7 +2,7 @@
 
 `@lapis-notes/canvas` opens a JSON Canvas file in a file view and in a read-only note embed. `Plugins/Canvas/Panels` is the governed surface. It loads the legacy feature board: a colored text note, two file notes, a link, a group, and three labeled connectors, in every placement. Middle (Top Tabs) also opens a Markdown note that embeds that same file. `Plugins/Canvas/Features` isolates text, whole-file, heading-section, link, group, connector, and note-embed examples. The stories stay `visual-pending`. They do not create Visual Delta baselines.
 
-The package lives at `packages/canvas` as version `0.1.0` with runtime id `lapis-canvas`. The view type is `lapis-canvas`. `App` is received by the plugin constructor and passed into the file view. The canvas nodes do not read or assign `globalThis.app`.
+The package lives at `packages/canvas` as version `0.1.0` with runtime id `lapis-canvas`. Its Markdown peer and development dependency both accept `^0.2.0`. The view type is `lapis-canvas`. `App` is received by the plugin constructor and passed into the file view. The canvas nodes do not read or assign `globalThis.app`.
 
 A file named `*.canvas` is associated exclusively with that view, and `registerExtensions(["canvas"], "lapis-canvas")` agrees. The embed registry entry `canvas` mounts the read-only `CanvasEmbed`, so `![[Sample.canvas]]` shows the board without writing it back. The embed fits that board into its frame after layout, so the nodes stay readable. Create new canvas asks `fileManager.getAvailablePathForAttachment` for `Untitled Canvas.canvas`, creates an empty document, and opens it. Snap to grid defaults off and snap to objects defaults on. Those settings stay on the plugin class.
 

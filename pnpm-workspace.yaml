@@ -28,6 +28,10 @@ onlyBuiltDependencies:
   - esbuild
 
 overrides:
+  # The workspace package is still 0.1.6 until Changesets applies the 0.2.0
+  # release. Dependents declare ^0.2.0, which npm does not have yet, so this
+  # install uses the workspace package that will be published as 0.2.0.
+  "@lapis-notes/markdown": "workspace:*"
   # One installed editor, parser, TypeScript, and Node types set so
   # @lapis-notes/api is not duplicated across published Markdown peers
   # and the workspace root.
