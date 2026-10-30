@@ -103,7 +103,7 @@ test("approved release lists every public plugin and no parked package", async (
   }
 });
 
-test("a main push opens a version pull request and does not publish", async () => {
+test("a main push opens a version pull request only for a releasable changeset", async () => {
   const source = await readFile(
     new URL("../.github/workflows/version-packages.yml", import.meta.url),
     "utf8",
@@ -113,6 +113,12 @@ test("a main push opens a version pull request and does not publish", async () =
     "utf8",
   );
   assert.match(source, /branches:\n\s+- main/);
+  assert.match(source, /node scripts\/version-public-packages\.mjs --check/);
+  assert.match(source, /if: steps\.releasable\.outputs\.releasable == 'true'/);
+  assert.ok(
+    source.indexOf("node scripts/version-public-packages.mjs --check") <
+      source.indexOf("changesets/action@v1.8.0"),
+  );
   assert.match(source, /changesets\/action@v1\.8\.0/);
   assert.match(source, /version: pnpm release:version/);
   assert.doesNotMatch(source, /release:publish|workflow_dispatch/);

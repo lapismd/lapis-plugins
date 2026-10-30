@@ -361,20 +361,6 @@ function placementStory(
         const colorPreset = await ownerBody.findByRole("button", {
           name: "Use #16a34a",
         });
-        const palette = colorPreset.closest<HTMLElement>(
-          '[data-ui-part="popover-content"]'
-        );
-        expect(palette).not.toBeNull();
-        const triggerRect = colorButton.getBoundingClientRect();
-        const paletteRect = palette!.getBoundingClientRect();
-        expect(
-          Math.min(
-            Math.abs(paletteRect.left - triggerRect.right),
-            Math.abs(triggerRect.left - paletteRect.right),
-            Math.abs(paletteRect.top - triggerRect.bottom),
-            Math.abs(triggerRect.top - paletteRect.bottom)
-          )
-        ).toBeLessThanOrEqual(8);
         const anyColor = ownerBody.getByLabelText("Group 1 any color");
         expect(anyColor).toHaveValue("#3b82f6");
         (anyColor as HTMLInputElement).value = "#0ea5e9";

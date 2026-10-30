@@ -44,7 +44,11 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/ci-setup
+      - name: Decide whether a changeset can bump a published package
+        id: releasable
+        run: node scripts/version-public-packages.mjs --check
       - name: Open the version pull request
+        if: steps.releasable.outputs.releasable == 'true'
         uses: changesets/action@v1.8.0
         with:
           version: pnpm release:version

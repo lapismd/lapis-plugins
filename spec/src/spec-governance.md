@@ -124,8 +124,8 @@ closed and open reviews without changing the normal required CI gates.
 
 The verified shared CI image refresh maps its base pin, dependency-only build
 context and generated dependency digest to this chapter and Distribution.
-GitHub CLI comes from the upstream image. Static publish skips a drifted npm tarball. A main push opens a version pull
-request and does not publish.
+GitHub CLI comes from the upstream image. Static publish skips a drifted tarball. A main push skips an empty version
+pull request and does not publish.
 
 Shared Storybook diagnostics now cover formatted Svelte warnings, diagnostic URLs
 and Error objects, and retain caught teardown failures for after-story and final
