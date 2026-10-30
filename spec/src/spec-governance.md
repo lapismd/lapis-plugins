@@ -2,6 +2,11 @@
 
 # Specification Governance
 
+The approved Bases/History release removes their prior versioning hold under
+LP-SPEC-016. Exact eligibility and explicit-hold regressions qualify the release
+script; audit, full CI, signed archives, provenance and consumer gates remain
+required before claiming a release.
+
 LN-HIST-018 retains separate regressions for explicit native selection,
 passive observation, saved-state projection and lost acknowledgement. Its
 public package, runtime archive and hosted consumer evidence remain distinct.
