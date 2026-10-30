@@ -1,5 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, userEvent, waitFor, within } from "storybook/test";
+
+// user-event refuses to hover through `pointer-events: none`. Browsers deliver
+// the event to the marker underneath, which is what this story asserts.
+function hoverMarker(marker: HTMLElement) {
+  return userEvent.setup({ pointerEventsCheck: 0 }).hover(marker);
+}
 import {
   TranscriptReading,
   sampleEmbeddedNote,
@@ -240,7 +246,7 @@ function placementStory(
       await expect(view.getAllByText("Speaker 1").length).toBeGreaterThan(0);
       await expect(view.getByText("2 speakers")).toBeVisible();
       if (layout === "middle-top-tabs") {
-        await userEvent.hover(
+        await hoverMarker(
           view.getByRole("button", { name: "Preview turn 1" }),
         );
         const card = view.getByRole("group", { name: "Turn details" });
@@ -519,7 +525,7 @@ function placementStory(
               '[data-testid="transcript-reading"]',
             ),
           ].find((node) => node.checkVisibility());
-          await userEvent.hover(
+          await hoverMarker(
             within(note!).getByRole("button", { name: "Preview turn 1" }),
           );
           await expect(
