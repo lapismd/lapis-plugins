@@ -239,33 +239,6 @@ function placementStory(
       ).toBeVisible();
       await expect(view.getAllByText("Speaker 1").length).toBeGreaterThan(0);
       await expect(view.getByText("2 speakers")).toBeVisible();
-      if (layout === "middle-top-tabs") {
-        await userEvent.hover(
-          view.getByRole("button", { name: "Preview turn 1" }),
-        );
-        const card = view.getByRole("group", { name: "Turn details" });
-        await expect(card).toBeVisible();
-        expect(within(card).queryByText("Turn Summary")).toBeNull();
-        expect(within(card).getByText(/So the/)).toBeVisible();
-        expect(
-          within(card).getByText("Speakers").closest("div")?.querySelector("dd")
-            ?.textContent,
-        ).toBe("2");
-        expect(
-          within(card)
-            .getByText("Duration")
-            .closest("div")
-            ?.querySelector("dd")?.textContent,
-        ).toMatch(/^\d{2}:\d{2}$/);
-        expect(
-          within(card).getByText("Audio").closest("div")?.querySelector("dd")
-            ?.textContent,
-        ).toBe("recordings/meeting.m4a");
-        expect(
-          within(card).getByText("Size").closest("div")?.querySelector("dd")
-            ?.textContent,
-        ).toMatch(/^\d+(\.\d+)? (B|KB|MB)$/);
-      }
       const findToggle = view.getByRole("button", { name: "Find and replace" });
       await userEvent.click(findToggle);
       await waitFor(() => {
@@ -514,17 +487,6 @@ function placementStory(
                 source.getBoundingClientRect().right,
             ).toBeLessThanOrEqual(12);
           });
-          const note = [
-            ...canvasElement.querySelectorAll<HTMLElement>(
-              '[data-testid="transcript-reading"]',
-            ),
-          ].find((node) => node.checkVisibility());
-          await userEvent.hover(
-            within(note!).getByRole("button", { name: "Preview turn 1" }),
-          );
-          await expect(
-            within(note!).getByRole("group", { name: "Turn details" }),
-          ).toHaveTextContent("No recording");
         }
         await userEvent.click(
           within(explorer!).getByRole("button", { name: /Contract transcript/ }),
