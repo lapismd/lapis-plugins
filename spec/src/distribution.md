@@ -261,7 +261,7 @@ controller migration acceptance uses documented temporary tarballs until their
 approved registry releases.
 The AI Chat catalog also exercises the two OpenCode harness choices through its public composer while keeping the Storybook execution fixture deterministic.
 
-Nostr release publication and head renewal remain deferred behind `NOSTR_RELEASE_ENABLED`. Static publication uses the separate `STATIC_RELEASE_ENABLED` switch, the existing `release.yml` trusted-publisher identity, and the protected first-publication gate. A rerun skips a published npm version, leaves a different tarball, leaves an existing GitHub release whose .lapis-plugin asset differs, and still creates a missing GitHub release. Markdown dependents declare `^0.2.0`. Until that release exists, the workspace install links the local Markdown package, and package checks wait for its build so the embed export exists.
+Nostr release publication and head renewal remain deferred behind `NOSTR_RELEASE_ENABLED`. Static publication uses the separate `STATIC_RELEASE_ENABLED` switch, the existing `release.yml` trusted-publisher identity, and the protected first-publication gate. A rerun skips a published npm version, leaves a different tarball, leaves an existing GitHub release whose .lapis-plugin asset differs, and still creates a missing GitHub release. A package the trusted publisher rejects does not stop later packages, and provenance stays on. Markdown dependents declare `^0.2.0`. Until that release exists, the workspace install links the local Markdown package, and package checks wait for its build so the embed export exists.
 
 Compiled renderer archives use `svelte/renderer/<compiler-version>` host contracts
 for Svelte and its declared browser runtime exports. The host provides these

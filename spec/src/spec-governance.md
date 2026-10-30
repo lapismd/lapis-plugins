@@ -124,7 +124,7 @@ closed and open reviews without changing the normal required CI gates.
 
 The verified shared CI image refresh maps its base pin, dependency-only build
 context and generated dependency digest to this chapter and Distribution.
-GitHub CLI comes from the upstream image. Static publish skips drifted assets. A main push skips an empty version
+GitHub CLI comes from the upstream image. Skips drifted assets; later ones continue. A main push skips an empty version
 pull request and does not publish.
 
 Shared Storybook diagnostics now cover formatted Svelte warnings, diagnostic URLs
