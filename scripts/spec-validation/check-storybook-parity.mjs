@@ -3,15 +3,7 @@ import { readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { auditStoryParity } from "./storybook-parity.mjs";
 export function trackedFileList(run = execFileSync) {
-  try {
-    return run("jj", ["file", "list"], { encoding: "utf8" });
-  } catch (error) {
-    const stderr = error.stderr?.toString?.() ?? "";
-    const missingTool = error.code === "ENOENT";
-    const plainGitCheckout = error.status === 1 && /no jj repo/i.test(stderr);
-    if (!missingTool && !plainGitCheckout) throw error;
-    return run("git", ["ls-files"], { encoding: "utf8" });
-  }
+  return run("git", ["ls-files"], { encoding: "utf8" });
 }
 const entry =
   process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
