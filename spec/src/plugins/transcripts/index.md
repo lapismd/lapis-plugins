@@ -16,7 +16,7 @@ adapter. Find and replace and the turn-details card are package-owned against th
 published Design Core chat document. The card overlays the reading surface
 while the pointer is on that turn's marker and does not resize the transcript
 pane. Hidden message actions stay out of pointer hit testing until that message
-is hovered, including on a turn marker. Playback starts at the beginning of the note. Find and replace searches
+is hovered, and they stay hidden while the pointer is on the turn navigation. Playback starts at the beginning of the note. Find and replace searches
 every spoken turn, and a replacement is written back into the note. A timestamp
 seeks to that spoken turn and plays, the active turn is highlighted without
 moving its avatar, and its metadata shows an animated playback icon with a

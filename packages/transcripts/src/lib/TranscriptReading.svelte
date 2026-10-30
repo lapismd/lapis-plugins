@@ -1282,4 +1282,10 @@ import {
       pointer-events: auto;
     }
   }
+
+  .transcript-reading:has(:global(.ui-transcript-navigation:hover))
+    :global(.ui-transcript-text-actions) {
+    display: none;
+    pointer-events: none;
+  }
 </style>
