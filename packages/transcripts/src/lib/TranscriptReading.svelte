@@ -1237,7 +1237,16 @@ import {
     }
   }
 
-  /* Turn markers occupy the right edge. Hidden message actions must not cover them. */
+  /* Turn markers occupy the right edge. Hidden message actions must not cover them.
+     pointer-events: none still wins user-event hit testing, so hide the controls. */
+  .transcript-reading :global(.ui-transcript-navigation) {
+    z-index: 6;
+  }
+
+  .transcript-reading :global(.ui-transcript-turn-marker) {
+    pointer-events: auto;
+  }
+
   .transcript-reading :global(.ui-transcript-text-actions) {
     right: 2.5rem;
   }
@@ -1245,6 +1254,16 @@ import {
   /* A nested embed sits inside the parent turn, so the parent focus rule would
      reveal every action in the embed. Only the hovered or focused turn shows. */
   @media (hover: hover) {
+    .transcript-reading :global(.ui-transcript-text-block .ui-transcript-text-actions) {
+      display: none;
+    }
+
+    .transcript-reading :global(.ui-transcript-text-block:hover > .ui-transcript-text-actions),
+    .transcript-reading :global(.ui-transcript-text-block:focus-within > .ui-transcript-text-actions),
+    .transcript-reading :global(.ui-transcript-text-actions:has([data-visible="true"])) {
+      display: block;
+    }
+
     .transcript-reading :global(.ui-transcript-text-block .ui-transcript-text-actions),
     .transcript-reading :global(.ui-transcript-text-block .ui-transcript-text-actions *) {
       opacity: 0;
