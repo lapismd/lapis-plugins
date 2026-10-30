@@ -13,6 +13,9 @@ concurrency:
   group: lapis-plugins-version-packages
   cancel-in-progress: false
 
+env:
+  LAPIS_PLUGINS_VALIDATION_RUNTIME: native
+
 jobs:
   image-pin:
     runs-on: ubuntu-latest
