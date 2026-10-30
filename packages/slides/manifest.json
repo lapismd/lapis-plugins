@@ -1,7 +1,7 @@
 {
   "id": "lapis-slides",
   "name": "Slides",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "minAppVersion": "0.1.0",
   "description": "Presentation mode for Markdown notes",
   "author": "Lapis Notes",

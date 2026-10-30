@@ -18,6 +18,21 @@ on:
         required: true
         default: true
         type: boolean
+      plugin_canvas:
+        description: Release @lapis-notes/canvas
+        required: true
+        default: true
+        type: boolean
+      plugin_csv:
+        description: Release @lapis-notes/csv
+        required: true
+        default: true
+        type: boolean
+      plugin_docx:
+        description: Release @lapis-notes/docx
+        required: true
+        default: true
+        type: boolean
       plugin_graph:
         description: Release @lapis-notes/graph
         required: true
@@ -38,6 +53,11 @@ on:
         required: true
         default: true
         type: boolean
+      plugin_pdf:
+        description: Release @lapis-notes/pdf
+        required: true
+        default: true
+        type: boolean
       plugin_search:
         description: Release @lapis-notes/search
         required: true
@@ -55,6 +75,11 @@ on:
         type: boolean
       plugin_spellcheck:
         description: Release @lapis-notes/spellcheck
+        required: true
+        default: true
+        type: boolean
+      plugin_transcripts:
+        description: Release @lapis-notes/transcripts
         required: true
         default: true
         type: boolean
@@ -113,28 +138,38 @@ jobs:
             ai
             bases
             bookmarks
+            canvas
+            csv
+            docx
             graph
             history
             markdown
             markdown-lint
+            pdf
             search
             slides
             source-editor
             spellcheck
+            transcripts
             wordcount
           )
           plugin_inputs=(
             "${{ inputs.plugin_ai }}"
             "${{ inputs.plugin_bases }}"
             "${{ inputs.plugin_bookmarks }}"
+            "${{ inputs.plugin_canvas }}"
+            "${{ inputs.plugin_csv }}"
+            "${{ inputs.plugin_docx }}"
             "${{ inputs.plugin_graph }}"
             "${{ inputs.plugin_history }}"
             "${{ inputs.plugin_markdown }}"
             "${{ inputs.plugin_markdown_lint }}"
+            "${{ inputs.plugin_pdf }}"
             "${{ inputs.plugin_search }}"
             "${{ inputs.plugin_slides }}"
             "${{ inputs.plugin_source_editor }}"
             "${{ inputs.plugin_spellcheck }}"
+            "${{ inputs.plugin_transcripts }}"
             "${{ inputs.plugin_wordcount }}"
           )
           selected_plugins=()

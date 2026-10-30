@@ -1,6 +1,6 @@
 {
   "name": "@lapis-notes/graph",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Lapis Notes global and local graph plugin",
   "license": "Apache-2.0",
   "type": "module",

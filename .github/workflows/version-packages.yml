@@ -1,0 +1,55 @@
+name: Version packages
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: lapis-plugins-version-packages
+  cancel-in-progress: false
+
+env:
+  LAPIS_PLUGINS_VALIDATION_RUNTIME: native
+
+jobs:
+  image-pin:
+    runs-on: ubuntu-latest
+    outputs:
+      reference: ${{ steps.image.outputs.reference }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Resolve the verified dependency image
+        id: image
+        run: |
+          set -euo pipefail
+          reference="$(jq -er '.dependencies | select(.image and (.digest | test("^sha256:[a-f0-9]{64}$"))) | .image + "@" + .digest' .ci/images.json)"
+          echo "reference=$reference" >> "$GITHUB_OUTPUT"
+
+  version:
+    name: Open version pull request
+    needs: image-pin
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ needs.image-pin.outputs.reference }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/ci-setup
+      - name: Open the version pull request
+        uses: changesets/action@v1.8.0
+        with:
+          version: pnpm release:version
+          commitMode: github-api
+          title: "chore: version Lapis plugins"
+          commit: "chore: version Lapis plugins"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

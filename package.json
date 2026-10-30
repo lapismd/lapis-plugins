@@ -25,7 +25,7 @@
     "plugin:verify": "node scripts/verify-plugin-release.mjs",
     "registry:media:capture": "node scripts/capture-registry-media.mjs",
     "registry:media:check": "node scripts/capture-registry-media.mjs --check",
-    "release:version": "changeset version && pnpm packages:sync",
+    "release:version": "node scripts/version-public-packages.mjs",
     "release:plan": "node scripts/create-release-plan.mjs",
     "release:nostr": "node scripts/nostr-release.mjs",
     "release:nostr:renew": "node scripts/renew-registry-heads.mjs",

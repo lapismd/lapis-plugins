@@ -22,7 +22,7 @@ remain unchanged.
 The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.
 
-Version 0.1.5 includes the harness catalog refresh and vault-scoped controller
+Version 0.1.6 includes the harness catalog refresh and vault-scoped controller
 readiness fixes. Its Markdown peer and development dependency both accept
 `^0.2.0`.
 
