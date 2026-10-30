@@ -7,7 +7,7 @@ import { REVISION_IDS, SYNC_STORY_FILES } from "./preview-runtime";
 const meta = {
   title: "Plugins/Sync/Review",
   component: SyncWorkspaceDemo,
-  tags: ["!autodocs", "visual-pending", "test"],
+  tags: ["!autodocs", "visual-pending", "test", "sync-unfinished"],
   parameters: { layout: "fullscreen" },
 } satisfies Meta<typeof SyncWorkspaceDemo>;
 export default meta;

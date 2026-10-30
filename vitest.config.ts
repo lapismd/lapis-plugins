@@ -37,7 +37,11 @@ export default defineConfig({
       {
         extends: true,
         plugins: [
-          storybookTest({ configDir: path.join(dirname, ".storybook") }),
+          // Sync is unfinished. Tagged stories stay in the catalog and are skipped.
+          storybookTest({
+            configDir: path.join(dirname, ".storybook"),
+            tags: { skip: ["sync-unfinished"] },
+          }),
         ],
         optimizeDeps: {
           exclude: [

@@ -16,7 +16,8 @@ with size 256 and initials fallback, as governed by LP-SPEC-041.
 
 Lapis Sync starts with the headless Nostr-compatible protocol foundation.
 The package remains private and parked until the Deno destination, endpoint
-security and consumer acceptance are complete. The UI may be previewed in the
+security and consumer acceptance are complete. Unit tests and Storybook
+interaction stories are skipped while Sync is unfinished. The UI may be previewed in the
 shared catalog while Sync remains excluded from installation and releases. The existing Nostr
 Sync plugin keeps its identity and installation behavior.
 
