@@ -1043,8 +1043,8 @@ import {
 
   .transcript-reading :global(.ui-transcript-document) {
     padding-block-start: var(--ui-transcript-hover-clearance, 3rem);
-    padding-inline: 1.25rem;
-    padding-block-end: 1.25rem;
+    padding-inline: 2.75rem;
+    padding-block-end: 2.75rem;
   }
 
   .transcript-reading :global(.ui-transcript-transcript-activity) {
@@ -1052,7 +1052,7 @@ import {
     width: 100%;
     max-width: none;
     margin: 0;
-    padding: 0 1.25rem 1.25rem;
+    padding: 0 2.75rem 2.75rem;
   }
 
   .transcript-reading
@@ -1249,7 +1249,9 @@ import {
   }
 
   .transcript-reading :global(.ui-transcript-text-actions) {
-    right: 2.5rem;
+    right: auto;
+    left: 0.5rem;
+    max-width: calc(100% - 1rem);
   }
 
   .transcript-reading :global(.ui-transcript-text-block .ui-transcript-text-actions) {
