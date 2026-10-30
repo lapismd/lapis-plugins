@@ -85,12 +85,9 @@ export function npmVersionAlreadyPublished(error) {
   );
 }
 
-function assertNpmIntegrity(release, existing, expectedIntegrity) {
-  if (existing !== expectedIntegrity) {
-    throw new Error(
-      `${release.packageName}@${release.version} exists with different npm integrity.`,
-    );
-  }
+export function npmPublicationDecision(existing, expectedIntegrity) {
+  if (!existing) return "publish";
+  return existing === expectedIntegrity ? "skip-same" : "skip-different";
 }
 
 async function publishNpm(release) {
@@ -99,17 +96,19 @@ async function publishNpm(release) {
   const expectedIntegrity = `sha512-${createHash("sha512")
     .update(bytes)
     .digest("base64")}`;
-  const skip = () => {
-    console.log(
-      `Skipping ${release.packageName}@${release.version}; npm already has this version.`,
-    );
+  const report = (decision) => {
+    const reason =
+      decision === "skip-different"
+        ? "npm already has this version with different integrity"
+        : "npm already has this version";
+    console.log(`Skipping ${release.packageName}@${release.version}; ${reason}.`);
+    return decision;
   };
-  const existing = await npmIntegrity(release);
-  if (existing) {
-    assertNpmIntegrity(release, existing, expectedIntegrity);
-    skip();
-    return;
-  }
+  const existing = npmPublicationDecision(
+    await npmIntegrity(release),
+    expectedIntegrity,
+  );
+  if (existing !== "publish") return report(existing);
   try {
     await execFileAsync(
       "npm",
@@ -118,11 +117,14 @@ async function publishNpm(release) {
     );
   } catch (error) {
     if (!npmVersionAlreadyPublished(error)) throw error;
-    const confirmed = await npmIntegrity(release);
-    if (!confirmed) throw error;
-    assertNpmIntegrity(release, confirmed, expectedIntegrity);
-    skip();
+    const confirmed = npmPublicationDecision(
+      await npmIntegrity(release),
+      expectedIntegrity,
+    );
+    if (confirmed === "publish") throw error;
+    return report(confirmed);
   }
+  return "publish";
 }
 
 async function npmIntegrity(release) {
