@@ -191,6 +191,14 @@ test("workflow routes every expensive lane and retains the stable aggregate", ()
     job("specification"),
     /run: .*?(?:turbo|storybook|plugin:build|packages:pack)/
   );
+  assert.match(
+    job("storybook-interaction"),
+    /shard: \[1, 2, 3, 4\]/
+  );
+  assert.match(
+    job("storybook-interaction"),
+    /pnpm test:storybook -- --shard=\$\{\{ matrix\.shard \}\}\/4/
+  );
   assert.match(job("validate"), /if: always\(\)/);
   assert.match(job("validate"), /- changes\n      - specification/);
   assert.doesNotMatch(workflow, /paths-ignore:/);

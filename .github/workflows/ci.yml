@@ -168,6 +168,10 @@ jobs:
     if: needs.changes.outputs.spec_only == 'false'
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     container:
       image: ${{ needs.image-pin.outputs.reference }}
       credentials:
@@ -180,7 +184,7 @@ jobs:
         run: node scripts/run-turbo.mjs build --summarize
       - name: Report cache restoration
         run: node scripts/report-turbo-cache.mjs --github-summary
-      - run: pnpm test:storybook
+      - run: pnpm test:storybook -- --shard=${{ matrix.shard }}/4
 
   release-artifacts:
     needs:
