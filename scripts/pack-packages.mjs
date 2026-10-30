@@ -12,7 +12,10 @@ import { verifyBuiltImportBoundaries } from "./lib/npm-package-imports.mjs";
 
 const execFileAsync = promisify(execFile);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const alreadyBuilt = process.argv.slice(2).filter((arg) => arg !== "--").includes("--already-built");
+const alreadyBuilt = process.argv
+  .slice(2)
+  .filter((arg) => arg !== "--")
+  .includes("--already-built");
 if (!alreadyBuilt) await runBuild();
 const outDir = path.join(root, ".release/npm");
 await rm(outDir, { recursive: true, force: true });
@@ -22,31 +25,38 @@ const packed = await runBoundedWorkers(pluginPackages, workerLimit, packPlugin);
 const manifest = packed
   .map((result) => result.manifest)
   .sort((left, right) => left.packageName.localeCompare(right.packageName));
-for (const result of [...packed].sort((left, right) => left.log.localeCompare(right.log))) {
+for (const result of [...packed].sort((left, right) =>
+  left.log.localeCompare(right.log)
+)) {
   console.log(result.log);
 }
 await writeFile(
   path.join(outDir, "manifest.json"),
-  `${JSON.stringify(manifest, null, 2)}\n`,
+  `${JSON.stringify(manifest, null, 2)}\n`
 );
 
 async function packPlugin(plugin) {
   const packageRoot = path.join(root, "packages", plugin.directory);
-  await verifyBuiltImportBoundaries(packageRoot, plugin.packageName);
   const { stdout } = await execFileAsync(
     "pnpm",
     ["pack", "--json", "--pack-destination", outDir],
-    { cwd: packageRoot, maxBuffer: 20 * 1024 * 1024 },
+    { cwd: packageRoot, maxBuffer: 20 * 1024 * 1024 }
   );
   const result = parsePackResult(stdout);
-  if (!result?.filename) throw new Error(`${plugin.packageName} did not produce a tarball.`);
+  if (!result?.filename)
+    throw new Error(`${plugin.packageName} did not produce a tarball.`);
   const tarballPath = path.resolve(packageRoot, result.filename);
-  const packageJson = JSON.parse(await readFile(path.join(packageRoot, "package.json"), "utf8"));
+  const packageJson = JSON.parse(
+    await readFile(path.join(packageRoot, "package.json"), "utf8")
+  );
   const serialized = JSON.stringify(packageJson);
   if (/"(?:workspace|link|file):/.test(serialized)) {
-    throw new Error(`${plugin.packageName} tarball metadata contains a local dependency protocol.`);
+    throw new Error(
+      `${plugin.packageName} tarball metadata contains a local dependency protocol.`
+    );
   }
   const files = result.files?.map((file) => file.path).sort() ?? [];
+  await verifyBuiltImportBoundaries(packageRoot, plugin.packageName, files);
   for (const required of [
     "CHANGELOG.md",
     "LICENSE.md",
@@ -63,7 +73,10 @@ async function packPlugin(plugin) {
   const checksum = createHash("sha256")
     .update(await readFile(tarballPath))
     .digest("hex");
-  await writeFile(`${tarballPath}.sha256`, `${checksum}  ${path.basename(tarballPath)}\n`);
+  await writeFile(
+    `${tarballPath}.sha256`,
+    `${checksum}  ${path.basename(tarballPath)}\n`
+  );
   return {
     log: `Packed ${plugin.packageName}@${packageJson.version}: ${checksum}`,
     manifest: {
@@ -78,19 +91,25 @@ async function packPlugin(plugin) {
 }
 
 async function runBuild() {
-  console.log("Building packages before packing (use --already-built to skip).");
+  console.log(
+    "Building packages before packing (use --already-built to skip)."
+  );
   const child = spawn("pnpm", ["build"], { cwd: root, stdio: "inherit" });
   const exitCode = await new Promise((resolve, reject) => {
     child.on("error", reject);
-    child.on("exit", (code, signal) => resolve(signal ? 1 : (code ?? 1)));
+    child.on("exit", (code, signal) => resolve(signal ? 1 : code ?? 1));
   });
-  if (exitCode !== 0) throw new Error(`Package build failed with exit code ${exitCode}.`);
+  if (exitCode !== 0)
+    throw new Error(`Package build failed with exit code ${exitCode}.`);
 }
 
 function parsePackResult(stdout) {
   const starts = [0];
   for (let index = 0; index < stdout.length; index += 1) {
-    if (stdout[index] === "\n" && (stdout[index + 1] === "{" || stdout[index + 1] === "[")) {
+    if (
+      stdout[index] === "\n" &&
+      (stdout[index + 1] === "{" || stdout[index + 1] === "[")
+    ) {
       starts.push(index + 1);
     }
   }

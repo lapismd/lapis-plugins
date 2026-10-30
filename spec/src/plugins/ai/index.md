@@ -1,23 +1,42 @@
 # AI Plugin
 
+Catalog tool-disclosure assertions include Design Core 0.6's visible target and
+group metadata in accessible names; expanding details still verifies the actual
+captured command/output and exact approval state.
+Shell geometry measures ordinary spacing from the resolved composer dock padding
+under LN-AI-027, without carrying forward a former footer's fixed 20px allowance.
+The panel still has no bottom padding and the composer cannot overlap messages.
+
+The package requires published Design Core `^0.7.0` for prepared browser CSS
+and bundled fonts through public exports. Application state and existing plugin
+behavior retain their owning contracts.
+
+Chat acceptance waits for composer menus to become visible before using them.
+Tool-call name assertions target the public call-name part so the same name in
+expanded details does not make the summary query ambiguous. Search result navigation asserts the complete accessible filename and path supplied by Search.
+The real AI shell applies the same overlay-readiness contract. It waits for
+menu visibility and released pointer handling before opening Settings, changing
+folder scope or acting after closing a menu; assertions and native animations
+remain unchanged.
+
 The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.
 
 Version 0.1.5 includes the harness catalog refresh and vault-scoped controller
-readiness fixes. Its Markdown peer and development dependency both require
-`^0.1.6`; generated metadata and changelog notes retain those coordinates.
+readiness fixes. Its Markdown peer and development dependency both accept
+`^0.2.0`.
 
-This candidate consumes published API 0.1.2 through its portable peer range.
-Shared shell qualification uses UI and File Explorer 0.1.2 and Workspace 0.2.0.
+This candidate consumes published API 0.2.0 through its portable peer range.
+Shared shell qualification uses UI 0.1.4, File Explorer 0.2.0 and Workspace 0.3.0.
 Mobile shell acceptance uses the published count-bearing dock label, opens the
 workspace tab chooser and returns with Done. It retains real-App plugin and
 collapsed-sidebar assertions; this repairs a stale story selector.
 
-Release qualification uses `@lapis-notes/api@^0.1.2` for the shared renderer,
+Release qualification uses `@lapis-notes/api@^0.2.0` for the shared renderer,
 diagnostics invalidation and selected metadata fingerprint contracts. Portable
 consumers must resolve this prerequisite from npm before plugin publication.
 
-Dependency acceptance now uses published Design Core `0.3.2` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
+Earlier dependency acceptance used Design Core `0.3.2` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
 unchanged; local overrides for these released packages are retired.
 
 AI presentation resolves Design Core through the repository's current published
@@ -89,7 +108,7 @@ composer or writes back to the append-only source.
 | LN-AI-024 | The chat panel MUST insert Design Core `SystemMessage` date dividers when item `createdAt` values cross a local calendar day. Labels MUST be Today, Yesterday, or a locale date.                                                                                                                                                                                                                                                                                                                                                             |
 | LN-AI-025 | The composer MUST keep `@` vault mentions as inline path tokens and MUST show explicit vault attachments in a Composer Drawer. Submit MUST merge and dedupe both path lists into `metadata.attachments`.                                                                                                                                                                                                                                                                                                                                     |
 | LN-AI-026 | MessageList MUST receive `latestMessageId` plus busy and empty flags. When the transcript is scrolled away from the latest item, Layout MUST show its scroll-to-latest control inside the transcript body and return to that item when activated.                                                                                                                                                                                                                                                                                            |
-| LN-AI-027 | The chat panel root MUST override the public workspace view paint tokens to body background and foreground and MUST NOT own bottom padding. The composer dock MUST own the workspace status-bar clearance below the composer so its lower border and shadow remain visible above the status bar.                                                                                                                                                                                                                                             |
+| LN-AI-027 | The chat panel root MUST override the public workspace view paint tokens to body background and foreground and MUST NOT own bottom padding. The composer dock MUST retain ordinary spacing below the composer without reserving workspace status-bar overlay clearance; the shell owns its footer track.                                                                                                                                                                                                                                     |
 | LN-AI-028 | The composer MUST present Effort and Model in an icon-only brain popover. Those fields MUST NOT remain as always-visible footer selects.                                                                                                                                                                                                                                                                                                                                                                                                     |
 | LN-AI-029 | The chat panel MUST place the transcript and composer in separate in-flow rows. The message list MUST grow to fill remaining panel height. The composer MUST stay at the panel bottom when the transcript is empty and MUST NOT overlay messages.                                                                                                                                                                                                                                                                                            |
 | LN-AI-030 | The chat panel, its portaled composer surfaces, and the AI settings tab MUST use the workspace sans family. Message bubbles MUST keep Design Core font-size and line-height. Markdown inside bubbles MUST inherit that type and keep a transparent preview surface so the bubble paint shows through.                                                                                                                                                                                                                                        |
@@ -555,3 +574,22 @@ animations and the rendered control center MUST hit-test to that control.
 Preference dismissal MUST await removal of every root/submenu portal before
 reopening. Visibility and restored body pointer events alone do not prove
 geometry and menu lifecycle readiness.
+
+The package test toolchain uses patched Vite 6.4.4 and Vitest 4.1.12
+or newer within the existing major versions. Shared catalog qualification uses
+the patched Storybook toolchain described in distribution; application behavior
+and public package ownership remain unchanged.
+
+Current shared-shell qualification uses the released Design Core 0.6
+public boundary and matching Notes framework archives. Published dependency
+ranges now admit that boundary directly; the Avatar repair remains a recorded
+local candidate until the separate release gate.
+
+Current App-backed catalog seeds and copyable host examples use `.lapis`
+for application state, matching the Notes-wide default. Historical vault data
+and the frozen Deno host are not migrated or edited.
+
+Catalog fixtures declare their actual composition under LP-SPEC-054. Synthetic
+setup actions use the separate LP-SPEC-055 fixture-controls surface; application
+stories retain the production WorkspaceShell. Loading and failure placeholders
+remain explicitly identified as boot status rather than alternate app chrome.

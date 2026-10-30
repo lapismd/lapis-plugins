@@ -1,5 +1,6 @@
 import {
   Plugin,
+  Notice,
   type App,
   type PluginManifest,
   type WorkspaceLeaf,
@@ -9,7 +10,6 @@ import {
   loadPersistedGraphSettings,
   mergeGraphSettings,
   serializeGraphSettings,
-  type PersistedGraphSettings,
 } from "./graph-settings";
 import {
   GraphDataCoordinator,
@@ -45,7 +45,8 @@ export class GraphPlugin extends Plugin {
   private readonly graphCoordinator: GraphDataCoordinator;
   private settings: GraphSettings = mergeGraphSettings(DEFAULT_GRAPH_SETTINGS);
   private settingsSaveTimer: ReturnType<typeof setTimeout> | null = null;
-  private pendingSettingsSave: PersistedGraphSettings | null = null;
+  private releaseSettingsSave: ((commit: boolean) => void) | null = null;
+  private settingsSaveTask: Promise<void> | null = null;
   private graphProblems: GraphProblemReporter | null = null;
   private readonly pathQueryCache = new Map<
     string,
@@ -62,6 +63,16 @@ export class GraphPlugin extends Plugin {
 
   async onload(): Promise<void> {
     await this.initializeSettings();
+    this.registerEvent(
+      this.app.configuration.on("plugin-data-updated", (event) => {
+        if (
+          event.pluginId !== this.manifest.id ||
+          event.origin === "plugin-save"
+        )
+          return;
+        this.applySettings(loadPersistedGraphSettings(event.value).settings);
+      }),
+    );
     this.graphProblems = createGraphProblemReporter(this);
     this.register(
       this.graphCoordinator.subscribe((state) => {
@@ -132,9 +143,9 @@ export class GraphPlugin extends Plugin {
     this.graphProblems = null;
     if (this.settingsSaveTimer) clearTimeout(this.settingsSaveTimer);
     this.settingsSaveTimer = null;
-    const pending = this.pendingSettingsSave;
-    this.pendingSettingsSave = null;
-    if (pending) await this.saveData(pending);
+    this.releaseSettingsSave?.(true);
+    this.releaseSettingsSave = null;
+    await this.settingsSaveTask;
   }
 
   getSettings(): GraphSettings {
@@ -142,12 +153,16 @@ export class GraphPlugin extends Plugin {
   }
 
   async updateSettings(nextSettings: GraphSettings): Promise<void> {
+    this.applySettings(nextSettings);
+    this.scheduleSettingsSave(this.getSettings());
+  }
+
+  private applySettings(nextSettings: GraphSettings): void {
     this.settings = mergeGraphSettings(nextSettings);
     const snapshot = this.getSettings();
     this.views.forEach((view) => {
       view.applyGraphSettings(snapshot);
     });
-    this.scheduleSettingsSave(snapshot);
   }
 
   subscribeToGlobalGraph(
@@ -202,13 +217,31 @@ export class GraphPlugin extends Plugin {
   }
 
   private scheduleSettingsSave(settings: GraphSettings): void {
-    this.pendingSettingsSave = serializeGraphSettings(settings);
     if (this.settingsSaveTimer) clearTimeout(this.settingsSaveTimer);
+    this.releaseSettingsSave?.(false);
+    const snapshot = serializeGraphSettings(settings);
+    let release!: (commit: boolean) => void;
+    const ready = new Promise<boolean>((resolve) => {
+      release = resolve;
+    });
+    this.releaseSettingsSave = release;
+    const persist = async () => {
+      if (await ready) await this.saveData(snapshot);
+    };
+    this.settingsSaveTask = this.app.vault.supportsConditionalTextWrites
+      ? this.app.fileEditingSessions.track(persist)
+      : persist();
+    void this.settingsSaveTask.catch((error) => {
+      new Notice(
+        `Graph settings could not be saved: ${error instanceof Error ? error.message : String(error)}`,
+        undefined,
+        this.app,
+      );
+    });
     this.settingsSaveTimer = setTimeout(() => {
       this.settingsSaveTimer = null;
-      const pending = this.pendingSettingsSave;
-      this.pendingSettingsSave = null;
-      if (pending) void this.saveData(pending);
+      this.releaseSettingsSave = null;
+      release(true);
     }, 180);
   }
 

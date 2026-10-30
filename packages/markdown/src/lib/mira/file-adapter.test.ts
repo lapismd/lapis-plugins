@@ -46,6 +46,7 @@ function createAppFixture() {
     },
     embedRegistry: {
       get: (extension: string) => (extension === "pdf" ? renderEmbed : null),
+      renderMarkdownEmbed: () => false,
     },
     openFile,
   } as unknown as App;
@@ -65,7 +66,44 @@ describe("Lapis Mira file adapter", () => {
   it("reuses one adapter instance for the same App", () => {
     const { app } = createAppFixture();
     expect(createLapisMiraFileAdapter(app)).toBe(
-      createLapisMiraFileAdapter(app),
+      createLapisMiraFileAdapter(app)
+    );
+  });
+
+  it("leases vault resource URLs for resolved portable assets", async () => {
+    const { app } = createAppFixture();
+    const image = file("Files/café.png");
+    const note = file("Notes/Target.md");
+    vi.spyOn(app.vault, "getFileByPath").mockImplementation((path) =>
+      path === image.path ? image : path === note.path ? note : null
+    );
+    const getResourceUrl = vi.fn(
+      async () => "lapis-vault://session/Files/caf%C3%A9.png"
+    );
+    Object.assign(app.vault, { getResourceUrl });
+    const adapter = createLapisMiraFileAdapter(app);
+
+    await expect(
+      adapter.readAssetUrl?.({ path: image.path, kind: "image" })
+    ).resolves.toBe("lapis-vault://session/Files/caf%C3%A9.png");
+    expect(getResourceUrl).toHaveBeenCalledExactlyOnceWith(image);
+    await expect(
+      adapter.readAssetUrl?.({ path: "Missing.png", kind: "image" })
+    ).resolves.toBeNull();
+    await expect(
+      adapter.readAssetUrl?.({ path: note.path, kind: "markdown" })
+    ).resolves.toBeNull();
+    expect(getResourceUrl).toHaveBeenCalledTimes(1);
+  });
+
+  it("releases portable asset URL leases through the owning vault", () => {
+    const { app } = createAppFixture();
+    const revokeResourceUrl = vi.fn();
+    Object.assign(app.vault, { revokeResourceUrl });
+
+    createLapisMiraFileAdapter(app).releaseAssetUrl?.("blob:owned-image");
+    expect(revokeResourceUrl).toHaveBeenCalledExactlyOnceWith(
+      "blob:owned-image"
     );
   });
 
@@ -109,8 +147,8 @@ describe("Lapis Mira file adapter", () => {
             kind: "markdown",
           },
         },
-        element,
-      ),
+        element
+      )
     ).toBe(false);
 
     const cleanup = adapter.renderEmbed?.(
@@ -124,18 +162,66 @@ describe("Lapis Mira file adapter", () => {
           kind: "unknown",
         },
       },
-      element,
+      element
     );
     expect(renderEmbed).toHaveBeenCalledWith(
       expect.objectContaining({
         app,
         containerEl: element,
         state: expect.objectContaining({ file: pdf, id: pdf.path }),
-      }),
+      })
     );
     expect(typeof cleanup).toBe("function");
     if (typeof cleanup === "function") cleanup();
     expect(destroy).toHaveBeenCalledOnce();
+  });
+
+  it("asks markdown embedders before declining a markdown embed", () => {
+    const contract = file("Notes/Contract transcript.md");
+    const draft = file("Notes/Draft meeting.md");
+    const destroy = vi.fn();
+    const element = { replaceChildren: vi.fn() } as unknown as HTMLElement;
+    const renderMarkdownEmbed = vi.fn((props: { file: { path: string } }) =>
+      props.file.path.endsWith("transcript.md") ? { destroy } : false
+    );
+    const app = {
+      vault: {
+        getFileByPath: (path: string) =>
+          [contract, draft].find((candidate) => candidate.path === path) ??
+          null,
+      },
+      embedRegistry: {
+        get: () => {
+          throw new Error("extension renderers do not own markdown embeds");
+        },
+        renderMarkdownEmbed,
+      },
+    } as unknown as App;
+    const adapter = createLapisMiraFileAdapter(app);
+    const targetFor = (candidate: TFile) => ({
+      href: candidate.path,
+      path: candidate.path,
+      file: {
+        path: candidate.path,
+        name: candidate.name,
+        extension: candidate.extension,
+        kind: "markdown" as const,
+      },
+    });
+
+    expect(adapter.renderEmbed?.(targetFor(draft), element)).toBe(false);
+    const cleanup = adapter.renderEmbed?.(targetFor(contract), element);
+    expect(renderMarkdownEmbed).toHaveBeenCalledWith(
+      expect.objectContaining({
+        app,
+        containerEl: element,
+        file: contract,
+      })
+    );
+    expect(typeof cleanup).toBe("function");
+    if (typeof cleanup === "function") cleanup();
+    expect(destroy).toHaveBeenCalledOnce();
+    expect(element.replaceChildren).toHaveBeenCalledOnce();
   });
 
   it("writes only existing Markdown files through the Lapis vault", async () => {
@@ -145,22 +231,22 @@ describe("Lapis Mira file adapter", () => {
     await expect(
       adapter.writeMarkdown?.(
         { path: target.path, name: target.name, kind: "markdown" },
-        "# Updated",
-      ),
+        "# Updated"
+      )
     ).resolves.toBeUndefined();
     expect(modify).toHaveBeenCalledWith(target, "# Updated");
 
     await expect(
       adapter.writeMarkdown?.(
         { path: pdf.path, name: pdf.name, kind: "markdown" },
-        "not a PDF",
-      ),
+        "not a PDF"
+      )
     ).rejects.toThrow("Cannot write non-Markdown file");
     await expect(
       adapter.writeMarkdown?.(
         { path: "Missing.md", name: "Missing.md", kind: "markdown" },
-        "missing",
-      ),
+        "missing"
+      )
     ).rejects.toThrow("Markdown file not found");
   });
 });

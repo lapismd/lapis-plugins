@@ -40,7 +40,7 @@ export async function bootSyncWorkspace(options: SyncWorkspaceOptions) {
   const identity = `sync-catalog-${++sequence}`;
   const seed = {
     ...SYNC_STORY_FILES,
-    ".obsidian/app.json": JSON.stringify({
+    ".lapis/app.json": JSON.stringify({
       "appearence.interface.showTabTitleBar": true,
       pluginData: {
         sync: {
@@ -55,7 +55,7 @@ export async function bootSyncWorkspace(options: SyncWorkspaceOptions) {
         },
       },
     }),
-    ".obsidian/workspace.json": JSON.stringify(
+    ".lapis/workspace.json": JSON.stringify(
       options.shell
         ? syncShellLayout(options.kind ?? "history")
         : syncPanelLayout(kind, placement),
@@ -63,7 +63,7 @@ export async function bootSyncWorkspace(options: SyncWorkspaceOptions) {
   };
   const app = new App({
     version: "0.1.2-story",
-    configPath: ".obsidian/app.json",
+    configPath: ".lapis/app.json",
     adapter: new MemoryVaultAdapter(seed, {
       name: "Atlas Sync Review",
       vaultId: identity,

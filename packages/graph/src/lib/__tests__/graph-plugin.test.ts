@@ -218,7 +218,9 @@ describe("graph settings persistence snapshots", () => {
   it("coalesces rapid plugin settings writes and flushes on unload", async () => {
     vi.useFakeTimers();
     vi.stubGlobal("createDiv", () => ({}));
-    const plugin = new GraphPlugin({} as never);
+    const plugin = new GraphPlugin({
+      vault: { supportsConditionalTextWrites: false },
+    } as never);
     const saveData = vi.fn(async () => undefined);
     (plugin as unknown as { saveData: typeof saveData }).saveData = saveData;
 

@@ -1,11 +1,88 @@
 # Specification Governance
 
+# Specification Governance
+
+LN-HIST-018 retains separate regressions for explicit native selection,
+passive observation, saved-state projection and lost acknowledgement. Its
+public package, runtime archive and hosted consumer evidence remain distinct.
+
+The 2026-10-27 editor-chrome slice qualifies LN-MD-127 with focused Source,
+Live Preview and dark-mode stories against verified API/Mira archives. Shared
+story-host vault-change startup and teardown are included in those targets.
+The user explicitly defers full suites and wider consumer acceptance to a
+separate stage; the slice record retains exact before/after counts without
+claiming repository-wide or release qualification.
+
+The native Markdown editing-intent scenario is classified as a public
+FileEmbed component review under LP-SPEC-054/055. Its real App, Mira writer and
+labelled shared fixture controls preserve the distinction between source
+interaction evidence and later application/native acceptance.
+
+Search settings recovery maps its private configuration observer, plugin/panel
+lifecycle and production-shell scenario to LN-SRCH-006/011/016. Evidence retains
+the original stale-control failure, strict-check correction and every source and
+consumer cohort separately. The mapped chapter updates, new story parity entry,
+public package qualification and existing audit/release findings remain explicit;
+functional success does not approve visual baselines or publication.
+
+Bases LN-BASE-032 and LN-BASE-033 govern explicit purpose names across the full
+filter, grouping, sort, summary and data-driven settings Select surface. Exact
+and complete catalog counts, public-archive provenance and the inherited Zod
+advisory are recorded in `spec/records/2026-10-25-bases-filter-names.md`.
+The advisory requires fresh acceptance for this patch before commit.
+
+LP-SPEC-053 defaults local portable validation to isolated Docker workers;
+hosted CI explicitly uses its provisioned native runtime. The repository-owned
+composition plugin enforces LP-SPEC-054 and LP-SPEC-055 beside existing Docs,
+App-ownership, public-boundary, accessibility and release checks.
+
+The isolated catalog qualification records the user's 2026-10-25 acceptance of
+the released API's existing Zod 3 advisory for this infrastructure change only.
+Normal audit-first commands and release qualification remain blocked. The
+approved Transcripts Markdown peer/development correction preserves LP-SPEC-011;
+temporary source-archive acceptance and the released Design Core teardown
+blocker remain explicit in the [qualification record](../records/2026-10-25-catalog-validation.md).
+
+The isolated Desktop shared-screen intake accepts portable Mira compatibility
+ranges. Existing audit findings are recorded separately with the user
+acceptance in `spec/records/2026-10-23-desktop-mira-compatibility.md`; no release
+or audit exemption is granted.
+
+The Search query-settlement repair maps to the Search chapter and verification
+record. Source, shared catalog and consumer acceptance remain separate gates;
+its pending-query scenario does not waive lifecycle failures or authorize visual
+baseline changes.
+
+Shared disposable panel fixtures seed app, types, workspace and bookmark state
+under the API's `.lapis` directory. Their explicit configuration path and default
+workspace loader must select the same state; expected panel counts, placement
+assertions, timeouts and accessibility gates remain unchanged (LP-SPEC-006).
+`Assets/map.png` is a complete image, and the fixture vault leases it as a
+fetchable resource URL.
+
+Source Editor, Markdown and Graph also accept Design Core 0.5.1 through portable
+semver ranges. The 0.4 registry graph remains valid; current-source Desktop
+acceptance uses verified 0.5.1 public archives without changing release gates.
+
+Search accepts Design Core 0.4 and 0.5 through portable semver ranges; its
+locked 0.4 graph and source/package ownership remain unchanged. Local 0.5
+consumer acceptance is recorded in `spec/records/2026-10-19-search-empty-results.md`.
 
 The standalone Bases accessibility patch preserves all normal CI and release
 gates. Its workflow story verifies the named property search and visible
 controlled list; source IDs remain unique across component instances and typed
 view options. Notes acceptance must consume the released package fix rather
 than a source alias, patched dependency or suppressed accessibility check.
+
+The Design Core 0.4.0 consumer refresh updates declared npm ranges and both
+registry lockfiles. Package and cold catalog checks qualify public exports,
+prepared CSS and bundled fonts; existing visual baselines and private Sync
+activation remain separate review gates.
+
+The consumer repair retains all visibility, geometry, pointer-hit and axe
+assertions. Cold focused stories qualify overlay readiness, tool-summary
+selectors and Bases picker accessibility; full suites remain required in CI
+under the user's local memory-pressure constraint.
 
 Private Sync sign-in acceptance records its isolated host's real Deno journey
 separately from Storybook fixtures. A host dependency compatibility repair keeps
@@ -29,7 +106,7 @@ AI, Bases and History mobile shell stories qualify the published count-bearing
 dock label by opening and closing the actual workspace tab chooser.
 
 Registry dependency acceptance bypasses pre-existing local pnpm hooks with
-`--ignore-pnpmfile`; local hook files remain outside the verified diff. The
+`--ignore-pnpmfile`; the committed lockfile omits the pnpmfile checksum. The
 private Sync review record includes its separate registry install command and
 the released Design Core floor before controlled header integration.
 
@@ -62,17 +139,17 @@ remain excluded.
 The final version batch records AI 0.1.5, History 0.1.4 and Markdown 0.1.6 in
 their manifests, generated documentation and authentic Changesets changelogs.
 The committed lockfile retains the qualified dependency graph and advances AI's
-local Markdown development edge with its public peer. CI owns the complete
+local Markdown development edge through the ^0.2.0 peer. Checks follow the Markdown build. CI owns the complete
 verification lanes for this candidate; publication remains separately approved.
 
 Checkpoint repairs require owning API regressions and plugin regressions for
 both invalidation and warm reuse. Release intent must name the affected plugin
 and retain prerequisite API version qualification. Static publication and the
-deferred relay route keep independent activation and approval gates.
+deferred relay route keep independent gates. Reruns skip published npm versions.
 
 Dependency acceptance now uses published Design Core `0.3.1` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
 unchanged; local overrides for these released packages are retired.
-Shared specification tooling resolves `@lapismd/spec-validator@0.1.4` from npm.
+Shared specification tooling resolves `@lapismd/spec-validator@0.2.0` from npm.
 
 Shared UI dependency refreshes advance portable package ranges and the committed
 lockfile together without adding checkout-specific package paths.
@@ -100,6 +177,7 @@ approved-release environment, and immutable-version patch rollback policy.
 Package-boundary verification also rejects bundled Lapis host packages and
 requires every externalized Lapis or approved singleton editor runtime module to resolve through a declared
 peer supplied by the consuming application.
+CSV's markup editor and search modules are declared peers on that same list.
 Shared release tooling MUST scan all emitted JavaScript runtime chunks for
 browser bare imports. Only declared Lapis, approved CodeMirror/Lezer and versioned Svelte renderer host modules may remain external;
 Compiler-emitted Svelte imports bind the locked renderer ABI through host-owned
@@ -113,6 +191,8 @@ dispatch tooling map to Distribution and this governance chapter.
 Shared registry showcase and capture tooling MUST use the root Storybook, fixed
 viewports, package-owned source stories, and deterministic comparison without
 creating or approving Visual Delta baselines.
+The shared panel demo may merge caller configuration into its app seed before
+plugins load, and that seed remains a Storybook fixture.
 Tracked registry-media guidance and the canonical registry-media chapter MUST
 stay aligned on story naming, capture density, authored data, generation
 commands, source-specific diagnostic isolation, production-compatible browser
@@ -120,6 +200,33 @@ shims, final-state assertions, and baseline policy.
 They also stay aligned on required banner and selective distinct Overview
 roles, two-theme capture, exact half-area diagonal composition, Word Count
 full-shell framing, and the four-output media contract.
+The shared Storybook host installs published Mira 0.1.2 so Design Core 0.7.0
+and the 0.0.3 editor plugins resolve one Mira line. Deep Mira modules stay in
+the Vite prebundle, which converts their CommonJS dependencies before the
+preview loads them.
+The Transcripts Reading preview is visual-pending under
+`Plugins/Transcripts/Panels/Reading`. It MUST show the scrollable sample in
+all six governed workspace placements, with slightly larger circular speaker avatars in
+distinct colours, a compact theme-surface footer, and one source icon that opens the Markdown editor.
+`Plugins/Transcripts/Registry Screenshots` is in the registry-media inventory.
+Its shell presets the open note in the workspace seed, so the first frame is
+that page.
+The PDF viewing preview is visual-pending under `Plugins/PDF/Panels/Viewing`.
+It MUST show the seeded PDF in all six governed placements, and Middle (Top
+Tabs) MUST also show that PDF inside a note embed. Registry media selection
+includes `Plugins/PDF/Registry Screenshots`. Stories stay `visual-pending` and MUST
+NOT create Visual Delta baselines.
+The Canvas preview is visual-pending under `Plugins/Canvas/Panels`.
+It MUST show the legacy feature board in all six governed placements, and Middle
+(Top Tabs) MUST also show that canvas inside a note embed. `Plugins/Canvas/Features`
+MUST isolate each node kind, a heading section, labeled connectors, and the note
+embed. Registry media selection includes `Plugins/Canvas/Registry Screenshots`.
+Stories stay `visual-pending` and MUST NOT create Visual Delta baselines.
+The CSV table preview is visual-pending under `Plugins/CSV/Panels/Table`.
+It MUST show the seeded CSV in all six governed placements, and Middle (Top
+Tabs) MUST also show that CSV inside a note embed. Registry media selection
+includes `Plugins/CSV/Registry Screenshots`. Stories stay `visual-pending` and MUST
+NOT create Visual Delta baselines.
 Shared full-shell framing changes MUST preserve the complete 3:2 source capture
 and prove both horizontal edges remain in the composed output. Every composed
 frame MUST preserve the shared dark right-edge gutter; subject-focused presets
@@ -148,10 +255,15 @@ interaction run falsely green.
 Until the affected Bits UI releases provide equivalent lifecycle cleanup, the
 root dependency graph applies reviewed pnpm patches to every resolved version.
 Release verification inventories the versions actually resolved in the frozen
-lockfile and checks their patch mappings, hashes and Link Preview selection-timer
-cleanup, so a dependency refresh cannot silently restore destroyed-effect reads.
+lockfile and checks their patch mappings, hashes, Link Preview selection-timer
+cleanup and the Slider destroyed-state document-handler guards, so a dependency
+refresh cannot silently restore destroyed-effect reads.
 Older versions also require Scroll Area resize-timer cancellation; 2.19.5 uses
-the upstream synchronous resize path. The user approved the scoped 2.19.5
+the upstream synchronous resize path. The renderer attaches pointer listeners
+one microtask late, so a Slider destroyed in the same tick it mounted leaks its
+document listeners past effect teardown; the tracked 2.19.5 patch keeps every
+leaked document pointer handler inert once its owning effect is destroyed
+(LP-SPEC-058). The user approved the scoped 2.19.5
 lifecycle-patch exception while an upstream fixed release remains unavailable.
 Mira 0.0.4 supplies pending-overlay registration and focus teardown through its
 published Bits UI 2.19.5 dependency. The consumer floor and frozen lockfile must
@@ -182,8 +294,8 @@ so both sides of moves are checked. Empty, malformed, ambiguous or unavailable
 comparisons, executable files, symlinks, other spec files and mixed changes
 retain full validation. Pushes, manual runs and reusable release calls retain
 full validation. The fast lane uses the pinned toolchain and frozen graph and
-runs the existing `pnpm spec:check`, including validation, mdBook, spec-first
-and App ownership, without package builds or publication prerequisites.
+runs the existing `pnpm spec:check` (validation, mdBook, and spec-first)
+and `pnpm check:app-ownership`, without package builds or publication prerequisites.
 Validate requires successful classification and image resolution. It accepts
 the fast route only when specification checks succeed and every full lane is
 skipped; otherwise every full lane must succeed. Unexpected skips, cancellations
@@ -192,9 +304,9 @@ acceptance into a successful aggregate. Executable regressions cover both routes
 and their failure states. Community is not a CI prerequisite. Dependency auditing is
 protected by LP-SPEC-048: root `check`, `ci:release`, and the quality job run
 `pnpm audit` against the committed lockfile, and only recorded
-`auditConfig.ignoreCves` entries may suppress an unpatched advisory. Functional Storybook and
+`auditConfig.ignoreCves` entries may suppress recorded unpatched advisories. Functional Storybook and
 axe failures remain blocking in their own lane; visual baselines do not become
-a deployment gate through this infrastructure change. Container setup marks
+a deployment gate. The local suite uses eight browser shards. The unit job installs jj 0.45.1. Sync tests are skipped. Container setup marks
 the checked-out workspace as a trusted Git directory before specification
 tools inspect tracked files; this trust is scoped to the exact workspace path.
 The reusable validation, production-candidate handoff, and downloaded-artifact
@@ -234,14 +346,12 @@ contract required by LP-SPEC-046 because those semantics are repository-owned.
 
 The AI Controller migration covers AI's execution facade, domain tool endpoints and
 deferred context preparation. Shared Storybook preview publishes a controller
-connection bridge only when an explicit URL and token are configured; default
+connection bridge only when a URL and token are configured; default
 stories stay Fake. The shared Storybook build uses Community's public
-Turso helper in both client and worker graphs; full static-build and interaction
+Turso helper in both graphs; full static-build and interaction
 acceptance accompanies that configuration change.
 
-The complete interaction lane runs four serial shards with a fresh browser for
-each shard. Files run sequentially within a shard to bound retained browser state
-and resource use; all stories and accessibility assertions remain selected.
+Pull-request CI runs four parallel interaction shards. Each quarter is two browser eighths with a 2 GiB shared-memory mount. Files stay sequential inside a browser, and every story and accessibility assertion remains selected.
 
 Deferred publication retains the release and renewal workflows in source.
 The workflow regression test MUST verify explicit activation on every job,
@@ -280,3 +390,82 @@ publication, enrollment or content transfer (LN-SYNC-042).
 The static catalog build has a bounded 6144 MiB Node heap. The default 4 GiB
 heap exhausts while compiling the complete catalog with private Sync enabled;
 the build budget does not alter interaction, accessibility or artifact gates.
+
+The catalog validates shared repository-history public exports with recorded
+source and consumer evidence. Optional migration peers are provided explicitly
+through ignored local archive overlays; committed package ranges and registry
+lockfiles retain portable dependency coordinates. Audit remediation changes
+patched tool versions without adding advisory suppressions.
+
+The optional History replacement observer remains governed by LN-HIST-015
+and its single verification row. Source, archive and consuming-host evidence
+remain distinct; it grants no exception to qualification, source ownership or
+visual-baseline approval.
+
+The plugin interaction runner owns IPv4 loopback port 63422 with strict port
+selection. Notes uses 63421 and Desktop retains its separate catalog port.
+Concurrent browser APIs cannot share IPv4/IPv6 listeners behind `localhost`
+because module and RPC requests may otherwise reach another repository.
+
+Native first-party algorithms are mapped to the dedicated native-services
+chapter and native-verification table. Cargo source, retained renderer fixture
+and consuming Notes lifetime evidence remain distinct. Native-only intake does
+not qualify npm publication, host adoption, or unrelated pending plugin work.
+The ordinary verification generator leaves the `LN-NATIVE` namespace with its
+dedicated table, preserving evidence and avoiding duplicate requirement rows.
+
+The current CSV metadata synchronization follows LP-SPEC-002 and keeps the
+separate native-services and distribution gates alongside its plugin chapter.
+The Markdown image URL lease follows the same split: the plugin chapter owns
+the vault hook, and this governance chapter does not gain a new gate. The
+vendored DOCX editor follows that same split and does not add a governance gate.
+The DOCX PDF export polyfill follows that same split and does not add a
+governance gate.
+
+## Candidate dependency audit
+
+<a id="lp-spec-057"></a>
+
+| ID          | Requirement                                                                                                                                                                                                                                                                                                                                                                          |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| LP-SPEC-057 | Archive-backed validation MUST audit the resolved installed candidate graph with the ordinary pnpm advisory policy. It MUST preserve that lockfile before restoring portable source metadata. Registry validation without candidate archives MUST audit the tracked graph. A candidate audit MUST NOT add advisory ignores or silently substitute the old registry dependency graph. |
+
+Private Docker validation may select `sshMultiplexing: false` for a direct SSH
+connection. Agent authentication, literal arguments, endpoint validation,
+resource bounds and Docker-only qualification remain unchanged.
+
+An absolute private `sshControlPath` may reuse an already authenticated owned
+connection. This changes connection reuse only, retaining the same endpoint,
+agent credentials, source qualification and Docker-only runtime boundaries.
+
+## Source-bound tooling fixtures
+
+LP-SPEC-049 release regressions compare complete active package/runtime
+coordinates against independently read manifests instead of a fixed count.
+Private and non-plugin fixtures remain excluded, and malformed manifests fail.
+LP-SPEC-053 snapshot fixtures explicitly select a base from their own temporary
+repository in a child environment; an outer validation revision must not leak
+into that repository. Complete source, ancestry, deletion and dirty-file checks
+remain enforced. These fixture repairs change no production source exporter.
+
+Dependency-lock repair uses ordinary registry semver manifests with the local
+pnpm hook disabled. Existing Bits UI and text-layout patches share the workspace
+patch authority; tests keep both the lifecycle/hash and portable-lock guards.
+A generated lock or a temporary archive graph is not release qualification.
+
+CSV Registry Screenshots are application stories under LP-SPEC-054. Their
+registry demo reaches the existing real WorkspaceShell through PanelDemo, so
+the classification inventory MUST include that family alongside the CSV panel.
+This inventory repair changes no story assertions, product code or baselines.
+
+Graph settings acceptance distinguishes coalescing from lifecycle admission.
+A source close-drain regression must prove the pending debounce remains owned;
+recovery must refresh mounted views without another write. Full session gates
+remain due after M7 implementation.
+
+Search notice-ownership qualification exercises the real Notice boundary with
+another compatibility host active. The original store-only view-state
+query-persistence qualification is superseded by the landed live query/scope
+snapshot design (LN-SRCH-006), and the renumbered LN-SRCH-054 requirement
+avoids the independently assigned LN-SRCH-051/052 identifiers; the rework
+record documents both decisions.

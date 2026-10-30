@@ -92,7 +92,7 @@
       <div class="bases-style-border-t-b950dd bases-style-p-2-7660b4">
         <div class="bases-style-grid-f3c543 bases-style-grid-cols-1-d7c833 bases-style-gap-2-77a2a2">
           <Select.Root type="single" bind:value={getDirection, setDirection}>
-            <Select.Trigger size="sm" class="bases-style-bg-background-e6f9e3 bases-style-h-8-ed8a5d bases-style-justify-between-8ef226">
+            <Select.Trigger aria-label="Group sort direction" size="sm" class="bases-style-bg-background-e6f9e3 bases-style-h-8-ed8a5d bases-style-justify-between-8ef226">
               {directions.find(
                 (direction) => direction.value === getDirection(),
               )?.label}

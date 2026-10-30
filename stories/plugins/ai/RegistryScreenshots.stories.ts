@@ -60,7 +60,11 @@ export const ChatWithToolActivity: Story = {
           '[data-workspace-surface="left-sidebar"]'
         );
         expect(leftSidebar?.getBoundingClientRect().width ?? 0).toBeLessThan(2);
-        expect(within(panel).getByText("vault.read")).toBeVisible();
+        expect(
+          within(panel).getByText("vault.read", {
+            selector: '[data-ui-part="call-name"]',
+          })
+        ).toBeVisible();
         expect(
           within(panel).getByRole("article", {
             name: "Message from assistant",

@@ -4,24 +4,39 @@ A standalone Bases patch carries the picker accessibility repair before the
 Design Core 0.4.0 framework refresh. Search inputs explicitly reference unique
 result lists and property icon actions expose accessible names. The property
 popup uses grid rows with independent visibility/edit controls in grid cells,
-preserving search and keyboard actions without buttons nested in options. The patch
-retains the existing published dependency ranges, so Notes can consume the
-released fix without waiting for its own API/UI compatibility release.
+preserving search and keyboard actions without buttons nested in options.
+
+The package now requires the published API `^0.2.0` and Design Core `^0.7.0`
+floors.
+
+The package requires published Design Core `^0.7.0` for prepared browser CSS
+and bundled fonts through public exports. Application state and existing plugin
+behavior retain their owning contracts.
+
+Bases Command search inputs explicitly reference their result lists with stable
+per-instance IDs; property actions expose accessible names. Workflow acceptance
+waits for opening popovers and suggestions before checking visibility or
+geometry, retaining existing assertions and accessibility gates.
+Filter group and operator select triggers carry explicit purpose names
+independently of their selected option text; operator names include the current
+property.
+Grouping and sorting directions, column summaries, layout and data-driven view
+options follow the same purpose-name contract across the complete Select surface.
 
 The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.
 
-This candidate consumes published API 0.1.2 through its portable peer range.
-Shared shell qualification uses UI and File Explorer 0.1.2 and Workspace 0.2.0.
+This candidate consumes published API 0.2.0 through its portable peer range.
+Shared shell qualification uses UI 0.1.4, File Explorer 0.2.0 and Workspace 0.3.0.
 Mobile shell acceptance uses the published count-bearing dock label, opens the
 workspace tab chooser and returns with Done. It retains real-App plugin and
 collapsed-sidebar assertions; this repairs a stale story selector.
 
-Release qualification uses `@lapis-notes/api@^0.1.2` for the shared renderer,
+Release qualification uses `@lapis-notes/api@^0.2.0` for the shared renderer,
 diagnostics invalidation and selected metadata fingerprint contracts. Portable
 consumers must resolve this prerequisite from npm before plugin publication.
 
-Dependency acceptance now uses published Design Core `0.3.2` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
+Earlier dependency acceptance used Design Core `0.3.2` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
 unchanged; local overrides for these released packages are retired.
 
 Bases presentation resolves Design Core through the repository's current
@@ -89,6 +104,8 @@ plugin shares the host's App and framework identity.
 | LN-BASE-029 | Advanced filter expressions MUST use the shared Lapis CodeMirror completion popover chrome in Storybook and production hosts. Focusing the inline query editor MUST NOT paint CodeMirror's default dotted outline; the surrounding segmented filter row remains the visible focus boundary.                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | LN-BASE-030 | Advanced filter source mode MUST validate non-empty expressions without preventing correction. Invalid drafts MUST mark the CodeMirror textbox invalid, show a destructive error label beneath it, and MUST NOT replace the last valid applied filter. Correcting the draft MUST clear the error and apply the valid expression.                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | LN-BASE-031 | Governed Bases Storybook coverage MUST start from persisted indexed rows, surface an async metadata query failure, and recover after a later committed invalidation without enumerating a MetadataCache snapshot.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| LN-BASE-032 | Filter group and operator selects MUST expose explicit accessible names    identifying their purpose independently of selected option text. An operator's name MUST include the current property display name and update when that property changes.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| LN-BASE-033 | Grouping and sorting directions, column summaries, layout and every data-driven view-option select MUST expose    an explicit accessible purpose name. Property-specific sort names MUST include the current property display name.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 
 ## Public surface
 
@@ -149,3 +166,25 @@ The signed runtime declares its compiled Svelte imports through the exact
 compiler-versioned renderer contracts in LP-SPEC-014 and LP-SPEC-047. Host-owned
 components and archived components share that renderer graph; npm package peers
 remain portable.
+
+The package test toolchain uses patched Vite 6.4.4 and Vitest 4.1.12
+or newer within the existing major versions. Shared catalog qualification uses
+the patched Storybook toolchain described in distribution; application behavior
+and public package ownership remain unchanged.
+
+Current shared-shell qualification uses the released Design Core 0.6
+public boundary and matching Notes framework archives. Published dependency
+ranges now admit that boundary directly; the Avatar repair remains a recorded
+local candidate until the separate release gate.
+
+Current App-backed catalog seeds and copyable host examples use `.lapis`
+for application state, matching the Notes-wide default. Historical vault data
+and the frozen Deno host are not migrated or edited.
+
+## File artwork
+
+<a id="lp-spec-056"></a>
+
+| ID | Requirement |
+| --- | --- |
+| LP-SPEC-056 | Bases MUST register its custom file SVG through the owning Plugin icon helper and contribute that ID for `.base` and `.bases` editor-view patterns. Plugin unload MUST release its artwork through the API lifecycle. Source and consumer qualification MUST use the public API archive containing that helper until the corresponding registry release is available. |

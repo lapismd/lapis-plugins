@@ -112,9 +112,11 @@ function assertStackedComposer(panel: HTMLElement): void {
   );
   expect(emptyBox.height).toBeGreaterThan(shellBox.height * 0.7);
   expect(shellBox.bottom).toBeLessThanOrEqual(dockBox.top + 2);
+  const dockPadding = parseFloat(getComputedStyle(dock!).paddingBottom);
+  expect(dockPadding).toBeGreaterThan(0);
   expect(
     dockBox.bottom - composerBody!.getBoundingClientRect().bottom,
-  ).toBeGreaterThanOrEqual(20);
+  ).toBeGreaterThanOrEqual(dockPadding);
   expect(dockBox.bottom).toBeLessThanOrEqual(panelBox.bottom + 2);
   expect(dockBox.top).toBeGreaterThan(panelBox.top + panelBox.height * 0.4);
 }
@@ -219,7 +221,7 @@ export const Desktop: Story = {
       within(panel).getByRole("button", { name: "Effort and model" }),
     );
     const modelMenu = body.getByTestId("ai-chat-model");
-    await expect(modelMenu).toBeVisible();
+    await waitFor(() => expect(modelMenu).toBeVisible());
     await userEvent.hover(modelMenu);
     await expect(
       await body.findByRole("menuitemradio", { name: "gpt-5.6-sol" }),
@@ -231,13 +233,20 @@ export const Desktop: Story = {
     await userEvent.keyboard("{Escape}");
 
     const input = within(panel).getByRole("combobox", { name: "Message" });
+    await waitFor(() =>
+      expect(getComputedStyle(input).pointerEvents).not.toBe("none"),
+    );
     await userEvent.type(input, "Summarize this note");
     await userEvent.keyboard("{Enter}");
     await waitFor(() => {
       expect(
         panel.querySelector('[data-ui-component="ai-chat-reasoning"]'),
       ).not.toBeNull();
-      expect(within(panel).getByText("vault.read")).toBeVisible();
+      expect(
+        within(panel).getByText("vault.read", {
+          selector: '[data-ui-part="call-name"]',
+        }),
+      ).toBeVisible();
       expect(
         within(panel).getByRole("article", { name: "Message from assistant" }),
       ).toHaveTextContent("Summary");
@@ -291,7 +300,7 @@ export const Desktop: Story = {
     await userEvent.click(await body.findByRole("option", { name: "Cursor" }));
     await waitFor(async () => {
       const raw =
-        await demoApp(canvasElement).vault.adapter.read(".obsidian/ai.json");
+        await demoApp(canvasElement).vault.adapter.read(".lapis/ai.json");
       expect(JSON.parse(raw).settings.acpAgent).toBe("cursor");
     });
     const closeSettings = within(dialog).getByRole("button", {
@@ -302,7 +311,7 @@ export const Desktop: Story = {
     });
     await userEvent.click(closeSettings);
     const raw =
-      await demoApp(canvasElement).vault.adapter.read(".obsidian/ai.json");
+      await demoApp(canvasElement).vault.adapter.read(".lapis/ai.json");
     expect(JSON.parse(raw)).not.toHaveProperty("sessions");
     expect(app.workspace.rightSplit.collapsed).toBe(true);
   },
@@ -400,9 +409,13 @@ export const CommunityToolOptIn: Story = {
         "ready",
       ),
     );
-    await userEvent.click(
-      await canvas.findByRole("button", { name: "Open settings" }),
+    const openSettings = await canvas.findByRole("button", {
+      name: "Open settings",
+    });
+    await waitFor(() =>
+      expect(getComputedStyle(openSettings).pointerEvents).not.toBe("none"),
     );
+    await userEvent.click(openSettings);
     const dialog = canvas.getByRole("dialog", { name: "Settings" });
     await userEvent.click(
       await within(dialog).findByRole("button", { name: "AI" }),
@@ -438,7 +451,7 @@ export const CommunityToolOptIn: Story = {
     await expect(community).toHaveAttribute("data-state", "checked");
     await waitFor(async () => {
       const raw =
-        await demoApp(canvasElement).vault.adapter.read(".obsidian/ai.json");
+        await demoApp(canvasElement).vault.adapter.read(".lapis/ai.json");
       const persisted = JSON.parse(raw).settings;
       expect(persisted.enabledAppToolNames).toContain("story_word_count");
       expect(persisted).not.toHaveProperty("enabledCommunityToolPluginIds");
@@ -565,9 +578,11 @@ export const LocalConversations: Story = {
     });
     const deleteChat = body.getByRole("menuitem", { name: /^Delete Chat$/ });
     const newChatItem = body.getByRole("menuitem", { name: /^New Chat$/ });
-    await expect(archiveChat).toBeVisible();
-    await expect(deleteChat).toBeVisible();
-    await expect(newChatItem).toBeVisible();
+    await waitFor(() => {
+      expect(archiveChat).toBeVisible();
+      expect(deleteChat).toBeVisible();
+      expect(newChatItem).toBeVisible();
+    });
     const conversationMenu =
       archiveChat.closest<HTMLElement>("[data-ai-part='conversation-menu']") ??
       archiveChat.closest<HTMLElement>("[role='menu']");
@@ -599,11 +614,14 @@ export const LocalConversations: Story = {
       expect(
         within(panel).getByRole("button", { name: "Conversation actions" }),
       ).toHaveAttribute("aria-expanded", "false");
+      expect(getComputedStyle(conversationTrigger).pointerEvents).not.toBe("none");
     });
     await userEvent.click(
       within(panel).getByRole("button", { name: "Effort and model" }),
     );
-    await userEvent.hover(body.getByTestId("ai-chat-model"));
+    const preferenceModelMenu = body.getByTestId("ai-chat-model");
+    await waitFor(() => expect(preferenceModelMenu).toBeVisible());
+    await userEvent.hover(preferenceModelMenu);
     const modelItem = await body.findByRole("menuitemradio", {
       name: "gpt-5.6-sol",
     });
@@ -613,6 +631,7 @@ export const LocalConversations: Story = {
       expect(
         body.queryByRole("menuitemradio", { name: "gpt-5.6-sol" }),
       ).toBeNull();
+      expect(getComputedStyle(conversationTrigger).pointerEvents).not.toBe("none");
     });
     await userEvent.click(
       within(panel).getByRole("button", {
@@ -939,15 +958,16 @@ export const FollowScope: Story = {
         "Projects",
       );
     });
-    await userEvent.click(
-      within(panel).getByRole("button", {
-        name: "Change chat folder: Projects",
-      }),
+    const scopeTrigger = within(panel).getByRole("button", {
+      name: "Change chat folder: Projects",
+    });
+    await waitFor(() =>
+      expect(getComputedStyle(scopeTrigger).pointerEvents).not.toBe("none"),
     );
+    await userEvent.click(scopeTrigger);
     const body = within(canvasElement.ownerDocument.body);
-    await expect(
-      await body.findByPlaceholderText("Search chat folders"),
-    ).toBeVisible();
+    const folderSearch = await body.findByPlaceholderText("Search chat folders");
+    await waitFor(() => expect(folderSearch).toBeVisible());
     await userEvent.click(body.getByRole("option", { name: "Vault" }));
     await waitFor(() => {
       expect(canvas.getByTestId("ai-chat-scope-path")).toHaveTextContent(

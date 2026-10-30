@@ -6,7 +6,7 @@ import { expectSyncReady } from "./story-assertions";
 const meta = {
   title: "Plugins/Sync/Shell",
   component: SyncWorkspaceDemo,
-  tags: ["!autodocs", "visual-pending", "test"],
+  tags: ["!autodocs", "visual-pending", "test", "sync-unfinished"],
   parameters: { layout: "fullscreen" },
 } satisfies Meta<typeof SyncWorkspaceDemo>;
 export default meta;

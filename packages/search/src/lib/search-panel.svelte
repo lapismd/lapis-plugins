@@ -8,6 +8,8 @@
     searchQueryLanguageSupport,
     Notice,
     type App,
+    type Plugin,
+    type SearchResultScope,
     type EditorPosition,
     type TFile,
     TextFileView,
@@ -24,6 +26,7 @@
   import * as Popover from "@lapismd/design-core/shadcn/popover";
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
   import * as Sidebar from "@lapismd/design-core/shadcn/sidebar";
+  import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
   import { Switch } from "@lapismd/design-core/shadcn/switch";
   import ChevronDown from "@lucide/svelte/icons/chevron-down";
   import ChevronRight from "@lucide/svelte/icons/chevron-right";
@@ -57,8 +60,18 @@
     type SearchResult,
   } from "./search-result-model";
   import { SearchViewType } from "./search-view-type";
+  import { observeRecoveredSearchSettings } from "./search-settings-observer";
+
+  import {
+    SearchProviderController,
+    searchProviderFields,
+    type ProviderResults,
+  } from "./search-provider-controller";
+  import { groupProviderResults } from "./search-provider-groups";
+  import SearchHistoryVersions from "./search-history-versions.svelte";
 
   type SearchPanelPlugin = {
+    readonly state: Plugin["state"];
     searchManager: SearchManager;
     getSettings(): SearchPluginSettings;
     updateSettings(patch: SearchPluginSettingsPatch): Promise<void>;
@@ -81,9 +94,13 @@
   let {
     app,
     initialQuery = "",
+    initialScope = "files",
+    onStateChange,
   }: {
     app: App;
     initialQuery?: string;
+    initialScope?: SearchResultScope;
+    onStateChange?: () => void;
   } = $props();
 
   const plugin = untrack(() => {
@@ -94,7 +111,97 @@
     return registered;
   });
 
-  let query = $state("");
+  let query = $state(untrack(() => initialQuery));
+  let scope = $state<SearchResultScope>(untrack(() => initialScope));
+  let previousViewState = untrack(() => JSON.stringify({ query, scope }));
+  $effect(() => {
+    const next = JSON.stringify({ query, scope });
+    if (next === previousViewState) return;
+    previousViewState = next;
+    untrack(() => onStateChange?.());
+  });
+  export function getSearchState() {
+    return { query, scope };
+  }
+  let providerRows = $state<ProviderResults[]>([]);
+  const providerController = untrack(
+    () =>
+      new SearchProviderController(
+        app.searchResultProviders,
+        (error) =>
+          new Notice(
+            `History search failed: ${error instanceof Error ? error.message : String(error)}`,
+            undefined,
+            app,
+          ),
+      ),
+  );
+  const reportProviderError = (error: unknown) => {
+    new Notice(
+      `History search failed: ${error instanceof Error ? error.message : String(error)}`,
+      undefined,
+      app,
+    );
+  };
+  const historyGroups = $derived(groupProviderResults(providerRows));
+  const historyCount = $derived(
+    historyGroups.reduce((sum, group) => sum + group.versions.length, 0),
+  );
+  const historyPending = $derived(
+    providerRows.some(
+      (row) => row.busy || row.next || row.status?.complete === false,
+    ),
+  );
+  const parsedQuery = $derived(parseSearchQueryAst(query));
+  const currentUnsupported = $derived(
+    searchProviderFields(parsedQuery.expression).some((field) =>
+      ["author", "after", "before", "commit"].includes(field),
+    ),
+  );
+  const displayGroups = $derived.by(() => {
+    const groups = new Map(
+      historyGroups.map((history) => [
+        history.id,
+        {
+          id: history.id,
+          history,
+          current: undefined as SearchResult | undefined,
+        },
+      ]),
+    );
+    for (const current of filteredResults) {
+      const existing = groups.get(current.file.path);
+      if (existing) existing.current = current;
+      else
+        groups.set(current.file.path, {
+          id: current.file.path,
+          current,
+          history: undefined!,
+        });
+    }
+    const mode = settings.view.sortMode;
+    return [...groups.values()].sort((a, b) => {
+      if (mode.startsWith("filename"))
+        return (
+          (mode.endsWith("desc") ? -1 : 1) *
+            (a.current?.file.name ?? a.history?.title ?? a.id).localeCompare(
+              b.current?.file.name ?? b.history?.title ?? b.id,
+              undefined,
+              { numeric: true, sensitivity: "base" },
+            ) || a.id.localeCompare(b.id)
+        );
+      const time = (item: typeof a) =>
+        item.current
+          ? mode.startsWith("created")
+            ? item.current.file.stat.ctime
+            : item.current.file.stat.mtime
+          : (item.history?.versions[0]?.hit.timestamp ?? 0);
+      return (
+        (mode.endsWith("desc") ? -1 : 1) * (time(a) - time(b)) ||
+        a.id.localeCompare(b.id)
+      );
+    });
+  });
   let settings = $state(untrack(() => plugin.getSettings()));
   let results = $state<SearchResult[]>([]);
   let resultCount = $state(0);
@@ -108,9 +215,32 @@
   let metadataFacetError = $state<string | null>(null);
   let metadataFacetGeneration = 0;
   let searchRevision = 0;
+  const resultSummary = $derived(
+    searching
+      ? "Searching…"
+      : scope === "files"
+        ? `${resultCount} result${resultCount === 1 ? "" : "s"}`
+        : `${scope === "history" ? 0 : resultCount} current · ${historyCount} saved${historyPending ? " loaded" : ""}`,
+  );
+  const providerSearchKey = $derived(
+    JSON.stringify({
+      text: query,
+      caseSensitive: settings.view.matchCase,
+      mode: retrievalModeForQuery(),
+      limit: settings.query.resultLimit,
+      enabled: scope !== "files",
+    }),
+  );
+  $effect(() => {
+    const { enabled, ...input } = JSON.parse(providerSearchKey);
+    const timer = window.setTimeout(
+      () => providerController.search(input, enabled),
+      250,
+    );
+    return () => window.clearTimeout(timer);
+  });
   const databaseRefreshDelayMs = 75;
 
-  const parsedQuery = $derived(parseSearchQueryAst(query));
   const diagnostic = $derived(
     query.trim() ? (parsedQuery.diagnostics[0]?.message ?? null) : null,
   );
@@ -124,6 +254,7 @@
   const searchRequestKey = $derived(
     JSON.stringify([
       query,
+      scope,
       settings.view.matchCase,
       settings.view.showMoreContext,
       settings.view.semanticSearchInStructuredQueries,
@@ -144,6 +275,7 @@
       : "Matching filenames, paths, tags, metadata, and content.";
   });
   const filteredResults = $derived.by(() => {
+    if (scope === "history" || currentUnsupported) return [];
     const facet = settings.view.resultFacet;
     const matching = results.filter((result) => {
       if (facet === "all") return true;
@@ -163,11 +295,41 @@
       .map((file) => file.name)
       .sort()
       .slice(0, 100);
-    return createVaultSearchFilterSyntax({
+    const syntax = createVaultSearchFilterSyntax({
       fileNames: names,
       paths,
       tags: metadataTags,
     });
+    if (scope === "files") return syntax;
+    const fields =
+      scope === "history"
+        ? (syntax.fields?.filter((field) =>
+            ["file", "path", "content"].includes(field.name),
+          ) ?? [])
+        : (syntax.fields ?? []);
+    return {
+      ...syntax,
+      title: "Search syntax",
+      fields: [
+        ...fields,
+        { name: "author", description: "Checkpoint author", operators: [":"] },
+        {
+          name: "after",
+          description: "Checkpoint date on or after (UTC)",
+          operators: [":"],
+        },
+        {
+          name: "before",
+          description: "Checkpoint date on or before (UTC)",
+          operators: [":"],
+        },
+        {
+          name: "commit",
+          description: "Checkpoint revision",
+          operators: [":"],
+        },
+      ],
+    };
   });
 
   async function refreshMetadataFacets(): Promise<void> {
@@ -193,6 +355,10 @@
     }
   }
 
+  export function setSearchScope(next: SearchResultScope): void {
+    scope = next;
+  }
+
   export function setSearchQuery(next: string): void {
     query = next;
   }
@@ -212,13 +378,28 @@
     );
   }
 
+  let openQuery = "";
+  $effect(() => {
+    if (openQuery !== query) {
+      openQuery = query;
+      resultOpenState = {};
+    }
+  });
   function refreshOpenState(items: SearchResult[], identity: string): void {
     if (identity === resultIdentity) return;
     resultIdentity = identity;
     const defaultOpen = !settings.view.collapseResults;
-    resultOpenState = Object.fromEntries(
-      items.map((item) => [item.file.path, defaultOpen]),
-    );
+    const previous = openQuery === query ? resultOpenState : {};
+    openQuery = query;
+    resultOpenState = {
+      ...previous,
+      ...Object.fromEntries(
+        items.map((item) => [
+          item.file.path,
+          previous[item.file.path] ?? defaultOpen,
+        ]),
+      ),
+    };
   }
 
   function setResultOpen(path: string, open: boolean): void {
@@ -251,13 +432,19 @@
     if (patch.view?.collapseResults !== undefined) {
       const defaultOpen = !settings.view.collapseResults;
       resultOpenState = Object.fromEntries(
-        results.map((result) => [result.file.path, defaultOpen]),
+        displayGroups.map((group) => [group.id, defaultOpen]),
       );
     }
   }
 
   async function executeSearch(term: string, revision: number): Promise<void> {
-    if (!term.trim() || diagnostic) {
+    if (plugin.state !== "enabled") return;
+    if (
+      !term.trim() ||
+      diagnostic ||
+      scope === "history" ||
+      currentUnsupported
+    ) {
       results = [];
       resultCount = 0;
       searching = false;
@@ -272,11 +459,11 @@
         snippetLength: snippetLength(),
         mode: retrievalModeForQuery(),
       });
-      if (revision !== searchRevision) return;
+      if (revision !== searchRevision || plugin.state !== "enabled") return;
       const nextResults = response.hits
         .map((hit) => searchResultFromHit(app, hit))
         .filter((result): result is SearchResult => result !== null);
-      resultCount = response.count;
+      resultCount = nextResults.length;
       const identity = `${term}\u0000${nextResults
         .map(
           (result) =>
@@ -285,7 +472,14 @@
         .join("\u0000")}`;
       if (identity !== resultIdentity) results = nextResults;
       refreshOpenState(nextResults, identity);
-      void rememberSearch(term);
+      await rememberSearch(term);
+    } catch (error) {
+      if (revision === searchRevision && plugin.state === "enabled")
+        new Notice(
+          error instanceof Error ? error.message : String(error),
+          undefined,
+          app,
+        );
     } finally {
       if (revision === searchRevision) searching = false;
     }
@@ -303,6 +497,7 @@
   });
 
   async function refreshIndex(): Promise<void> {
+    providerController.refresh();
     if (indexing) return;
     indexing = true;
     try {
@@ -319,10 +514,18 @@
       result.file.path,
       ...result.matches.map((match) => `  ${match.key}: ${match.text}`),
     ]);
+    lines.push(
+      ...providerRows.flatMap((row) =>
+        row.hits.flatMap((hit) => [
+          hit.path ?? hit.title,
+          ...hit.matches.map((match) => `  ${match.field}: ${match.text}`),
+        ]),
+      ),
+    );
     const text = lines.join("\n");
     try {
       await navigator.clipboard.writeText(text);
-      new Notice("Search results copied");
+      new Notice("Search results copied", undefined, app);
     } catch {
       const textarea = document.createElement("textarea");
       textarea.value = text;
@@ -334,6 +537,8 @@
       textarea.remove();
       new Notice(
         copied ? "Search results copied" : "Unable to copy search results",
+        undefined,
+        app,
       );
     }
   }
@@ -419,7 +624,26 @@
   }
 
   onMount(() => {
-    query = initialQuery;
+    const settingsChanged = observeRecoveredSearchSettings(
+      app,
+      "search",
+      (next) => {
+        const collapseChanged =
+          settings.view.collapseResults !== next.view.collapseResults;
+        settings = next;
+        if (collapseChanged) {
+          resultOpenState = Object.fromEntries(
+            displayGroups.map((group) => [
+              group.id,
+              !next.view.collapseResults,
+            ]),
+          );
+        }
+      },
+    );
+    const unsubscribeProviders = providerController.subscribe(
+      (rows) => (providerRows = rows),
+    );
     void refreshMetadataFacets();
     let databaseRefreshTimer: number | undefined;
     const databaseChanged = app.appDatabase.subscribeToChanges((change) => {
@@ -440,6 +664,9 @@
       () => void refreshMetadataFacets(),
     );
     return () => {
+      settingsChanged();
+      unsubscribeProviders();
+      providerController.close();
       searchRevision += 1;
       metadataFacetGeneration += 1;
       window.clearTimeout(databaseRefreshTimer);
@@ -586,19 +813,31 @@
       </p>
     {/if}
 
+    <div class="search-panel__source">
+      <FilterCommandPicker
+        label={`${scope === "files" ? "Current files" : scope === "history" ? "History" : "Everything"} search source`}
+        value={scope}
+        options={[
+          { value: "files", label: "Current files" },
+          { value: "history", label: "History" },
+          { value: "all", label: "Everything" },
+        ]}
+        onChange={(value: string) => {
+          scope = value as SearchResultScope;
+        }}
+      />
+    </div>
     <div class="search-panel__summary">
       <Button
         variant="ghost"
         size="sm"
         class="search-panel__summary-control"
-        aria-label="Copy search results"
-        disabled={!filteredResults.length}
+        aria-label={`Copy search results: ${resultSummary}`}
+        disabled={!filteredResults.length && !historyCount}
         onclick={copySearchResults}
       >
         <Copy aria-hidden="true" />
-        {searching
-          ? "Searching…"
-          : `${resultCount} result${resultCount === 1 ? "" : "s"}`}
+        {resultSummary}
       </Button>
       <Popover.Root>
         <Popover.Trigger>
@@ -608,8 +847,11 @@
               variant="ghost"
               size="sm"
               class="search-panel__summary-control search-panel__sort"
+              aria-label={formatSearchViewSortLabel(settings.view.sortMode)}
             >
-              <span>{formatSearchViewSortLabel(settings.view.sortMode)}</span>
+              <span class="search-panel__sort-label"
+                >{formatSearchViewSortLabel(settings.view.sortMode)}</span
+              >
               <ChevronsUpDown aria-hidden="true" />
             </Button>
           {/snippet}
@@ -630,6 +872,35 @@
       </Popover.Root>
     </div>
 
+    {#if scope !== "files"}
+      {#if !providerRows.length && query.trim()}<p
+          class="search-panel__explanation"
+        >
+          History search is unavailable. Enable Repository History to search
+          saved versions.
+        </p>{/if}
+      {#each providerRows as row (row.provider.id)}
+        {#if row.unavailable}<p class="search-panel__explanation">
+            {row.provider.label}: {row.unavailable}
+          </p>{/if}
+        {#if row.status?.omitted}<p class="search-panel__explanation">
+            {row.status.omitted} file versions are searchable by path only.
+          </p>{/if}
+        {#if row.status?.complete === false}<p
+            class="search-panel__explanation"
+            role="status"
+          >
+            {row.status.description ??
+              `Indexing history · ${row.status.indexed} checkpoints ready`}
+          </p>{/if}
+      {/each}
+    {/if}
+    {#if currentUnsupported && scope !== "history"}<p
+        class="search-panel__explanation"
+      >
+        Current files do not support checkpoint author, date or revision
+        filters.
+      </p>{/if}
     {#if explanation}
       <p class="search-panel__explanation">{explanation}</p>
     {/if}
@@ -639,7 +910,17 @@
     <Sidebar.Content class="search-panel__results" data-ui-part="content">
       {#if !query.trim()}
         <p class="search-panel__empty">Type to search.</p>
-      {:else if !searching && !diagnostic && filteredResults.length === 0}
+      {:else if providerRows.some((row) => row.busy) && displayGroups.length === 0}
+        <div
+          class="search-panel__loading"
+          role="status"
+          aria-label="Searching saved history"
+        >
+          {#each Array(4) as _}<Skeleton
+              class="search-panel__loading-title"
+            /><Skeleton class="search-panel__loading-snippet" />{/each}
+        </div>
+      {:else if !searching && !historyPending && !providerRows.some((row) => row.unavailable) && !diagnostic && displayGroups.length === 0}
         <p class="search-panel__empty">No matches found.</p>
       {:else}
         <div class="search-panel__tree-inset">
@@ -648,14 +929,16 @@
             aria-label="Search results"
             class="search-panel__tree"
           >
-            {#each filteredResults as result (result.file.path)}
+            {#each displayGroups as display (display.id)}
+              {@const result = display.current}
+              {@const path =
+                result?.file.path ?? display.history?.path ?? display.id}
               {@const open =
-                resultOpenState[result.file.path] ??
-                !settings.view.collapseResults}
+                resultOpenState[display.id] ?? !settings.view.collapseResults}
               <Sidebar.MenuItem role="none" class="search-panel__tree-item">
                 <Collapsible.Root
                   {open}
-                  onOpenChange={(next) => setResultOpen(result.file.path, next)}
+                  onOpenChange={(next) => setResultOpen(display.id, next)}
                   class="search-panel__result"
                 >
                   <Collapsible.Trigger
@@ -664,13 +947,15 @@
                     aria-level={1}
                     aria-selected="false"
                     aria-expanded={open}
-                    aria-label={`${result.file.path}, ${result.matches.length} matches`}
+                    aria-label={result
+                      ? `${result.file.basename} ${(result?.matches.length ?? 0) + (display.history?.versions.length ?? 0)} · ${path}, ${(result?.matches.length ?? 0) + (display.history?.versions.length ?? 0)} matches`
+                      : `${display.history?.title ?? path} ${display.history?.versions.length ?? 0} · ${path}, ${display.history?.versions.length ?? 0} saved versions`}
                   >
                     <ChevronRight
                       class="search-panel__disclosure"
                       aria-hidden="true"
                     />
-                    {#if result.file.extension === "canvas"}
+                    {#if (result?.file.extension ?? display.history?.extension) === "canvas"}
                       <Hash
                         class="search-panel__file-icon"
                         aria-hidden="true"
@@ -683,30 +968,34 @@
                     {/if}
                     <span class="search-panel__file-label">
                       <HighlightedText
-                        text={result.file.basename}
-                        ranges={result.title?.ranges ?? []}
+                        text={result?.file.basename ??
+                          display.history?.title ??
+                          path}
+                        ranges={result?.title?.ranges ?? []}
                       />
                     </span>
                     <Sidebar.MenuBadge class="search-panel__count-badge">
-                      {result.matches.length}
+                      {(result?.matches.length ?? 0) +
+                        (display.history?.versions.length ?? 0)}
                     </Sidebar.MenuBadge>
                   </Collapsible.Trigger>
                   <Collapsible.Content class="search-panel__match-list">
                     <div class="search-panel__match-header">
-                      <span
-                        class="search-panel__match-path"
-                        title={result.file.path}
-                      >
-                        {result.file.path}
+                      <span class="search-panel__match-path" title={path}>
+                        {path}
                       </span>
                       <Badge variant="outline" class="search-panel__mode-badge">
-                        {result.hit.retrievalMode}
+                        {result?.hit.retrievalMode ?? "lexical"}
                       </Badge>
+                      {#if display.history && result}<Badge variant="outline"
+                          >Current</Badge
+                        >{/if}
                     </div>
                     <Sidebar.MenuSub role="group">
-                      {#each result.matches as match, index (`${result.file.path}:${index}`)}
+                      {#each result?.matches ?? [] as match, index (`${display.id}:${index}`)}
+                        {@const currentResult = result!}
                         <Sidebar.MenuSubItem role="none">
-                          {@const loadingKey = `${result.file.path}\u0000${match.id}`}
+                          {@const loadingKey = `${path}\u0000${match.id}`}
                           <div
                             class="search-panel__match-shell"
                             role="treeitem"
@@ -718,12 +1007,12 @@
                               match.context &&
                                 match.context.end < match.context.sourceLength,
                             )}
-                            onclick={() => openResult(result, match.pos)}
+                            onclick={() => openResult(currentResult, match.pos)}
                             onkeydown={(event) => {
                               if (event.key !== "Enter" && event.key !== " ")
                                 return;
                               event.preventDefault();
-                              void openResult(result, match.pos);
+                              void openResult(currentResult, match.pos);
                             }}
                           >
                             {#if match.context?.start}
@@ -736,7 +1025,7 @@
                                 onclick={(event) => {
                                   event.stopPropagation();
                                   void expandMatchContext(
-                                    result,
+                                    currentResult,
                                     match,
                                     "before",
                                   );
@@ -771,7 +1060,7 @@
                                 onclick={(event) => {
                                   event.stopPropagation();
                                   void expandMatchContext(
-                                    result,
+                                    currentResult,
                                     match,
                                     "after",
                                   );
@@ -784,6 +1073,10 @@
                         </Sidebar.MenuSubItem>
                       {/each}
                     </Sidebar.MenuSub>
+                    {#if display.history}<SearchHistoryVersions
+                        versions={display.history.versions}
+                        report={reportProviderError}
+                      />{/if}
                   </Collapsible.Content>
                 </Collapsible.Root>
               </Sidebar.MenuItem>
@@ -791,6 +1084,15 @@
           </Sidebar.Menu>
         </div>
       {/if}
+      {#each providerRows.filter((row) => row.next) as row (row.provider.id)}
+        <Button
+          variant="ghost"
+          size="sm"
+          disabled={row.busy}
+          onclick={() => providerController.more(row.provider.id)}
+          >{row.busy ? "Searching history…" : "Search older history"}</Button
+        >
+      {/each}
     </Sidebar.Content>
   </ScrollArea>
 </div>

@@ -161,5 +161,7 @@ export const GroupedList: Story = {
     const sort = within(sortPopover);
     expect(sort.getByText("Group by")).toBeVisible();
     expect(sort.getByText("Status")).toBeVisible();
+    expect(sort.getByRole("button", { name: "Group sort direction" })).toBeVisible();
+    expect(sort.getByRole("button", { name: "Project sort direction" })).toBeVisible();
   },
 };

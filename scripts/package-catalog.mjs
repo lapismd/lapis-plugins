@@ -10,6 +10,11 @@ const allPluginPackages = [
     pluginId: "bookmarks",
   },
   {
+    directory: "canvas",
+    packageName: "@lapis-notes/canvas",
+    pluginId: "lapis-canvas",
+  },
+  {
     directory: "community",
     packageName: "@lapis-notes/community",
     pluginId: "community",
@@ -34,6 +39,9 @@ const allPluginPackages = [
     packageName: "@lapis-notes/markdown-lint",
     pluginId: "lapis-markdown-lint",
   },
+  { directory: "pdf", packageName: "@lapis-notes/pdf", pluginId: "lapis-pdf" },
+  { directory: "docx", packageName: "@lapis-notes/docx", pluginId: "lapis-docx" },
+  { directory: "csv", packageName: "@lapis-notes/csv", pluginId: "lapis-csv" },
   {
     directory: "search",
     packageName: "@lapis-notes/search",
@@ -53,6 +61,11 @@ const allPluginPackages = [
     directory: "spellcheck",
     packageName: "@lapis-notes/spellcheck",
     pluginId: "spellcheck",
+  },
+  {
+    directory: "transcripts",
+    packageName: "@lapis-notes/transcripts",
+    pluginId: "lapis-transcripts",
   },
   {
     directory: "wordcount",
@@ -107,11 +120,11 @@ export const packageNames = new Set(
 );
 
 export const frameworkPackageVersions = new Map([
-  ["@lapis-notes/api", "^0.1.2"],
-  ["@lapis-notes/file-explorer", "^0.1.2"],
-  ["@lapis-notes/language-service", "^0.1.1"],
-  ["@lapis-notes/ui", "^0.1.2"],
-  ["@lapis-notes/workspace", "^0.2.0"],
+  ["@lapis-notes/api", "^0.2.0"],
+  ["@lapis-notes/file-explorer", "^0.2.0"],
+  ["@lapis-notes/language-service", "^0.1.2"],
+  ["@lapis-notes/ui", "^0.1.4"],
+  ["@lapis-notes/workspace", "^0.3.0"],
 ]);
 
 // These editor runtimes exchange class instances, facets and parser node props

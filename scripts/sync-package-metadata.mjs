@@ -12,18 +12,18 @@ import {
 
 const repositoryRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
-  "..",
+  ".."
 );
 const mode = process.argv[2] ?? "--check";
 assert.ok(
   mode === "--check" || mode === "--write",
-  "Usage: sync-package-metadata.mjs --check|--write",
+  "Usage: sync-package-metadata.mjs --check|--write"
 );
 
 import { versionedRendererHostSpecifier } from "./lib/svelte-runtime-contract.mjs";
 import { rendererCompilerVersionFromLockfile } from "./lib/runtime-host-modules.mjs";
 const rendererVersion = rendererCompilerVersionFromLockfile(
-  await readFile(path.join(repositoryRoot, "pnpm-lock.yaml"), "utf8"),
+  await readFile(path.join(repositoryRoot, "pnpm-lock.yaml"), "utf8")
 );
 const rendererSharedDependencies = new Map(
   Object.entries({
@@ -96,10 +96,49 @@ const rendererSharedDependencies = new Map(
       "svelte/internal/client",
       "svelte/internal/disclose-version",
     ],
+    pdf: [
+      "svelte",
+      "svelte/attachments",
+      "svelte/internal/client",
+      "svelte/internal/disclose-version",
+    ],
+    canvas: [
+      "svelte",
+      "svelte/attachments",
+      "svelte/events",
+      "svelte/internal/client",
+      "svelte/internal/disclose-version",
+      "svelte/internal/flags/legacy",
+      "svelte/reactivity",
+    ],
+    docx: [
+      "svelte",
+      "svelte/attachments",
+      "svelte/internal/client",
+      "svelte/internal/disclose-version",
+    ],
+    csv: [
+      "svelte",
+      "svelte/attachments",
+      "svelte/events",
+      "svelte/internal/client",
+      "svelte/internal/disclose-version",
+      "svelte/reactivity",
+    ],
+    transcripts: [
+      "svelte",
+      "svelte/attachments",
+      "svelte/events",
+      "svelte/internal/client",
+      "svelte/internal/disclose-version",
+      "svelte/internal/flags/legacy",
+      "svelte/reactivity",
+      "svelte/store",
+    ],
     "source-editor": [],
     spellcheck: [],
     wordcount: [],
-  }),
+  })
 );
 
 const descriptions = new Map([
@@ -114,6 +153,11 @@ const descriptions = new Map([
   ],
   ["source-editor", "Source editing for text, JSON, and YAML files"],
   ["slides", "Presentation mode for Markdown notes"],
+  ["pdf", "PDF file view and note embed for Lapis applications"],
+  ["canvas", "JSON Canvas file view and note embed for Lapis applications"],
+  ["docx", "Word document file view and note embed for Lapis applications"],
+  ["csv", "CSV and TSV table view and note embed for Lapis applications"],
+  ["transcripts", "Speaker-separated reading view for Markdown transcripts"],
   ["spellcheck", "Harper grammar and spelling diagnostics for open notes"],
   ["wordcount", "Status bar word, character, and reading-time counts"],
 ]);
@@ -185,6 +229,11 @@ const sharedDependencies = new Map([
     ],
   ],
   ["slides", ["@lapis-notes/api", "@lapis-notes/markdown/embed"]],
+  ["pdf", ["@lapis-notes/api", "@lapis-notes/api/workspace-host"]],
+  ["canvas", ["@lapis-notes/api", "@lapis-notes/markdown/embed"]],
+  ["docx", ["@lapis-notes/api"]],
+  ["csv", ["@lapis-notes/api", "@lapis-notes/api/editor/core", "@lapis-notes/api/menu", "@lapis-notes/api/workspace-host"]],
+  ["transcripts", ["@lapis-notes/api", "@lapis-notes/markdown"]],
   [
     "source-editor",
     [
@@ -264,6 +313,41 @@ const editorSharedDependencies = new Map(
       "@lezer/lr",
     ],
     slides: [],
+    pdf: [],
+    canvas: [
+      "@codemirror/autocomplete",
+      "@codemirror/commands",
+      "@codemirror/language",
+      "@codemirror/lint",
+      "@codemirror/search",
+      "@codemirror/state",
+      "@codemirror/view",
+      "@lezer/common",
+      "@lezer/highlight",
+      "@lezer/lr",
+    ],
+    docx: [],
+    csv: [
+      "@codemirror/language",
+      "@codemirror/search",
+      "@codemirror/state",
+      "@codemirror/view",
+      "@lezer/common",
+      "@lezer/highlight",
+      "@lezer/lr",
+    ],
+    transcripts: [
+      "@codemirror/autocomplete",
+      "@codemirror/commands",
+      "@codemirror/language",
+      "@codemirror/lint",
+      "@codemirror/search",
+      "@codemirror/state",
+      "@codemirror/view",
+      "@lezer/common",
+      "@lezer/highlight",
+      "@lezer/lr",
+    ],
     "source-editor": [
       "@codemirror/language",
       "@lezer/common",
@@ -272,7 +356,7 @@ const editorSharedDependencies = new Map(
     ],
     spellcheck: [],
     wordcount: ["@codemirror/state", "@codemirror/view"],
-  }),
+  })
 );
 
 const findings = [];
@@ -286,12 +370,12 @@ for (const plugin of pluginPackages) {
   const normalizedManifest = normalizeManifest(
     manifest,
     plugin,
-    packageJson.version,
+    packageJson.version
   );
   const normalizedPackage = normalizePackage(
     packageJson,
     normalizedManifest,
-    plugin,
+    plugin
   );
   await compareOrWrite(packagePath, packageJson, normalizedPackage);
   await compareOrWrite(manifestPath, manifest, normalizedManifest);
@@ -304,7 +388,7 @@ if (findings.length) {
   console.log(
     mode === "--write"
       ? `Synchronized ${pluginPackages.length} plugin package manifests.`
-      : `Verified ${pluginPackages.length} plugin package manifests.`,
+      : `Verified ${pluginPackages.length} plugin package manifests.`
   );
 }
 
@@ -318,7 +402,7 @@ function normalizeManifest(manifest, plugin, packageVersion) {
     ...rendererSharedDependencies
       .get(plugin.directory)
       .map((specifier) =>
-        versionedRendererHostSpecifier(specifier, rendererVersion),
+        versionedRendererHostSpecifier(specifier, rendererVersion)
       ),
   ];
   const lapis = manifest.lapis ?? {};
@@ -402,7 +486,10 @@ function normalizePackage(packageJson, manifest, plugin) {
     "devDependencies",
   ]) {
     if (normalized[field]) {
-      normalized[field] = normalizeDependencies(normalized[field]);
+      normalized[field] = normalizeDependencies(
+        normalized[field],
+        plugin.directory
+      );
     }
   }
   return normalized;
@@ -460,16 +547,16 @@ function normalizeScripts(scripts) {
   if (normalized.check?.includes("packages/plugins/")) {
     normalized.check = normalized.check.replace(
       /pnpm --dir \.\.\/\.\.\/\.\. check:no-tailwind packages\/plugins\/plugin-[^ ]+\/src && /,
-      "",
+      ""
     );
   }
   return normalized;
 }
 
-function normalizeDependencies(dependencies) {
+function normalizeDependencies(dependencies, _plugin) {
   const normalized = {};
   for (const [name, version] of Object.entries(dependencies).sort(([a], [b]) =>
-    a.localeCompare(b),
+    a.localeCompare(b)
   )) {
     normalized[name] = frameworkPackageVersions.get(name) ?? version;
   }
@@ -485,7 +572,10 @@ async function compareOrWrite(filePath, current, normalized) {
   const actual = `${JSON.stringify(current, null, 2)}\n`;
   if (actual !== expected) {
     findings.push(
-      `${path.relative(repositoryRoot, filePath)} is not synchronized; run pnpm packages:sync`,
+      `${path.relative(
+        repositoryRoot,
+        filePath
+      )} is not synchronized; run pnpm packages:sync`
     );
   }
 }

@@ -36,6 +36,7 @@ specifications.
 ## Specifications, stories, and validation
 
 - Update the owning chapter under `spec/src/plugins` with behavior changes.
+- Discover requirements with `pnpm spec:search "<topic or LP-SPEC-ID>"` before a manual scan of `spec/src`. Follow the installed global spec-search guidance in `~/.agents/skills/spec-validator/SKILL.md`. Use `--semantic` for conceptual queries. When QMD is unavailable, use the `rg` fallback that command prints. Search hits are a cache; the chapter remains authoritative.
 - Use the single repository-level Storybook. Keep stories organized by their
   owning package; do not add per-package Storybook configurations.
 - Before committing a verified slice, run `pnpm audit` plus the focused package

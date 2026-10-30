@@ -2,9 +2,7 @@
   --ui-workspace-view-background: var(--background);
   --ui-workspace-view-foreground: var(--foreground);
   --ui-ai-request-gap: 0.5rem;
-  --ui-ai-chat-bottom-clearance: calc(
-    var(--ui-workspace-status-height, 1.5rem) + 0.75rem
-  );
+  --ui-ai-chat-bottom-clearance: 0.75rem;
   --font-sans: "DM Sans Variable", sans-serif;
   --ui-workspace-font-sans: var(--font-sans), ui-sans-serif, system-ui,
     sans-serif;
@@ -252,7 +250,8 @@
   min-width: 0;
 }
 
-[data-ui-component="ai-chat-panel"] .ai-chat-panel__tool-detail
+[data-ui-component="ai-chat-panel"]
+  .ai-chat-panel__tool-detail
   [data-ui-component="code-block"] {
   min-width: 0;
 }
@@ -347,7 +346,8 @@
 }
 
 [data-ui-component="ai-chat-panel"] .ai-chat-panel__markdown,
-[data-ui-component="ai-chat-panel"] .ai-chat-panel__markdown
+[data-ui-component="ai-chat-panel"]
+  .ai-chat-panel__markdown
   :where(
     .mira-markdown-preview,
     .markdown-preview-surface,
@@ -369,14 +369,16 @@
 }
 
 [data-ui-component="ai-chat-panel"] .ai-chat-panel__markdown,
-[data-ui-component="ai-chat-panel"] .ai-chat-panel__markdown
+[data-ui-component="ai-chat-panel"]
+  .ai-chat-panel__markdown
   :where(
     .mira-markdown-preview,
     .markdown-preview-surface,
     .markdown-embed-surface,
     .markdown-view__document
   ),
-[data-ui-component="ai-chat-panel"] .ai-chat-panel__markdown
+[data-ui-component="ai-chat-panel"]
+  .ai-chat-panel__markdown
   :where(h1, h2, h3, h4, h5, h6) {
   font-family: inherit;
   font-size: inherit;
@@ -492,7 +494,8 @@
 }
 
 [data-ui-component="ai-jsonl-view"] .ai-jsonl-view__markdown,
-[data-ui-component="ai-jsonl-view"] .ai-jsonl-view__markdown
+[data-ui-component="ai-jsonl-view"]
+  .ai-jsonl-view__markdown
   :where(
     .mira-markdown-preview,
     .markdown-preview-surface,

@@ -44,11 +44,20 @@ test("static qualification has no Community dependency and retains relay tests s
   const pkg = JSON.parse(
     await readFile(new URL("../package.json", import.meta.url), "utf8")
   );
+  const lanes = JSON.parse(
+    await readFile(new URL("./validation/lanes.json", import.meta.url), "utf8")
+  );
   assert.equal(pkg.devDependencies["@lapismd/lapis-community"], undefined);
   assert.equal(
     pkg.scripts["test:release:nostr"],
+    "node scripts/validation.mjs run test:release:nostr"
+  );
+  assert.equal(
+    lanes["test:release:nostr"],
     "node --test scripts/deferred-nostr-tests/*.test.mjs"
   );
+  assert.doesNotMatch(lanes["test:release"], /deferred-nostr-tests/);
+  assert.doesNotMatch(lanes["ci:release"], /test:release:nostr/);
   for (const file of [
     "../.storybook/main.ts",
     "./check-registry-metadata.mjs",

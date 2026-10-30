@@ -1,16 +1,24 @@
 # Search Plugin
 
+Catalog filter triggers use their complete current accessible name, including
+the selected file type and retrieval mode. Selection and persistence assertions
+remain required after opening the public controls.
+
+The package requires Design Core `^0.7.0` for prepared browser CSS
+and bundled fonts through public exports. Application state and existing plugin
+behavior retain their owning contracts.
+
 The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.
 
-This candidate consumes published API 0.1.2 through its portable peer range.
-Shared shell qualification uses UI and File Explorer 0.1.2 and Workspace 0.2.0.
+This candidate consumes published API 0.2.0 through its portable peer range.
+Shared shell qualification uses UI 0.1.4, File Explorer 0.2.0 and Workspace 0.3.0.
 
-Release qualification uses `@lapis-notes/api@^0.1.2` for the shared renderer,
+Release qualification uses `@lapis-notes/api@^0.2.0` for the shared renderer,
 diagnostics invalidation and selected metadata fingerprint contracts. Portable
 consumers must resolve this prerequisite from npm before plugin publication.
 
-Dependency acceptance now uses published Design Core `0.3.2` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
+Earlier dependency acceptance used Design Core `0.3.2` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
 unchanged; local overrides for these released packages are retired.
 
 Search presentation resolves Design Core through the repository's current
@@ -44,6 +52,13 @@ plugin shares the host's App and framework identity.
 
 ## Requirements
 
+Under LN-SRCH-006/011/016, recovered or externally reloaded Search plugin data
+MUST refresh the plugin's settings and every mounted Search panel. The next
+partial save MUST preserve recovered values, authored queries and scopes. The
+observer MUST use the owning App's public configuration events, ignore unrelated
+plugins and plugin-save echoes, dispose on unload, and reconcile changed native
+embedding/chunking controls without writing the recovered data again.
+
 | ID          | Requirement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | LN-SRCH-001 | Search MUST be ported from `/Users/stevejuma/code/lapis-notes/packages/plugins/plugin-search` at commit `8ec68e18` without copying API database or query-parser implementations.                                                                                                                                                                                                                                                                                                                                                                             |
@@ -51,7 +66,7 @@ plugin shares the host's App and framework identity.
 | LN-SRCH-003 | Search indexing MUST write through `AppDatabase`, refresh files accepted by registered search-document providers after metadata loads, prune stale documents, and track later provider-owned vault, metadata, or provider changes. Vault changes that no registered Search provider accepts MUST NOT invalidate the Search checkpoint.                                                                                                                                                                                                                       |
 | LN-SRCH-004 | The Search view MUST compose Design Core `SearchFilterBar` in CodeMirror mode with the API search-query language, query diagnostics, field/value completion, and expandable facets.                                                                                                                                                                                                                                                                                                                                                                          |
 | LN-SRCH-005 | Search results MUST render a file-grouped tree in which every level-one result is collapsible and owns at least one level-two child. Explicit content, tag, metadata, and path snippets MUST remain children; a hit without one MUST receive a `name` child from its filename snippet or file name. The tree MUST highlight explicit ranges, expose totals and sorting, and open a selected file or source position through the API workspace.                                                                                                               |
-| LN-SRCH-006 | Search MUST retain bounded recent queries, match-case state, result-limit and snippet-length settings, and MUST dispose indexing listeners and pending searches when disabled.                                                                                                                                                                                                                                                                                                                                                                               |
+| LN-SRCH-006 | Search MUST retain each leaf's current authored query and selected scope in newly command-created views and through layout saves, close and reload, including edits not yet rendered. It MUST retain bounded recent queries, match-case state, result-limit and snippet-length settings, and dispose indexing listeners and pending searches when disabled.                                                                                                                                                                                                  |
 | LN-SRCH-007 | Markdown Tags MUST open Search with a `tag:` query. All Properties MUST open Search with an escaped bracket-property query while remaining recoverable when Search is disabled.                                                                                                                                                                                                                                                                                                                                                                              |
 | LN-SRCH-008 | Storybook MUST demonstrate the real Search plugin in all six governed panel placements over an indexed in-memory vault and MUST verify query, facet, highlight, and navigation behavior.                                                                                                                                                                                                                                                                                                                                                                     |
 | LN-SRCH-009 | Deno desktop MUST load Search before metadata and layout restoration so a persisted `search` leaf restores as available and uses the app database search boundary.                                                                                                                                                                                                                                                                                                                                                                                           |
@@ -86,7 +101,7 @@ plugin shares the host's App and framework identity.
 | LN-SRCH-038 | Search Manager MUST stamp indexed documents with the selected source-provider id, pass optional provider allowlists to `AppDatabase`, and prune only documents owned by its registered providers so independent disposable projections remain intact.                                                                                                                                                                                                                                                                                                        |
 | LN-SRCH-039 | Search MUST register `notes_search` through the application tool registry. It MUST query only Markdown documents inside the trusted conversation path prefix, apply the requested limit before returning, and expose bounded snippets with portable vault-relative paths.                                                                                                                                                                                                                                                                                    |
 | LN-SRCH-040 | Search MUST register composer `/search` as a tool-dispatch command for `notes_search`. The command MUST pass the raw arguments as `query`, MUST NOT add a workspace palette command, and MUST dispose on unload. An empty query MUST be a visible usage error.                                                                                                                                                                                                                                                                                               |
-| LN-SRCH-041 | Search MUST register the `notes_search` result view. A hit row MUST open that vault file in a workspace leaf without closing the chat. The view MUST consume `structuredContent.results` paths and snippets.                                                                                                                                                                                                                                                                                                                                                 |
+| LN-SRCH-041 | Search MUST register the `notes_search` result view. A hit row MUST open that vault file in a workspace leaf without closing the chat. The view MUST consume `structuredContent.results` paths and snippets. File buttons MUST include their visible filename and path in the accessible name.                                                                                                                                                                                                                                                               |
 | LN-SRCH-042 | Warm Search startup MUST reconcile lightweight document manifests against metadata hashes and provider versions. Unchanged documents MUST NOT read vault bodies, enumerate complete Search documents, regenerate chunks, or recompute embeddings.                                                                                                                                                                                                                                                                                                            |
 | LN-SRCH-043 | Search syntax facets MUST query indexed metadata tags and properties asynchronously. Revision-aware refresh MUST suppress stale results and MUST NOT enumerate `MetadataCache.getAllItems`.                                                                                                                                                                                                                                                                                                                                                                  |
 | LN-SRCH-044 | An active Search view MUST subscribe to revisioned AppDatabase changes and debounce re-execution of its current query after committed Search-domain changes or reset invalidation. It MUST suppress stale results and release the subscription on teardown.                                                                                                                                                                                                                                                                                                  |
@@ -127,7 +142,8 @@ Composer `/search` is the user-facing tool-dispatch path for the same
 `notes_search` callback; it stays off the workspace palette and disappears
 when Search unloads (LN-SRCH-040).
 The same plugin registers the `notes_search` chat result view so hit rows
-open the matching vault file (LN-SRCH-041).
+open the matching vault file (LN-SRCH-041); empty results MUST use Design Core
+Empty with a search icon and muted description instead of plain paragraph text.
 `@lapis-notes/search/agent-tools` exposes only the portable factory used by the
 explicit real-agent probe; indexing ownership and plugin registration remain in
 the Search root package.
@@ -185,3 +201,88 @@ filtered to files accepted by registered Search providers under LN-SRCH-003.
 Selected metadata parser or provider changes invalidate Search even when file
 statistics and Search provider versions remain unchanged. Metadata inputs for
 files without a Search provider do not invalidate the checkpoint.
+
+## Federated historical results
+
+| ID          | Requirement                                                                                                                                                                                                                                                                                                                                           |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| LN-SRCH-051 | Search MUST consume App-owned, lifecycle-managed result providers with cancellable pages, stable identities, declared capabilities and provider-owned navigation/context. Current-file queries and document providers MUST remain independent.                                                                                                        |
+| LN-SRCH-052 | Search MUST default to Current files and offer History and Everything scopes. Historical matches MUST group distinct versions beneath file rows, retain exact revision labels and distinguish saved versions, checkpoint metadata, deletions and unavailable text. Unsupported filters or retrieval modes MUST NOT silently broaden a provider query. |
+| LN-SRCH-053 | Search MUST publish provider pages incrementally, preserve successful peers after source failure, fence obsolete replies and generations, retain row expansion and loaded context, and keep incomplete indexing/paging distinguishable from a final empty result. Version activation and context expansion MUST remain provider-owned.                |
+| LN-SRCH-054 | Search MUST send command and background-indexing notices through its explicitly owned App. A concurrent compatibility host, delayed failure or vault switch MUST NOT redirect feedback to another App. |
+
+Saved-version rows use compact disclosures and matching snippet insets, without
+inheriting a second Sidebar sub-list indent. The sort control keeps its
+accessible name and hides its label when the Search pane is narrow.
+Accessible names on source, count, file and version controls include their
+visible text while retaining path, revision and activation meaning.
+Expanded version details are a nested group so their actions and snippets do not
+replace the version row label.
+Saving recent queries or unrelated view preferences does not restart a provider
+query. Only its query/scope/options identity changes trigger a new search.
+Current-file totals describe renderable live-file hits; stale unresolved paths
+are not advertised as visible results. Open Search returns its activation task.
+Version containers derive their names from visible content, while header
+actions retain concise names. Their nested matches have independent targets.
+
+The package test toolchain uses patched Vite 6.4.4 and Vitest 4.1.12
+or newer within the existing major versions. Shared catalog qualification uses
+the patched Storybook toolchain described in distribution; application behavior
+and public package ownership remain unchanged.
+
+Current shared-shell qualification uses the released Design Core 0.6
+public boundary and matching Notes framework archives. Published dependency
+ranges now admit that boundary directly; the Avatar repair remains a recorded
+local candidate until the separate release gate.
+
+Filter review stories assert the complete current Design Core accessible
+trigger name, including its selected value, and retain all filter mutations
+and persisted-setting checks.
+
+Search view close awaits its owned Svelte panel teardown before the App can
+release persistence. The final live query/scope snapshot remains available;
+unload reuses that same idempotent teardown.
+Results completing after plugin disable are obsolete: they do not update
+presentation or persist recent queries. Active query failures are reported
+through the owning App's notice surface, and recent-query persistence settles
+inside that same operation.
+
+Catalog fixtures declare their actual composition under LP-SPEC-054. Synthetic
+setup actions use the separate LP-SPEC-055 fixture-controls surface; application
+stories retain the production WorkspaceShell. Loading and failure placeholders
+remain explicitly identified as boot status rather than alternate app chrome.
+
+The private native plugin crate stages the same built-in Canvas extraction
+under LN-NATIVE-004. Complete shared source outcomes qualify the unchanged
+TypeScript provider and its native counterpart. Search provider selection,
+chunking configuration, scheduling and both application adoptions remain
+separate Rust-migration gates; standalone Web retains this implementation.
+
+## Explicit native indexing ownership
+
+Under LN-SRCH-003/017/045, an explicitly supplied App background-indexing
+observer owns native provider selection, reconciliation and generated Search
+publication. Search MUST forward only registered provider identities, versions,
+priorities and retained chunk settings. Unsupported providers and selected
+service failures MUST remain observable without a callback or browser-writer
+fallback. Absent native selection MUST retain the standalone browser path.
+
+SearchManager MUST retain queries and its status presentation while omitting
+client file/metadata writer listeners and checkpoint writes under native
+selection. Native active or pending work MUST remain distinguishable from ready;
+the completion timestamp MUST come from the successful native pass. Query
+telemetry MUST use the last observed native activity without adding service
+reads to query execution.
+Manager/view disposal MUST remain passive and MUST NOT wait for accepted native
+refresh work; explicit plugin disable uses the App-owned native drain.
+Late settings/provider continuations MUST NOT select or refresh native indexing
+after the manager is disposed. Already accepted work may finish passively.
+Explicit disable MUST fence new declarations before awaiting native drain.
+Explicit re-enable MUST create a fresh presentation lifetime; old startup or
+provider continuations MUST NOT act on its replacement.
+Chunk-setting/provider changes declare the new selection. Query/view preferences
+MUST NOT redeclare indexing. Native rebuild requests MUST use the service's
+rebuild control instead of a client database writer.
+
+The [source adapter receipt](../../../records/2026-10-26-native-search-adapter.md)
+records independent API, plugin source, consumer and actual-host gates.

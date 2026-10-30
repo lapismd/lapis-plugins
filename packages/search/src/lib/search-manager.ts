@@ -18,6 +18,11 @@ import {
   DEFAULT_SEARCH_SETTINGS,
   type SearchPluginSettings,
 } from "./search-settings";
+import {
+  configureNativeSearch,
+  hasNativeSearch,
+  nativeSearch,
+} from "./native-search";
 
 const REACTIVE_INDEX_DELAY_MS = 75;
 const SEARCH_RECONCILE_CHECKPOINT_KEY = "search.reconcile-checkpoint.v1";
@@ -169,6 +174,7 @@ export interface SearchQueryResult {
 }
 
 export class SearchManager {
+  private observedNativeRefreshActive = false;
   private refreshPromise: Promise<SearchRuntimeStatus> | null = null;
   private queuedRefreshReason: string | null = null;
   private refreshState = {
@@ -213,6 +219,10 @@ export class SearchManager {
     content: string,
     cache: CachedMetadata,
   ): Promise<void> {
+    if (hasNativeSearch(this.app)) {
+      nativeSearch(this.app);
+      return;
+    }
     const provider = this.app.searchDocumentProviders.resolve(file);
     if (!provider) {
       await this.processDelete(file);
@@ -270,6 +280,10 @@ export class SearchManager {
   }
 
   async processDelete(file: TFile | string): Promise<void> {
+    if (hasNativeSearch(this.app)) {
+      nativeSearch(this.app);
+      return;
+    }
     await this.app.appDatabase.deleteSearchDocument(
       typeof file === "string" ? file : file.path,
     );
@@ -334,7 +348,12 @@ export class SearchManager {
           "search.source_provider.count",
           params.sourceProviderIds?.length ?? 0,
         );
-        span.setAttribute("search.reconcile.active", this.refreshState.active);
+        span.setAttribute(
+          "search.reconcile.active",
+          hasNativeSearch(this.app)
+            ? this.observedNativeRefreshActive
+            : this.refreshState.active,
+        );
         return result;
       },
       {
@@ -347,27 +366,43 @@ export class SearchManager {
   }
 
   async getStatus(): Promise<SearchRuntimeStatus> {
-    const [provider, runtime, stats] = await Promise.all([
+    const selected = hasNativeSearch(this.app);
+    const [provider, runtime, stats, native] = await Promise.all([
       this.app.appDatabase.getSearchEmbeddingProvider(),
       this.app.appDatabase.getSearchEmbeddingRuntimeStatus(),
       this.app.appDatabase.getSearchIndexStats(),
+      selected ? nativeSearch(this.app).getStatus() : null,
     ]);
+    const nativeRefreshing = Boolean(
+      native && (native.active || native.pending > 0),
+    );
+    if (selected) this.observedNativeRefreshActive = nativeRefreshing;
     return {
       backendKind: this.app.appDatabase.kind,
       provider,
       runtime,
       ...stats,
-      isRefreshing: this.refreshState.active,
-      refreshReason: this.refreshState.reason,
+      lastError: native?.error ?? stats.lastError,
+      isRefreshing: selected ? nativeRefreshing : this.refreshState.active,
+      refreshReason: selected
+        ? nativeRefreshing
+          ? (this.refreshState.reason ?? "native-indexing")
+          : null
+        : this.refreshState.reason,
       refreshProgress: {
-        processed: this.refreshState.processed,
-        total: this.refreshState.total,
+        processed: selected
+          ? (native?.processed ?? 0)
+          : this.refreshState.processed,
+        total: selected ? (native?.total ?? 0) : this.refreshState.total,
       },
-      refreshedAt: this.refreshState.refreshedAt,
+      refreshedAt: selected
+        ? (native?.completed_at ?? null)
+        : this.refreshState.refreshedAt,
     };
   }
 
   refreshFromVault(reason = "manual-refresh"): Promise<SearchRuntimeStatus> {
+    if (hasNativeSearch(this.app)) return this.refreshNative(reason);
     this.queuedRefreshReason = reason;
     this.refreshPromise ??= this.runRefreshQueue().finally(() => {
       this.refreshPromise = null;
@@ -376,6 +411,7 @@ export class SearchManager {
   }
 
   async reconcileStartup(): Promise<SearchRuntimeStatus> {
+    if (hasNativeSearch(this.app)) return this.refreshNative("startup");
     const execute = async (setCheckpoint?: (value: string) => void) => {
       const initialGeneration = this.sourceGeneration;
       let status: SearchRuntimeStatus;
@@ -429,6 +465,10 @@ export class SearchManager {
   }
 
   trackChanges(): () => void {
+    if (hasNativeSearch(this.app)) {
+      nativeSearch(this.app);
+      return () => {};
+    }
     const changed = this.app.metadataCache.on(
       "changed",
       (file, content, cache) => {
@@ -519,6 +559,12 @@ export class SearchManager {
   async dispose(): Promise<void> {
     if (this.disposed) return;
     this.flushQueuedChanges.cancel();
+    if (hasNativeSearch(this.app)) {
+      this.disposed = true;
+      this.queuedChanges.clear();
+      this.queuedDeletes.clear();
+      return;
+    }
     if (this.queuedChanges.size || this.queuedDeletes.size) {
       await this.drainQueuedChanges();
     }
@@ -531,6 +577,28 @@ export class SearchManager {
     this.disposed = true;
     this.queuedChanges.clear();
     this.queuedDeletes.clear();
+  }
+
+  async configureIndexing(): Promise<void> {
+    if (this.disposed) return;
+    if (hasNativeSearch(this.app))
+      await configureNativeSearch(this.app, this.getSettings());
+  }
+
+  private async refreshNative(reason: string): Promise<SearchRuntimeStatus> {
+    if (this.disposed) throw new Error("Search manager is disposed");
+    const previous = await this.getStatus();
+    if (this.disposed) return previous;
+    const observer = await configureNativeSearch(this.app, this.getSettings());
+    if (this.disposed || observer.detached) return previous;
+    this.refreshState.reason = reason;
+    await observer.refresh(reason.includes("rebuild"), {
+      title: "Refreshing search index",
+      source: "Search",
+      readyMessage: "Search index ready",
+    });
+    if (this.disposed || observer.detached) return previous;
+    return this.getStatus();
   }
 
   private async processFile(file: TFile): Promise<void> {

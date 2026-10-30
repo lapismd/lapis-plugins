@@ -619,9 +619,9 @@ export const EditableCells: Story = {
       ),
     ).toBeLessThan(1);
 
-    const groupTypeTrigger = visibleFilterElement<HTMLButtonElement>(
-      '[data-bases-filter-control="group-type-trigger"]',
-    );
+    const groupTypeTrigger = body.getByRole("button", {
+      name: "Filter group match",
+    });
     expect(groupTypeTrigger).toHaveTextContent("All of the following are true");
     await userEvent.click(groupTypeTrigger!);
     const groupTypeContent = await waitFor(() => {
@@ -661,9 +661,9 @@ export const EditableCells: Story = {
       ),
     );
 
-    const operatorTrigger = visibleFilterElement<HTMLButtonElement>(
-      '[data-bases-filter-control="operator-trigger"]',
-    );
+    const operatorTrigger = body.getByRole("button", {
+      name: "file filter operator",
+    });
     expect(operatorTrigger).toHaveTextContent("links to");
     await userEvent.click(operatorTrigger!);
     const operatorContent = await waitFor(() => {

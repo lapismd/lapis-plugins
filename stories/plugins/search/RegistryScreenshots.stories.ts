@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, userEvent, waitFor, within } from "storybook/test";
 import { WORKSPACE_SHELL_DOCS_PARAMETERS } from "../../workspace/docs-parameters";
-import PanelDemo from "../_shared/panels/PanelDemo.svelte";
+import SearchPanelDemo from "./panels/SearchPanelDemo.svelte";
 import {
   registryPanelApp,
   waitForRegistrySurface,
@@ -18,7 +18,7 @@ const registrySource = pluginWorkspaceSource(
 
 const meta = {
   title: "Plugins/Search/Registry Screenshots",
-  component: PanelDemo,
+  component: SearchPanelDemo,
   tags: ["registry-media", "visual-pending"],
   parameters: {
     layout: "fullscreen",
@@ -30,16 +30,15 @@ const meta = {
       },
     },
   },
-} satisfies Meta<typeof PanelDemo>;
+} satisfies Meta<typeof SearchPanelDemo>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 function renderSearch(): NonNullable<Story["render"]> {
   return (() => ({
-    Component: PanelDemo,
+    Component: SearchPanelDemo,
     props: {
-      kind: "search",
       layout: "left-sidebar",
       diagnostics: "none",
     },
@@ -48,6 +47,13 @@ function renderSearch(): NonNullable<Story["render"]> {
 
 async function populateSearch(canvasElement: HTMLElement) {
   await registryPanelApp(canvasElement);
+  await waitFor(
+    () =>
+      expect(
+        canvasElement.querySelector('[data-search-placement-ready="true"]')
+      ).not.toBeNull(),
+    { timeout: 30000 }
+  );
   await waitForRegistrySurface(canvasElement, '[data-testid="search-panel"]');
   const panelElement = canvasElement.querySelector<HTMLElement>(
     '[data-testid="search-panel"]'
@@ -112,7 +118,7 @@ export const SearchFilters: Story = {
       panel.getByRole("region", { name: "Search view settings" })
     ).toBeVisible();
     expect(
-      panel.getByRole("button", { name: "Filter by file type" })
+      panel.getByRole("button", { name: "Filter by file type: All" })
     ).toBeVisible();
   },
 };

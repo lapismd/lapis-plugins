@@ -311,3 +311,31 @@ export const SidebarGroup = placementStory(
   sources.SidebarGroup,
   "Outline as the only view in a grouped right-sidebar item.",
 );
+
+export const NoHeadings: Story = {
+  name: "No headings",
+  tags: ["visual-pending", "!autodocs"],
+  parameters: placementParameters(
+    kind,
+    "middle-top-tabs",
+    sources.MiddleTopTabs,
+    "An ordinary note without headings shows an accessible empty Outline.",
+  ),
+  render: renderPlacement("middle-top-tabs"),
+  play: async ({ args, canvasElement }) => {
+    const panel = await expectPanelPlacement(
+      canvasElement,
+      kind,
+      "middle-top-tabs",
+      "outline-panel",
+      args,
+    );
+    const app = panelDemoApp(canvasElement);
+    const file = app.vault.getFileByPath("Notes/Welcome.md");
+    if (!file) throw new Error("Missing seeded Welcome note");
+    await app.vault.modify(file, "A note without headings.\n");
+    await waitFor(() =>
+      expect(panel.getByText("No headings found.")).toBeVisible(),
+    );
+  },
+};

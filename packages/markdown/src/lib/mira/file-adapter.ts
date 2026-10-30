@@ -4,6 +4,7 @@ import type {
   MiraFileRef,
   MiraFileTarget,
 } from "@lapismd/mira/extensions";
+import { bindLapisMarkdownEditingSession } from "./file-editing-binding";
 
 const IMAGE_EXTENSIONS = new Set([
   "apng",
@@ -32,8 +33,8 @@ export function toMiraFileRef(file: TFile): MiraFileRef {
     kind: isMarkdown(file)
       ? "markdown"
       : IMAGE_EXTENSIONS.has(file.extension.toLocaleLowerCase())
-        ? "image"
-        : "unknown",
+      ? "image"
+      : "unknown",
   };
 }
 
@@ -47,7 +48,7 @@ function resolveFile(app: App, target: MiraFileTarget): TFile | null {
   }
   return app.metadataCache.getFirstLinkpathDest(
     target.path,
-    target.sourcePath ?? "",
+    target.sourcePath ?? ""
   );
 }
 
@@ -66,6 +67,8 @@ export function createLapisMiraFileAdapter(app: App): MiraFileAdapter {
   if (existing) return existing;
 
   const adapter: MiraFileAdapter = {
+    bindMarkdownEditingSession: (path, session) =>
+      bindLapisMarkdownEditingSession(app, path, session),
     resolveLink(target) {
       const file = resolveFile(app, target);
       return file ? toMiraFileRef(file) : null;
@@ -78,6 +81,18 @@ export function createLapisMiraFileAdapter(app: App): MiraFileAdapter {
         : null;
     },
 
+    async readAssetUrl(file) {
+      const resolved = fileFromRef(app, file);
+      // Markdown keeps the preview path. A resource URL would make Mira render
+      // the note as an image and hide that preview.
+      if (!resolved || isMarkdown(resolved)) return null;
+      return app.vault.getResourceUrl(resolved);
+    },
+
+    releaseAssetUrl(url) {
+      app.vault.revokeResourceUrl(url);
+    },
+
     async writeMarkdown(file, value) {
       const resolved = fileFromRef(app, file);
       if (!resolved) {
@@ -86,6 +101,10 @@ export function createLapisMiraFileAdapter(app: App): MiraFileAdapter {
       if (!isMarkdown(resolved)) {
         throw new Error(`Cannot write non-Markdown file: ${file.path}`);
       }
+      if (app.vault.supportsConditionalTextWrites)
+        throw new Error(
+          "Conditional Markdown writes require a bound source session"
+        );
       await app.vault.modify(resolved, value);
     },
 
@@ -121,6 +140,19 @@ export function createLapisMiraFileAdapter(app: App): MiraFileAdapter {
         };
       }
 
+      if (isMarkdown(file)) {
+        const handle = app.embedRegistry.renderMarkdownEmbed({
+          app,
+          containerEl: element,
+          file,
+        });
+        if (handle === false) return false;
+        return () => {
+          void handle?.destroy?.();
+          element.replaceChildren();
+        };
+      }
+
       const renderer = app.embedRegistry.get(file.extension);
       if (!renderer) return false;
       const handle = renderer({
@@ -151,7 +183,7 @@ export function createLapisMiraFileAdapter(app: App): MiraFileAdapter {
           id: heading.heading,
           text: heading.heading,
           level: heading.level,
-        }),
+        })
       );
     },
 

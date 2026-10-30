@@ -20,3 +20,8 @@ that repeats the same followed path. Linked mentions read `getCache`/`getFileCac
 so a reload does not depend on `getAllItems()`.
 
 Preview behavior is defined by [Link Previews](./link-previews.md).
+
+Browser acceptance waits for the public preview's entrance geometry before
+checking its unchanged minimum width; initial visibility alone does not mean
+that the Hover Card entrance animation has finished. The play retains its
+400px check and all navigation, editing and pointer-handoff assertions.

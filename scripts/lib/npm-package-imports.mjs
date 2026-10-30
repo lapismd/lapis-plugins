@@ -4,18 +4,31 @@ import path from "node:path";
 const importSpecifierPattern =
   /(?:\bfrom\s*|\bimport\s*(?:\(\s*)?)["']([^"']+)["']/g;
 
-export async function verifyBuiltImportBoundaries(packageRoot, packageName) {
+export async function verifyBuiltImportBoundaries(
+  packageRoot,
+  packageName,
+  packedFiles
+) {
   const normalizedPackageRoot = path.resolve(packageRoot);
   const distRoot = path.join(normalizedPackageRoot, "dist");
 
-  for (const filePath of await listJavaScriptFiles(distRoot)) {
+  const files =
+    packedFiles === undefined
+      ? await listJavaScriptFiles(distRoot)
+      : packedFiles
+          .filter((file) => /\.(?:c|m)?js$/.test(file))
+          .map((file) => path.resolve(normalizedPackageRoot, file));
+  for (const filePath of files) {
     const source = await readFile(filePath, "utf8");
     for (const match of source.matchAll(importSpecifierPattern)) {
       const specifier = match[1];
       if (!specifier.startsWith(".")) continue;
 
       const resolvedImport = path.resolve(path.dirname(filePath), specifier);
-      const relativeImport = path.relative(normalizedPackageRoot, resolvedImport);
+      const relativeImport = path.relative(
+        normalizedPackageRoot,
+        resolvedImport
+      );
       if (
         relativeImport === ".." ||
         relativeImport.startsWith(`..${path.sep}`) ||
@@ -24,7 +37,7 @@ export async function verifyBuiltImportBoundaries(packageRoot, packageName) {
         const relativeFile = path.relative(normalizedPackageRoot, filePath);
         throw new Error(
           `${packageName} built import escapes the installed package: ` +
-            `${relativeFile} -> ${specifier}`,
+            `${relativeFile} -> ${specifier}`
         );
       }
     }

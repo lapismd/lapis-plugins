@@ -1,0 +1,202 @@
+{
+  "stories/plugins/ai/AiChat.stories.ts": {
+    "kind": "component",
+    "subject": "@lapis-notes/ai#AiChatPanel"
+  },
+  "stories/plugins/ai/AiLiveHost.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/ai/RegistryScreenshots.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/ai/panels/Catalog.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/ai/panels/Chat.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/ai/panels/History.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/ai/shell/Shell.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/bases/BasesViews.stories.ts": {
+    "kind": "component",
+    "subject": "@lapis-notes/bases#BasesViewSurface"
+  },
+  "stories/plugins/bases/BasesWorkflows.stories.ts": {
+    "kind": "component",
+    "subject": "@lapis-notes/bases#BasesViewSurface"
+  },
+  "stories/plugins/bases/Embeds.stories.ts": {
+    "kind": "integration",
+    "requirement": "LP-SPEC-054",
+    "reason": "Tests imperative App embed and fenced-code registries in a focused fixture; does not claim full application-shell parity."
+  },
+  "stories/plugins/bases/RegistryScreenshots.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/bases/shell/Lifecycle.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/bases/shell/Shell.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/bookmarks/RegistryScreenshots.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/bookmarks/panels/Bookmarks.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/canvas/Features.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/canvas/RegistryScreenshots.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/canvas/panels/Viewing.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/community/RegistryScreenshots.stories.ts": {
+    "kind": "component",
+    "subject": "@lapis-notes/community#CommunityPluginApplication"
+  },
+  "stories/plugins/csv/RegistryScreenshots.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/csv/panels/Canvas.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/csv/panels/Table.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/docx/panels/Viewing.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/graph/RegistryScreenshots.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/graph/panels/Graph.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/graph/panels/LocalGraph.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/history/Compare.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/history/RegistryScreenshots.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/history/panels/History.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/history/repository/Repository.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/history/shell/Shell.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/markdown-lint/RegistryScreenshots.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/markdown/ReadingSurface.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/markdown/RegistryScreenshots.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/markdown/panels/AllProperties.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/markdown/panels/Backlinks.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/markdown/panels/FileProperties.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/markdown/panels/LinkPreviewAcceptance.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/markdown/panels/NativeEditing.stories.ts": {
+    "kind": "component",
+    "subject": "@lapis-notes/markdown/embed#FileEmbed"
+  },
+  "stories/plugins/markdown/panels/OutgoingLinks.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/markdown/panels/Outline.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/markdown/panels/Tags.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/pdf/RegistryScreenshots.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/pdf/panels/Viewing.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/search/FederatedResults.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/search/RegistryScreenshots.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/search/SearchToolResult.stories.ts": {
+    "kind": "component",
+    "subject": "@lapis-notes/ai#AiChatPanel"
+  },
+  "stories/plugins/search/panels/Recovery.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/search/panels/Search.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/slides/Decks.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/slides/RegistryScreenshots.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/source-editor/RegistryScreenshots.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/spellcheck/RegistryScreenshots.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/sync/RegistryScreenshots.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/sync/Review.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/sync/Settings.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/sync/Shell.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/sync/States.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/sync/panels/FileHistory.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/sync/panels/History.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/sync/panels/Sync.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/transcripts/RegistryScreenshots.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/transcripts/panels/Reading.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/wordcount/RegistryScreenshots.stories.ts": {
+    "kind": "application"
+  }
+}

@@ -1,16 +1,28 @@
 # Graph Plugin
 
+The package requires Design Core `^0.7.0` for prepared browser CSS
+and bundled fonts through public exports. Application state and existing plugin
+behavior retain their owning contracts.
+
+Pointer acceptance remeasures the Group remove button after query focus can
+scroll the settings panel, then verifies that its current centre receives the
+pointer. The hit-target assertion remains required.
+The focused-node preview scenario first opens and closes a real vault note,
+retaining its public workspace file context before focusing the graph. It does
+not assume that an empty workspace has an active note.
+
 The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.
 
-This candidate consumes published API 0.1.2 through its portable peer range.
-Shared shell qualification uses UI and File Explorer 0.1.2 and Workspace 0.2.0.
+This candidate consumes published API 0.2.0 through its portable peer range.
+Its Markdown peer and development dependency both accept `^0.2.0`.
+Shared shell qualification uses UI 0.1.4, File Explorer 0.2.0 and Workspace 0.3.0.
 
-Release qualification uses `@lapis-notes/api@^0.1.2` for the shared renderer,
+Release qualification uses `@lapis-notes/api@^0.2.0` for the shared renderer,
 diagnostics invalidation and selected metadata fingerprint contracts. Portable
 consumers must resolve this prerequisite from npm before plugin publication.
 
-Dependency acceptance now uses published Design Core `0.3.2` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
+Earlier dependency acceptance used Design Core `0.3.2` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
 unchanged; local overrides for these released packages are retired.
 
 Graph presentation resolves Design Core through the repository's current
@@ -96,6 +108,8 @@ canvas positions only as presentation state.
 | LN-GRAPH-031 | Pointer emphasis MUST default to a `500 ms` activation delay and `350 ms` release grace, expose both as `0…2000 ms` sliders in `50 ms` steps, retain the previous emphasis during the grace window, and safely replace or cancel timers across node changes, drag, pan, graph replacement, time-lapse, and teardown.                                                                                                                                                                                                       |
 | LN-GRAPH-032 | Cmd/Ctrl-hover on an existing Markdown note MUST immediately open a read-only public Markdown `FileEmbed` preview at a continuously updated canvas anchor, independently from emphasis dwell. The owner-document popover MUST permit pointer handoff, remain after modifier release, and close after leaving both surfaces, on Escape, graph replacement, note removal, or teardown. Tags, unresolved nodes, and attachments MUST NOT preview.                                                                             |
 | LN-GRAPH-033 | Compact Group rows MUST give the drag handle balanced inline space without a mouse-hover outline. Rounded focus paint MUST cover the handle, query, colour, and close action as one row. The close action MUST remain visible, retain a trailing gutter inside the row, and gain a visible background on hover. Idle rows MUST have no divider or shadow, and focused paint MUST retain an outer trailing gap.                                                                                                             |
+| LN-GRAPH-034 | Graph MUST admit pending settings changes to the owning App lifecycle before persistence debounce can omit them from native close. Rapid controls MUST retain coalesced writes, unload MUST await the final save, and failed writes MUST preserve the existing conflict barrier and report through the owning App.                                                                                                                                                                                                         |
+| LN-GRAPH-035 | Graph MUST apply recovered owning Configuration plugin data to its settings and every open global/local view before subsequent control changes. Recovery MUST NOT schedule another settings write or read another App.                                                                                                                                                                                                                                                                                                     |
 
 ## Runtime flow
 
@@ -143,3 +157,18 @@ The signed runtime declares its compiled Svelte imports through the exact
 compiler-versioned renderer contracts in LP-SPEC-014 and LP-SPEC-047. Host-owned
 components and archived components share that renderer graph; npm package peers
 remain portable.
+
+The package test toolchain uses patched Vite 6.4.4 and Vitest 4.1.12
+or newer within the existing major versions. Shared catalog qualification uses
+the patched Storybook toolchain described in distribution; application behavior
+and public package ownership remain unchanged.
+
+Current shared-shell qualification uses the released Design Core 0.6
+public boundary and matching Notes framework archives. Published dependency
+ranges now admit that boundary directly; the Avatar repair remains a recorded
+local candidate until the separate release gate.
+
+Catalog validation follows LP-SPEC-054/055: application fixtures fill the actual
+browser viewport and synthetic setup stays in the declared fixture-controls
+boundary. The focus/preview scenario establishes its file through the owned
+workspace before checking pointer interaction.

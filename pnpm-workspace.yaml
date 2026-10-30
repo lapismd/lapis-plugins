@@ -12,23 +12,48 @@ auditConfig:
     # removal conditions: spec/records/2026-10-11-plugin-test-unblock.md.
     - CVE-2026-93687
     - CVE-2026-97058
+    # elliptic GHSA-848j-6mx2-7j84 via vite-plugin-node-polyfills >
+    # node-stdlib-browser > crypto-browserify > browserify-sign.
+    # deepmerge GHSA-gcqx-w48m-w2h4 via @sveltejs/vite-plugin-svelte.
+    # Both patched versions are <0.0.0. Removal conditions:
+    # spec/records/2026-10-29-unpatched-audit-exceptions.md
+    - CVE-2025-14505
+    - CVE-2026-93753
 
 linkWorkspacePackages: true
+# Hosts explicitly supply optional feature peers, including unpublished migration clients.
+autoInstallPeers: false
 
 onlyBuiltDependencies:
   - esbuild
 
 overrides:
+  # The workspace package is still 0.1.6 until Changesets applies the 0.2.0
+  # release. Dependents declare ^0.2.0, which npm does not have yet, so this
+  # install uses the workspace package that will be published as 0.2.0.
+  "@lapis-notes/markdown": "workspace:*"
+  # One installed editor, parser, TypeScript, and Node types set so
+  # @lapis-notes/api is not duplicated across published Markdown peers
+  # and the workspace root.
+  "@codemirror/autocomplete": "6.20.4"
+  "@codemirror/view": "6.43.15"
+  "@lezer/common": "1.5.4"
+  "@lezer/markdown": "1.8.1"
+  "@types/node": "24.19.2"
+  typescript: "5.9.3"
+  bits-ui: "2.19.5"
   # Match the Notes host's Turso 0.7.2 worker-runtime compatibility pins.
   "@napi-rs/wasm-runtime@1.0.7>@emnapi/core": "1.8.1"
   "@napi-rs/wasm-runtime@1.0.7>@emnapi/runtime": "1.8.1"
   "@modelcontextprotocol/sdk@>=1.12.0 <1.31.0": ">=1.31.0 <2"
   adm-zip@<0.6.0: ">=0.6.0"
+  "body-parser@>=2.0.0 <2.4.0": ">=2.4.0 <3"
+  "zod@>=4.0.0 <4.6.6": ">=4.6.6 <5"
   aria-query: "5.3.2"
   brace-expansion@>=4.0.0 <5.0.12: ">=5.0.12 <6"
   devalue@<=5.9.2: ">=5.9.3 <6"
-  dompurify@<3.4.16: ">=3.4.16 <4"
-  fast-uri@>=3.0.0 <3.1.8: ">=3.1.8 <4"
+  dompurify@<3.4.17: ">=3.4.17 <4"
+  fast-uri@>=3.0.0 <3.1.9: ">=3.1.9 <4"
   hono@<4.13.7: ">=4.13.7 <5"
   ip-address@<=10.7.0: ">=10.7.1 <11"
   katex@>=0.11.0 <0.18.2: ">=0.18.2 <0.19"
@@ -39,3 +64,4 @@ overrides:
   source-map-js@>=1.0.0 <1.2.2: ">=1.2.2 <2"
 patchedDependencies:
   bits-ui@2.19.5: patches/bits-ui@2.19.5.patch
+  "@chenglou/pretext@0.0.7": patches/@chenglou__pretext@0.0.7.patch

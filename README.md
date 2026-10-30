@@ -20,6 +20,7 @@ signed `.lapis-plugin` release asset.
 | `@lapis-notes/search`        | `search`              |
 | `@lapis-notes/source-editor` | `lapis-source-editor` |
 | `@lapis-notes/spellcheck`    | `spellcheck`          |
+| `@lapis-notes/transcripts`   | `lapis-transcripts`   |
 | `@lapis-notes/wordcount`     | `wordcount`           |
 
 The package name and runtime ID intentionally remain separate compatibility
@@ -57,3 +58,8 @@ without remote-cache access. Do not commit `.env`.
 
 See [RELEASING.md](./RELEASING.md) for the manual publication gate and release
 asset contract.
+
+## Local checks
+
+Portable checks, builds and tests default to Docker. See [validation](docs/validation.md)
+for image preparation, remote execution, explicit native runs and story composition checks.

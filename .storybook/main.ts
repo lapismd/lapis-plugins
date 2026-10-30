@@ -7,6 +7,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { mergeConfig, searchForWorkspaceRoot } from "vite";
 
+import { docxExportPolyfills } from "../scripts/lib/docx-export-polyfills.mjs";
 import { pluginPackages } from "../scripts/package-catalog.mjs";
 
 const storybookDir = path.dirname(fileURLToPath(import.meta.url));
@@ -32,6 +33,10 @@ const packageAliases = [
   ["@lapis-notes/graph/embed", "packages/graph/src/lib/embed.ts"],
   ["@lapis-notes/graph/styles.css", "packages/graph/src/lib/styles.css"],
   ["@lapis-notes/graph", "packages/graph/src/lib/index.ts"],
+  [
+    "@lapis-notes/history/repository",
+    "packages/history/src/lib/repository/index.ts",
+  ],
   ["@lapis-notes/history/styles.css", "packages/history/src/lib/styles.css"],
   ["@lapis-notes/history", "packages/history/src/lib/index.ts"],
   [
@@ -54,6 +59,19 @@ const packageAliases = [
     "packages/slides/src/lib/views/slides/slides.css",
   ],
   ["@lapis-notes/slides", "packages/slides/src/lib/index.ts"],
+  [
+    "@lapis-notes/transcripts/styles.css",
+    "packages/transcripts/src/styles.css",
+  ],
+  ["@lapis-notes/transcripts", "packages/transcripts/src/index.ts"],
+  ["@lapis-notes/pdf/styles.css", "packages/pdf/src/styles.css"],
+  ["@lapis-notes/pdf", "packages/pdf/src/index.ts"],
+  ["@lapis-notes/docx/styles.css", "packages/docx/src/styles.css"],
+  ["@lapis-notes/docx", "packages/docx/src/index.ts"],
+  ["@lapis-notes/csv/styles.css", "packages/csv/src/styles.css"],
+  ["@lapis-notes/csv", "packages/csv/src/index.ts"],
+  ["@lapis-notes/canvas/styles.css", "packages/canvas/src/styles.css"],
+  ["@lapis-notes/canvas", "packages/canvas/src/index.ts"],
   [
     "@lapis-notes/source-editor/styles.css",
     "packages/source-editor/src/styles.css",
@@ -82,12 +100,36 @@ const linkedRoots = linkedPackages.flatMap((packageName) => {
 const linkedWorkspaceRoots = [
   ...new Set(linkedRoots.map((root) => searchForWorkspaceRoot(root))),
 ];
+const siblingDesignCore = path.resolve(repoRoot, "../design-core");
+const usesSiblingDesignCore = linkedRoots.some((root) =>
+  root.includes(`${path.sep}@lapismd+design-core@file+..+design-core`)
+);
+const siblingDesignCoreAliases = usesSiblingDesignCore
+  ? [
+      ["tw-animate-css", "node_modules/tw-animate-css/dist/tw-animate.css"],
+      [
+        "@fontsource-variable/dm-sans",
+        "node_modules/@fontsource-variable/dm-sans/index.css",
+      ],
+      [
+        "@fontsource-variable/source-code-pro",
+        "node_modules/@fontsource-variable/source-code-pro/index.css",
+      ],
+      [
+        "shadcn-svelte/tailwind.css",
+        "node_modules/shadcn-svelte/dist/tailwind.css",
+      ],
+    ].map(([find, relativePath]) => ({
+      find,
+      replacement: path.join(siblingDesignCore, relativePath),
+    }))
+  : [];
 
 const config: StorybookConfig = {
   stories: [
     ...pluginPackages.map(
       (plugin) =>
-        `../stories/plugins/${plugin.directory}/**/*.stories.@(js|ts|svelte)`,
+        `../stories/plugins/${plugin.directory}/**/*.stories.@(js|ts|svelte)`
     ),
     // Private UI qualification; this does not activate Sync or release selection.
     "../stories/plugins/sync/**/*.stories.@(js|ts|svelte)",
@@ -118,10 +160,11 @@ const config: StorybookConfig = {
     const nonSveltePlugins = plugins.filter(
       (plugin) =>
         !plugin?.name?.startsWith("vite-plugin-svelte") &&
-        plugin?.name !== "sveltekit-autoimport-configuration",
+        plugin?.name !== "sveltekit-autoimport-configuration"
     );
     viteConfig.plugins = [
       tursoBundleBuildPlugin(),
+      docxExportPolyfills({ process: false }),
       svelte({
         preprocess: vitePreprocess(),
         emitCss: false,
@@ -133,10 +176,10 @@ const config: StorybookConfig = {
     return mergeConfig(viteConfig, {
       define: {
         "import.meta.env.LAPIS_AGENT_RUNTIME_URL": JSON.stringify(
-          process.env.LAPIS_AGENT_RUNTIME_URL ?? "",
+          process.env.LAPIS_AGENT_RUNTIME_URL ?? ""
         ),
         "import.meta.env.LAPIS_AGENT_RUNTIME_TOKEN": JSON.stringify(
-          process.env.LAPIS_AGENT_RUNTIME_TOKEN ?? "",
+          process.env.LAPIS_AGENT_RUNTIME_TOKEN ?? ""
         ),
       },
       resolve: {
@@ -150,19 +193,27 @@ const config: StorybookConfig = {
         ],
         alias: [
           {
+            find: /^@cw\/shared$/,
+            replacement: path.join(
+              repoRoot,
+              "packages/docx/vendor/wordcanvas/shared/src/index.ts",
+            ),
+          },
+          {
             find: /^harper\.js\/binaryInlined$/,
             replacement: path.join(
               repoRoot,
-              "packages/spellcheck/node_modules/harper.js/dist/binaryInlined.js",
+              "packages/spellcheck/node_modules/harper.js/dist/binaryInlined.js"
             ),
           },
           {
             find: /^harper\.js\/binary$/,
             replacement: path.join(storybookDir, "harper-binary.ts"),
           },
+          ...siblingDesignCoreAliases,
           ...packageAliases.map(([find, replacement]) => ({
             find: new RegExp(
-              `^${find.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
+              `^${find.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`
             ),
             replacement: path.join(repoRoot, replacement),
           })),
@@ -170,14 +221,14 @@ const config: StorybookConfig = {
             find: /^\$lib(?:\/(.*))?$/,
             replacement: `${path.join(
               repoRoot,
-              "packages/markdown/src/lib",
+              "packages/markdown/src/lib"
             )}/$1`,
           },
         ],
       },
       esbuild: { target: "esnext" },
       worker: {
-        plugins: () => [tursoBundleBuildPlugin()],
+        plugins: () => [tursoBundleBuildPlugin(), docxExportPolyfills()],
         format: "es",
         rollupOptions: { output: { inlineDynamicImports: true } },
       },
@@ -207,7 +258,12 @@ const config: StorybookConfig = {
       },
       server: {
         fs: {
-          allow: [repoRoot, ...linkedRoots, ...linkedWorkspaceRoots],
+          allow: [
+            repoRoot,
+            ...linkedRoots,
+            ...linkedWorkspaceRoots,
+            ...(usesSiblingDesignCore ? [siblingDesignCore] : []),
+          ],
         },
       },
     });

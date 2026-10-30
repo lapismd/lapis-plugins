@@ -222,8 +222,8 @@ export function createBasesViewsDocument(
 
 export function createBasesViewsSeed(): Record<string, string | ArrayBuffer> {
   return {
-    ".obsidian/app.json": "{}",
-    ".obsidian/types.json": JSON.stringify(BASES_SAMPLE_TYPES, null, 2),
+    ".lapis/app.json": "{}",
+    ".lapis/types.json": JSON.stringify(BASES_SAMPLE_TYPES, null, 2),
     "Bases/Projects.base": JSON.stringify(
       createBasesViewsDocument("table"),
       null,

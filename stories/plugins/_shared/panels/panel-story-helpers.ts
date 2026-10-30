@@ -52,7 +52,7 @@ export const PANEL_DOCS_PARAMETERS = {
 
 export function panelDemoApp(canvasElement: HTMLElement): App {
   const root = canvasElement.querySelector<HTMLElement & { __lapisApp?: App }>(
-    '[data-testid="panel-demo"]',
+    '[data-testid="panel-demo"]'
   );
   if (!root?.__lapisApp) throw new Error("Missing initialized panel demo App");
   return root.__lapisApp;
@@ -102,7 +102,7 @@ export function placementParameters(
   kind: PanelDemoKind,
   layout: PanelDemoLayout,
   source: string,
-  description: string,
+  description: string
 ) {
   const placement = PANEL_PLACEMENTS[layout];
   const familyPath = {
@@ -113,6 +113,10 @@ export function placementParameters(
     search: "search/panels/search",
     bookmarks: "bookmarks/panels/bookmarks",
     history: "history/panels/history",
+    csv: "csv/panels/table",
+    canvas: "canvas/panels/viewing",
+    pdf: "pdf/panels/viewing",
+    reading: "transcripts/panels/reading",
     graph: "graph/panels/graph",
     "local-graph": "graph/panels/local-graph",
     "all-properties": "markdown/panels/all-properties",
@@ -149,10 +153,10 @@ export async function expectPanelSource(
     };
   },
   kind: PanelDemoKind,
-  layout: PanelDemoLayout,
+  layout: PanelDemoLayout
 ) {
   await expect(parameters.docs?.canvas?.className).toBe(
-    "panel-demo-docs-canvas",
+    "panel-demo-docs-canvas"
   );
   await expect(parameters.docs?.story?.height).toBe("700px");
   await expect(parameters.docs?.story?.inline).toBe(false);
@@ -161,7 +165,7 @@ export async function expectPanelSource(
 
   const source = parameters.docs?.source?.code ?? "";
   await expect(source).toContain(
-    'import { WorkspaceShell } from "@lapis-notes/workspace";',
+    'import { WorkspaceShell } from "@lapis-notes/workspace";'
   );
   await expect(source).toContain("app.workspace.changeLayout(layout)");
   await expect(source).toContain(`"${panelLayoutMarker(kind, layout)}"`);
@@ -174,13 +178,21 @@ export async function expectPanelSource(
           ? 'from "@lapis-notes/bookmarks";'
           : kind === "history"
             ? 'from "@lapis-notes/history";'
-            : kind === "explorer"
-              ? 'from "@lapis-notes/file-explorer";'
-              : kind === "ai-history" ||
-                  kind === "ai-catalog" ||
-                  kind === "ai-chat"
-                ? 'from "@lapis-notes/ai";'
-                : 'from "@lapis-notes/markdown";',
+            : kind === "reading"
+              ? 'from "@lapis-notes/transcripts";'
+                : kind === "pdf"
+                ? 'from "@lapis-notes/pdf";'
+                : kind === "canvas"
+                  ? 'from "@lapis-notes/canvas";'
+                : kind === "csv"
+                  ? 'from "@lapis-notes/csv";'
+                  : kind === "explorer"
+                ? 'from "@lapis-notes/file-explorer";'
+                : kind === "ai-history" ||
+                    kind === "ai-catalog" ||
+                    kind === "ai-chat"
+                  ? 'from "@lapis-notes/ai";'
+                  : 'from "@lapis-notes/markdown";',
   );
   await expect(source).not.toContain("PanelDemo");
   await expect(source).not.toContain("args.");
@@ -191,7 +203,7 @@ export async function expectPanelPlacement(
   kind: PanelDemoKind,
   layout: PanelDemoLayout,
   testId: string,
-  args: Record<string, unknown>,
+  args: Record<string, unknown>
 ) {
   await expect(args).not.toHaveProperty("kind");
   await expect(args).not.toHaveProperty("layout");
@@ -201,22 +213,22 @@ export async function expectPanelPlacement(
   await waitFor(
     () => {
       expect(canvas.getByTestId("panel-demo-status")).toHaveTextContent(
-        "ready",
+        "ready"
       );
       expect(
-        canvasElement.querySelector('[data-app-shell-ready="true"]'),
+        canvasElement.querySelector('[data-app-shell-ready="true"]')
       ).not.toBeNull();
       expect(canvas.getAllByTestId(testId)).toHaveLength(1);
       const markdown =
         canvasElement.querySelector(".markdown-view") ||
         canvasElement.querySelector(
-          '[data-ui-component="markdown-mira-preview"]',
+          '[data-ui-component="markdown-mira-preview"]'
         ) ||
         canvasElement.querySelector(".markdown-view__editor");
       if (requiresFile) expect(markdown).not.toBeNull();
       else expect(markdown).toBeNull();
     },
-    { timeout: 20_000 },
+    { timeout: 20_000 }
   );
 
   await new Promise<void>((resolve) => {
@@ -234,19 +246,23 @@ export async function expectPanelPlacement(
   const viewport = canvasElement.ownerDocument.documentElement;
   const demoBox = demo.getBoundingClientRect();
   const rootBox = storyRoot.getBoundingClientRect();
+  await expect(
+    Math.abs(demoBox.height - viewport.clientHeight),
+    "Application fixture fills the browser viewport without relying on Storybook body classes"
+  ).toBeLessThan(1);
   await expect(Math.abs(demoBox.width - rootBox.width)).toBeLessThan(1);
   await expect(Math.abs(demoBox.height - rootBox.height)).toBeLessThan(1);
   if (storyRoot.id === "storybook-root") {
     await expect(Math.abs(rootBox.width - viewport.clientWidth)).toBeLessThan(
-      1,
+      1
     );
     await expect(Math.abs(rootBox.height - viewport.clientHeight)).toBeLessThan(
-      1,
+      1
     );
     await expect(getComputedStyle(storyRoot).padding).toBe("0px");
     await expect(getComputedStyle(storyRoot).overflow).toBe("hidden");
     await expect(
-      getComputedStyle(canvasElement.ownerDocument.body).overflow,
+      getComputedStyle(canvasElement.ownerDocument.body).overflow
     ).toBe("hidden");
   }
   await expect(getComputedStyle(demo).overflow).toBe("hidden");
@@ -261,7 +277,7 @@ export async function expectPanelPlacement(
     "sidebar-group": "workspace-sidebar-group",
   }[layout];
   const host = panel.closest(
-    `[data-ui-component="${expectedHost}"]`,
+    `[data-ui-component="${expectedHost}"]`
   ) as HTMLElement | null;
   await expect(host).not.toBeNull();
 
@@ -274,16 +290,16 @@ export async function expectPanelPlacement(
     "sidebar-group": "right-sidebar",
   }[layout];
   const surfaceHost = panel.closest(
-    "[data-workspace-surface]",
+    "[data-workspace-surface]"
   ) as HTMLElement | null;
   if (!surfaceHost) throw new Error(`Missing workspace surface for ${layout}`);
   await expect(surfaceHost).toHaveAttribute(
     "data-workspace-surface",
-    expectedSurface,
+    expectedSurface
   );
 
   const viewHost = panel.closest(
-    '[data-ui-component="workspace-view-host"]',
+    '[data-ui-component="workspace-view-host"]'
   ) as HTMLElement | null;
   if (!viewHost) throw new Error(`Missing WorkspaceViewHost for ${layout}`);
   const storyWindow = canvasElement.ownerDocument.defaultView;
@@ -292,12 +308,12 @@ export async function expectPanelPlacement(
   const paintHost = directSidebar
     ? surfaceHost
     : (canvasElement.querySelector(
-        '[data-workspace-surface="body"]',
+        '[data-workspace-surface="body"]'
       ) as HTMLElement | null);
   if (!paintHost) throw new Error(`Missing expected paint host for ${layout}`);
   const viewBackground = storyWindow.getComputedStyle(viewHost).backgroundColor;
   await expect(viewBackground).toBe(
-    storyWindow.getComputedStyle(paintHost).backgroundColor,
+    storyWindow.getComputedStyle(paintHost).backgroundColor
   );
   const panelBackground = storyWindow.getComputedStyle(panel).backgroundColor;
   if (kind === "ai-chat") {
@@ -308,23 +324,23 @@ export async function expectPanelPlacement(
     await expect(panelBackground).toBe(viewBackground);
   }
   const stickyChrome = panel.querySelector<HTMLElement>(
-    '[data-ui-part="chrome"]',
+    '[data-ui-part="chrome"]'
   );
   if (stickyChrome) {
     await expect(
-      storyWindow.getComputedStyle(stickyChrome).backgroundColor,
+      storyWindow.getComputedStyle(stickyChrome).backgroundColor
     ).toBe(viewBackground);
   }
 
   if (directSidebar) {
     await expect(host).toHaveAttribute(
       "data-workspace-sidebar-side",
-      layout === "left-sidebar" ? "left" : "right",
+      layout === "left-sidebar" ? "left" : "right"
     );
   }
   if (layout === "bottom-panel" || layout === "sidebar-group") {
     const groupHeader = host?.querySelector<HTMLElement>(
-      'button[data-ui-part="panel-header"]',
+      'button[data-ui-part="panel-header"]'
     );
     await expect(groupHeader).not.toBeNull();
     await expect(groupHeader).toBeVisible();
@@ -336,33 +352,33 @@ export async function expectPanelPlacement(
 
 export async function expectPanelAlignment(
   canvasElement: HTMLElement,
-  testId: string,
+  testId: string
 ) {
   const panelElement = canvasElement.querySelector<HTMLElement>(
-    `[data-testid="${testId}"]`,
+    `[data-testid="${testId}"]`
   );
   if (!panelElement) throw new Error(`Missing ${testId}`);
   const viewHost = panelElement.closest<HTMLElement>(
-    '[data-ui-component="workspace-view-host"], .ui-workspace-imperative-view',
+    '[data-ui-component="workspace-view-host"], .ui-workspace-imperative-view'
   );
   if (!viewHost) throw new Error(`Missing WorkspaceViewHost for ${testId}`);
 
   await expect(
     Math.abs(
       panelElement.getBoundingClientRect().width -
-        viewHost.getBoundingClientRect().width,
-    ),
+        viewHost.getBoundingClientRect().width
+    )
   ).toBeLessThan(1);
   await expect(
-    panelElement.querySelector('[data-ui-part="group-label"]'),
+    panelElement.querySelector('[data-ui-part="group-label"]')
   ).toBeNull();
   await expect(panelElement.querySelector('[data-ui-part="meta"]')).toBeNull();
   await expect(getComputedStyle(panelElement).fontFamily).toBe(
-    getComputedStyle(viewHost).fontFamily,
+    getComputedStyle(viewHost).fontFamily
   );
 
   const panelContent = panelElement.querySelector<HTMLElement>(
-    '[data-ui-part="content"]',
+    '[data-ui-part="content"]'
   );
   if (!panelContent) throw new Error(`Missing panel content for ${testId}`);
   const panelContentStyle = getComputedStyle(panelContent);
@@ -376,41 +392,41 @@ export async function expectPanelAlignment(
 
 export async function expectLinkPanelAlignment(
   canvasElement: HTMLElement,
-  testId: string,
+  testId: string
 ) {
   await waitFor(() => {
     const current = canvasElement.querySelector<HTMLElement>(
-      `[data-testid="${testId}"]`,
+      `[data-testid="${testId}"]`
     );
     expect(
       current?.querySelectorAll(
-        ".markdown-link-sidebar__group-button, .markdown-link-sidebar__mention",
-      ).length,
+        ".markdown-link-sidebar__group-button, .markdown-link-sidebar__mention"
+      ).length
     ).toBeGreaterThan(1);
     expect(
-      current?.querySelectorAll(".markdown-link-sidebar__count").length,
+      current?.querySelectorAll(".markdown-link-sidebar__count").length
     ).toBeGreaterThan(1);
   });
   const alignment = await expectPanelAlignment(canvasElement, testId);
   const content = alignment.panelElement.querySelector<HTMLElement>(
-    ".markdown-link-sidebar__content",
+    ".markdown-link-sidebar__content"
   );
   if (!content) throw new Error(`Missing link panel content for ${testId}`);
   await expect(
     Math.abs(
-      content.getBoundingClientRect().width - alignment.availableContentWidth,
-    ),
+      content.getBoundingClientRect().width - alignment.availableContentWidth
+    )
   ).toBeLessThan(1);
 
   const rows = Array.from(
     alignment.panelElement.querySelectorAll<HTMLElement>(
-      ".markdown-link-sidebar__group-button, .markdown-link-sidebar__mention",
-    ),
+      ".markdown-link-sidebar__group-button, .markdown-link-sidebar__mention"
+    )
   );
   const counts = Array.from(
     alignment.panelElement.querySelectorAll<HTMLElement>(
-      ".markdown-link-sidebar__count",
-    ),
+      ".markdown-link-sidebar__count"
+    )
   );
   await expect(rows.length).toBeGreaterThan(1);
   await expect(counts.length).toBeGreaterThan(1);
@@ -419,7 +435,7 @@ export async function expectLinkPanelAlignment(
   ]).toEqual(["12px"]);
   await expect(
     Math.max(...counts.map((count) => count.getBoundingClientRect().right)) -
-      Math.min(...counts.map((count) => count.getBoundingClientRect().right)),
+      Math.min(...counts.map((count) => count.getBoundingClientRect().right))
   ).toBeLessThan(1);
 
   return alignment;
@@ -427,22 +443,22 @@ export async function expectLinkPanelAlignment(
 
 export async function expectMarkdownDocumentScroll(canvasElement: HTMLElement) {
   const viewHost = canvasElement.querySelector<HTMLElement>(
-    '[data-ui-component="workspace-view-host"][data-workspace-view-type="markdown"]',
+    '[data-ui-component="workspace-view-host"][data-workspace-view-type="markdown"]'
   );
   if (!viewHost) throw new Error("Missing Markdown WorkspaceViewHost");
 
   const scrollRoot = viewHost.querySelector<HTMLElement>(
-    ".cm-editor-scroll-area",
+    ".cm-editor-scroll-area"
   );
   const viewport = scrollRoot?.querySelector<HTMLElement>(
-    '[data-ui-component="scroll-area"][data-ui-part="scroll-area-viewport"]',
+    '[data-ui-component="scroll-area"][data-ui-part="scroll-area-viewport"]'
   );
   if (!scrollRoot || !viewport) {
     throw new Error("Missing Markdown editor ScrollArea");
   }
   const markdownView = viewHost.querySelector<HTMLElement>(".markdown-view");
   const codeMirrorScroller = viewHost.querySelector<HTMLElement>(
-    ".cm-editor-content > .cm-editor > .cm-scroller",
+    ".cm-editor-content > .cm-editor > .cm-scroller"
   );
   if (!markdownView || !codeMirrorScroller) {
     throw new Error("Missing full-height Markdown editor surface");
@@ -467,10 +483,10 @@ export async function expectMarkdownDocumentScroll(canvasElement: HTMLElement) {
   const originalContents = documentEditor.getValue();
   const overflowFixture = Array.from(
     { length: 80 },
-    (_, index) => `Scroll regression line ${index + 1}.`,
+    (_, index) => `Scroll regression line ${index + 1}.`
   ).join("\n\n");
   const storyHost = canvasElement.querySelector<HTMLElement>(
-    '[data-testid="panel-demo"]',
+    '[data-testid="panel-demo"]'
   );
   if (!storyHost) throw new Error("Missing panel demo story host");
   const initialStoryHeight = storyHost.style.height;
@@ -483,11 +499,11 @@ export async function expectMarkdownDocumentScroll(canvasElement: HTMLElement) {
       const viewHostHeight = viewHost.getBoundingClientRect().height;
       for (const surface of [markdownView, scrollRoot]) {
         expect(
-          Math.abs(surface.getBoundingClientRect().height - viewHostHeight),
+          Math.abs(surface.getBoundingClientRect().height - viewHostHeight)
         ).toBeLessThan(1);
       }
       expect(["auto", "scroll"]).toContain(
-        getComputedStyle(viewport).overflowY,
+        getComputedStyle(viewport).overflowY
       );
       expect(getComputedStyle(codeMirrorScroller).overflowX).toBe("clip");
       expect(getComputedStyle(codeMirrorScroller).overflowY).toBe("visible");
@@ -510,7 +526,7 @@ export async function expectMarkdownDocumentScroll(canvasElement: HTMLElement) {
 export function expectLinkPreviewPlacement(
   trigger: HTMLElement,
   preview: HTMLElement,
-  requireEditorOverlap = true,
+  requireEditorOverlap = true
 ) {
   const previewRect = preview.getBoundingClientRect();
   const ownerDocument = trigger.ownerDocument;
@@ -525,16 +541,16 @@ export function expectLinkPreviewPlacement(
   expect(previewRect.right).toBeLessThanOrEqual(viewportWidth + 1);
   expect(previewRect.bottom).toBeLessThanOrEqual(viewportHeight + 1);
   expect(["top", "right", "bottom", "left"]).toContain(
-    preview.getAttribute("data-side"),
+    preview.getAttribute("data-side")
   );
 
   if (!requireEditorOverlap) return;
 
   const editor = ownerDocument.querySelector<HTMLElement>(
-    '.markdown-view, [data-ui-component="markdown-mira-preview"], .markdown-view__editor',
+    '.markdown-view, [data-ui-component="markdown-mira-preview"], .markdown-view__editor'
   );
   const editorHost = editor?.closest<HTMLElement>(
-    '[data-ui-component="workspace-view-host"]',
+    '[data-ui-component="workspace-view-host"]'
   );
   if (!editorHost) throw new Error("Missing adjacent Markdown editor host");
   const editorRect = editorHost.getBoundingClientRect();
@@ -547,18 +563,18 @@ export function expectLinkPreviewPlacement(
 
   const hit = ownerDocument.elementFromPoint(
     overlapLeft + (overlapRight - overlapLeft) / 2,
-    overlapTop + (overlapBottom - overlapTop) / 2,
+    overlapTop + (overlapBottom - overlapTop) / 2
   );
   expect(
     hit?.closest(
-      '[data-ui-component="hover-card"][data-ui-part="hover-card-content"]',
-    ),
+      '[data-ui-component="hover-card"][data-ui-part="hover-card-content"]'
+    )
   ).toBe(preview);
 }
 
 export async function expectLinkPreviewHoverHandoff(
   trigger: HTMLElement,
-  preview: HTMLElement,
+  preview: HTMLElement
 ) {
   trigger.blur();
   await userEvent.unhover(trigger);

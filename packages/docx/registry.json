@@ -1,0 +1,97 @@
+{
+  "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
+  "schemaVersion": 2,
+  "categories": ["reading"],
+  "highlights": [
+    "Open a vault Word document in its own view.",
+    "Embed the same viewer in a note.",
+    "Keep the file owned by the vault."
+  ],
+  "documentationUrl": "https://github.com/lapismd/lapis-plugins/tree/main/packages/docx#readme",
+  "appearance": {
+    "icon": "file-text",
+    "accent": "#8B5CF6"
+  },
+  "releases": {},
+  "media": {
+    "banner": {
+      "alt": "Lapis DOCX showing a seeded Word document in the file view, with both sidebars available to the shell.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/banner.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/banner.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/banner.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/banner.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-docx-registry-screenshots--banner",
+        "focus": "full-shell"
+      }
+    }
+  },
+  "gallery": [
+    {
+      "id": "embedded-note",
+      "alt": "A note embedding the seeded Word document beneath a short introduction.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/embedded-note.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/embedded-note.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/embedded-note.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/embedded-note.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-docx-registry-screenshots--embedded-note",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "Embed the file",
+            "tone": "neutral"
+          },
+          {
+            "text": "in a note",
+            "tone": "violet"
+          }
+        ],
+        "description": [
+          {
+            "text": "Open a",
+            "tone": "neutral"
+          },
+          {
+            "text": "note",
+            "tone": "violet"
+          },
+          {
+            "text": "and keep the",
+            "tone": "neutral"
+          },
+          {
+            "text": "Word file",
+            "tone": "cyan"
+          },
+          {
+            "text": "inside it.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    }
+  ]
+}

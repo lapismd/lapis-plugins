@@ -15,13 +15,35 @@ Backlinks and Outgoing Links retain this preview behavior when a legacy
 view-type alias is restored. Canonicalization changes only persisted workspace
 identity, not link resolution or preview ownership.
 
+Portable image rendering uses Mira's public `readAssetUrl` and
+`releaseAssetUrl` hooks. The owning App's vault acquires and revokes each asset
+URL; missing files return no URL. The existing registered-embed path remains
+available without a desktop-specific loader or resource workaround.
+
 ## Requirements
+
+| ID        | Requirement                                                                                                                                                                                                                                                                                                                                                                                                               |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| LN-MD-118 | Every writable Mira preview MUST bind its captured source session to the original App's editing registry. Pending, failed and retired writes MUST participate in flush and protection. Changing files or owners MUST NOT redirect an earlier write, and failed detached sessions MUST remain discoverable until persistence or explicit recovery succeeds.                                                                |
+| LN-MD-119 | On conditional-capable vaults, bound previews MUST use public API FileTextPersistence with the source session's acknowledged text as their independent baseline. Background reads and another preview's state MUST NOT advance that baseline; LN-MD-124 governs protected native handoff. Missing portable text authority MUST reject binding, and conditional failure MUST NOT fall back to unconditional writes.        |
+| LN-MD-120 | Bound-preview recovery MUST compose public API conflict actions with the original Mira text session's recovery lease. Each operation MUST retain its own acknowledgement, reset and release callbacks. External snapshots MUST be revalidated before a draft is discarded or overwrites disk; a superseded decision MUST remain unresolved.                                                                               |
+| LN-MD-123 | On an App selecting native editor intents, bound previews MUST hold input through the public Mira synchronous input lease before native admission. The binding MUST expose captured acknowledged text, report newer dirty generations and retain its existing writer. Guarded mutation MUST yield only after protected persistence and rearm before editing resumes; uncertain admission or rearm MUST retain protection. |
+| LN-MD-124 | After a confirmed protected native handoff, clean previews MUST reconcile authoritative saved text through Mira's public protected text lease and their existing conditional baseline before input unlocks. Refresh MUST NOT submit writes or discard dirty state. Missing files MUST retain expected absence and the existing buffer until normal retirement; failures MUST preserve protection for explicit retry.      |
+
+Native admission uses only the input lease's release action. It does not
+accept local content, select external content or add a persistence callback.
+LN-MD-124's later protected handoff uses the existing public text-recovery lease
+to observe native-owned saved bytes. The native fence is active before that
+snapshot is delivered; this is not an ambient-read or content-write path.
+Mira constructs and immediately binds its source writer before user input;
+dirty and in-flight retained sessions remain fenced through the same public
+lease. Native Tasks stays inside the App registry guard.
 
 | ID        | Requirement                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | LN-MD-026 | The Markdown package MUST adapt the Lapis vault, metadata cache, workspace navigation, and `EmbedRegistry` to Mira's public `MiraFileAdapter`. One App MUST reuse one adapter instance so preview effects do not churn.                                                                                                                                                                                                     |
 | LN-MD-027 | Ordinary internal links rendered by Mira in reading and live-preview modes MUST retain the Lapis `MiraFileAdapter` resolution, lazy preview, and navigation path while delegating timing, safe pointer handoff, owner-document mounting, collision placement, appearance, and topmost cross-pane paint to Mira's portable Bits UI `LinkPreview`. Lapis MUST NOT add a portal wrapper, source alias, or clipping workaround. |
-| LN-MD-028 | The Lapis `MiraFileAdapter` MUST provide `writeMarkdown` through `app.vault.modify` for existing Markdown files and reject missing or non-Markdown targets.                                                                                                                                                                                                                                                                 |
+| LN-MD-028 | The Lapis MiraFileAdapter MUST reject missing or non-Markdown write targets. Hosts without conditional text writes MAY retain ordinary writeMarkdown through app.vault.modify. Conditional hosts MUST reject unbound writes instead of silently using unconditional persistence.                                                                                                                                            |
 | LN-MD-029 | Ordinary Mira note previews and link-panel `FileEmbed` previews MUST share minimal content-first chrome without a visible filename or path header. Rendered Markdown receives disclosure-safe inset, and editing uses a two-pixel focus-ring border.                                                                                                                                                                        |
 | LN-MD-030 | Ordinary Mira note previews and link-panel `FileEmbed` previews MUST resolve the same Lapis-aligned Mira appearance.                                                                                                                                                                                                                                                                                                        |
 | LN-MD-054 | Reading mode and live preview MUST receive the Lapis Mira adapter so ordinary internal note links and embeds use Mira's portable preview surfaces.                                                                                                                                                                                                                                                                          |
@@ -47,3 +69,7 @@ Outgoing candidate discovery tokenizes the active indexed Search document,
 limits query and result counts, and reuses returned Search content. It MUST NOT
 reread the active or candidate Markdown body when those documents are already
 indexed.
+
+Panel browser acceptance waits for preview entrance geometry before asserting
+the unchanged 400px minimum width. Visibility can precede the end of Hover Card
+animation; that intermediate frame does not define the settled card size.

@@ -1,12 +1,25 @@
-import { View, type WorkspaceLeaf } from "@lapis-notes/api";
+import {
+  View,
+  type SearchResultScope,
+  type WorkspaceLeaf,
+} from "@lapis-notes/api";
 import { mount, unmount } from "svelte";
 import SearchPanel from "./search-panel.svelte";
 import { SearchViewType } from "./search-view-type";
 
 export { SearchViewType } from "./search-view-type";
 
+type SearchPanelState = { query: string; scope: SearchResultScope };
+type SearchPanelInstance = {
+  getSearchState?(): SearchPanelState;
+  setSearchScope?(scope: SearchResultScope): void;
+  setSearchQuery?(query: string): void;
+};
+
 export class SearchView extends View {
-  private component: Record<string, unknown> | null = null;
+  private component: SearchPanelInstance | null = null;
+  private snapshot?: SearchPanelState;
+  private closing?: Promise<void>;
 
   constructor(leaf: WorkspaceLeaf) {
     super(leaf);
@@ -24,38 +37,66 @@ export class SearchView extends View {
     return "search";
   }
 
+  getState(): Record<string, unknown> {
+    return {
+      ...super.getState(),
+      ...(this.component?.getSearchState?.() ?? this.snapshot),
+    };
+  }
+
   protected onOpen(): Promise<void> {
     return Promise.resolve();
   }
 
   protected onClose(): Promise<void> {
-    return Promise.resolve();
+    return this.stopPanel();
   }
 
   onload(): void {
+    this.closing = undefined;
     this.component = mount(SearchPanel, {
       target: this.containerEl,
       props: {
         app: this.app,
+        initialScope: (["files", "history", "all"].includes(
+          String(this.getState()["scope"])
+        )
+          ? this.getState()["scope"]
+          : "files") as SearchResultScope,
         initialQuery:
           typeof this.getState()["query"] === "string"
             ? (this.getState()["query"] as string)
             : "",
+        onStateChange: () => {
+          if (this.component)
+            this.app.workspace.requestSaveLayout({
+              source: "api",
+              operation: "search-state",
+            });
+        },
       },
-    }) as Record<string, unknown>;
+    }) as SearchPanelInstance;
   }
 
   async setState(state: Record<string, unknown>): Promise<void> {
+    this.snapshot = undefined;
     await super.setState(state);
+    if (["files", "history", "all"].includes(String(state["scope"])))
+      this.component?.setSearchScope?.(state["scope"] as SearchResultScope);
     if (typeof state["query"] === "string") {
-      (
-        this.component as { setSearchQuery?: (query: string) => void } | null
-      )?.setSearchQuery?.(state["query"]);
+      this.component?.setSearchQuery?.(state["query"]);
     }
   }
 
-  onunload(): void {
-    if (this.component) void unmount(this.component);
+  onunload(): Promise<void> {
+    return this.stopPanel();
+  }
+
+  private stopPanel(): Promise<void> {
+    if (this.closing) return this.closing;
+    this.snapshot = this.component?.getSearchState?.() ?? this.snapshot;
+    const current = this.component;
     this.component = null;
+    return (this.closing = current ? unmount(current) : Promise.resolve());
   }
 }

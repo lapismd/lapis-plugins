@@ -1,0 +1,23 @@
+{
+  "build": "node --env-file-if-exists=.env scripts/run-turbo.mjs build",
+  "check": "pnpm run audit && pnpm check:storybook-parity && pnpm packages:check && pnpm check:app-ownership && pnpm check:no-tailwind && node --env-file-if-exists=.env scripts/run-turbo.mjs check",
+  "check:app-ownership": "node scripts/check-app-ownership.mjs",
+  "check:no-tailwind": "node scripts/check-no-tailwind.mjs",
+  "packages:check": "node scripts/sync-package-metadata.mjs --check && node scripts/sync-package-docs.mjs --check && node scripts/check-package-boundaries.mjs && node scripts/check-registry-metadata.mjs",
+  "test": "node --env-file-if-exists=.env scripts/run-turbo.mjs test",
+  "test:release": "node --test scripts/*.test.mjs",
+  "test:release:nostr": "node --test scripts/deferred-nostr-tests/*.test.mjs",
+  "packages:pack": "node --env-file-if-exists=.env scripts/pack-packages.mjs",
+  "ci:packages": "node --env-file-if-exists=.env scripts/run-turbo.mjs build check test",
+  "ci:release": "pnpm run audit && pnpm packages:check && pnpm spec:check && pnpm check:app-ownership && pnpm check:no-tailwind && pnpm test:release && pnpm ci:packages && pnpm packages:pack -- --already-built && pnpm plugin:build && pnpm plugin:verify && pnpm build-storybook",
+  "build-storybook": "node --max-old-space-size=6144 node_modules/storybook/dist/bin/dispatcher.js build",
+  "test:storybook": "vitest run --project storybook --no-file-parallelism",
+  "spec:first": "spec-validator first",
+  "spec:check": "spec-validator check && pnpm check:app-ownership",
+  "spec:validate": "spec-validator validate",
+  "validation:check": "node --test scripts/validation.test.mjs scripts/spec-validation/storybook-parity.test.mjs",
+  "validation:smoke": "node scripts/validation/smoke.mjs",
+  "check:storybook-parity": "node scripts/spec-validation/check-storybook-parity.mjs",
+  "test:storybook-parity": "node --test scripts/spec-validation/storybook-parity.test.mjs",
+  "validation:sync": "pnpm --dir packages/sync check && pnpm --dir packages/sync test && pnpm --dir packages/sync build"
+}

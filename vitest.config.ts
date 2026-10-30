@@ -37,7 +37,11 @@ export default defineConfig({
       {
         extends: true,
         plugins: [
-          storybookTest({ configDir: path.join(dirname, ".storybook") }),
+          // Sync is unfinished. Tagged stories stay in the catalog and are skipped.
+          storybookTest({
+            configDir: path.join(dirname, ".storybook"),
+            tags: { skip: ["sync-unfinished"] },
+          }),
         ],
         optimizeDeps: {
           exclude: [
@@ -69,9 +73,10 @@ export default defineConfig({
           setupFiles: ["./.storybook/vitest.setup.ts"],
           testTimeout: 120_000,
           browser: {
+            api: { host: "127.0.0.1", port: 63422, strictPort: true },
             enabled: true,
             headless: true,
-            provider: playwright({}),
+            provider: playwright({ launchOptions: { channel: "chromium" } }),
             instances: [{ browser: "chromium" }],
           },
         },

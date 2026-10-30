@@ -95,8 +95,18 @@
     overflow: visible;
   }
 
-  .markdown-view__reading
-    :global([data-ui-part="scroll-area-viewport"]) {
+  .markdown-view__reading :global(.mira-editor__editor),
+  .markdown-view__reading :global(.mira__pane--preview) {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .markdown-view__reading :global(.mira-editor__editor > .mira),
+  .markdown-view__reading :global(.mira-markdown-preview) {
+    flex: 1 0 auto;
+  }
+
+  .markdown-view__reading :global([data-ui-part="scroll-area-viewport"]) {
     scroll-padding-block-start: var(--mira-preview-padding, 2rem);
   }
 

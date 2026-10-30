@@ -182,6 +182,7 @@
           bind:value={getGroupDirection, setGroupDirection}
         >
           <Select.Trigger
+            aria-label="Group sort direction"
             size="sm"
             class="bases-style-bg-background-e6f9e3 bases-style-h-8-ed8a5d bases-style-rounded-none-0c5e91 bases-style-border-none-4a5f0e bases-style-shadow-none-ad47d1 bases-style-outline-none-df37b1"
           >

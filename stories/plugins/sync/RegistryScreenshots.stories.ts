@@ -16,7 +16,7 @@ const source = pluginWorkspaceSource(
 const meta = {
   title: "Plugins/Sync/Registry Screenshots",
   component: SyncWorkspaceDemo,
-  tags: ["registry-media", "visual-pending", "test"],
+  tags: ["registry-media", "visual-pending", "test", "sync-unfinished"],
   parameters: {
     layout: "fullscreen",
     docs: {

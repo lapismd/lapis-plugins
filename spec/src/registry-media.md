@@ -50,7 +50,13 @@ All sources live under `Plugins/<Plugin>/Registry Screenshots` and carry both
 | Slides        | Full-screen Goals presentation                                                |
 | Source Editor | Focused JSON editor                                                           |
 | Spell Check   | Suggestions and Problems, Editor action popover                               |
+| CSV           | Open table, coloured source, note embed, find, canvas sheet, embedded canvas |
 | Word Count    | Complete shell with both sidebars closed and status bar                       |
+| PDF           | Open PDF with both sidebars closed, and a note that embeds that file         |
+| Transcripts   | Spoken reading with both sidebars closed, and a note that embeds the call    |
+
+CSV is an active catalog package. Registry media selection includes
+`Plugins/CSV/Registry Screenshots`.
 
 Each plugin owns one explicit banner story. AI shows History left, Chat in the
 main area, and Catalog right. Graph shows Explorer, Global Graph, and Local
@@ -59,14 +65,22 @@ Live Preview, and File Properties. Bases uses the populated cover cards view.
 Bookmarks and Search show their primary panel on the left beside an empty main
 workspace. Markdown Lint, Source Editor, Spell Check, and Word Count use the
 complete shell with both sidebars closed. Slides uses the full-screen Goals
-presentation.
+presentation. Transcripts shows the spoken reading with both sidebars closed,
+and a gallery card embeds that call in a meeting note. PDF shows the open
+survey with both sidebars closed, and a gallery card embeds that file in a
+note. CSV shows the staff-readings table with both sidebars closed. Overview
+shows the coloured source. Gallery cards show that source, the same table
+inside a note, find on the quoted cell, the canvas sheet, and that sheet
+inside a note.
 
 Overview media is intentionally selective. AI uses focused tool activity,
 Bases uses Grouped List, Graph uses the focused Global Graph, History uses
 Compare, Markdown uses Reading, Search uses open search filters, and Spell
-Check uses the editor action popover. Bookmarks, Markdown Lint, Source Editor,
-Slides, and Word Count omit Overview media because their available full-screen state
-would repeat the banner rather than add useful context.
+Check uses the editor action popover. Bookmarks, Markdown Lint, PDF, Source Editor,
+Slides, Transcripts, and Word Count omit Overview media because their available full-screen state
+would repeat the banner rather than add useful context. CSV uses the coloured
+source for Overview because that editor is a different full-screen state from
+the table.
 
 Full-shell stories use the common 1200x800 application frame with Explorer
 open unless the card explicitly demonstrates focus mode, an editor/sidebar

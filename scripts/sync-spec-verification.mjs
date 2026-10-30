@@ -16,13 +16,17 @@ for (const file of await markdownFiles(specRoot)) {
   const chapter = path.relative(specRoot, file).replace(/\.md$/, "");
   for (const line of source.split(/\r?\n/)) {
     const match = definitionPattern.exec(line);
-    if (match) definitions.push({ id: match[1], chapter });
+    // Native requirements retain their dedicated verification table. This
+    // ordinary plugin matrix must neither duplicate nor fabricate their rows.
+    if (match && !match[1].startsWith("LN-NATIVE-"))
+      definitions.push({ id: match[1], chapter });
   }
 }
 
 const seen = new Set();
 for (const definition of definitions) {
-  if (seen.has(definition.id)) throw new Error(`Duplicate requirement ${definition.id}.`);
+  if (seen.has(definition.id))
+    throw new Error(`Duplicate requirement ${definition.id}.`);
   seen.add(definition.id);
 }
 
@@ -32,7 +36,8 @@ for (const sourcePath of [outputPath, options.migrateFrom].filter(Boolean)) {
     const source = await readFile(path.resolve(root, sourcePath), "utf8");
     for (const line of source.split(/\r?\n/)) {
       const match = definitionPattern.exec(line);
-      if (match && !previousRows.has(match[1])) previousRows.set(match[1], line);
+      if (match && !previousRows.has(match[1]))
+        previousRows.set(match[1], line);
     }
   } catch (error) {
     if (sourcePath === outputPath && error?.code === "ENOENT") continue;
@@ -41,7 +46,7 @@ for (const sourcePath of [outputPath, options.migrateFrom].filter(Boolean)) {
 }
 
 const rows = definitions.map(({ id, chapter }) =>
-  normalizeRow(previousRows.get(id), id, chapter),
+  normalizeRow(previousRows.get(id), id, chapter)
 );
 const output = [
   "# Verification",
@@ -57,22 +62,26 @@ const output = [
 
 if (options.check) {
   const current = await readFile(outputPath, "utf8").catch(() => "");
-  if (current !== output) throw new Error("spec/src/verification.md is out of date.");
+  if (current !== output)
+    throw new Error("spec/src/verification.md is out of date.");
 } else {
   await writeFile(outputPath, output);
-  console.log(`Updated ${path.relative(root, outputPath)} with ${rows.length} rows.`);
+  console.log(
+    `Updated ${path.relative(root, outputPath)} with ${rows.length} rows.`
+  );
 }
 
 function normalizeRow(existing, id, chapter) {
   if (existing) {
     const cells = splitRow(existing);
     if (cells.length >= 4) {
-      return `| ${id} | ${cells[1] || chapter} | ${cells[2] || "Implemented"} | ${cells.slice(3).join(" | ") || defaultEvidence(id)} |`;
+      return `| ${id} | ${cells[1] || chapter} | ${
+        cells[2] || "Implemented"
+      } | ${cells.slice(3).join(" | ") || defaultEvidence(id)} |`;
     }
   }
-  const status = id === "LP-SPEC-016" || id === "LP-SPEC-017"
-    ? "Planned"
-    : "Implemented";
+  const status =
+    id === "LP-SPEC-016" || id === "LP-SPEC-017" ? "Planned" : "Implemented";
   return `| ${id} | ${chapter} | ${status} | ${defaultEvidence(id)} |`;
 }
 
@@ -84,7 +93,11 @@ function defaultEvidence(id) {
 }
 
 function splitRow(line) {
-  return line.trim().replace(/^\||\|$/g, "").split("|").map((cell) => cell.trim());
+  return line
+    .trim()
+    .replace(/^\||\|$/g, "")
+    .split("|")
+    .map((cell) => cell.trim());
 }
 
 async function markdownFiles(directory) {
@@ -92,8 +105,9 @@ async function markdownFiles(directory) {
   const files = [];
   for (const entry of entries.sort((a, b) => a.name.localeCompare(b.name))) {
     const candidate = path.join(directory, entry.name);
-    if (entry.isDirectory()) files.push(...await markdownFiles(candidate));
-    else if (entry.isFile() && entry.name.endsWith(".md")) files.push(candidate);
+    if (entry.isDirectory()) files.push(...(await markdownFiles(candidate)));
+    else if (entry.isFile() && entry.name.endsWith(".md"))
+      files.push(candidate);
   }
   return files;
 }

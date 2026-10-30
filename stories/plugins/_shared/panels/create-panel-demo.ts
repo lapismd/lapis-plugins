@@ -58,6 +58,10 @@ export type PanelDemoKind =
   | "local-graph"
   | "bookmarks"
   | "history"
+  | "csv"
+  | "canvas"
+  | "pdf"
+  | "reading"
   | "tags";
 
 export type PanelDemoLayout =
@@ -74,10 +78,21 @@ export type PanelDemoDiagnostics =
   | "markdownlint"
   | "spellcheck";
 
+export interface PanelDemoOpenDocument {
+  title: string;
+  icon: string;
+  type: string;
+  state: Record<string, unknown>;
+}
+
 export interface PanelDemoOptions {
   hideSidebars?: boolean;
   diagnostics?: PanelDemoDiagnostics;
   graphData?: "default" | "registry-rich";
+  plugins?: Parameters<App["plugins"]["registerCorePlugins"]>[0];
+  files?: Record<string, string | ArrayBuffer>;
+  openDocument?: PanelDemoOpenDocument;
+  configuration?: Record<string, unknown>;
 }
 
 export const PANEL_DEMO_LAYOUTS: PanelDemoLayout[] = [
@@ -104,6 +119,10 @@ export const PANEL_VIEW_TYPE: Record<PanelDemoKind, string> = {
   "local-graph": LocalGraphViewType,
   bookmarks: BookmarksViewType,
   history: HistoryViewType,
+  csv: "lapis-csv",
+  canvas: "lapis-canvas",
+  pdf: "lapis-pdf",
+  reading: "lapis-transcripts-reading",
   tags: TagsViewType,
 };
 
@@ -193,6 +212,30 @@ export const PANEL_LEAF_META: Record<
     title: "History",
     icon: "history",
     group: "History",
+    requiresFile: true,
+  },
+  csv: {
+    title: "CSV",
+    icon: "table",
+    group: "CSV",
+    requiresFile: false,
+  },
+  canvas: {
+    title: "Canvas",
+    icon: "network",
+    group: "Canvas",
+    requiresFile: false,
+  },
+  pdf: {
+    title: "PDF",
+    icon: "file-text",
+    group: "PDF",
+    requiresFile: false,
+  },
+  reading: {
+    title: "Transcript",
+    icon: "audio-lines",
+    group: "Transcripts",
     requiresFile: true,
   },
   tags: {
@@ -444,6 +487,53 @@ export function createPanelDemoLayout(
 const HISTORY_WRAP_LINE =
   "History compare wrap probe: " + "word ".repeat(40).trim();
 
+const PANEL_IMAGE_TYPES: Record<string, string> = {
+  png: "image/png",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  gif: "image/gif",
+  webp: "image/webp",
+  svg: "image/svg+xml",
+  bmp: "image/bmp",
+};
+
+const PANEL_MAP_PNG =
+  "iVBORw0KGgoAAAANSUhEUgAAAKAAAABgCAYAAACaJ3mZAAACdUlEQVR4nO3cu00DURBAUSpyGYRUQEARlIIIKYCIamgHRGbBGn+0b+58bnDzt7OH8Upec3d4fvsyo7qjD2CzE6ChCdDQBGhoAjQ0ARqaAA1NgIYmQEMToKEJ0NAEaGgCNDQBGpoADU2AhiZAQxOgoQnQ0ARoaAI0NAEamgBv7P71/U/0mSo2HuAWpOjoGQgQhvb48oA1HWZLgNmQ7YmTnq0ALwBHw4lESc9+LMBJ6DpjLAVwOrhrQNL3qg1A0fXGmBag8GZATAdQeLMgpgEovJkQcYDCmw0RAyi8HNEQEYDiyxWJMByg8PJGIAwD6NarUfQ2DAEovlpFIgwFSA/2uM+Pp7PRZ8yAsDxAEt8lyG6NBtIF4VKA0fhWgpsKcjXCZQAjnvtIcBNA/lzH6ufB5QAnoeuAcev85QDuuf0yAegI8pLzrtyCSwFWB+d5129BHGC1G1jpevbc2GUAHq/rvQaQGVwUgsi2rmPVx3AZgDSk7hjPnX0cQBpLd5DXnrU9QBpDhjKBawmQvsGVo/+IywA8JH35wPYBuLcVAVpfgCLsUblvQtyCvSr3XbBbsE9l34ZxC/ao7PuAIqxf+TeiRVi3Nr8JOfg8WK52v4oTYZ1a/i54CyI9aDuNL9KD/xvGwrceDlCEeSLxoQCFOBteGoBCnAkvHUAhzoKXFqAQZ8BLD1CIveGVASjGfujKAjyFcSrI3zOg78kogFMxdkDXDuA5kFVRbl0HPVsB7ogyA87/zkXPTIAwzKjoGQiwYELaJwEamgANTYCGJkBDE6ChCdDQBGhoAjQ0ARqaAA1NgIYmQEMToKEJ0NAEaGgCNDQBGpoADe0bpaRio/92zFgAAAAASUVORK5CYII=";
+
+function bytesFromBase64(value: string): ArrayBuffer {
+  const binary = globalThis.atob(value);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+  return bytes.buffer;
+}
+
+class PanelDemoVaultAdapter extends MemoryVaultAdapter {
+  readonly #resourceUrls = new Set<string>();
+
+  async getResourceUrl(path: string): Promise<string> {
+    const data = await this.readBinary(path);
+    const extension = path.split(".").pop()?.toLowerCase() ?? "";
+    const type = PANEL_IMAGE_TYPES[extension];
+    const url = URL.createObjectURL(
+      new Blob([data], type ? { type } : undefined),
+    );
+    this.#resourceUrls.add(url);
+    return url;
+  }
+
+  revokeResourceUrl(url: string): void {
+    if (!this.#resourceUrls.delete(url)) return;
+    URL.revokeObjectURL(url);
+  }
+
+  disposeResourceUrls(): void {
+    for (const url of this.#resourceUrls) URL.revokeObjectURL(url);
+    this.#resourceUrls.clear();
+  }
+}
+
 export function createPanelDemoSeed(
   kind: PanelDemoKind,
   layout: PanelDemoLayout,
@@ -520,9 +610,10 @@ export function createPanelDemoSeed(
   }
 
   return {
-    ".obsidian/app.json": JSON.stringify(
+    ".lapis/app.json": JSON.stringify(
       {
         ...PANEL_APP_CONFIGURATION,
+        ...(options.configuration ?? {}),
         ...(kind === "bookmarks"
           ? { pluginData: { bookmarks: createBookmarksDocument() } }
           : {}),
@@ -531,7 +622,7 @@ export function createPanelDemoSeed(
       2,
     ),
     ".env": "DEMO=1\n",
-    ".obsidian/types.json": JSON.stringify(
+    ".lapis/types.json": JSON.stringify(
       {
         types: {
           title: "text",
@@ -546,7 +637,7 @@ export function createPanelDemoSeed(
       null,
       2,
     ),
-    ".obsidian/workspace.json": JSON.stringify(workspaceLayout, null, 2),
+    ".lapis/workspace.json": JSON.stringify(workspaceLayout, null, 2),
     "Notes/Welcome.md": [
       "---",
       "title: Welcome",
@@ -656,7 +747,7 @@ export function createPanelDemoSeed(
       null,
       2,
     ),
-    "Assets/map.png": new Uint8Array([137, 80, 78, 71]).buffer,
+    "Assets/map.png": bytesFromBase64(PANEL_MAP_PNG),
     ...(useRegistryGraphData ? createGraphSeed() : {}),
     ...(kind === "ai-history" ? createAiHistorySeed() : {}),
     ...(kind === "ai-catalog" ? createAiCatalogSeed() : {}),
@@ -770,7 +861,7 @@ function createBookmarksDocument() {
 
 function createBookmarksSeed(): Record<string, string> {
   return {
-    ".obsidian/bookmarks.json": JSON.stringify(
+    ".lapis/bookmarks.json": JSON.stringify(
       createBookmarksDocument(),
       null,
       2,
@@ -922,13 +1013,43 @@ function countPanelLeaves(app: App, panelType: string): number {
   return count;
 }
 
+function presetMainDocument(
+  layout: Record<string, unknown>,
+  document: PanelDemoOpenDocument,
+): void {
+  const main = layout.main as {
+    children?: Array<{ children?: Array<Record<string, unknown>> }>;
+  };
+  const leafNode = main.children?.[0]?.children?.[0];
+  if (!leafNode || leafNode.type !== "leaf" || typeof leafNode.id !== "string") {
+    throw new Error("Panel demo has no main document leaf to preset");
+  }
+  leafNode.state = {
+    type: document.type,
+    state: document.state,
+    icon: document.icon,
+    title: document.title,
+  };
+  layout.active = leafNode.id;
+}
+
 export async function bootPanelDemo(
   kind: PanelDemoKind,
   layout: PanelDemoLayout,
   options: PanelDemoOptions = {},
 ): Promise<{ app: App; dispose: () => Promise<void> }> {
-  const adapter = new MemoryVaultAdapter(
-    createPanelDemoSeed(kind, layout, options),
+  const seed = createPanelDemoSeed(kind, layout, options);
+  if (options.files) Object.assign(seed, options.files);
+  if (options.openDocument) {
+    const workspace = JSON.parse(String(seed[".lapis/workspace.json"])) as Record<
+      string,
+      unknown
+    >;
+    presetMainDocument(workspace, options.openDocument);
+    seed[".lapis/workspace.json"] = JSON.stringify(workspace, null, 2);
+  }
+  const adapter = new PanelDemoVaultAdapter(
+    seed,
     {
       name: `Lapis Panel ${kind} ${layout}`,
       vaultId: `lapis-panel-${kind}-${layout}`,
@@ -937,7 +1058,7 @@ export async function bootPanelDemo(
   );
   const app = new App({
     version: "0.0.1-story",
-    configPath: ".obsidian/app.json",
+    configPath: ".lapis/app.json",
     adapter,
     appDatabase: new MemoryAppDatabase(`lapis-panel-${kind}-${layout}`),
     workspaceShell: { application: { name: "Lapis Notes" } },
@@ -976,6 +1097,7 @@ export async function bootPanelDemo(
       enabledByDefault: true,
       distribution: "bundled",
     },
+    ...(options.plugins ?? []),
   ]);
 
   await app.vault.load();
@@ -1060,15 +1182,18 @@ export async function bootPanelDemo(
     throw new Error(`Missing Markdown context leaf for ${kind} ${layout}`);
   }
   if (markdownLeaf) app.workspace.setActiveLeaf(markdownLeaf, { focus: false });
+  await app.vaultChanges.start();
 
   return {
     app,
     dispose: async () => {
+      await app.vaultChanges.stop();
       stopWatchingMetadata();
       for (const plugin of [...app.plugins.corePlugins].reverse()) {
         await plugin.disable().catch(() => undefined);
       }
       await app.workspace.disposeWorkspaceHost();
+      adapter.disposeResourceUrls();
       disposeApplicationCompatibility();
     },
   };

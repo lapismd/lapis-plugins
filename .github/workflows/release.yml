@@ -81,6 +81,9 @@ defaults:
   run:
     shell: bash
 
+env:
+  LAPIS_PLUGINS_VALIDATION_RUNTIME: native
+
 jobs:
   selection:
     if: vars.STATIC_RELEASE_ENABLED == 'true'
@@ -219,7 +222,7 @@ jobs:
             .release/release-plan.json
           if-no-files-found: error
           retention-days: 7
-      - name: Publish approved npm and GitHub artifacts
+      - name: Skip published npm versions and create missing GitHub releases
         run: |
           set -euo pipefail
           args=(--plugins "${{ needs.selection.outputs.plugins }}")

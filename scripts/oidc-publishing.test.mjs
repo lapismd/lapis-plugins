@@ -81,9 +81,20 @@ test("audits the committed dependency graph on every quality change", async () =
     new URL("../package.json", import.meta.url),
     "utf8"
   );
-  assert.match(pkg, /"audit": "pnpm audit"/);
-  assert.match(pkg, /"check": "pnpm audit &&/);
-  assert.match(pkg, /"ci:release": "pnpm audit &&/);
+  assert.equal(JSON.parse(pkg).scripts.audit, "node scripts/audit.mjs");
+  assert.equal(
+    JSON.parse(pkg).scripts.check,
+    "node scripts/validation.mjs run check"
+  );
+  const lanes = JSON.parse(
+    await readFile(new URL("./validation/lanes.json", import.meta.url), "utf8")
+  );
+  assert.match(lanes.check, /^pnpm run audit &&/);
+  assert.equal(
+    JSON.parse(pkg).scripts["ci:release"],
+    "node scripts/validation.mjs run ci:release"
+  );
+  assert.match(lanes["ci:release"], /^pnpm run audit &&/);
   assert.match(ciWorkflow, /^\s*- run: pnpm audit$/m);
 });
 

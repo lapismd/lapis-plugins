@@ -43,7 +43,7 @@
     "./registry.json": "./registry.json"
   },
   "dependencies": {
-    "@lapismd/design-core": "^0.3.2",
+    "@lapismd/design-core": "^0.7.0",
     "@lucide/svelte": "^0.523.0"
   },
   "peerDependencies": {
@@ -52,7 +52,7 @@
     "@codemirror/language": "^6.11.3",
     "@codemirror/state": "^6.6.0",
     "@codemirror/view": "^6.42.1",
-    "@lapis-notes/api": "^0.1.2",
+    "@lapis-notes/api": "^0.2.0",
     "@lezer/common": "^1.5.2",
     "@lezer/highlight": "^1.2.3",
     "@lezer/lr": "^1.4.2",
@@ -66,8 +66,8 @@
     "svelte": "^5.38.2",
     "svelte-check": "^4.3.1",
     "typescript": "~5.8.3",
-    "vite": "^6.4.2",
-    "vitest": "^4.1.8"
+    "vite": "^6.4.4",
+    "vitest": "^4.1.12"
   },
   "repository": {
     "type": "git",
