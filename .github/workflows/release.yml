@@ -220,6 +220,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/ci-setup
+      - name: Install pinned upstream JJ for release gates
+        run: node scripts/validation/install-tools.mjs --ci
       - name: Validate selected source and every shared release gate
         run: |
           set -euo pipefail

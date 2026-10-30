@@ -32,6 +32,10 @@ test("static publication requires activation, protected approval and the pinned 
   );
   assert.match(source, /trap 'rm -f "\$key_file"' EXIT/);
   assert.ok(
+    source.indexOf("node scripts/validation/install-tools.mjs --ci") <
+      source.indexOf("pnpm check")
+  );
+  assert.ok(
     source.indexOf("create-static-release-plan.mjs") <
       source.indexOf("release:publish-approved")
   );
