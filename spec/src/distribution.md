@@ -294,7 +294,7 @@ They neither activate publication nor alter production trust.
 
 The parked Sync catalog has its own tracked registry lockfile. CI installs it
 with `--ignore-workspace --ignore-pnpmfile --frozen-lockfile` alongside the root
-frozen install so clean Storybook jobs receive its icons and QR dependencies.
+frozen install, which omits the local pnpmfile checksum, so clean Storybook jobs receive its icons and QR dependencies.
 Sync remains excluded from recursive workspace tasks and release selection.
 The review graph consumes released Design Core 0.4.0, retaining the Settings fixes.
 

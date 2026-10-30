@@ -106,7 +106,7 @@ AI, Bases and History mobile shell stories qualify the published count-bearing
 dock label by opening and closing the actual workspace tab chooser.
 
 Registry dependency acceptance bypasses pre-existing local pnpm hooks with
-`--ignore-pnpmfile`; local hook files remain outside the verified diff. The
+`--ignore-pnpmfile`; the committed lockfile omits the pnpmfile checksum. The
 private Sync review record includes its separate registry install command and
 the released Design Core floor before controlled header integration.
 
