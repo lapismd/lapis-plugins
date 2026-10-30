@@ -90,9 +90,10 @@ export function npmPublicationDecision(existing, expectedIntegrity) {
   return existing === expectedIntegrity ? "skip-same" : "skip-different";
 }
 
-export function githubExistingAssetDecision(matches, replace) {
+export function githubExistingAssetDecision(assetName, matches, replace) {
   if (matches) return "match";
-  return replace ? "mismatch" : "skip-different";
+  if (replace || !assetName.endsWith(".lapis-plugin")) return "mismatch";
+  return "skip-different";
 }
 
 async function publishNpm(release) {
@@ -274,12 +275,13 @@ async function verifyGitHubReleaseAssets(release, releaseAssets, replace) {
         readFile(expected),
         readFile(remote),
       ]);
+      const asset = path.basename(expected);
       const decision = githubExistingAssetDecision(
+        asset,
         expectedBytes.equals(remoteBytes),
         replace,
       );
       if (decision === "match") continue;
-      const asset = path.basename(expected);
       if (decision === "skip-different") {
         console.log(
           `Skipping ${release.releaseTag}; GitHub already has a different ${asset} asset.`,
