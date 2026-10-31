@@ -117,7 +117,7 @@ export default defineConfig(tableRequirements(), {
         },
         {
           pattern:
-            "^(?:package\\.json$|pnpm-|turbo\\.json$|svelte\\.config\\.js$|vitest\\.config\\.ts$|\\.storybook/|\\.changeset/|\\.github/|scripts/|README\\.md$|RELEASING\\.md$|AGENTS\\.md$|spec-validator\\.config\\.mjs$)",
+            "^(?:package\\.json$|pnpm-|turbo\\.json$|svelte\\.config\\.js$|vitest\\.config\\.ts$|\\.storybook/|\\.changeset/|\\.github/|scripts/|patches/|README\\.md$|RELEASING\\.md$|AGENTS\\.md$|spec-validator\\.config\\.mjs$)",
           chapters: [
             "spec/src/distribution.md",
             "spec/src/spec-governance.md",
@@ -127,7 +127,7 @@ export default defineConfig(tableRequirements(), {
       ],
       protected: [
         "^crates/lapis-plugin-services/",
-        "^(?:packages/|stories/|package\\.json$|pnpm-|turbo\\.json$|svelte\\.config\\.js$|vitest\\.config\\.ts$|\\.storybook/|\\.changeset/|\\.github/|scripts/|README\\.md$|RELEASING\\.md$|AGENTS\\.md$|spec-validator\\.config\\.mjs$)",
+        "^(?:packages/|stories/|package\\.json$|pnpm-|turbo\\.json$|svelte\\.config\\.js$|vitest\\.config\\.ts$|\\.storybook/|\\.changeset/|\\.github/|scripts/|patches/|README\\.md$|RELEASING\\.md$|AGENTS\\.md$|spec-validator\\.config\\.mjs$)",
       ],
     },
   },

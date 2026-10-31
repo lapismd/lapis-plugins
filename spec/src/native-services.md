@@ -99,6 +99,11 @@ registry-only resolution and selects no other native Markdown/Search
 implementation; the native crate stages and their host selections stay
 separately pinned.
 
+The authorized composed Bits UI 2.20.2 browser patch retains Link Preview and
+Slider teardown and the upstream same-container focus repair. Its explicit root
+registration changes the renderer dependency input only; native algorithms,
+crate pins, admitted host capabilities and independent native gates remain.
+
 ## Frontmatter source parity
 
 The shared retained corpus compares complete metadata through the existing JSON

@@ -41,7 +41,7 @@ overrides:
   "@lezer/markdown": "1.8.1"
   "@types/node": "24.19.2"
   typescript: "5.9.3"
-  bits-ui: "2.19.5"
+  bits-ui: "2.20.2"
   # Match the Notes host's Turso 0.7.2 worker-runtime compatibility pins.
   "@napi-rs/wasm-runtime@1.0.7>@emnapi/core": "1.8.1"
   "@napi-rs/wasm-runtime@1.0.7>@emnapi/runtime": "1.8.1"
@@ -63,5 +63,5 @@ overrides:
   sharp: ">=0.35.5 <0.36"
   source-map-js@>=1.0.0 <1.2.2: ">=1.2.2 <2"
 patchedDependencies:
-  bits-ui@2.19.5: patches/bits-ui@2.19.5.patch
+  bits-ui@2.20.2: patches/bits-ui@2.20.2.patch
   "@chenglou/pretext@0.0.7": patches/@chenglou__pretext@0.0.7.patch
