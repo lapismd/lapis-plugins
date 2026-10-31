@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
-  heldPackageNames,
   partitionChangeset,
   renderChangeset,
 } from "./version-public-packages.mjs";
@@ -16,8 +15,11 @@ const mixed = `---
 Keep the other packages on this release.
 `;
 
-test("splits held Bases and History entries out of a mixed changeset", () => {
-  const parsed = partitionChangeset(mixed, heldPackageNames);
+test("splits explicitly held entries out of a mixed changeset", () => {
+  const parsed = partitionChangeset(mixed, [
+    "@lapis-notes/bases",
+    "@lapis-notes/history",
+  ]);
   assert.deepEqual(
     parsed.rest.map((entry) => entry.name),
     ["@lapis-notes/ai"],
@@ -26,7 +28,16 @@ test("splits held Bases and History entries out of a mixed changeset", () => {
     parsed.held.map((entry) => `${entry.name}:${entry.bump}`),
     ["@lapis-notes/bases:patch", "@lapis-notes/history:minor"],
   );
-  assert.match(renderChangeset(parsed.rest, parsed.body), /"@lapis-notes\/ai": patch/);
-  assert.doesNotMatch(renderChangeset(parsed.rest, parsed.body), /bases|history/);
-  assert.match(renderChangeset(parsed.held, parsed.body), /Keep the other packages/);
+  assert.match(
+    renderChangeset(parsed.rest, parsed.body),
+    /"@lapis-notes\/ai": patch/,
+  );
+  assert.doesNotMatch(
+    renderChangeset(parsed.rest, parsed.body),
+    /bases|history/,
+  );
+  assert.match(
+    renderChangeset(parsed.held, parsed.body),
+    /Keep the other packages/,
+  );
 });

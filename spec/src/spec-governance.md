@@ -2,6 +2,17 @@
 
 # Specification Governance
 
+The approved Bases/History release removes their prior versioning hold under
+LP-SPEC-016. Exact eligibility and explicit-hold regressions qualify the release
+script; audit, full CI, signed archives, provenance and consumer gates remain
+required before claiming a release.
+
+The root intake uses verified API 0.2.3 and Workspace 0.3.1 through normal
+ranges; the independent Sync root also takes API 0.2.3. Both roots now require
+the verified Core 0.7.4 release and explicitly retain the canonical Bits patch.
+Source checks, versioned artifacts, actual plugin publication and final consumer
+qualification remain separate gates; eligibility alone cannot establish them.
+
 LN-HIST-018 retains separate regressions for explicit native selection,
 passive observation, saved-state projection and lost acknowledgement. Its
 public package, runtime archive and hosted consumer evidence remain distinct.
@@ -200,7 +211,7 @@ shims, final-state assertions, and baseline policy.
 They also stay aligned on required banner and selective distinct Overview
 roles, two-theme capture, exact half-area diagonal composition, Word Count
 full-shell framing, and the four-output media contract.
-The shared Storybook host installs published Mira 0.1.2 so Design Core 0.7.0
+The shared Storybook host installs published Mira 0.1.4 so Design Core 0.7.4
 and the 0.0.3 editor plugins resolve one Mira line. Deep Mira modules stay in
 the Vite prebundle, which converts their CommonJS dependencies before the
 preview loads them.

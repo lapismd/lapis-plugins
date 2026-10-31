@@ -29,8 +29,14 @@ const publicOnly = `---
 Publish markdown.
 `;
 
-test("a held Bases or History changeset cannot open a version pull request", () => {
-  assert.equal(changesetIsReleasable(heldOnly, heldPackageNames), false);
+test("an explicit package hold prevents a version pull request", () => {
+  assert.equal(
+    changesetIsReleasable(heldOnly, [
+      "@lapis-notes/bases",
+      "@lapis-notes/history",
+    ]),
+    false,
+  );
 });
 
 test("a changeset that bumps a published package can open a version pull request", () => {
@@ -39,5 +45,13 @@ test("a changeset that bumps a published package can open a version pull request
 });
 
 test("an unreadable changeset cannot open a version pull request", () => {
-  assert.equal(changesetIsReleasable("not a changeset\n", heldPackageNames), false);
+  assert.equal(
+    changesetIsReleasable("not a changeset\n", heldPackageNames),
+    false,
+  );
+});
+
+test("approved Bases and History changesets can open the next version pull request", () => {
+  assert.deepEqual(heldPackageNames, []);
+  assert.equal(changesetIsReleasable(heldOnly), true);
 });

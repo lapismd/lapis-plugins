@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "@lapismd/ai-controller": "^0.1.0",
-    "@lapismd/design-core": "^0.7.0",
+    "@lapismd/design-core": "^0.7.4",
     "@lucide/svelte": "^0.523.0",
     "ajv": "^8.20.0",
     "yaml": "^2.9.0"

@@ -12,10 +12,10 @@ result lists and property icon actions expose accessible names. The property
 popup uses grid rows with independent visibility/edit controls in grid cells,
 preserving search and keyboard actions without buttons nested in options.
 
-The package now requires the published API `^0.2.0` and Design Core `^0.7.0`
+The package now requires the published API `^0.2.0` and Design Core `^0.7.4`
 floors.
 
-The package requires published Design Core `^0.7.0` for prepared browser CSS
+The package requires published Design Core `^0.7.4` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
 behavior retain their owning contracts.
 

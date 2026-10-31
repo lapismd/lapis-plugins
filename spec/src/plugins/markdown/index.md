@@ -13,7 +13,7 @@ admitted-contract assertions are unchanged.
 LN-MD-022's empty Outline explains the missing headings outside its semantic
 list. The real-App No headings story retains interaction and axe qualification.
 
-The package requires Design Core `^0.7.0` for prepared browser CSS
+The package requires Design Core `^0.7.4` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
 behavior retain their owning contracts. A full-file Markdown embed asks
 registered Markdown embedders in order for `md` and `markdown`. The first
@@ -24,7 +24,7 @@ extensions.
 The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.
 
-Version 0.2.0 consumes published Mira `~0.1.2` and the matching 0.0.3 editor
+Version 0.2.0 consumes published Mira `~0.1.4` and the matching 0.0.3 editor
 and optional plugin releases.
 Its generated manifest, README installation coordinate and authentic Changesets
 changelog agree on the independent release version.
@@ -74,6 +74,15 @@ specified separately under [Panels](./panels/index.md).
 Targeted `Editing Title Alignment` and `Editing Search Settings` scenarios
 qualify the shared API and Mira editor contracts below. Source and dark-mode
 variants retain real App ownership and leave full-suite qualification deferred.
+
+`ReadingMath` in the real-App Reading surface family qualifies the existing
+published Mira renderer under LN-MD-004 and the mode lifecycle under LN-MD-005.
+It retains ordinary Markdown alongside inline and display math, verifies actual
+KaTeX output and TeX annotations, and leaves then re-enters Reading without
+changing the authoritative vault text. This is consumer coverage for the
+remark/rehype packaging boundary; Live Preview math widgets and source-owned
+parser, macro and trust parity remain separate Mira acceptance. The scenario
+stays `visual-pending` and does not approve or replace baselines.
 
 | ID        | Requirement                                                                                                                                                                                                                                                                                                                                                                                         |
 | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

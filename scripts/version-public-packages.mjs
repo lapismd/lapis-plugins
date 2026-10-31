@@ -14,9 +14,9 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const changesetDir = path.join(root, ".changeset");
 
-// This release leaves Bases and History unpublished. Their changesets stay
-// in the tree so a later version can consume them.
-export const heldPackageNames = ["@lapis-notes/bases", "@lapis-notes/history"];
+// Bases and History are approved for the next governed public release.
+// Retain explicit hold support without silently excluding either package.
+export const heldPackageNames = [];
 
 export function partitionChangeset(source, held = heldPackageNames) {
   const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
@@ -119,7 +119,9 @@ export function versionPublicPackages() {
 function reportReleasable(releasable) {
   const value = releasable ? "true" : "false";
   if (process.env.GITHUB_OUTPUT) {
-    writeFileSync(process.env.GITHUB_OUTPUT, `releasable=${value}\n`, { flag: "a" });
+    writeFileSync(process.env.GITHUB_OUTPUT, `releasable=${value}\n`, {
+      flag: "a",
+    });
   }
   console.log(
     releasable
@@ -128,10 +130,15 @@ function reportReleasable(releasable) {
   );
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (
+  process.argv[1] &&
+  path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+) {
   if (process.argv.includes("--check")) {
     const releasable = changesetFiles().some((name) =>
-      changesetIsReleasable(readFileSync(path.join(changesetDir, name), "utf8")),
+      changesetIsReleasable(
+        readFileSync(path.join(changesetDir, name), "utf8"),
+      ),
     );
     reportReleasable(releasable);
   } else {

@@ -1,8 +1,11 @@
 # Lapis Sync
 
-The package requires published Design Core `^0.7.2` for prepared browser CSS
+The package requires published Design Core `^0.7.4` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
 behavior retain their owning contracts.
+Its separately frozen review graph verifies the released Core artifact and the
+same explicit composed Bits patch as the root. Source qualification does not
+enable this parked package or complete its outstanding consumer/native gates.
 
 Native desktop account integration uses the released API's native bridge and
 the owning App database's stable vault ID. The native host retains the verifier,
@@ -33,8 +36,9 @@ patch from `../../patches/bits-ui@2.20.2.patch`, with a frozen hash. Root worksp
 settings cannot substitute for this separately installed graph. The patch
 retains Link Preview/Slider cleanup and FocusScope same-container identity;
 upstream-equivalence removal and original diagnostics remain required.
-API 0.2.2 supplies the released minimatch repair; the independent development
-root explicitly supplies its compatible Mira 0.1.3 peer.
+API 0.2.3 retains the released minimatch repair and settled initialization
+cleanup; the independent development
+root explicitly supplies its compatible Mira 0.1.4 peer.
 Sync remains parked, skipped and excluded from package publication.
 
 ## Requirements
@@ -188,7 +192,7 @@ for application state, matching the Notes-wide default. Historical vault data
 and the frozen Deno host are not migrated or edited.
 
 The private catalog install is frozen separately from the root workspace. Its
-current API 0.2.2/Core 0.7.2 graph and validation tooling retain the published
+current API 0.2.3/Core 0.7.2 graph and validation tooling retain the published
 Vitest, body-parser and fast-uri repairs. Its audit has no unignored findings;
 the historical Zod gate no longer applies to this graph. The existing scoped
 development deepmerge CVE-2026-93753 ignore remains until a patched release.
