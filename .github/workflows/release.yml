@@ -285,4 +285,5 @@ jobs:
         run: node scripts/dispatch-static-release.mjs --plugins "${{ needs.selection.outputs.plugins }}"
         env:
           LAPIS_PUBLICATION_APPROVED: "true"
+          GITHUB_TOKEN: ${{ github.token }}
           REGISTRY_GITHUB_TOKEN: ${{ steps.registry-app.outputs.token }}

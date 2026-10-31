@@ -1,5 +1,12 @@
 # Specification Governance
 
+Static registry dispatch under LP-SPEC-016 derives its source coordinates from
+the verified published archive and resolved tag, including retained assets from
+an earlier approved release. Signature, checksum and coordinate rejection tests
+qualify that boundary before dispatch; registry verification and human review
+remain independent of sender evidence. The installed Deno-free spec-validator
+0.2.0 is the current published release; Node 24 qualifies QMD search and doctor.
+
 # Specification Governance
 
 The approved Bases/History release removes their prior versioning hold under
