@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
-import { expect, waitFor } from "storybook/test";
+import { expect, waitFor, within } from "storybook/test";
 import PanelDemo from "../_shared/panels/PanelDemo.svelte";
 import {
   verifyEditingAlignment,
@@ -97,6 +97,75 @@ export const ShortNoteDark: Story = {
 export const LongNoteDark: Story = {
   ...LongNote,
   globals: { colorMode: "dark" },
+};
+
+export const ReadingMath: Story = {
+  tags: ["visual-pending"],
+  play: async ({ canvasElement }) => {
+    const app = await registryPanelApp(canvasElement);
+    const path = "Notes/Reading-math.md";
+    const source = [
+      "# Reading math",
+      "",
+      "An **ordinary paragraph** with inline $x^2 + y^2 = z^2$.",
+      "",
+      "- A normal list item",
+      "",
+      "$$",
+      "\\frac{1}{2} + \\sqrt{4} = \\frac{5}{2}",
+      "$$",
+      "",
+    ].join("\n");
+    const file = await app.vault.create(path, source);
+
+    const verifyMath = async () => {
+      await waitFor(() => {
+        const preview = canvasElement.querySelector<HTMLElement>(
+          '[data-ui-component="markdown-mira-preview"] .mira-markdown-preview'
+        );
+        expect(preview).not.toBeNull();
+        expect(
+          within(preview!).getByRole("heading", { name: "Reading math" })
+        ).toBeVisible();
+        expect(preview!.querySelector("strong")).toHaveTextContent(
+          "ordinary paragraph"
+        );
+        expect(preview!.querySelector("li")).toHaveTextContent(
+          "A normal list item"
+        );
+        const formulas = preview!.querySelectorAll<HTMLElement>(".katex");
+        expect(formulas).toHaveLength(2);
+        for (const formula of formulas) expect(formula).toBeVisible();
+        expect(preview!.querySelectorAll(".katex-display")).toHaveLength(1);
+        expect(preview!.querySelectorAll(".katex-error")).toHaveLength(0);
+        expect(
+          Array.from(
+            preview!.querySelectorAll(
+              'annotation[encoding="application/x-tex"]'
+            ),
+            (annotation) => annotation.textContent?.trim()
+          )
+        ).toEqual([
+          "x^2 + y^2 = z^2",
+          "\\frac{1}{2} + \\sqrt{4} = \\frac{5}{2}",
+        ]);
+      });
+    };
+
+    await openRegistryFile(canvasElement, path, { mode: "preview" });
+    await verifyMath();
+    const { editor } = await openRegistryFile(canvasElement, path, {
+      mode: "source",
+    });
+    if (!editor) throw new Error("Reading math has no source editor");
+    expect(editor.getValue()).toBe(source);
+    expect(
+      canvasElement.querySelector('[data-ui-component="markdown-mira-preview"]')
+    ).toBeNull();
+    await openRegistryFile(canvasElement, path, { mode: "preview" });
+    await verifyMath();
+    expect(await app.vault.read(file)).toBe(source);
+  },
 };
 
 export const EditingTitleAlignment: Story = {

@@ -75,6 +75,15 @@ Targeted `Editing Title Alignment` and `Editing Search Settings` scenarios
 qualify the shared API and Mira editor contracts below. Source and dark-mode
 variants retain real App ownership and leave full-suite qualification deferred.
 
+`ReadingMath` in the real-App Reading surface family qualifies the existing
+published Mira renderer under LN-MD-004 and the mode lifecycle under LN-MD-005.
+It retains ordinary Markdown alongside inline and display math, verifies actual
+KaTeX output and TeX annotations, and leaves then re-enters Reading without
+changing the authoritative vault text. This is consumer coverage for the
+remark/rehype packaging boundary; Live Preview math widgets and source-owned
+parser, macro and trust parity remain separate Mira acceptance. The scenario
+stays `visual-pending` and does not approve or replace baselines.
+
 | ID        | Requirement                                                                                                                                                                                                                                                                                                                                                                                         |
 | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | LN-MD-127 | Markdown editing MUST retain the API inline title's measured text-column alignment in Source and Live Preview. Opening Settings over Find/Replace MUST cover editor panels and gutters, retain modal focus, and preserve the search query and replacement after dismissal. The Reading surface editing stories MUST exercise these shared package contracts without plugin-local styling overrides. |
