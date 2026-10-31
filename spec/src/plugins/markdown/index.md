@@ -275,3 +275,5 @@ only the captured controller on explicit recovery. Body-only changes remain
 compatible. The two governed persistence scenarios extend the existing File
 Properties shell family; [source evidence](../../../records/2026-10-26-properties-persistence.md)
 keeps provisional public-package diagnosis separate from final source/host intake.
+
+Notebook canvas-table adoption may widen Markdown’s Design Core compatibility range only after owner-side acceptance. This dependency-only intake MUST preserve all Markdown behavior and public exports, leave CSV and other plugin code untouched, and defer release/whole-catalog qualification until integrated UI approval.
