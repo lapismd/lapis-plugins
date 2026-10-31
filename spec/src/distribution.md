@@ -25,12 +25,15 @@ and normal ranges. Removal requires an equivalent upstream release and fresh
 unpatched lifecycle/focus acceptance in each consumer. Source and release proof
 are retained in [the intake record](../records/2026-10-31-bits-focus-patch.md).
 
-Validation takes published API 0.2.3, UI 0.1.5, Workspace 0.3.1, Core 0.7.2 and
+Validation takes published API 0.2.3, UI 0.1.5, Workspace 0.3.1, Core 0.7.3 and
 Mira 0.1.3 through normal ranges. API 0.2.3 retains the released minimatch repair
 and adds settled Sync initialization cleanup. Its governed npm tag remains
-`next`; this intake does not promote `latest`. Core 0.7.3 remains a separate
-final-cohort gate until actually published. See
-[API intake](../records/2026-10-31-framework-api-intake.md).
+`next`; this intake does not promote `latest`. Core 0.7.3's registry bytes,
+provenance, package tag and GitHub release are verified at source `1ff36f37`.
+Each independent install root still registers the exact published Bits patch;
+the library's package settings do not propagate to its consumers. See
+[Core intake](../records/2026-10-31-core-073-intake.md) and
+[API artifact qualification](../records/2026-10-31-framework-api-artifacts.md).
 
 Search settings recovery preserves the existing package identity, semver ranges
 and independent patch release. Its private observer uses the public owning-App

@@ -1,8 +1,11 @@
 # Lapis Sync
 
-The package requires published Design Core `^0.7.2` for prepared browser CSS
+The package requires published Design Core `^0.7.3` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
 behavior retain their owning contracts.
+Its separately frozen review graph verifies the released Core artifact and the
+same explicit composed Bits patch as the root. Source qualification does not
+enable this parked package or complete its outstanding consumer/native gates.
 
 Native desktop account integration uses the released API's native bridge and
 the owning App database's stable vault ID. The native host retains the verifier,
