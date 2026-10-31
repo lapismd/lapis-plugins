@@ -87,7 +87,11 @@ generated registry PR or changing production registry deployment.
 
 After approval, the release workflow publishes npm, creates the package-scoped
 GitHub release, and sends the verified release coordinates to the registry by
-`repository_dispatch` using a narrowly scoped GitHub App token. Secrets contain
+`repository_dispatch` using a narrowly scoped GitHub App token. The sender verifies
+the actual published archive and checksum against the pinned release key and
+resolved release tag before sending coordinates. When a rerun retains an earlier
+archive, the dispatch uses that archive's original signed source commit rather
+than the current workflow commit. It never rewrites the retained artifact. Secrets contain
 private key material; release logs and artifacts never do.
 
 The manual workflow presents one checkbox per plugin, with every plugin selected
