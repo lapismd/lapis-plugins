@@ -40,7 +40,7 @@ test("tracks the Bits UI lifecycle patch for every resolved version", async () =
     if (version === "2.18.1") {
       assert.match(patch, /globalThis\.clearTimeout\(resizeTimeout\)/);
     }
-    if (version === "2.19.5") {
+    if (["2.19.5", "2.20.2"].includes(version)) {
       // Svelte defers pointer-listener attachment one microtask behind on().
       // A slider destroyed in the same tick it mounted therefore leaks its
       // four document listeners past effect teardown, and each later

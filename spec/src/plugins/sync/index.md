@@ -1,6 +1,6 @@
 # Lapis Sync
 
-The package requires published Design Core `^0.7.0` for prepared browser CSS
+The package requires published Design Core `^0.7.2` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
 behavior retain their owning contracts.
 
@@ -24,9 +24,18 @@ Sync plugin keeps its identity and installation behavior.
 Its shared-catalog dependencies are pinned by `packages/sync/pnpm-lock.yaml`
 and installed separately in CI with frozen registry resolution. This supports
 clean UI review while retaining the private package and recursive-task exclusion.
-The isolated development manifest explicitly supplies released UI `^0.1.3` to
+The isolated development manifest explicitly supplies released UI `^0.1.5` to
 the API peer graph, including its corrected runtime dependency declarations.
 This development edge does not expand the plugin runtime host contract.
+
+Its independent root also registers the authorized composed Bits UI 2.20.2
+patch from `../../patches/bits-ui@2.20.2.patch`, with a frozen hash. Root workspace
+settings cannot substitute for this separately installed graph. The patch
+retains Link Preview/Slider cleanup and FocusScope same-container identity;
+upstream-equivalence removal and original diagnostics remain required.
+API 0.2.2 supplies the released minimatch repair; the independent development
+root explicitly supplies its compatible Mira 0.1.3 peer.
+Sync remains parked, skipped and excluded from package publication.
 
 ## Requirements
 
@@ -179,6 +188,7 @@ for application state, matching the Notes-wide default. Historical vault data
 and the frozen Deno host are not migrated or edited.
 
 The private catalog install is frozen separately from the root workspace. Its
-validation tooling consumes patched Vitest, body-parser and fast-uri registry
-versions. Zod 3 stays an upstream release gate. Deepmerge CVE-2026-93753 is
-ignored until a patched release exists.
+current API 0.2.2/Core 0.7.2 graph and validation tooling retain the published
+Vitest, body-parser and fast-uri repairs. Its audit has no unignored findings;
+the historical Zod gate no longer applies to this graph. The existing scoped
+development deepmerge CVE-2026-93753 ignore remains until a patched release.

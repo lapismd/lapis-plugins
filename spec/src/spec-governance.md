@@ -265,6 +265,13 @@ document listeners past effect teardown; the tracked 2.19.5 patch keeps every
 leaked document pointer handler inert once its owning effect is destroyed
 (LP-SPEC-058). The user approved the scoped 2.19.5
 lifecycle-patch exception while an upstream fixed release remains unavailable.
+The October 31 authorization extends this to the composed registry 2.20.2
+patch, retaining those lifecycle repairs and adding the same-container
+FocusScope guard from owner commit 692fbdf5 (upstream Bits UI #2264). Keep one
+explicit root mapping for each resolved version and verify its frozen hash.
+Consumers must register their own patch; package-local pnpm settings do not
+propagate through npm. Remove hunks only after released upstream equivalence
+and fresh unpatched lifecycle/focus qualification, retaining fatal diagnostics.
 Mira 0.0.4 supplies pending-overlay registration and focus teardown through its
 published Bits UI 2.19.5 dependency. The consumer floor and frozen lockfile must
 retain that provider; unused older patch declarations are retired without
