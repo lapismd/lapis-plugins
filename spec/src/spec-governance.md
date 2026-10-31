@@ -7,6 +7,11 @@ LP-SPEC-016. Exact eligibility and explicit-hold regressions qualify the release
 script; audit, full CI, signed archives, provenance and consumer gates remain
 required before claiming a release.
 
+The root intake uses verified API 0.2.3 and Workspace 0.3.1 through normal
+ranges; the independent Sync root also takes API 0.2.3. Core 0.7.2 remains explicit until the
+actual repaired 0.7.3 release is available. A staged graph, metadata check or
+eligibility result cannot establish final cohort, npm or native qualification.
+
 LN-HIST-018 retains separate regressions for explicit native selection,
 passive observation, saved-state projection and lost acknowledgement. Its
 public package, runtime archive and hosted consumer evidence remain distinct.

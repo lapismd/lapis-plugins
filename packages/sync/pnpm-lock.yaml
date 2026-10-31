@@ -42,8 +42,8 @@ importers:
         version: 1.5.4
     devDependencies:
       '@lapis-notes/api':
-        specifier: ^0.2.2
-        version: 0.2.2(89382379975276c3e7aca7bb971a444a)
+        specifier: ^0.2.3
+        version: 0.2.3(89382379975276c3e7aca7bb971a444a)
       '@lapis-notes/ui':
         specifier: ^0.1.5
         version: 0.1.5(@internationalized/date@3.12.4)(@lapismd/design-core@0.7.2(svelte@5.56.10)(tailwindcss@4.3.3))(svelte@5.56.10)
@@ -791,8 +791,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@lapis-notes/api@0.2.2':
-    resolution: {integrity: sha512-3UpUr+TelkuRbNVUDpKCiltk+Bc1FZWH03BahIUlHGUC/QQ1fU0kuUZU4jnLb4WPpeIRbmBun1QgACkp4WxWTQ==}
+  '@lapis-notes/api@0.2.3':
+    resolution: {integrity: sha512-CGQQzAq/2aH3SDznhVIv/1oCictAxvXfLUiqQ4aYfmR0hN2YL/jTomH9sJn+gVSnSoeP4qyXXTMmRNrZfABM0Q==}
     peerDependencies:
       '@codemirror/autocomplete': ^6.18.6
       '@codemirror/commands': ^6.8.1
@@ -3639,7 +3639,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.6.0
 
-  '@lapis-notes/api@0.2.2(89382379975276c3e7aca7bb971a444a)':
+  '@lapis-notes/api@0.2.3(89382379975276c3e7aca7bb971a444a)':
     dependencies:
       '@codemirror/autocomplete': 6.20.4
       '@codemirror/commands': 6.11.1
