@@ -1,7 +1,7 @@
 {
   "id": "history",
   "name": "History",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "minAppVersion": "0.1.0",
   "description": "Browse, compare, and restore saved file revisions",
   "author": "Lapis Notes",
