@@ -144,3 +144,5 @@ rerun skips an npm version already on the registry, verifies that tarball, and
 creates any missing GitHub release without publishing again. Markdown dependents
 declare `^0.2.0` and the workspace install links the local package until that
 release exists. Package checks wait for its build so the embed export exists.
+
+The Notebook canvas cohort dependency intake retains native-service contracts; compatibility evidence and remaining full qualification are tracked in spec/records/2026-10-31-notebook-canvas-compat.md.

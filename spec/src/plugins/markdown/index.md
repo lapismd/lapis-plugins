@@ -277,3 +277,7 @@ Properties shell family; [source evidence](../../../records/2026-10-26-propertie
 keeps provisional public-package diagnosis separate from final source/host intake.
 
 Notebook canvas-table adoption may widen Markdown’s Design Core compatibility range only after owner-side acceptance. This dependency-only intake MUST preserve all Markdown behavior and public exports, leave CSV and other plugin code untouched, and defer release/whole-catalog qualification until integrated UI approval.
+
+The prepared Markdown dependency range admits Design Core 0.8 for shared Notebook tables; Markdown runtime behavior retains its qualified contract and the owning release evidence separates review preparation from full qualification.
+
+The private catalog development dependency on History uses `^0.2.0`, matching the existing workspace package and API 0.2 host cohort. This avoids accidentally installing the obsolete 0.1.4 registry host graph during Markdown compatibility lock refresh; History and CSV runtime source remain unchanged.

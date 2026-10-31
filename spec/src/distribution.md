@@ -401,3 +401,7 @@ retain one source identity; qualification keeps legacy services compatible.
 Graph native intake uses the verified current API archive for admitted pending
 operations. Its settings repair is packed at the owning source snapshot; npm
 publication and signed plugin artifacts remain at their separate release gates.
+
+Notebook canvas compatibility prepares a Markdown patch Changeset with registry-portable ranges; publication, signatures, archive reproduction and consumer qualification remain behind integrated UI approval and the explicit release gate.
+
+The private catalog development dependency on History uses `^0.2.0`, matching the existing workspace package and API 0.2 host cohort. This avoids accidentally installing the obsolete 0.1.4 registry host graph during Markdown compatibility lock refresh; History and CSV runtime source remain unchanged.

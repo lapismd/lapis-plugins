@@ -1,61 +1,44 @@
-# Notebook canvas-table migration progress
+# Notebook compatibility qualification
 
-## Delivery state
+Notebook and Design Core UI was approved on 31 October 2026. Complete the
+dependency-only Markdown compatibility checks and audit without changing CSV
+or other plugin behavior. Full qualification is in progress. Pushing, merging
+and publication require separate authorization. Keep visual baselines unchanged.
 
-- Specified: complete contract written before runtime changes.
-- Implemented: pending.
-- Focused-tested: pending; no passing runtime evidence claimed.
-- UI-approved: pending.
-- Fully-qualified: deferred until UI approval.
+## Post-approval compatibility evidence
 
-## Source and ownership
+All commands used Node 24. Latest Deno-free validator remains 0.2.0; doctor
+and working QMD search receipts are retained under `.local/qualification/`.
 
-Isolated workspaces: design-core-notebook-tables, lapis-plugin-notebook-canvas-tables,
-lapis-notes-notebook-canvas-host and lapis-plugins-notebook-canvas-compat.
-Bases: Design Core f16631c7; Notebook 04c858d7; Notes 6ffa9caf; Plugins be302f37.
-Existing workspaces and Storybook 10329 are preserved. No push/merge/publication.
+- `pnpm --filter @lapis-notes/markdown check`: 0 errors/0 warnings.
+- `pnpm --filter @lapis-notes/markdown test`: 154 passed/0 failed.
+- `pnpm --filter @lapis-notes/markdown build`: build and publint passed.
+- `pnpm spec:check`: passed validation, mdBook and spec-first, 0 findings.
+- `pnpm check:app-ownership`: passed in isolated Docker.
+- `pnpm test:storybook -- stories/plugins/markdown`: 61 interaction/axe stories
+  passed/0 failed across 11 files, fresh Docker browser. Receipt:
+  lapis-plugins-validation-29dd091d-c0e1-4fa3-8988-f6272f00f308.
+- `pnpm build-storybook`: full static catalog passed, no screenshot comparison.
+- `node --test scripts/plugin-release.test.mjs scripts/plugin-archive-contract.test.mjs
+scripts/npm-package-imports.test.mjs scripts/build-plugin-release.test.mjs`:
+  26 passed/0 failed, including reproducibility/signature contracts.
+- `pnpm --dir packages/markdown pack --pack-destination
+../../.local/qualification/markdown-pack`: passed package and publint.
+- `pnpm plugin:build -- --plugin markdown --out-dir ...` first stopped at
+  the clean-working-copy release gate. Repeated with explicit immutable JJ
+  source snapshot `ff4a0454e0c4f5dda3d1a11867da5fc7df57b818` and
+  `--commit`: candidate payload passed. This is local qualification only.
+- `pnpm plugin:verify -- <directory>` first failed on forwarded `--`; exact
+  `node scripts/verify-plugin-release.mjs .local/qualification/markdown-payload`
+  passed. A second build from the same snapshot matched SHA256
+  `4e92ceadfb62b7821877f1ddf8a452af93b2f96c2d5a7ca1754b7c09d4056e10`.
+- Initial audit had 1 new moderate minimatch finding. Remote main's matching
+  baseline had none. Lock refresh exposed a stale root development History
+  range (^0.1.4) that did not match the existing local 0.2.0 package. Aligning
+  only the dev range to ^0.2.0 removed the obsolete registry dependency.
+  Final audit has no advisories/moderate/high/critical findings and retains
+  the same two pre-existing ignored low metadata entries. No new CVE ignore.
 
-## Implementation slices
-
-1. Specification and exact-command evidence, committed before runtime.
-2. Generic column snippets, measured details, density/chrome and selection scope;
-   custom operator validation; focused shared regression checks.
-3. Notebook typed adapter/evaluator, result/dataframe/input/preview integration,
-   focused stories, public types and lifecycle checks.
-4. Host explicit module exposure and minimal package compatibility preparation.
-5. Docker review server with verified archived dependencies; integrated UI review.
-6. Only after approval: full shared/host/package qualification, authorized releases,
-   registry refresh and final Notebook Docker validation:all and packed host intake.
-
-## Verification matrix
-
-| Boundary           | Before UI approval                                                       | After UI approval                                 |
-| ------------------ | ------------------------------------------------------------------------ | ------------------------------------------------- |
-| Geometry/selection | Exact units, scrolled/resized overlays, scoped select-all                | Full Design Core checks                           |
-| Rich content       | Headers, histograms, custom cells, measured details, a11y                | Full interaction/accessibility and static catalog |
-| Typed filters      | Null/blank, regex/errors, range, dates, precise numbers, nested groups   | Full units and package consumers                  |
-| Inputs             | Values/defaults/required/disabled, no sort/filter input, repeated embeds | Full Notebook validation:all                      |
-| Lifecycle          | Fresh Docker browser, focus, portal, teardown, large bounded dataset     | Cold packed plugin in supported hosts             |
-| Public contracts   | Strict focused types, exports, size/native-CSS audits                    | Packed-consumer and release checks                |
-| Governance         | spec:first/spec:check, formatter, doctor/search                          | Complete evidence and release disposition         |
-
-## Commands and observations
-
-- `jj git fetch --remote codex-https --branch main`: four owners succeeded.
-- `pnpm view @lapismd/spec-validator version --json`: latest Deno-free 0.2.0.
-- Initial searches under unintended Node 26 ABI 147: QMD native mismatch;
-  supported fallback is rg. Repeat doctor/search under explicit Node 24 PATH.
-- Notebook `pnpm install --frozen-lockfile`: one configuration failure because
-  the local hook checksum was active. `pnpm install --frozen-lockfile --ignore-pnpmfile`
-  succeeds with registry resolution; no tracked lock mutation.
-- All runtime test counts are pending. No screenshot comparisons/baseline updates.
-
-## Resume
-
-Read the owning canonical requirements and this record, inspect each workspace
-with jj st, run focused exact targets and append their failure counts. Archive
-provenance and actual installed lock belong to the Docker receipt. Do not run
-broad suites, static catalog or publication until the user approves both UIs.
-After approval run Design Core spec:first/spec:check/checks and packed acceptance;
-complete affected host/package lanes; obtain release authorization; consume
-published registry versions; run Notebook validation:all and real plugin loading.
+CSV and all other plugin runtime files remain unchanged. Published signing,
+registry intake and final Notebook acceptance require the separately authorized
+release cohort. This compatibility slice is not a publication receipt.

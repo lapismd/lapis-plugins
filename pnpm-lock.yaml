@@ -97,7 +97,7 @@ importers:
         specifier: ^0.2.0
         version: 0.2.0(d5df976fe7717213fe6532693e203be5)
       '@lapis-notes/history':
-        specifier: ^0.1.4
+        specifier: ^0.2.0
         version: link:packages/history
       '@lapis-notes/language-service':
         specifier: ^0.1.2
@@ -675,7 +675,7 @@ importers:
   packages/markdown:
     dependencies:
       '@lapismd/design-core':
-        specifier: ^0.7.4
+        specifier: ^0.7.4 || ^0.8.0
         version: 0.7.4(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lapismd/mira':
         specifier: ~0.1.4
