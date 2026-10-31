@@ -110,12 +110,27 @@ that source-owner result does not substitute for this repository's consumers.
 - Latest validator doctor and semantic discovery pass. Final source spec-first
   maps 12 protected files, including patch payloads, to five canonical chapters.
 
+## Clean-commit artifact qualification
+
+Verified source is committed at `9c1ac6dc54eef8a60ca693d8c52d8768b9326e02`.
+The normal empty child `44dbb1f7` passes the complete Docker `pnpm ci:release`
+lane without bypassing the clean-source guard or supplying `GITHUB_SHA`.
+Run `lapis-plugins-validation-ed5c01c2-3183-4113-a42f-2213e5640735` records
+all 51 cached package check/test/build tasks, release tooling, audit and spec
+checks, 17 public npm tarballs with checked contents/checksums, 17 deterministic
+runtime payloads with successful verification, and the static catalog build.
+The artifact source resolves to the verified nonempty parent. Existing build
+warnings remain visible in `/tmp/lapis-plugins-bits-artifacts.log`.
+
+[Source PR #43](https://github.com/lapismd/lapis-plugins/pull/43) owns hosted
+qualification, including the test-signed registry fixture. Production signing,
+publication and final Desktop cohort acceptance remain separate gates.
+
 ## Remaining qualification
 
-Record the composed patch checksum and frozen graph, original affected cold
-stories, complete interaction/axe/check/test/build/audit/package lanes, and
-separate actual publication/host acceptance before claiming release completion.
-Failed attempts remain retained. No baselines or diagnostic thresholds change.
+Hosted source checks and actual publication/host acceptance remain before
+claiming release completion. Failed attempts remain retained. No baselines or
+diagnostic thresholds change.
 
 Remove a hunk only after a released upstream package provides equivalent
 behavior and every consumer passes the original lifecycle/focus regression on
