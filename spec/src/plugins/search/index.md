@@ -4,7 +4,7 @@ Catalog filter triggers use their complete current accessible name, including
 the selected file type and retrieval mode. Selection and persistence assertions
 remain required after opening the public controls.
 
-The package requires Design Core `^0.7.0` for prepared browser CSS
+The package requires Design Core `^0.7.4` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
 behavior retain their owning contracts.
 

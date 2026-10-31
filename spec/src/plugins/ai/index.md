@@ -7,7 +7,7 @@ Shell geometry measures ordinary spacing from the resolved composer dock padding
 under LN-AI-027, without carrying forward a former footer's fixed 20px allowance.
 The panel still has no bottom padding and the composer cannot overlap messages.
 
-The package requires published Design Core `^0.7.0` for prepared browser CSS
+The package requires published Design Core `^0.7.4` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
 behavior retain their owning contracts.
 

@@ -25,13 +25,13 @@ and normal ranges. Removal requires an equivalent upstream release and fresh
 unpatched lifecycle/focus acceptance in each consumer. Source and release proof
 are retained in [the intake record](../records/2026-10-31-bits-focus-patch.md).
 
-Validation takes published API 0.2.3, UI 0.1.5, Workspace 0.3.1, Core 0.7.3 and
-Mira 0.1.3 through normal ranges. API 0.2.3 retains the released minimatch repair
+Validation takes published API 0.2.3, UI 0.1.5, Workspace 0.3.1, Core 0.7.4 and
+Mira 0.1.4 through normal ranges. API 0.2.3 retains the released minimatch repair
 and adds settled Sync initialization cleanup. Its governed npm tag remains
-`next`; this intake does not promote `latest`. Core 0.7.3's registry bytes,
-provenance, package tag and GitHub release are verified at source `1ff36f37`.
-Each independent install root still registers the exact published Bits patch;
-the library's package settings do not propagate to its consumers. See
+`next`; this intake does not promote `latest`. Core 0.7.4 and Mira 0.1.4 are the
+published registry versions these floors require. Each independent install root
+still registers the exact published Bits patch; the library's package settings
+do not propagate to its consumers. The prior Core 0.7.3 graph remains recorded in
 [Core intake](../records/2026-10-31-core-073-intake.md) and
 [API artifact qualification](../records/2026-10-31-framework-api-artifacts.md).
 
@@ -265,9 +265,9 @@ change how packages are published. Storybook and the plugin release build
 polyfill the Node builtins that the DOCX PDF export worker imports. That
 polyfill is a build-host detail and does not change how packages are published.
 
-The shared development host resolves published Mira `~0.1.2` together with
+The shared development host resolves published Mira `~0.1.4` together with
 mira-editor, mira-plugin-ai, and mira-plugin-mermaid `~0.0.3`. Design Core
-stays on the published `^0.7.0` range. Storybook keeps prebundling
+stays on the published `^0.7.4` range. Storybook keeps prebundling
 `@lapismd/mira/**`, including that line's CommonJS highlighter dependencies.
 
 Shared Storybook imports API's public `build/vite` helper for prebuilt Turso

@@ -53,8 +53,8 @@
     "./registry.json": "./registry.json"
   },
   "dependencies": {
-    "@lapismd/design-core": "^0.7.0",
-    "@lapismd/mira": "~0.1.2",
+    "@lapismd/design-core": "^0.7.4",
+    "@lapismd/mira": "~0.1.4",
     "@lapismd/mira-editor": "~0.0.2 || ~0.0.3",
     "@lapismd/mira-plugin-ai": "~0.0.2 || ~0.0.3",
     "@lapismd/mira-plugin-mermaid": "~0.0.2 || ~0.0.3",

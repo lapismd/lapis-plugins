@@ -1,6 +1,6 @@
 # Lapis Sync
 
-The package requires published Design Core `^0.7.3` for prepared browser CSS
+The package requires published Design Core `^0.7.4` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
 behavior retain their owning contracts.
 Its separately frozen review graph verifies the released Core artifact and the
@@ -38,7 +38,7 @@ retains Link Preview/Slider cleanup and FocusScope same-container identity;
 upstream-equivalence removal and original diagnostics remain required.
 API 0.2.3 retains the released minimatch repair and settled initialization
 cleanup; the independent development
-root explicitly supplies its compatible Mira 0.1.3 peer.
+root explicitly supplies its compatible Mira 0.1.4 peer.
 Sync remains parked, skipped and excluded from package publication.
 
 ## Requirements

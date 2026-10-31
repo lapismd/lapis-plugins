@@ -13,7 +13,7 @@ admitted-contract assertions are unchanged.
 LN-MD-022's empty Outline explains the missing headings outside its semantic
 list. The real-App No headings story retains interaction and axe qualification.
 
-The package requires Design Core `^0.7.0` for prepared browser CSS
+The package requires Design Core `^0.7.4` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
 behavior retain their owning contracts. A full-file Markdown embed asks
 registered Markdown embedders in order for `md` and `markdown`. The first
@@ -24,7 +24,7 @@ extensions.
 The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.
 
-Version 0.2.0 consumes published Mira `~0.1.2` and the matching 0.0.3 editor
+Version 0.2.0 consumes published Mira `~0.1.4` and the matching 0.0.3 editor
 and optional plugin releases.
 Its generated manifest, README installation coordinate and authentic Changesets
 changelog agree on the independent release version.
