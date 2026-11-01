@@ -494,3 +494,14 @@ query-persistence qualification is superseded by the landed live query/scope
 snapshot design (LN-SRCH-006), and the renumbered LN-SRCH-054 requirement
 avoids the independently assigned LN-SRCH-051/052 identifiers; the rework
 record documents both decisions.
+
+Notebook canvas dependency-only intake uses the standing specification-first and narrowly verified UI review sequence; the complete package/release lanes remain deferred until integrated UI approval.
+
+After the recorded UI and release approval, the Core 0.9 registry compatibility
+slice MUST retain exact-head CI, canonical mapping, registry-only lockfile and
+owner release evidence. Earlier archive qualification MUST NOT substitute for
+the final released package graph or waive any publication gate.
+
+The refreshed cohort's History settings-page type failure MUST be repaired in
+History's portable dependency metadata and proved by the exact strict check.
+The repair MUST NOT cast away controller identity or weaken the shared CI lane.

@@ -150,3 +150,13 @@ rerun skips an npm version already on the registry, verifies that tarball, and
 creates any missing GitHub release without publishing again. Markdown dependents
 declare `^0.2.0` and the workspace install links the local package until that
 release exists. Package checks wait for its build so the embed export exists.
+
+The Notebook canvas cohort dependency intake retains native-service contracts; compatibility evidence and remaining full qualification are tracked in spec/records/2026-10-31-notebook-canvas-compat.md.
+
+The final Core 0.9 registry refresh changes no native service, plugin algorithm
+or CSV behavior. Native source and host adoption remain separately qualified;
+renderer dependency compatibility MUST NOT be reported as native acceptance.
+
+History's Core 0.9 dependency compatibility repair preserves every repository
+service and callback. Its native provider qualification remains distinct from
+the renderer settings-page type check.
