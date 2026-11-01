@@ -278,6 +278,6 @@ keeps provisional public-package diagnosis separate from final source/host intak
 
 Notebook canvas-table adoption may widen Markdown’s Design Core compatibility range only after owner-side acceptance. This dependency-only intake MUST preserve all Markdown behavior and public exports, leave CSV and other plugin code untouched, and defer release/whole-catalog qualification until integrated UI approval.
 
-The prepared Markdown dependency range admits Design Core 0.8 for shared Notebook tables; Markdown runtime behavior retains its qualified contract and the owning release evidence separates review preparation from full qualification.
+The Markdown compatibility range MUST admit released Design Core 0.9 for shared Notebook tables while retaining qualified 0.7.4 and 0.8 hosts. The private catalog qualifies that published 0.9 graph. Markdown runtime behavior and public exports remain unchanged; the owning release evidence separates candidate archives from final registry qualification.
 
 The private catalog development dependency on History uses `^0.2.0`, matching the existing workspace package and API 0.2 host cohort. This avoids accidentally installing the obsolete 0.1.4 registry host graph during Markdown compatibility lock refresh; History and CSV runtime source remain unchanged.

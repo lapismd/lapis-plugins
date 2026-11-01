@@ -152,3 +152,7 @@ declare `^0.2.0` and the workspace install links the local package until that
 release exists. Package checks wait for its build so the embed export exists.
 
 The Notebook canvas cohort dependency intake retains native-service contracts; compatibility evidence and remaining full qualification are tracked in spec/records/2026-10-31-notebook-canvas-compat.md.
+
+The final Core 0.9 registry refresh changes no native service, plugin algorithm
+or CSV behavior. Native source and host adoption remain separately qualified;
+renderer dependency compatibility MUST NOT be reported as native acceptance.

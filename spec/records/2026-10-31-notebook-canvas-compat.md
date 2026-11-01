@@ -1,5 +1,55 @@
 # Notebook compatibility qualification
 
+## Authorized registry refresh — 1 November 2026
+
+The user authorized merging and releasing this cohort, including version PRs
+and eligible npm deployment approval. Core 0.9.0 completed its protected release
+workflow `41258271966`, including installed-package integrity/provenance and tag
+verification. The compatibility slice now admits Core 0.9 alongside existing
+0.7.4/0.8 hosts and qualifies the private catalog against registry 0.9.0.
+Original PR #49 CI `41254770785` passed; the refreshed exact head requires its
+own complete CI before merge. CSV and other plugin runtime files stay untouched.
+
+The initial registry projection still uses published API 0.2.3 and UI 0.1.5,
+whose peers admit only older Core. This adds two temporary Core peer warnings;
+hold final qualification/push until Notes' compatible patches are published,
+then refresh API/UI/Workspace/Explorer development floors and the registry lock.
+Do not suppress those peers or publish this intermediate graph.
+
+- Latest Deno-free validator 0.2.0 rechecked; doctor and QMD search passed.
+- `pnpm spec:first --base main@codex-https --head @`: passed 4 protected files,
+  4 canonical chapters, 0 findings.
+- First current-slice `pnpm spec:check`: 3 missing mapped chapter findings.
+  Updated the owning distribution/native/governance notes; exact rerun passed
+  validate/mdBook/spec-first, 0 findings. Changed-file formatting passed.
+- Registry lock refresh targets Core 0.9 for the catalog and Markdown itself,
+  retaining the Markdown public range's qualified 0.7.4 and 0.8 support.
+
+### Registry cohort verified — 1 November, 02:06 UTC
+
+Notes' release `41262301909` completed publication, clean registry verification
+and all four GitHub releases. Verification initially failed once because npm
+had not processed Workspace 0.3.2; after all versions became visible, the exact
+failed jobs rerun passed. No republish, retry-policy change or assertion waiver.
+The catalog now consumes API 0.2.4, UI 0.1.6, Workspace 0.3.2 and Explorer
+0.2.1 with Core 0.9.0 through registry ranges. Both new Core peer warnings are
+gone; only the pre-existing optional PDF Vue peer warnings remain.
+
+- `pnpm install --lockfile-only --ignore-pnpmfile`: passed final registry graph.
+- `pnpm check -- --filter=@lapis-notes/markdown`: passed in isolated Docker,
+  including audit, 64 story-composition families, 17 package boundaries,
+  App ownership/native CSS, Markdown build/publint and strict check (0 errors,
+  0 warnings). Audit retained only the same two ignored low entries, no new
+  moderate/high/critical findings. Receipt `lapis-plugins-validation-f1babc28-9cf9-46af-bd20-2a9542321c0a`.
+- `pnpm test -- --filter=@lapis-notes/markdown`: 154 passed/0 failed in Docker;
+  receipt `lapis-plugins-validation-b9b5e7d6-62a5-456c-b5b2-1d01ffdfdb2e`.
+- `pnpm spec:first --base main@codex-https --head @`: 4 protected files,
+  4 canonical chapters, 0 findings. Exact `pnpm spec:check` passed all three
+  lanes; changed-file formatting passed. Latest validator remains 0.2.0.
+
+The final hosted CI must qualify the pushed head before merge. Existing broad
+candidate receipts above remain historical; no visual comparisons were run.
+
 Notebook and Design Core UI was approved on 31 October 2026. Complete the
 dependency-only Markdown compatibility checks and audit without changing CSV
 or other plugin behavior. Full qualification is in progress. Pushing, merging

@@ -496,3 +496,8 @@ avoids the independently assigned LN-SRCH-051/052 identifiers; the rework
 record documents both decisions.
 
 Notebook canvas dependency-only intake uses the standing specification-first and narrowly verified UI review sequence; the complete package/release lanes remain deferred until integrated UI approval.
+
+After the recorded UI and release approval, the Core 0.9 registry compatibility
+slice MUST retain exact-head CI, canonical mapping, registry-only lockfile and
+owner release evidence. Earlier archive qualification MUST NOT substitute for
+the final released package graph or waive any publication gate.
