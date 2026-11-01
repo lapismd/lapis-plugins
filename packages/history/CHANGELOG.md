@@ -1,5 +1,11 @@
 # History changelog
 
+## 0.2.1
+
+### Patch Changes
+
+- [#49](https://github.com/lapismd/lapis-plugins/pull/49) [`bb3a6a4`](https://github.com/lapismd/lapis-plugins/commit/bb3a6a4526a7eb5826b2b8763d18c61142248ea5) Thanks [@stevejuma](https://github.com/stevejuma)! - Admit Design Core 0.9 alongside 0.7.4 so History's settings page shares the host API's controller types. Preserve existing History behavior and native-service contracts.
+
 ## 0.2.0
 
 ### Minor Changes
