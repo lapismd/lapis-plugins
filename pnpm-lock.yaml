@@ -629,8 +629,8 @@ importers:
   packages/history:
     dependencies:
       '@lapismd/design-core':
-        specifier: ^0.7.4
-        version: 0.7.4(svelte@5.56.10)(tailwindcss@4.3.3)
+        specifier: ^0.7.4 || ^0.9.0
+        version: 0.9.0(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte':
         specifier: ^1.57.0
         version: 1.57.0(svelte@5.56.10)

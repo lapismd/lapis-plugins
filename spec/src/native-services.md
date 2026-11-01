@@ -156,3 +156,7 @@ The Notebook canvas cohort dependency intake retains native-service contracts; c
 The final Core 0.9 registry refresh changes no native service, plugin algorithm
 or CSV behavior. Native source and host adoption remain separately qualified;
 renderer dependency compatibility MUST NOT be reported as native acceptance.
+
+History's Core 0.9 dependency compatibility repair preserves every repository
+service and callback. Its native provider qualification remains distinct from
+the renderer settings-page type check.

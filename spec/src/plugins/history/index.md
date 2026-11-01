@@ -1,8 +1,13 @@
 # History Plugin
 
-The package requires published Design Core `^0.7.4` for prepared browser CSS
-and bundled fonts through public exports. Application state and existing plugin
-behavior retain their owning contracts.
+The package admits published Design Core `^0.7.4 || ^0.9.0` for prepared browser
+CSS and bundled fonts through public exports. The Core 0.9 host cohort MUST
+resolve History's settings page and API settings registration to the same Core
+provider, preserving nominal controller identity without casts or aliases.
+This compatibility patch changes no History behavior or native service contract.
+
+The [cohort compatibility record](../../../records/2026-10-31-notebook-canvas-compat.md)
+retains the exact settings-page strict-check regression and owning package checks.
 
 The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.

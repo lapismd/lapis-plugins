@@ -409,4 +409,9 @@ ranges. Markdown's patch release retains its qualified older Core hosts; the
 catalog verifies 0.9 without source archives. Exact refreshed-head CI and normal
 package/signature/deployment gates MUST precede its authorized publication.
 
+The cohort also requires a dependency-only History compatibility patch because
+its custom settings page shares API controller types. Preserve an independent
+patch intent; Markdown-only publication MUST NOT silently select History or any
+other plugin. Versioning and publication remain separate owner gates.
+
 The private catalog development dependency on History uses `^0.2.0`, matching the existing workspace package and API 0.2 host cohort. This avoids accidentally installing the obsolete 0.1.4 registry host graph during Markdown compatibility lock refresh; History and CSV runtime source remain unchanged.

@@ -50,6 +50,37 @@ gone; only the pre-existing optional PDF Vue peer warnings remain.
 The final hosted CI must qualify the pushed head before merge. Existing broad
 candidate receipts above remain historical; no visual comparisons were run.
 
+### Exact CI compatibility repair — 1 November 2026
+
+Refreshed CI `41263868277` passed every applicable lane except quality (and its
+aggregate): History's custom settings page resolved Core 0.7.4 while API 0.2.4
+resolved Core 0.9.0. Its nominal `AppShellController` types failed assignment at
+`repository-status.ts:59`. No runtime source defect or CSV change was involved.
+
+- Before edit, exact `pnpm check -- --filter=@lapis-notes/history` reproduced
+  1 strict error/0 warnings in Docker; receipt
+  `lapis-plugins-validation-7ab1db18-6971-4b5d-ad46-7a4dce9be6fb`.
+- History's portable Core range now also admits 0.9, and its lock resolves
+  0.9 with the host API. No cast, alias, node_modules edit or test weakening.
+- Exact rerun passed 0 errors/0 warnings plus audit, package boundaries and
+  ownership/style policies; receipt
+  `lapis-plugins-validation-ca472039-b4a0-47f1-93d1-899754c2fb1a`.
+- `pnpm spec:first --base main@codex-https --head @`: passed 6 protected files,
+  5 canonical chapters; `pnpm spec:check` passed all three lanes. Formatting passed.
+
+History has a separate patch Changeset for honest public metadata versioning.
+The authorized publication selection remains Markdown only; History publication
+stays separate. History behavior, native services, CSV and other runtime sources
+are unchanged. Its owning build/test lane and refreshed full CI remain required.
+
+The owning `pnpm ci:packages -- --filter=@lapis-notes/history` then passed all
+four tasks (build/publint, strict check, tests and required Markdown build),
+including 23 Vitest plus 96 repository tests = 119 passed/0 failed. Receipt:
+`lapis-plugins-validation-b92c9780-c84f-49ea-9cde-11b9ab1f68fe`.
+The verification evidence is linked from History's canonical chapter. An
+optional formatter probe also reproduces the unmodified central verification
+table's existing formatting warning; that file has no retained change.
+
 Notebook and Design Core UI was approved on 31 October 2026. Complete the
 dependency-only Markdown compatibility checks and audit without changing CSV
 or other plugin behavior. Full qualification is in progress. Pushing, merging
