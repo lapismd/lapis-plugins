@@ -1,6 +1,6 @@
 {
   "name": "@lapis-notes/csv",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "CSV and TSV table view and note embed for Lapis applications",
   "license": "Apache-2.0",
   "type": "module",

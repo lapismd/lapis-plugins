@@ -1,7 +1,7 @@
 {
   "id": "bases",
   "name": "Bases",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "minAppVersion": "0.1.0",
   "description": "Build table, card, and grouped views from Markdown properties",
   "author": "Lapis Notes Bases",
