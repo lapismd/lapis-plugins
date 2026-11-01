@@ -1,5 +1,9 @@
 # Native first-party plugin services
 
+<!-- dependency-automation-policy -->
+
+Dependency update PRs from the trusted LapisMD App, Dependabot or Renovate MAY skip specification checks using the PR author rather than the rerun actor. Functional checks remain required. The shared `lapismd/dependency-automation` coordinator proposes published first-party npm updates with Changeset release intent where required; it does not merge, publish, sign or deploy. This CI policy changes no runtime or public contract in this chapter.
+
 Native hosts installing a retained static archive use its original signed
 source identity. Registry dispatch verifies that identity against the immutable
 release tag rather than assigning the rerun's source commit. This release-tool

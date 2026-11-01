@@ -1,3 +1,4 @@
+import { specificationDockerArguments } from "../dependency-automation/spec-policy.mjs";
 import { execFileSync, spawn } from "node:child_process";
 import { createWriteStream } from "node:fs";
 import { mkdtemp, rm } from "node:fs/promises";
@@ -11,7 +12,7 @@ export function contextArguments(config, args) {
 export function sshDockerCommand(
   endpoint,
   args,
-  { multiplexing = true, controlPath } = {},
+  { multiplexing = true, controlPath } = {}
 ) {
   const url = new URL(endpoint);
   if (
@@ -55,6 +56,7 @@ export function sshDockerCommand(
   ];
 }
 export function dockerCommand(config, args) {
+  args = specificationDockerArguments(args);
   if (config.transport !== "ssh-cli")
     return ["docker", contextArguments(config, args)];
   const endpoint = execFileSync(
@@ -66,7 +68,7 @@ export function dockerCommand(config, args) {
       "--format",
       "{{.Endpoints.docker.Host}}",
     ]),
-    { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] },
+    { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }
   ).trim();
   return sshDockerCommand(endpoint, args, {
     multiplexing: config.sshMultiplexing !== false,
@@ -101,7 +103,7 @@ export async function sendDirectory(config, args, directory) {
     ],
     {
       stdio: ["ignore", "pipe", "inherit"],
-    },
+    }
   );
   const child = spawn(cmd, argv, { stdio: ["pipe", "inherit", "inherit"] });
   await Promise.all([
@@ -113,7 +115,7 @@ export async function sendDirectory(config, args, directory) {
 export async function receiveDirectory(config, args, directory) {
   const [cmd, argv] = dockerCommand(config, args);
   const temporary = await mkdtemp(
-    join(tmpdir(), "lapis-plugins-validation-report-"),
+    join(tmpdir(), "lapis-plugins-validation-report-")
   );
   try {
     const archive = join(temporary, "reports.tar");
@@ -133,7 +135,7 @@ function finished(child) {
   return new Promise((accept, reject) => {
     child.once("error", reject);
     child.once("exit", (code) =>
-      code === 0 ? accept() : reject(Error(`Docker transfer exited ${code}`)),
+      code === 0 ? accept() : reject(Error(`Docker transfer exited ${code}`))
     );
   });
 }

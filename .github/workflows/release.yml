@@ -274,7 +274,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
       - name: Create registry GitHub App token
         id: registry-app
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3
         with:
           client-id: ${{ secrets.LAPIS_REGISTRY_APP_CLIENT_ID }}
           private-key: ${{ secrets.LAPIS_REGISTRY_APP_PRIVATE_KEY }}
@@ -287,3 +287,16 @@ jobs:
           LAPIS_PUBLICATION_APPROVED: "true"
           GITHUB_TOKEN: ${{ github.token }}
           REGISTRY_GITHUB_TOKEN: ${{ steps.registry-app.outputs.token }}
+  notify-dependencies:
+    name: Notify dependency consumers
+    needs:
+      - static-publish
+    if: always() && needs.static-publish.result == 'success'
+    permissions:
+      contents: read
+    uses: lapismd/dependency-automation/.github/workflows/notify.yml@ea9d35b12b612467bbabf1c6271ffa41b5eda4ba
+    with:
+      automation-ref: ea9d35b12b612467bbabf1c6271ffa41b5eda4ba
+      source-sha: ${{ github.sha }}
+    secrets:
+      app-private-key: ${{ secrets.LAPIS_DEPENDENCY_APP_PRIVATE_KEY }}

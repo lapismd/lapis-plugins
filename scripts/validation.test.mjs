@@ -72,13 +72,13 @@ test("public validation lanes route through Docker while preserving native comma
     if (name.startsWith("spec:")) {
       assert.match(
         pkg.scripts[name],
-        /^spec-validator /,
-        `${name} calls the installed spec-validator`,
+        /^node scripts\/dependency-automation\/spec-policy\.mjs (?:--command spec:lint |(?:check|validate|first|build)\b)/,
+        `${name} uses the PR-author policy that delegates ordinary PRs to the installed spec-validator`
       );
     } else {
       assert.equal(
         pkg.scripts[name],
-        "node scripts/validation.mjs run " + name,
+        "node scripts/validation.mjs run " + name
       );
     }
     assert.ok(command.length > 0);
