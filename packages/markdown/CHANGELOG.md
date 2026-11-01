@@ -1,5 +1,11 @@
 # Markdown changelog
 
+## 0.2.1
+
+### Patch Changes
+
+- [#49](https://github.com/lapismd/lapis-plugins/pull/49) [`2feb2be`](https://github.com/lapismd/lapis-plugins/commit/2feb2be5d28948d1afd9705efc46588993c7716d) Thanks [@stevejuma](https://github.com/stevejuma)! - Admit Design Core 0.8 and 0.9 in the Markdown dependency range for the Notebook canvas-table host cohort. Markdown behavior and CSV remain unchanged; integrated review and full qualification precede release.
+
 ## 0.2.0
 
 ### Minor Changes
