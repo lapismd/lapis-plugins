@@ -55,6 +55,9 @@ Preview beside the right Outline, Source beside right File Properties, Reading,
 and Backlinks; all stay `visual-pending` until separate visual approval.
 Each capture MUST assert its final editor mode and adjacent panel before the
 shared readiness marker permits media generation.
+Reading MUST also wait for at least one meaningful content image to decode with
+nonzero natural dimensions. Decorative CodeMirror cursor buffers are excluded
+by their missing alternative text or hidden accessibility state.
 Reading preserves the complete full-shell capture, while the editor-and-panel
 cards retain their declared right-sidebar crops. Every frame retains the shared
 dark right-edge gutter.

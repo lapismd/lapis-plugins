@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
+import { expect, waitFor } from "storybook/test";
 import {
   BacklinksViewType,
   FilePropertiesViewType,
@@ -17,7 +18,7 @@ import {
 
 const registrySource = pluginWorkspaceSource(
   "@lapis-notes/markdown",
-  "MarkdownPlugin"
+  "MarkdownPlugin",
 );
 
 const meta = {
@@ -44,7 +45,7 @@ function editorStory(
   kind: "explorer" | "outline" | "file-properties",
   layout: "left-sidebar" | "right-sidebar",
   description: string,
-  sidebarSelector?: string
+  sidebarSelector?: string,
 ): Story {
   return {
     parameters: registryStoryParameters(registrySource, description),
@@ -58,8 +59,26 @@ function editorStory(
         canvasElement,
         mode === "preview"
           ? '[data-ui-component="markdown-mira-preview"]'
-          : ".markdown-view__editor"
+          : ".markdown-view__editor",
       );
+      if (mode === "preview") {
+        await waitFor(
+          async () => {
+            const images = [
+              ...canvasElement.querySelectorAll<HTMLImageElement>(
+                "[data-ui-component='markdown-mira-preview'] img[alt]:not([aria-hidden='true'])",
+              ),
+            ];
+            expect(images.length).toBeGreaterThan(0);
+            for (const image of images) {
+              await image.decode();
+              expect(image.naturalWidth).toBeGreaterThan(0);
+              expect(image.naturalHeight).toBeGreaterThan(0);
+            }
+          },
+          { timeout: 10000 },
+        );
+      }
       if (sidebarSelector) {
         await waitForRegistrySurface(canvasElement, sidebarSelector);
       }
@@ -70,7 +89,7 @@ function editorStory(
 function sidebarStory(
   kind: "outline" | "backlinks",
   selector: string,
-  description: string
+  description: string,
 ): Story {
   return {
     parameters: registryStoryParameters(registrySource, description),
@@ -90,31 +109,31 @@ export const LivePreview = editorStory(
   "outline",
   "right-sidebar",
   "Live Preview keeps Markdown editable while the Outline tracks the active note.",
-  '[data-testid="outline-panel"]'
+  '[data-testid="outline-panel"]',
 );
 export const Source = editorStory(
   "source",
   "file-properties",
   "right-sidebar",
   "Source mode exposes Markdown text beside the active file properties.",
-  '[data-testid="file-properties-panel"]'
+  '[data-testid="file-properties-panel"]',
 );
 export const Reading = editorStory(
   "preview",
   "explorer",
   "left-sidebar",
-  "Reading mode renders the active note beside Explorer."
+  "Reading mode renders the active note beside Explorer.",
 );
 export const BacklinksSidebar = sidebarStory(
   "backlinks",
   '[data-testid="backlinks-panel"]',
-  "Backlinks lists notes that reference the active Markdown file."
+  "Backlinks lists notes that reference the active Markdown file.",
 );
 
 export const Overview: Story = {
   parameters: registryStoryParameters(
     registrySource,
-    "The overview combines Live Preview, Backlinks, and File Properties in one workspace."
+    "The overview combines Live Preview, Backlinks, and File Properties in one workspace.",
   ),
   render: (() => ({
     Component: PanelDemo,
@@ -133,11 +152,11 @@ export const Overview: Story = {
     await app.workspace.revealLeaf(backlinks);
     await waitForRegistrySurface(
       canvasElement,
-      '[data-testid="backlinks-panel"]'
+      '[data-testid="backlinks-panel"]',
     );
     await waitForRegistrySurface(
       canvasElement,
-      '[data-testid="file-properties-panel"]'
+      '[data-testid="file-properties-panel"]',
     );
     await waitForRegistrySurface(canvasElement, ".markdown-view__editor");
     if (app.workspace.getLeavesOfType(FilePropertiesViewType).length !== 1) {
