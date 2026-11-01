@@ -2,10 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-import {
-  parkedPluginPackages,
-  pluginPackages,
-} from "./package-catalog.mjs";
+import { parkedPluginPackages, pluginPackages } from "./package-catalog.mjs";
 
 test("static publication requires activation, protected approval and the pinned blocking CI", async () => {
   const source = await readFile(
@@ -16,6 +13,16 @@ test("static publication requires activation, protected approval and the pinned 
   for (const [, name, body] of jobs.matchAll(
     /^  ([\w-]+):\n([\s\S]*?)(?=^  [\w-]+:|$(?![\s\S]))/gm
   )) {
+    if (name === "notify-dependencies") {
+      assert.match(body, /- static-publish/);
+      assert.match(
+        body,
+        /if: always\(\) && needs\.static-publish\.result == 'success'/
+      );
+      assert.match(body, /permission[s]:\n      contents: read/);
+      assert.doesNotMatch(body, /id-token: write|environment:/);
+      continue;
+    }
     assert.match(
       body,
       /^    if: vars\.STATIC_RELEASE_ENABLED == 'true'$/m,
@@ -89,12 +96,12 @@ test("approved release lists every public plugin and no parked package", async (
       assert.match(source, new RegExp(`^      plugin_${input}:$`, "m"), file);
       assert.ok(
         source.includes(`Release ${plugin.packageName}`),
-        plugin.packageName,
+        plugin.packageName
       );
       assert.match(
         source,
         new RegExp(`^            ${plugin.directory}$`, "m"),
-        file,
+        file
       );
     }
     for (const plugin of parkedPluginPackages) {
@@ -106,18 +113,18 @@ test("approved release lists every public plugin and no parked package", async (
 test("a main push opens a version pull request only for a releasable changeset", async () => {
   const source = await readFile(
     new URL("../.github/workflows/version-packages.yml", import.meta.url),
-    "utf8",
+    "utf8"
   );
   const release = await readFile(
     new URL("../.github/workflows/release.yml", import.meta.url),
-    "utf8",
+    "utf8"
   );
   assert.match(source, /branches:\n\s+- main/);
   assert.match(source, /node scripts\/version-public-packages\.mjs --check/);
   assert.match(source, /if: steps\.releasable\.outputs\.releasable == 'true'/);
   assert.ok(
     source.indexOf("node scripts/version-public-packages.mjs --check") <
-      source.indexOf("changesets/action@v1.8.0"),
+      source.indexOf("changesets/action@v1.8.0")
   );
   assert.match(source, /changesets\/action@v1\.8\.0/);
   assert.match(source, /version: pnpm release:version/);

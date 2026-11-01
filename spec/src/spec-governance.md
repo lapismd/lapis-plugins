@@ -1,5 +1,9 @@
 # Specification Governance
 
+<!-- dependency-automation-policy -->
+
+Dependency update PRs from the trusted LapisMD App, Dependabot or Renovate MAY skip specification checks using the PR author rather than the rerun actor. Functional checks remain required. The shared `lapismd/dependency-automation` coordinator proposes published first-party npm updates with Changeset release intent where required; it does not merge, publish, sign or deploy. This CI policy changes no runtime or public contract in this chapter.
+
 Static registry dispatch under LP-SPEC-016 derives its source coordinates from
 the verified published archive and resolved tag, including retained assets from
 an earlier approved release. Signature, checksum and coordinate rejection tests
@@ -9,10 +13,7 @@ remain independent of sender evidence. The installed Deno-free spec-validator
 
 # Specification Governance
 
-The approved Bases/History release removes their prior versioning hold under
-LP-SPEC-016. Exact eligibility and explicit-hold regressions qualify the release
-script; audit, full CI, signed archives, provenance and consumer gates remain
-required before claiming a release.
+The approved Bases/History release removes their prior versioning hold under LP-SPEC-016. Exact eligibility and explicit-hold regressions qualify the release script; audit, full CI, signed archives, provenance and consumer gates remain required before claiming a release.
 
 The root intake uses verified API 0.2.3 and Workspace 0.3.1 through normal
 ranges; the independent Sync root also takes API 0.2.3. Both roots now require
