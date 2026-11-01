@@ -52,7 +52,7 @@
     "./registry.json": "./registry.json"
   },
   "dependencies": {
-    "@lapismd/design-core": "^0.7.4",
+    "@lapismd/design-core": "^0.10.1",
     "@lucide/svelte": "^0.523.0",
     "d3-force": "^3.0.0"
   },

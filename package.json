@@ -80,7 +80,7 @@
     "@lapis-notes/language-service": "^0.1.2",
     "@lapis-notes/ui": "^0.1.6",
     "@lapis-notes/workspace": "^0.3.2",
-    "@lapismd/design-core": "^0.9.0",
+    "@lapismd/design-core": "^0.10.1",
     "@lapismd/mira": "~0.1.4",
     "@lapismd/mira-editor": "~0.0.3",
     "@lapismd/mira-plugin-ai": "~0.0.3",
