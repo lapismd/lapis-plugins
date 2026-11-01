@@ -1,5 +1,14 @@
 # Canvas
 
+## 0.2.1
+
+### Patch Changes
+
+- [#54](https://github.com/lapismd/lapis-plugins/pull/54) [`91d0014`](https://github.com/lapismd/lapis-plugins/commit/91d001499930e7c4ea2c9ea622e3f5ed2d956ab3) Thanks [@lapismd-dependency-bot](https://github.com/apps/lapismd-dependency-bot)! - Refresh first-party Lapis dependencies to the published versions recorded in this pull request.
+
+- Updated dependencies [[`91d0014`](https://github.com/lapismd/lapis-plugins/commit/91d001499930e7c4ea2c9ea622e3f5ed2d956ab3)]:
+  - @lapis-notes/markdown@0.2.2
+
 ## 0.2.0
 
 ### Minor Changes
