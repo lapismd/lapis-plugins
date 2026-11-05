@@ -173,7 +173,6 @@ const sharedDependencies = new Map([
       "@lapis-notes/api/path",
       "@lapis-notes/api/vault",
       "@lapis-notes/api/workspace-host",
-      "@lapis-notes/markdown/embed",
     ],
   ],
   [
@@ -194,7 +193,6 @@ const sharedDependencies = new Map([
     [
       "@lapis-notes/api",
       "@lapis-notes/api/telemetry",
-      "@lapis-notes/markdown/embed",
     ],
   ],
   ["history", ["@lapis-notes/api", "@lapis-notes/api/workspace-host"]],
@@ -228,12 +226,12 @@ const sharedDependencies = new Map([
       "@lapis-notes/api/agent-tools",
     ],
   ],
-  ["slides", ["@lapis-notes/api", "@lapis-notes/markdown/embed"]],
+  ["slides", ["@lapis-notes/api"]],
   ["pdf", ["@lapis-notes/api", "@lapis-notes/api/workspace-host"]],
-  ["canvas", ["@lapis-notes/api", "@lapis-notes/markdown/embed"]],
+  ["canvas", ["@lapis-notes/api"]],
   ["docx", ["@lapis-notes/api"]],
   ["csv", ["@lapis-notes/api", "@lapis-notes/api/editor/core", "@lapis-notes/api/menu", "@lapis-notes/api/workspace-host"]],
-  ["transcripts", ["@lapis-notes/api", "@lapis-notes/markdown"]],
+  ["transcripts", ["@lapis-notes/api"]],
   [
     "source-editor",
     [

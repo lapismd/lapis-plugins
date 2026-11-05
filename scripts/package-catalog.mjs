@@ -148,7 +148,6 @@ export const approvedWorkspaceHostModules = [
     (specifier) => new RegExp(`^${specifier.replaceAll("/", "\\/")}$`),
   ),
   /^@lapis-notes\/api(?:\/.*)?$/,
-  /^@lapis-notes\/markdown(?:\/.*)?$/,
 ];
 
 export function pluginPackageBySelector(selector) {
