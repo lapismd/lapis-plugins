@@ -8,7 +8,7 @@ under LN-AI-027, without carrying forward a former footer's fixed 20px allowance
 The panel still has no bottom padding and the composer cannot overlap messages.
 
 The package requires published Design Core `^0.7.4` for prepared browser CSS
-and bundled fonts through public exports. The published bundle inlines `@lapis-notes/markdown/embed` rather than loading it from the host. Application state and existing plugin
+and bundled fonts through public exports. The published bundle inlines `@lapis-notes/markdown/embed` rather than loading it from the host. It declares the editor host modules that inlined Markdown leaves external. Application state and existing plugin
 behavior retain their owning contracts.
 
 Chat acceptance waits for composer menus to become visible before using them.

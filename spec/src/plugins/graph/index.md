@@ -15,7 +15,7 @@ The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.
 
 Version 0.1.4 consumes published API 0.2.0 through its portable peer range.
-Its Markdown peer and development dependency both accept `^0.2.0`. The published bundle inlines `@lapis-notes/markdown/embed`. Host modules remain the API, including telemetry, and the Svelte renderer.
+Its Markdown peer and development dependency both accept `^0.2.0`. The published bundle inlines `@lapis-notes/markdown/embed`. Host modules remain the API, including telemetry and the editor entries Markdown leaves external, plus the Svelte renderer.
 Shared shell qualification uses UI 0.1.4, File Explorer 0.2.0 and Workspace 0.3.0.
 
 Release qualification uses `@lapis-notes/api@^0.2.0` for the shared renderer,
