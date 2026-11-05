@@ -20,7 +20,8 @@
           "format": "esm",
           "sharedDependencies": [
             "@lapis-notes/api",
-            "@lapis-notes/markdown/embed",
+            "@lapis-notes/api/editor/core",
+            "@lapis-notes/api/editor/language-service",
             "@codemirror/autocomplete",
             "@codemirror/commands",
             "@codemirror/language",

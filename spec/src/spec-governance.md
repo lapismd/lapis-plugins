@@ -10,6 +10,7 @@ an earlier approved release. Signature, checksum and coordinate rejection tests
 qualify that boundary before dispatch; registry verification and human review
 remain independent of sender evidence. The installed Deno-free spec-validator
 0.2.0 is the current published release; Node 24 qualifies QMD search and doctor.
+Release bundling inlines `@lapis-notes/markdown` instead of admitting it as a host module. Plugins declare the editor and renderer host modules that inlined Markdown leaves external.
 
 # Specification Governance
 

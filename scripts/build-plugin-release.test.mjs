@@ -44,6 +44,18 @@ test("bundles a plugin package's own manifest self-reference", () => {
   );
 });
 
+test("bundles Markdown instead of admitting it as a host module", () => {
+  for (const specifier of [
+    "@lapis-notes/markdown",
+    "@lapis-notes/markdown/embed",
+  ]) {
+    assert.equal(
+      approvedWorkspaceHostModules.some((pattern) => pattern.test(specifier)),
+      false,
+    );
+  }
+});
+
 test("covers compiler internals and public browser runtime exports without server modules", () => {
   for (const specifier of [
     "svelte",

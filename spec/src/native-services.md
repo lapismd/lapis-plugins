@@ -9,6 +9,7 @@ source identity. Registry dispatch verifies that identity against the immutable
 release tag rather than assigning the rerun's source commit. This release-tool
 boundary preserves the archive bytes, runtime descriptor, native service pins
 and host-owned installation admission; it introduces no native service API.
+Release bundling inlines `@lapis-notes/markdown` instead of admitting it as a host module. Plugins declare the editor and renderer host modules that inlined Markdown leaves external. This does not change a native service.
 
 Approving Bases and History version eligibility changes only npm release
 selection. The private native service crate stays separately qualified and
