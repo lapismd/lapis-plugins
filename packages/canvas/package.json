@@ -1,6 +1,6 @@
 {
   "name": "@lapis-notes/canvas",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "JSON Canvas file view and note embed for Lapis applications",
   "license": "Apache-2.0",
   "type": "module",
@@ -57,14 +57,14 @@
     "@codemirror/state": "^6.6.0",
     "@codemirror/view": "^6.42.1",
     "@lapis-notes/api": "^0.2.0",
-    "@lapis-notes/markdown": "^0.2.0",
+    "@lapis-notes/markdown": "^0.2.2",
     "@lezer/common": "^1.5.2",
     "@lezer/highlight": "^1.2.3",
     "@lezer/lr": "^1.4.2",
     "svelte": "^5.0.0"
   },
   "devDependencies": {
-    "@lapis-notes/markdown": "^0.2.0",
+    "@lapis-notes/markdown": "^0.2.2",
     "@sveltejs/package": "^2.5.0",
     "@sveltejs/vite-plugin-svelte": "^5.1.1",
     "@tsconfig/svelte": "^5.0.5",
