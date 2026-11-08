@@ -170,3 +170,5 @@ renderer dependency compatibility MUST NOT be reported as native acceptance.
 History's Core 0.9 dependency compatibility repair preserves every repository
 service and callback. Its native provider qualification remains distinct from
 the renderer settings-page type check.
+
+The document release recovery prepares DOCX 0.2.1, PDF 0.2.1 and Slides 0.1.2 through Changesets and the existing LP-SPEC-016 qualification gates. Their earlier npm versions and signed GitHub assets remain immutable; native service revisions and host-profile adoption retain their separate owning-consumer gates.

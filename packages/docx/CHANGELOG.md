@@ -1,5 +1,11 @@
 # DOCX
 
+## 0.2.1
+
+### Patch Changes
+
+- Release the current document and presentation bundles as immutable patch versions through trusted publishing. Previously published versions retain their original contents.
+
 ## 0.2.0
 
 ### Minor Changes

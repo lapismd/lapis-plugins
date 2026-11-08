@@ -509,3 +509,5 @@ History's portable dependency metadata and proved by the exact strict check.
 The repair MUST NOT cast away controller identity or weaken the shared CI lane.
 
 The LP-SPEC-016 operator preflight is a read-only npm configuration audit, not proof of OIDC activation. Package Settings status and a successful trusted publish remain necessary. Recovery preserves original release coordinates and immutable publications, and retains candidate artifacts by run attempt. Authentication diagnostics expose only npm error codes, never command details or credentials.
+
+The document release recovery prepares DOCX 0.2.1, PDF 0.2.1 and Slides 0.1.2 through Changesets and the existing LP-SPEC-016 qualification gates. Their earlier npm versions and signed GitHub assets remain immutable; native service revisions and host-profile adoption retain their separate owning-consumer gates.

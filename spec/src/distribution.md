@@ -415,3 +415,5 @@ patch intent; Markdown-only publication MUST NOT silently select History or any
 other plugin. Versioning and publication remain separate owner gates.
 
 The private catalog development dependency on History uses `^0.2.0`, matching the existing workspace package and API 0.2 host cohort. This avoids accidentally installing the obsolete 0.1.4 registry host graph during Markdown compatibility lock refresh; History and CSV runtime source remain unchanged.
+
+The document release recovery prepares DOCX 0.2.1, PDF 0.2.1 and Slides 0.1.2 through Changesets and the existing LP-SPEC-016 qualification gates. Their earlier npm versions and signed GitHub assets remain immutable; native service revisions and host-profile adoption retain their separate owning-consumer gates.
