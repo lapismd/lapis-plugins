@@ -159,3 +159,18 @@ describe("shouldReloadForMetadataChange", () => {
     ).toBe(true);
   });
 });
+
+it("tracks a column-only predicate when the property is hidden from cards", () => {
+  const dependencies = collectMetadataDependencies({
+    documentFilter: { and: [] },
+    viewFilter: { and: [] },
+    order: ["file.name"],
+    sort: [],
+    groupByProperty: "note.phase",
+    formulas: {},
+    additionalFilters: [
+      { and: [{ column: "note.confidence", op: ">", value: "0" }] },
+    ],
+  });
+  expect([...dependencies.properties]).toContain("confidence");
+});

@@ -2,6 +2,9 @@
 
 <!-- dependency-automation-policy -->
 
+Bases consumes the released Core 0.12.2 embedded-landmark repair through normal npm ranges. The root validation graph resolves compatible Core consumers together; this browser renderer intake changes no native service revision or installation authority.
+
+
 Dependency update PRs from the trusted LapisMD App, Dependabot or Renovate MAY skip specification checks using the PR author rather than the rerun actor. Functional checks remain required. The shared `lapismd/dependency-automation` coordinator proposes published first-party npm updates with Changeset release intent where required; it does not merge, publish, sign or deploy. This CI policy changes no runtime or public contract in this chapter.
 
 Native hosts installing a retained static archive use its original signed
@@ -174,3 +177,22 @@ the renderer settings-page type check.
 The document release recovery prepares DOCX 0.2.1, PDF 0.2.1 and Slides 0.1.2 through Changesets and the existing LP-SPEC-016 qualification gates. Their earlier npm versions and signed GitHub assets remain immutable; native service revisions and host-profile adoption retain their separate owning-consumer gates.
 
 DOCX npm qualification bundles its browser-only WordCanvas graph and assets into the tarball. LP-SPEC-011 now checks the packed inventory for every literal relative JavaScript import, so checkout-only vendor files cannot qualify a portable package. Native service source pins and installation admission retain their existing ownership.
+
+The Bases kanban view is a renderer-only addition: no native service, callback
+or plugin algorithm changes. Its bundled archive payload remains rebuilt from
+the same source commit and package version as the npm package.
+
+Bases Markdown board reference scenarios exercise the renderer and in-memory App query boundary. Their fixture loading and grouping require no native-service transport or application-specific status model.
+
+Configurable Bases boards use Design Core `^0.12.1` for shared presentation,
+while embedded Markdown editing uses the App-owned query and file-editing services. Renderer verification may use checksum-verified
+candidate archives on remote Docker while preserving all workspace dependency
+security overrides and audit policy. Those renderer and packaging receipts do
+not replace native-service qualification or authorize a native dependency change.
+History's Core 0.12 compatibility admission binds its settings renderer to the
+host's shared provider under the existing renderer qualification gates.
+
+The validation tool installer may recover transient upstream release redirects
+through GitHub's official asset API, preserving the same pinned archive bytes,
+root executable and version checks. This changes no native service protocol,
+parser ownership, runtime selection or host acceptance requirement.

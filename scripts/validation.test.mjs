@@ -2,6 +2,174 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { archiveMember, ciToolDirectory } from "./validation/install-tools.mjs";
+import * as toolInstaller from "./validation/install-tools.mjs";
+import { createHash } from "node:crypto";
+
+function toolArchiveFixture() {
+  const bytes = Buffer.from("verified upstream archive");
+  const pin = {
+    owner: "jj-vcs/jj",
+    version: "0.45.1",
+    asset: "jj-v0.45.1-x86_64-unknown-linux-musl.tar.gz",
+    digest: createHash("sha256").update(bytes).digest("hex")
+  };
+  const direct = `https://github.com/${pin.owner}/releases/download/v${pin.version}/${pin.asset}`;
+  const metadata = {
+    assets: [{ id: 42, name: pin.asset, browser_download_url: direct }]
+  };
+  return { bytes, pin, direct, metadata };
+}
+
+test("pinned tool download recovers a transient release URL through the official asset API", async () => {
+  const { bytes, pin, direct, metadata } = toolArchiveFixture();
+  const requests = [];
+  const result = await toolInstaller.downloadToolArchive(
+    pin,
+    async (url, init) => {
+      requests.push({ url, init });
+      if (requests.length === 1)
+        return new Response("Gateway timeout", { status: 504 });
+      if (requests.length === 2) return Response.json(metadata);
+      return new Response(bytes);
+    }
+  );
+  assert.deepEqual(result, bytes);
+  assert.deepEqual(
+    requests.map((r) => r.url),
+    [
+      direct,
+      "https://api.github.com/repos/jj-vcs/jj/releases/tags/v0.45.1",
+      "https://api.github.com/repos/jj-vcs/jj/releases/assets/42"
+    ]
+  );
+  assert.equal(requests[2].init.headers.Accept, "application/octet-stream");
+  assert.ok(requests.every((r) => r.init.signal instanceof AbortSignal));
+});
+
+test("pinned tool download admits verified direct bytes without using the API", async () => {
+  const { bytes, pin } = toolArchiveFixture();
+  let calls = 0;
+  assert.deepEqual(
+    await toolInstaller.downloadToolArchive(pin, async () => {
+      calls++;
+      return new Response(bytes);
+    }),
+    bytes
+  );
+  assert.equal(calls, 1);
+});
+
+test("pinned tool download rejects corrupt direct bytes without falling back", async () => {
+  const { pin } = toolArchiveFixture();
+  let calls = 0;
+  await assert.rejects(
+    toolInstaller.downloadToolArchive(pin, async () => {
+      calls++;
+      return new Response("corrupt");
+    }),
+    /checksum mismatch/
+  );
+  assert.equal(calls, 1);
+});
+
+test("pinned tool download rejects corrupt fallback bytes with the same checksum gate", async () => {
+  const { pin, metadata } = toolArchiveFixture();
+  let calls = 0;
+  await assert.rejects(
+    toolInstaller.downloadToolArchive(pin, async () => {
+      calls++;
+      return calls === 1
+        ? new Response(null, { status: 504 })
+        : calls === 2
+          ? Response.json(metadata)
+          : new Response("corrupt");
+    }),
+    /checksum mismatch/
+  );
+  assert.equal(calls, 3);
+});
+
+test("pinned tool download rejects ambiguous or mismatched release assets", async () => {
+  const { pin, metadata } = toolArchiveFixture();
+  for (const assets of [
+    [],
+    [...metadata.assets, ...metadata.assets],
+    [{ ...metadata.assets[0], id: -1 }],
+    [
+      {
+        ...metadata.assets[0],
+        browser_download_url: "https://example.com/tool.tar.gz"
+      }
+    ]
+  ]) {
+    let calls = 0;
+    await assert.rejects(
+      toolInstaller.downloadToolArchive(pin, async () => {
+        calls++;
+        return calls === 1
+          ? new Response(null, { status: 504 })
+          : Response.json({ assets });
+      }),
+      /identity mismatch/
+    );
+    assert.equal(calls, 2);
+  }
+});
+
+test("pinned tool download stops on permanent responses and failed API requests", async () => {
+  const { pin, metadata } = toolArchiveFixture();
+  for (const [responses, expected] of [
+    [[new Response(null, { status: 403 })], /Tool download failed: 403/],
+    [
+      [
+        new Response(null, { status: 504 }),
+        new Response(null, { status: 502 })
+      ],
+      /lookup failed: 502/
+    ],
+    [
+      [
+        new Response(null, { status: 504 }),
+        Response.json(metadata),
+        new Response(null, { status: 503 })
+      ],
+      /asset download failed: 503/
+    ]
+  ]) {
+    const count = responses.length;
+    let calls = 0;
+    await assert.rejects(
+      toolInstaller.downloadToolArchive(pin, async () => responses[calls++]),
+      expected
+    );
+    assert.equal(calls, count);
+  }
+});
+
+test("pinned tool download falls back for transport failures but preserves programming errors", async () => {
+  const { pin, bytes, metadata } = toolArchiveFixture();
+  for (const error of [
+    new TypeError("fetch failed"),
+    new DOMException("timeout", "TimeoutError")
+  ]) {
+    let calls = 0;
+    assert.deepEqual(
+      await toolInstaller.downloadToolArchive(pin, async () => {
+        calls++;
+        if (calls === 1) throw error;
+        return calls === 2 ? Response.json(metadata) : new Response(bytes);
+      }),
+      bytes
+    );
+    assert.equal(calls, 3);
+  }
+  await assert.rejects(
+    toolInstaller.downloadToolArchive(pin, async () => {
+      throw new Error("programming error");
+    }),
+    /programming error/
+  );
+});
 
 test("hosted CI installs Jujutsu only into runner-owned temporary paths", () => {
   assert.throws(() => ciToolDirectory({}), /runner-owned/);
@@ -29,7 +197,15 @@ import {
   validationConfig,
   imageKey,
   validateArchives,
+  validationNodeHeap
 } from "./validation/model.mjs";
+
+test("Node heap fits the remote memory budget and is capped at the qualified CI size", () => {
+  assert.equal(validationNodeHeap(1), 512);
+  assert.equal(validationNodeHeap(4), 2048);
+  assert.equal(validationNodeHeap(12), 6144);
+  assert.equal(validationNodeHeap(24), 6144);
+});
 test("Docker is default and native must be explicit", () => {
   assert.equal(validationConfig({}, {}).runtime, "docker");
   assert.equal(
@@ -118,7 +294,7 @@ test("archive inputs require identity, version and exact checksum", () => {
     () =>
       validateArchives([
         { name: "a", version: "1.0.0", path: "a.tgz", sha256: "a".repeat(64) },
-        { name: "a", version: "1.0.0", path: "b.tgz", sha256: "a".repeat(64) },
+        { name: "a", version: "1.0.0", path: "b.tgz", sha256: "a".repeat(64) }
       ]),
     /Duplicate/
   );
@@ -128,8 +304,8 @@ test("archive inputs require identity, version and exact checksum", () => {
         name: "@lapismd/a",
         version: "1.0.0",
         path: "a.tgz",
-        sha256: "a".repeat(64),
-      },
+        sha256: "a".repeat(64)
+      }
     ]).length,
     1
   );
@@ -159,7 +335,7 @@ for (const workspace of [false, true])
           'user.name="Validation"',
           "--config",
           'user.email="validation@localhost"',
-          ...args,
+          ...args
         ],
         { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }
       ).trim();
@@ -186,12 +362,12 @@ for (const workspace of [false, true])
             "const { snapshot } = await import(process.argv[1]); process.stdout.write(JSON.stringify(await snapshot(process.argv[2], process.argv[3])));",
             new URL("./validation/source.mjs", import.meta.url).href,
             repo,
-            destination,
+            destination
           ],
           {
             cwd: repo,
             env: { ...process.env, LAPIS_PLUGINS_CHECK_BASE: base },
-            encoding: "utf8",
+            encoding: "utf8"
           }
         )
       );
@@ -205,7 +381,7 @@ for (const workspace of [false, true])
       execFileSync("git", ["index-pack", "--stdin"], {
         cwd: restored,
         input: await readFile(join(destination, "source.pack")),
-        stdio: ["pipe", "pipe", "pipe"],
+        stdio: ["pipe", "pipe", "pipe"]
       });
       execFileSync(
         "git",
@@ -234,7 +410,7 @@ test("SSH context transport quotes arguments and rejects other endpoint types", 
   const [cmd, args] = sshDockerCommand("ssh://steve@example.test:2222", [
     "run",
     "image",
-    "a; echo unexpected",
+    "a; echo unexpected"
   ]);
   assert.equal(cmd, "ssh");
   assert.ok(args.includes("2222"));
@@ -343,19 +519,19 @@ test("default browser suites run complete bounded shards without changing explic
   assert.deepEqual(
     laneInvocations("test:storybook", [
       "Example.stories.svelte",
-      "--shard=1/2",
+      "--shard=1/2"
     ]),
     [["Example.stories.svelte", "--shard=1/2"]]
   );
   assert.deepEqual(laneInvocations("test:storybook", ["--shard=4/4"]), [
     ["--shard=7/8"],
-    ["--shard=8/8"],
+    ["--shard=8/8"]
   ]);
   assert.deepEqual(
     laneInvocations("test:storybook", ["--shard=1/4", "--reporter=default"]),
     [
       ["--shard=1/8", "--reporter=default"],
-      ["--shard=2/8", "--reporter=default"],
+      ["--shard=2/8", "--reporter=default"]
     ]
   );
   assert.deepEqual(laneInvocations("web:test", []), [[]]);
@@ -402,7 +578,7 @@ test("SSH direct mode preserves authentication, port and argument boundaries", a
     "ConnectTimeout=10",
     "ConnectionAttempts=5",
     "ControlMaster=no",
-    "ControlPath=none",
+    "ControlPath=none"
   ])
     assert.ok(args.includes(option), option);
   assert.ok(args.includes("2222"));
@@ -431,7 +607,7 @@ test("SSH direct mode reuses an explicitly owned control connection", async () =
   const { sshDockerCommand } = await import("./validation/docker.mjs");
   const [, args] = sshDockerCommand("ssh://steve@example.test", ["info"], {
     multiplexing: false,
-    controlPath: "/tmp/owned-ssh-%C",
+    controlPath: "/tmp/owned-ssh-%C"
   });
   assert.ok(args.includes("ControlMaster=no"));
   assert.ok(args.includes("ControlPath=/tmp/owned-ssh-%C"));

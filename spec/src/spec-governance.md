@@ -2,6 +2,9 @@
 
 <!-- dependency-automation-policy -->
 
+The Core 0.12.2 Bases prerequisite retains explicit source, verified-archive and registry-only evidence for the embedded-board landmark contract. Its dependency intake updates the mapped distribution and native-boundary chapters; it adds no spec-first exemption and does not authorize a plugin release.
+
+
 Dependency update PRs from the trusted LapisMD App, Dependabot or Renovate MAY skip specification checks using the PR author rather than the rerun actor. Functional checks remain required. The shared `lapismd/dependency-automation` coordinator proposes published first-party npm updates with Changeset release intent where required; it does not merge, publish, sign or deploy. This CI policy changes no runtime or public contract in this chapter.
 
 Static registry dispatch under LP-SPEC-016 derives its source coordinates from
@@ -513,3 +516,36 @@ The LP-SPEC-016 operator preflight is a read-only npm configuration audit, not p
 The document release recovery prepares DOCX 0.2.1, PDF 0.2.1 and Slides 0.1.2 through Changesets and the existing LP-SPEC-016 qualification gates. Their earlier npm versions and signed GitHub assets remain immutable; native service revisions and host-profile adoption retain their separate owning-consumer gates.
 
 DOCX npm qualification bundles its browser-only WordCanvas graph and assets into the tarball. LP-SPEC-011 now checks the packed inventory for every literal relative JavaScript import, so checkout-only vendor files cannot qualify a portable package. Native service source pins and installation admission retain their existing ownership.
+
+The Bases kanban slice records its behavior in LN-BASE-034 with updated
+LN-BASE-005, LN-BASE-011 and LN-BASE-014 rows and matching verification status
+in the same change. Its governed story is registered in the checked-in
+workspace catalog; name or tag discovery MUST NOT substitute for the catalog
+id.
+
+The Bases Kanban role, task and arbitrary Markdown catalog scenarios share LN-BASE-034 ownership. The reference fixture records provenance and fixed dates; supported behavior is asserted through the public view surface.
+
+Archive-backed remote validation retains the complete workspace dependency overrides when adding candidate archives, including existing security pins. Its isolated audit reads the candidate lockfile together with the unchanged repository audit policy (LP-SPEC-057).
+
+After checking the imported snapshot and its parents, the remote worker creates
+an empty child working copy. Release preparation therefore retains its clean
+working-copy requirement and resolves the checked snapshot's committed source;
+later source edits must still fail admission.
+The remote worker supplies a default Node child-process heap budget of half
+the container memory, capped at the existing 6 GiB hosted-CI budget; the
+validation receipt records that budget alongside the container resource limits.
+
+The complete Kanban and Activity integration carries one Bases minor Changeset
+and a Markdown patch Changeset entry. Release notes must describe the final
+property-grid and inline-detail contracts rather than an earlier board draft.
+The final Bases and catalog integration requires registry Design Core `^0.12.1`;
+qualification MUST record an empty candidate-archive inventory and a frozen
+registry install before its review branch is pushed.
+The same integration includes a History compatibility patch admitting Core 0.12
+for its host-registered settings page; the strict component type check and
+History package acceptance MUST pass before the combined review branch is pushed.
+
+Hosted toolchain failures retain the original HTTP status and run identity in
+verification evidence. The bounded official-API download fallback is covered by
+transport, coordinate and checksum rejection tests; it MUST NOT waive a pinned
+version, hash, executable-member check or blocking CI lane (LP-SPEC-003).

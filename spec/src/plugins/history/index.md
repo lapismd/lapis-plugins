@@ -6,6 +6,10 @@ resolve History's settings page and API settings registration to the same Core
 provider, preserving nominal controller identity without casts or aliases.
 This compatibility patch changes no History behavior or native service contract.
 
+The Core 0.12 host cohort MUST likewise bind History's settings page and API
+registration to one released provider; its package range admits `^0.12.0`
+alongside the previously supported cohorts without casts or aliases.
+
 The [cohort compatibility record](../../../records/2026-10-31-notebook-canvas-compat.md)
 retains the exact settings-page strict-check regression and owning package checks.
 

@@ -2,7 +2,12 @@ import { readFile, writeFile, mkdir, copyFile } from "node:fs/promises";
 import { createReadStream } from "node:fs";
 import { execFileSync, spawn } from "node:child_process";
 import { join } from "node:path";
-import { hash, validateArchives, laneInvocations } from "./model.mjs";
+import {
+  hash,
+  validateArchives,
+  laneInvocations,
+  validationNodeHeap,
+} from "./model.mjs";
 import { execute } from "./process.mjs";
 const root = "/work/lapis-plugins",
   input = "/input",
@@ -85,14 +90,38 @@ try {
     JSON.stringify([...source.parents].sort())
   )
     throw Error("Snapshot parents mismatch");
+  // Preserve the verified source as a committed parent. Release preparation
+  // requires an empty working copy and resolves that parent's source identity.
+  run("jj", [
+    "--config",
+    'user.name="Validation"',
+    "--config",
+    'user.email="validation@localhost"',
+    "new",
+    source.revision,
+    "-m",
+    "Remote validation workspace",
+  ]);
   process.env.LAPIS_PLUGINS_VALIDATION_WORKER = "1";
   process.env.LAPIS_PLUGINS_VALIDATION_RUNTIME = "native";
   process.env.LAPIS_PLUGINS_CHECK_REVISION = source.revision;
   if (source.base) process.env.LAPIS_PLUGINS_CHECK_BASE = source.base;
   process.env.LAPIS_PLUGINS_CI_REPORTS = "1";
   process.env.PNPM_HOME = "/opt/pnpm";
+  const nodeHeapMiB = validationNodeHeap(request.resources.memoryGiB);
+  process.env.NODE_OPTIONS = `--max-old-space-size=${nodeHeapMiB}`;
+  console.log(`Node heap budget: ${nodeHeapMiB} MiB`);
   const archives = validateArchives(source.archives);
   if (archives.length) {
+    // Root package overrides replace the workspace map in pnpm. Preserve the
+    // repository's complete configured security and deduplication policy.
+    const configuredOverrides =
+      JSON.parse(
+        execFileSync("pnpm", ["config", "get", "overrides", "--json"], {
+          cwd: root,
+          encoding: "utf8",
+        })
+      ) ?? {};
     const overrides = {};
     await mkdir(join(root, ".local/validation-packages"), { recursive: true });
     for (const entry of archives) {
@@ -121,7 +150,11 @@ try {
     pkg.devDependencies = { ...pkg.devDependencies, ...overrides };
     pkg.pnpm = {
       ...pkg.pnpm,
-      overrides: { ...pkg.pnpm?.overrides, ...overrides },
+      overrides: {
+        ...configuredOverrides,
+        ...pkg.pnpm?.overrides,
+        ...overrides,
+      },
     };
     try {
       await writeFile(packagePath, JSON.stringify(pkg));

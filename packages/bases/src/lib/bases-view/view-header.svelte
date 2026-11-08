@@ -60,7 +60,9 @@
   data-ui-component="bases-toolbar"
   data-ui-part="root"
 >
-  <div class="bases-style-flex-60fbb7 bases-style-flex-wrap-1eb5c6 bases-style-gap-1-44ee8b">
+  <div
+    class="bases-style-flex-60fbb7 bases-style-flex-wrap-1eb5c6 bases-style-gap-1-44ee8b"
+  >
     <Views
       bind:show
       {controller}
@@ -83,7 +85,9 @@
       onExportCsv={exportCsv}
     />
   </div>
-  <div class="bases-style-flex-60fbb7 bases-style-flex-wrap-1eb5c6 bases-style-gap-1-44ee8b">
+  <div
+    class="bases-style-flex-60fbb7 bases-style-flex-wrap-1eb5c6 bases-style-gap-1-44ee8b"
+  >
     <Button
       variant="outline"
       size="sm"
@@ -97,6 +101,9 @@
       <span>Search</span>
     </Button>
     <Sort
+      showGrouping={!["kanban", "activity"].includes(
+        controller.selectedView.type,
+      )}
       bind:orderBy={
         () => controller.selectedView.sort,
         (orderBy) => (controller.selectedView.sort = orderBy)
@@ -134,7 +141,12 @@
       }
       {controller}
     />
-    <Button variant="outline" size="sm" class="bases-style-h-8-ed8a5d" onclick={createFile}>
+    <Button
+      variant="outline"
+      size="sm"
+      class="bases-style-h-8-ed8a5d"
+      onclick={createFile}
+    >
       <Plus />
       <span>New</span>
     </Button>

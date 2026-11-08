@@ -2,7 +2,10 @@ import { App, MemoryAppDatabase, MemoryVaultAdapter } from "@lapis-notes/api";
 import { BasesPlugin } from "@lapis-notes/bases";
 import { MarkdownPlugin } from "@lapis-notes/markdown";
 import { watchMetadata } from "../../workspace/watch-metadata";
-import { createBasesViewsSeed } from "./bases-views-fixture";
+import {
+  createBasesViewsSeed,
+  type BasesViewScenario,
+} from "./bases-views-fixture";
 
 export class BasesStoryVaultAdapter extends MemoryVaultAdapter {
   readonly #resourceUrls = new Set<string>();
@@ -26,11 +29,13 @@ export class BasesStoryVaultAdapter extends MemoryVaultAdapter {
   }
 }
 
-export async function bootBasesViewsDemo(): Promise<{
+export async function bootBasesViewsDemo(
+  scenario?: BasesViewScenario,
+): Promise<{
   app: App;
   dispose: () => Promise<void>;
 }> {
-  const adapter = new BasesStoryVaultAdapter(createBasesViewsSeed(), {
+  const adapter = new BasesStoryVaultAdapter(createBasesViewsSeed(scenario), {
     name: "Lapis Bases Views",
     vaultId: "lapis-bases-views",
     clock: 1_700_000_000_000,

@@ -1,4 +1,8 @@
 import {
+  referenceFiles,
+  type ReferenceCollection,
+} from "./kanban-reference-fixture";
+import {
   BASES_SAMPLE_ARTWORK,
   BASES_SAMPLE_NOTES,
   BASES_SAMPLE_TYPES,
@@ -8,7 +12,17 @@ import {
 
 export function basesViewsExampleSource(scenario: BasesViewScenario): string {
   const document = JSON.stringify(createBasesViewsDocument(scenario), null, 2);
-  const notes = JSON.stringify(BASES_SAMPLE_NOTES, null, 2);
+  const notes = JSON.stringify(
+    scenario.startsWith("kanban-") || scenario === "activity"
+      ? referenceFiles(
+          scenario === "activity"
+            ? "notes"
+            : (scenario.slice(7) as ReferenceCollection),
+        )
+      : BASES_SAMPLE_NOTES,
+    null,
+    2,
+  );
   const artwork = JSON.stringify(BASES_SAMPLE_ARTWORK, null, 2);
 
   return `<script lang="ts">

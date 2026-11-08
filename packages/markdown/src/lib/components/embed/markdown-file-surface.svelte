@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { untrack } from "svelte";
   import type {
     App,
     MarkdownFileSurfaceActivation,
@@ -31,6 +32,11 @@
   } = $props();
 
   const fileAdapter = $derived(createLapisMiraFileAdapter(app));
+  const sourcePath = $derived(file.path);
+  const fileRef = $derived.by(() => {
+    sourcePath;
+    return untrack(() => toMiraFileRef(file));
+  });
   const resolved = $derived.by(() => {
     void app.configuration.getConfiguration();
     return resolveMarkdownMiraExtensions(app, undefined, {
@@ -46,7 +52,8 @@
   } | null = $state(null);
 
   $effect(() => {
-    onEditingChange?.(editing);
+    const next = editing;
+    untrack(() => onEditingChange?.(next));
   });
 
   function interactiveTarget(target: EventTarget | null): boolean {
@@ -61,7 +68,11 @@
   }
 
   function activate(event: MouseEvent): void {
-    if (!editable || activation !== "double-click" || interactiveTarget(event.target)) {
+    if (
+      !editable ||
+      activation !== "double-click" ||
+      interactiveTarget(event.target)
+    ) {
       return;
     }
     event.preventDefault();
@@ -91,10 +102,12 @@
 >
   <EditableMarkdownPreview
     bind:this={preview}
-    file={toMiraFileRef(file)}
+    file={fileRef}
     {fileAdapter}
     bind:editing
     extensions={resolved.miraExtensions}
+    frontmatterOpen={false}
+    focusEditorOnEdit={false}
     activateOnPreviewInteraction={activation === "click"}
     {returnToPreviewOnBlur}
   />
@@ -102,6 +115,31 @@
 
 <style>
   .lapis-markdown-file-surface {
+    --mira-preview-background: var(
+      --ui-markdown-file-surface-background,
+      transparent
+    );
+    --mira-background: var(--ui-markdown-file-surface-background, transparent);
+    --mira-editor-background: var(
+      --ui-markdown-file-surface-background,
+      transparent
+    );
+    --mira-widget-background: var(
+      --ui-markdown-file-surface-background,
+      transparent
+    );
+    --mira-code-editor-background: var(
+      --ui-markdown-file-surface-background,
+      transparent
+    );
+    --mira-code-editor-gutter-background: var(
+      --ui-markdown-file-surface-background,
+      transparent
+    );
+    --background-primary: var(
+      --ui-markdown-file-surface-background,
+      transparent
+    );
     box-sizing: border-box;
     min-height: 0;
     min-width: 0;

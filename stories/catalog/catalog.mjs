@@ -183,6 +183,12 @@ const basesViewsCatalog = [
   ["editable-cells", "Editable Cells"],
   ["cards", "Cards"],
   ["grouped-list", "Grouped List"],
+  ["kanban", "Kanban"],
+  ["kanban-roles", "Kanban Roles"],
+  ["kanban-notes", "Kanban Notes"],
+  ["kanban-tasks", "Kanban Tasks"],
+  ["kanban-scroll", "Kanban Scrolling"],
+  ["activity", "Kanban Activity"],
   ["map", "Map Unavailable"],
   ["unknown", "Unknown View"],
 ].map(([scenario, title]) => ({
@@ -190,15 +196,22 @@ const basesViewsCatalog = [
   title: `Bases Views: ${title}`,
   spec: "spec/src/plugins/bases/index.md",
   publicSurface: "@lapis-notes/bases",
-  storyId: `plugins-bases-views--${
-    scenario === "grouped-list"
-      ? "grouped-list"
-      : scenario === "map"
-        ? "map-unavailable"
-        : scenario === "unknown"
-          ? "unknown-view"
-          : scenario
-  }`,
+  storyId:
+    scenario === "activity"
+      ? "plugins-bases-views-kanban--activity"
+      : scenario.startsWith("kanban")
+      ? `plugins-bases-views-kanban--${
+          scenario === "kanban" ? "projects" : scenario.slice(7)
+        }`
+      : `plugins-bases-views--${
+          scenario === "grouped-list"
+            ? "grouped-list"
+            : scenario === "map"
+            ? "map-unavailable"
+            : scenario === "unknown"
+            ? "unknown-view"
+            : scenario
+        }`,
 }));
 
 /** @type {CatalogEntry[]} */

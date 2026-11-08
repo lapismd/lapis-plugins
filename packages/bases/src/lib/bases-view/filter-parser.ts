@@ -316,11 +316,13 @@ export function generateQuery(
   view: BasesViewBase,
   formulas: Record<string, string>,
   globalFilter?: Filters,
+  requiredProperties: BasesPropertyId[] = [],
 ) {
   let query = "SET identifier_quoting = bracket;\nSELECT\n";
   const columns: Array<string> = [
     ...new Set([
       ...view.order,
+      ...requiredProperties,
       ...(view.groupBy?.property ? [view.groupBy.property] : []),
       ...(typeof view.image === "string" && view.image.length > 0
         ? [view.image]

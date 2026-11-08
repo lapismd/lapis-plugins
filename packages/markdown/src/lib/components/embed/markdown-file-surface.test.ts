@@ -9,7 +9,9 @@ describe("Markdown file surface", () => {
     );
 
     expect(source).toContain('activation !== "double-click"');
-    expect(source).toContain("activateOnPreviewInteraction={activation === \"click\"}");
+    expect(source).toContain(
+      'activateOnPreviewInteraction={activation === "click"}',
+    );
     expect(source).toContain("export function enter");
     expect(source).toContain("export async function flush");
     expect(source).toContain("export async function exit");
@@ -17,7 +19,7 @@ describe("Markdown file surface", () => {
     expect(source).toContain('data-mira-theme="obsidian"');
     expect(source).toContain('data-editing="false"');
     expect(source).toContain('data-editing="true"');
-    expect(source).toContain("onEditingChange?.(editing)");
+    expect(source).toContain("untrack(() => onEditingChange?.(next))");
     expect(source).not.toContain(
       "onEditingChange={(next) => onEditingChange?.(next)}",
     );

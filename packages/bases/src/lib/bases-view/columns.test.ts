@@ -13,7 +13,7 @@ describe("Bases file-derived columns", () => {
         "file.embeds",
         "file.backlinks",
         "file.properties",
-      ]),
+      ])
     );
   });
 
@@ -29,7 +29,7 @@ describe("Bases file-derived columns", () => {
       {
         "other.md": { "note.md": 1 },
         "note.md": { "target.md": 1 },
-      },
+      }
     );
 
     expect(value.tags).toEqual(["#work"]);
@@ -46,7 +46,7 @@ describe("Bases file-derived columns", () => {
         "note.status": { displayName: "Status" },
         "note.due": { displayName: "Due" },
       },
-      {},
+      {}
     );
 
     expect(columns["note.status"]).toMatchObject({
@@ -74,7 +74,7 @@ describe("Bases file-derived columns", () => {
         },
       ],
       {},
-      {},
+      {}
     );
 
     const types = frontMatterTypesForColumns(columns);
@@ -111,14 +111,39 @@ describe("Bases file-derived columns", () => {
       ],
       {},
       {},
-      app,
+      app
     );
 
-    expect(columns.done?.type).toBe("checkbox");
-    expect(columns.count?.type).toBe("number");
+    expect(columns["note.done"]?.type).toBe("checkbox");
+    expect(columns["note.count"]?.type).toBe("number");
     expect(frontMatterTypesForColumns(columns)).toMatchObject({
       "note.done": Boolean,
       "note.count": Number,
     });
   });
+});
+
+test("inferred fields share the scoped ids used by mapping settings and queries", () => {
+  const columns = columnsFor(
+    [
+      {
+        id: "visit.md",
+        checksum: "1",
+        file: { path: "visit.md" } as never,
+        cache: { frontmatter: { phase: "Reflect", occurred: "2026-06-25" } },
+      },
+    ],
+    { "note.phase": { displayName: "Stage" } },
+    {}
+  );
+  expect(columns["note.phase"]).toMatchObject({
+    id: "note.phase",
+    displayName: "Stage",
+    type: "text",
+  });
+  expect(columns["note.occurred"]).toMatchObject({
+    id: "note.occurred",
+    type: "date",
+  });
+  expect(columns.phase).toBeUndefined();
 });

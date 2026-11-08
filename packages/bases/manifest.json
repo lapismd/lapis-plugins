@@ -27,6 +27,7 @@
             "@lapis-notes/api/metadata-value",
             "@codemirror/autocomplete",
             "@codemirror/language",
+            "@codemirror/lint",
             "@codemirror/state",
             "@codemirror/view",
             "@lezer/common",

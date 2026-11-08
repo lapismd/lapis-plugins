@@ -1,16 +1,19 @@
+import {
+  renderScenario,
+  storyParameters,
+  demoApp,
+  demoDocument,
+  waitForView,
+} from "./bases-view-story-helpers";
 import type { App } from "@lapis-notes/api";
 import { BasesViewSurface, type BasesDocument } from "@lapis-notes/bases";
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, fireEvent, userEvent, waitFor, within } from "storybook/test";
-import { workspaceCatalogParameters } from "../../catalog/catalog.mjs";
 import { WORKSPACE_SHELL_DOCS_STORY } from "../../workspace/docs-parameters";
 import {
   expectAsyncQueryFailureAndRecovery,
   triggerMetadataReset,
 } from "../_shared/panels/panel-story-helpers";
-import BasesViewsDemo from "./BasesViewsDemo.svelte";
-import { basesViewsExampleSource } from "./BasesViews.example-sources";
-import type { BasesViewScenario } from "./bases-views-fixture";
 import {
   expectBasesCellContentTopAligned,
   expectBasesColumnsAligned,
@@ -51,85 +54,6 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-type StoryRender = NonNullable<Story["render"]>;
-
-function renderScenario(scenario: BasesViewScenario): StoryRender {
-  return (() => ({
-    Component: BasesViewsDemo,
-    props: { scenario },
-  })) as StoryRender;
-}
-
-function storyParameters(scenario: BasesViewScenario, description: string) {
-  const catalogId = `plugins-bases-views-${scenario}`;
-  return {
-    ...workspaceCatalogParameters(catalogId),
-    docs: {
-      description: { story: description },
-      source: {
-        code: basesViewsExampleSource(scenario),
-        language: "tsx",
-        type: "code",
-      },
-    },
-    visualDelta: {
-      images: [
-        `/visual-baselines/stories/plugins/bases/views-${scenario}-chromium.png`,
-      ],
-      opacity: 0.5,
-      colorInversion: false,
-      align: "canvas",
-      placement: "right",
-    },
-  };
-}
-
-function demoApp(canvasElement: HTMLElement): App {
-  const root = canvasElement.querySelector<HTMLElement & { __lapisApp?: App }>(
-    '[data-testid="bases-views-demo"]',
-  );
-  if (!root?.__lapisApp) {
-    throw new Error("The Bases views story has no active Lapis app");
-  }
-  return root.__lapisApp;
-}
-
-function demoDocument(canvasElement: HTMLElement): BasesDocument {
-  const root = canvasElement.querySelector<
-    HTMLElement & { __basesDocument?: BasesDocument }
-  >('[data-testid="bases-views-demo"]');
-  if (!root?.__basesDocument) {
-    throw new Error("The Bases views story has no active document");
-  }
-  return root.__basesDocument;
-}
-
-async function waitForView(
-  canvasElement: HTMLElement,
-  scenario: BasesViewScenario,
-  type: string,
-) {
-  const canvas = within(canvasElement);
-  await waitFor(
-    () => {
-      expect(canvas.getByTestId("bases-views-status")).toHaveTextContent(
-        "ready",
-      );
-      expect(
-        canvasElement.querySelector(
-          `[data-ui-component="bases-view"][data-type="${type}"]`,
-        ),
-      ).toBeInTheDocument();
-    },
-    { timeout: 20_000 },
-  );
-  expect(canvas.getByTestId("bases-views-demo")).toHaveAttribute(
-    "data-scenario",
-    scenario,
-  );
-  expect(demoApp(canvasElement).plugins.isPluginEnabled("bases")).toBe(true);
-  return canvas;
-}
 
 function firstRowHeight(table: HTMLElement) {
   return table
@@ -506,7 +430,9 @@ export const EditableCells: Story = {
     await waitFor(() => {
       expect(filterPopover).toBeVisible();
       expect(
-        Math.abs(filterPopover!.getBoundingClientRect().width - sortPopoverWidth),
+        Math.abs(
+          filterPopover!.getBoundingClientRect().width - sortPopoverWidth,
+        ),
       ).toBeLessThan(1);
       expect(filterPopover!.getBoundingClientRect().width).toBeCloseTo(
         canvasElement.ownerDocument.defaultView!.innerWidth * 0.45,

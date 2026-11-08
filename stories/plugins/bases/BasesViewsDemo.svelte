@@ -1,10 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import type { App } from "@lapis-notes/api";
-  import {
-    BasesViewSurface,
-    type BasesDocument,
-  } from "@lapis-notes/bases";
+  import { BasesViewSurface, type BasesDocument } from "@lapis-notes/bases";
   import { bootBasesViewsDemo } from "./create-bases-views-demo";
   import {
     createBasesViewsDocument,
@@ -39,7 +36,7 @@
 
   onMount(() => {
     let cancelled = false;
-    const runtimePromise = bootBasesViewsDemo();
+    const runtimePromise = bootBasesViewsDemo(scenario);
     void runtimePromise
       .then((runtime) => {
         if (cancelled) return;
@@ -67,6 +64,9 @@
   class="bases-views-demo"
   data-testid="bases-views-demo"
   data-scenario={scenario}
+  data-fill-viewport={scenario.startsWith("kanban") || scenario === "activity"
+    ? "true"
+    : undefined}
   data-status={status}
 >
   <output class="bases-views-demo__status" data-testid="bases-views-status">
@@ -95,6 +95,19 @@
   :global(.bases-views-docs-canvas) .bases-views-demo {
     height: 700px;
     min-height: 700px;
+  }
+
+  .bases-views-demo[data-fill-viewport="true"] {
+    height: 100dvh;
+    min-height: 0;
+  }
+  :global(.bases-views-docs-canvas)
+    .bases-views-demo[data-fill-viewport="true"] {
+    height: 700px;
+    min-height: 0;
+  }
+  .bases-views-demo[data-scenario="kanban-scroll"] {
+    max-inline-size: 80rem;
   }
 
   .bases-views-demo__status {

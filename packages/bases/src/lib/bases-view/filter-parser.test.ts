@@ -13,7 +13,7 @@ describe("generateQuery", () => {
         limit: 0,
       },
       {},
-      { and: [] },
+      { and: [] }
     );
 
     expect(query).toContain("SELECT\n  rowId as {$rowId}");
@@ -35,7 +35,7 @@ describe("generateQuery", () => {
         limit: 0,
       },
       {},
-      { and: [] },
+      { and: [] }
     );
 
     expect(query).toContain("file.name as {file.name}");
@@ -54,10 +54,28 @@ describe("generateQuery", () => {
         limit: 0,
       },
       {},
-      { and: [] },
+      { and: [] }
     );
 
     expect(query).toContain("file.name as {file.name}");
     expect(query).toContain("note.cover as {note.cover}");
   });
+});
+
+it("projects hidden mapped card fields without adding them to visible property order", () => {
+  const view = {
+    type: "kanban",
+    name: "Research",
+    order: ["file.name"],
+    sort: [],
+    filter: { and: [] },
+    limit: 0,
+  } as import("./models").BasesViewBase;
+  const query = generateQuery(view, {}, { and: [] }, [
+    "note.abstract",
+    "note.reviewed",
+  ]);
+  expect(query).toContain("note.abstract as {note.abstract}");
+  expect(query).toContain("note.reviewed as {note.reviewed}");
+  expect(view.order).toEqual(["file.name"]);
 });

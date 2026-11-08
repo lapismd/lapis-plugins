@@ -12,6 +12,7 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Icon } from "@lapis-notes/api/icon";
   import { Input } from "@lapismd/design-core/shadcn/input";
+  import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
   import type { BasesViewBase } from "../models";
   import type { QueryController } from "../bases.svelte";
   import ViewSettings from "../view-settings.svelte";
@@ -78,49 +79,63 @@
 <Popover.Root bind:open>
   <Popover.Trigger>
     {#snippet child({ props }: { props: Record<string, unknown> })}
-      <Button {...props} variant="outline" size="sm" class="bases-style-h-8-ed8a5d bases-style-border-dashed-a29b7a">
+      <Button
+        {...props}
+        variant="outline"
+        size="sm"
+        class="bases-style-h-8-ed8a5d bases-style-border-dashed-a29b7a"
+      >
         <Icon name={viewIcon(selected)} />
         {value.name}
         <ArrowUpDown />
       </Button>
     {/snippet}
   </Popover.Trigger>
-  <Popover.Content class="bases-style-w-270px-448793 bases-style-min-w-220px-cbc208 bases-style-p-0-8a539c" align="start">
+  <Popover.Content
+    class="bases-style-w-270px-448793 bases-style-min-w-220px-cbc208 bases-style-p-0-8a539c"
+    align="start"
+  >
     {#if selected}
-      <Command.Root>
-        <div class="bases-style-p-2-7660b4">
-          <div class="bases-style-flex-60fbb7 bases-style-justify-between-8ef226">
-            <Button
-              variant="ghost"
-              size="sm"
-              class="bases-style-flex-60fbb7 grow bases-style-justify-start-4b5cc1"
-              onclick={(evt) => {
-                selected = null;
-              }}
-            >
-              <ChevronLeft /> Edit {selected.name}
-            </Button>
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger>
-                {#snippet child({ props }: { props: Record<string, unknown> })}
-                  <Button {...props} size="sm" variant="ghost"
-                    aria-label={`View actions for ${selected!.name}`}
-                    ><Ellipsis /></Button
-                  >
-                {/snippet}
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content>
-                <DropdownMenu.Item onclick={() => deleteView()}
-                  >Delete view</DropdownMenu.Item
+      <div class="bases-view-editor" data-ui-component="bases-view-editor">
+        <div class="bases-view-editor__header">
+          <Button
+            variant="ghost"
+            size="sm"
+            class="bases-style-flex-60fbb7 grow bases-style-justify-start-4b5cc1"
+            onclick={(evt) => {
+              selected = null;
+            }}
+          >
+            <ChevronLeft /> Edit {selected.name}
+          </Button>
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              {#snippet child({ props }: { props: Record<string, unknown> })}
+                <Button
+                  {...props}
+                  size="sm"
+                  variant="ghost"
+                  aria-label={`View actions for ${selected!.name}`}
+                  ><Ellipsis /></Button
                 >
-                <DropdownMenu.Separator />
-                <DropdownMenu.Item onclick={() => duplicateView()}
-                  >Duplicate view</DropdownMenu.Item
-                >
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
-          </div>
-          <div class="bases-style-grid-f3c543 bases-style-grid-cols-1-d7c833 bases-style-items-center-3960ff bases-style-gap-2-77a2a2 bases-style-px-2-d5eab2 bases-style-pt-1-6b7d6e">
+              {/snippet}
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content>
+              <DropdownMenu.Item onclick={() => deleteView()}
+                >Delete view</DropdownMenu.Item
+              >
+              <DropdownMenu.Separator />
+              <DropdownMenu.Item onclick={() => duplicateView()}
+                >Duplicate view</DropdownMenu.Item
+              >
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        </div>
+        <ScrollArea
+          class="bases-view-editor__scroll"
+          viewportProps={{ role: "group", "aria-label": "View settings" }}
+        >
+          <div class="bases-view-editor__fields">
             <Input
               id="column_name"
               aria-label="View name"
@@ -128,14 +143,20 @@
               value={selected.name}
               class={cn("bases-style-col-span-2-40efc0 bases-style-h-8-ed8a5d")}
             />
+            <ViewSettings {controller} bind:view={selected} />
           </div>
-          <ViewSettings {controller} bind:view={selected} />
-        </div>
-      </Command.Root>
+        </ScrollArea>
+      </div>
     {:else}
       <Command.Root>
-        <Command.Input placeholder="Find or create" aria-controls="bases-view-selector-list" />
-        <Command.List id="bases-view-selector-list" class="bases-style-p-1-eb6a3c">
+        <Command.Input
+          placeholder="Find or create"
+          aria-controls="bases-view-selector-list"
+        />
+        <Command.List
+          id="bases-view-selector-list"
+          class="bases-style-p-1-eb6a3c"
+        >
           <Command.Empty>No views found.</Command.Empty>
           {#each views as view}
             <Command.Item
@@ -155,7 +176,9 @@
       </Command.Root>
     {/if}
     {#if !selected}
-      <div class="bases-style-flex-60fbb7 bases-style-w-full-6da6a3 bases-style-flex-col-8dddea bases-style-gap-1-44ee8b bases-style-border-t-b950dd bases-style-p-1-eb6a3c">
+      <div
+        class="bases-style-flex-60fbb7 bases-style-w-full-6da6a3 bases-style-flex-col-8dddea bases-style-gap-1-44ee8b bases-style-border-t-b950dd bases-style-p-1-eb6a3c"
+      >
         <Button
           size="sm"
           onclick={() => (selected = value)}
@@ -176,3 +199,34 @@
     {/if}
   </Popover.Content>
 </Popover.Root>
+
+<style>
+  .bases-view-editor {
+    display: flex;
+    flex-direction: column;
+    height: min(
+      36rem,
+      var(--bits-popover-content-available-height, calc(100dvh - 2rem))
+    );
+    min-height: 0;
+  }
+
+  .bases-view-editor__header {
+    display: flex;
+    flex: none;
+    justify-content: space-between;
+    padding: 0.5rem;
+  }
+
+  :global(.bases-view-editor__scroll) {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .bases-view-editor__fields {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0.5rem 1rem 1rem;
+  }
+</style>

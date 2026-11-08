@@ -11,6 +11,8 @@ export {
   serializeBasesDocument,
 } from "./bases-view";
 export type {
+  ActivityBasesViewDocument,
+  MarkdownCardViewOptions,
   AnyBasesView,
   BasesDocument,
   BasesViewBase,
@@ -18,6 +20,7 @@ export type {
   CustomBasesView,
   FilterLine,
   Filters,
+  KanbanBasesViewDocument,
   ListView,
   MapView,
   SortColumn,
