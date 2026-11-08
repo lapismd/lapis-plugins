@@ -1,4 +1,5 @@
 import type { App } from "@lapis-notes/api";
+import { groupIdentity } from "../../../../packages/bases/src/lib/bases-view/kanban-view/mapping";
 import { BasesViewSurface, type BasesDocument } from "@lapis-notes/bases";
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, fireEvent, userEvent, waitFor, within } from "storybook/test";
@@ -496,9 +497,7 @@ Notes.play = async (context) => {
   const collect = canvas
     .getByRole("heading", { name: /^Collect$/ })
     .closest<HTMLElement>(".kanban-column")!;
-  const groupId = collect
-    .getAttribute("aria-labelledby")!
-    .replace(/-title$/, "");
+  const groupId = groupIdentity(view.groupBy!.property, "Collect");
   const originalCount = collect.querySelectorAll(
     '[data-ui-component="kanban-card"]',
   ).length;

@@ -4,8 +4,10 @@
 
   let {
     value,
+    label,
   }: {
     value: number | DateTime | string;
+    label: string;
   } = $props();
 
   let date = $derived.by(() => {
@@ -26,6 +28,7 @@
 
 <div class="bases-table-cell bases-rendered-value">
   <input
+    aria-label={label}
     class="metadata-input metadata-input-text mod-datetime !static !ps-0"
     value={date}
     step="any"

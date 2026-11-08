@@ -175,7 +175,7 @@
         </Command.List>
       </Command.Root>
     {/if}
-    {#if !selected}
+    {#if !selected && !controller.readOnly}
       <div
         class="bases-style-flex-60fbb7 bases-style-w-full-6da6a3 bases-style-flex-col-8dddea bases-style-gap-1-44ee8b bases-style-border-t-b950dd bases-style-p-1-eb6a3c"
       >

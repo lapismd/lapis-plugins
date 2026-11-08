@@ -77,7 +77,7 @@
   <SummaryStrip {view} class="bases-list__summary" />
   <ScrollArea.Root
     class="bases-record-view__scroll"
-    orientation="both"
+    orientation="vertical"
     type="always"
     viewportProps={{ "aria-label": "Records" }}
   >

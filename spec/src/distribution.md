@@ -1,5 +1,11 @@
 # Distribution and Releases
 
+Bases file and fenced Markdown embeds retain a bounded read-only query toolbar
+and disposable Shadcn Alert errors. Governed Board and Activity embed stories
+exercise two simultaneous instances; plugin media is regenerated from the
+updated record layout, with no change to independent archive identity or
+publication gates (LN-BASE-008/011, LP-SPEC-054).
+
 <!-- dependency-automation-policy -->
 
 The Bases Board/Activity renderer requires released Design Core 0.12.2 for embedded Kanban landmark ownership. Root and Bases ranges declare that minimum; compatible lockfile consumers share its resolved package identity. Temporary archive checks remain distinct from registry-only qualification, and this intake does not approve a plugin release.

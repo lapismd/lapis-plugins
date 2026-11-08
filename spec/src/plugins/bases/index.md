@@ -80,6 +80,32 @@ package, independently of the repository source layout.
 The Lapis API host module is peer-provided by the application so the packed
 plugin shares the host's App and framework identity.
 
+Read-only file and fenced embeds under LN-BASE-008 MUST establish a nonzero,
+viewport-bounded host in ordinary Markdown flow. The selected view's Shadcn
+viewport remains its single data scroller, and disposal removes the owned host.
+Embeds MUST show the shared Bases toolbar with the view selector at the inline
+start and Search/Filter controls aligned at the inline end, with compact vertical
+padding. File-backed embeds MUST show their filename in a bottom-right Shadcn
+badge on hover or keyboard focus rather than repeat it in the toolbar. The badge
+MUST meet the right and bottom edges and round only its top-left corner. Fenced
+views MUST NOT invent a filename. Table and List content MUST have no outer
+inline padding; embedded List rows retain internal start padding, and grouped
+records retain their hierarchy indentation inside full-width row separators.
+Group headings and counts MUST stay within the visible viewport even with long
+or wrapped record properties; long group labels yield space to counts. Table
+scrollbar tracks MUST use the body surface so no alternate surface leaks at the
+bottom or right edge. Lists with no explicit property order MUST search their
+displayed filename identity. Query controls MUST work without persisting embedded source or frontmatter; file creation and view
+editing actions remain unavailable in read-only mode. Invalid YAML and failed
+embed reads MUST use the released Shadcn destructive Alert with an icon,
+readable title and the original error details, and dispose that mounted alert.
+Read-only date fields MUST retain an accessible name from their property label.
+Governed Markdown embed acceptance MUST verify populated,
+read-only file and fenced views, the invalid-YAML error, and render cleanup.
+It MUST finish with those populated views restored for interactive review,
+including after a fresh mount; cleanup acceptance must not leave the story blank.
+Kanban and Activity MUST each have governed file and fenced embed examples.
+
 ## Requirements
 
 | ID          | Requirement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
@@ -127,7 +153,7 @@ plugin shares the host's App and framework identity.
 | LN-BASE-041 | Every visible non-title property MUST occupy its own cell in an ordered two-column grid, filling left then right and retaining a placeholder for missing values rather than concatenating additional properties.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 
 | LN-BASE-042 | Card bodies MUST default to the themed body surface while preserving explicit card surface customisation. Registry examples MUST configure short cover headers through real view configuration and contain enough realistic records to demonstrate vertical scrolling. |
-| LN-BASE-043 | Lists MUST render compact records with configured primary identity, one horizontal row of labelled secondary properties aligned on their first text baseline, and collapsible group headings with counts. Group values MUST be bold and tags MUST use the shared Lapis Tag List. Grouped records MUST be indented beneath their parent heading and start with a decorative Lucide bullet. Values MUST have usable minimum widths, with numbers kept on one line and long text bounded to two lines with ellipsis while retaining its complete accessible value and edit source. Writable properties MUST activate editors on click or keyboard; Escape MUST discard uncommitted drafts. Existing per-type commits, read-only values and file navigation MUST remain intact, and Table/Card editing MUST remain unchanged. |
+| LN-BASE-043 | Lists MUST render compact records with configured primary identity, a wrapping row of labelled secondary properties aligned on their first text baseline, and collapsible group headings with counts. Group values MUST be bold and tags MUST use the shared Lapis Tag List. Grouped records MUST be indented beneath their parent heading and start with a decorative Lucide bullet. Values MUST have usable minimum widths, with numbers kept on one line and long text bounded to two lines with ellipsis while retaining its complete accessible value and edit source. Writable properties MUST activate editors on click or keyboard; Escape MUST discard uncommitted drafts. Existing per-type commits, read-only values and file navigation MUST remain intact, and Table/Card editing MUST remain unchanged. |
 | LN-BASE-044 | Unknown view types MUST retain their configuration and render a centred Shadcn Empty state with an icon, unsupported-view title, configured type and guidance to the existing view menu. |
 
 ## Public surface

@@ -198,7 +198,7 @@
   {:else if value instanceof TFile}
     <File {app} file={value} />
   {:else if value instanceof DateTime}
-    <DatetimeWidget {value} />
+    <DatetimeWidget {value} {label} />
   {:else if value instanceof Icon}
     <IconComponent name={[value.name, "circle-question-mark"]} />
   {:else}

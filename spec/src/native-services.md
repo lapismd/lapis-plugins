@@ -1,5 +1,10 @@
 # Native first-party plugin services
 
+The Bases embed catalog renders file and fenced Board/Activity instances with
+an explicitly owned App. Read-only Search and Filter change only the embedded
+query; no native writer, metadata parser revision, or installation authority
+is introduced by this presentation slice (LN-BASE-008/011).
+
 <!-- dependency-automation-policy -->
 
 Bases consumes the released Core 0.12.2 embedded-landmark repair through normal npm ranges. The root validation graph resolves compatible Core consumers together; this browser renderer intake changes no native service revision or installation authority.

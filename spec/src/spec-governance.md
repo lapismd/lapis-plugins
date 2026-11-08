@@ -1,5 +1,11 @@
 # Specification Governance
 
+Bases embed acceptance covers both rendered content and resource disposal,
+then remounts populated views for review. Markdown, Board and Activity entries
+remain classified integrations using the real App and public renderer; shared
+list-wrapping, toolbar and error regressions retain their owning Bases contract
+and full interaction/accessibility gates (LN-BASE-008/011/043, LP-SPEC-054).
+
 <!-- dependency-automation-policy -->
 
 The Core 0.12.2 Bases prerequisite retains explicit source, verified-archive and registry-only evidence for the embedded-board landmark contract. Its dependency intake updates the mapped distribution and native-boundary chapters; it adds no spec-first exemption and does not authorize a plugin release.

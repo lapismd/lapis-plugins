@@ -773,8 +773,12 @@ export class QueryController extends Component {
     {},
   ]);
   queryResult: BasesQueryResult = $derived.by(() => {
-    const visibleProperties = (this.selectedView?.order ??
-      []) as BasesPropertyId[];
+    const configuredProperties = this.selectedView?.order ?? [];
+    const visibleProperties = (
+      this.selectedView?.type === "list" && configuredProperties.length === 0
+        ? ["file.name"]
+        : configuredProperties
+    ) as BasesPropertyId[];
     const entries = filterEntriesBySearch(
       convertEntries(this.dataset),
       visibleProperties,

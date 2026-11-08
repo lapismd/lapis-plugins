@@ -7,6 +7,15 @@
     type MarkdownRenderChild,
   } from "@lapis-notes/api";
   import { bootBasesEditorShellDemo } from "./shell/create-shell-demo";
+  import { createBasesViewsDocument } from "./bases-views-fixture";
+
+  let {
+    scenario = "markdown",
+    listProperties = true,
+  }: {
+    scenario?: "markdown" | "kanban" | "activity";
+    listProperties?: boolean;
+  } = $props();
 
   let status = $state("booting");
   let error = $state("");
@@ -19,7 +28,8 @@
     let disposed = false;
     let embedHandle: EmbedViewHandle | void;
     const children: MarkdownRenderChild[] = [];
-    let runtime: Awaited<ReturnType<typeof bootBasesEditorShellDemo>> | null = null;
+    let runtime: Awaited<ReturnType<typeof bootBasesEditorShellDemo>> | null =
+      null;
 
     const cleanupRenders = () => {
       void embedHandle?.destroy?.();
@@ -30,7 +40,15 @@
       invalidEmbed?.replaceChildren();
     };
 
-    const runtimePromise = bootBasesEditorShellDemo();
+    const fixtureScenario =
+      scenario === "kanban"
+        ? "kanban-roles"
+        : scenario === "activity"
+          ? "activity"
+          : "table";
+    const runtimePromise = bootBasesEditorShellDemo(fixtureScenario, {
+      fixtureProfile: scenario === "markdown" ? "registry" : "default",
+    });
     void runtimePromise
       .then((readyRuntime) => {
         if (disposed) return readyRuntime.dispose();
@@ -38,8 +56,13 @@
         const app = readyRuntime.app;
         const file = app.vault.getFileByPath("Bases/Projects.base");
         const renderer = app.embedRegistry.get("base");
-        if (!file || !renderer) throw new Error("Bases embed renderer is unavailable");
-        embedHandle = renderer({ app, containerEl: fileEmbed, state: { file } });
+        if (!file || !renderer)
+          throw new Error("Bases embed renderer is unavailable");
+        embedHandle = renderer({
+          app,
+          containerEl: fileEmbed,
+          state: { file },
+        });
 
         const renderFence = (
           language: "base" | "bases",
@@ -47,7 +70,8 @@
           containerEl: HTMLElement,
         ) => {
           const processor = app.mardownCodeBlockPostProcessor[language]?.[0];
-          if (!processor) throw new Error(`Missing ${language} fenced renderer`);
+          if (!processor)
+            throw new Error(`Missing ${language} fenced renderer`);
           const fenced = `\`\`\`${language}\n${source}\n\`\`\`\n`;
           const context: MarkdownPostProcessorContext = {
             docId: `bases-${language}`,
@@ -58,8 +82,41 @@
           };
           processor(containerEl, context);
         };
-        renderFence("bases", "views:\n  - type: list\n    name: Embedded list", fencedEmbed);
-        renderFence("base", "views: [", invalidEmbed);
+        renderFence(
+          "bases",
+          scenario === "markdown"
+            ? JSON.stringify({
+                properties: createBasesViewsDocument("table").properties,
+                views: [
+                  {
+                    type: "list",
+                    name: "Embedded list",
+                    ...(listProperties
+                      ? {
+                          order: [
+                            "file.name",
+                            "note.owner",
+                            "note.status",
+                            "note.score",
+                            "note.due",
+                            "note.tags",
+                            "file.folder",
+                            "file.path",
+                          ],
+                          groupBy: {
+                            property: "note.status",
+                            direction: "ASC",
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              })
+            : JSON.stringify(createBasesViewsDocument(fixtureScenario)),
+          fencedEmbed,
+        );
+        if (scenario === "markdown")
+          renderFence("base", "views: [", invalidEmbed);
 
         const ownedRoot = root as HTMLDivElement & {
           __lapisApp?: App;
@@ -83,7 +140,9 @@
         delete (root as HTMLDivElement & { __cleanupBasesEmbeds?: () => void })
           .__cleanupBasesEmbeds;
       }
-      void (runtime ? runtime.dispose() : runtimePromise.then((value) => value.dispose()));
+      void (runtime
+        ? runtime.dispose()
+        : runtimePromise.then((value) => value.dispose()));
     };
   });
 </script>
@@ -91,18 +150,15 @@
 <div bind:this={root} class="bases-embeds-demo" data-testid="bases-embeds-demo">
   <output data-testid="bases-embeds-status">{status}</output>
   {#if error}<div role="alert">{error}</div>{/if}
-  <section>
-    <h2>Base file embed</h2>
+  <section aria-label="Base file embed">
     <div bind:this={fileEmbed} data-testid="bases-file-embed"></div>
   </section>
-  <section>
-    <h2>Fenced Bases block</h2>
+  <section aria-label="Fenced Bases block">
     <div bind:this={fencedEmbed} data-testid="bases-fenced-embed"></div>
   </section>
-  <section>
-    <h2>Invalid fenced YAML</h2>
-    <div bind:this={invalidEmbed} data-testid="bases-invalid-embed"></div>
-  </section>
+  {#if scenario === "markdown"}<section aria-label="Invalid fenced YAML">
+      <div bind:this={invalidEmbed} data-testid="bases-invalid-embed"></div>
+    </section>{/if}
 </div>
 
 <style>
@@ -127,13 +183,9 @@
 
   .bases-embeds-demo section {
     min-height: 10rem;
-    padding: 1rem;
+    padding: 0;
     border: 1px solid var(--ui-workspace-border);
     border-radius: 0.5rem;
-  }
-
-  .bases-embeds-demo h2 {
-    margin: 0 0 0.75rem;
-    font-size: 0.875rem;
+    overflow: hidden;
   }
 </style>

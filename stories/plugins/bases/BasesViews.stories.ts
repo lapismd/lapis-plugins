@@ -831,9 +831,11 @@ export const GroupedList: Story = {
         ).fontWeight,
       ),
     ).toBeGreaterThanOrEqual(600);
-    expect(firstRow.getBoundingClientRect().left).toBeGreaterThan(
-      toggles[0]!.getBoundingClientRect().left + 16,
-    );
+    expect(
+      firstRow
+        .querySelector<HTMLElement>(".bases-list__record-content")!
+        .getBoundingClientRect().left,
+    ).toBeGreaterThan(toggles[0]!.getBoundingClientRect().left + 16);
     const field = firstRow.querySelector(".bases-list__property")!;
     const textBottom = (element: Element) => {
       const range = canvasElement.ownerDocument.createRange();
@@ -952,10 +954,18 @@ export const List: Story = {
         '[data-ui-part="row"]:first-child .bases-list__property',
       ),
     ];
-    expect(
-      Math.max(...fields.map((field) => field.getBoundingClientRect().top)) -
-        Math.min(...fields.map((field) => field.getBoundingClientRect().top)),
-    ).toBeLessThan(2);
+    const viewport = list.querySelector<HTMLElement>(
+      '[data-ui-part="scroll-area-viewport"]',
+    )!;
+    expect(viewport.scrollWidth).toBeLessThanOrEqual(viewport.clientWidth + 1);
+    for (const field of fields) {
+      const label = field.querySelector("dt")!.getBoundingClientRect();
+      const value = field.querySelector("dd")!.getBoundingClientRect();
+      expect(value.left - label.right).toBeGreaterThanOrEqual(7);
+      expect(field.getBoundingClientRect().right).toBeLessThanOrEqual(
+        viewport.getBoundingClientRect().right + 1,
+      );
+    }
     await expectFileLinkPreview(canvasElement);
   },
 };
@@ -1028,7 +1038,9 @@ export const ListEditing: Story = {
     );
     await userEvent.keyboard("{Escape}");
     expect(await app.vault.read(file)).toContain("accessibility");
-    await userEvent.click(await record.findByRole("button", { name: "#product" }));
+    await userEvent.click(
+      await record.findByRole("button", { name: "#product" }),
+    );
     expect(await record.findByRole("combobox", { name: "tags" })).toBeVisible();
     await userEvent.keyboard("{Escape}");
     expect(record.queryByRole("button", { name: "Edit Project" })).toBeNull();
