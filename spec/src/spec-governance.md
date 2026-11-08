@@ -507,3 +507,5 @@ the final released package graph or waive any publication gate.
 The refreshed cohort's History settings-page type failure MUST be repaired in
 History's portable dependency metadata and proved by the exact strict check.
 The repair MUST NOT cast away controller identity or weaken the shared CI lane.
+
+The LP-SPEC-016 operator preflight is a read-only npm configuration audit, not proof of OIDC activation. Package Settings status and a successful trusted publish remain necessary. Recovery preserves original release coordinates and immutable publications, and retains candidate artifacts by run attempt. Authentication diagnostics expose only npm error codes, never command details or credentials.

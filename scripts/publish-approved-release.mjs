@@ -28,21 +28,38 @@ export async function main(args) {
   }
   const releases = selectReleases(plan.releases, options.selectors);
   for (const release of releases) await verifyApprovedArtifacts(release);
+  await publishSelectedReleases(releases, options, {
+    publishNpmImpl: publishNpm,
+    publishGitHubReleaseImpl: publishGitHubRelease,
+  });
+}
 
+export async function publishSelectedReleases(
+  releases,
+  options,
+  { publishNpmImpl, publishGitHubReleaseImpl, log = console.log } = {},
+) {
+  if (
+    typeof publishNpmImpl !== "function" ||
+    typeof publishGitHubReleaseImpl !== "function"
+  ) {
+    throw new Error("Approved publication operations are required.");
+  }
   const unauthorized = [];
   for (const release of releases) {
     try {
-      await publishNpm(release);
+      await publishNpmImpl(release);
     } catch (error) {
       if (!npmTrustedPublisherRejected(error)) throw error;
-      unauthorized.push(`${release.packageName}@${release.version}`);
-      console.log(
-        `Skipping ${release.packageName}@${release.version}; npm trusted publishing rejected this package.`,
+      const diagnostic = `${release.packageName}@${release.version} [${npmErrorCode(error)}]`;
+      unauthorized.push(diagnostic);
+      log(
+        `Skipping ${diagnostic}; npm trusted publishing rejected this package. Check the package's trusted publisher status, exact workflow/environment and direct-publish permission.`,
       );
       continue;
     }
-    await publishGitHubRelease(release, options);
-    console.log(`Published ${release.packageName}@${release.version}.`);
+    await publishGitHubReleaseImpl(release, options);
+    log(`Published ${release.packageName}@${release.version}.`);
   }
   if (unauthorized.length) {
     throw new Error(
@@ -105,6 +122,27 @@ export function npmTrustedPublisherRejected(error) {
   return /ENEEDAUTH|need auth/i.test(detail);
 }
 
+// Never print command arguments, stderr, credentials or authentication URLs.
+export function npmErrorCode(error) {
+  const detail = `${error?.message ?? ""}\n${error?.stderr ?? ""}`;
+  const code = detail.match(/npm (?:error|ERR!) code (E[A-Z0-9_]+)/)?.[1];
+  return [
+    "ENEEDAUTH",
+    "EOTP",
+    "E401",
+    "E403",
+    "E404",
+    "E409",
+    "EPUBLISHCONFLICT",
+    "ECONNRESET",
+    "ETIMEDOUT",
+    "EAI_AGAIN",
+    "ENOTFOUND",
+  ].includes(code)
+    ? code
+    : "UNKNOWN";
+}
+
 export function npmPublicationDecision(existing, expectedIntegrity) {
   if (!existing) return "publish";
   return existing === expectedIntegrity ? "skip-same" : "skip-different";
@@ -127,7 +165,9 @@ async function publishNpm(release) {
       decision === "skip-different"
         ? "npm already has this version with different integrity"
         : "npm already has this version";
-    console.log(`Skipping ${release.packageName}@${release.version}; ${reason}.`);
+    console.log(
+      `Skipping ${release.packageName}@${release.version}; ${reason}.`,
+    );
     return decision;
   };
   const existing = npmPublicationDecision(

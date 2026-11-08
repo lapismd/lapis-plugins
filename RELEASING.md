@@ -119,6 +119,64 @@ CLI at version 11.5.1 or newer so it can exchange the workflow identity for a
 short-lived publishing credential. GitHub release and registry dispatch
 credentials remain separate from npm authentication.
 
+### Operator preflight and activation
+
+Before an approved release, use npm 11.15.0 or newer with package write access
+and account 2FA to inspect the selected publisher configurations:
+
+```sh
+pnpm release:trust:check -- --plugins canvas,csv,transcripts
+```
+
+This read-only operator command checks the exact GitHub repository, workflow,
+environment and `npm publish` permission. It accepts multiple connections per
+package and reports every failing package. It is not an OIDC authentication test
+and must not run as a publishing-credential check in CI. If npm requests 2FA,
+supply a current OTP through npm's temporary `npm_config_otp` environment
+configuration, or select npm's optional five-minute verification window during
+an interactive `npm trust list <package> --json` check. Clear the temporary OTP
+after the command. Do not put an OTP or npm access token in repository files.
+
+Also check each connection's status in the package's npm Settings tab. npm CLI
+versions may omit activation and expiry metadata even when the tuple and
+permissions match. A new trusted publisher must complete its first successful
+publish within **two days**. Unused connections expire and must be deleted and
+recreated; publishing an older version before creating the connection does not
+activate it. Preserve the exact tuple and allowed actions when replacing an
+expired connection. Direct publishing must be explicitly allowed; staged-only
+permission is insufficient. Refresh a connection when its next version is ready
+to publish, since skipping an existing version does not activate the connection.
+
+### Recovering a partial static publication
+
+1. Read the failed run's source SHA, selection, npm outcomes and retained signed
+   candidate artifact. Download that artifact before its seven-day retention
+   expires. New runs include both run ID and attempt in the artifact name so
+   retries retain separate evidence.
+2. Compare registry versions and tarball integrity with the approved candidates.
+   Keep existing npm versions and GitHub assets. A changed package needs a patch
+   version; never overwrite a previously published version to complete a run.
+3. Repair only the failed packages' expired or mismatched publisher connections,
+   then repeat the operator preflight and confirm their npm Settings status.
+4. Within two days of recreating a connection, rerun the original failed jobs
+   after release approval. Do not dispatch a different source revision as a
+   substitute for the partial release. Failed-job retries rebuild and sign from
+   that run's original SHA and selection; they do not automatically resume the
+   retained artifact. Preserve the downloaded original as recovery evidence.
+5. Verify the previously missing npm versions and provenance, signed GitHub
+   archives, registry dispatch and dependency notification. Confirm existing
+   publications remain unchanged. The sender verifies retained published
+   archives and dispatches their original signed source coordinates.
+
+Authentication rejections include only a safe npm error code in each package's
+diagnostic and final failure summary. The publisher attempts the remaining
+packages, never creates GitHub assets for a rejected npm publication, and fails
+before registry dispatch. Other npm failures stop publication immediately.
+
+See [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/) and
+[npm trust](https://docs.npmjs.com/cli/v11/commands/npm-trust/) for authentication
+and connection-management requirements.
+
 ## Correcting a published package
 
 Never use `npm unpublish` as the normal rollback. Publish a verified patch
