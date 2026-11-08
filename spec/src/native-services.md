@@ -172,3 +172,5 @@ service and callback. Its native provider qualification remains distinct from
 the renderer settings-page type check.
 
 The document release recovery prepares DOCX 0.2.1, PDF 0.2.1 and Slides 0.1.2 through Changesets and the existing LP-SPEC-016 qualification gates. Their earlier npm versions and signed GitHub assets remain immutable; native service revisions and host-profile adoption retain their separate owning-consumer gates.
+
+DOCX npm qualification bundles its browser-only WordCanvas graph and assets into the tarball. LP-SPEC-011 now checks the packed inventory for every literal relative JavaScript import, so checkout-only vendor files cannot qualify a portable package. Native service source pins and installation admission retain their existing ownership.
