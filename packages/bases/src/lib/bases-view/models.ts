@@ -180,6 +180,8 @@ export interface BasesViewMap {
   table: TableView;
   cards: CardsView;
   list: ListView;
+  kanban: KanbanBasesViewDocument;
+  activity: ActivityBasesViewDocument;
   map: MapView;
 }
 
@@ -196,6 +198,33 @@ export interface TableView extends BasesView<"table"> {
 }
 
 export interface ListView extends BasesView<"list"> {}
+
+export interface MarkdownCardViewOptions {
+  chipProperty?: string;
+  /** Optional title property id used for card titles. */
+  titleProperty?: string;
+  descriptionProperty?: string;
+  tagsProperty?: string;
+  badgeProperty?: string;
+  badgeLabel?: string;
+  badgeColor?: string;
+  anchorColumnId?: string | null;
+  columnFilters?: Record<string, Filters>;
+  /** Persisted lane order for the reorderable columns. */
+  columnOrder?: string[];
+  /** Persisted per-lane title/colour overrides keyed by column id. */
+  columnMeta?: Record<string, { title?: string; color?: string }>;
+}
+
+export interface KanbanBasesViewDocument
+  extends BasesView<"kanban">,
+    MarkdownCardViewOptions {}
+
+export interface ActivityBasesViewDocument
+  extends BasesView<"activity">,
+    MarkdownCardViewOptions {
+  dateProperty?: string;
+}
 
 export interface CardsView extends BasesView<"cards"> {
   cardSize?: number;

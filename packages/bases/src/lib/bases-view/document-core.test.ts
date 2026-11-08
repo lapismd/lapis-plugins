@@ -88,4 +88,58 @@ describe("normalizeBasesDocument", () => {
       filter: { and: [] },
     });
   });
+
+  it("preserves kanban lane configuration when parsed back from source mode", () => {
+    const document = normalizeBasesDocument({
+      activeView: "Board",
+      views: [
+        {
+          type: "kanban",
+          name: "Board",
+          order: ["file.name", "note.owner"],
+          groupBy: { property: "note.status", direction: "ASC" },
+          titleProperty: "note.title",
+          columnOrder: ["Planning", "Active"],
+          columnMeta: { Active: { title: "Doing", color: "#1d4ed8" } },
+          limit: 0,
+        },
+      ],
+    });
+
+    expect(document.views[0]).toMatchObject({
+      type: "kanban",
+      name: "Board",
+      groupBy: { property: "note.status", direction: "ASC" },
+      titleProperty: "note.title",
+      columnOrder: ["Planning", "Active"],
+      columnMeta: { Active: { title: "Doing", color: "#1d4ed8" } },
+    });
+  });
 });
+
+for (const type of ["kanban", "activity"]) {
+  it(`retains mapped card fields, anchoring and column predicates for ${type}`, () => {
+    const settings = {
+      type,
+      name: "Research",
+      titleProperty: "note.heading",
+      descriptionProperty: "note.abstract",
+      tagsProperty: "note.labels",
+      badgeProperty: "note.confidence",
+      badgeLabel: "Evidence",
+      badgeColor: "#4d7c0f",
+      dateProperty: "note.reviewed",
+      anchorColumnId: null,
+      columnFilters: {
+        collect: {
+          and: [{ column: "note.owner", op: "=", value: "Maya Chen" }],
+        },
+      },
+    };
+    const document = normalizeBasesDocument({ views: [settings] });
+    expect(document.views[0]).toMatchObject(settings);
+    expect(
+      normalizeBasesDocument(JSON.parse(JSON.stringify(document))).views[0]
+    ).toMatchObject(settings);
+  });
+}

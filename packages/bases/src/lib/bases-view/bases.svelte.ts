@@ -25,9 +25,7 @@ import type { VaultRecord } from ".";
 import { isEqual } from "lodash-es";
 import { groupEntries } from "./query-result-core";
 import { filterEntriesBySearch } from "./search-core";
-import {
-  collectMetadataDependencies,
-} from "./metadata-invalidation-core";
+import { collectMetadataDependencies } from "./metadata-invalidation-core";
 import {
   appDatabaseRowsToVaultRecords,
   buildBasesAppDatabaseQuery,
@@ -725,14 +723,34 @@ export class QueryController extends Component {
   private prevDoc: string = "";
   private lastViewResults = new WeakMap<BasesView, BasesQueryResult>();
 
+  get requiredProperties(): BasesPropertyId[] {
+    return (
+      this.views
+        .get(this.selectedView?.type)
+        ?.requiredProperties?.(this.selectedView, this.getAllColumns()) ?? []
+    );
+  }
+
   query = $derived(
-    generateQuery(this.selectedView!, this.formulas, this.doc.filters),
+    generateQuery(
+      this.selectedView!,
+      this.formulas,
+      this.doc.filters,
+      this.requiredProperties,
+    ),
   );
   metadataDependencies = $derived.by(() => {
     return collectMetadataDependencies({
       documentFilter: this.doc.filters,
       viewFilter: this.selectedView?.filter,
-      order: (this.selectedView?.order ?? []) as BasesPropertyId[],
+      order: [
+        ...(this.selectedView?.order ?? []),
+        ...this.requiredProperties,
+      ] as BasesPropertyId[],
+      additionalFilters:
+        this.views
+          .get(this.selectedView?.type)
+          ?.columnFilters?.(this.selectedView) ?? [],
       sort: this.selectedView?.sort ?? [],
       groupByProperty: this.selectedView?.groupBy?.property ?? null,
       imageProperty:
@@ -816,12 +834,13 @@ export class QueryController extends Component {
     });
 
     $effect(() => {
-      this.dataset = this.getRecords(this.query);
+      this.dataset = this.data.length ? this.getRecords(this.query) : [[], {}];
     });
 
     this.registerEvent(
       this.app.metadataCache.on("index-changed", (change) => {
-        if (change.reset || change.domains.includes("metadata")) void this.reload();
+        if (change.reset || change.domains.includes("metadata"))
+          void this.reload();
       }),
     );
     this.registerEvent(
@@ -874,6 +893,33 @@ export class QueryController extends Component {
       console.error("Error executing query", e);
       return [[], types];
     }
+  }
+
+  /** Apply a lane predicate to the already selected result without changing global filters. */
+  filterEntries(
+    entries: BasesEntry[],
+    filter: import("./models").Filters,
+  ): BasesEntry[] {
+    const query = generateQuery(
+      {
+        ...this.selectedView,
+        order: [],
+        sort: [],
+        groupBy: undefined,
+        limit: 0,
+        filter,
+      },
+      this.formulas,
+    );
+    const [columns, rows] = this.db.execute(query) as [
+      { name: symbol }[],
+      unknown[][],
+    ];
+    const position = columns.findIndex(
+      (column) => column.name.description === "$rowId",
+    );
+    const ids = new Set(rows.map((row) => (row[position] as VaultRecord).id));
+    return entries.filter((entry) => ids.has(entry.id));
   }
 
   getAllColumns() {
@@ -941,13 +987,16 @@ export class QueryController extends Component {
         for (let offset = 0; offset < records.length; offset += 400) {
           const links = await this.app.metadataCache.queryLinks({
             direction: "incoming",
-            paths: records.slice(offset, offset + 400).map((record) => record.id),
+            paths: records
+              .slice(offset, offset + 400)
+              .map((record) => record.id),
             resolution: "resolved",
             limit: 100_000,
           });
           for (const link of links) {
             if (!link.resolvedTargetPath) continue;
-            const sources = backlinks.get(link.resolvedTargetPath) ?? new Set<string>();
+            const sources =
+              backlinks.get(link.resolvedTargetPath) ?? new Set<string>();
             sources.add(link.sourcePath);
             backlinks.set(link.resolvedTargetPath, sources);
           }
@@ -1138,6 +1187,13 @@ export interface BasesViewRegistration {
    * @public
    */
   options?: (config: SharedBasesViewConfig) => BasesAllOptions[];
+  /** Hidden presentation fields that this layout needs in its result projection. */
+  requiredProperties?: (
+    view: BasesViewBase,
+    columns: readonly import("./columns").ColumnDefinition[],
+  ) => BasesPropertyId[];
+  /** Additional layout-owned predicates whose metadata dependencies must stay live. */
+  columnFilters?: (view: BasesViewBase) => import("./models").Filters[];
 }
 
 /**

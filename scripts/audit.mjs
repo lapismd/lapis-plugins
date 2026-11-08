@@ -16,10 +16,15 @@ try {
   if (useCandidate)
     for (const name of ["package.json", "pnpm-lock.yaml"])
       copyFileSync(join(candidate, name), join(directory, name));
+  if (useCandidate && existsSync(resolve("pnpm-workspace.yaml")))
+    copyFileSync(
+      resolve("pnpm-workspace.yaml"),
+      join(directory, "pnpm-workspace.yaml")
+    );
   console.log(
     useCandidate
       ? "Auditing the installed verified-archive graph."
-      : "Auditing the registry lockfile graph.",
+      : "Auditing the registry lockfile graph."
   );
   const result = spawnSync("pnpm", ["audit", ...process.argv.slice(2)], {
     cwd: directory,

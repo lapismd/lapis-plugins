@@ -1,4 +1,8 @@
 import {
+  referenceFiles,
+  type ReferenceCollection,
+} from "./kanban-reference-fixture";
+import {
   BasesView,
   type BasesAllOptions,
   type QueryController,
@@ -13,6 +17,12 @@ export type BasesViewScenario =
   | "schema-settings"
   | "cards"
   | "grouped-list"
+  | "kanban"
+  | "kanban-roles"
+  | "kanban-notes"
+  | "kanban-tasks"
+  | "kanban-scroll"
+  | "activity"
   | "map"
   | "unknown";
 
@@ -159,6 +169,15 @@ const views: BasesDocument["views"] = [
     limit: 0,
   },
   {
+    type: "kanban",
+    name: "Status board",
+    order: ["file.name", "note.owner", "note.score"],
+    sort: [{ property: "file.name", direction: "ASC" }],
+    groupBy: { property: "note.status", direction: "ASC" },
+    filter: { and: [] },
+    limit: 0,
+  },
+  {
     type: "map",
     name: "Project map",
     order: ["file.name", "note.owner"],
@@ -184,6 +203,12 @@ const activeViewNames: Record<BasesViewScenario, string> = {
   "schema-settings": "Story options",
   cards: "Project cards",
   "grouped-list": "Projects by status",
+  kanban: "Status board",
+  "kanban-roles": "Markdown board",
+  "kanban-notes": "Markdown board",
+  "kanban-tasks": "Markdown board",
+  "kanban-scroll": "Markdown board",
+  activity: "Markdown board",
   map: "Project map",
   unknown: "Timeline experiment",
 };
@@ -191,6 +216,52 @@ const activeViewNames: Record<BasesViewScenario, string> = {
 export function createBasesViewsDocument(
   scenario: BasesViewScenario,
 ): BasesDocument {
+  if (scenario.startsWith("kanban-") || scenario === "activity") {
+    return {
+      filters: { and: [] },
+      properties: {
+        "note.title": { displayName: "Title" },
+        "note.phase": { displayName: "Phase" },
+        "note.owner": { displayName: "Owner" },
+        "note.company": { displayName: "Company" },
+        "note.location": { displayName: "Location" },
+        "note.occurred": { displayName: "Recorded" },
+        "note.description": { displayName: "Summary" },
+        "note.followUp": { displayName: "Follow up" },
+      },
+      formulas: {},
+      summaries: {},
+      activeView: "Markdown board",
+      views: [
+        {
+          type: scenario === "activity" ? "activity" : "kanban",
+          name: "Markdown board",
+          titleProperty: "note.title",
+          anchorColumnId:
+            scenario === "kanban-tasks" ? "note.phase:%22Doing%22" : undefined,
+          chipProperty:
+            scenario === "kanban-roles" ? "note.company" : "note.category",
+          order:
+            scenario === "kanban-roles"
+              ? [
+                  "note.title",
+                  "note.company",
+                  "note.location",
+                  "note.owner",
+                  "note.occurred",
+                ]
+              : ["note.title", "note.owner", "note.occurred"],
+          badgeProperty:
+            scenario === "kanban-roles" ? "note.followUp" : "note.highlight",
+          badgeLabel: scenario === "kanban-roles" ? "Follow up" : "Highlight",
+          sort: [],
+          groupBy: { property: "note.phase", direction: "ASC" },
+          filter: { and: [] },
+          limit: 0,
+        },
+      ],
+    };
+  }
   const clonedViews = structuredClone(views);
   if (scenario === "filter-options") {
     const table = clonedViews.find((view) => view.name === "Portfolio table");
@@ -220,7 +291,30 @@ export function createBasesViewsDocument(
   };
 }
 
-export function createBasesViewsSeed(): Record<string, string | ArrayBuffer> {
+export function createBasesViewsSeed(
+  scenario?: BasesViewScenario,
+): Record<string, string | ArrayBuffer> {
+  if (scenario?.startsWith("kanban-") || scenario === "activity") {
+    return {
+      ".lapis/app.json": "{}",
+      ".lapis/types.json": JSON.stringify({
+        types: {
+          title: "text",
+          phase: "text",
+          owner: "text",
+          description: "text",
+          occurred: "date",
+          followUp: "date",
+          tags: "tags",
+        },
+      }),
+      ...referenceFiles(
+        scenario === "activity"
+          ? "notes"
+          : (scenario.slice(7) as ReferenceCollection),
+      ),
+    };
+  }
   return {
     ".lapis/app.json": "{}",
     ".lapis/types.json": JSON.stringify(BASES_SAMPLE_TYPES, null, 2),

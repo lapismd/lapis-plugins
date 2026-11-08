@@ -47,9 +47,9 @@ export function imageKey(inputs) {
   return hash(
     JSON.stringify(
       Object.fromEntries(
-        Object.entries(inputs).sort(([a], [b]) => a.localeCompare(b)),
-      ),
-    ),
+        Object.entries(inputs).sort(([a], [b]) => a.localeCompare(b))
+      )
+    )
   ).slice(0, 20);
 }
 export function validateArchives(entries) {
@@ -70,6 +70,11 @@ export function validateArchives(entries) {
   return entries;
 }
 export const laneImage = () => "ui";
+
+/** Reserve at least half the container for browsers, native buffers and workers. */
+export function validationNodeHeap(memoryGiB) {
+  return Math.max(1, Math.min(6144, Math.floor(memoryGiB * 512)));
+}
 
 /** Eight shards bound browser lifetime. A CI quarter is two of those eighths. */
 export function laneInvocations(lane, args) {

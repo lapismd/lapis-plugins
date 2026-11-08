@@ -196,7 +196,7 @@ const config: StorybookConfig = {
             find: /^@cw\/shared$/,
             replacement: path.join(
               repoRoot,
-              "packages/docx/vendor/wordcanvas/shared/src/index.ts",
+              "packages/docx/vendor/wordcanvas/shared/src/index.ts"
             ),
           },
           {
@@ -257,6 +257,15 @@ const config: StorybookConfig = {
         ],
       },
       server: {
+        watch: {
+          ignored: [
+            "**/.local/**",
+            "**/.release/**",
+            "**/storybook-static/**",
+            "**/spec_book/**",
+            "**/spec/book/**",
+          ],
+        },
         fs: {
           allow: [
             repoRoot,

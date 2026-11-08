@@ -268,6 +268,7 @@ const editorSharedDependencies = new Map(
     bases: [
       "@codemirror/autocomplete",
       "@codemirror/language",
+      "@codemirror/lint",
       "@codemirror/state",
       "@codemirror/view",
       "@lezer/common",

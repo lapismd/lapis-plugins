@@ -10,26 +10,26 @@ const pins = {
     [
       "jj",
       "jj-v0.45.1-x86_64-unknown-linux-musl.tar.gz",
-      "f35438350b5d61963aac5dd74ede510b31d6b9690769d1a6268cf058cc825f72",
+      "f35438350b5d61963aac5dd74ede510b31d6b9690769d1a6268cf058cc825f72"
     ],
     [
       "mdBook",
       "mdbook-v0.5.4-x86_64-unknown-linux-musl.tar.gz",
-      "5222beabd3e37dc5be0d18ff99b79058469354db5c220153a1b92db5ba12be89",
-    ],
+      "5222beabd3e37dc5be0d18ff99b79058469354db5c220153a1b92db5ba12be89"
+    ]
   ],
   arm64: [
     [
       "jj",
       "jj-v0.45.1-aarch64-unknown-linux-musl.tar.gz",
-      "7349a43dd5a20dbc998b10114daa0ee63d2ab863fb822c7eb6b0ebca5903cc69",
+      "7349a43dd5a20dbc998b10114daa0ee63d2ab863fb822c7eb6b0ebca5903cc69"
     ],
     [
       "mdBook",
       "mdbook-v0.5.4-aarch64-unknown-linux-musl.tar.gz",
-      "753e5c5c363ee8a56972344dcf91466f005a51db84a7aeffe427ae3ef83d6d44",
-    ],
-  ],
+      "753e5c5c363ee8a56972344dcf91466f005a51db84a7aeffe427ae3ef83d6d44"
+    ]
+  ]
 };
 export function archiveMember(members, executable) {
   const matches = members
@@ -44,6 +44,63 @@ export function ciToolDirectory(environment = process.env) {
     throw Error("CI tool installation requires runner-owned temporary paths");
   return join(environment.RUNNER_TEMP, "lapis-plugins-validation-tools");
 }
+export async function downloadToolArchive(
+  { owner, version, asset, digest },
+  fetchArchive = fetch
+) {
+  const direct = `https://github.com/${owner}/releases/download/v${version}/${asset}`;
+  const request = (url, headers = {}) =>
+    fetchArchive(url, { headers, signal: AbortSignal.timeout(30_000) });
+  const verified = async (response) => {
+    const bytes = Buffer.from(await response.arrayBuffer());
+    if (createHash("sha256").update(bytes).digest("hex") !== digest)
+      throw Error("Tool archive checksum mismatch: " + asset);
+    return bytes;
+  };
+  let response;
+  try {
+    response = await request(direct);
+  } catch (error) {
+    if (!["TypeError", "AbortError", "TimeoutError"].includes(error?.name))
+      throw error;
+  }
+  if (response?.ok) return verified(response);
+  if (response && ![408, 429, 500, 502, 503, 504].includes(response.status))
+    throw Error("Tool download failed: " + response.status);
+  await response?.body?.cancel();
+  console.warn(
+    `Tool release URL unavailable (${response?.status ?? "transport"}); using the official asset API for ${asset}.`
+  );
+
+  // A release redirect can be unavailable while the official asset API still
+  // serves the identical pinned bytes. Resolve only this release and filename.
+  const api = `https://api.github.com/repos/${owner}/releases`;
+  const metadata = await request(`${api}/tags/v${version}`, {
+    Accept: "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28"
+  });
+  if (!metadata.ok)
+    throw Error("Tool release lookup failed: " + metadata.status);
+  const release = await metadata.json();
+  const matches = Array.isArray(release.assets)
+    ? release.assets.filter((item) => item.name === asset)
+    : [];
+  const match = matches[0];
+  if (
+    matches.length !== 1 ||
+    !Number.isSafeInteger(match.id) ||
+    match.id <= 0 ||
+    match.browser_download_url !== direct
+  )
+    throw Error("Tool release asset identity mismatch: " + asset);
+  response = await request(`${api}/assets/${match.id}`, {
+    Accept: "application/octet-stream",
+    "X-GitHub-Api-Version": "2022-11-28"
+  });
+  if (!response.ok)
+    throw Error("Tool asset download failed: " + response.status);
+  return verified(response);
+}
 export async function install(directory = "/opt/tools", onlyJj = false) {
   if (process.platform !== "linux" || !pins[process.arch])
     throw Error("Unsupported container toolchain platform");
@@ -52,18 +109,7 @@ export async function install(directory = "/opt/tools", onlyJj = false) {
     if (onlyJj && tool !== "jj") continue;
     const owner = tool === "jj" ? "jj-vcs/jj" : "rust-lang/mdBook";
     const version = tool === "jj" ? "0.45.1" : "0.5.4";
-    const response = await fetch(
-      "https://github.com/" +
-        owner +
-        "/releases/download/v" +
-        version +
-        "/" +
-        asset
-    );
-    if (!response.ok) throw Error("Tool download failed: " + response.status);
-    const bytes = Buffer.from(await response.arrayBuffer());
-    if (createHash("sha256").update(bytes).digest("hex") !== digest)
-      throw Error("Tool archive checksum mismatch: " + tool);
+    const bytes = await downloadToolArchive({ owner, version, asset, digest });
     const archive = "/tmp/" + asset;
     await writeFile(archive, bytes);
     const executable = tool === "jj" ? "jj" : "mdbook";
@@ -73,7 +119,7 @@ export async function install(directory = "/opt/tools", onlyJj = false) {
     );
     execFileSync("tar", ["-xzf", archive, "-C", directory, member]);
     const actual = execFileSync(join(directory, executable), ["--version"], {
-      encoding: "utf8",
+      encoding: "utf8"
     }).trim();
     if (
       !actual.startsWith(

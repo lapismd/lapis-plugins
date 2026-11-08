@@ -52,7 +52,7 @@ function defaultCustomView(type: string): AnyBasesView {
 
 function normalizeView(
   view: unknown,
-  fallbackName: string,
+  fallbackName: string
 ): AnyBasesView | null {
   if (!view || typeof view !== "object") return null;
 
@@ -64,7 +64,7 @@ function normalizeView(
       name: typeof candidate.name === "string" ? candidate.name : fallbackName,
       order: Array.isArray(candidate.order)
         ? candidate.order.filter(
-            (value): value is string => typeof value === "string",
+            (value): value is string => typeof value === "string"
           )
         : [],
       sort: Array.isArray(candidate.sort) ? candidate.sort : [],
@@ -91,7 +91,7 @@ function normalizeView(
       name: typeof candidate.name === "string" ? candidate.name : fallbackName,
       order: Array.isArray(candidate.order)
         ? candidate.order.filter(
-            (value): value is string => typeof value === "string",
+            (value): value is string => typeof value === "string"
           )
         : [],
       sort: Array.isArray(candidate.sort) ? candidate.sort : [],
@@ -128,7 +128,7 @@ function normalizeView(
       name: typeof candidate.name === "string" ? candidate.name : fallbackName,
       order: Array.isArray(candidate.order)
         ? candidate.order.filter(
-            (value): value is string => typeof value === "string",
+            (value): value is string => typeof value === "string"
           )
         : [],
       sort: Array.isArray(candidate.sort) ? candidate.sort : [],
@@ -148,6 +148,49 @@ function normalizeView(
     } as AnyBasesView;
   }
 
+  if (candidate.type === "kanban" || candidate.type === "activity") {
+    return {
+      ...candidate,
+      type: candidate.type,
+      name: typeof candidate.name === "string" ? candidate.name : fallbackName,
+      order: Array.isArray(candidate.order)
+        ? candidate.order.filter(
+            (value): value is string => typeof value === "string"
+          )
+        : [],
+      sort: Array.isArray(candidate.sort) ? candidate.sort : [],
+      filter:
+        candidate.filter && typeof candidate.filter === "object"
+          ? (candidate.filter as Filters)
+          : emptyFilter(),
+      limit: typeof candidate.limit === "number" ? candidate.limit : 0,
+      summaries:
+        candidate.summaries && typeof candidate.summaries === "object"
+          ? (candidate.summaries as Record<string, string>)
+          : undefined,
+      groupBy:
+        candidate.groupBy && typeof candidate.groupBy === "object"
+          ? candidate.groupBy
+          : undefined,
+      titleProperty:
+        typeof candidate.titleProperty === "string"
+          ? candidate.titleProperty
+          : undefined,
+      columnOrder: Array.isArray(candidate.columnOrder)
+        ? candidate.columnOrder.filter(
+            (value): value is string => typeof value === "string"
+          )
+        : undefined,
+      columnMeta:
+        candidate.columnMeta && typeof candidate.columnMeta === "object"
+          ? (candidate.columnMeta as Record<
+              string,
+              { title?: string; color?: string }
+            >)
+          : undefined,
+    } as AnyBasesView;
+  }
+
   if (typeof candidate.type === "string" && candidate.type.length > 0) {
     return {
       ...defaultCustomView(candidate.type),
@@ -155,7 +198,7 @@ function normalizeView(
       name: typeof candidate.name === "string" ? candidate.name : fallbackName,
       order: Array.isArray(candidate.order)
         ? candidate.order.filter(
-            (value): value is string => typeof value === "string",
+            (value): value is string => typeof value === "string"
           )
         : [],
       sort: Array.isArray(candidate.sort) ? candidate.sort : [],

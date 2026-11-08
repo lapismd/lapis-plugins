@@ -21,6 +21,7 @@ export type MetadataDependencySet = {
 type MetadataDependencyInput = {
   documentFilter: Filters;
   viewFilter: Filters | undefined;
+  additionalFilters?: Filters[];
   order: BasesPropertyId[];
   sort: SortColumn[];
   groupByProperty?: BasesPropertyId | null;
@@ -77,10 +78,7 @@ function trackPropertyDependency(
     return;
   }
 
-  if (
-    propertyId === "file.links" ||
-    propertyId === "file.embeds"
-  ) {
+  if (propertyId === "file.links" || propertyId === "file.embeds") {
     dependencies.links = true;
     return;
   }
@@ -182,6 +180,8 @@ export function collectMetadataDependencies(
 
   collectFilterDependencies(dependencies, input.documentFilter);
   collectFilterDependencies(dependencies, input.viewFilter);
+  for (const filter of input.additionalFilters ?? [])
+    collectFilterDependencies(dependencies, filter);
 
   for (const propertyId of input.order) {
     trackPropertyDependency(dependencies, propertyId);

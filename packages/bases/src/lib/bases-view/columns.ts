@@ -17,7 +17,7 @@ export function columnsFor(
   rows: VaultRecord[],
   properties: Record<string, { displayName: string }> = {},
   formulas: Record<string, string>,
-  app?: Pick<App, "metadataTypeManager">,
+  app?: Pick<App, "metadataTypeManager">
 ) {
   const columns: ColumnDefinition[] = buildFileColumns(properties).map(
     (column) => ({
@@ -25,7 +25,7 @@ export function columnsFor(
       displayName: column.displayName,
       icon: column.icon,
       type: column.type,
-    }),
+    })
   );
 
   const metadata: Record<string, number> = {};
@@ -38,7 +38,7 @@ export function columnsFor(
         observedMetadataTypes[key] ??= inferMetadataTypeFromValue(
           key,
           value,
-          app,
+          app
         );
       });
     }
@@ -81,11 +81,13 @@ export function columnsFor(
       const { type, icon } = getMetadataTypeInfo(
         key,
         observedMetadataTypes[key] ?? "unknown",
-        app,
+        app
       );
+      const id = `note.${key}` as BasesPropertyId;
       columns.push({
-        id: key,
-        displayName: properties[key]?.displayName || name,
+        id,
+        displayName:
+          properties[id]?.displayName || properties[key]?.displayName || name,
         icon,
         type,
       });
@@ -97,7 +99,7 @@ export function columnsFor(
 }
 
 export function frontMatterTypesForColumns(
-  columns: Record<string, ColumnDefinition>,
+  columns: Record<string, ColumnDefinition>
 ): Record<string, DType> {
   const types: Record<string, DType> = {};
 
@@ -140,7 +142,7 @@ export function metadataType(type: MetadataType): DType {
 function inferMetadataTypeFromValue(
   key: string,
   value: unknown,
-  app?: Pick<App, "metadataTypeManager">,
+  app?: Pick<App, "metadataTypeManager">
 ): MetadataType {
   return (
     app?.metadataTypeManager?.determinePropertyType?.(key, value) ??

@@ -20,6 +20,8 @@ import { TableView } from "./table-view/index.svelte";
 import { UnknownView } from "./unknown-view";
 import { CardView } from "./card-view";
 import { ListView } from "./list-view";
+import { KanbanBasesView, ActivityBasesView } from "./kanban-view";
+import { boardRequiredProperties } from "./kanban-view/configuration";
 import { MapView } from "./map-view";
 import { normalizeBasesDocument } from "./document-core";
 import { SerializedWriteQueue } from "../serialized-write-queue";
@@ -84,11 +86,14 @@ export function serializeBasesDocument(content: BasesDocument): string {
 export const dumpDocument = serializeBasesDocument;
 
 export function registerBuiltInBasesViews(
-  views: Map<string, BasesViewRegistration>,
+  views: Map<string, BasesViewRegistration>
 ): void {
   const implementations: Record<
     BuiltInBasesViewId,
-    Pick<BasesViewRegistration, "factory" | "options">
+    Pick<
+      BasesViewRegistration,
+      "factory" | "options" | "requiredProperties" | "columnFilters"
+    >
   > = {
     table: {
       factory: (controller, containerEl) =>
@@ -110,6 +115,32 @@ export function registerBuiltInBasesViews(
         new ListView(controller, containerEl),
       options: ListView.getViewOptions,
     },
+    kanban: {
+      factory: (controller, containerEl) =>
+        new KanbanBasesView(controller, containerEl),
+      options: KanbanBasesView.getViewOptions,
+      requiredProperties: boardRequiredProperties,
+      columnFilters: (view) =>
+        Object.values(
+          (view.columnFilters ?? {}) as Record<
+            string,
+            import("./models").Filters
+          >
+        ),
+    },
+    activity: {
+      factory: (controller, containerEl) =>
+        new ActivityBasesView(controller, containerEl),
+      options: ActivityBasesView.getViewOptions,
+      requiredProperties: boardRequiredProperties,
+      columnFilters: (view) =>
+        Object.values(
+          (view.columnFilters ?? {}) as Record<
+            string,
+            import("./models").Filters
+          >
+        ),
+    },
     map: {
       factory: (controller, containerEl) =>
         new MapView(controller, containerEl),
@@ -124,7 +155,7 @@ export function registerBuiltInBasesViews(
 
 export function createBasesViewRegistrations(
   app: App,
-  registrations?: ReadonlyMap<string, BasesViewRegistration>,
+  registrations?: ReadonlyMap<string, BasesViewRegistration>
 ): Map<string, BasesViewRegistration> {
   const views = new Map<string, BasesViewRegistration>();
   registerBuiltInBasesViews(views);
@@ -159,7 +190,7 @@ export class BasesView extends MarkdownView {
     this.state["mode"] ||= "preview";
     this.views = createBasesViewRegistrations(this.app);
     this.writeQueue = new SerializedWriteQueue(({ file, content }) =>
-      this.app.vault.modify(file, content),
+      this.app.vault.modify(file, content)
     );
   }
 
@@ -173,7 +204,7 @@ export class BasesView extends MarkdownView {
    */
   registerBasesView(
     viewId: string,
-    registration: BasesViewRegistration,
+    registration: BasesViewRegistration
   ): boolean {
     this.views.set(viewId, registration);
     return true;
@@ -185,7 +216,7 @@ export class BasesView extends MarkdownView {
 
   setState(
     state: Record<string, unknown>,
-    result?: ViewStateResult,
+    result?: ViewStateResult
   ): Promise<void> {
     const previous = { ...this.getState() };
     return super.setState(state, result).then(() => {
@@ -234,7 +265,9 @@ export class BasesView extends MarkdownView {
         this.containerEl.addClass("mod-loader");
         this.addAction(
           "pencil",
-          `${t("Current view: preview")}\n${t("Click to edit")}\n${t("⌘+Click to open to the right")}`,
+          `${t("Current view: preview")}\n${t("Click to edit")}\n${t(
+            "⌘+Click to open to the right"
+          )}`,
           (evt) => {
             if (evt.metaKey || evt.ctrlKey) {
               const leaf = this.app.workspace.getLeaf("split", "horizontal");
@@ -246,7 +279,7 @@ export class BasesView extends MarkdownView {
               this.setState({ ...this.getState(), mode: "source" });
             }
             this.app.workspace.requestSaveLayout();
-          },
+          }
         );
 
         const doc = parseBasesDocument(this.editor.getValue());
@@ -287,11 +320,13 @@ export class BasesView extends MarkdownView {
           this.app.editorExtensions(BasesViewType, {
             file: this.file?.path,
             mode: "source",
-          }),
+          })
         );
         this.addAction(
           "book-open",
-          `${t("Current view: editing")}\n${t("Click to read")}\n${t("⌘+Click to open to the right")}`,
+          `${t("Current view: editing")}\n${t("Click to read")}\n${t(
+            "⌘+Click to open to the right"
+          )}`,
           (evt) => {
             if (evt.metaKey || evt.ctrlKey) {
               const leaf = this.app.workspace.getLeaf("split", "horizontal");
@@ -303,7 +338,7 @@ export class BasesView extends MarkdownView {
               this.setState({ ...this.getState(), mode: "preview" });
             }
             this.app.workspace.requestSaveLayout();
-          },
+          }
         );
         this.component = mount(NoteEditor, {
           target: this.containerEl,

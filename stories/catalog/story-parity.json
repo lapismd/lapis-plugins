@@ -198,5 +198,9 @@
   },
   "stories/plugins/wordcount/RegistryScreenshots.stories.ts": {
     "kind": "application"
+  },
+  "stories/plugins/bases/kanban/BasesKanban.stories.ts": {
+    "kind": "component",
+    "subject": "@lapis-notes/bases#BasesViewSurface"
   }
 }

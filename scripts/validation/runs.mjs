@@ -2,7 +2,13 @@ import { readFile, writeFile, mkdir, rm, open } from "node:fs/promises";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { root, localRoot, json } from "./paths.mjs";
-import { hash, imageKey, laneImage, label } from "./model.mjs";
+import {
+  hash,
+  imageKey,
+  laneImage,
+  label,
+  validationNodeHeap,
+} from "./model.mjs";
 import { image } from "./images.mjs";
 import { snapshot, snapshotFile } from "./source.mjs";
 import { execute } from "./process.mjs";
@@ -59,6 +65,7 @@ async function performRun(config, lane, args, selected, workspace) {
       cpus: config.cpus,
       memoryGiB: config.memoryGiB,
       shmGiB: config.shmGiB,
+      nodeHeapMiB: validationNodeHeap(config.memoryGiB),
     },
   };
   await writeFile(

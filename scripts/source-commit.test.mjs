@@ -1,5 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { execFileSync } from "node:child_process";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 import { resolveSourceCommit } from "./lib/source-commit.mjs";
 
@@ -62,4 +66,38 @@ test("release source prefers the workflow commit", async () => {
     },
   });
   assert.equal(commit, "workflow-source");
+});
+
+test("an empty validation child retains its exact snapshot source and rejects later edits", async () => {
+  const cwd = await mkdtemp(join(tmpdir(), "lapis-source-snapshot-"));
+  const jj = (...args) =>
+    execFileSync(
+      "jj",
+      [
+        "--config",
+        'user.name="Validation"',
+        "--config",
+        'user.email="validation@localhost"',
+        ...args,
+      ],
+      { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }
+    ).trim();
+  try {
+    jj("git", "init", "--colocate");
+    await writeFile(join(cwd, "source.md"), "Verified snapshot\n");
+    const snapshot = jj("log", "-r", "@", "--no-graph", "-T", "commit_id");
+    await assert.rejects(
+      resolveSourceCommit({ cwd, env: {} }),
+      /empty Jujutsu/
+    );
+    jj("new", snapshot, "-m", "Remote validation workspace");
+    assert.equal(await resolveSourceCommit({ cwd, env: {} }), snapshot);
+    await writeFile(join(cwd, "source.md"), "Unverified later edit\n");
+    await assert.rejects(
+      resolveSourceCommit({ cwd, env: {} }),
+      /empty Jujutsu/
+    );
+  } finally {
+    await rm(cwd, { recursive: true, force: true });
+  }
 });
