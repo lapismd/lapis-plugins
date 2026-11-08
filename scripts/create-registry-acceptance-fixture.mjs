@@ -7,6 +7,7 @@ import {
   normalizeRegistryCatalogEntry,
   normalizeRegistryCatalogIndex,
 } from "@lapis-notes/api/registry/schema";
+import { stageRegistryAcceptanceMedia } from "./lib/registry-acceptance-media.mjs";
 import { pluginPackages } from "./package-catalog.mjs";
 import { canonicalJson } from "./plugin-release.mjs";
 import { prepareStaticReleaseCandidate } from "./lib/static-release-candidate.mjs";
@@ -74,6 +75,7 @@ try {
       latestVersion: manifest.version,
       highlights: metadata.highlights,
       appearance: metadata.appearance,
+      ...await stageRegistryAcceptanceMedia({ metadata, packageRoot, out, artifactOrigin, plugin, sourceCommit }),
       versions: {
         [manifest.version]: {
           version: manifest.version,

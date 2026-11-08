@@ -1,4 +1,5 @@
 <script lang="ts">
+  import * as ScrollArea from "@lapismd/design-core/shadcn/scroll-area";
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
   import type { BasesView } from "../../bases.svelte";
   import { toNumber } from "..";
@@ -27,16 +28,17 @@
 </script>
 
 <div
-  class="bases-card-grid bases-style-h-full-668b21 bases-style-w-full-6da6a3 bases-style-flex-grow-95a3df bases-style-overflow-auto-73fc3f bases-style-pb-16-db15dd bases-style-pl-5-151215"
-  style={`scrollbar-gutter: stable; transform: translate3d(0,0,0);`}
+  class="bases-card-grid bases-record-view"
 >
+  <ScrollArea.Root class="bases-record-view__scroll" viewportProps={{ "aria-label": "Loading cards" }}>
+  <div class="bases-card-grid__content">
   <div class="bases-style-flex-60fbb7 bases-style-w-full-6da6a3 bases-style-items-center-3960ff bases-style-justify-center-86843c">
     <div class="loader"></div>
   </div>
   <div class="bases-style-flex-60fbb7 bases-style-flex-wrap-1eb5c6 bases-style-gap-2-77a2a2">
     {#each queryResults.data as record}
       <div
-        style={`width: ${cardSize}}px; height: ${cardHeight}px;`}
+        style={`width: ${cardSize}px; height: ${cardHeight}px;`}
         class="bases-card-placeholder bases-style-w-full-6da6a3 bases-style-overflow-hidden-2cd02d bases-style-rounded-lg-5f22e6 border bases-style-text-sm-fc7473 bases-style-whitespace-nowrap-e82ae8"
       >
         <div class="bases-style-h-full-668b21 bases-style-w-full-6da6a3">
@@ -65,4 +67,6 @@
       </div>
     {/each}
   </div>
+  </div>
+  </ScrollArea.Root>
 </div>

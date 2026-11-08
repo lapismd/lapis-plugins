@@ -182,6 +182,7 @@ const basesViewsCatalog = [
   ["table", "Table"],
   ["editable-cells", "Editable Cells"],
   ["cards", "Cards"],
+  ["list", "List"],
   ["grouped-list", "Grouped List"],
   ["kanban", "Kanban"],
   ["kanban-roles", "Kanban Roles"],

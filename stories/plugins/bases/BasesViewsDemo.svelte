@@ -64,9 +64,7 @@
   class="bases-views-demo"
   data-testid="bases-views-demo"
   data-scenario={scenario}
-  data-fill-viewport={scenario.startsWith("kanban") || scenario === "activity"
-    ? "true"
-    : undefined}
+  data-fill-viewport="true"
   data-status={status}
 >
   <output class="bases-views-demo__status" data-testid="bases-views-status">

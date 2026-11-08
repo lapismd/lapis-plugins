@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { BasesView } from "../bases.svelte";
+  import * as ScrollArea from "@lapismd/design-core/shadcn/scroll-area";
   import SummaryStrip from "../components/summary-strip.svelte";
 
   let {
@@ -10,11 +11,13 @@
 </script>
 
 <div
-  class="bases-style-flex-60fbb7 bases-style-h-full-668b21 bases-style-flex-col-8dddea bases-style-gap-3-1004c0 bases-style-border-t-b950dd bases-style-px-4-f0faeb bases-style-py-5-c9b99c bases-style-text-sm-fc7473"
+  class="bases-record-view"
   data-layout="map"
   data-ui-component="bases-map-view"
   data-ui-part="unavailable"
 >
+  <ScrollArea.Root class="bases-record-view__scroll" viewportProps={{ "aria-label": "Map view information" }}>
+  <div class="bases-map-view__content">
   <SummaryStrip {view} />
   <div class="bases-style-font-medium-2689f3">Map view is not available in this runtime yet.</div>
   <p class="bases-style-text-muted-foreground-bfa603">
@@ -25,4 +28,6 @@
   <p class="bases-style-text-muted-foreground-bfa603">
     Current result count: {view.data.data.length}
   </p>
+  </div>
+  </ScrollArea.Root>
 </div>

@@ -13,6 +13,7 @@ import {
   createBasesViewsDocument,
   createBasesViewsSeed,
   type BasesViewScenario,
+  type BasesFixtureProfile,
 } from "../bases-views-fixture";
 
 export const BASES_EDITOR_SHELL_CONFIGURATION = {
@@ -101,12 +102,12 @@ export function createBasesEditorShellLayout(
 
 export function createBasesEditorShellSeed(
   scenario: BasesViewScenario = "table",
-  options: { focusMode?: boolean } = {},
+  options: { focusMode?: boolean; fixtureProfile?: BasesFixtureProfile } = {},
 ): Record<string, string | ArrayBuffer> {
   return {
-    ...createBasesViewsSeed(),
+    ...createBasesViewsSeed(scenario, options.fixtureProfile),
     "Bases/Projects.base": JSON.stringify(
-      createBasesViewsDocument(scenario),
+      createBasesViewsDocument(scenario, options.fixtureProfile),
       null,
       2,
     ),
@@ -125,7 +126,7 @@ export function createBasesEditorShellSeed(
 
 export async function bootBasesEditorShellDemo(
   scenario: BasesViewScenario = "table",
-  options: { focusMode?: boolean } = {},
+  options: { focusMode?: boolean; fixtureProfile?: BasesFixtureProfile } = {},
 ): Promise<{
   app: App;
   dispose: () => Promise<void>;
@@ -134,7 +135,7 @@ export async function bootBasesEditorShellDemo(
     createBasesEditorShellSeed(scenario, options),
     {
       name: `Lapis Bases Editor Shell ${scenario}`,
-      vaultId: `lapis-bases-editor-shell-${scenario}`,
+      vaultId: `lapis-bases-editor-shell-${scenario}-${options.fixtureProfile ?? "default"}`,
       clock: 1_700_000_000_000,
     },
   );
@@ -142,7 +143,9 @@ export async function bootBasesEditorShellDemo(
     version: "0.0.1-story",
     configPath: ".lapis/app.json",
     adapter,
-    appDatabase: new MemoryAppDatabase(`lapis-bases-editor-shell-${scenario}`),
+    appDatabase: new MemoryAppDatabase(
+      `lapis-bases-editor-shell-${scenario}-${options.fixtureProfile ?? "default"}`,
+    ),
     workspaceShell: { application: { name: "Lapis Notes" } },
     markdownRenderer: async () => {},
   });

@@ -1,7 +1,11 @@
 {
   "$schema": "https://registry.lapis.md/schemas/plugin-source.schema.json",
   "schemaVersion": 2,
-  "categories": ["data", "database", "editor"],
+  "categories": [
+    "data",
+    "database",
+    "editor"
+  ],
   "highlights": [
     "Create structured views over notes and front matter.",
     "Filter and organize vault data without leaving the workspace.",
@@ -176,6 +180,86 @@
         "description": [
           {
             "text": "Shape the same source data into a grouped list when a table is more than you need.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    },
+    {
+      "id": "kanban",
+      "alt": "Configurable role board with Markdown summaries, company chips and follow-up stamps.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/kanban.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/kanban.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/kanban.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/kanban.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-bases-registry-screenshots--kanban",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "Move work forward",
+            "tone": "neutral"
+          },
+          {
+            "text": "with ordinary Markdown",
+            "tone": "amber"
+          }
+        ],
+        "description": [
+          {
+            "text": "Use your own properties for columns, summaries and badges in Markdown.",
+            "tone": "neutral"
+          }
+        ]
+      }
+    },
+    {
+      "id": "activity",
+      "alt": "Activity timeline with dated Markdown records and sticky day headings.",
+      "images": {
+        "preview": {
+          "path": "registry-assets/gallery/activity.preview.webp"
+        },
+        "full": {
+          "path": "registry-assets/gallery/activity.full.webp"
+        },
+        "light": {
+          "path": "registry-assets/gallery/activity.light.webp"
+        },
+        "dark": {
+          "path": "registry-assets/gallery/activity.dark.webp"
+        }
+      },
+      "capture": {
+        "storyId": "plugins-bases-registry-screenshots--activity",
+        "focus": "full-shell"
+      },
+      "card": {
+        "headline": [
+          {
+            "text": "See what happened",
+            "tone": "neutral"
+          },
+          {
+            "text": "day by day",
+            "tone": "cyan"
+          }
+        ],
+        "description": [
+          {
+            "text": "Explore dated records with sticky day headings and open the source Markdown directly from each card.",
             "tone": "neutral"
           }
         ]

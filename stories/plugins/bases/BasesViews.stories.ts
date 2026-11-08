@@ -8,7 +8,14 @@ import {
 import type { App } from "@lapis-notes/api";
 import { BasesViewSurface, type BasesDocument } from "@lapis-notes/bases";
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
-import { expect, fireEvent, userEvent, waitFor, within } from "storybook/test";
+import {
+  expect,
+  fireEvent,
+  userEvent,
+  waitFor,
+  within,
+  spyOn,
+} from "storybook/test";
 import { WORKSPACE_SHELL_DOCS_STORY } from "../../workspace/docs-parameters";
 import {
   expectAsyncQueryFailureAndRecovery,
@@ -54,6 +61,80 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+async function expectFileLinkPreview(canvasElement: HTMLElement) {
+  const link = within(canvasElement).getByRole("link", { name: "Aurora.md" });
+  expect(getComputedStyle(link).textDecorationLine).toBe("none");
+  link.focus();
+  await userEvent.tab();
+  await userEvent.tab({ shift: true });
+  expect(link).toHaveFocus();
+  expect(getComputedStyle(link).textDecorationLine).toContain("underline");
+  link.blur();
+  await userEvent.hover(link);
+  const body = within(canvasElement.ownerDocument.body);
+  const preview = await body.findByRole("region", {
+    name: "Preview of Aurora.md",
+  });
+  await waitFor(() =>
+    expect(
+      within(preview).getByText(
+        "A focused writing environment for connected research.",
+      ),
+    ).toBeVisible(),
+  );
+  expect(
+    preview.querySelector('[data-ui-part="scroll-area-viewport"]'),
+  ).toBeVisible();
+  expect(preview.querySelector('[contenteditable="true"]')).toBeNull();
+  await waitFor(() =>
+    expect(
+      preview
+        .closest('[data-ui-part="hover-card-content"]')!
+        .getBoundingClientRect().width,
+    ).toBeGreaterThanOrEqual(400),
+  );
+  await userEvent.unhover(link);
+  await fireEvent.pointerMove(canvasElement.ownerDocument, {
+    clientX: canvasElement.ownerDocument.defaultView!.innerWidth - 1,
+    clientY: canvasElement.ownerDocument.defaultView!.innerHeight - 1,
+    pointerType: "mouse",
+  });
+  await waitFor(() => expect(preview).not.toBeInTheDocument());
+
+  const app = demoApp(canvasElement);
+  const file = app.vault.getFileByPath("Projects/Aurora.md")!;
+  const open = spyOn(app, "openFile").mockResolvedValue();
+  const save = spyOn(app.workspace, "requestSaveLayout").mockImplementation(
+    () => {},
+  );
+  try {
+    await userEvent.click(link);
+    expect(open).toHaveBeenCalledWith(file);
+    await waitFor(() => expect(save).toHaveBeenCalled());
+    const leaf = app.workspace.getLeaf("tab");
+    const getLeaf = spyOn(app.workspace, "getLeaf").mockReturnValue(leaf);
+    const openTab = spyOn(leaf, "openFile").mockResolvedValue();
+    const reveal = spyOn(app.workspace, "revealLeaf").mockImplementation(
+      () => {},
+    );
+    try {
+      await fireEvent.click(link, { ctrlKey: true });
+      await fireEvent.click(link, { metaKey: true });
+      expect(getLeaf).toHaveBeenCalledWith("tab");
+      expect(openTab).toHaveBeenCalledTimes(2);
+      expect(openTab).toHaveBeenCalledWith(file);
+      await waitFor(() => expect(reveal).toHaveBeenCalledWith(leaf));
+    } finally {
+      getLeaf.mockRestore();
+      openTab.mockRestore();
+      reveal.mockRestore();
+    }
+  } finally {
+    open.mockRestore();
+    save.mockRestore();
+  }
+}
 
 function firstRowHeight(table: HTMLElement) {
   return table
@@ -148,6 +229,7 @@ export const Table: Story = {
           expect(canvas.getByText("Aurora.md")).toBeVisible();
         }),
     });
+    await expectFileLinkPreview(canvasElement);
   },
 };
 
@@ -677,6 +759,25 @@ export const Cards: Story = {
   play: async ({ canvasElement }) => {
     const canvas = await waitForView(canvasElement, "cards", "cards");
     await waitFor(() => {
+      const grid = canvasElement.querySelector<HTMLElement>(
+        '[data-ui-component="bases-card-view"]',
+      )!;
+      expect(
+        grid.querySelector('[data-ui-part="scroll-area-viewport"]'),
+      ).toBeVisible();
+      const card = grid.querySelector<HTMLElement>('[data-ui-part="card"]')!;
+      expect(getComputedStyle(card).backgroundColor).toBe(
+        getComputedStyle(grid).backgroundColor,
+      );
+      expect(
+        card.querySelector('[data-ui-part="scroll-area-viewport"]'),
+      ).toBeNull();
+      grid.style.setProperty(
+        "--ui-bases-card-background",
+        "rgb(240, 230, 220)",
+      );
+      expect(getComputedStyle(card).backgroundColor).toBe("rgb(240, 230, 220)");
+      grid.style.removeProperty("--ui-bases-card-background");
       expect(
         canvasElement.querySelectorAll('[data-ui-part="card"]'),
       ).toHaveLength(3);
@@ -693,6 +794,7 @@ export const Cards: Story = {
         ),
       ).toBe(true);
     });
+    await expectFileLinkPreview(canvasElement);
   },
 };
 
@@ -716,6 +818,34 @@ export const GroupedList: Story = {
     const rowCount = canvasElement.querySelectorAll(
       '[data-ui-component="bases-list-view"] [data-ui-part="row"]',
     ).length;
+    const firstRow = canvasElement.querySelector<HTMLElement>(
+      '[data-ui-component="bases-list-view"] [data-ui-part="row"]',
+    )!;
+    expect(
+      firstRow.querySelector('[data-ui-part="record-bullet"]'),
+    ).toBeVisible();
+    expect(
+      Number(
+        getComputedStyle(
+          toggles[0]!.querySelector(".bases-card-grid__group-value")!,
+        ).fontWeight,
+      ),
+    ).toBeGreaterThanOrEqual(600);
+    expect(firstRow.getBoundingClientRect().left).toBeGreaterThan(
+      toggles[0]!.getBoundingClientRect().left + 16,
+    );
+    const field = firstRow.querySelector(".bases-list__property")!;
+    const textBottom = (element: Element) => {
+      const range = canvasElement.ownerDocument.createRange();
+      range.selectNodeContents(element);
+      return range.getBoundingClientRect().bottom;
+    };
+    expect(
+      Math.abs(
+        textBottom(field.querySelector("dt")!) -
+          textBottom(field.querySelector(".bases-cell__display")!),
+      ),
+    ).toBeLessThan(2);
     await userEvent.click(toggles[0]!);
     expect(toggles[0]).toHaveAttribute("aria-expanded", "false");
     await waitFor(() =>
@@ -754,9 +884,153 @@ export const UnknownView: Story = {
   play: async ({ canvasElement }) => {
     const canvas = await waitForView(canvasElement, "unknown", "timeline");
     await waitFor(() =>
-      expect(
-        canvas.getByText("Base configured with an unknown view type: timeline"),
-      ).toBeVisible(),
+      expect(canvas.getByText("Unsupported view")).toBeVisible(),
     );
+    expect(canvas.getByText("timeline", { exact: true })).toBeVisible();
+    expect(
+      canvasElement.querySelector('[data-ui-part="empty-media"] svg'),
+    ).toBeVisible();
+    expect(
+      demoDocument(canvasElement).views.find(
+        (view) => view.name === "Timeline experiment",
+      )?.type,
+    ).toBe("timeline");
+  },
+};
+
+export const List: Story = {
+  parameters: storyParameters(
+    "list",
+    "Compact records show configured fields as readable values, with editors activated on demand.",
+  ),
+  render: renderScenario("list"),
+  play: async ({ canvasElement }) => {
+    const canvas = await waitForView(canvasElement, "list", "list");
+    await waitFor(() => expect(canvas.getByText("Aurora.md")).toBeVisible());
+    const list = canvasElement.querySelector<HTMLElement>(
+      '[data-ui-component="bases-list-view"]',
+    )!;
+    expect(
+      list.querySelector('[data-ui-part="scroll-area-viewport"]'),
+    ).toBeVisible();
+    expect(list.querySelectorAll(".bases-list__record")).toHaveLength(3);
+    expect(list.querySelectorAll("input")).toHaveLength(0);
+    const owners = within(list).getAllByRole("button", { name: "Edit Owner" });
+    expect(owners).toHaveLength(3);
+    expect(owners[0]).toHaveAccessibleDescription("Maya Chen");
+    const score = within(list).getAllByRole("button", {
+      name: "Edit Score",
+    })[0]!;
+    const ownerText = owners[0]!.querySelector("span")!;
+    const scoreText = score.querySelector("span")!;
+    const lineHeight = Number.parseFloat(getComputedStyle(score).lineHeight);
+    expect(score.getBoundingClientRect().width).toBeGreaterThanOrEqual(56);
+    expect(scoreText.getBoundingClientRect().height).toBeLessThan(
+      lineHeight * 1.5,
+    );
+    expect(ownerText.getBoundingClientRect().height).toBeLessThan(
+      lineHeight * 1.5,
+    );
+    const context = within(
+      list.querySelector<HTMLElement>('[data-ui-part="row"]')!,
+    ).getByRole("button", { name: "Edit Context" });
+    const excerpt = context.querySelector<HTMLElement>("span")!;
+    expect(context.getBoundingClientRect().width).toBeLessThanOrEqual(256);
+    expect(excerpt.getBoundingClientRect().height).toBeLessThanOrEqual(
+      lineHeight * 2 + 1,
+    );
+    expect(excerpt.scrollHeight).toBeGreaterThan(excerpt.clientHeight);
+    expect(context.title).toContain("every workstream");
+    expect(list.querySelector('[data-ui-component="tag-list"]')).toBeVisible();
+    await waitFor(() =>
+      expect(
+        within(list).getAllByRole("button", { name: "#product" }).length,
+      ).toBeGreaterThan(0),
+    );
+    const fields = [
+      ...list.querySelectorAll<HTMLElement>(
+        '[data-ui-part="row"]:first-child .bases-list__property',
+      ),
+    ];
+    expect(
+      Math.max(...fields.map((field) => field.getBoundingClientRect().top)) -
+        Math.min(...fields.map((field) => field.getBoundingClientRect().top)),
+    ).toBeLessThan(2);
+    await expectFileLinkPreview(canvasElement);
+  },
+};
+
+export const ListEditing: Story = {
+  parameters: storyParameters(
+    "list",
+    "Click or keyboard activation edits one property; Escape discards an uncommitted draft and blur persists normalised metadata.",
+  ),
+  render: renderScenario("list"),
+  play: async ({ canvasElement }) => {
+    await waitForView(canvasElement, "list", "list");
+    const row = await waitFor(() => {
+      const current = canvasElement.querySelector<HTMLElement>(
+        '[data-ui-component="bases-list-view"] [data-ui-part="row"]',
+      );
+      expect(current).toBeVisible();
+      return current!;
+    });
+    const record = within(row);
+    const app = demoApp(canvasElement);
+    const file = app.vault.getFileByPath("Projects/Aurora.md")!;
+    await userEvent.click(record.getByRole("button", { name: "Edit Owner" }));
+    const owner = await record.findByRole("combobox", { name: "owner" });
+    expect(owner).toHaveFocus();
+    await userEvent.clear(owner);
+    await userEvent.type(owner, "Uncommitted draft");
+    await userEvent.keyboard("{Escape}");
+    expect(record.queryByRole("combobox", { name: "owner" })).toBeNull();
+    expect(await app.vault.read(file)).toContain("owner: Maya Chen");
+    const activate = record.getByRole("button", { name: "Edit Owner" });
+    activate.focus();
+    await userEvent.keyboard("{Enter}");
+    const editor = await record.findByRole("combobox", { name: "owner" });
+    await userEvent.clear(editor);
+    await userEvent.type(editor, "Amara Okafor");
+    await userEvent.click(record.getByRole("button", { name: "Edit Score" }));
+    await waitFor(async () =>
+      expect(await app.vault.read(file)).toContain("owner: Amara Okafor"),
+    );
+    const score = await record.findByRole("spinbutton", { name: "score" });
+    await userEvent.clear(score);
+    await userEvent.type(score, "97");
+    await userEvent.tab();
+    await waitFor(async () =>
+      expect(await app.vault.read(file)).toContain("score: 97"),
+    );
+    await userEvent.click(record.getByRole("button", { name: "Edit Due" }));
+    const due = await record.findByLabelText("due");
+    await fireEvent.change(due, { target: { value: "2026-12-20" } });
+    await waitFor(async () =>
+      expect(await app.vault.read(file)).toContain("2026-12-20"),
+    );
+    await userEvent.keyboard("{Escape}");
+    await userEvent.click(
+      record.getByRole("button", { name: "Edit Featured" }),
+    );
+    const featured = await record.findByRole("checkbox", { name: "featured" });
+    await userEvent.click(featured);
+    await userEvent.tab();
+    await waitFor(async () =>
+      expect(await app.vault.read(file)).toContain("featured: false"),
+    );
+    await userEvent.click(record.getByRole("button", { name: "Edit Tags" }));
+    const tags = await record.findByRole("combobox", { name: "tags" });
+    await userEvent.type(tags, "accessibility");
+    await userEvent.keyboard("{Enter}");
+    await waitFor(async () =>
+      expect(await app.vault.read(file)).toContain("accessibility"),
+    );
+    await userEvent.keyboard("{Escape}");
+    expect(await app.vault.read(file)).toContain("accessibility");
+    await userEvent.click(await record.findByRole("button", { name: "#product" }));
+    expect(await record.findByRole("combobox", { name: "tags" })).toBeVisible();
+    await userEvent.keyboard("{Escape}");
+    expect(record.queryByRole("button", { name: "Edit Project" })).toBeNull();
   },
 };

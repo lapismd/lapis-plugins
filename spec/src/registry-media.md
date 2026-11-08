@@ -40,7 +40,7 @@ All sources live under `Plugins/<Plugin>/Registry Screenshots` and carry both
 | Plugin        | Required cards                                                                |
 | ------------- | ----------------------------------------------------------------------------- |
 | AI            | Focused chat with tool activity, History, Catalog                             |
-| Bases         | Filter options, Cover cards, Grouped list                                     |
+| Bases         | Filter options, Cover cards, Grouped list, Kanban, Activity                   |
 | Bookmarks     | Bookmarks sidebar                                                             |
 | Graph         | Focused Global Graph, Local Graph sidebar                                     |
 | History       | History sidebar, Compare                                                      |
@@ -146,3 +146,16 @@ missing tags, theme mismatch, split mismatch, and stale bytes are failures.
 Registry capture is independent from Visual Delta baseline review. Generated
 cards remain reviewable through the local source registry preview, while their
 source stories remain `visual-pending` until a separate baseline approval.
+
+Bases registry captures use a private forty-record project portfolio, retaining
+the compact fixture for ordinary acceptance. At least twenty-eight Active
+records demonstrate filtered-table scrolling. Cover Cards uses a configured
+0.45 height-to-width ratio. Kanban and Activity use scenario-specific Markdown
+reference records and occupy the final two gallery slots. Their declared story
+IDs and all light/dark preview/full assets travel through registry generation;
+adding them does not authorise publication.
+
+Private signed-catalog acceptance MUST stage every declared media image with
+its URL, source URL, dimensions, byte count and SHA-256. It MUST retain all
+declared gallery IDs after public schema normalisation. Packed registry.json
+MUST match the source metadata, including Kanban and Activity capture entries.

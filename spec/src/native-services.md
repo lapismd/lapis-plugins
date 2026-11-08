@@ -196,3 +196,8 @@ The validation tool installer may recover transient upstream release redirects
 through GitHub's official asset API, preserving the same pinned archive bytes,
 root executable and version checks. This changes no native service protocol,
 parser ownership, runtime selection or host acceptance requirement.
+
+Bases registry and record-view acceptance use explicit story-owned Apps and the
+existing remote Docker transport. List activation reuses the owning plugin's
+frontmatter writer; it introduces no native service, compatibility singleton
+or additional application routing.
