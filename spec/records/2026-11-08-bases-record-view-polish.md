@@ -147,3 +147,18 @@ and all 29 Bases stories pass again, receipt
 PR is opened before #62 merges; final hosted CI and restacked-head verification
 remain separate gates. The original workspace and conflicted local main remain
 preserved, and the review Storybook runs against released Core 0.12.2.
+
+## Main restack
+
+Kanban PR #62 merged after all functional and aggregate checks passed on exact
+head `afb9fb7660fb4259c2a930ebd0a0b12a7b57dee3`. Its squash result is main
+`fe8e1d757b51a15118983727880343042f0c07d3`. The stacked follow-up PR #66 was
+already open against the Kanban branch. Main's tree matches the qualified
+Kanban tree exactly; rebasing only the two follow-up commits onto main leaves
+the follow-up tree byte-for-byte unchanged. The comparison against its base
+contains 58 intended files and no duplicated Kanban implementation or dependency
+files. Local main's original conflicted targets are preserved.
+
+Final restacked-hosted qualification is recorded by PR #66's exact-head checks;
+this receipt update changes no executable source. Plugin versions, publication
+and registry dispatch remain held, with Changesets pending for later release.
