@@ -2,6 +2,9 @@
 
 <!-- dependency-automation-policy -->
 
+The Bases Board/Activity renderer requires released Design Core 0.12.2 for embedded Kanban landmark ownership. Root and Bases ranges declare that minimum; compatible lockfile consumers share its resolved package identity. Temporary archive checks remain distinct from registry-only qualification, and this intake does not approve a plugin release.
+
+
 Dependency update PRs from the trusted LapisMD App, Dependabot or Renovate MAY skip specification checks using the PR author rather than the rerun actor. Functional checks remain required. The shared `lapismd/dependency-automation` coordinator proposes published first-party npm updates with Changeset release intent where required; it does not merge, publish, sign or deploy. This CI policy changes no runtime or public contract in this chapter.
 
 The shared App-backed panel host owns the public vault-change service from ready state through teardown. It starts reconciliation before exposing the ready App and drains/stops the service before disposing views and plugins. Local file renames therefore project into the existing editor, tab and breadcrumb through the same API lifecycle used by application hosts.

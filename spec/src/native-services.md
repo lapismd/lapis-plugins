@@ -2,6 +2,9 @@
 
 <!-- dependency-automation-policy -->
 
+Bases consumes the released Core 0.12.2 embedded-landmark repair through normal npm ranges. The root validation graph resolves compatible Core consumers together; this browser renderer intake changes no native service revision or installation authority.
+
+
 Dependency update PRs from the trusted LapisMD App, Dependabot or Renovate MAY skip specification checks using the PR author rather than the rerun actor. Functional checks remain required. The shared `lapismd/dependency-automation` coordinator proposes published first-party npm updates with Changeset release intent where required; it does not merge, publish, sign or deploy. This CI policy changes no runtime or public contract in this chapter.
 
 Native hosts installing a retained static archive use its original signed

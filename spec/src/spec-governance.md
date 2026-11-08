@@ -2,6 +2,9 @@
 
 <!-- dependency-automation-policy -->
 
+The Core 0.12.2 Bases prerequisite retains explicit source, verified-archive and registry-only evidence for the embedded-board landmark contract. Its dependency intake updates the mapped distribution and native-boundary chapters; it adds no spec-first exemption and does not authorize a plugin release.
+
+
 Dependency update PRs from the trusted LapisMD App, Dependabot or Renovate MAY skip specification checks using the PR author rather than the rerun actor. Functional checks remain required. The shared `lapismd/dependency-automation` coordinator proposes published first-party npm updates with Changeset release intent where required; it does not merge, publish, sign or deploy. This CI policy changes no runtime or public contract in this chapter.
 
 Static registry dispatch under LP-SPEC-016 derives its source coordinates from

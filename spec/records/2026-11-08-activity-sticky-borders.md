@@ -102,3 +102,30 @@ History's exact Svelte check now reports zero errors and warnings.
 This receipt-only update follows qualification. Hosted CI must pass on the
 resulting pushed head before merge. No tests, audit policy or visual baselines
 were weakened; plugin versions remain unchanged.
+
+## Released embedded-board landmark prerequisite
+
+Design Core PR #67 repairs the board's nested main landmark and is released as
+0.12.2 from `7208808e556ac6c5a4330f3e77d862c1a9343fa6`; release run
+`42525186187` passes publication, clean install, integrity and provenance. Its
+source, version and fresh main checks are green. Root and Bases declare
+`^0.12.2`; other compatible plugin ranges, including History's union, remain
+unchanged. Pinned pnpm 10.34.5 regenerates the registry lockfile and frozen
+installation passes. The resolver refreshes compatible transitive packages and
+the retained 0.9 Core cohort to 0.9.1; the independent Sync graph is unchanged.
+Registry-only qualification follows before the new exact PR head is merged.
+No plugin version, publication or registry dispatch is authorized here.
+
+Registry-only `pnpm ci:release` passes on omarchy (4 CPUs/12 GiB), source
+`f2e6f1c20ca82153b32993f7f9c9157784f2a51c`, receipt
+`lapis-plugins-validation-0d4af5a5-6b00-4c24-b69b-5739b9843482`. All 51 package
+tasks, 190 tooling tests, audit/specification/App-ownership checks, 17 npm packs,
+17 verified payloads and the static Storybook build pass with no candidate
+archives. The focused Bases browser family and new exact hosted head follow.
+
+The complete Bases browser family passes 25 cases with zero failures against
+registry Core 0.12.2; receipt
+`lapis-plugins-validation-df4d08d4-6146-464c-93cb-57c6d6704188`. This qualifies
+the released renderer integration independently of the earlier archive target.
+The receipt-only commit update follows these runs; hosted required checks must
+pass on the resulting new exact feature head before merging PR #62.
