@@ -445,3 +445,9 @@ release and unique filename. Both paths MUST verify the same pinned digest;
 corruption, permanent HTTP failures, ambiguous asset identities and API failures
 MUST fail closed. Each request is bounded to 30 seconds and API fallback is
 attempted at most once (LP-SPEC-036).
+
+Bases registry media includes five declared gallery cards: table, cover cards,
+grouped list, Kanban and Activity. Capture inputs remain source-owned metadata
+and assets; package qualification verifies that registry.json retains those
+entries. Generating private acceptance data does not dispatch registry updates
+or publish new plugin versions.

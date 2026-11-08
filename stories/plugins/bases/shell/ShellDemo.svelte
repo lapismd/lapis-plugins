@@ -4,7 +4,10 @@
   import { WorkspaceShell } from "@lapis-notes/workspace";
   import type { WorkspaceRequestedDisplayMode } from "@lapismd/design-core/workspace/core";
   import { bootBasesEditorShellDemo } from "./create-shell-demo";
-  import type { BasesViewScenario } from "../bases-views-fixture";
+  import type {
+    BasesViewScenario,
+    BasesFixtureProfile,
+  } from "../bases-views-fixture";
   import "@lapis-notes/bases/styles.css";
   import "@lapismd/mira/themes/obsidian.css";
   import "@lapismd/mira-editor/styles.css";
@@ -17,10 +20,12 @@
     displayMode = "desktop",
     scenario = "table",
     focusMode = false,
+    fixtureProfile = "default",
   }: {
     displayMode?: WorkspaceRequestedDisplayMode;
     scenario?: BasesViewScenario;
     focusMode?: boolean;
+    fixtureProfile?: BasesFixtureProfile;
   } = $props();
 
   $effect(() => {
@@ -34,7 +39,10 @@
 
   onMount(() => {
     let cancelled = false;
-    const runtimePromise = bootBasesEditorShellDemo(scenario, { focusMode });
+    const runtimePromise = bootBasesEditorShellDemo(scenario, {
+      focusMode,
+      fixtureProfile,
+    });
     void runtimePromise
       .then((runtime) => {
         if (cancelled) return;

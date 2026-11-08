@@ -549,3 +549,8 @@ Hosted toolchain failures retain the original HTTP status and run identity in
 verification evidence. The bounded official-API download fallback is covered by
 transport, coordinate and checksum rejection tests; it MUST NOT waive a pinned
 version, hash, executable-member check or blocking CI lane (LP-SPEC-003).
+
+Bases view polish retains a separate dependent change from the Kanban intake.
+Regression evidence distinguishes the completed Kanban head from subsequent
+List, Card, fallback and registry-media changes. Media regeneration does not
+approve or replace Visual Delta baselines.

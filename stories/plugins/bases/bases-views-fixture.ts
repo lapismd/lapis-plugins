@@ -1,3 +1,4 @@
+import { createRegistryProjectNotes } from "./registry-project-fixture";
 import {
   referenceFiles,
   type ReferenceCollection,
@@ -9,6 +10,8 @@ import {
 } from "@lapis-notes/api";
 import type { BasesDocument, BasesViewRegistration } from "@lapis-notes/bases";
 
+export type BasesFixtureProfile = "default" | "registry";
+
 export type BasesViewScenario =
   | "table"
   | "editable-cells"
@@ -16,6 +19,7 @@ export type BasesViewScenario =
   | "filter-options"
   | "schema-settings"
   | "cards"
+  | "list"
   | "grouped-list"
   | "kanban"
   | "kanban-roles"
@@ -169,6 +173,23 @@ const views: BasesDocument["views"] = [
     limit: 0,
   },
   {
+    type: "list",
+    name: "Project records",
+    order: [
+      "file.name",
+      "note.owner",
+      "note.status",
+      "note.score",
+      "note.due",
+      "note.featured",
+      "note.tags",
+      "note.context",
+    ],
+    sort: [{ property: "file.name", direction: "ASC" }],
+    filter: { and: [] },
+    limit: 0,
+  },
+  {
     type: "kanban",
     name: "Status board",
     order: ["file.name", "note.owner", "note.score"],
@@ -202,6 +223,7 @@ const activeViewNames: Record<BasesViewScenario, string> = {
   "filter-options": "Portfolio table",
   "schema-settings": "Story options",
   cards: "Project cards",
+  list: "Project records",
   "grouped-list": "Projects by status",
   kanban: "Status board",
   "kanban-roles": "Markdown board",
@@ -215,6 +237,7 @@ const activeViewNames: Record<BasesViewScenario, string> = {
 
 export function createBasesViewsDocument(
   scenario: BasesViewScenario,
+  profile: BasesFixtureProfile = "default",
 ): BasesDocument {
   if (scenario.startsWith("kanban-") || scenario === "activity") {
     return {
@@ -263,6 +286,19 @@ export function createBasesViewsDocument(
     };
   }
   const clonedViews = structuredClone(views);
+  if (profile === "registry") {
+    const cards = clonedViews.find((view) => view.type === "cards");
+    if (cards) cards.imageAspectRatio = 0.45;
+    for (const table of clonedViews.filter((view) => view.type === "table")) {
+      table.columnSize = {
+        "file.name": 360,
+        "note.status": 220,
+        "note.owner": 280,
+        "note.score": 180,
+        "note.due": 240,
+      };
+    }
+  }
   if (scenario === "filter-options") {
     const table = clonedViews.find((view) => view.name === "Portfolio table");
     if (table) {
@@ -283,6 +319,9 @@ export function createBasesViewsDocument(
       "note.tags": { displayName: "Tags" },
       "note.collaborators": { displayName: "Collaborators" },
       "note.cover": { displayName: "Cover" },
+      ...(scenario === "list"
+        ? { "note.context": { displayName: "Context" } }
+        : {}),
     },
     formulas: {},
     summaries: {},
@@ -293,6 +332,7 @@ export function createBasesViewsDocument(
 
 export function createBasesViewsSeed(
   scenario?: BasesViewScenario,
+  profile: BasesFixtureProfile = "default",
 ): Record<string, string | ArrayBuffer> {
   if (scenario?.startsWith("kanban-") || scenario === "activity") {
     return {
@@ -323,7 +363,15 @@ export function createBasesViewsSeed(
       null,
       2,
     ),
-    ...projectNotes,
+    ...(profile === "registry" ? createRegistryProjectNotes() : projectNotes),
+    ...(scenario === "list"
+      ? {
+          "Projects/Aurora.md": projectNotes["Projects/Aurora.md"].replace(
+            "\n---\n# Aurora",
+            '\ncontext: "Coordinate the research synthesis, accessibility review, partner handover and publication schedule across the writing team while preserving source evidence, unresolved questions and the next decision for every workstream."\n---\n# Aurora',
+          ),
+        }
+      : {}),
     ...BASES_SAMPLE_ARTWORK,
   };
 }

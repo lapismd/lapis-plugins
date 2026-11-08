@@ -63,12 +63,18 @@ async function packPlugin(plugin) {
     "README.md",
     "dist/index.js",
     "manifest.json",
+    "registry.json",
     "package.json",
     "styles.css",
   ]) {
     if (!files.includes(required)) {
       throw new Error(`${plugin.packageName} tarball is missing ${required}.`);
     }
+  }
+  const { stdout: packedRegistry } = await execFileAsync("tar", ["-xOf", tarballPath, "package/registry.json"], { maxBuffer: 2 * 1024 * 1024 });
+  const sourceRegistry = await readFile(path.join(packageRoot, "registry.json"), "utf8");
+  if (packedRegistry !== sourceRegistry) {
+    throw new Error(`${plugin.packageName} packed registry media metadata differs from source.`);
   }
   const checksum = createHash("sha256")
     .update(await readFile(tarballPath))

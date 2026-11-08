@@ -6,7 +6,7 @@
   import throttle from "lodash-es/throttle";
   import { createVirtualizer, type MetadataType } from "@lapis-notes/api";
   import { toNumber } from "..";
-  import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
+  import * as ScrollArea from "@lapismd/design-core/shadcn/scroll-area";
   import Cell from "../../cell.svelte";
   import SummaryStrip from "../../components/summary-strip.svelte";
   import { getMetadataTypeInfo } from "../../metadata-type-info";
@@ -58,7 +58,7 @@
   });
 
   let containerSize = useResizeObserver();
-  let containerEl: HTMLDivElement = $state()!;
+  let containerEl = $state<HTMLElement | null>(null);
   let cardHeight = $derived.by(() => {
     return view.config.getOrder().length * 56 + 17 + imageSize + 28;
   });
@@ -97,7 +97,7 @@
 
   const handleResize = throttle(() => {
     const size = Math.floor(containerSize.size.width / (cardSize + gap.x));
-    columns = size;
+    columns = Math.max(1, size);
   }, 200);
 
   $effect(() => {
@@ -156,7 +156,7 @@
 </script>
 
 {#snippet cardBody(row: BasesEntry)}
-  <ScrollArea class="bases-style-h-full-668b21 bases-style-w-full-6da6a3">
+  <div class="bases-card__body">
     {#if imageSize}
       <CardImage
         app={view.controller.app}
@@ -189,28 +189,34 @@
         </div>
       </div>
     {/each}
-  </ScrollArea>
+  </div>
 {/snippet}
 
 {#if show}
   <div
-    class="bases-card-grid bases-style-h-full-668b21 bases-style-w-full-6da6a3 bases-style-flex-grow-95a3df bases-style-overflow-auto-73fc3f bases-style-pb-16-db15dd bases-style-pl-5-151215"
+    class="bases-card-grid bases-record-view"
     data-layout="cards"
     data-ui-component="bases-card-view"
     data-ui-part="viewport"
-    bind:this={
-      () => containerEl,
-      (value) => {
-        containerEl = value;
-        containerSize.ref = value;
-      }
-    }
-    style={`scrollbar-gutter: stable; transform: translate3d(0,0,0);`}
   >
     <SummaryStrip
       {view}
       class="bases-card-grid__summary sticky bases-style-top-0-216740 bases-style-left-0-c78fac bases-style-z-90-3d4b39 bases-style-mb-4-da0198 bases-style-py-3-1b2d54 bases-style-pr-5-752a63 backdrop-blur"
     />
+    <ScrollArea.Root
+      class="bases-record-view__scroll"
+      orientation="both"
+      type="always"
+      bind:viewportRef={
+        () => containerEl,
+        (value) => {
+          containerEl = value;
+          if (value) containerSize.ref = value;
+        }
+      }
+      viewportProps={{ "aria-label": "Cards" }}
+    >
+    <div class="bases-card-grid__content">
     {#if groupBy}
       <div class="bases-style-space-y-6-b3542e bases-style-pr-5-752a63">
         {#each groups as group, index (`${index}_${group.key?.toString() ?? "ungrouped"}`)}
@@ -261,7 +267,7 @@
     {:else}
       <div
         class="relative"
-        style={`height: ${rowVirtualizer.getTotalSize() + cardHeight}px; width: ${columnVirtualizer.getTotalSize()}px;`}
+        style={`height: ${rowVirtualizer.getTotalSize()}px; width: ${columnVirtualizer.getTotalSize()}px;`}
       >
         {#each rowVirtualizer.getVirtualItems() as virtualRow (virtualRow.key)}
           {#each columnVirtualizer.getVirtualItems() as virtualColumn (virtualColumn.key)}
@@ -283,6 +289,8 @@
         {/each}
       </div>
     {/if}
+    </div>
+    </ScrollArea.Root>
   </div>
 {:else}
   <CardPlaceholder {view} />
