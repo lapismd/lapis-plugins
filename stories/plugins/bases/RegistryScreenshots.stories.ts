@@ -45,15 +45,16 @@ async function waitForScenario(
       );
       expect(canvas.getByTestId("bases-editor-shell-demo")).toHaveAttribute(
         "data-focus-mode",
-        "false",
+        "true",
       );
       expect(canvasElement.querySelector(selector)).toBeVisible();
       const leftSidebar = canvasElement.querySelector<HTMLElement>(
         '[data-workspace-surface="left-sidebar"]',
       );
-      expect(leftSidebar?.getBoundingClientRect().width ?? 0).toBeGreaterThan(
-        100,
-      );
+      expect(leftSidebar?.getBoundingClientRect().width ?? 0).toBe(0);
+      expect(
+        canvas.getByRole("button", { name: "Open left sidebar" }),
+      ).toBeVisible();
     },
     { timeout: 20_000 },
   );
@@ -65,7 +66,7 @@ async function waitForScenario(
 }
 
 function focusedArgs(scenario: BasesViewScenario) {
-  return { scenario, focusMode: false, fixtureProfile: "registry" } as const;
+  return { scenario, focusMode: true, fixtureProfile: "registry" } as const;
 }
 
 export const FilterOptions: Story = {

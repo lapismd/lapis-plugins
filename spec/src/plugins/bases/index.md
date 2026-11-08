@@ -59,12 +59,14 @@ highlights, and registry-only Overview content under LP-SPEC-021 and LP-SPEC-033
 metadata remain authoritative for the fields defined by LP-SPEC-022.
 Registry identity and capture-backed gallery media remain package-owned under
 LP-SPEC-030 and LP-SPEC-031. Governed `Registry Screenshots` stories cover
-focused Filter options, Cover cards with real artwork, and a Grouped List with
-its grouping controls open; all stay `visual-pending` until separate visual
-approval.
-All three focused views use the uncropped full-shell composition so their
-complete workspace width remains visible before the shared dark right-edge
-gutter. The manifest summary names the table, card, and grouped Markdown
+focused Filter options, Cover cards with real artwork, a Grouped List with
+its grouping controls open, Kanban, and Activity; all stay `visual-pending`
+until separate visual approval.
+Every Bases registry screenshot MUST seed both sidebars closed and retain
+the real application shell, giving the selected Bases view the full available
+workspace width. Story interactions MUST assert the closed left sidebar and
+its accessible reopen control. Ordinary shell stories retain their Explorer
+layout. The manifest summary names the table, card, and grouped Markdown
 property views instead of repeating the plugin name.
 The fixed banner state uses the populated cover-card workspace with real
 artwork. The separate Overview image uses the Grouped List story so the body

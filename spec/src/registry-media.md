@@ -61,7 +61,8 @@ CSV is an active catalog package. Registry media selection includes
 Each plugin owns one explicit banner story. AI shows History left, Chat in the
 main area, and Catalog right. Graph shows Explorer, Global Graph, and Local
 Graph. History shows Explorer, Compare, and History. Markdown shows Backlinks,
-Live Preview, and File Properties. Bases uses the populated cover cards view.
+Live Preview, and File Properties. Bases uses the populated cover cards view;
+all Bases captures seed both sidebars closed so the Bases view fills the shell.
 Bookmarks and Search show their primary panel on the left beside an empty main
 workspace. Markdown Lint, Source Editor, Spell Check, and Word Count use the
 complete shell with both sidebars closed. Slides uses the full-screen Goals
