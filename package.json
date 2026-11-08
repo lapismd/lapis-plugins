@@ -32,6 +32,7 @@
     "release:nostr:verify": "node scripts/verify-nostr-release.mjs",
     "release:dispatch-metadata": "node scripts/dispatch-plugin-metadata.mjs",
     "release:publish-approved": "node scripts/publish-approved-release.mjs",
+    "release:trust:check": "node scripts/check-npm-trusted-publishers.mjs",
     "ci:packages": "node scripts/validation.mjs run ci:packages",
     "ci:release": "node scripts/validation.mjs run ci:release",
     "ci:container": "node --env-file-if-exists=.env scripts/run-ci-container.mjs",

@@ -1,5 +1,11 @@
 # Slides changelog
 
+## 0.1.2
+
+### Patch Changes
+
+- Release the current document and presentation bundles as immutable patch versions through trusted publishing. Previously published versions retain their original contents.
+
 ## 0.1.1
 
 ### Patch Changes

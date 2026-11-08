@@ -1,5 +1,12 @@
 # DOCX
 
+## 0.2.1
+
+### Patch Changes
+
+- Include WordCanvas and its browser workers and assets in the npm package so static consumers can open DOCX files without a repository vendor tree.
+- Release the current document and presentation bundles as immutable patch versions through trusted publishing. Previously published versions retain their original contents.
+
 ## 0.2.0
 
 ### Minor Changes

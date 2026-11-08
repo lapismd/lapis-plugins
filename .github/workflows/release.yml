@@ -249,7 +249,7 @@ jobs:
           node scripts/create-static-release-plan.mjs --production --plugins "${{ needs.selection.outputs.plugins }}"
       - uses: actions/upload-artifact@v7
         with:
-          name: signed-static-candidate-${{ github.run_id }}
+          name: signed-static-candidate-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             .release/npm/*.tgz
             .release/npm/*.sha256

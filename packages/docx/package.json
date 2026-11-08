@@ -1,6 +1,6 @@
 {
   "name": "@lapis-notes/docx",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Word document file view and note embed for Lapis applications",
   "license": "Apache-2.0",
   "type": "module",
@@ -10,7 +10,7 @@
     "check:svelte": "svelte-check --tsconfig ./tsconfig.app.json --fail-on-warnings --output human",
     "check:types": "tsc -p tsconfig.node.json --noEmit",
     "test": "vitest run",
-    "prepack": "svelte-package --input src --output dist --tsconfig ./tsconfig.pack.json && publint",
+    "prepack": "svelte-package --input src --output dist --tsconfig ./tsconfig.pack.json && node scripts/package-wordcanvas.mjs && publint",
     "publint": "publint",
     "pack": "pnpm pack --pack-destination ../../.release/npm"
   },

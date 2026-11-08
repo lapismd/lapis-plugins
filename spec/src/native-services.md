@@ -9,6 +9,11 @@ source identity. Registry dispatch verifies that identity against the immutable
 release tag rather than assigning the rerun's source commit. This release-tool
 boundary preserves the archive bytes, runtime descriptor, native service pins
 and host-owned installation admission; it introduces no native service API.
+LP-SPEC-016 recovery retains the signed source identity across partial npm
+publication and failed-job retries. Native installation admission consumes the
+verified published archive after the selected npm/GitHub publication completes;
+an operator's successful publisher-configuration audit supplies no installation
+or native-service authorization.
 Release bundling inlines `@lapis-notes/markdown` instead of admitting it as a host module. Plugins declare the editor and renderer host modules that inlined Markdown leaves external. This does not change a native service.
 
 Approving Bases and History version eligibility changes only npm release
@@ -165,3 +170,7 @@ renderer dependency compatibility MUST NOT be reported as native acceptance.
 History's Core 0.9 dependency compatibility repair preserves every repository
 service and callback. Its native provider qualification remains distinct from
 the renderer settings-page type check.
+
+The document release recovery prepares DOCX 0.2.1, PDF 0.2.1 and Slides 0.1.2 through Changesets and the existing LP-SPEC-016 qualification gates. Their earlier npm versions and signed GitHub assets remain immutable; native service revisions and host-profile adoption retain their separate owning-consumer gates.
+
+DOCX npm qualification bundles its browser-only WordCanvas graph and assets into the tarball. LP-SPEC-011 now checks the packed inventory for every literal relative JavaScript import, so checkout-only vendor files cannot qualify a portable package. Native service source pins and installation admission retain their existing ownership.
