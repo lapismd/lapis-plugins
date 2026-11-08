@@ -555,6 +555,13 @@ Notes.play = async (context) => {
   const header = within(editor).getByRole("button", {
     name: /^Edit Markdown board/,
   });
+  // The popover entrance scales its children; measure the settled layout.
+  await waitFor(() =>
+    expect(editor.getBoundingClientRect().height).toBeCloseTo(
+      editor.offsetHeight,
+      0,
+    ),
+  );
   const headerTop = header.getBoundingClientRect().top;
   expect(editor.getBoundingClientRect().height).toBeLessThanOrEqual(577);
   expect(settingsViewport.tabIndex).toBe(0);

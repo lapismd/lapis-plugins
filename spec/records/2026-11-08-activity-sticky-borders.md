@@ -129,3 +129,20 @@ registry Core 0.12.2; receipt
 the released renderer integration independently of the earlier archive target.
 The receipt-only commit update follows these runs; hosted required checks must
 pass on the resulting new exact feature head before merging PR #62.
+
+
+Hosted run `42527255066` on exact head
+`8b1d33e242491a52c824b3eae86c7c2c8847b875` reports one Notes-story failure;
+other interaction shards, quality, units, static build and release artifacts
+pass. The settings gap was 15.2px during the popover's 95% entrance scale,
+against the unchanged 16px expectation. Acceptance now waits for the editor's
+rendered height to match its unscaled layout height before capturing geometry.
+The 8px/16px spacing and sticky-header tolerances remain unchanged; this is a
+measurement repair, not a product spacing change or quarantine.
+
+The exact Notes target passes one case after the measurement repair; receipt
+`lapis-plugins-validation-85447b7c-1690-4a91-89b5-599923b5f669`. Specification
+checks and the complete Bases family pass 25 cases with zero failures in
+`lapis-plugins-validation-f27c3d2a-ae82-464e-97ad-55ae13822386`. Spec-first
+passes one protected story file and its owning canonical chapter. The next
+pushed exact head must receive a fresh complete hosted CI qualification.
