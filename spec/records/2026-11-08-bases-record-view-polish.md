@@ -126,3 +126,24 @@ Core 0.12.2 is now published from main `7208808e556ac6c5a4330f3e77d862c1a9343fa6
 with green source/version/main CI, immutable artifact and provenance verification
 in release run `42525186187`. Registry-only integration and final hosted heads
 remain required before the PR stack is declared ready.
+
+## Registry-only stack qualification
+
+The follow-up on the Core 0.12.2 prerequisite passes the complete combined
+registry-only run, with an empty candidate archive inventory; source
+`5a227fd81a038d4d1682c69a27f390aa8fe1c853`, receipt
+`lapis-plugins-validation-ad6a8d0b-1eaa-4ddb-b06e-f36b53363d49`. It includes
+all 51 package tasks, 193 tooling tests, audit/specification/App ownership,
+17 npm packs, 17 verified plugin payloads, cold static Storybook, all 29 Bases
+interaction/axe stories, and seven deterministic media checks (28 WebPs).
+Generated catalog normalisation and pack-byte checks retain both new gallery
+entries. No plugin versions or visual baselines changed.
+
+Kanban's hosted Notes regression is repaired in the prerequisite with unchanged
+spacing assertions and a settled-geometry wait. Rebasing the follow-up preserves
+that clause alongside its file-link contract. The final merged specification
+and all 29 Bases stories pass again, receipt
+`lapis-plugins-validation-5a4ef5ed-aa02-4a3f-b4d7-53472468f1a8`. The dependent
+PR is opened before #62 merges; final hosted CI and restacked-head verification
+remain separate gates. The original workspace and conflicted local main remain
+preserved, and the review Storybook runs against released Core 0.12.2.
