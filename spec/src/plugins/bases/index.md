@@ -92,6 +92,8 @@ MUST meet the right and bottom edges and round only its top-left corner. Fenced
 views MUST NOT invent a filename. Table and List content MUST have no outer
 inline padding; embedded List rows retain internal start padding, and grouped
 records retain their hierarchy indentation inside full-width row separators.
+Embedded group headings MUST retain internal start padding before the expand
+chevron while their separators span the pane.
 Group headings and counts MUST stay within the visible viewport even with long
 or wrapped record properties; long group labels yield space to counts. Table
 scrollbar tracks MUST use the body surface so no alternate surface leaks at the
@@ -106,6 +108,9 @@ read-only file and fenced views, the invalid-YAML error, and render cleanup.
 It MUST finish with those populated views restored for interactive review,
 including after a fresh mount; cleanup acceptance must not leave the story blank.
 Kanban and Activity MUST each have governed file and fenced embed examples.
+The ordinary Markdown Embed example MUST use automatic Table column sizing
+that fits a wide pane and overflows a constrained pane. Registry screenshot
+fixtures MAY retain explicit wider columns to demonstrate both scroll directions.
 
 ## Requirements
 

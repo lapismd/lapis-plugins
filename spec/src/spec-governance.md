@@ -147,9 +147,11 @@ checks and explicit shared-catalog stories remain separate from installation
 and release selection. The retained source inventory records the Apache-2.0
 correction in the owning Nostr Sync repository before extraction.
 
-Dependency-image automation follows LP-SPEC-051: terminal PR states never
-absorb a new digest update. The executable workflow regressions cover merged,
-closed and open reviews without changing the normal required CI gates.
+Dependency-image automation follows LP-SPEC-051: one rolling review retains
+immutable digest pins, terminal reviews receive a new PR, and successful
+publication closes only superseded same-repository bot hash-branch reviews.
+Executable workflow regressions retain failure preservation and main-only
+publication without changing normal required CI gates.
 
 The verified shared CI image refresh maps its base pin, dependency-only build
 context and generated dependency digest to this chapter and Distribution.
