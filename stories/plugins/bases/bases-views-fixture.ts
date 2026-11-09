@@ -10,7 +10,7 @@ import {
 } from "@lapis-notes/api";
 import type { BasesDocument, BasesViewRegistration } from "@lapis-notes/bases";
 
-export type BasesFixtureProfile = "default" | "registry";
+export type BasesFixtureProfile = "default" | "registry" | "embed";
 
 export type BasesViewScenario =
   | "table"
@@ -363,7 +363,7 @@ export function createBasesViewsSeed(
       null,
       2,
     ),
-    ...(profile === "registry" ? createRegistryProjectNotes() : projectNotes),
+    ...(profile === "default" ? projectNotes : createRegistryProjectNotes()),
     ...(scenario === "list"
       ? {
           "Projects/Aurora.md": projectNotes["Projects/Aurora.md"].replace(

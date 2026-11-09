@@ -47,7 +47,7 @@
           ? "activity"
           : "table";
     const runtimePromise = bootBasesEditorShellDemo(fixtureScenario, {
-      fixtureProfile: scenario === "markdown" ? "registry" : "default",
+      fixtureProfile: scenario === "markdown" ? "embed" : "default",
     });
     void runtimePromise
       .then((readyRuntime) => {

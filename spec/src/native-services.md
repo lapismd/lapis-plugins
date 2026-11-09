@@ -1,5 +1,10 @@
 # Native first-party plugin services
 
+Rolling dependency-image reviews update only the verified CI image pin. They
+MUST NOT change native service revisions, runtime installation authority or
+plugin archive identity; native admission continues to use the signed release
+coordinates under LP-SPEC-002 and LP-SPEC-051.
+
 The Bases embed catalog renders file and fenced Board/Activity instances with
 an explicitly owned App. Read-only Search and Filter change only the embedded
 query; no native writer, metadata parser revision, or installation authority

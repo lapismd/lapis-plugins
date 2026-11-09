@@ -208,6 +208,10 @@
   padding-inline-start: 0.75rem;
 }
 
+.bases-embed .bases-list__group-toggle {
+  padding-inline-start: 0.75rem;
+}
+
 .bases-embed__file-chip {
   position: absolute;
   right: 0;

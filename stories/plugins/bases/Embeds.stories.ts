@@ -172,8 +172,20 @@ export const Markdown: Story = {
     expect(tableViewport.scrollHeight).toBeGreaterThan(
       tableViewport.clientHeight,
     );
-    expect(tableViewport.scrollWidth).toBeGreaterThan(
-      tableViewport.clientWidth,
+    await waitFor(() =>
+      expect(tableViewport.scrollWidth).toBeLessThanOrEqual(
+        tableViewport.clientWidth + 1,
+      ),
+    );
+    table.style.width = "360px";
+    await waitFor(() =>
+      expect(tableViewport.scrollWidth).toBeGreaterThan(tableViewport.clientWidth),
+    );
+    table.style.removeProperty("width");
+    await waitFor(() =>
+      expect(tableViewport.scrollWidth).toBeLessThanOrEqual(
+        tableViewport.clientWidth + 1,
+      ),
     );
     for (const track of tableSurface.querySelectorAll<HTMLElement>(
       '[data-ui-part="scroll-area-scrollbar"]',
@@ -226,6 +238,10 @@ export const Markdown: Story = {
     for (const header of list.querySelectorAll<HTMLElement>(
       ".bases-list__group-header",
     )) {
+      const chevron = header.querySelector<SVGElement>("button svg")!;
+      expect(
+        chevron.getBoundingClientRect().left - header.getBoundingClientRect().left,
+      ).toBeGreaterThanOrEqual(8);
       const count = header.querySelector<HTMLElement>(".bases-list__count")!;
       expect(count).toBeVisible();
       expect(count.getBoundingClientRect().right).toBeLessThanOrEqual(
@@ -242,6 +258,11 @@ export const Markdown: Story = {
           listViewport.getBoundingClientRect().right + 1,
         );
       }
+      const header = list.querySelector<HTMLElement>(".bases-list__group-header")!;
+      const chevron = header.querySelector<SVGElement>("button svg")!;
+      expect(
+        chevron.getBoundingClientRect().left - header.getBoundingClientRect().left,
+      ).toBeGreaterThanOrEqual(8);
       const count = list.querySelector<HTMLElement>(".bases-list__count")!;
       expect(count.getBoundingClientRect().right).toBeLessThanOrEqual(
         listViewport.getBoundingClientRect().right,
