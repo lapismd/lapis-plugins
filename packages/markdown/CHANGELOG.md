@@ -1,5 +1,13 @@
 # Markdown changelog
 
+## 0.2.3
+
+### Patch Changes
+
+- [#62](https://github.com/lapismd/lapis-plugins/pull/62) [`fe8e1d7`](https://github.com/lapismd/lapis-plugins/commit/fe8e1d757b51a15118983727880343042f0c07d3) Thanks [@stevejuma](https://github.com/stevejuma)! - Add configurable Markdown Kanban and Activity layouts, inline file editing, property grids, generic stamp badges, column filters and optional anchoring. Derive summaries from Markdown bodies or mapped properties, preserve the host background in embedded editors and start embedded editing with collapsed properties. Keep dated Activity headings sticky with visible column borders. Admit the released Core 0.12 cohort in History so its settings component shares the host controller type.
+
+- [#61](https://github.com/lapismd/lapis-plugins/pull/61) [`9210719`](https://github.com/lapismd/lapis-plugins/commit/921071900dc14f6ffdcd09080a33cf330135955f) Thanks [@lapismd-dependency-bot](https://github.com/apps/lapismd-dependency-bot)! - Refresh first-party Lapis dependencies to the published versions recorded in this pull request.
+
 ## 0.2.2
 
 ### Patch Changes

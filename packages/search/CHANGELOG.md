@@ -1,5 +1,13 @@
 # Search changelog
 
+## 0.1.6
+
+### Patch Changes
+
+- [#65](https://github.com/lapismd/lapis-plugins/pull/65) [`0765871`](https://github.com/lapismd/lapis-plugins/commit/07658710fdf3f21a4ceb5e4ddbadb77c897c8cf1) Thanks [@lapismd-dependency-bot](https://github.com/apps/lapismd-dependency-bot)! - Refresh first-party Lapis dependencies to the published versions recorded in this pull request.
+
+- [#61](https://github.com/lapismd/lapis-plugins/pull/61) [`9210719`](https://github.com/lapismd/lapis-plugins/commit/921071900dc14f6ffdcd09080a33cf330135955f) Thanks [@lapismd-dependency-bot](https://github.com/apps/lapismd-dependency-bot)! - Refresh first-party Lapis dependencies to the published versions recorded in this pull request.
+
 ## 0.1.5
 
 ### Patch Changes
