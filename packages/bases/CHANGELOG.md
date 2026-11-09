@@ -1,5 +1,25 @@
 # Bases changelog
 
+## 0.3.0
+
+### Minor Changes
+
+- [#66](https://github.com/lapismd/lapis-plugins/pull/66) [`e6263f6`](https://github.com/lapismd/lapis-plugins/commit/e6263f6d8fa4f24de9af42b5b701fbfd55972299) Thanks [@stevejuma](https://github.com/stevejuma)! - Modernise compact List records with on-demand editing, use bounded Shadcn scrolling and body-surface Cards, add shared file-link hover previews and hover/focus underlines, improve unsupported views, and add populated Kanban and Activity registry examples.
+
+- [#62](https://github.com/lapismd/lapis-plugins/pull/62) [`fe8e1d7`](https://github.com/lapismd/lapis-plugins/commit/fe8e1d757b51a15118983727880343042f0c07d3) Thanks [@stevejuma](https://github.com/stevejuma)! - Add configurable Markdown Kanban and Activity layouts, inline file editing, property grids, generic stamp badges, column filters and optional anchoring. Derive summaries from Markdown bodies or mapped properties, preserve the host background in embedded editors and start embedded editing with collapsed properties. Keep dated Activity headings sticky with visible column borders. Admit the released Core 0.12 cohort in History so its settings component shares the host controller type.
+
+### Patch Changes
+
+- [#68](https://github.com/lapismd/lapis-plugins/pull/68) [`5a54841`](https://github.com/lapismd/lapis-plugins/commit/5a54841a08814a8ead6bc6c55adc01cb174e72a6) Thanks [@stevejuma](https://github.com/stevejuma)! - Give file and fenced Markdown embeds a bounded host, compact Bases toolbar, working Search and Filter controls, and a filename chip on hover or focus. Preserve read-only behaviour, present invalid content in a Shadcn error alert, name read-only dates for assistive technology, and add Kanban/Activity embed examples. Keep Table/List edges flush and table scrollbar tracks on the body surface. Wrap additional List properties within the available width, retain label/value alignment, and keep group counts and full-width separators visible.
+
+  Require Design Core ^0.12.3 so repeated Kanban and Activity embeds retain independent accessible landmarks and IDs.
+
+- [#72](https://github.com/lapismd/lapis-plugins/pull/72) [`bb8229a`](https://github.com/lapismd/lapis-plugins/commit/bb8229abead6278c12f15b4708810120af3387de) Thanks [@stevejuma](https://github.com/stevejuma)! - Inset embedded grouped List headings before the expand chevron while preserving full-width separators and visible counts.
+
+  Show automatic Table column sizing in the ordinary Embed example while retaining realistic data and narrow-pane scroll acceptance.
+
+- [#61](https://github.com/lapismd/lapis-plugins/pull/61) [`9210719`](https://github.com/lapismd/lapis-plugins/commit/921071900dc14f6ffdcd09080a33cf330135955f) Thanks [@lapismd-dependency-bot](https://github.com/apps/lapismd-dependency-bot)! - Refresh first-party Lapis dependencies to the published versions recorded in this pull request.
+
 ## 0.2.1
 
 ### Patch Changes
