@@ -45,8 +45,9 @@ consumers must resolve this prerequisite from npm before plugin publication.
 Earlier dependency acceptance used Design Core `0.3.2` and Mira `0.0.3` through portable npm ranges. Source ownership and public contracts remain
 unchanged; local overrides for these released packages are retired.
 
-Bases presentation resolves Design Core through the repository's current
-published semver range and committed lockfile.
+Bases presentation requires released Design Core `^0.12.3` through the
+committed registry lockfile. Repeated Board and Activity embeds retain independent
+landmarks and instance-scoped IDs under the public Core contract.
 The configurable view-control closure includes the existing shared
 `@codemirror/lint` host runtime. Its generated runtime manifest and npm peer
 declaration must agree with emitted bare imports.
