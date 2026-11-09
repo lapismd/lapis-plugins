@@ -114,6 +114,7 @@ export function registerBuiltInBasesViews(
       factory: (controller, containerEl) =>
         new ListView(controller, containerEl),
       options: ListView.getViewOptions,
+      requiredProperties: (view) => view.order?.length ? [] : ["file.name"],
     },
     kanban: {
       factory: (controller, containerEl) =>

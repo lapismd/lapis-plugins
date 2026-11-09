@@ -112,8 +112,12 @@ vi.mock("./bases-view", () => ({
   })),
 }));
 
-vi.mock("./bases-view/view.svelte", () => ({
-  default: Symbol("BasesComponent"),
+vi.mock("./bases-view/components/bases-embed.svelte", () => ({
+  default: Symbol("BasesEmbed"),
+}));
+
+vi.mock("./bases-view/components/bases-error.svelte", () => ({
+  default: Symbol("BasesError"),
 }));
 
 vi.mock("svelte", () => ({
@@ -122,7 +126,8 @@ vi.mock("svelte", () => ({
 }));
 
 import { EmbedRegistry } from "@lapis-notes/api";
-import { mount } from "svelte";
+import { mount, unmount } from "svelte";
+import BasesError from "./bases-view/components/bases-error.svelte";
 import { parseBasesDocument } from "./bases-view";
 import { BasesPlugin } from "./bases-plugin";
 
@@ -241,10 +246,19 @@ describe("BasesPlugin", () => {
 
     handler("views: [", containerEl, { addChild });
 
-    expect(
-      containerEl.querySelector(".bases-view-error__message")?.textContent,
-    ).toContain("Unable to render this base: invalid YAML");
-    expect(mount).not.toHaveBeenCalled();
+    expect(mount).toHaveBeenCalledOnce();
+    expect(mount).toHaveBeenCalledWith(BasesError, {
+      target: containerEl,
+      props: { message: "Unable to render this base: invalid YAML" },
+    });
     expect(addChild).toHaveBeenCalledOnce();
+    const child = addChild.mock.calls[0][0] as {
+      unloaders: Set<() => void>;
+    };
+    for (const dispose of child.unloaders) dispose();
+    expect(unmount).toHaveBeenCalledWith(
+      vi.mocked(mount).mock.results[0].value,
+    );
+    expect(containerEl.childNodes).toHaveLength(0);
   });
 });

@@ -86,7 +86,7 @@
     />
   </div>
   <div
-    class="bases-style-flex-60fbb7 bases-style-flex-wrap-1eb5c6 bases-style-gap-1-44ee8b"
+    class="bases-view__toolbar-controls bases-style-flex-60fbb7 bases-style-flex-wrap-1eb5c6 bases-style-gap-1-44ee8b"
   >
     <Button
       variant="outline"
@@ -141,14 +141,16 @@
       }
       {controller}
     />
-    <Button
-      variant="outline"
-      size="sm"
-      class="bases-style-h-8-ed8a5d"
-      onclick={createFile}
-    >
-      <Plus />
-      <span>New</span>
-    </Button>
+    {#if !controller.readOnly}
+      <Button
+        variant="outline"
+        size="sm"
+        class="bases-style-h-8-ed8a5d"
+        onclick={createFile}
+      >
+        <Plus />
+        <span>New</span>
+      </Button>
+    {/if}
   </div>
 </div>

@@ -8,7 +8,8 @@ import {
 import { markupEditor } from "@lapis-notes/api/editor/core";
 import { yaml } from "@codemirror/lang-yaml";
 import { mount, unmount } from "svelte";
-import BasesComponent from "./bases-view/view.svelte";
+import BasesEmbed from "./bases-view/components/bases-embed.svelte";
+import BasesError from "./bases-view/components/bases-error.svelte";
 import {
   BasesView,
   BasesViewType,
@@ -70,14 +71,18 @@ export class BasesPlugin extends Plugin {
               return;
             }
 
-            activeHandle = this.mountReadOnlyBases(containerEl, content);
+            activeHandle = this.mountReadOnlyBases(
+              containerEl,
+              content,
+              file.name,
+            );
           })
           .catch((error) => {
             if (disposed) {
               return;
             }
 
-            this.renderError(
+            activeHandle = this.renderError(
               containerEl,
               error instanceof Error
                 ? `Unable to render this embedded base: ${error.message}`
@@ -111,6 +116,7 @@ export class BasesPlugin extends Plugin {
   private mountReadOnlyBases(
     containerEl: HTMLElement,
     content: string,
+    fileName?: string,
   ): BasesRenderHandle {
     containerEl.replaceChildren();
 
@@ -118,28 +124,21 @@ export class BasesPlugin extends Plugin {
     try {
       document = parseBasesDocument(content);
     } catch (error) {
-      this.renderError(
+      return this.renderError(
         containerEl,
         error instanceof Error
           ? `Unable to render this base: ${error.message}`
           : `Unable to render this base: ${String(error)}`,
       );
-      return {
-        destroy: () => {
-          containerEl.replaceChildren();
-        },
-      };
     }
 
-    const component = mount(BasesComponent, {
+    const component = mount(BasesEmbed, {
       target: containerEl,
       props: {
         app: this.app,
         document,
         registrations: createBasesViewRegistrations(this.app),
-        onChange: () => {},
-        readOnly: true,
-        showHeader: false,
+        fileName,
       },
     });
 
@@ -151,15 +150,21 @@ export class BasesPlugin extends Plugin {
     };
   }
 
-  private renderError(containerEl: HTMLElement, message: string): void {
+  private renderError(
+    containerEl: HTMLElement,
+    message: string,
+  ): BasesRenderHandle {
     containerEl.replaceChildren();
-    const wrapper = document.createElement("div");
-    wrapper.className = "bases-view-error";
-    const messageEl = document.createElement("p");
-    messageEl.className = "bases-view-error__message";
-    messageEl.textContent = message;
-    wrapper.appendChild(messageEl);
-    containerEl.appendChild(wrapper);
+    const component = mount(BasesError, {
+      target: containerEl,
+      props: { message },
+    });
+    return {
+      destroy: () => {
+        void unmount(component);
+        containerEl.replaceChildren();
+      },
+    };
   }
 }
 

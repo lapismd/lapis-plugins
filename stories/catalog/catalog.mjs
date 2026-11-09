@@ -462,6 +462,20 @@ export const workspaceCatalog = [
     storyId: "plugins-bases-embeds--markdown",
   },
   {
+    id: "plugins-bases-embeds-kanban",
+    title: "Bases Kanban Embeds",
+    spec: "spec/src/plugins/bases/index.md",
+    publicSurface: "@lapis-notes/bases + @lapis-notes/api",
+    storyId: "plugins-bases-embeds--kanban",
+  },
+  {
+    id: "plugins-bases-embeds-activity",
+    title: "Bases Activity Embeds",
+    spec: "spec/src/plugins/bases/index.md",
+    publicSurface: "@lapis-notes/bases + @lapis-notes/api",
+    storyId: "plugins-bases-embeds--activity",
+  },
+  {
     id: "plugins-history-shell-desktop",
     title: "History Shell: Desktop",
     spec: "spec/src/plugins/history/index.md",
