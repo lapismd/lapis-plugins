@@ -16,11 +16,8 @@ export function repositoryFeedback(app: App, title: string, identity?: string) {
       getWorkspaceHostBinding(app.workspace).controller.notifications.dismiss(
         id
       );
-      void app.notifications
-        .clear(id)
-        .catch((error) =>
-          console.error("Repository notification cleanup failed", error)
-        );
+      // Reports are transient (persist: false); recovery must not write
+      // persisted history on every healthy native-status observation.
     },
   };
 }

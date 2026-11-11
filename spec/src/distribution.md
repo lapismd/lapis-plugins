@@ -10,7 +10,6 @@ publication gates (LN-BASE-008/011, LP-SPEC-054).
 
 The Bases Board/Activity renderer requires released Design Core 0.12.3 for independent repeated Board/Activity landmark and ID ownership. Root and Bases ranges declare that minimum; the root, Bases and the compatible UI peer graph resolve that released package identity. Temporary archive checks remain distinct from registry-only qualification, and this intake does not approve a plugin release.
 
-
 Dependency update PRs from the trusted LapisMD App, Dependabot or Renovate MAY skip specification checks using the PR author rather than the rerun actor. Functional checks remain required. The shared `lapismd/dependency-automation` coordinator proposes published first-party npm updates with Changeset release intent where required; it does not merge, publish, sign or deploy. This CI policy changes no runtime or public contract in this chapter.
 
 The shared App-backed panel host owns the public vault-change service from ready state through teardown. It starts reconciliation before exposing the ready App and drains/stops the service before disposing views and plugins. Local file renames therefore project into the existing editor, tab and breadcrumb through the same API lifecycle used by application hosts.
@@ -457,3 +456,5 @@ grouped list, Kanban and Activity. Capture inputs remain source-owned metadata
 and assets; package qualification verifies that registry.json retains those
 entries. Generating private acceptance data does not dispatch registry updates
 or publish new plugin versions.
+
+The History transient-feedback patch is qualified as an unpublished source candidate under LN-HIST-019. Local npm-pack and deterministic payload verification do not authorize npm publication, signed public assets or registry dispatch; those remain separate release gates.

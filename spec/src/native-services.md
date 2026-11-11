@@ -14,7 +14,6 @@ is introduced by this presentation slice (LN-BASE-008/011).
 
 Bases consumes the released Core 0.12.3 repeated-embed accessibility repair through normal npm ranges. The root validation graph and Bases resolve the repaired Core package with their compatible UI peers; this browser renderer intake changes no native service revision or installation authority.
 
-
 Dependency update PRs from the trusted LapisMD App, Dependabot or Renovate MAY skip specification checks using the PR author rather than the rerun actor. Functional checks remain required. The shared `lapismd/dependency-automation` coordinator proposes published first-party npm updates with Changeset release intent where required; it does not merge, publish, sign or deploy. This CI policy changes no runtime or public contract in this chapter.
 
 Native hosts installing a retained static archive use its original signed
@@ -211,3 +210,5 @@ Bases registry and record-view acceptance use explicit story-owned Apps and the
 existing remote Docker transport. List activation reuses the owning plugin's
 frontmatter writer; it introduces no native service, compatibility singleton
 or additional application routing.
+
+History feedback recovery preserves LN-HIST-016/019 passive observation: healthy status reads dismiss transient workspace notices without writing notification history. This changes no service admission, native owner, transport, mutation port or teardown authority.
