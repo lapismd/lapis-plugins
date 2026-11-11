@@ -1,5 +1,11 @@
 # History changelog
 
+## 0.2.4
+
+### Patch Changes
+
+- [#75](https://github.com/lapismd/lapis-plugins/pull/75) [`785db1d`](https://github.com/lapismd/lapis-plugins/commit/785db1dcd08734ee6f9cfc05b13f689cf766d54c) Thanks [@stevejuma](https://github.com/stevejuma)! - Keep repository error recovery transient instead of clearing persistent notification history on every healthy native status observation.
+
 ## 0.2.3
 
 ### Patch Changes

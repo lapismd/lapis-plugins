@@ -1,7 +1,7 @@
 {
   "id": "bookmarks",
   "name": "Bookmarks",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "minAppVersion": "0.1.0",
   "description": "Bookmark files, folders, searches, and groups",
   "author": "Lapis Notes",
