@@ -52,6 +52,9 @@
   "stories/plugins/canvas/Features.stories.ts": {
     "kind": "application"
   },
+  "stories/plugins/canvas/Layout.stories.ts": {
+    "kind": "application"
+  },
   "stories/plugins/canvas/RegistryScreenshots.stories.ts": {
     "kind": "application"
   },

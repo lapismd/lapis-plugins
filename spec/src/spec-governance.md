@@ -1,5 +1,7 @@
 # Specification Governance
 
+LN-CANVAS-042 separates pure layout evidence from real selection-toolbar persistence and undo/redo. Imported dimensions remain authoritative except when an explicit equal-size command changes that dimension. Stories stay visual-pending and no baseline is replaced.
+
 Canvas live-embed evidence separates source subscription ownership, public content resolution, bounded recursion and responsive camera behavior. LN-CANVAS-014 stays in progress until shared colour presentation is qualified; lifecycle completion does not approve visual baselines or publication.
 
 Canvas authoring/history distinguishes creation and drop-receiver evidence from real File Explorer drag-source adoption. LN-CANVAS-012 stays in progress until the owning drag source is qualified; LN-CANVAS-032 through LN-CANVAS-035 govern the implemented receiver, history and clipboard surface.

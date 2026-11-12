@@ -1,5 +1,7 @@
 # Distribution and Releases
 
+Canvas selection-layout artifacts add thirteen geometry commands without changing entity identities, extensions or host dependency protocols (LN-CANVAS-042). Group descendants translate with their selected root and runtime release remains separately qualified.
+
 Canvas live embed artifacts retain public controlled-preview inputs and bundle their registered file-content renderer. Mounted surfaces lease XYFlow foundation CSS; no publication, host profile or dependency protocol changes (LN-CANVAS-036 through LN-CANVAS-039).
 
 Canvas authoring/history patch artifacts retain document extensions, remapped selection clipboard and pending text snapshots (LN-CANVAS-032 through LN-CANVAS-035). No host dependency, static profile or publication authority changes; File Explorer drag-source adoption remains separately qualified.

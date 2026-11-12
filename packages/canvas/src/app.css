@@ -197,6 +197,29 @@
   overflow: hidden;
 }
 
+.canvas-card-edit-button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 3;
+  padding: 4px 8px;
+  border: 1px solid var(--canvas-node-border, var(--background-modifier-border));
+  border-radius: 6px;
+  color: var(--text-normal);
+  background: var(--canvas-node-fill, var(--background-primary));
+  opacity: 0;
+  pointer-events: none;
+}
+.canvas-node-shell.selected:hover .canvas-card-edit-button,
+.canvas-card-edit-button:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.canvas-card-edit-button:focus-visible {
+  outline: 2px solid var(--canvas-readable-indicator, var(--interactive-accent));
+  outline-offset: 3px;
+}
+
 .canvas-node-kind {
   font-size: 0.68rem;
   font-weight: 700;

@@ -60,6 +60,9 @@ The copied board keeps text, file, link, and group nodes, connectors, pane clipp
 | LN-CANVAS-038 | Nested rendering MUST detect repeated canonical Canvas paths within the same App's parent chain, including chains through Markdown, and MUST stop after six ancestor boards. Sibling instances and equal paths in different Apps MUST remain independent. Detached Markdown fragments MUST be checked after attachment; stopped previews MUST offer open-original navigation. |
 | LN-CANVAS-039 | Read-only Canvas embeds MUST provide bounded responsive frames, a read-only label and open-original navigation. They MUST fit after public viewport/node readiness, source changes and frame resizing, without delayed startup fits resetting an explicit zoom choice. Mounted surfaces MUST lease foundation CSS independently across Apps and documents. |
 
+| LN-CANVAS-042 | Selection layout MUST expose left/center/right and top/middle/bottom alignment, horizontal/vertical equal-gap distribution, row/column/grid arrangement and equal width/height. Each command MUST flush pending editors, form one undoable mutation and preserve identities, connectors, extensions and unaffected dimensions. Selected groups MUST move contained descendants once; selection inside a selected group MUST NOT become a second layout unit. Distribution MUST retain outside anchors and require three independent cards. Layout controls MUST support keyboard activation and Escape dismissal. |
+| LN-CANVAS-043 | Editable card previews MUST expose a separate focusable edit action outside rendered Markdown controls. Card selection and pointer editing MUST remain available without nesting interactive controls inside a button wrapper. |
+
 ## Alignment sequence
 
 Implement and qualify these independently reviewable slices in order:
