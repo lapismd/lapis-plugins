@@ -1,5 +1,10 @@
 # Distribution and Releases
 
+The Design Core 0.12.4 intake resolves History and Markdown's existing compatible
+union ranges to the same 0.12.4 package identity as settings registrations.
+The lockfile retains other dependency versions and the separate legacy 0.9
+consumer line; it does not replace registry packages with local paths.
+
 Canvas view/embed navigation shares bundled controls and public XYFlow camera APIs without new host dependencies. Camera commands retain document bytes and runtime publication stays separate (LN-CANVAS-048).
 
 Canvas connector artifacts retain endpoint identity and imported extension fields through reconnection (LN-CANVAS-046/047). Native pointer acceptance runs against the built public Storybook bundle in the static CI lane.
