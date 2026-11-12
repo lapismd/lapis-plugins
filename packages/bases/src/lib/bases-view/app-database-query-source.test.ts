@@ -24,6 +24,39 @@ function row(path: string) {
 }
 
 describe("buildBasesAppDatabaseQuery", () => {
+  it("keeps bracketed property IDs at the typed evaluator boundary", () => {
+    const query = buildBasesAppDatabaseQuery({ documentFilter: { and: [{ column: 'note["status"]', op: "=", value: "draft" }] }, sort: [{ property: 'note["priority"]' as any, direction: "ASC" }], limit: 1 });
+    expect(query).toEqual({ excludeHiddenPaths: true });
+  });
+  it.each([
+    { and: ['status != "done"'] },
+    { or: [{ column: "note.status", op: "=", value: "open" }] },
+    { and: [{ column: "file.name", op: "contains", value: "Alpha" }] },
+  ])(
+    "does not apply limits before an unlowered predicate: %j",
+    (documentFilter) => {
+      expect(
+        buildBasesAppDatabaseQuery({
+          documentFilter: documentFilter as any,
+          sort: [{ property: "file.path", direction: "ASC" }],
+          limit: 1,
+        })
+      ).not.toHaveProperty("limit");
+    }
+  );
+
+  it("does not turn any-of tags into an all-tags candidate restriction", () => {
+    const query = buildBasesAppDatabaseQuery({
+      documentFilter: {
+        and: [{ column: "file", op: "hasTag", value: ["work", "home"] }],
+      },
+      sort: [{ property: "file.path", direction: "ASC" }],
+      limit: 1,
+    });
+    expect(query).not.toHaveProperty("requiredTags");
+    expect(query).not.toHaveProperty("limit");
+  });
+
   it("lowers safe conjunctive filters plus supported sort and limit", () => {
     const query = buildBasesAppDatabaseQuery({
       documentFilter: {
@@ -124,7 +157,7 @@ describe("appDatabaseRowToVaultRecord", () => {
             count: 1,
           },
         ],
-      },
+      }
     );
 
     expect(record.id).toBe("Projects/Alpha.md");
@@ -155,8 +188,8 @@ describe("queryBasesAppDatabaseRows", () => {
             },
           ],
         },
-        1,
-      ),
+        1
+      )
     ).resolves.toMatchObject([
       { file: { path: "A.md" } },
       { file: { path: "B.md" } },

@@ -12,6 +12,7 @@
   import ViewHeader from "./view-header.svelte";
   import Search from "@lucide/svelte/icons/search";
   import X from "@lucide/svelte/icons/x";
+  import BasesError from "./components/bases-error.svelte";
 
   let {
     registrations,
@@ -152,7 +153,9 @@
       </div>
     </div>
   {/if}
-  {#if queryController.loadError}
+  {#if queryController.queryError}
+    <BasesError message={queryController.queryError} />
+  {:else if queryController.loadError}
     <div class="bases-view__query-error" role="alert">
       <p>Unable to load indexed metadata: {queryController.loadError}</p>
       <button type="button" onclick={() => void queryController.reload()}>

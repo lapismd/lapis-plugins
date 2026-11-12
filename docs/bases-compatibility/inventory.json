@@ -1,0 +1,2511 @@
+{
+  "schemaVersion": 1,
+  "features": [
+    {
+      "id": "BASES-YAML-001",
+      "title": "Global string filters",
+      "priority": "P0",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/syntax",
+      "notes": "Global string predicates normalize to a single-expression AND group; object filters remain supported.",
+      "probes": [
+        {
+          "id": "string",
+          "mode": "filter",
+          "filter": "status != \"done\"",
+          "expected": [
+            "alpha",
+            "gamma"
+          ]
+        },
+        {
+          "id": "object",
+          "mode": "filter",
+          "filter": {
+            "and": [
+              "status != \"done\""
+            ]
+          },
+          "expected": [
+            "alpha",
+            "gamma"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "BASES-YAML-002",
+      "title": "Per-view filters key",
+      "priority": "P0",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/syntax",
+      "notes": "Obsidian views[].filters imports into the native singular filter model; native filter wins when both keys exist, and writes retain the Lapis format.",
+      "probes": [
+        {
+          "id": "obsidian-key",
+          "mode": "document",
+          "document": {
+            "views": [
+              {
+                "type": "table",
+                "name": "Table",
+                "order": [
+                  "file.path"
+                ],
+                "filters": {
+                  "and": [
+                    "status != \"open\""
+                  ]
+                }
+              }
+            ]
+          },
+          "expected": [
+            "beta"
+          ]
+        },
+        {
+          "id": "lapis-key",
+          "mode": "document",
+          "document": {
+            "views": [
+              {
+                "type": "table",
+                "name": "Table",
+                "order": [
+                  "file.path"
+                ],
+                "filter": {
+                  "and": [
+                    "status != \"open\""
+                  ]
+                }
+              }
+            ]
+          },
+          "expected": [
+            "beta"
+          ]
+        }
+      ],
+      "difference": {
+        "kind": "intentional",
+        "reason": "Retain the native singular filter model/write format for existing documents and integrations; import the Obsidian spelling at the read boundary.",
+        "evidence": "document-core.ts; models.ts; serializeBasesDocument; LN-BASE-003"
+      }
+    },
+    {
+      "id": "BASES-YAML-003",
+      "title": "Global AND view filters",
+      "priority": "P0",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/syntax",
+      "notes": "Global and per-view predicates compose with AND for imported and native documents.",
+      "probes": [
+        {
+          "id": "obsidian-composition",
+          "mode": "document",
+          "document": {
+            "filters": {
+              "and": [
+                "status != \"done\""
+              ]
+            },
+            "views": [
+              {
+                "type": "table",
+                "name": "Table",
+                "order": [
+                  "file.path"
+                ],
+                "filters": {
+                  "and": [
+                    "price > 5"
+                  ]
+                }
+              }
+            ]
+          },
+          "expected": [
+            "alpha"
+          ]
+        },
+        {
+          "id": "native-composition",
+          "mode": "document",
+          "document": {
+            "filters": {
+              "and": [
+                "status != \"done\""
+              ]
+            },
+            "views": [
+              {
+                "type": "table",
+                "name": "Table",
+                "order": [
+                  "file.path"
+                ],
+                "filter": {
+                  "and": [
+                    "price > 5"
+                  ]
+                }
+              }
+            ]
+          },
+          "expected": [
+            "alpha"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "BASES-FILTER-001",
+      "title": "Recursive and/or/not groups",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/syntax",
+      "notes": "Full loader-to-query acceptance; not excludes any matching child.",
+      "probes": [
+        {
+          "id": "and",
+          "mode": "filter",
+          "filter": {
+            "and": [
+              "status != \"done\"",
+              "price > 5"
+            ]
+          },
+          "expected": [
+            "alpha"
+          ]
+        },
+        {
+          "id": "or",
+          "mode": "filter",
+          "filter": {
+            "or": [
+              "status != \"open\"",
+              "file.ext != \"md\""
+            ]
+          },
+          "expected": [
+            "beta",
+            "gamma"
+          ]
+        },
+        {
+          "id": "not",
+          "mode": "filter",
+          "filter": {
+            "not": [
+              "status != \"open\"",
+              "file.ext != \"md\""
+            ]
+          },
+          "expected": [
+            "alpha"
+          ]
+        },
+        {
+          "id": "nested",
+          "mode": "filter",
+          "filter": {
+            "or": [
+              {
+                "and": [
+                  "status != \"done\"",
+                  "price > 5"
+                ]
+              },
+              {
+                "not": [
+                  "file.ext != \"txt\""
+                ]
+              }
+            ]
+          },
+          "expected": [
+            "alpha",
+            "gamma"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "BASES-FILTER-002",
+      "title": "Comparison operators",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/syntax",
+      "notes": "Standard comparisons, including double-equals, execute through the same lowering boundary as formulas; native single-equals remains accepted.",
+      "probes": [
+        {
+          "id": "equals",
+          "mode": "filter",
+          "filter": {
+            "and": [
+              "price == 4"
+            ]
+          },
+          "expected": [
+            "beta"
+          ]
+        },
+        {
+          "id": "not-equal",
+          "mode": "filter",
+          "filter": {
+            "and": [
+              "price != 4"
+            ]
+          },
+          "expected": [
+            "alpha",
+            "gamma"
+          ]
+        },
+        {
+          "id": "greater",
+          "mode": "filter",
+          "filter": {
+            "and": [
+              "price > 4"
+            ]
+          },
+          "expected": [
+            "alpha"
+          ]
+        },
+        {
+          "id": "greater-equal",
+          "mode": "filter",
+          "filter": {
+            "and": [
+              "price >= 4"
+            ]
+          },
+          "expected": [
+            "alpha",
+            "beta"
+          ]
+        },
+        {
+          "id": "less",
+          "mode": "filter",
+          "filter": {
+            "and": [
+              "price < 4"
+            ]
+          },
+          "expected": [
+            "gamma"
+          ]
+        },
+        {
+          "id": "less-equal",
+          "mode": "filter",
+          "filter": {
+            "and": [
+              "price <= 4"
+            ]
+          },
+          "expected": [
+            "beta",
+            "gamma"
+          ]
+        },
+        {
+          "id": "native-equals",
+          "mode": "filter",
+          "filter": {
+            "and": [
+              "price = 4"
+            ]
+          },
+          "expected": [
+            "beta"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "BASES-FILTER-003",
+      "title": "Symbolic boolean operators and truthiness",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/syntax",
+      "notes": "Symbolic logic and numeric truthiness are compiled to boolean predicates before evaluation.",
+      "probes": [
+        {
+          "id": "and",
+          "mode": "filter",
+          "filter": {
+            "and": [
+              "status == \"open\" && price > 5"
+            ]
+          },
+          "expected": [
+            "alpha"
+          ]
+        },
+        {
+          "id": "or",
+          "mode": "filter",
+          "filter": {
+            "and": [
+              "price > 5 || price == 0"
+            ]
+          },
+          "expected": [
+            "alpha",
+            "gamma"
+          ]
+        },
+        {
+          "id": "not",
+          "mode": "filter",
+          "filter": {
+            "and": [
+              "!(status == \"done\")"
+            ]
+          },
+          "expected": [
+            "alpha",
+            "gamma"
+          ]
+        },
+        {
+          "id": "truthy",
+          "mode": "filter",
+          "filter": {
+            "and": [
+              "price"
+            ]
+          },
+          "expected": [
+            "alpha",
+            "beta"
+          ]
+        },
+        {
+          "id": "and-without-equals",
+          "mode": "filter",
+          "filter": {
+            "and": [
+              "price > 5 && age < 4"
+            ]
+          },
+          "expected": [
+            "alpha"
+          ]
+        },
+        {
+          "id": "or-without-equals",
+          "mode": "filter",
+          "filter": {
+            "and": [
+              "price > 5 || price < 1"
+            ]
+          },
+          "expected": [
+            "alpha",
+            "gamma"
+          ]
+        },
+        {
+          "id": "not-without-equals",
+          "mode": "filter",
+          "filter": {
+            "and": [
+              "!(price > 5)"
+            ]
+          },
+          "expected": [
+            "beta",
+            "gamma"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "BASES-FILTER-004",
+      "title": "Bare, note-dot and bracket properties",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/syntax",
+      "notes": "Bracketed note keys use typed literal-key lookups, preserving whitespace, dots and reserved names.",
+      "probes": [
+        {
+          "id": "bare",
+          "mode": "filter",
+          "filter": {
+            "and": [
+              "status != \"open\""
+            ]
+          },
+          "expected": [
+            "beta"
+          ]
+        },
+        {
+          "id": "dot",
+          "mode": "filter",
+          "filter": {
+            "and": [
+              "note.status != \"open\""
+            ]
+          },
+          "expected": [
+            "beta"
+          ]
+        },
+        {
+          "id": "bracket",
+          "mode": "filter",
+          "filter": {
+            "and": [
+              "note[\"status\"] != \"open\""
+            ]
+          },
+          "expected": [
+            "beta"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "BASES-FILTER-005",
+      "title": "Arithmetic and precedence",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/syntax",
+      "notes": "Arithmetic precedence, grouping, unary minus, division and modulo.",
+      "probes": [
+        {
+          "id": "precedence",
+          "mode": "expression",
+          "expression": "2 + 3 * 4",
+          "expected": 14
+        },
+        {
+          "id": "division",
+          "mode": "expression",
+          "expression": "12 / 3",
+          "expected": 4
+        },
+        {
+          "id": "modulo",
+          "mode": "expression",
+          "expression": "7 % 3",
+          "expected": 1
+        },
+        {
+          "id": "parentheses",
+          "mode": "expression",
+          "expression": "(2 + 3) * -4",
+          "expected": -20
+        }
+      ]
+    },
+    {
+      "id": "BASES-FORMULA-001",
+      "title": "Formula references in filters",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/syntax",
+      "notes": "Dotted and bracketed formula references resolve through the same execution compiler without rewriting string literals.",
+      "probes": [
+        {
+          "id": "dot",
+          "mode": "document",
+          "document": {
+            "formulas": {
+              "ppu": "price / age"
+            },
+            "filters": {
+              "and": [
+                "formula.ppu > 3"
+              ]
+            },
+            "views": [
+              {
+                "type": "table",
+                "name": "Table",
+                "order": [
+                  "file.path"
+                ]
+              }
+            ]
+          },
+          "expected": [
+            "alpha"
+          ]
+        },
+        {
+          "id": "bracket",
+          "mode": "document",
+          "document": {
+            "formulas": {
+              "ppu": "price / age"
+            },
+            "filters": {
+              "and": [
+                "formula[\"ppu\"] > 3"
+              ]
+            },
+            "views": [
+              {
+                "type": "table",
+                "name": "Table",
+                "order": [
+                  "file.path"
+                ]
+              }
+            ]
+          },
+          "expected": [
+            "alpha"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "BASES-FORMULA-002",
+      "title": "Formula chains and formula sorting",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/syntax",
+      "notes": "Formula chains preserve arithmetic precedence and both formula-ID spellings sort by evaluated values.",
+      "probes": [
+        {
+          "id": "chain",
+          "mode": "document",
+          "document": {
+            "formulas": {
+              "ppu": "price / age",
+              "next": "formula[\"ppu\"] + 1"
+            },
+            "filters": {
+              "and": [
+                "formula[\"next\"] > 4"
+              ]
+            },
+            "views": [
+              {
+                "type": "table",
+                "name": "Table",
+                "order": [
+                  "file.path"
+                ]
+              }
+            ]
+          },
+          "expected": [
+            "alpha"
+          ]
+        },
+        {
+          "id": "sort",
+          "mode": "document",
+          "document": {
+            "formulas": {
+              "ppu": "price / age"
+            },
+            "views": [
+              {
+                "type": "table",
+                "name": "Table",
+                "order": [
+                  "formula.ppu"
+                ],
+                "sort": [
+                  {
+                    "property": "formula.ppu",
+                    "direction": "ASC"
+                  }
+                ]
+              }
+            ]
+          },
+          "expected": [
+            "gamma",
+            "beta",
+            "alpha"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "BASES-CONTEXT-001",
+      "title": "this binding",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/syntax",
+      "notes": "A query has no owning-note binding in BasesTable or QueryController; real embed ownership needs a host fixture.",
+      "probes": [
+        {
+          "id": "this-file",
+          "mode": "expression",
+          "expression": "this.file.path",
+          "expected": "Notes/Context.md"
+        }
+      ],
+      "difference": {
+        "kind": "deferred",
+        "reason": "Host-specific this binding needs an explicit owning-file context contract; do not infer it from a global App.",
+        "evidence": "LN-BASE-012; QueryController and BasesTable"
+      }
+    },
+    {
+      "id": "BASES-DATE-001",
+      "title": "Date fields and arithmetic",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/syntax",
+      "notes": "Luxon values must implement the documented Bases date and duration semantics.",
+      "probes": [
+        {
+          "id": "year",
+          "mode": "expression",
+          "expression": "date(\"2025-01-02\").year",
+          "expected": 2025
+        },
+        {
+          "id": "month",
+          "mode": "expression",
+          "expression": "date(\"2025-01-02\").month",
+          "expected": 1
+        },
+        {
+          "id": "add-month",
+          "mode": "expression",
+          "expression": "(date(\"2024-12-01\") + \"1M\").format(\"YYYY-MM-DD\")",
+          "expected": "2025-01-01"
+        },
+        {
+          "id": "date-difference",
+          "mode": "expression",
+          "expression": "number(date(\"2025-01-03\") - date(\"2025-01-01\"))",
+          "expected": 172800000
+        }
+      ]
+    },
+    {
+      "id": "BASES-FILE-001",
+      "title": "File fields",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/syntax",
+      "notes": "The runtime basename uses the extension-free TFile.basename field; other selected metadata fields remain unchanged.",
+      "probes": [
+        {
+          "id": "name",
+          "mode": "expression",
+          "expression": "file.name",
+          "expected": "Alpha.md"
+        },
+        {
+          "id": "basename",
+          "mode": "expression",
+          "expression": "file.basename",
+          "expected": "Alpha"
+        },
+        {
+          "id": "path",
+          "mode": "expression",
+          "expression": "file.path",
+          "expected": "Notes/Alpha.md"
+        },
+        {
+          "id": "extension",
+          "mode": "expression",
+          "expression": "file.ext",
+          "expected": "md"
+        },
+        {
+          "id": "size",
+          "mode": "expression",
+          "expression": "file.size",
+          "expected": 10
+        },
+        {
+          "id": "tags",
+          "mode": "expression",
+          "expression": "file.tags",
+          "expected": [
+            "#book/fiction"
+          ]
+        },
+        {
+          "id": "links",
+          "mode": "expression",
+          "expression": "file.links",
+          "expected": [
+            "Notes/Beta.md"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "BASES-LINK-001",
+      "title": "Frontmatter links resolve as typed links",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/syntax",
+      "notes": "Documented wikilinks support asFile and file comparisons; current metadata keeps raw strings.",
+      "probes": [
+        {
+          "id": "frontmatter-link",
+          "mode": "expression",
+          "expression": "authors[0].asFile().name",
+          "expected": "Beta.md"
+        },
+        {
+          "id": "link-equality",
+          "mode": "expression",
+          "expression": "link(\"Notes/Beta.md\") == link(\"[[Notes/Beta.md]]\")",
+          "expected": true
+        }
+      ],
+      "difference": {
+        "kind": "deferred",
+        "reason": "Typed link/file resolution requires the complete host-owned value-wrapper contract, not a string approximation.",
+        "evidence": "LN-BASE-012; functions-core.ts; bases.svelte.ts"
+      }
+    },
+    {
+      "id": "BASES-FUNC-001",
+      "title": "global.escapeHTML",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "escapeHTML(\"<>&\")",
+          "expected": "&lt;&gt;&amp;"
+        }
+      ],
+      "functions": [
+        "global.escapeHTML"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-002",
+      "title": "global.date",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Accept ISO and documented space-separated date/time strings, preserving existing native and epoch constructors.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "date(\"2025-01-02\")",
+          "expected": "2025-01-02T00:00:00.000Z"
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "date(\"2025-01-02 12:30:00\")",
+          "expected": "2025-01-02T12:30:00.000Z"
+        }
+      ],
+      "functions": [
+        "global.date"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-003",
+      "title": "global.duration",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Accept documented shorthand durations, distinguishing M (month) from m (minute), while retaining native ISO durations.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "duration(\"1d\")",
+          "expected": 86400000
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "duration(\"2 hours\")",
+          "expected": 7200000
+        },
+        {
+          "id": "short-week",
+          "mode": "expression",
+          "expression": "duration(\"1w\")",
+          "expected": 604800000
+        }
+      ],
+      "functions": [
+        "global.duration"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-004",
+      "title": "global.file",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "A path must resolve to a File object; returning the path text is insufficient.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "file(\"Notes/Beta.md\").name",
+          "expected": "Beta.md"
+        }
+      ],
+      "functions": [
+        "global.file"
+      ],
+      "difference": {
+        "kind": "deferred",
+        "reason": "Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity.",
+        "evidence": "LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion"
+      }
+    },
+    {
+      "id": "BASES-FUNC-005",
+      "title": "global.html",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [],
+      "functions": [
+        "global.html"
+      ],
+      "review": {
+        "evidence": "functions.ts returns scalar strings for html/image and a local Icon class; bases.svelte.ts converts these via generic value wrappers.",
+        "acceptance": "Mount a governed formula cell and verify typed HTML, image or icon rendering and safe teardown."
+      },
+      "difference": {
+        "kind": "deferred",
+        "reason": "Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity.",
+        "evidence": "LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion"
+      }
+    },
+    {
+      "id": "BASES-FUNC-006",
+      "title": "global.if",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "if(true, \"yes\", \"no\")",
+          "expected": "yes"
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "if(false, \"yes\")",
+          "expected": null
+        }
+      ],
+      "functions": [
+        "global.if"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-007",
+      "title": "global.image",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [],
+      "functions": [
+        "global.image"
+      ],
+      "review": {
+        "evidence": "functions.ts returns scalar strings for html/image and a local Icon class; bases.svelte.ts converts these via generic value wrappers.",
+        "acceptance": "Mount a governed formula cell and verify typed HTML, image or icon rendering and safe teardown."
+      },
+      "difference": {
+        "kind": "deferred",
+        "reason": "Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity.",
+        "evidence": "LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion"
+      }
+    },
+    {
+      "id": "BASES-FUNC-008",
+      "title": "global.icon",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [],
+      "functions": [
+        "global.icon"
+      ],
+      "review": {
+        "evidence": "functions.ts returns scalar strings for html/image and a local Icon class; bases.svelte.ts converts these via generic value wrappers.",
+        "acceptance": "Mount a governed formula cell and verify typed HTML, image or icon rendering and safe teardown."
+      },
+      "difference": {
+        "kind": "deferred",
+        "reason": "Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity.",
+        "evidence": "LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion"
+      }
+    },
+    {
+      "id": "BASES-FUNC-009",
+      "title": "global.link",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Checks typed file resolution; display overload needs host rendering acceptance.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "link(\"Notes/Beta.md\").asFile().name",
+          "expected": "Beta.md"
+        }
+      ],
+      "functions": [
+        "global.link"
+      ],
+      "difference": {
+        "kind": "deferred",
+        "reason": "Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity.",
+        "evidence": "LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion"
+      }
+    },
+    {
+      "id": "BASES-FUNC-010",
+      "title": "global.list",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "An existing list must remain unchanged rather than becoming a nested list.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "list(\"one\")",
+          "expected": [
+            "one"
+          ]
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "list([1,2])",
+          "expected": [
+            1,
+            2
+          ]
+        }
+      ],
+      "functions": [
+        "global.list"
+      ],
+      "difference": {
+        "kind": "intentional",
+        "reason": "Keep the native variadic list extension in addition to single-list preservation.",
+        "evidence": "functions.ts VARARG registration; functions.test.ts list(a,b,c)"
+      }
+    },
+    {
+      "id": "BASES-FUNC-011",
+      "title": "global.max",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "max(1,4,2)",
+          "expected": 4
+        }
+      ],
+      "functions": [
+        "global.max"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-012",
+      "title": "global.min",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "min(1,4,2)",
+          "expected": 1
+        }
+      ],
+      "functions": [
+        "global.min"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-013",
+      "title": "global.now",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "now().year",
+          "expected": 2026
+        }
+      ],
+      "functions": [
+        "global.now"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-014",
+      "title": "global.number",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Date objects coerce to epoch milliseconds; existing scalar coercions remain available.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "number(\"3.4\")",
+          "expected": 3.4
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "number(true)",
+          "expected": 1
+        },
+        {
+          "id": "example-3",
+          "mode": "expression",
+          "expression": "number(date(\"1970-01-02\"))",
+          "expected": 86400000
+        }
+      ],
+      "functions": [
+        "global.number"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-015",
+      "title": "global.today",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "today().hour",
+          "expected": 0
+        }
+      ],
+      "functions": [
+        "global.today"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-016",
+      "title": "global.random",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "random() >= 0 && random() < 1",
+          "expected": true
+        }
+      ],
+      "functions": [
+        "global.random"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-017",
+      "title": "any.isTruthy",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "(1).isTruthy()",
+          "expected": true
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "(0).isTruthy()",
+          "expected": false
+        }
+      ],
+      "functions": [
+        "any.isTruthy"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-018",
+      "title": "any.isType",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "\"x\".isType(\"string\")",
+          "expected": true
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "true.isType(\"boolean\")",
+          "expected": true
+        },
+        {
+          "id": "example-3",
+          "mode": "expression",
+          "expression": "[1].isType(\"list\")",
+          "expected": true
+        }
+      ],
+      "functions": [
+        "any.isType"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-019",
+      "title": "any.toString",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "(123).toString()",
+          "expected": "123"
+        }
+      ],
+      "functions": [
+        "any.toString"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-020",
+      "title": "date.date",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "date(\"2025-01-02T12:30:00\").date()",
+          "expected": "2025-01-02T00:00:00.000Z"
+        }
+      ],
+      "functions": [
+        "date.date"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-021",
+      "title": "date.format",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "date(\"2025-01-02\").format(\"YYYY-MM-DD\")",
+          "expected": "2025-01-02"
+        }
+      ],
+      "functions": [
+        "date.format"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-022",
+      "title": "date.time",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Obsidian returns HH:mm:ss; Luxon ISO time includes offsets and milliseconds.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "date(\"2025-01-02T12:30:00\").time()",
+          "expected": "12:30:00"
+        }
+      ],
+      "functions": [
+        "date.time"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-023",
+      "title": "date.relative",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "date(\"2026-11-11T12:00:00\").relative()",
+          "expected": "1 day ago"
+        }
+      ],
+      "functions": [
+        "date.relative"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-024",
+      "title": "date.isEmpty",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "date(\"2025-01-02\").isEmpty()",
+          "expected": false
+        }
+      ],
+      "functions": [
+        "date.isEmpty"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-025",
+      "title": "string.contains",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "functions-core.ts lowercases both operands; Obsidian follows JavaScript case sensitivity.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "\"hello\".contains(\"ell\")",
+          "expected": true
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "\"hello\".contains(\"H\")",
+          "expected": false
+        }
+      ],
+      "functions": [
+        "string.contains"
+      ],
+      "difference": {
+        "kind": "intentional",
+        "reason": "Keep case-insensitive text matching so existing saved filters retain their meaning. Obsidian case sensitivity remains a reported difference.",
+        "evidence": "functions-core.ts contains; functions.test.ts existing-semantics regression"
+      }
+    },
+    {
+      "id": "BASES-FUNC-026",
+      "title": "string.containsAll",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Check canonical containsAll spelling and case sensitivity, independently of Lapis containsAllOf alias.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "\"hello\".containsAll(\"h\", \"e\")",
+          "expected": true
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "\"hello\".containsAll(\"H\", \"e\")",
+          "expected": false
+        }
+      ],
+      "functions": [
+        "string.containsAll"
+      ],
+      "difference": {
+        "kind": "intentional",
+        "reason": "Keep the established case-insensitive canonical alias and containsAllOf extension.",
+        "evidence": "functions.test.ts registers upstream contains aliases with existing semantics"
+      }
+    },
+    {
+      "id": "BASES-FUNC-027",
+      "title": "string.containsAny",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Check canonical containsAny spelling and case sensitivity, independently of Lapis containsAnyOf alias.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "\"hello\".containsAny(\"x\", \"e\")",
+          "expected": true
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "\"hello\".containsAny(\"H\", \"X\")",
+          "expected": false
+        }
+      ],
+      "functions": [
+        "string.containsAny"
+      ],
+      "difference": {
+        "kind": "intentional",
+        "reason": "Keep the established case-insensitive canonical alias and containsAnyOf extension.",
+        "evidence": "functions.test.ts registers upstream contains aliases with existing semantics"
+      }
+    },
+    {
+      "id": "BASES-FUNC-028",
+      "title": "string.endsWith",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "\"hello\".endsWith(\"lo\")",
+          "expected": true
+        }
+      ],
+      "functions": [
+        "string.endsWith"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-029",
+      "title": "string.isEmpty",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "\"\".isEmpty()",
+          "expected": true
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "\"hello\".isEmpty()",
+          "expected": false
+        }
+      ],
+      "functions": [
+        "string.isEmpty"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-030",
+      "title": "string.lower",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "\"HELLO\".lower()",
+          "expected": "hello"
+        }
+      ],
+      "functions": [
+        "string.lower"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-031",
+      "title": "string.replace",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "\"a:b:c\".replace(\":\", \"-\")",
+          "expected": "a-b-c"
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "\"a:b:c\".replace(/:/, \"-\")",
+          "expected": "a-b:c"
+        },
+        {
+          "id": "example-3",
+          "mode": "expression",
+          "expression": "\"a:b:c\".replace(/:/g, \"-\")",
+          "expected": "a-b-c"
+        }
+      ],
+      "functions": [
+        "string.replace"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-032",
+      "title": "string.repeat",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "\"ab\".repeat(2)",
+          "expected": "abab"
+        }
+      ],
+      "functions": [
+        "string.repeat"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-033",
+      "title": "string.reverse",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "\"abc\".reverse()",
+          "expected": "cba"
+        }
+      ],
+      "functions": [
+        "string.reverse"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-034",
+      "title": "string.slice",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "\"hello\".slice(1,4)",
+          "expected": "ell"
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "\"hello\".slice(1)",
+          "expected": "ello"
+        }
+      ],
+      "functions": [
+        "string.slice"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-035",
+      "title": "string.split",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "String separators accept the optional split limit. Regular-expression literal parsing remains an unresolved gap.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "\"a,b,c\".split(\",\")",
+          "expected": [
+            "a",
+            "b",
+            "c"
+          ]
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "\"a,b,c\".split(\",\",2)",
+          "expected": [
+            "a",
+            "b"
+          ]
+        },
+        {
+          "id": "example-3",
+          "mode": "expression",
+          "expression": "\"a,b,c\".split(/,/)",
+          "expected": [
+            "a",
+            "b",
+            "c"
+          ]
+        }
+      ],
+      "functions": [
+        "string.split"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-036",
+      "title": "string.startsWith",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "\"hello\".startsWith(\"he\")",
+          "expected": true
+        }
+      ],
+      "functions": [
+        "string.startsWith"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-037",
+      "title": "string.title",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "\"hello world\".title()",
+          "expected": "Hello World"
+        }
+      ],
+      "functions": [
+        "string.title"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-038",
+      "title": "string.trim",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "\" hi \".trim()",
+          "expected": "hi"
+        }
+      ],
+      "functions": [
+        "string.trim"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-039",
+      "title": "number.abs",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "(-5).abs()",
+          "expected": 5
+        }
+      ],
+      "functions": [
+        "number.abs"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-040",
+      "title": "number.ceil",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "(2.1).ceil()",
+          "expected": 3
+        }
+      ],
+      "functions": [
+        "number.ceil"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-041",
+      "title": "number.floor",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "(2.9).floor()",
+          "expected": 2
+        }
+      ],
+      "functions": [
+        "number.floor"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-042",
+      "title": "number.isEmpty",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Present zero values are not empty; missing values still are.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "(0).isEmpty()",
+          "expected": false
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "(5).isEmpty()",
+          "expected": false
+        }
+      ],
+      "functions": [
+        "number.isEmpty"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-043",
+      "title": "number.round",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "(2.5).round()",
+          "expected": 3
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "(2.3333).round(2)",
+          "expected": 2.33
+        }
+      ],
+      "functions": [
+        "number.round"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-044",
+      "title": "number.toFixed",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "(3.14159).toFixed(2)",
+          "expected": "3.14"
+        }
+      ],
+      "functions": [
+        "number.toFixed"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-045",
+      "title": "list.contains",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "[1,2,3].contains(2)",
+          "expected": true
+        }
+      ],
+      "functions": [
+        "list.contains"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-046",
+      "title": "list.containsAll",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "[1,2,3].containsAll(2,3)",
+          "expected": true
+        }
+      ],
+      "functions": [
+        "list.containsAll"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-047",
+      "title": "list.containsAny",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "[1,2,3].containsAny(3,4)",
+          "expected": true
+        }
+      ],
+      "functions": [
+        "list.containsAny"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-048",
+      "title": "list.filter",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "[1,2,3,4].filter(value > 2)",
+          "expected": [
+            3,
+            4
+          ]
+        }
+      ],
+      "functions": [
+        "list.filter"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-049",
+      "title": "list.flat",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "[1,[2,3]].flat()",
+          "expected": [
+            1,
+            2,
+            3
+          ]
+        }
+      ],
+      "functions": [
+        "list.flat"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-050",
+      "title": "list.isEmpty",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "[].isEmpty()",
+          "expected": true
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "[1].isEmpty()",
+          "expected": false
+        }
+      ],
+      "functions": [
+        "list.isEmpty"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-051",
+      "title": "list.join",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "[1,2,3].join(\",\")",
+          "expected": "1,2,3"
+        }
+      ],
+      "functions": [
+        "list.join"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-052",
+      "title": "list.map",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "[1,2,3].map(value + 1)",
+          "expected": [
+            2,
+            3,
+            4
+          ]
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "[1,2,3].map(index)",
+          "expected": [
+            0,
+            1,
+            2
+          ]
+        }
+      ],
+      "functions": [
+        "list.map"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-053",
+      "title": "list.reduce",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Obsidian takes expression then initial value, with acc; Lapis callback uses accumulator.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "[1,2,3].reduce(acc + value, 0)",
+          "expected": 6
+        }
+      ],
+      "functions": [
+        "list.reduce"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-054",
+      "title": "list.reverse",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "[1,2,3].reverse()",
+          "expected": [
+            3,
+            2,
+            1
+          ]
+        }
+      ],
+      "functions": [
+        "list.reverse"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-055",
+      "title": "list.slice",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "[1,2,3,4].slice(1,3)",
+          "expected": [
+            2,
+            3
+          ]
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "[1,2,3].slice(1)",
+          "expected": [
+            2,
+            3
+          ]
+        }
+      ],
+      "functions": [
+        "list.slice"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-056",
+      "title": "list.sort",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "[3,1,2].sort()",
+          "expected": [
+            1,
+            2,
+            3
+          ]
+        }
+      ],
+      "functions": [
+        "list.sort"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-057",
+      "title": "list.unique",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "[1,2,2,3].unique()",
+          "expected": [
+            1,
+            2,
+            3
+          ]
+        }
+      ],
+      "functions": [
+        "list.unique"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-058",
+      "title": "link.asFile",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "link(\"Notes/Beta.md\").asFile().name",
+          "expected": "Beta.md"
+        }
+      ],
+      "functions": [
+        "link.asFile"
+      ],
+      "difference": {
+        "kind": "deferred",
+        "reason": "Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity.",
+        "evidence": "LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion"
+      }
+    },
+    {
+      "id": "BASES-FUNC-059",
+      "title": "link.linksTo",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Must inspect the source file's outgoing links rather than compare the two paths.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "link(\"Notes/Alpha.md\").linksTo(\"Notes/Beta.md\")",
+          "expected": true
+        }
+      ],
+      "functions": [
+        "link.linksTo"
+      ],
+      "difference": {
+        "kind": "deferred",
+        "reason": "Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity.",
+        "evidence": "LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion"
+      }
+    },
+    {
+      "id": "BASES-FUNC-060",
+      "title": "file.asLink",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Requires a typed link with resolution rather than a wikilink string.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "file.asLink().asFile().name",
+          "expected": "Alpha.md"
+        }
+      ],
+      "functions": [
+        "file.asLink"
+      ],
+      "difference": {
+        "kind": "deferred",
+        "reason": "Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity.",
+        "evidence": "LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion"
+      }
+    },
+    {
+      "id": "BASES-FUNC-061",
+      "title": "file.hasLink",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "file.hasLink(\"Notes/Beta.md\")",
+          "expected": true
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "file.hasLink(file(\"Notes/Beta.md\"))",
+          "expected": true
+        }
+      ],
+      "functions": [
+        "file.hasLink"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-062",
+      "title": "file.hasProperty",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "file.hasProperty(\"status\")",
+          "expected": true
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "file.hasProperty(\"missing\")",
+          "expected": false
+        }
+      ],
+      "functions": [
+        "file.hasProperty"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-063",
+      "title": "file.hasTag",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "file.hasTag(\"book\")",
+          "expected": true
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "file.hasTag(\"missing\", \"book\")",
+          "expected": true
+        }
+      ],
+      "functions": [
+        "file.hasTag"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-064",
+      "title": "file.inFolder",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "file.inFolder(\"Notes\")",
+          "expected": true
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "file.inFolder(\"Other\")",
+          "expected": false
+        }
+      ],
+      "functions": [
+        "file.inFolder"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-065",
+      "title": "object.isEmpty",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Plain objects with no own properties are empty; date and duration objects remain non-empty.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "file.properties.isEmpty()",
+          "expected": false
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "empty.isEmpty()",
+          "expected": true
+        }
+      ],
+      "functions": [
+        "object.isEmpty"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-066",
+      "title": "object.keys",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "file.properties.keys()",
+          "expected": [
+            "status",
+            "price",
+            "age",
+            "tags",
+            "authors",
+            "empty"
+          ]
+        }
+      ],
+      "functions": [
+        "object.keys"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-067",
+      "title": "object.values",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "file.properties.values()",
+          "expected": [
+            "open",
+            12,
+            3,
+            [
+              "book/fiction"
+            ],
+            [
+              "[[Notes/Beta.md]]"
+            ],
+            {}
+          ]
+        }
+      ],
+      "functions": [
+        "object.values"
+      ]
+    },
+    {
+      "id": "BASES-FUNC-068",
+      "title": "regular-expression.matches",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/functions",
+      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "probes": [
+        {
+          "id": "example-1",
+          "mode": "expression",
+          "expression": "/abc/.matches(\"abcde\")",
+          "expected": true
+        },
+        {
+          "id": "example-2",
+          "mode": "expression",
+          "expression": "/abc/.matches(\"xyz\")",
+          "expected": false
+        }
+      ],
+      "functions": [
+        "regular-expression.matches"
+      ]
+    },
+    {
+      "id": "BASES-VIEW-001",
+      "title": "Table, cards, list, Kanban and Activity",
+      "priority": "P2",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/views",
+      "notes": "Registrations and governed stories exist. Layout names do not establish compatibility with every Obsidian view setting.",
+      "probes": [],
+      "review": {
+        "evidence": "src/lib/bases-view/view-registration-inventory.ts; stories/plugins/bases",
+        "acceptance": "Run each populated governed story and compare current Obsidian layout configuration."
+      }
+    },
+    {
+      "id": "BASES-VIEW-002",
+      "title": "Interactive map",
+      "priority": "P2",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/views",
+      "notes": "Map renders an explicit unavailable surface; interactive map/provider support remains absent.",
+      "probes": [],
+      "review": {
+        "evidence": "src/lib/bases-view/map-view/view.svelte",
+        "acceptance": "Provide a real map provider and test geospatial data, navigation and disposal."
+      },
+      "difference": {
+        "kind": "deferred",
+        "reason": "The current product deliberately renders map-unavailable until a real provider is supplied.",
+        "evidence": "LN-BASE-005/012; map-view/view.svelte"
+      }
+    },
+    {
+      "id": "BASES-VIEW-003",
+      "title": "Sort, group, manual groups and collapse",
+      "priority": "P2",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/views",
+      "notes": "Basic sorting and grouping exist; manual group ordering, hidden groups and explicit empty groups need separate acceptance.",
+      "probes": [],
+      "review": {
+        "evidence": "src/lib/bases-view/query-result-core.ts; models.ts; table-view and list-view",
+        "acceptance": "Load Obsidian manual group configuration, hide/reorder/add empty groups, and verify persistence."
+      }
+    },
+    {
+      "id": "BASES-VIEW-004",
+      "title": "Default and custom summaries",
+      "priority": "P2",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/syntax",
+      "notes": "Built-in summary branches exist, but grouped and arbitrary custom formula semantics are not fully qualified.",
+      "probes": [],
+      "review": {
+        "evidence": "src/lib/bases-view/bases.svelte.ts BasesQueryResult.getSummary; header/summaries.svelte",
+        "acceptance": "Check every default summary plus values.mean().round(3) globally and per group."
+      }
+    },
+    {
+      "id": "BASES-VIEW-005",
+      "title": "Embeds and named-view fragments",
+      "priority": "P2",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/views",
+      "notes": "Read-only file and fenced embeds exist; Obsidian ![[File.base#View]] selection requires focused host acceptance.",
+      "probes": [],
+      "review": {
+        "evidence": "src/lib/bases-plugin.ts; stories/plugins/bases/Embeds.stories.ts",
+        "acceptance": "Verify fragment-selected views, this ownership and independent repeated embed lifecycles."
+      }
+    },
+    {
+      "id": "BASES-VIEW-006",
+      "title": "Search, edit, create, export and clipboard",
+      "priority": "P2",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/views",
+      "notes": "Lapis has governed workflow and editable-cell stories; copying formatted results and complete Obsidian workflow parity are unverified.",
+      "probes": [],
+      "review": {
+        "evidence": "src/lib/bases-view/header; export-core.ts; stories/plugins/bases",
+        "acceptance": "Exercise search over displayed properties, CRUD, CSV and clipboard with the same fixtures in both hosts."
+      }
+    },
+    {
+      "id": "BASES-FORMULA-003",
+      "title": "Circular references and diagnostics",
+      "priority": "P1",
+      "owner": "lapis-plugins/packages/bases",
+      "source": "https://help.obsidian.md/bases/syntax",
+      "notes": "The execution compiler rejects circular and unknown formula references; the UI retains its editing toolbar and shows a bounded error. Source and governed story regressions cover this behavior.",
+      "probes": [
+        {
+          "id": "dot-cycle",
+          "mode": "compile-error",
+          "document": {
+            "formulas": {
+              "a": "formula.b",
+              "b": "formula.a"
+            },
+            "filters": {
+              "and": [
+                "formula.a > 0"
+              ]
+            },
+            "views": [
+              {
+                "type": "table",
+                "name": "Audit",
+                "order": [
+                  "file.path"
+                ]
+              }
+            ]
+          },
+          "expected": "Circular Bases formula: a -> b -> a"
+        },
+        {
+          "id": "bracket-cycle",
+          "mode": "compile-error",
+          "document": {
+            "formulas": {
+              "a": "formula[\"a\"]"
+            },
+            "filters": {
+              "and": [
+                "formula[\"a\"] > 0"
+              ]
+            },
+            "views": [
+              {
+                "type": "table",
+                "name": "Audit",
+                "order": [
+                  "file.path"
+                ]
+              }
+            ]
+          },
+          "expected": "Circular Bases formula: a -> a"
+        }
+      ]
+    }
+  ]
+}

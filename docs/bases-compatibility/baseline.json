@@ -1,0 +1,746 @@
+{
+  "BASES-YAML-001": [
+    {
+      "id": "string",
+      "pass": true
+    },
+    {
+      "id": "object",
+      "pass": true
+    }
+  ],
+  "BASES-YAML-002": [
+    {
+      "id": "obsidian-key",
+      "pass": true
+    },
+    {
+      "id": "lapis-key",
+      "pass": true
+    }
+  ],
+  "BASES-YAML-003": [
+    {
+      "id": "obsidian-composition",
+      "pass": true
+    },
+    {
+      "id": "native-composition",
+      "pass": true
+    }
+  ],
+  "BASES-FILTER-001": [
+    {
+      "id": "and",
+      "pass": true
+    },
+    {
+      "id": "or",
+      "pass": true
+    },
+    {
+      "id": "not",
+      "pass": true
+    },
+    {
+      "id": "nested",
+      "pass": true
+    }
+  ],
+  "BASES-FILTER-002": [
+    {
+      "id": "equals",
+      "pass": true
+    },
+    {
+      "id": "not-equal",
+      "pass": true
+    },
+    {
+      "id": "greater",
+      "pass": true
+    },
+    {
+      "id": "greater-equal",
+      "pass": true
+    },
+    {
+      "id": "less",
+      "pass": true
+    },
+    {
+      "id": "less-equal",
+      "pass": true
+    },
+    {
+      "id": "native-equals",
+      "pass": true
+    }
+  ],
+  "BASES-FILTER-003": [
+    {
+      "id": "and",
+      "pass": true
+    },
+    {
+      "id": "or",
+      "pass": true
+    },
+    {
+      "id": "not",
+      "pass": true
+    },
+    {
+      "id": "truthy",
+      "pass": true
+    },
+    {
+      "id": "and-without-equals",
+      "pass": true
+    },
+    {
+      "id": "or-without-equals",
+      "pass": true
+    },
+    {
+      "id": "not-without-equals",
+      "pass": true
+    }
+  ],
+  "BASES-FILTER-004": [
+    {
+      "id": "bare",
+      "pass": true
+    },
+    {
+      "id": "dot",
+      "pass": true
+    },
+    {
+      "id": "bracket",
+      "pass": true
+    }
+  ],
+  "BASES-FILTER-005": [
+    {
+      "id": "precedence",
+      "pass": true
+    },
+    {
+      "id": "division",
+      "pass": true
+    },
+    {
+      "id": "modulo",
+      "pass": true
+    },
+    {
+      "id": "parentheses",
+      "pass": true
+    }
+  ],
+  "BASES-FORMULA-001": [
+    {
+      "id": "dot",
+      "pass": true
+    },
+    {
+      "id": "bracket",
+      "pass": true
+    }
+  ],
+  "BASES-FORMULA-002": [
+    {
+      "id": "chain",
+      "pass": true
+    },
+    {
+      "id": "sort",
+      "pass": true
+    }
+  ],
+  "BASES-CONTEXT-001": [
+    {
+      "id": "this-file",
+      "pass": false
+    }
+  ],
+  "BASES-DATE-001": [
+    {
+      "id": "year",
+      "pass": true
+    },
+    {
+      "id": "month",
+      "pass": true
+    },
+    {
+      "id": "add-month",
+      "pass": false
+    },
+    {
+      "id": "date-difference",
+      "pass": false
+    }
+  ],
+  "BASES-FILE-001": [
+    {
+      "id": "name",
+      "pass": true
+    },
+    {
+      "id": "basename",
+      "pass": true
+    },
+    {
+      "id": "path",
+      "pass": true
+    },
+    {
+      "id": "extension",
+      "pass": true
+    },
+    {
+      "id": "size",
+      "pass": true
+    },
+    {
+      "id": "tags",
+      "pass": true
+    },
+    {
+      "id": "links",
+      "pass": true
+    }
+  ],
+  "BASES-LINK-001": [
+    {
+      "id": "frontmatter-link",
+      "pass": false
+    },
+    {
+      "id": "link-equality",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-001": [
+    {
+      "id": "example-1",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-002": [
+    {
+      "id": "example-1",
+      "pass": true
+    },
+    {
+      "id": "example-2",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-003": [
+    {
+      "id": "example-1",
+      "pass": true
+    },
+    {
+      "id": "example-2",
+      "pass": true
+    },
+    {
+      "id": "short-week",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-004": [
+    {
+      "id": "example-1",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-006": [
+    {
+      "id": "example-1",
+      "pass": true
+    },
+    {
+      "id": "example-2",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-009": [
+    {
+      "id": "example-1",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-010": [
+    {
+      "id": "example-1",
+      "pass": true
+    },
+    {
+      "id": "example-2",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-011": [
+    {
+      "id": "example-1",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-012": [
+    {
+      "id": "example-1",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-013": [
+    {
+      "id": "example-1",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-014": [
+    {
+      "id": "example-1",
+      "pass": true
+    },
+    {
+      "id": "example-2",
+      "pass": true
+    },
+    {
+      "id": "example-3",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-015": [
+    {
+      "id": "example-1",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-016": [
+    {
+      "id": "example-1",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-017": [
+    {
+      "id": "example-1",
+      "pass": true
+    },
+    {
+      "id": "example-2",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-018": [
+    {
+      "id": "example-1",
+      "pass": true
+    },
+    {
+      "id": "example-2",
+      "pass": true
+    },
+    {
+      "id": "example-3",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-019": [
+    {
+      "id": "example-1",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-020": [
+    {
+      "id": "example-1",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-021": [
+    {
+      "id": "example-1",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-022": [
+    {
+      "id": "example-1",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-023": [
+    {
+      "id": "example-1",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-024": [
+    {
+      "id": "example-1",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-025": [
+    {
+      "id": "example-1",
+      "pass": true
+    },
+    {
+      "id": "example-2",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-026": [
+    {
+      "id": "example-1",
+      "pass": true
+    },
+    {
+      "id": "example-2",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-027": [
+    {
+      "id": "example-1",
+      "pass": true
+    },
+    {
+      "id": "example-2",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-028": [
+    {
+      "id": "example-1",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-029": [
+    {
+      "id": "example-1",
+      "pass": true
+    },
+    {
+      "id": "example-2",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-030": [
+    {
+      "id": "example-1",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-031": [
+    {
+      "id": "example-1",
+      "pass": true
+    },
+    {
+      "id": "example-2",
+      "pass": false
+    },
+    {
+      "id": "example-3",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-032": [
+    {
+      "id": "example-1",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-033": [
+    {
+      "id": "example-1",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-034": [
+    {
+      "id": "example-1",
+      "pass": true
+    },
+    {
+      "id": "example-2",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-035": [
+    {
+      "id": "example-1",
+      "pass": true
+    },
+    {
+      "id": "example-2",
+      "pass": true
+    },
+    {
+      "id": "example-3",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-036": [
+    {
+      "id": "example-1",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-037": [
+    {
+      "id": "example-1",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-038": [
+    {
+      "id": "example-1",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-039": [
+    {
+      "id": "example-1",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-040": [
+    {
+      "id": "example-1",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-041": [
+    {
+      "id": "example-1",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-042": [
+    {
+      "id": "example-1",
+      "pass": true
+    },
+    {
+      "id": "example-2",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-043": [
+    {
+      "id": "example-1",
+      "pass": false
+    },
+    {
+      "id": "example-2",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-044": [
+    {
+      "id": "example-1",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-045": [
+    {
+      "id": "example-1",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-046": [
+    {
+      "id": "example-1",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-047": [
+    {
+      "id": "example-1",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-048": [
+    {
+      "id": "example-1",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-049": [
+    {
+      "id": "example-1",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-050": [
+    {
+      "id": "example-1",
+      "pass": false
+    },
+    {
+      "id": "example-2",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-051": [
+    {
+      "id": "example-1",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-052": [
+    {
+      "id": "example-1",
+      "pass": true
+    },
+    {
+      "id": "example-2",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-053": [
+    {
+      "id": "example-1",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-054": [
+    {
+      "id": "example-1",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-055": [
+    {
+      "id": "example-1",
+      "pass": false
+    },
+    {
+      "id": "example-2",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-056": [
+    {
+      "id": "example-1",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-057": [
+    {
+      "id": "example-1",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-058": [
+    {
+      "id": "example-1",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-059": [
+    {
+      "id": "example-1",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-060": [
+    {
+      "id": "example-1",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-061": [
+    {
+      "id": "example-1",
+      "pass": true
+    },
+    {
+      "id": "example-2",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-062": [
+    {
+      "id": "example-1",
+      "pass": true
+    },
+    {
+      "id": "example-2",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-063": [
+    {
+      "id": "example-1",
+      "pass": true
+    },
+    {
+      "id": "example-2",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-064": [
+    {
+      "id": "example-1",
+      "pass": true
+    },
+    {
+      "id": "example-2",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-065": [
+    {
+      "id": "example-1",
+      "pass": true
+    },
+    {
+      "id": "example-2",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-066": [
+    {
+      "id": "example-1",
+      "pass": true
+    }
+  ],
+  "BASES-FUNC-067": [
+    {
+      "id": "example-1",
+      "pass": false
+    }
+  ],
+  "BASES-FUNC-068": [
+    {
+      "id": "example-1",
+      "pass": false
+    },
+    {
+      "id": "example-2",
+      "pass": false
+    }
+  ],
+  "BASES-FORMULA-003": [
+    {
+      "id": "dot-cycle",
+      "pass": true
+    },
+    {
+      "id": "bracket-cycle",
+      "pass": true
+    }
+  ]
+}

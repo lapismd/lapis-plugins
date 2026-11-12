@@ -179,6 +179,9 @@ export const apiUiCatalog = [
 
 /** @type {CatalogEntry[]} */
 const basesViewsCatalog = [
+  ["imported-filters", "Imported Filters"],
+  ["formula-filters", "Formula Filters"],
+  ["invalid-formula", "Invalid Formula"],
   ["table", "Table"],
   ["editable-cells", "Editable Cells"],
   ["cards", "Cards"],

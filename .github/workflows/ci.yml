@@ -32,6 +32,24 @@ env:
   LAPIS_DEPENDENCY_BOT_LOGIN: ${{ vars.LAPIS_DEPENDENCY_BOT_LOGIN }}
 
 jobs:
+  bases-upstream:
+    name: Obsidian Bases documentation drift (advisory)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7
+      - name: Compare current official documentation with reviewed snapshot
+        run: |
+          mkdir -p .release/bases-compatibility
+          node scripts/bases-compatibility.mjs --upstream > .release/bases-compatibility/upstream-drift.json
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: bases-upstream-drift
+          path: .release/bases-compatibility/upstream-drift.json
+          if-no-files-found: error
+
   changes:
     runs-on: ubuntu-latest
     outputs:
@@ -135,6 +153,16 @@ jobs:
       - uses: ./.github/actions/ci-setup
       - name: Run package unit tests
         run: node scripts/run-turbo.mjs build test --summarize
+      - name: Audit Bases compatibility and report freshness
+        run: pnpm audit:bases
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: bases-compatibility-report
+          path: |
+            .release/bases-compatibility/report.md
+            .release/bases-compatibility/report.json
+          if-no-files-found: error
       - name: Report cache restoration
         run: node scripts/report-turbo-cache.mjs --github-summary
       - name: Install pinned upstream JJ for repository fixtures

@@ -57,7 +57,10 @@
     "validation:doctor": "node scripts/validation.mjs doctor",
     "check:storybook-parity": "node scripts/validation.mjs run check:storybook-parity",
     "test:storybook-parity": "node scripts/validation.mjs run test:storybook-parity",
-    "validation:sync": "node scripts/validation.mjs run validation:sync"
+    "validation:sync": "node scripts/validation.mjs run validation:sync",
+    "audit:bases": "node scripts/bases-compatibility.mjs",
+    "audit:bases:update": "node scripts/bases-compatibility.mjs --write",
+    "audit:bases:upstream": "node scripts/bases-compatibility.mjs --upstream"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.7.0",

@@ -470,3 +470,14 @@ entries. Generating private acceptance data does not dispatch registry updates
 or publish new plugin versions.
 
 The History transient-feedback patch is qualified as an unpublished source candidate under LN-HIST-019. Local npm-pack and deterministic payload verification do not authorize npm publication, signed public assets or registry dispatch; those remain separate release gates.
+
+## Bases compatibility evidence
+
+Under LN-BASE-045, the CI unit job MUST run `pnpm audit:bases` independently of the package test cache and retain the compatibility reports as artifacts. Known compatibility gaps MUST remain explicit evidence; this audit MUST NOT replace normal package, browser, accessibility or release gates.
+An independent advisory job MUST compare current upstream documentation with the reviewed snapshot and retain its drift report. Network failures and upstream changes MUST remain visible without changing the blocking offline acceptance result.
+
+Imported Bases filter fixes retain normal npm patch delivery and the existing model/write format. LN-BASE-003/004 qualification distinguishes source and real-App catalog evidence from later registry consumer adoption.
+
+LN-BASE-046 ships as a separate Bases patch group; its expression compiler remains private and the public document model/write format is unchanged.
+
+LN-BASE-047 is a separate value-helper patch group. Audit disposition metadata preserves the distinction between corrected defects, intentional native behavior and deferred host features; no release is implied by local validation.

@@ -731,14 +731,26 @@ export class QueryController extends Component {
     );
   }
 
-  query = $derived(
-    generateQuery(
-      this.selectedView!,
-      this.formulas,
-      this.doc.filters,
-      this.requiredProperties,
-    ),
-  );
+  private compiledQuery = $derived.by(() => {
+    try {
+      return {
+        query: generateQuery(
+          this.selectedView!,
+          this.formulas,
+          this.doc.filters,
+          this.requiredProperties
+        ),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        query: "",
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+  });
+  query = $derived(this.compiledQuery.query);
+  queryError = $derived(this.compiledQuery.error);
   metadataDependencies = $derived.by(() => {
     return collectMetadataDependencies({
       documentFilter: this.doc.filters,
@@ -879,6 +891,7 @@ export class QueryController extends Component {
   getRecords(
     qs: string,
   ): [Array<Record<string, unknown>>, Record<string, DType>] {
+    if (!qs.trim()) return [[], {}];
     const types: Record<string, DType> = {};
     try {
       const [columns, data]: [{ name: symbol; type: DType }[], unknown[][]] =

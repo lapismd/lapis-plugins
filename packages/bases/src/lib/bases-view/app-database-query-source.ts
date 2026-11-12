@@ -74,14 +74,14 @@ function appendUnique(target: string[], value: string): void {
 
 function appendPropertyFilter(
   target: AppDatabaseIndexedMetadataPropertyFilter[],
-  filter: AppDatabaseIndexedMetadataPropertyFilter,
+  filter: AppDatabaseIndexedMetadataPropertyFilter
 ): void {
   if (
     target.some(
       (existing) =>
         existing.name === filter.name &&
         existing.op === filter.op &&
-        existing.value === filter.value,
+        existing.value === filter.value
     )
   ) {
     return;
@@ -89,24 +89,29 @@ function appendPropertyFilter(
   target.push(filter);
 }
 
-function collectConjunctiveFilterLines(
-  filter: Filters | FilterLine | string | null | undefined,
-): FilterLine[] {
-  if (!filter || typeof filter === "string") {
-    return [];
-  }
-  if (isFilterLine(filter)) {
-    return [filter];
-  }
-  if (!isFilterGroup(filter) || !("and" in filter)) {
-    return [];
-  }
-
-  return filter.and.flatMap((entry) => collectConjunctiveFilterLines(entry));
+function lowerConjunctiveFilter(
+  query: AppDatabaseIndexedMetadataQuery,
+  filter: Filters | FilterLine | string | null | undefined
+): boolean {
+  if (!filter) return true;
+  if (typeof filter === "string") return !filter.trim();
+  if (isFilterLine(filter)) return lowerFilterLine(query, filter);
+  if (!isFilterGroup(filter) || !("and" in filter)) return false;
+  // Visit every child so safe candidates can still be narrowed when another
+  // conjunct must be evaluated by PEaQL. Such a query cannot push down a limit.
+  return filter.and
+    .map((entry) => lowerConjunctiveFilter(query, entry))
+    .every(Boolean);
 }
 
 function normalizePropertyName(column: string): string | null {
-  if (!column || column === "file" || column.startsWith("formula.")) {
+  if (
+    !column ||
+    column === "file" ||
+    column.startsWith("note[") ||
+    column.startsWith("formula.") ||
+    column.startsWith("formula[")
+  ) {
     return null;
   }
   if (column.startsWith("file.")) {
@@ -116,7 +121,7 @@ function normalizePropertyName(column: string): string | null {
 }
 
 function isScalarFilterValue(
-  value: unknown,
+  value: unknown
 ): value is string | number | boolean | null {
   return (
     value === null ||
@@ -128,10 +133,10 @@ function isScalarFilterValue(
 
 function lowerFilterLine(
   query: AppDatabaseIndexedMetadataQuery,
-  filter: FilterLine,
-): void {
+  filter: FilterLine
+): boolean {
   if (filter.custom) {
-    return;
+    return false;
   }
 
   const rawValues = (
@@ -139,13 +144,17 @@ function lowerFilterLine(
   ) as unknown[];
   const values = rawValues.filter(isScalarFilterValue);
 
+  // These database restrictions are scalar/conjunctive. Multi-value functions
+  // have any-of semantics and must not be narrowed into all-of restrictions.
+  if (rawValues.length !== 1 || values.length !== 1) return false;
+
   if (filter.column === "file" && filter.op === "inFolder") {
     for (const value of values) {
       if (typeof value === "string") {
         appendUnique((query.pathPrefixes ??= []), value);
       }
     }
-    return;
+    return typeof values[0] === "string";
   }
 
   if (filter.column === "file" && filter.op === "hasTag") {
@@ -154,7 +163,7 @@ function lowerFilterLine(
         appendUnique((query.requiredTags ??= []), value);
       }
     }
-    return;
+    return typeof values[0] === "string";
   }
 
   if (filter.column === "file" && filter.op === "hasProperty") {
@@ -166,7 +175,7 @@ function lowerFilterLine(
         });
       }
     }
-    return;
+    return typeof values[0] === "string";
   }
 
   if (filter.column === "file" && filter.op === "!hasProperty") {
@@ -178,7 +187,7 @@ function lowerFilterLine(
         });
       }
     }
-    return;
+    return typeof values[0] === "string";
   }
 
   if (filter.column === "file.ext" && filter.op === "=") {
@@ -187,12 +196,12 @@ function lowerFilterLine(
         appendUnique((query.extensions ??= []), value);
       }
     }
-    return;
+    return typeof values[0] === "string";
   }
 
   const propertyName = normalizePropertyName(filter.column);
   if (!propertyName) {
-    return;
+    return false;
   }
 
   if (["=", "!=", ">", ">=", "<", "<="].includes(filter.op)) {
@@ -203,8 +212,10 @@ function lowerFilterLine(
         op: filter.op as AppDatabaseIndexedMetadataPropertyFilter["op"],
         value,
       });
+      return true;
     }
   }
+  return false;
 }
 
 function lowerSort(sort: SortColumn): AppDatabaseIndexedMetadataSort | null {
@@ -245,25 +256,21 @@ function lowerSort(sort: SortColumn): AppDatabaseIndexedMetadataSort | null {
 }
 
 export function buildBasesAppDatabaseQuery(
-  input: BuildBasesAppDatabaseQueryInput,
+  input: BuildBasesAppDatabaseQueryInput
 ): AppDatabaseIndexedMetadataQuery {
   const query: AppDatabaseIndexedMetadataQuery = {
     excludeHiddenPaths: true,
   };
 
-  for (const filter of collectConjunctiveFilterLines(input.documentFilter)) {
-    lowerFilterLine(query, filter);
-  }
-  for (const filter of collectConjunctiveFilterLines(input.viewFilter)) {
-    lowerFilterLine(query, filter);
-  }
+  const documentLowered = lowerConjunctiveFilter(query, input.documentFilter);
+  const viewLowered = lowerConjunctiveFilter(query, input.viewFilter);
 
   const loweredSorts = input.sort
     .map(lowerSort)
     .filter((sort) => sort !== null);
   if (loweredSorts.length > 0 && loweredSorts.length === input.sort.length) {
     query.sort = loweredSorts;
-    if (input.limit && input.limit > 0) {
+    if (documentLowered && viewLowered && input.limit && input.limit > 0) {
       query.limit = input.limit;
     }
   }
@@ -279,7 +286,7 @@ export function buildBasesAppDatabaseQuery(
 export async function queryBasesAppDatabaseRows(
   database: Pick<AppDatabase, "queryIndexedMetadataPage">,
   query: AppDatabaseIndexedMetadataQuery,
-  pageSize = 500,
+  pageSize = 500
 ): Promise<AppDatabaseIndexedMetadataRow[]> {
   if (query.limit && query.limit > 0) {
     return (
@@ -307,7 +314,7 @@ export async function queryBasesAppDatabaseRows(
 
 export function appDatabaseRowToVaultRecord(
   app: QuerySourceApp,
-  row: AppDatabaseIndexedMetadataRow,
+  row: AppDatabaseIndexedMetadataRow
 ): QuerySourceVaultRecord {
   const cache = clone((row.metadata?.metadata ?? {}) as CachedMetadata) ?? {};
   const frontmatter = { ...(cache.frontmatter ?? {}) };
@@ -319,14 +326,14 @@ export function appDatabaseRowToVaultRecord(
   cache.frontmatter = frontmatter;
 
   if ((cache.tags?.length ?? 0) === 0 && row.tags.length > 0) {
-    cache.tags = row.tags.map((tag) => ({ tag: tag.tag }) as never);
+    cache.tags = row.tags.map((tag) => ({ tag: tag.tag } as never));
   }
   if ((cache.links?.length ?? 0) === 0) {
     cache.links = row.links
       .filter((link) => link.type === "link")
       .map(
         (link) =>
-          ({ link: link.resolvedTargetPath ?? link.targetText }) as never,
+          ({ link: link.resolvedTargetPath ?? link.targetText } as never)
       );
   }
   if ((cache.embeds?.length ?? 0) === 0) {
@@ -334,7 +341,7 @@ export function appDatabaseRowToVaultRecord(
       .filter((link) => link.type === "embed")
       .map(
         (link) =>
-          ({ link: link.resolvedTargetPath ?? link.targetText }) as never,
+          ({ link: link.resolvedTargetPath ?? link.targetText } as never)
       );
   }
 
@@ -349,7 +356,7 @@ export function appDatabaseRowToVaultRecord(
 
 export function appDatabaseRowsToVaultRecords(
   app: QuerySourceApp,
-  rows: AppDatabaseIndexedMetadataRow[],
+  rows: AppDatabaseIndexedMetadataRow[]
 ): QuerySourceVaultRecord[] {
   return rows.map((row) => appDatabaseRowToVaultRecord(app, row));
 }
