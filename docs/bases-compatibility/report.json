@@ -10,10 +10,11 @@
     },
     "sources": {
       "document-core.ts": "9cb39ea10bc6f6f62dab7a382edf5a569a647abecf9a4050a291acd3053cb9db",
-      "filter-parser.ts": "66672e8096db30389bebc7c6e3468707837c973dbd75dd9fbf77ab63644722fb",
+      "expression-compiler.ts": "e7c4e9333f941af27594a50aee309b8970d26afcf4a0c7c7fcbd2bc945be27a3",
+      "filter-parser.ts": "08b549a1638f4689f836e9018e804ae8ad2309f965a03adc34b4e4d2a07131fd",
       "functions.ts": "857651c47e62f05198c110789a95b6290ae2991c1a69ae3c74045045925d8dc8",
       "functions-core.ts": "0018f5ff86abbcb661115795b22c02a2b498b5d5e2ad4ccdc8020c65df301f5e",
-      "db.ts": "79b54a08c9b6165d559b66a4d85db7cea4dbd7a5f435073da362c8a7c9ad868f",
+      "db.ts": "1a6ee55eb3746b3e30063c4e96ae21b04d75b4c4bf6141772305a5fcf707b58c",
       "file-fields-core.ts": "112b9f1265ee47e31decca9debccaca4b47e4f97f4bcfc285d532ef1456b32a2"
     }
   },
@@ -371,7 +372,7 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/syntax",
-      "notes": "Exact resulting files, including zero values.",
+      "notes": "Standard comparisons, including double-equals, execute through the same lowering boundary as formulas; native single-equals remains accepted.",
       "probes": [
         {
           "id": "equals",
@@ -461,15 +462,17 @@
           ]
         }
       ],
-      "status": "partial",
+      "status": "supported",
       "observations": [
         {
           "id": "equals",
-          "pass": false,
+          "pass": true,
           "expected": [
             "beta"
           ],
-          "error": "Error processing statement Error: syntax error at or near: \"=\""
+          "actual": [
+            "beta"
+          ]
         },
         {
           "id": "not-equal",
@@ -545,7 +548,7 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/syntax",
-      "notes": "Parser acceptance alone does not prove logical evaluation.",
+      "notes": "Symbolic logic and numeric truthiness are compiled to boolean predicates before evaluation.",
       "probes": [
         {
           "id": "and",
@@ -637,42 +640,53 @@
           ]
         }
       ],
-      "status": "partial",
+      "status": "supported",
       "observations": [
         {
           "id": "and",
-          "pass": false,
+          "pass": true,
           "expected": [
             "alpha"
           ],
-          "error": "Error processing statement Error: syntax error at or near: \"=\""
+          "actual": [
+            "alpha"
+          ]
         },
         {
           "id": "or",
-          "pass": false,
+          "pass": true,
           "expected": [
             "alpha",
             "gamma"
           ],
-          "error": "Error processing statement Error: syntax error at or near: \"=\""
+          "actual": [
+            "alpha",
+            "gamma"
+          ]
         },
         {
           "id": "not",
-          "pass": false,
+          "pass": true,
           "expected": [
             "alpha",
             "gamma"
           ],
-          "error": "Error processing statement Error: syntax error at or near: \"=\""
+          "actual": [
+            "alpha",
+            "gamma"
+          ]
         },
         {
           "id": "truthy",
-          "pass": false,
+          "pass": true,
           "expected": [
             "alpha",
             "beta"
           ],
-          "error": "argument of WHERE must be type boolean, not type number"
+          "actual": [
+            "alpha",
+            "beta"
+          ]
         },
         {
           "id": "and-without-equals",
@@ -716,7 +730,7 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/syntax",
-      "notes": "All documented property access forms must refer to the same frontmatter.",
+      "notes": "Bracketed note keys use typed literal-key lookups, preserving whitespace, dots and reserved names.",
       "probes": [
         {
           "id": "bare",
@@ -755,7 +769,7 @@
           ]
         }
       ],
-      "status": "partial",
+      "status": "supported",
       "observations": [
         {
           "id": "bare",
@@ -779,11 +793,13 @@
         },
         {
           "id": "bracket",
-          "pass": false,
+          "pass": true,
           "expected": [
             "beta"
           ],
-          "error": "column 'status'::note type is not subscriptable:"
+          "actual": [
+            "beta"
+          ]
         }
       ]
     },
@@ -854,7 +870,7 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/syntax",
-      "notes": "filter-parser.ts substitutes bracket references but its dotted-reference pattern says filter rather than formula.",
+      "notes": "Dotted and bracketed formula references resolve through the same execution compiler without rewriting string literals.",
       "probes": [
         {
           "id": "dot",
@@ -909,15 +925,17 @@
           ]
         }
       ],
-      "status": "partial",
+      "status": "supported",
       "observations": [
         {
           "id": "dot",
-          "pass": false,
+          "pass": true,
           "expected": [
             "alpha"
           ],
-          "error": "column is not structured: object"
+          "actual": [
+            "alpha"
+          ]
         },
         {
           "id": "bracket",
@@ -937,7 +955,7 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/syntax",
-      "notes": "Query generation must resolve formula dependencies and sort their evaluated values.",
+      "notes": "Formula chains preserve arithmetic precedence and both formula-ID spellings sort by evaluated values.",
       "probes": [
         {
           "id": "chain",
@@ -996,7 +1014,7 @@
           ]
         }
       ],
-      "status": "partial",
+      "status": "supported",
       "observations": [
         {
           "id": "chain",
@@ -1010,16 +1028,16 @@
         },
         {
           "id": "sort",
-          "pass": false,
+          "pass": true,
           "expected": [
             "gamma",
             "beta",
             "alpha"
           ],
           "actual": [
-            "alpha",
+            "gamma",
             "beta",
-            "gamma"
+            "alpha"
           ]
         }
       ]
@@ -1246,13 +1264,13 @@
           "id": "frontmatter-link",
           "pass": false,
           "expected": "Beta.md",
-          "error": "Error processing statement Error: syntax error at or near: \"0\",Error: syntax error at or near: \"\""
+          "error": "Invalid Bases expression."
         },
         {
           "id": "link-equality",
           "pass": false,
           "expected": true,
-          "error": "Error processing statement Error: syntax error at or near: \"=\""
+          "actual": false
         }
       ]
     },
@@ -1960,7 +1978,7 @@
           "id": "example-1",
           "pass": false,
           "expected": "12:30:00",
-          "error": "Error processing statement Error: syntax error at or near: \"time\",Error: syntax error at or near: \"\""
+          "error": "Invalid Bases expression."
         }
       ]
     },
@@ -2278,13 +2296,13 @@
           "id": "example-2",
           "pass": false,
           "expected": "a-b:c",
-          "error": "Error processing statement Error: syntax error at or near: \"\",Error: syntax error at or near: \"\",Error: syntax error at or near: \"\",Error: syntax error at or near: \")\""
+          "error": "Invalid Bases expression."
         },
         {
           "id": "example-3",
           "pass": false,
           "expected": "a-b-c",
-          "error": "Invalid query stack(2):"
+          "error": "Invalid Bases expression."
         }
       ]
     },
@@ -2458,7 +2476,7 @@
             "b",
             "c"
           ],
-          "error": "Error processing statement Error: syntax error at or near: \"/,\",Error: syntax error at or near: \"/\""
+          "error": "Invalid Bases expression."
         }
       ]
     },
@@ -2852,7 +2870,7 @@
             3,
             4
           ],
-          "error": "Error processing statement Error: syntax error at or near: \"filter(\""
+          "error": "Invalid Bases expression."
         }
       ]
     },
@@ -2922,7 +2940,7 @@
           "id": "example-1",
           "pass": false,
           "expected": true,
-          "error": "Error processing statement Error: Error: Unsupported Literal node: ⚠,Error: Error: Unsupported Literal node: ⚠,Error: Error: Unsupported Literal node: ⚠,Error: syntax error at or near: \"\""
+          "error": "Invalid Bases expression."
         },
         {
           "id": "example-2",
@@ -2956,7 +2974,7 @@
           "id": "example-1",
           "pass": false,
           "expected": "1,2,3",
-          "error": "Error processing statement Error: syntax error at or near: \"\",Error: syntax error at or near: \"\""
+          "error": "Invalid Bases expression."
         }
       ]
     },
@@ -3208,7 +3226,7 @@
             2,
             3
           ],
-          "error": "Error processing statement Error: syntax error at or near: \"unique\",Error: syntax error at or near: \"\""
+          "error": "Invalid Bases expression."
         }
       ]
     },
@@ -3591,7 +3609,7 @@
             ],
             {}
           ],
-          "error": "Error processing statement Error: syntax error at or near: \"values\",Error: syntax error at or near: \"\""
+          "error": "Invalid Bases expression."
         }
       ]
     },
@@ -3625,13 +3643,13 @@
           "id": "example-1",
           "pass": false,
           "expected": true,
-          "error": "Error processing statement Error: syntax error at or near: \"/\",Error: syntax error at or near: \".\""
+          "error": "Invalid Bases expression."
         },
         {
           "id": "example-2",
           "pass": false,
           "expected": false,
-          "error": "Error processing statement Error: syntax error at or near: \"/\",Error: syntax error at or near: \".\""
+          "error": "Invalid Bases expression."
         }
       ]
     },
@@ -3725,13 +3743,73 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/syntax",
-      "notes": "Formula substitution repeatedly rewrites bracket references without cycle detection. Deliberate cyclic input is not executed in-process because it can hang.",
-      "probes": [],
-      "review": {
-        "evidence": "src/lib/bases-view/filter-parser.ts replaceFormulas while loop",
-        "acceptance": "Use a bounded worker regression when implementing cycle detection; preserve last valid document."
-      },
-      "status": "review-required"
+      "notes": "The execution compiler rejects circular and unknown formula references; the UI retains its editing toolbar and shows a bounded error. Source and governed story regressions cover this behavior.",
+      "probes": [
+        {
+          "id": "dot-cycle",
+          "mode": "compile-error",
+          "document": {
+            "formulas": {
+              "a": "formula.b",
+              "b": "formula.a"
+            },
+            "filters": {
+              "and": [
+                "formula.a > 0"
+              ]
+            },
+            "views": [
+              {
+                "type": "table",
+                "name": "Audit",
+                "order": [
+                  "file.path"
+                ]
+              }
+            ]
+          },
+          "expected": "Circular Bases formula: a -> b -> a"
+        },
+        {
+          "id": "bracket-cycle",
+          "mode": "compile-error",
+          "document": {
+            "formulas": {
+              "a": "formula[\"a\"]"
+            },
+            "filters": {
+              "and": [
+                "formula[\"a\"] > 0"
+              ]
+            },
+            "views": [
+              {
+                "type": "table",
+                "name": "Audit",
+                "order": [
+                  "file.path"
+                ]
+              }
+            ]
+          },
+          "expected": "Circular Bases formula: a -> a"
+        }
+      ],
+      "status": "supported",
+      "observations": [
+        {
+          "id": "dot-cycle",
+          "pass": true,
+          "expected": "Circular Bases formula: a -> b -> a",
+          "actual": "Circular Bases formula: a -> b -> a"
+        },
+        {
+          "id": "bracket-cycle",
+          "pass": true,
+          "expected": "Circular Bases formula: a -> a",
+          "actual": "Circular Bases formula: a -> a"
+        }
+      ]
     }
   ]
 }

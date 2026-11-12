@@ -89,6 +89,48 @@ export const ImportedFilters: Story = {
   },
 };
 
+export const FormulaFilters: Story = {
+  parameters: storyParameters(
+    "formula-filters",
+    "Bracketed properties, equality, chained formulas and formula sorting execute through the real indexed App before limiting results."
+  ),
+  render: renderScenario("formula-filters"),
+  play: async ({ canvasElement }) => {
+    const canvas = await waitForView(canvasElement, "formula-filters", "table");
+    await waitFor(() => {
+      expect(
+        canvas.getByRole("link", { name: "Juniper.md", exact: true })
+      ).toBeVisible();
+      expect(
+        canvas.queryByRole("link", { name: "Aurora.md", exact: true })
+      ).not.toBeInTheDocument();
+      expect(
+        canvas.queryByRole("link", { name: "Harbor.md", exact: true })
+      ).not.toBeInTheDocument();
+    });
+  },
+};
+
+export const InvalidFormula: Story = {
+  parameters: storyParameters(
+    "invalid-formula",
+    "A cyclic formula shows a bounded, accessible error while leaving the editing toolbar available."
+  ),
+  render: renderScenario("invalid-formula"),
+  play: async ({ canvasElement }) => {
+    const canvas = await waitForView(canvasElement, "invalid-formula", "table");
+    await waitFor(() =>
+      expect(canvas.getByText(/Circular Bases formula/)).toBeVisible()
+    );
+    expect(
+      canvas.getByRole("button", { name: "Properties", exact: true })
+    ).toBeVisible();
+    expect(
+      canvas.queryByRole("link", { name: "Aurora.md", exact: true })
+    ).not.toBeInTheDocument();
+  },
+};
+
 async function expectFileLinkPreview(canvasElement: HTMLElement) {
   const link = within(canvasElement).getByRole("link", { name: "Aurora.md" });
   expect(getComputedStyle(link).textDecorationLine).toBe("none");

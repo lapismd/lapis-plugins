@@ -56,7 +56,13 @@ export function validateInventory(inventory, upstream) {
       );
       probeIds.add(probe.id);
       assert(
-        ["expression", "filter", "document", "parser"].includes(probe.mode)
+        [
+          "expression",
+          "filter",
+          "document",
+          "parser",
+          "compile-error",
+        ].includes(probe.mode)
       );
       assert(
         Object.hasOwn(probe, "expected"),

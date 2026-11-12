@@ -227,3 +227,5 @@ or application lifecycle behavior. Those service boundaries retain their owning
 native and application acceptance requirements.
 
 Bases candidate limits under LN-BASE-004 are safe only when every predicate is lowered. Final PEaQL-only restrictions require complete paginated candidates before the view limit applies; no native service contract is changed.
+
+LN-BASE-046 performs final expression/formula evaluation in Bases. It adds no native state, global App binding or database syntax contract.

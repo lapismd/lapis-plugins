@@ -18,6 +18,8 @@ export type BasesFixtureProfile = "default" | "registry" | "embed";
 
 export type BasesViewScenario =
   | "imported-filters"
+  | "formula-filters"
+  | "invalid-formula"
   | "table"
   | "editable-cells"
   | "query-controls"
@@ -223,6 +225,8 @@ const views: BasesDocument["views"] = [
 
 const activeViewNames: Record<BasesViewScenario, string> = {
   "imported-filters": "Imported filters",
+  "formula-filters": "Formula filters",
+  "invalid-formula": "Invalid formula",
   table: "Portfolio table",
   "editable-cells": "Editable fields",
   "query-controls": "Portfolio table",
@@ -245,6 +249,27 @@ export function createBasesViewsDocument(
   scenario: BasesViewScenario,
   profile: BasesFixtureProfile = "default"
 ): BasesDocument {
+  if (scenario === "formula-filters" || scenario === "invalid-formula") {
+    return parseBasesDocument(`filters: note["score"] > 80
+formulas:
+  ppu: note.score / 10
+  grade: ${
+    scenario === "invalid-formula" ? "formula.grade" : "(formula.ppu + 1) * 2"
+  }
+views:
+  - type: table
+    name: Formula filters
+    order: [file.name, formula.grade]
+    sort:
+      - property: formula.ppu
+        direction: ASC
+    filters:
+      and:
+        - note.status == "Active"
+        - formula["grade"] > 18
+    limit: 1
+`);
+  }
   if (scenario === "imported-filters") {
     return parseBasesDocument(`filters: note.score > 80
 views:

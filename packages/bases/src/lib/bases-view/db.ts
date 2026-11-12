@@ -158,9 +158,11 @@ export class BasesTable extends Table {
           return value;
         },
       );
-      if (this.columns.has(name)) continue;
       map.set(name, column);
-      this.columns.set(name, column);
+      if (!this.columns.has(name)) this.columns.set(name, column);
+      // Keep bracket keys literal and typed, including whitespace, dots and
+      // names that collide with the file-level columns.
+      this.columns.set(`note[${JSON.stringify(name)}]`, column);
     }
     const PropStructure = defineStructureName(
       class extends Structure {

@@ -234,7 +234,7 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/syntax",
-      "notes": "Exact resulting files, including zero values.",
+      "notes": "Standard comparisons, including double-equals, execute through the same lowering boundary as formulas; native single-equals remains accepted.",
       "probes": [
         {
           "id": "equals",
@@ -331,7 +331,7 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/syntax",
-      "notes": "Parser acceptance alone does not prove logical evaluation.",
+      "notes": "Symbolic logic and numeric truthiness are compiled to boolean predicates before evaluation.",
       "probes": [
         {
           "id": "and",
@@ -430,7 +430,7 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/syntax",
-      "notes": "All documented property access forms must refer to the same frontmatter.",
+      "notes": "Bracketed note keys use typed literal-key lookups, preserving whitespace, dots and reserved names.",
       "probes": [
         {
           "id": "bare",
@@ -510,7 +510,7 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/syntax",
-      "notes": "filter-parser.ts substitutes bracket references but its dotted-reference pattern says filter rather than formula.",
+      "notes": "Dotted and bracketed formula references resolve through the same execution compiler without rewriting string literals.",
       "probes": [
         {
           "id": "dot",
@@ -572,7 +572,7 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/syntax",
-      "notes": "Query generation must resolve formula dependencies and sort their evaluated values.",
+      "notes": "Formula chains preserve arithmetic precedence and both formula-ID spellings sort by evaluated values.",
       "probes": [
         {
           "id": "chain",
@@ -2368,12 +2368,58 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/syntax",
-      "notes": "Formula substitution repeatedly rewrites bracket references without cycle detection. Deliberate cyclic input is not executed in-process because it can hang.",
-      "probes": [],
-      "review": {
-        "evidence": "src/lib/bases-view/filter-parser.ts replaceFormulas while loop",
-        "acceptance": "Use a bounded worker regression when implementing cycle detection; preserve last valid document."
-      }
+      "notes": "The execution compiler rejects circular and unknown formula references; the UI retains its editing toolbar and shows a bounded error. Source and governed story regressions cover this behavior.",
+      "probes": [
+        {
+          "id": "dot-cycle",
+          "mode": "compile-error",
+          "document": {
+            "formulas": {
+              "a": "formula.b",
+              "b": "formula.a"
+            },
+            "filters": {
+              "and": [
+                "formula.a > 0"
+              ]
+            },
+            "views": [
+              {
+                "type": "table",
+                "name": "Audit",
+                "order": [
+                  "file.path"
+                ]
+              }
+            ]
+          },
+          "expected": "Circular Bases formula: a -> b -> a"
+        },
+        {
+          "id": "bracket-cycle",
+          "mode": "compile-error",
+          "document": {
+            "formulas": {
+              "a": "formula[\"a\"]"
+            },
+            "filters": {
+              "and": [
+                "formula[\"a\"] > 0"
+              ]
+            },
+            "views": [
+              {
+                "type": "table",
+                "name": "Audit",
+                "order": [
+                  "file.path"
+                ]
+              }
+            ]
+          },
+          "expected": "Circular Bases formula: a -> a"
+        }
+      ]
     }
   ]
 }

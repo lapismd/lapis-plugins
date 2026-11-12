@@ -50,7 +50,7 @@
   "BASES-FILTER-002": [
     {
       "id": "equals",
-      "pass": false
+      "pass": true
     },
     {
       "id": "not-equal",
@@ -80,19 +80,19 @@
   "BASES-FILTER-003": [
     {
       "id": "and",
-      "pass": false
+      "pass": true
     },
     {
       "id": "or",
-      "pass": false
+      "pass": true
     },
     {
       "id": "not",
-      "pass": false
+      "pass": true
     },
     {
       "id": "truthy",
-      "pass": false
+      "pass": true
     },
     {
       "id": "and-without-equals",
@@ -118,7 +118,7 @@
     },
     {
       "id": "bracket",
-      "pass": false
+      "pass": true
     }
   ],
   "BASES-FILTER-005": [
@@ -142,7 +142,7 @@
   "BASES-FORMULA-001": [
     {
       "id": "dot",
-      "pass": false
+      "pass": true
     },
     {
       "id": "bracket",
@@ -156,7 +156,7 @@
     },
     {
       "id": "sort",
-      "pass": false
+      "pass": true
     }
   ],
   "BASES-CONTEXT-001": [
@@ -727,6 +727,16 @@
     {
       "id": "example-2",
       "pass": false
+    }
+  ],
+  "BASES-FORMULA-003": [
+    {
+      "id": "dot-cycle",
+      "pass": true
+    },
+    {
+      "id": "bracket-cycle",
+      "pass": true
     }
   ]
 }

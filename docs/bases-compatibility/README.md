@@ -63,8 +63,8 @@ AppDatabase candidate pushdown, vault indexing, rendered cells, browser lifecycl
 or host-specific `this` ownership. Existing package and Storybook suites govern
 those boundaries. Do not treat missing test-fixture host state as a runtime defect.
 The context-binding entry records the missing binding by source review and needs
-a host fixture before a fix can be qualified. Cyclic formulas need a bounded
-worker test because current substitution can loop indefinitely.
+a host fixture before a fix can be qualified. Circular formula references are
+checked as explicit compilation-error probes, alongside the governed error story.
 
 ## Suggested implementation order
 

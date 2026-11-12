@@ -24,6 +24,10 @@ function row(path: string) {
 }
 
 describe("buildBasesAppDatabaseQuery", () => {
+  it("keeps bracketed property IDs at the typed evaluator boundary", () => {
+    const query = buildBasesAppDatabaseQuery({ documentFilter: { and: [{ column: 'note["status"]', op: "=", value: "draft" }] }, sort: [{ property: 'note["priority"]' as any, direction: "ASC" }], limit: 1 });
+    expect(query).toEqual({ excludeHiddenPaths: true });
+  });
   it.each([
     { and: ['status != "done"'] },
     { or: [{ column: "note.status", op: "=", value: "open" }] },

@@ -108,6 +108,7 @@ function normalizePropertyName(column: string): string | null {
   if (
     !column ||
     column === "file" ||
+    column.startsWith("note[") ||
     column.startsWith("formula.") ||
     column.startsWith("formula[")
   ) {

@@ -1,3 +1,4 @@
+import { compileBasesExpression } from "./expression-compiler";
 import {
   AttributeExpression,
   BooleanExpression,
@@ -67,7 +68,7 @@ export type FilterPredicateValidation =
   | { valid: false; predicate: null; error: string };
 
 export function validateFilterPredicate(
-  query: string,
+  query: string
 ): FilterPredicateValidation {
   if (!query.trim()) {
     return { valid: true, predicate: null, error: null };
@@ -135,21 +136,9 @@ function toSQLValue(value: unknown): any {
   return JSON.stringify(value);
 }
 
-function replaceFormulas(query: string, formulas: Record<string, string> = {}) {
-  while (query.match(/formula\["([^"]*)"\]|filter\.[a-zA-Z_][a-zA-Z0-9_]*/g)) {
-    query = query.replaceAll(
-      /formula\["([^"]*)"\]|filter\.[a-zA-Z_][a-zA-Z0-9_]*/g,
-      (match, captured) => {
-        return formulas[captured] || "null";
-      },
-    );
-  }
-  return query;
-}
-
 export function toSQL(
   filter: unknown,
-  formulas: Record<string, string> = {},
+  formulas: Record<string, string> = {}
 ): string {
   if (isFilterGroup(filter)) {
     const type = filterGroupType(filter);
@@ -195,14 +184,14 @@ export function toSQL(
       return `${column}.${op}(${toSQLValue(values)})`;
     }
   } else if (typeof filter === "string") {
-    return replaceFormulas(filter, formulas);
+    return filter;
   }
   return "";
 }
 
 function flattenBooleanExpression(
   expr: BooleanExpression,
-  targetOp: string,
+  targetOp: string
 ): unknown[] {
   const conditions: unknown[] = [];
 
@@ -316,7 +305,7 @@ export function generateQuery(
   view: BasesViewBase,
   formulas: Record<string, string>,
   globalFilter?: Filters,
-  requiredProperties: BasesPropertyId[] = [],
+  requiredProperties: BasesPropertyId[] = []
 ) {
   let query = "SET identifier_quoting = bracket;\nSELECT\n";
   const columns: Array<string> = [
@@ -335,7 +324,10 @@ export function generateQuery(
       if (isFilter) {
         if (filterKey in formulas) {
           if (formulas[filterKey]) {
-            return `  (${replaceFormulas(formulas[filterKey], formulas)}) as ${filterColumn}`;
+            return `  (${compileBasesExpression(
+              formulas[filterKey],
+              formulas
+            )}) as ${filterColumn}`;
           }
         }
         return `  null as ${filterColumn}`;
@@ -348,7 +340,7 @@ export function generateQuery(
   query += columns.length ? ",\n  rowId as {$rowId}" : "  rowId as {$rowId}";
   const where = [toSQL(globalFilter, formulas), toSQL(view.filter, formulas)]
     .filter((it) => it.length > 0)
-    .map((q) => `(${q})`)
+    .map((q) => compileBasesExpression(q, formulas, true))
     .join(" and ");
   if (where) {
     query += "\nWHERE " + where;
@@ -356,9 +348,11 @@ export function generateQuery(
 
   const sort = view.sort
     .map((s) => {
-      const [isFormula] = isFilterColumn(s.property);
+      const [isFormula, formulaKey] = isFilterColumn(s.property);
       return isFormula
-        ? `(${replaceFormulas(formulaColumn(s.property), formulas)}) ${s.direction}`
+        ? `(${compileBasesExpression(formulaColumn(formulaKey), formulas)}) ${
+            s.direction
+          }`
         : `{${s.property}} ${s.direction}`;
     })
     .join(",");

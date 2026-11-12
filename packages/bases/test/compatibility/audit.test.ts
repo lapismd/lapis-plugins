@@ -102,13 +102,27 @@ function execute(query: string, single = false): any[][] {
 }
 
 function observe(probe: any) {
-  if (probe.mode === "expression")
+  if (probe.mode === "compile-error") {
+    const document = normalizeBasesDocument(probe.document);
+    try {
+      generateQuery(document.views[0], document.formulas, document.filters);
+      return null;
+    } catch (error) {
+      return error instanceof Error ? error.message : String(error);
+    }
+  }
+  if (probe.mode === "expression") {
+    const document = normalizeBasesDocument({
+      formulas: { auditValue: probe.expression },
+      views: [{ type: "table", name: "Audit", order: ["formula.auditValue"] }],
+    });
     return plain(
       execute(
-        `SET identifier_quoting = bracket; SELECT ${probe.expression} AS result`,
+        generateQuery(document.views[0], document.formulas, document.filters),
         true
       )[0]?.[0]
     );
+  }
   if (probe.mode === "parser")
     return validateFilterPredicate(probe.expression).valid;
   const document = normalizeBasesDocument(
@@ -183,6 +197,7 @@ afterAll(() => {
       sources: Object.fromEntries(
         [
           "document-core.ts",
+          "expression-compiler.ts",
           "filter-parser.ts",
           "functions.ts",
           "functions-core.ts",

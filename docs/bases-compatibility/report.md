@@ -2,7 +2,7 @@
 
 Documentation reviewed: 2026-11-12. This is documentation-derived acceptance against Lapis source, not a live Obsidian differential test.
 
-35 supported, 19 partial, 25 gaps, 10 requiring manual review. Counts describe the selected probes, not a percentage of product parity.
+41 supported, 14 partial, 25 gaps, 9 requiring manual review. Counts describe the selected probes, not a percentage of product parity.
 
 Run `pnpm audit:bases` to check behavior and report freshness; `pnpm audit:bases:update` explicitly accepts changed results. Run `pnpm audit:bases:upstream` to detect upstream documentation drift. See [audit workflow](README.md).
 
@@ -20,12 +20,12 @@ Supported means all listed probes passed; partial means some passed; gap means n
 | BASES-YAML-002 | P0 | [Per-view filters key](https://help.obsidian.md/bases/syntax) | supported | 2/2 | Obsidian views[].filters imports into the native singular filter model; native filter wins when both keys exist, and writes retain the Lapis format. |
 | BASES-YAML-003 | P0 | [Global AND view filters](https://help.obsidian.md/bases/syntax) | supported | 2/2 | Global and per-view predicates compose with AND for imported and native documents. |
 | BASES-FILTER-001 | P1 | [Recursive and/or/not groups](https://help.obsidian.md/bases/syntax) | supported | 4/4 | Full loader-to-query acceptance; not excludes any matching child. |
-| BASES-FILTER-002 | P1 | [Comparison operators](https://help.obsidian.md/bases/syntax) | partial | 6/7 | Exact resulting files, including zero values. |
-| BASES-FILTER-003 | P1 | [Symbolic boolean operators and truthiness](https://help.obsidian.md/bases/syntax) | partial | 3/7 | Parser acceptance alone does not prove logical evaluation. |
-| BASES-FILTER-004 | P1 | [Bare, note-dot and bracket properties](https://help.obsidian.md/bases/syntax) | partial | 2/3 | All documented property access forms must refer to the same frontmatter. |
+| BASES-FILTER-002 | P1 | [Comparison operators](https://help.obsidian.md/bases/syntax) | supported | 7/7 | Standard comparisons, including double-equals, execute through the same lowering boundary as formulas; native single-equals remains accepted. |
+| BASES-FILTER-003 | P1 | [Symbolic boolean operators and truthiness](https://help.obsidian.md/bases/syntax) | supported | 7/7 | Symbolic logic and numeric truthiness are compiled to boolean predicates before evaluation. |
+| BASES-FILTER-004 | P1 | [Bare, note-dot and bracket properties](https://help.obsidian.md/bases/syntax) | supported | 3/3 | Bracketed note keys use typed literal-key lookups, preserving whitespace, dots and reserved names. |
 | BASES-FILTER-005 | P1 | [Arithmetic and precedence](https://help.obsidian.md/bases/syntax) | supported | 4/4 | Arithmetic precedence, grouping, unary minus, division and modulo. |
-| BASES-FORMULA-001 | P1 | [Formula references in filters](https://help.obsidian.md/bases/syntax) | partial | 1/2 | filter-parser.ts substitutes bracket references but its dotted-reference pattern says filter rather than formula. |
-| BASES-FORMULA-002 | P1 | [Formula chains and formula sorting](https://help.obsidian.md/bases/syntax) | partial | 1/2 | Query generation must resolve formula dependencies and sort their evaluated values. |
+| BASES-FORMULA-001 | P1 | [Formula references in filters](https://help.obsidian.md/bases/syntax) | supported | 2/2 | Dotted and bracketed formula references resolve through the same execution compiler without rewriting string literals. |
+| BASES-FORMULA-002 | P1 | [Formula chains and formula sorting](https://help.obsidian.md/bases/syntax) | supported | 2/2 | Formula chains preserve arithmetic precedence and both formula-ID spellings sort by evaluated values. |
 | BASES-CONTEXT-001 | P1 | [this binding](https://help.obsidian.md/bases/syntax) | gap | 0/1 | A query has no owning-note binding in BasesTable or QueryController; real embed ownership needs a host fixture. |
 | BASES-DATE-001 | P1 | [Date fields and arithmetic](https://help.obsidian.md/bases/syntax) | partial | 2/4 | Luxon values must implement the documented Bases date and duration semantics. |
 | BASES-FILE-001 | P1 | [File fields](https://help.obsidian.md/bases/syntax) | partial | 6/7 | Tests runtime metadata, not display wrappers; tags include nested frontmatter tags. |
@@ -104,42 +104,9 @@ Supported means all listed probes passed; partial means some passed; gap means n
 | BASES-VIEW-004 | P2 | [Default and custom summaries](https://help.obsidian.md/bases/syntax) | review-required | 0/0 | Built-in summary branches exist, but grouped and arbitrary custom formula semantics are not fully qualified. |
 | BASES-VIEW-005 | P2 | [Embeds and named-view fragments](https://help.obsidian.md/bases/views) | review-required | 0/0 | Read-only file and fenced embeds exist; Obsidian ![[File.base#View]] selection requires focused host acceptance. |
 | BASES-VIEW-006 | P2 | [Search, edit, create, export and clipboard](https://help.obsidian.md/bases/views) | review-required | 0/0 | Lapis has governed workflow and editable-cell stories; copying formatted results and complete Obsidian workflow parity are unverified. |
-| BASES-FORMULA-003 | P1 | [Circular references and diagnostics](https://help.obsidian.md/bases/syntax) | review-required | 0/0 | Formula substitution repeatedly rewrites bracket references without cycle detection. Deliberate cyclic input is not executed in-process because it can hang. |
+| BASES-FORMULA-003 | P1 | [Circular references and diagnostics](https://help.obsidian.md/bases/syntax) | supported | 2/2 | The execution compiler rejects circular and unknown formula references; the UI retains its editing toolbar and shows a bounded error. Source and governed story regressions cover this behavior. |
 
 ## Failing probes
-
-### BASES-FILTER-002: Comparison operators
-
-Owner: lapis-plugins/packages/bases. Exact resulting files, including zero values.
-
-- equals — `{"and":["price == 4"]}`: expected `["beta"]`; error `Error processing statement Error: syntax error at or near: "="`.
-
-### BASES-FILTER-003: Symbolic boolean operators and truthiness
-
-Owner: lapis-plugins/packages/bases. Parser acceptance alone does not prove logical evaluation.
-
-- and — `{"and":["status == \"open\" && price > 5"]}`: expected `["alpha"]`; error `Error processing statement Error: syntax error at or near: "="`.
-- or — `{"and":["price > 5 \|\| price == 0"]}`: expected `["alpha","gamma"]`; error `Error processing statement Error: syntax error at or near: "="`.
-- not — `{"and":["!(status == \"done\")"]}`: expected `["alpha","gamma"]`; error `Error processing statement Error: syntax error at or near: "="`.
-- truthy — `{"and":["price"]}`: expected `["alpha","beta"]`; error `argument of WHERE must be type boolean, not type number`.
-
-### BASES-FILTER-004: Bare, note-dot and bracket properties
-
-Owner: lapis-plugins/packages/bases. All documented property access forms must refer to the same frontmatter.
-
-- bracket — `{"and":["note[\"status\"] != \"open\""]}`: expected `["beta"]`; error `column 'status'::note type is not subscriptable:`.
-
-### BASES-FORMULA-001: Formula references in filters
-
-Owner: lapis-plugins/packages/bases. filter-parser.ts substitutes bracket references but its dotted-reference pattern says filter rather than formula.
-
-- dot — `{"formulas":{"ppu":"price / age"},"filters":{"and":["formula.ppu > 3"]},"views":[{"type":"table","name":"Table","order":["file.path"]}]}`: expected `["alpha"]`; error `column is not structured: object`.
-
-### BASES-FORMULA-002: Formula chains and formula sorting
-
-Owner: lapis-plugins/packages/bases. Query generation must resolve formula dependencies and sort their evaluated values.
-
-- sort — `{"formulas":{"ppu":"price / age"},"views":[{"type":"table","name":"Table","order":["formula.ppu"],"sort":[{"property":"formula.ppu","direction":"ASC"}]}]}`: expected `["gamma","beta","alpha"]`; actual `["alpha","beta","gamma"]`.
 
 ### BASES-CONTEXT-001: this binding
 
@@ -164,8 +131,8 @@ Owner: lapis-plugins/packages/bases. Tests runtime metadata, not display wrapper
 
 Owner: lapis-plugins/packages/bases. Documented wikilinks support asFile and file comparisons; current metadata keeps raw strings.
 
-- frontmatter-link — `authors[0].asFile().name`: expected `"Beta.md"`; error `Error processing statement Error: syntax error at or near: "0",Error: syntax error at or near: ""`.
-- link-equality — `link("Notes/Beta.md") == link("[[Notes/Beta.md]]")`: expected `true`; error `Error processing statement Error: syntax error at or near: "="`.
+- frontmatter-link — `authors[0].asFile().name`: expected `"Beta.md"`; error `Invalid Bases expression.`.
+- link-equality — `link("Notes/Beta.md") == link("[[Notes/Beta.md]]")`: expected `true`; actual `false`.
 
 ### BASES-FUNC-002: global.date
 
@@ -226,7 +193,7 @@ Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the select
 
 Owner: lapis-plugins/packages/bases. Obsidian returns HH:mm:ss; Luxon ISO time includes offsets and milliseconds.
 
-- example-1 — `date("2025-01-02T12:30:00").time()`: expected `"12:30:00"`; error `Error processing statement Error: syntax error at or near: "time",Error: syntax error at or near: ""`.
+- example-1 — `date("2025-01-02T12:30:00").time()`: expected `"12:30:00"`; error `Invalid Bases expression.`.
 
 ### BASES-FUNC-025: string.contains
 
@@ -250,15 +217,15 @@ Owner: lapis-plugins/packages/bases. Check canonical containsAny spelling and ca
 
 Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
 
-- example-2 — `"a:b:c".replace(/:/, "-")`: expected `"a-b:c"`; error `Error processing statement Error: syntax error at or near: "",Error: syntax error at or near: "",Error: syntax error at or near: "",Error: syntax error at or near: ")"`.
-- example-3 — `"a:b:c".replace(/:/g, "-")`: expected `"a-b-c"`; error `Invalid query stack(2):`.
+- example-2 — `"a:b:c".replace(/:/, "-")`: expected `"a-b:c"`; error `Invalid Bases expression.`.
+- example-3 — `"a:b:c".replace(/:/g, "-")`: expected `"a-b-c"`; error `Invalid Bases expression.`.
 
 ### BASES-FUNC-035: string.split
 
 Owner: lapis-plugins/packages/bases. Check optional limit and RegExp overloads, not only the two-argument string form.
 
 - example-2 — `"a,b,c".split(",",2)`: expected `["a","b"]`; error `no function matches "split(string, string, integer)" name and argument type`.
-- example-3 — `"a,b,c".split(/,/)`: expected `["a","b","c"]`; error `Error processing statement Error: syntax error at or near: "/,",Error: syntax error at or near: "/"`.
+- example-3 — `"a,b,c".split(/,/)`: expected `["a","b","c"]`; error `Invalid Bases expression.`.
 
 ### BASES-FUNC-042: number.isEmpty
 
@@ -294,7 +261,7 @@ Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the select
 
 Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
 
-- example-1 — `[1,2,3,4].filter(value > 2)`: expected `[3,4]`; error `Error processing statement Error: syntax error at or near: "filter("`.
+- example-1 — `[1,2,3,4].filter(value > 2)`: expected `[3,4]`; error `Invalid Bases expression.`.
 
 ### BASES-FUNC-049: list.flat
 
@@ -306,13 +273,13 @@ Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the select
 
 Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
 
-- example-1 — `[].isEmpty()`: expected `true`; error `Error processing statement Error: Error: Unsupported Literal node: ⚠,Error: Error: Unsupported Literal node: ⚠,Error: Error: Unsupported Literal node: ⚠,Error: syntax error at or near: ""`.
+- example-1 — `[].isEmpty()`: expected `true`; error `Invalid Bases expression.`.
 
 ### BASES-FUNC-051: list.join
 
 Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
 
-- example-1 — `[1,2,3].join(",")`: expected `"1,2,3"`; error `Error processing statement Error: syntax error at or near: "",Error: syntax error at or near: ""`.
+- example-1 — `[1,2,3].join(",")`: expected `"1,2,3"`; error `Invalid Bases expression.`.
 
 ### BASES-FUNC-053: list.reduce
 
@@ -343,7 +310,7 @@ Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the select
 
 Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
 
-- example-1 — `[1,2,2,3].unique()`: expected `[1,2,3]`; error `Error processing statement Error: syntax error at or near: "unique",Error: syntax error at or near: ""`.
+- example-1 — `[1,2,2,3].unique()`: expected `[1,2,3]`; error `Invalid Bases expression.`.
 
 ### BASES-FUNC-058: link.asFile
 
@@ -373,14 +340,14 @@ Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the select
 
 Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
 
-- example-1 — `file.properties.values()`: expected `["open",12,3,["book/fiction"],["[[Notes/Beta.md]]"],{}]`; error `Error processing statement Error: syntax error at or near: "values",Error: syntax error at or near: ""`.
+- example-1 — `file.properties.values()`: expected `["open",12,3,["book/fiction"],["[[Notes/Beta.md]]"],{}]`; error `Invalid Bases expression.`.
 
 ### BASES-FUNC-068: regular-expression.matches
 
 Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
 
-- example-1 — `/abc/.matches("abcde")`: expected `true`; error `Error processing statement Error: syntax error at or near: "/",Error: syntax error at or near: "."`.
-- example-2 — `/abc/.matches("xyz")`: expected `false`; error `Error processing statement Error: syntax error at or near: "/",Error: syntax error at or near: "."`.
+- example-1 — `/abc/.matches("abcde")`: expected `true`; error `Invalid Bases expression.`.
+- example-2 — `/abc/.matches("xyz")`: expected `false`; error `Invalid Bases expression.`.
 
 ## Sources
 
