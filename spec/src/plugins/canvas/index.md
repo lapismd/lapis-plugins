@@ -25,7 +25,7 @@ The copied board keeps text, file, link, and group nodes, connectors, pane clipp
 | LN-CANVAS-008 | The plugin MUST create an empty canvas using `fileManager.getAvailablePathForAttachment`, expose Create new canvas as a command and ribbon action, and persist snap-to-grid (default off) and snap-to-objects (default on) settings on the plugin class. |
 | LN-CANVAS-009 | Text, file, link, and group nodes and connectors MUST render within the pane. Markdown node previews and editors MUST use transparent surfaces and compact block spacing. |
 | LN-CANVAS-010 | The published Canvas bundle MUST inline its Markdown embed dependency and bundle XYFlow and its foundation stylesheet. Shared App and editor runtime contracts MUST use approved public host modules. |
-| LN-CANVAS-011 | Debounced saves MUST stay bound to their original App and file, serialize concurrent writes, retain failed changes for retry, flush before file transitions and teardown, and surface external-write conflicts without overwriting newer disk content. |
+| LN-CANVAS-011 | Debounced saves MUST stay bound to their original App and file, serialize concurrent writes, retain failed changes for retry, flush before file transitions and teardown, and surface external-write conflicts without overwriting newer disk content on hosts advertising conditional text writes. |
 | LN-CANVAS-012 | A new empty board MUST support adding text, vault-note, media, URL, and empty-group cards through accessible controls and context actions. Vault drag/drop and URL drops MUST create cards at the drop position. |
 | LN-CANVAS-013 | Board mutations MUST support undo and redo, including edits, creation, movement, resizing, grouping, connectors, and deletion. Duplicate, copy, cut, and paste MUST remap entity IDs and internal connector references. Text editing MUST retain normal editor shortcuts and coalesce a completed editing session into a useful board history entry. |
 | LN-CANVAS-014 | Read-only note embeds MUST resolve vault file cards through public App contracts, update when source files change, and dispose asynchronous work and subscriptions. Views and embeds MUST share card presentation, support responsive frames and open-original navigation, and bound nested rendering with cycle detection. |
@@ -45,6 +45,10 @@ The copied board keeps text, file, link, and group nodes, connectors, pane clipp
 
 | LN-CANVAS-027 | Each opened Canvas board MUST register a destination-bound writer with its owning App before publication and await native admission when present. App guards MUST protect its input and flush queued board writes. Hosts advertising conditional text writes MUST use the public persistence contract against acknowledged bytes, without falling back after a conditional failure. Other hosts MAY retain their existing persistence under the public API capability contract. External changes MUST publish App-owned conflicts supporting reviewed keep-local, use-external, merged-text and refresh actions. |
 | LN-CANVAS-028 | Unexpected synchronous teardown MUST unregister the board writer while retaining failed changes in the App registry. The protected board and its recovery callbacks MUST remain available until the retained writer is clean; successful retry or reviewed conflict recovery MUST release the component. |
+
+| LN-CANVAS-029 | Pending virtual Mira text-card buffers MUST contribute to the parent Canvas file's dirty state before debounce. Parent flush MUST drain those editors before graph persistence. A text editor MUST acknowledge a bound write only after the complete JSON document is durable; failed writes MUST retain its draft for App retry. Virtual editors MUST NOT register synthetic vault paths as independent file writers. |
+| LN-CANVAS-030 | Canvas input protection MUST synchronously hold its virtual text editors. Reviewed local, external and merged conflict recovery and protected native saved-text refresh MUST synchronize the parent JSON and all affected editor buffers before releasing protection. Removed cards MUST release their old draft only after the reviewed document is accepted. |
+| LN-CANVAS-031 | Guarded file rename MUST flush pending text-card edits before moving the file and rebind the existing Canvas view's writer to the new path. Unexpected teardown MUST retain pending editor buffers and their component until complete JSON persistence or reviewed recovery succeeds. |
 
 ## Alignment sequence
 
@@ -67,15 +71,18 @@ remains a separate release gate. All changed stories stay `visual-pending`.
 
 Package tests cover JSON Canvas parse and save helpers, the runtime id, the exclusive `*.canvas` association, and the `canvas` embed registration. `Plugins/Canvas/Panels` opens the legacy feature board in every placement and, in Middle (Top Tabs), shows the note embed. `Plugins/Canvas/Features` checks each node kind, a heading section, labeled connectors, and the note embed.
 
-`src/lib/json-canvas-safety.test.ts` verifies rejection without data loss, imported geometry and stacking, extension retention after editing, and omitted arrow defaults. Full authoring, persistence, embedding, theme, and parity requirements remain planned until their focused acceptance lands.
+`src/lib/json-canvas-safety.test.ts` verifies rejection without data loss, imported geometry and stacking, extension retention after editing, and omitted arrow defaults. Full authoring, live embedding, theme, and parity requirements remain planned until their focused acceptance lands.
 
-## Save-queue scope
+## Writer lifecycle qualification
 
-LN-CANVAS-024/025/026 cover board mutations already delivered to the owning file
-view. LN-CANVAS-027/028 add App registration, conditional board conflicts, native
-admission and retained teardown recovery. The Canvas API peer floor is 0.2.4,
-which supplies those public contracts. LN-CANVAS-011 remains in progress:
-draining pending embedded Mira text buffers requires separate qualification
-before full writer-lifecycle alignment is claimed. Rename admission and synchronous host disposal remain
-part of that broader contract. Reload is not an implicit discard of a failed
-draft; explicit retry must succeed before it replaces the document.
+LN-CANVAS-024 through LN-CANVAS-031 qualify the delivered board queue, App
+registration, virtual text buffers, protected recovery, native producer
+admission and saved-text refresh, guarded rename, and retained synchronous
+teardown. Source contracts are qualified through the public App registry and
+real Mira/workspace plays. The API peer floor is 0.2.4. Conditional conflicts
+follow the host's advertised optional capability; existing persistence remains
+available on OPFS and legacy Desktop hosts without that capability, as required
+by the public API contract. An attempted conditional write never falls back.
+Installed native Desktop release qualification and publication remain separate
+from these producer/source tests. Reload is not an implicit discard of a failed
+draft; explicit retry or reviewed recovery must succeed first.

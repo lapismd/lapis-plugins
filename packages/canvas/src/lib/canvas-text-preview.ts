@@ -42,15 +42,17 @@ export function toCanvasFileRef(file: TFile): MiraFileRef {
 
 export function createCanvasTextAdapter(
   source: { value: string },
-  onWrite: (value: string) => void,
+  onWrite: (value: string) => void | Promise<void>,
+  bind?: MiraFileAdapter["bindMarkdownEditingSession"],
 ): MiraFileAdapter & { reload: () => void } {
   const watchers = new Set<() => void>();
   return {
+    bindMarkdownEditingSession: bind,
     resolveLink: () => null,
     readMarkdown: () => source.value,
     writeMarkdown: (_file, value) => {
       source.value = value;
-      onWrite(value);
+      return onWrite(value);
     },
     watchFile: (_file, callback) => {
       watchers.add(callback);

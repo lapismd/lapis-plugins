@@ -1,8 +1,10 @@
 # Native first-party plugin services
 
-Canvas registers its board writer through the public App editing-session registry and awaits native admission when present (LN-CANVAS-027). This qualifies producer admission and protection contracts, while embedded-buffer and complete native host release acceptance remain outstanding under LN-CANVAS-011.
+Canvas virtual editors now participate in synchronous producer holds, protected native saved-text refresh and reviewed recovery (LN-CANVAS-029/030/031). Native admission uses the public App contract; this source qualification does not claim installed native Desktop release acceptance.
 
-Canvas queue qualification (LN-CANVAS-024/025/026) covers captured board writes. The separate App/native producer admission evidence is LN-CANVAS-027; pending embedded-buffer draining remains outstanding under LN-CANVAS-011. Producer qualification MUST NOT be presented as native release acceptance.
+Canvas registers its board writer through the public App editing-session registry and awaits native admission when present (LN-CANVAS-027). This qualifies producer admission and protection contracts, while installed native Desktop release acceptance remains separate.
+
+Canvas queue qualification (LN-CANVAS-024/025/026) covers captured board writes. The separate App/native producer admission evidence is LN-CANVAS-027; pending embedded buffers are covered separately by LN-CANVAS-029/030/031. Producer qualification MUST NOT be presented as native release acceptance.
 
 Canvas editable-document validation belongs to the Canvas plugin (LN-CANVAS-005). Native Search retains its separately tested tolerant canvas-text extractor; it MUST NOT become an editable-file repair or persistence authority.
 

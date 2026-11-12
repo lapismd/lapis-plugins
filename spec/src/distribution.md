@@ -1,8 +1,10 @@
 # Distribution and Releases
 
+Canvas pending text buffers share the parent file writer and require durable JSON acknowledgement (LN-CANVAS-029/030/031). Patch intent includes the producer/source lifecycle contract; installed native Desktop release qualification and publication remain separate.
+
 Canvas App-owned persistence requires API ^0.2.4 and retains normal registry semver dependencies. Its patch artifact qualification covers LN-CANVAS-027/028; publication remains a separate approval gate.
 
-Canvas save-queue patch artifacts retain destination-bound serialization and explicit retry (LN-CANVAS-024/025/026). Embedded-buffer and complete native lifecycle qualification remain outstanding under LN-CANVAS-011; patch release intent is not publication approval.
+Canvas save-queue patch artifacts retain destination-bound serialization and explicit retry (LN-CANVAS-024/025/026). Installed native Desktop release qualification remains separate; patch release intent is not publication approval.
 
 Canvas file-safety patch artifacts MUST retain the JSON Canvas round-trip and endpoint-default contracts (LN-CANVAS-005/006/007). Npm and runtime archives qualify the same source; patch release intent does not authorize publication.
 
