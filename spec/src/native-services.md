@@ -1,5 +1,7 @@
 # Native first-party plugin services
 
+Canvas editable-document validation belongs to the Canvas plugin (LN-CANVAS-005). Native Search retains its separately tested tolerant canvas-text extractor; it MUST NOT become an editable-file repair or persistence authority.
+
 Rolling dependency-image reviews update only the verified CI image pin. They
 MUST NOT change native service revisions, runtime installation authority or
 plugin archive identity; native admission continues to use the signed release

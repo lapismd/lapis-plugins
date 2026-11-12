@@ -105,6 +105,7 @@
       Math.round(bounds.height + GROUP_PADDING_TOP + GROUP_PADDING_BOTTOM),
     );
     groupNode.selected = true;
+    groupNode.zIndex = Math.min(0, ...store.nodes.map((node) => node.zIndex ?? 0)) - 1;
 
     store.nodes = [
       ...store.nodes.map((node) => ({

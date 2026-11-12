@@ -574,7 +574,7 @@
       const nextCanvas = parseJsonCanvas(rawJson);
       const flow = toFlowDocument(nextCanvas);
       const normalizedRawJson = stringifyJsonCanvas(
-        serializeFlowDocument(flow.nodes, flow.edges),
+        serializeFlowDocument(flow.nodes, flow.edges, nextCanvas),
       );
 
       canvas = nextCanvas;
@@ -601,7 +601,7 @@
     nodes;
     edges;
 
-    const nextCanvas = serializeFlowDocument(nodes, edges);
+    const nextCanvas = serializeFlowDocument(nodes, edges, untrack(() => canvas) ?? {});
     const nextRawJson = stringifyJsonCanvas(nextCanvas);
     canvas = nextCanvas;
 
