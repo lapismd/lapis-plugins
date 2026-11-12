@@ -391,7 +391,7 @@ export function resolveCanvasEmbedFileContent(
 
   for (const key of lookupKeys) {
     const matched = fileContents[key];
-    if (!matched) {
+    if (matched === undefined) {
       continue;
     }
 

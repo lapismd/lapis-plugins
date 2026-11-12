@@ -265,6 +265,7 @@ export class CanvasView extends FileView {
       target: this.containerEl,
       props: {
         app: this.app,
+        sourcePath: this.file?.path ?? "",
         documentSession: saves,
         inputBlocked: this.inputHolds > 0 || Boolean(this.containerEl.inert),
         rawJson: this.rawJson,

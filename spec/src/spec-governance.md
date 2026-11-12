@@ -1,5 +1,7 @@
 # Specification Governance
 
+Canvas live-embed evidence separates source subscription ownership, public content resolution, bounded recursion and responsive camera behavior. LN-CANVAS-014 stays in progress until shared colour presentation is qualified; lifecycle completion does not approve visual baselines or publication.
+
 Canvas authoring/history distinguishes creation and drop-receiver evidence from real File Explorer drag-source adoption. LN-CANVAS-012 stays in progress until the owning drag source is qualified; LN-CANVAS-032 through LN-CANVAS-035 govern the implemented receiver, history and clipboard surface.
 
 Canvas writer lifecycle LN-CANVAS-011 is source-qualified by LN-CANVAS-024 through LN-CANVAS-031. Pending-buffer, guarded rename and retained teardown tests use real public App/Mira integration. Optional conditional capability and installed native Desktop release limitations remain explicit in the owning chapter.

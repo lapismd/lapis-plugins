@@ -1,62 +1,37 @@
 <script lang="ts">
-  import {
-    useNodesInitialized,
-    useSvelteFlow,
-    useViewportInitialized,
-  } from "@xyflow/svelte";
-  import { onMount, tick } from "svelte";
+  import { useNodesInitialized, useSvelteFlow, useViewportInitialized } from "@xyflow/svelte";
+  import { tick, untrack } from "svelte";
 
+  let { responsive = false, revision, container }: { responsive?: boolean; revision?: unknown; container?: HTMLElement | null } = $props();
   const { fitView, getNodes } = useSvelteFlow();
   const nodesInitialized = useNodesInitialized();
   const viewportInitialized = useViewportInitialized();
-  const autoFitOptions = { maxZoom: 1 };
+  let fitted = false;
 
-  onMount(() => {
-    let started = false;
+  $effect(() => {
+    if (!nodesInitialized.current || !viewportInitialized.current) return;
+    if (!responsive && fitted) return;
+    if (responsive) void revision;
+    const element = container;
+    if (untrack(() => getNodes().length) === 0) return;
+    fitted = true;
     let cancelled = false;
-    const fitTimers: ReturnType<typeof setTimeout>[] = [];
-    const triggerFit = () => {
-      void fitView(autoFitOptions);
+    let frame: number | null = null;
+    const schedule = () => {
+      if (frame !== null) cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        frame = null;
+        if (!cancelled) void fitView({ maxZoom: 1 });
+      });
     };
-
-    const startAutoFit = async () => {
-      if (
-        started ||
-        !nodesInitialized.current ||
-        !viewportInitialized.current ||
-        getNodes().length === 0
-      ) {
-        return;
-      }
-
-      started = true;
-      await tick();
-
-      for (const delayMs of [0, 250, 1000, 2500, 5000]) {
-        const timer = setTimeout(() => {
-          if (cancelled || getNodes().length === 0) {
-            return;
-          }
-
-          triggerFit();
-        }, delayMs);
-
-        fitTimers.push(timer);
-      }
-    };
-
-    const readinessPoll = setInterval(() => {
-      void startAutoFit();
-    }, 100);
-
-    void startAutoFit();
-
+    // Public readiness replaces polling and delayed fits that stole user zoom.
+    void tick().then(() => { if (!cancelled) schedule(); });
+    const observer = responsive && element ? new ResizeObserver(schedule) : null;
+    if (element) observer?.observe(element);
     return () => {
       cancelled = true;
-      clearInterval(readinessPoll);
-      for (const timer of fitTimers) {
-        clearTimeout(timer);
-      }
+      observer?.disconnect();
+      if (frame !== null) cancelAnimationFrame(frame);
     };
   });
 </script>

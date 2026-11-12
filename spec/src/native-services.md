@@ -1,5 +1,7 @@
 # Native first-party plugin services
 
+Read-only Canvas source listeners and nested rendering remain renderer-owned. Virtual text links delegate public vault reads while their edits retain the existing parent producer; native admission and installed-release qualification remain unchanged (LN-CANVAS-037).
+
 Canvas creation dialogs share the App producer input fence, and clipboard snapshots do not acknowledge pending native/virtual text (LN-CANVAS-032/034). Authoring/history is renderer-owned; native service and installed release identities remain unchanged.
 
 Canvas virtual editors now participate in synchronous producer holds, protected native saved-text refresh and reviewed recovery (LN-CANVAS-029/030/031). Native admission uses the public App contract; this source qualification does not claim installed native Desktop release acceptance.
