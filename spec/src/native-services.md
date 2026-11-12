@@ -1,5 +1,9 @@
 # Native first-party plugin services
 
+The Design Core 0.12.4 dependency intake keeps History settings components and
+their owning App registration on one compatible shared package identity.
+Public settings, runtime ownership and native service contracts remain intact.
+
 Canvas keyboard navigation is scoped to its owning rendered board. Camera state is presentation-only; its help dialog shares the existing App input fence and creates no native service or durable writer (LN-CANVAS-048).
 
 Connector endpoint editors and empty-space connection drops use the existing protected parent board writer (LN-CANVAS-046/047). Navigation does not create a writer; reconnection does not bypass App guards.

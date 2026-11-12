@@ -1,5 +1,10 @@
 # Specification Governance
 
+Design Core 0.12.4 lockfile qualification includes History and Markdown's
+compatible union ranges. The exact History source check must reject mixed
+0.12.3/0.12.4 settings types before the fix and pass after registry alignment;
+normal functional and accessibility gates remain required for dependency PRs.
+
 LN-CANVAS-048 qualifies navigation separately from geometry edits: camera commands preserve exact stored bytes, respect focused form/editor input and own help focus/protection. Read-only help omits editable-card instructions.
 
 LN-CANVAS-046/047 distinguish pure endpoint retention, keyboard form and follow interactions from native pointer gestures. The static CI lane runs Playwright drag and cancellation cases after building Storybook; synthetic pointer events alone do not qualify these workflows.
