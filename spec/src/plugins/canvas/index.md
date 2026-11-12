@@ -80,6 +80,9 @@ The copied board keeps text, file, link, and group nodes, connectors, pane clipp
 
 ## Alignment sequence
 
+| LN-CANVAS-056 | Text-to-note conversion MUST flush pending card Markdown, create a collision-free note through the owning App's public vault/file manager, preserve card identity, geometry, extensions and connectors, and record one undoable card-kind replacement. Undo MUST retain the created note. Creation failure MUST leave the original text card available for retry. |
+| LN-CANVAS-057 | An asynchronous conversion MUST capture its board owner, source and document session before admission. A file/owner transition, disposal, protection or concurrent target edit MUST prevent stale replacement. A note already created when completion becomes stale MUST remain in the vault; failure reporting MUST identify that retained note. |
+
 Implement and qualify these independently reviewable slices in order:
 
 1. File validation, lossless round trips, and JSON Canvas endpoint defaults.

@@ -609,3 +609,4 @@ LN-BASE-049 shares strict syntax parsing between execution and editor drafts wit
 Canvas touch gestures and explicit selection remain plugin-owned under LN-CANVAS-051/052; native acceptance must drive real touch input.
 
 Canvas web cards own HTTP(S) admission and explicit sandboxed previews under LN-CANVAS-054/055; remote frame loading must not mutate vault content.
+LN-CANVAS-056/057 govern text-card conversion through public owning-App contracts, lossless card replacement, retained-note undo and stale asynchronous completion. Functional, accessibility, installed runtime and visual evidence remain separate.
