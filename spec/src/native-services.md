@@ -1,5 +1,7 @@
 # Native first-party plugin services
 
+Connector endpoint editors and empty-space connection drops use the existing protected parent board writer (LN-CANVAS-046/047). Navigation does not create a writer; reconnection does not bypass App guards.
+
 Canvas background dialogs use the existing parent editing guard. Image reads and URL disposal belong to each mounted surface; background changes introduce no writer or native service (LN-CANVAS-044/045).
 
 Canvas layout flushes existing virtual editors through the parent board controller before one document mutation (LN-CANVAS-042). App input protection and native producer admission remain unchanged; layout introduces no separate writer or service.

@@ -189,7 +189,8 @@ jobs:
         run: node scripts/run-turbo.mjs build --summarize
       - name: Report cache restoration
         run: node scripts/report-turbo-cache.mjs --github-summary
-      - run: pnpm build-storybook
+      - name: Build Storybook and verify native Canvas pointer workflows
+        run: pnpm test:canvas-browser
         env:
           NODE_OPTIONS: --max-old-space-size=6144
 

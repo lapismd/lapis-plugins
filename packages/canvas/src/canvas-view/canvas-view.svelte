@@ -4,12 +4,14 @@
     MiniMap,
     PanOnScrollMode,
     SvelteFlow,
+    type OnConnectEnd,
   } from "@xyflow/svelte";
   import { acquireCanvasStyles } from "../lib/canvas-styles";
   import { canvasOwnerKey } from "../lib/canvas-embed-boundary";
   import CanvasActions from "./canvas-actions.svelte";
   import { CanvasHistory } from "../lib/canvas-history";
   import { canvasMutationGroup } from "../lib/canvas-authoring";
+  import CanvasConnectionDrop from "./canvas-connection-drop.svelte";
   import type { CanvasBoardController } from "../lib/canvas-board-controller";
   import CanvasAlignmentGuides from "./canvas-alignment-guides.svelte";
   import CanvasControls from "./canvas-controls.svelte";
@@ -103,15 +105,18 @@
   const textSessions = new Map<string, number>();
   let contextPoint = $state<{ x: number; y: number } | null>(null);
   let surface = $state<HTMLElement | null>(null);
+  let reconnecting = false;
+  let connectionError = $state<string | null>(null);
+  let droppedConnection = $state<Parameters<OnConnectEnd> | null>(null);
 
   $effect(() => { if (surface) return acquireCanvasStyles(surface.ownerDocument); });
 
-  function applyDocument(document: JsonCanvas, selected = new Set<string>()): void {
+  function applyDocument(document: JsonCanvas, selected = new Set<string>(), selectedEdges = new Set<string>()): void {
     if (inputBlocked) throw new Error("Canvas editing is temporarily protected");
     const flow = toFlowDocument(document);
     canvas = document;
     nodes = flow.nodes.map((node) => ({ ...node, selected: selected.has(node.id) }));
-    edges = flow.edges;
+    edges = flow.edges.map((edge) => ({ ...edge, selected: selectedEdges.has(edge.id) }));
   }
 
   const board: CanvasBoardController = {
@@ -756,6 +761,7 @@
   </div>
 {:else}
   <div class="canvas-view-root" bind:this={surface} data-canvas-boundary data-canvas-owner={canvasOwnerKey(app)} data-canvas-source-path={sourcePath || undefined}>
+    {#if connectionError}<p class="canvas-connection-error" role="alert">{connectionError}</p>{/if}
     {#if saveState === "error"}
       <div class="canvas-save-error" role="alert">
         <span>Canvas changes could not be saved: {saveError ?? "Unknown error"}</span>
@@ -783,6 +789,12 @@
           onpanecontextmenu={({ event }) => { event.preventDefault(); contextPoint = { x: event.clientX, y: event.clientY }; }}
           onbeforedelete={async () => { try { await board.flush(); return true; } catch { return false; } }}
           onconnect={handleConnect}
+          onbeforeconnect={(connection) => inputBlocked ? false : connection}
+          onconnectstart={() => { connectionError = null; board.beginGesture(); }}
+          onconnectend={(event, state) => { if (!reconnecting && !inputBlocked && state.fromNode && !state.toNode && !state.isValid) droppedConnection = [event, state]; }}
+          onreconnectstart={() => { reconnecting = true; board.beginGesture(); }}
+          onbeforereconnect={(edge) => inputBlocked ? false : edge}
+          onreconnectend={() => { reconnecting = false; }}
           onnodedragstart={handleNodeDragStart}
           onnodedrag={handleNodeDrag}
           onnodedragstop={handleNodeDragStop}
@@ -790,6 +802,7 @@
         >
           <CanvasActions {app} {inputBlocked} {surface} bind:contextPoint />
           <CanvasFitController />
+          <CanvasConnectionDrop request={droppedConnection} onDone={() => { droppedConnection = null; }} onError={(reason) => { connectionError = reason; }} />
           <CanvasSelectionToolbar />
           <CanvasAlignmentGuides guides={alignmentGuides} />
           <Background />

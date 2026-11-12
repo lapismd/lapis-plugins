@@ -2,12 +2,14 @@
   import {
     BaseEdge,
     EdgeLabel,
+    EdgeReconnectAnchor,
     Position,
     useSvelteFlow,
     useViewport,
     type EdgeProps,
   } from "@xyflow/svelte";
-  import { tick } from "svelte";
+  import { getContext, tick } from "svelte";
+  import CanvasConnectionControls from "./canvas-connection-controls.svelte";
   import ArrowLeftRight from "@lucide/svelte/icons/arrow-left-right";
   import ArrowRight from "@lucide/svelte/icons/arrow-right";
   import Expand from "@lucide/svelte/icons/expand";
@@ -50,6 +52,7 @@
 
   const { deleteElements, setCenter, updateEdge } = useSvelteFlow();
   const viewport = useViewport();
+  const readOnly = getContext<{ readonly current: boolean } | undefined>("lapis-canvas-readonly");
   const presetColorIds = new Set(Object.keys(PRESET_COLORS));
 
   let isColorMenuOpen = $state(false);
@@ -64,6 +67,7 @@
   let toolbarElement = $state<HTMLDivElement | null>(null);
   let toolbarMaxWidth = $state("calc(100vw - 1.5rem)");
   let toolbarOffsetX = $state("0px");
+  let toolbarOffsetY = $state("0px");
   let toolbarVertical = $state<"top" | "bottom">("top");
   let wasSelectedOnPointerDown = $state(false);
 
@@ -486,8 +490,18 @@
       containerRect.right - padding - toolbarWidth,
     );
     const clampedLeft = Math.min(Math.max(desiredLeft, minLeft), maxLeft);
-    const spaceAbove = anchorRect.top - containerRect.top;
-    const spaceBelow = containerRect.bottom - anchorRect.bottom;
+    let top = containerRect.top;
+    let bottom = containerRect.bottom;
+    // Floating controls must stay clear of fixed authoring/navigation panels.
+    // Raising their paint order would merely obscure those panels instead.
+    for (const panel of container.querySelectorAll(".svelte-flow__panel")) {
+      const rect = panel.getBoundingClientRect();
+      if (rect.right <= clampedLeft || rect.left >= clampedLeft + toolbarWidth) continue;
+      if (rect.top <= anchorRect.top) top = Math.max(top, rect.bottom);
+      else bottom = Math.min(bottom, rect.top);
+    }
+    const spaceAbove = anchorRect.top - top;
+    const spaceBelow = bottom - anchorRect.bottom;
     const requiredHeight = toolbarHeight + gap;
 
     toolbarOffsetX = `${Math.round(clampedLeft - desiredLeft)}px`;
@@ -495,6 +509,13 @@
       spaceAbove >= requiredHeight || spaceAbove >= spaceBelow
         ? "top"
         : "bottom";
+    const desiredTop = toolbarVertical === "top"
+      ? anchorRect.top - 16 - toolbarHeight
+      : anchorRect.bottom + 16;
+    const availableTop = top + gap;
+    const availableBottom = bottom - gap - toolbarHeight;
+    const placedTop = Math.max(availableTop, Math.min(desiredTop, availableBottom));
+    toolbarOffsetY = `${Math.round(placedTop - desiredTop)}px`;
   }
 
   $effect(() => {
@@ -592,6 +613,10 @@
   });
 </script>
 
+<style>
+  .canvas-connector-reconnect-dot { display: block; width: 12px; height: 12px; margin: 16px; border: 2px solid var(--canvas-readable-indicator, var(--text-normal)); border-radius: 50%; background: var(--canvas-readable-surface, var(--background-primary)); }
+</style>
+
 {#if selected || isHovered}
   <path
     class="canvas-flow-edge-glow"
@@ -646,7 +671,13 @@
   ></path>
 {/if}
 
-{#if selected}
+{#if selected && !readOnly?.current}
+  <EdgeReconnectAnchor type="source" position={{ x: sourceX, y: sourceY }} size={44} class="canvas-connector-reconnect" aria-hidden="true" title="Drag to reconnect source">
+    <span class="canvas-connector-reconnect-dot"></span>
+  </EdgeReconnectAnchor>
+  <EdgeReconnectAnchor type="target" position={{ x: targetX, y: targetY }} size={44} class="canvas-connector-reconnect" aria-hidden="true" title="Drag to reconnect target">
+    <span class="canvas-connector-reconnect-dot"></span>
+  </EdgeReconnectAnchor>
   <path
     class="canvas-flow-edge-hit-area"
     d={edgeGeometry.path}
@@ -693,11 +724,13 @@
         class:canvas-edge-toolbar-bottom={toolbarVertical === "bottom"}
         class="canvas-edge-toolbar"
         style:--canvas-edge-toolbar-offset-x={toolbarOffsetX}
+        style:--canvas-edge-toolbar-offset-y={toolbarOffsetY}
         style:--canvas-edge-toolbar-max-width={toolbarMaxWidth}
         style:--canvas-edge-toolbar-scale={toolbarScale}
       >
         <div class="canvas-edge-toolbar-content">
           <div class="canvas-node-toolbar-actions">
+            {#if !readOnly?.current}<CanvasConnectionControls {id} />{/if}
             <button
               type="button"
               class="canvas-node-toolbar-button"
