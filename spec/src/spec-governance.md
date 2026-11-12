@@ -1,5 +1,9 @@
 # Specification Governance
 
+Parked Sync's independently audited registry graph includes Hono Node adapter
+2.1.6. Source qualification retains its existing private/skipped status and
+does not add a vulnerability exception or release authorization.
+
 Design Core 0.12.4 lockfile qualification includes History and Markdown's
 compatible union ranges. The exact History source check must reject mixed
 0.12.3/0.12.4 settings types before the fix and pass after registry alignment;

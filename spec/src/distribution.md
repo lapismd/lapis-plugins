@@ -138,6 +138,8 @@ host require published Design Core `^0.4.0`, including prepared browser CSS and
 bundled fonts alongside controlled header actions and compact file inputs.
 Both the shared and parked Sync lockfiles resolve registry packages with local
 pnpm hooks disabled; this does not select Sync for publication.
+Both graphs include the allowed Hono Node adapter 2.1.6 security patch. Their
+independent frozen-install and audit gates remain required.
 
 The Design Core refresh patch also restores Bases picker input/list links and
 accessible property-action names. Existing patch release intent includes this
