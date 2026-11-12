@@ -138,6 +138,8 @@ host require published Design Core `^0.4.0`, including prepared browser CSS and
 bundled fonts alongside controlled header actions and compact file inputs.
 Both the shared and parked Sync lockfiles resolve registry packages with local
 pnpm hooks disabled; this does not select Sync for publication.
+Both graphs include the allowed Hono Node adapter 2.1.6 security patch. Their
+independent frozen-install and audit gates remain required.
 
 The Design Core refresh patch also restores Bases picker input/list links and
 accessible property-action names. Existing patch release intent includes this
@@ -503,3 +505,4 @@ Canvas touch gestures and explicit selection remain plugin-owned under LN-CANVAS
 
 Canvas web cards own HTTP(S) admission and explicit sandboxed previews under LN-CANVAS-054/055; remote frame loading must not mutate vault content.
 Text-to-note conversion uses the owning App and a captured board operation under LN-CANVAS-056/057. Installed runtime acceptance must verify lossless replacement and retained-note undo; publication remains a separate gate.
+PNG export is bundled under LN-CANVAS-058/059 using a normal html-to-image registry range. Runtime acceptance verifies actual PNG output and privacy choices; export adds no publication or host profile authority.

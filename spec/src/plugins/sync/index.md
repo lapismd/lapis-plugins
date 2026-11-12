@@ -27,6 +27,8 @@ Sync plugin keeps its identity and installation behavior.
 Its shared-catalog dependencies are pinned by `packages/sync/pnpm-lock.yaml`
 and installed separately in CI with frozen registry resolution. This supports
 clean UI review while retaining the private package and recursive-task exclusion.
+The independent graph resolves the permitted Hono Node adapter range to
+registry 2.1.6, clearing its two moderate advisories without a new audit exception.
 The isolated development manifest explicitly supplies released UI `^0.1.5` to
 the API peer graph, including its corrected runtime dependency declarations.
 This development edge does not expand the plugin runtime host contract.

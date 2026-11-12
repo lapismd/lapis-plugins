@@ -1,5 +1,9 @@
 # Specification Governance
 
+Parked Sync's independently audited registry graph includes Hono Node adapter
+2.1.6. Source qualification retains its existing private/skipped status and
+does not add a vulnerability exception or release authorization.
+
 Design Core 0.12.4 lockfile qualification includes History and Markdown's
 compatible union ranges. The exact History source check must reject mixed
 0.12.3/0.12.4 settings types before the fix and pass after registry alignment;
@@ -610,3 +614,4 @@ Canvas touch gestures and explicit selection remain plugin-owned under LN-CANVAS
 
 Canvas web cards own HTTP(S) admission and explicit sandboxed previews under LN-CANVAS-054/055; remote frame loading must not mutate vault content.
 LN-CANVAS-056/057 govern text-card conversion through public owning-App contracts, lossless card replacement, retained-note undo and stale asynchronous completion. Functional, accessibility, installed runtime and visual evidence remain separate.
+LN-CANVAS-058/059 separate PNG geometry/quality tests, accessible options, actual native downloads and private snapshot/resource disposal. Functional image validation does not approve a visual baseline or a plugin release.
