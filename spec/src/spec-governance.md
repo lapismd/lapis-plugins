@@ -1,5 +1,7 @@
 # Specification Governance
 
+LN-CANVAS-046/047 distinguish pure endpoint retention, keyboard form and follow interactions from native pointer gestures. The static CI lane runs Playwright drag and cancellation cases after building Storybook; synthetic pointer events alone do not qualify these workflows.
+
 Canvas background qualification separates resource-lease lifecycle tests from real protected dialogs, image decoding, persistence and note-embed acceptance (LN-CANVAS-044/045). Stories remain visual-pending.
 
 LN-CANVAS-042 separates pure layout evidence from real selection-toolbar persistence and undo/redo. Imported dimensions remain authoritative except when an explicit equal-size command changes that dimension. Stories stay visual-pending and no baseline is replaced.

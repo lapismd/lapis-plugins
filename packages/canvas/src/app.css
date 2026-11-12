@@ -399,7 +399,7 @@
   left: 0;
   bottom: 1rem;
   z-index: 8;
-  transform: translateX(calc(-50% + var(--canvas-edge-toolbar-offset-x, 0px)));
+  transform: translate(calc(-50% + var(--canvas-edge-toolbar-offset-x, 0px)), var(--canvas-edge-toolbar-offset-y, 0px));
 }
 
 .canvas-edge-toolbar.canvas-edge-toolbar-bottom {

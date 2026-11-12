@@ -64,6 +64,8 @@ The copied board keeps text, file, link, and group nodes, connectors, pane clipp
 | LN-CANVAS-043 | Editable card previews MUST expose a separate focusable edit action outside rendered Markdown controls. Card selection and pointer editing MUST remain available without nesting interactive controls inside a button wrapper. |
 | LN-CANVAS-044 | Group background images MUST resolve through the owning App relative to the Canvas source. Views and embeds MUST support cover, aspect-ratio and repeat presentation, recover from matching vault changes and show missing-image failures. Each mounted background MUST release its resource leases and subscriptions, including stale asynchronous reads. |
 | LN-CANVAS-045 | Group background controls MUST validate existing vault images, preserve unrelated document data and support undo/redo. Background dialogs MUST share App input protection and retain the existing background when validation or persistence fails. |
+| LN-CANVAS-046 | Selected connectors MUST expose source and target drag anchors and keyboard-accessible endpoint editors. Reconnection MUST preserve connector identity, label, arrows, colour and extension fields, retain cancelled connections and participate in board undo/redo. Protected boards MUST reject reconnection. Connector controls MUST remain reachable beside fixed board panels. |
+| LN-CANVAS-047 | Connectors MUST offer navigation to either attached card. A new connection dropped on empty board space MUST create one text card and connector in one undoable mutation, honour its starting handle direction, flush pending editors and preserve unrelated content. Cancelled reconnection and drops on controls or cards MUST NOT create cards. |
 
 ## Alignment sequence
 

@@ -1,5 +1,7 @@
 # Distribution and Releases
 
+Canvas connector artifacts retain endpoint identity and imported extension fields through reconnection (LN-CANVAS-046/047). Native pointer acceptance runs against the built public Storybook bundle in the static CI lane.
+
 Canvas group backgrounds use public vault resource leases and preserve stored image paths and sizing fields. No new runtime host external or publication route is introduced (LN-CANVAS-044/045).
 
 Canvas selection-layout artifacts add thirteen geometry commands without changing entity identities, extensions or host dependency protocols (LN-CANVAS-042). Group descendants translate with their selected root and runtime release remains separately qualified.

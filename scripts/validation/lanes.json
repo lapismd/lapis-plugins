@@ -12,6 +12,7 @@
   "ci:release": "pnpm run audit && pnpm packages:check && pnpm spec:check && pnpm check:app-ownership && pnpm check:no-tailwind && pnpm test:release && pnpm ci:packages && pnpm packages:pack -- --already-built && pnpm plugin:build && pnpm plugin:verify && pnpm build-storybook",
   "build-storybook": "node --max-old-space-size=6144 node_modules/storybook/dist/bin/dispatcher.js build",
   "test:storybook": "vitest run --project storybook --no-file-parallelism",
+  "test:canvas-browser": "pnpm build && pnpm build-storybook && playwright test -c tests/canvas/playwright.config.ts",
   "spec:first": "node scripts/dependency-automation/spec-policy.mjs first",
   "spec:check": "node scripts/dependency-automation/spec-policy.mjs check && pnpm check:app-ownership",
   "spec:validate": "node scripts/dependency-automation/spec-policy.mjs validate",

@@ -41,6 +41,7 @@
     "dev:sync": "pnpm --dir packages/sync build && vite --config dev/sync/vite.config.mjs",
     "build-storybook": "node scripts/validation.mjs run build-storybook",
     "test:storybook": "node scripts/validation.mjs run test:storybook",
+    "test:canvas-browser": "node scripts/validation.mjs run test:canvas-browser",
     "spec:validate": "node scripts/dependency-automation/spec-policy.mjs validate",
     "spec:check": "node scripts/dependency-automation/spec-policy.mjs check",
     "spec:first": "node scripts/dependency-automation/spec-policy.mjs first",
