@@ -255,3 +255,5 @@ LN-BASE-048 collection callbacks are evaluated in Bases with lexical query varia
 LN-BASE-049 date and editor helpers remain source-owned query behavior. This change adds no host this binding, native service state or implicit App lookup.
 
 Canvas touch gestures and explicit selection remain plugin-owned under LN-CANVAS-051/052; native acceptance must drive real touch input.
+
+Canvas web cards own HTTP(S) admission and explicit sandboxed previews under LN-CANVAS-054/055; remote frame loading must not mutate vault content.

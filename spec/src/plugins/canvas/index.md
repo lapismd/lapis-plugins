@@ -75,6 +75,9 @@ The copied board keeps text, file, link, and group nodes, connectors, pane clipp
 
 | LN-CANVAS-053 | Mouse and touch resize dimensions MUST flow through public node width/height fields into persistence, bounds, grouping and navigation. Imported positive dimensions MUST remain intact before resizing; undo/redo MUST restore complete geometry and preserve unrelated fields. Presentation styles MUST NOT override resized dimensions. |
 
+| LN-CANVAS-054 | Every URL-card navigation path in views and embeds MUST admit only absolute HTTP(S) addresses. Malformed and unsupported stored URLs MUST remain inert without rewriting the source. Opening a valid external link MUST isolate its opener and omit referrer information. |
+| LN-CANVAS-055 | Web previews MUST load only after an explicit user action and close without changing Canvas data. Frames MUST omit same-origin and top-navigation permissions, deny sensitive browser capabilities and send no referrer. Supporting browsers MUST use credentialless frames to load within cross-origin isolated hosts without sending host credentials. The open-external action and a visible framing fallback MUST remain available when preview loading fails, the browser lacks support or a site refuses embedding. |
+
 ## Alignment sequence
 
 Implement and qualify these independently reviewable slices in order:

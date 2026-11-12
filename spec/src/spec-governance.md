@@ -607,3 +607,5 @@ LN-BASE-048 retains original failing expectations and adds callback scope eviden
 LN-BASE-049 shares strict syntax parsing between execution and editor drafts without requiring formula definitions during syntax validation. Audit results retain original date-arithmetic gaps.
 
 Canvas touch gestures and explicit selection remain plugin-owned under LN-CANVAS-051/052; native acceptance must drive real touch input.
+
+Canvas web cards own HTTP(S) admission and explicit sandboxed previews under LN-CANVAS-054/055; remote frame loading must not mutate vault content.

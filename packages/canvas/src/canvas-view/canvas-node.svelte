@@ -4,6 +4,8 @@
   import { createLapisMiraFileAdapter } from "@lapis-notes/markdown/embed";
   import CanvasGroupBackground from "../canvas-group-background.svelte";
   import CanvasGroupBackgroundControls from "./canvas-group-background-controls.svelte";
+  import CanvasWebPreview from "../canvas-web-preview.svelte";
+  import { canvasWebUrl } from "../lib/canvas-web-url";
   import CanvasFileContent from "../canvas-file-content.svelte";
   import { EditableMarkdownPreview } from "@lapismd/mira/preview";
   import "@lapismd/mira/preview/styles.css";
@@ -568,18 +570,6 @@
     !useLowZoomNodePreview && (data.kind === "text" || isEditableMarkdownFile),
   );
   const embedSourcePath = $derived(canvasSource?.current ?? "");
-  let linkHost = $derived.by(() => {
-    if (data.kind !== "link" || !data.url) {
-      return null;
-    }
-
-    try {
-      return new URL(data.url).host;
-    } catch {
-      return null;
-    }
-  });
-
   function openTarget(): void {
     if (data.kind === "file") {
       if (resolvedFile && app) {
@@ -589,12 +579,9 @@
     }
 
     if (data.kind === "link" && data.url) {
-      window.open(data.url, "_blank", "noopener,noreferrer");
+      const address = canvasWebUrl(data.url);
+      if (address) window.open(address, "_blank", "noopener,noreferrer");
     }
-  }
-
-  function handleNodeActionPointerDown(event: PointerEvent): void {
-    event.stopPropagation();
   }
 
   function clearVisibleHandles(): void {
@@ -625,11 +612,6 @@
     visibleHandleRight = interactiveElement.classList.contains("right");
     visibleHandleBottom = interactiveElement.classList.contains("bottom");
     visibleHandleLeft = interactiveElement.classList.contains("left");
-  }
-
-  function handleOpenTargetClick(event: MouseEvent): void {
-    event.stopPropagation();
-    openTarget();
   }
 
   $effect(() => {
@@ -1115,16 +1097,7 @@
     {/if}
 
     {#if data.kind === "link"}
-      <div class="canvas-node-meta nodrag nopan">
-        <div class="canvas-node-meta-text">{linkHost ?? "Invalid URL"}</div>
-        <button
-          type="button"
-          class="canvas-node-action nodrag nopan"
-          onpointerdown={handleNodeActionPointerDown}
-          onclick={handleOpenTargetClick}
-          disabled={!data.url}>Open link</button
-        >
-      </div>
+      <CanvasWebPreview url={data.url ?? ""} />
     {/if}
   {/snippet}
 

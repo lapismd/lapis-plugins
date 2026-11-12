@@ -214,5 +214,8 @@
   },
   "stories/plugins/canvas/Touch.stories.ts": {
     "kind": "application"
+  },
+  "stories/plugins/canvas/WebPreviews.stories.ts": {
+    "kind": "application"
   }
 }

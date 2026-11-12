@@ -500,3 +500,5 @@ LN-BASE-048 collection compatibility is a separate Bases patch group delivered t
 LN-BASE-049 is a separate Bases patch group. Moment is a bundled registry dependency for the documented date-format language; no host import or public export is added.
 
 Canvas touch gestures and explicit selection remain plugin-owned under LN-CANVAS-051/052; native acceptance must drive real touch input.
+
+Canvas web cards own HTTP(S) admission and explicit sandboxed previews under LN-CANVAS-054/055; remote frame loading must not mutate vault content.
