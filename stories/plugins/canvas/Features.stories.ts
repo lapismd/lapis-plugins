@@ -1,3 +1,4 @@
+import type { App } from "@lapis-notes/api";
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, userEvent, waitFor, within } from "storybook/test";
 import { CanvasEmbed } from "@lapis-notes/canvas";
@@ -241,5 +242,101 @@ export const GroupImportedCards: Story = {
       const small = root.querySelector<HTMLElement>('[data-id="small"]')!;
       expect(Number(getComputedStyle(frame).zIndex)).toBeLessThan(Number(getComputedStyle(small).zIndex));
     });
+  },
+};
+
+async function canvasOwner(element: HTMLElement): Promise<App> {
+  return waitFor(() => {
+    const host = element.querySelector<HTMLElement>('[data-panel-kind="canvas"][data-status="ready"]') as (HTMLElement & { __lapisApp?: App }) | null;
+    expect(host?.__lapisApp).toBeDefined();
+    return host!.__lapisApp!;
+  }, { timeout: 30_000 });
+}
+
+export const SaveBeforeSwitch: Story = {
+  name: "Save stays on its original file during a switch",
+  parameters: featureParameters("Switching boards waits for the pending source write and leaves the destination document unchanged."),
+  render: () => ({
+    Component: ViewingPanelDemo,
+    props: { layout: "middle-top-tabs", canvasPath: "Imported.canvas", files: { "Imported.canvas": importedDocument } },
+  }),
+  play: async ({ canvasElement }) => {
+    const app = await canvasOwner(canvasElement);
+    const nextRaw = JSON.stringify({ nodes: [{ id: "next", type: "text", x: 0, y: 0, width: 260, height: 160, text: "Next board" }] });
+    const nextFile = await app.vault.create("Next.canvas", nextRaw);
+    const original = app.vault.modify.bind(app.vault);
+    let finish!: () => void;
+    const gate = new Promise<void>((resolve) => { finish = resolve; });
+    let began!: () => void;
+    const started = new Promise<void>((resolve) => { began = resolve; });
+    app.vault.modify = async (file, data, options) => {
+      if (file.path === "Imported.canvas") {
+        began();
+        await gate;
+      }
+      return original(file, data, options);
+    };
+    let switching: Promise<void> | undefined;
+    try {
+      const board = within(canvasElement);
+      await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-id="small"] .canvas-node-label')!);
+      await userEvent.click(await board.findByRole("button", { name: "Set color", exact: true }));
+      await userEvent.click(board.getByRole("button", { name: "Set node color 4", exact: true }));
+      const leaf = app.workspace.activeLeaf!;
+      switching = leaf.openFile(nextFile);
+      await started;
+      expect((leaf.view as unknown as { file: { path: string } }).file.path).toBe("Imported.canvas");
+      finish();
+      await switching;
+      await waitFor(() => expect(canvasElement.textContent).toContain("Next board"));
+      expect(JSON.parse(await app.vault.read(app.vault.getFileByPath("Imported.canvas")!)).nodes[0].color).toBe("4");
+      expect(await app.vault.read(nextFile)).toBe(nextRaw);
+    } finally {
+      finish();
+      try {
+        await switching;
+      } finally {
+        app.vault.modify = original;
+      }
+    }
+  },
+};
+
+export const RetrySave: Story = {
+  name: "Failed save retains the board and retries",
+  parameters: featureParameters("A failed write keeps the board visible and the Retry save action persists the retained draft."),
+  render: () => ({
+    Component: ViewingPanelDemo,
+    props: { layout: "middle-top-tabs", canvasPath: "Imported.canvas", files: { "Imported.canvas": importedDocument } },
+  }),
+  play: async ({ canvasElement }) => {
+    const app = await canvasOwner(canvasElement);
+    const original = app.vault.modify.bind(app.vault);
+    let rejectNext = true;
+    app.vault.modify = async (file, data, options) => {
+      if (file.path === "Imported.canvas" && rejectNext) {
+        rejectNext = false;
+        throw new Error("Storage temporarily unavailable");
+      }
+      return original(file, data, options);
+    };
+    try {
+      const board = within(canvasElement);
+      await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-id="small"] .canvas-node-label')!);
+      await userEvent.click(await board.findByRole("button", { name: "Set color", exact: true }));
+      await userEvent.click(board.getByRole("button", { name: "Set node color 4", exact: true }));
+      const alert = await board.findByRole("alert");
+      expect(alert).toHaveTextContent("Storage temporarily unavailable");
+      expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(2);
+      expect(canvasElement.querySelector(".canvas-view-error")).toBeNull();
+      await userEvent.click(board.getByRole("button", { name: "Retry save", exact: true }));
+      await waitFor(async () => {
+        const value = JSON.parse(await app.vault.read(app.vault.getFileByPath("Imported.canvas")!));
+        expect(value.nodes[0].color).toBe("4");
+        expect(board.queryByRole("alert")).toBeNull();
+      });
+    } finally {
+      app.vault.modify = original;
+    }
   },
 };

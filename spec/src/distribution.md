@@ -1,5 +1,7 @@
 # Distribution and Releases
 
+Canvas save-queue patch artifacts retain destination-bound serialization and explicit retry (LN-CANVAS-024/025/026). Full App/native editing admission remains separately planned under LN-CANVAS-011; patch release intent is not publication approval.
+
 Canvas file-safety patch artifacts MUST retain the JSON Canvas round-trip and endpoint-default contracts (LN-CANVAS-005/006/007). Npm and runtime archives qualify the same source; patch release intent does not authorize publication.
 
 Bases file and fenced Markdown embeds retain a bounded read-only query toolbar
