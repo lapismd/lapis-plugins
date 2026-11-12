@@ -15,6 +15,7 @@
   import type { CanvasBoardController } from "../lib/canvas-board-controller";
   import CanvasAlignmentGuides from "./canvas-alignment-guides.svelte";
   import CanvasControls from "./canvas-controls.svelte";
+  import CanvasNavigation from "./canvas-navigation.svelte";
   import CanvasFitController from "./canvas-fit-controller.svelte";
   import CanvasNode from "./canvas-node.svelte";
   import CanvasSelectionToolbar from "./canvas-selection-toolbar.svelte";
@@ -801,12 +802,13 @@
           onnodeclick={handleNodeClick}
         >
           <CanvasActions {app} {inputBlocked} {surface} bind:contextPoint />
-          <CanvasFitController />
+          <CanvasFitController container={surface} />
           <CanvasConnectionDrop request={droppedConnection} onDone={() => { droppedConnection = null; }} onError={(reason) => { connectionError = reason; }} />
           <CanvasSelectionToolbar />
           <CanvasAlignmentGuides guides={alignmentGuides} />
           <Background />
           <CanvasControls />
+          <CanvasNavigation />
           <MiniMap />
         </SvelteFlow>
       {/if}

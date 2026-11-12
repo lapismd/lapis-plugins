@@ -7,19 +7,20 @@
   let { readOnly = false }: { readOnly?: boolean } = $props();
 
   const { setZoom, zoomIn, zoomOut } = useSvelteFlow();
+  const duration = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 150;
 
   async function resetZoom(): Promise<void> {
-    await setZoom(1, { duration: 150 });
+    await setZoom(1, { duration: duration() });
   }
 </script>
 
-<Controls position="top-right" showZoom={false} showLock={!readOnly}>
+<Controls position="top-right" showZoom={false} showFitView={false} showLock={!readOnly}>
   {#snippet before()}
     <ControlButton
       class="svelte-flow__controls-zoomin"
       title="Zoom In"
       aria-label="Zoom In"
-      onclick={() => void zoomIn({ duration: 150 })}
+      onclick={() => void zoomIn({ duration: duration() })}
     >
       <Plus />
     </ControlButton>
@@ -35,7 +36,7 @@
       class="svelte-flow__controls-zoomout"
       title="Zoom Out"
       aria-label="Zoom Out"
-      onclick={() => void zoomOut({ duration: 150 })}
+      onclick={() => void zoomOut({ duration: duration() })}
     >
       <Minus />
     </ControlButton>

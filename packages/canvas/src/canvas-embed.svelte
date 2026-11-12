@@ -11,6 +11,7 @@
   import { acquireCanvasStyles } from "./lib/canvas-styles";
   import { canvasOwnerKey } from "./lib/canvas-embed-boundary";
   import CanvasControls from "./canvas-view/canvas-controls.svelte";
+  import CanvasNavigation from "./canvas-view/canvas-navigation.svelte";
   import CanvasEdge from "./canvas-view/canvas-edge.svelte";
   import CanvasFitController from "./canvas-view/canvas-fit-controller.svelte";
   import CanvasEmbedNode from "./canvas-embed-node.svelte";
@@ -138,7 +139,7 @@
 </script>
 
 <section bind:this={surface} class={mergeClassName("canvas-view-root canvas-embed", className)} class:canvas-embed-static={!sourcePath || compact}
-  data-canvas-boundary data-canvas-owner={canvasOwnerKey(app)} data-canvas-embed data-canvas-source-path={sourcePath || undefined} aria-label={sourcePath ? `Embedded canvas: ${sourcePath}` : "Embedded canvas"}>
+  data-canvas-boundary data-canvas-owner={canvasOwnerKey(app)} data-canvas-embed data-canvas-source-path={sourcePath || undefined} role="group" aria-label={sourcePath ? `Embedded canvas: ${sourcePath}` : "Embedded canvas"}>
   {#if sourcePath}
     <header class="canvas-embed-header">
       <span class="canvas-embed-path">{sourcePath}</span>
@@ -178,6 +179,7 @@
         <Background />
         <MiniMap />
         <CanvasControls readOnly />
+        <CanvasNavigation readOnly />
         <CanvasFitController responsive revision={value} container={surface} />
       </SvelteFlow>
     </div>

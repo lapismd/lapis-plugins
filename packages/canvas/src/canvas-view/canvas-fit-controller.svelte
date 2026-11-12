@@ -7,10 +7,22 @@
   const nodesInitialized = useNodesInitialized();
   const viewportInitialized = useViewportInitialized();
   let fitted = false;
+  let interacted = $state(false);
 
   $effect(() => {
-    if (!nodesInitialized.current || !viewportInitialized.current) return;
-    if (!responsive && fitted) return;
+    if (responsive || !container) return;
+    const element = container;
+    const stop = () => { interacted = true; };
+    const events = ["pointerdown", "keydown", "wheel", "dragover", "click"];
+    for (const event of events) element.addEventListener(event, stop, true);
+    return () => { for (const event of events) element.removeEventListener(event, stop, true); };
+  });
+
+  $effect(() => {
+    if (!viewportInitialized.current) return;
+    if (!responsive && (fitted || interacted)) return;
+    if (!responsive && untrack(() => getNodes().length) === 0) { fitted = true; return; }
+    if (!nodesInitialized.current) return;
     if (responsive) void revision;
     const element = container;
     if (untrack(() => getNodes().length) === 0) return;

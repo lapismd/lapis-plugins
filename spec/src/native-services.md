@@ -1,5 +1,7 @@
 # Native first-party plugin services
 
+Canvas keyboard navigation is scoped to its owning rendered board. Camera state is presentation-only; its help dialog shares the existing App input fence and creates no native service or durable writer (LN-CANVAS-048).
+
 Connector endpoint editors and empty-space connection drops use the existing protected parent board writer (LN-CANVAS-046/047). Navigation does not create a writer; reconnection does not bypass App guards.
 
 Canvas background dialogs use the existing parent editing guard. Image reads and URL disposal belong to each mounted surface; background changes introduce no writer or native service (LN-CANVAS-044/045).
