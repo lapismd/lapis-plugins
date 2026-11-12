@@ -137,7 +137,11 @@ export const Link = featureStory(
   { canvasPath: SAMPLE_LINK_CANVAS_PATH },
   (root) => {
     expectText(root, "app.lapis.md");
-    expect(root.querySelector("button")).toHaveTextContent("Open link");
+    const link = within(root).getByRole("link", { name: "Open link", exact: true });
+    expect(link).toHaveAttribute("href", expect.stringContaining("https://app.lapis.md"));
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
+    expect(within(root).getByRole("button", { name: "Load web preview", exact: true })).toBeVisible();
+    expect(root.querySelector("iframe")).toBeNull();
   },
 );
 

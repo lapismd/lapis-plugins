@@ -2,6 +2,7 @@
   import type { App } from "@lapis-notes/api";
   import CanvasGroupBackground from "./canvas-group-background.svelte";
   import CanvasFileContent from "./canvas-file-content.svelte";
+  import CanvasWebPreview from "./canvas-web-preview.svelte";
   import { MarkdownEmbed } from "@lapis-notes/markdown/embed";
   import { Handle, Position, type NodeProps } from "@xyflow/svelte";
   import { getContext } from "svelte";
@@ -79,11 +80,7 @@
           <CanvasFileContent {app} path={data.file} subpath={data.subpath} sourcePath={canvasSource?.current ?? ""} />
         </div>
       {:else if data.kind === "link"}
-        <div class="canvas-node-text">
-          <a href={data.url ?? "#"} rel="noreferrer" target="_blank">
-            {nodeLabel}
-          </a>
-        </div>
+        <CanvasWebPreview url={data.url ?? ""} />
       {:else}
         <div class="canvas-node-text">{nodeLabel}</div>
       {/if}
