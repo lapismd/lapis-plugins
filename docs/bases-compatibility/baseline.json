@@ -556,37 +556,45 @@
   "BASES-FUNC-045": [
     {
       "id": "example-1",
-      "pass": false
+      "pass": true
     }
   ],
   "BASES-FUNC-046": [
     {
       "id": "example-1",
-      "pass": false
+      "pass": true
     }
   ],
   "BASES-FUNC-047": [
     {
       "id": "example-1",
-      "pass": false
+      "pass": true
     }
   ],
   "BASES-FUNC-048": [
     {
       "id": "example-1",
-      "pass": false
+      "pass": true
+    },
+    {
+      "id": "callback-index",
+      "pass": true
+    },
+    {
+      "id": "callback-truthiness",
+      "pass": true
     }
   ],
   "BASES-FUNC-049": [
     {
       "id": "example-1",
-      "pass": false
+      "pass": true
     }
   ],
   "BASES-FUNC-050": [
     {
       "id": "example-1",
-      "pass": false
+      "pass": true
     },
     {
       "id": "example-2",
@@ -596,7 +604,7 @@
   "BASES-FUNC-051": [
     {
       "id": "example-1",
-      "pass": false
+      "pass": true
     }
   ],
   "BASES-FUNC-052": [
@@ -607,40 +615,56 @@
     {
       "id": "example-2",
       "pass": true
+    },
+    {
+      "id": "callback-nested",
+      "pass": true
     }
   ],
   "BASES-FUNC-053": [
     {
       "id": "example-1",
-      "pass": false
+      "pass": true
+    },
+    {
+      "id": "string-accumulator",
+      "pass": true
+    },
+    {
+      "id": "empty-initial",
+      "pass": true
     }
   ],
   "BASES-FUNC-054": [
     {
       "id": "example-1",
-      "pass": false
+      "pass": true
     }
   ],
   "BASES-FUNC-055": [
     {
       "id": "example-1",
-      "pass": false
+      "pass": true
     },
     {
       "id": "example-2",
-      "pass": false
+      "pass": true
+    },
+    {
+      "id": "negative-start",
+      "pass": true
     }
   ],
   "BASES-FUNC-056": [
     {
       "id": "example-1",
-      "pass": false
+      "pass": true
     }
   ],
   "BASES-FUNC-057": [
     {
       "id": "example-1",
-      "pass": false
+      "pass": true
     }
   ],
   "BASES-FUNC-058": [

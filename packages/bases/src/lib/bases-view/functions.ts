@@ -2,6 +2,7 @@ import { normalizePath, TFile } from "@lapis-notes/api";
 import { createFunction, Decimal, VARARG } from "peaql";
 import { VaultFile } from "./db";
 import { DateTime, Duration } from "luxon";
+import "./collection-functions";
 import {
   ceil,
   contains,
@@ -185,6 +186,15 @@ createFunction("slice", [Array, Number], Array, sliceList, true);
 createFunction("slice", [Array, Number, Number], Array, sliceList, true);
 createFunction("sort", [Array], Array, sortList, true);
 createFunction("unique", [Array], Array, unique, true);
+// PEaQL distinguishes typed array literals from metadata's Array constructor.
+createFunction("flat", [[Object]], [Object], flat, true);
+createFunction("reverse", [[Object]], [Object], reverseList, true);
+createFunction("slice", [[Object], Number], [Object], sliceList, true);
+createFunction("slice", [[Object], Number, Number], [Object], sliceList, true);
+createFunction("sort", [[Object]], [Object], sortList, true);
+createFunction("bases_unique", [Object], [Object], unique, true);
+createFunction("bases_join", [Object], String, join, true);
+createFunction("bases_join", [Object, String], String, join, true);
 createFunction("ceil", [Number], Number, ceil, true);
 createFunction("floor", [Number], Number, floor, true);
 createFunction("isType", [Object, String], Boolean, isType, true);

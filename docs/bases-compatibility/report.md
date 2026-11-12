@@ -2,7 +2,7 @@
 
 Documentation reviewed: 2026-11-12. This is documentation-derived acceptance against Lapis source, not a live Obsidian differential test.
 
-47 supported, 9 partial, 24 gaps, 9 requiring manual review. Counts describe the selected probes, not a percentage of product parity.
+59 supported, 8 partial, 13 gaps, 9 requiring manual review. Counts describe the selected probes, not a percentage of product parity.
 
 Run `pnpm audit:bases` to check behavior and report freshness; `pnpm audit:bases:update` explicitly accepts changed results. Run `pnpm audit:bases:upstream` to detect upstream documentation drift. See [audit workflow](README.md).
 
@@ -74,19 +74,19 @@ Supported means all listed probes passed; partial means some passed; gap means n
 | BASES-FUNC-042 | P1 | [number.isEmpty](https://help.obsidian.md/bases/functions) | supported | 2/2 | Present zero values are not empty; missing values still are. |
 | BASES-FUNC-043 | P1 | [number.round](https://help.obsidian.md/bases/functions) | partial | 1/2 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-044 | P1 | [number.toFixed](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-045 | P1 | [list.contains](https://help.obsidian.md/bases/functions) | gap | 0/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-046 | P1 | [list.containsAll](https://help.obsidian.md/bases/functions) | gap | 0/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-047 | P1 | [list.containsAny](https://help.obsidian.md/bases/functions) | gap | 0/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-048 | P1 | [list.filter](https://help.obsidian.md/bases/functions) | gap | 0/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-049 | P1 | [list.flat](https://help.obsidian.md/bases/functions) | gap | 0/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-050 | P1 | [list.isEmpty](https://help.obsidian.md/bases/functions) | partial | 1/2 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-051 | P1 | [list.join](https://help.obsidian.md/bases/functions) | gap | 0/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-052 | P1 | [list.map](https://help.obsidian.md/bases/functions) | supported | 2/2 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-053 | P1 | [list.reduce](https://help.obsidian.md/bases/functions) | gap | 0/1 | Obsidian takes expression then initial value, with acc; Lapis callback uses accumulator. |
-| BASES-FUNC-054 | P1 | [list.reverse](https://help.obsidian.md/bases/functions) | gap | 0/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-055 | P1 | [list.slice](https://help.obsidian.md/bases/functions) | gap | 0/2 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-056 | P1 | [list.sort](https://help.obsidian.md/bases/functions) | gap | 0/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-057 | P1 | [list.unique](https://help.obsidian.md/bases/functions) | gap | 0/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
+| BASES-FUNC-045 | P1 | [list.contains](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
+| BASES-FUNC-046 | P1 | [list.containsAll](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
+| BASES-FUNC-047 | P1 | [list.containsAny](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
+| BASES-FUNC-048 | P1 | [list.filter](https://help.obsidian.md/bases/functions) | supported | 3/3 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
+| BASES-FUNC-049 | P1 | [list.flat](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
+| BASES-FUNC-050 | P1 | [list.isEmpty](https://help.obsidian.md/bases/functions) | supported | 2/2 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
+| BASES-FUNC-051 | P1 | [list.join](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
+| BASES-FUNC-052 | P1 | [list.map](https://help.obsidian.md/bases/functions) | supported | 3/3 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
+| BASES-FUNC-053 | P1 | [list.reduce](https://help.obsidian.md/bases/functions) | supported | 3/3 | Method reduce evaluates expression then initial value with lexical acc/value/index; native direct-helper ordering is preserved. |
+| BASES-FUNC-054 | P1 | [list.reverse](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
+| BASES-FUNC-055 | P1 | [list.slice](https://help.obsidian.md/bases/functions) | supported | 3/3 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
+| BASES-FUNC-056 | P1 | [list.sort](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
+| BASES-FUNC-057 | P1 | [list.unique](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-058 | P1 | [link.asFile](https://help.obsidian.md/bases/functions) | gap | 0/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-059 | P1 | [link.linksTo](https://help.obsidian.md/bases/functions) | gap | 0/1 | Must inspect the source file's outgoing links rather than compare the two paths. |
 | BASES-FUNC-060 | P1 | [file.asLink](https://help.obsidian.md/bases/functions) | gap | 0/1 | Requires a typed link with resolution rather than a wikilink string. |
@@ -229,79 +229,6 @@ Owner: lapis-plugins/packages/bases. String separators accept the optional split
 Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
 
 - example-1 — `(2.5).round()`: expected `3`; actual `2.5`.
-
-### BASES-FUNC-045: list.contains
-
-Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
-
-- example-1 — `[1,2,3].contains(2)`: expected `true`; error `no function matches "contains(Array<integer>, integer)" name and argument type`.
-
-### BASES-FUNC-046: list.containsAll
-
-Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
-
-- example-1 — `[1,2,3].containsAll(2,3)`: expected `true`; error `no function matches "containsAll(Array<integer>, integer, integer)" name and argument type`.
-
-### BASES-FUNC-047: list.containsAny
-
-Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
-
-- example-1 — `[1,2,3].containsAny(3,4)`: expected `true`; error `no function matches "containsAny(Array<integer>, integer, integer)" name and argument type`.
-
-### BASES-FUNC-048: list.filter
-
-Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
-
-- example-1 — `[1,2,3,4].filter(value > 2)`: expected `[3,4]`; error `Invalid Bases expression.`.
-
-### BASES-FUNC-049: list.flat
-
-Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
-
-- example-1 — `[1,[2,3]].flat()`: expected `[1,2,3]`; error `Invalid query stack(3):`.
-
-### BASES-FUNC-050: list.isEmpty
-
-Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
-
-- example-1 — `[].isEmpty()`: expected `true`; error `Invalid Bases expression.`.
-
-### BASES-FUNC-051: list.join
-
-Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
-
-- example-1 — `[1,2,3].join(",")`: expected `"1,2,3"`; error `Invalid Bases expression.`.
-
-### BASES-FUNC-053: list.reduce
-
-Owner: lapis-plugins/packages/bases. Obsidian takes expression then initial value, with acc; Lapis callback uses accumulator.
-
-- example-1 — `[1,2,3].reduce(acc + value, 0)`: expected `6`; error `Unsupported operator(+): (object + object)`.
-
-### BASES-FUNC-054: list.reverse
-
-Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
-
-- example-1 — `[1,2,3].reverse()`: expected `[3,2,1]`; error `no function matches "reverse(Array<integer>)" name and argument type`.
-
-### BASES-FUNC-055: list.slice
-
-Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
-
-- example-1 — `[1,2,3,4].slice(1,3)`: expected `[2,3]`; error `no function matches "slice(Array<integer>, integer, integer)" name and argument type`.
-- example-2 — `[1,2,3].slice(1)`: expected `[2,3]`; error `no function matches "slice(Array<integer>, integer)" name and argument type`.
-
-### BASES-FUNC-056: list.sort
-
-Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
-
-- example-1 — `[3,1,2].sort()`: expected `[1,2,3]`; error `no function matches "sort(Array<integer>)" name and argument type`.
-
-### BASES-FUNC-057: list.unique
-
-Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
-
-- example-1 — `[1,2,2,3].unique()`: expected `[1,2,3]`; error `Invalid Bases expression.`.
 
 ### BASES-FUNC-058: link.asFile
 

@@ -201,6 +201,7 @@ afterAll(() => {
           "filter-parser.ts",
           "functions.ts",
           "functions-core.ts",
+          "collection-functions.ts",
           "db.ts",
           "file-fields-core.ts",
         ].map((name) => [

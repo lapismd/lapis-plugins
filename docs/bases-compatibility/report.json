@@ -10,11 +10,12 @@
     },
     "sources": {
       "document-core.ts": "9cb39ea10bc6f6f62dab7a382edf5a569a647abecf9a4050a291acd3053cb9db",
-      "expression-compiler.ts": "e7c4e9333f941af27594a50aee309b8970d26afcf4a0c7c7fcbd2bc945be27a3",
+      "expression-compiler.ts": "9d9b025f9faa77d24bd77d591c00464b353b2469ddccfaaa418c129d3e05688b",
       "filter-parser.ts": "08b549a1638f4689f836e9018e804ae8ad2309f965a03adc34b4e4d2a07131fd",
-      "functions.ts": "0c68176e5cdbfae5b03117be21cc530642066d3de569b71b8bbdb375eee2108d",
+      "functions.ts": "699ed5ca13af142f7d06ec74511059d64b6db4d41b1ea3dccff7a6672e425ba1",
       "functions-core.ts": "ffb25adf15a1f879a9a0c833cfa73a8dc9c3c4294ea46bd2643460d5a2023325",
-      "db.ts": "31f0b13e676e7f808c153828a3dcdbc7833f0dcb2b19ce917e15bea530809300",
+      "collection-functions.ts": "44b255db36bc90f31731084f3d5366d02ee21a256ab75a4698a1dab44c260def",
+      "db.ts": "0f0e7db85c32ebd102773bdbe2d1c68e14385787bff435fbd4966c36e4faa73a",
       "file-fields-core.ts": "112b9f1265ee47e31decca9debccaca4b47e4f97f4bcfc285d532ef1456b32a2"
     }
   },
@@ -2847,13 +2848,13 @@
       "functions": [
         "list.contains"
       ],
-      "status": "gap",
+      "status": "supported",
       "observations": [
         {
           "id": "example-1",
-          "pass": false,
+          "pass": true,
           "expected": true,
-          "error": "no function matches \"contains(Array<integer>, integer)\" name and argument type"
+          "actual": true
         }
       ]
     },
@@ -2875,13 +2876,13 @@
       "functions": [
         "list.containsAll"
       ],
-      "status": "gap",
+      "status": "supported",
       "observations": [
         {
           "id": "example-1",
-          "pass": false,
+          "pass": true,
           "expected": true,
-          "error": "no function matches \"containsAll(Array<integer>, integer, integer)\" name and argument type"
+          "actual": true
         }
       ]
     },
@@ -2903,13 +2904,13 @@
       "functions": [
         "list.containsAny"
       ],
-      "status": "gap",
+      "status": "supported",
       "observations": [
         {
           "id": "example-1",
-          "pass": false,
+          "pass": true,
           "expected": true,
-          "error": "no function matches \"containsAny(Array<integer>, integer, integer)\" name and argument type"
+          "actual": true
         }
       ]
     },
@@ -2929,21 +2930,66 @@
             3,
             4
           ]
+        },
+        {
+          "id": "callback-index",
+          "mode": "expression",
+          "expression": "[1,2,3,4].filter(index > 1)",
+          "expected": [
+            3,
+            4
+          ]
+        },
+        {
+          "id": "callback-truthiness",
+          "mode": "expression",
+          "expression": "[0,1,2].filter(value)",
+          "expected": [
+            1,
+            2
+          ]
         }
       ],
       "functions": [
         "list.filter"
       ],
-      "status": "gap",
+      "status": "supported",
       "observations": [
         {
           "id": "example-1",
-          "pass": false,
+          "pass": true,
           "expected": [
             3,
             4
           ],
-          "error": "Invalid Bases expression."
+          "actual": [
+            3,
+            4
+          ]
+        },
+        {
+          "id": "callback-index",
+          "pass": true,
+          "expected": [
+            3,
+            4
+          ],
+          "actual": [
+            3,
+            4
+          ]
+        },
+        {
+          "id": "callback-truthiness",
+          "pass": true,
+          "expected": [
+            1,
+            2
+          ],
+          "actual": [
+            1,
+            2
+          ]
         }
       ]
     },
@@ -2969,17 +3015,21 @@
       "functions": [
         "list.flat"
       ],
-      "status": "gap",
+      "status": "supported",
       "observations": [
         {
           "id": "example-1",
-          "pass": false,
+          "pass": true,
           "expected": [
             1,
             2,
             3
           ],
-          "error": "Invalid query stack(3):"
+          "actual": [
+            1,
+            2,
+            3
+          ]
         }
       ]
     },
@@ -3007,13 +3057,13 @@
       "functions": [
         "list.isEmpty"
       ],
-      "status": "partial",
+      "status": "supported",
       "observations": [
         {
           "id": "example-1",
-          "pass": false,
+          "pass": true,
           "expected": true,
-          "error": "Invalid Bases expression."
+          "actual": true
         },
         {
           "id": "example-2",
@@ -3041,13 +3091,13 @@
       "functions": [
         "list.join"
       ],
-      "status": "gap",
+      "status": "supported",
       "observations": [
         {
           "id": "example-1",
-          "pass": false,
+          "pass": true,
           "expected": "1,2,3",
-          "error": "Invalid Bases expression."
+          "actual": "1,2,3"
         }
       ]
     },
@@ -3077,6 +3127,21 @@
             0,
             1,
             2
+          ]
+        },
+        {
+          "id": "callback-nested",
+          "mode": "expression",
+          "expression": "[1,2].map([1,2].map(value + index))",
+          "expected": [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              3
+            ]
           ]
         }
       ],
@@ -3112,6 +3177,30 @@
             1,
             2
           ]
+        },
+        {
+          "id": "callback-nested",
+          "pass": true,
+          "expected": [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              3
+            ]
+          ],
+          "actual": [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              3
+            ]
+          ]
         }
       ]
     },
@@ -3121,25 +3210,49 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/functions",
-      "notes": "Obsidian takes expression then initial value, with acc; Lapis callback uses accumulator.",
+      "notes": "Method reduce evaluates expression then initial value with lexical acc/value/index; native direct-helper ordering is preserved.",
       "probes": [
         {
           "id": "example-1",
           "mode": "expression",
           "expression": "[1,2,3].reduce(acc + value, 0)",
           "expected": 6
+        },
+        {
+          "id": "string-accumulator",
+          "mode": "expression",
+          "expression": "[\"a\",\"b\"].reduce(acc + value, \"\")",
+          "expected": "ab"
+        },
+        {
+          "id": "empty-initial",
+          "mode": "expression",
+          "expression": "[].reduce(acc + value, 10)",
+          "expected": 10
         }
       ],
       "functions": [
         "list.reduce"
       ],
-      "status": "gap",
+      "status": "supported",
       "observations": [
         {
           "id": "example-1",
-          "pass": false,
+          "pass": true,
           "expected": 6,
-          "error": "Unsupported operator(+): (object + object)"
+          "actual": 6
+        },
+        {
+          "id": "string-accumulator",
+          "pass": true,
+          "expected": "ab",
+          "actual": "ab"
+        },
+        {
+          "id": "empty-initial",
+          "pass": true,
+          "expected": 10,
+          "actual": 10
         }
       ]
     },
@@ -3165,17 +3278,21 @@
       "functions": [
         "list.reverse"
       ],
-      "status": "gap",
+      "status": "supported",
       "observations": [
         {
           "id": "example-1",
-          "pass": false,
+          "pass": true,
           "expected": [
             3,
             2,
             1
           ],
-          "error": "no function matches \"reverse(Array<integer>)\" name and argument type"
+          "actual": [
+            3,
+            2,
+            1
+          ]
         }
       ]
     },
@@ -3204,30 +3321,57 @@
             2,
             3
           ]
+        },
+        {
+          "id": "negative-start",
+          "mode": "expression",
+          "expression": "[1,2,3].slice(-2)",
+          "expected": [
+            2,
+            3
+          ]
         }
       ],
       "functions": [
         "list.slice"
       ],
-      "status": "gap",
+      "status": "supported",
       "observations": [
         {
           "id": "example-1",
-          "pass": false,
+          "pass": true,
           "expected": [
             2,
             3
           ],
-          "error": "no function matches \"slice(Array<integer>, integer, integer)\" name and argument type"
+          "actual": [
+            2,
+            3
+          ]
         },
         {
           "id": "example-2",
-          "pass": false,
+          "pass": true,
           "expected": [
             2,
             3
           ],
-          "error": "no function matches \"slice(Array<integer>, integer)\" name and argument type"
+          "actual": [
+            2,
+            3
+          ]
+        },
+        {
+          "id": "negative-start",
+          "pass": true,
+          "expected": [
+            2,
+            3
+          ],
+          "actual": [
+            2,
+            3
+          ]
         }
       ]
     },
@@ -3253,17 +3397,21 @@
       "functions": [
         "list.sort"
       ],
-      "status": "gap",
+      "status": "supported",
       "observations": [
         {
           "id": "example-1",
-          "pass": false,
+          "pass": true,
           "expected": [
             1,
             2,
             3
           ],
-          "error": "no function matches \"sort(Array<integer>)\" name and argument type"
+          "actual": [
+            1,
+            2,
+            3
+          ]
         }
       ]
     },
@@ -3289,17 +3437,21 @@
       "functions": [
         "list.unique"
       ],
-      "status": "gap",
+      "status": "supported",
       "observations": [
         {
           "id": "example-1",
-          "pass": false,
+          "pass": true,
           "expected": [
             1,
             2,
             3
           ],
-          "error": "Invalid Bases expression."
+          "actual": [
+            1,
+            2,
+            3
+          ]
         }
       ]
     },

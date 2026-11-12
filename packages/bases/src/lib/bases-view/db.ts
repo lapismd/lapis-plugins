@@ -182,6 +182,11 @@ export class BasesTable extends Table {
 
   getColumn(name: string, fullScan: boolean = true): EvalNode {
     const col = super.getColumn(name, fullScan);
+    // Callback bindings read their lexical context, even inside nested functions;
+    // they must never fall back to a note's frontmatter with the same name.
+    if (["bases_value", "bases_index", "bases_acc"].includes(name))
+      return new AttributeGetter(name, name === "bases_index" ? Number : Object,
+        (scope: Record<string, unknown>) => scope?.[name]);
     if (!col) {
       return new AttributeGetter(name, Object, (context: VaultRecord) => {
         const props = context.cache?.frontmatter || {};

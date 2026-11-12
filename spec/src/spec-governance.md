@@ -588,3 +588,5 @@ LN-BASE-003/004 regressions cover previously discarded filters and premature can
 LN-BASE-046 query checks retain every earlier passing conformance probe. New expected outcomes are reviewed alongside exact regression and invalid-formula recovery evidence.
 
 Under LN-BASE-045/047, intentional/deferred audit labels MUST retain source evidence and rationale. They MUST NOT remove Obsidian expectations or reclassify failing probes as passing.
+
+LN-BASE-048 retains original failing expectations and adds callback scope evidence; explicit audit updates must preserve every previously passing probe.

@@ -19,6 +19,7 @@ export type BasesFixtureProfile = "default" | "registry" | "embed";
 export type BasesViewScenario =
   | "imported-filters"
   | "formula-filters"
+  | "collection-filters"
   | "invalid-formula"
   | "table"
   | "editable-cells"
@@ -226,6 +227,7 @@ const views: BasesDocument["views"] = [
 const activeViewNames: Record<BasesViewScenario, string> = {
   "imported-filters": "Imported filters",
   "formula-filters": "Formula filters",
+  "collection-filters": "Collection filters",
   "invalid-formula": "Invalid formula",
   table: "Portfolio table",
   "editable-cells": "Editable fields",
@@ -249,6 +251,21 @@ export function createBasesViewsDocument(
   scenario: BasesViewScenario,
   profile: BasesFixtureProfile = "default"
 ): BasesDocument {
+  if (scenario === "collection-filters") {
+    return parseBasesDocument(`formulas:
+  grade: '[note.score, 1].reduce(acc + value, 0)'
+  participants: 'list(note.collaborators).filter(index < 2).join(", ")'
+views:
+  - type: table
+    name: Collection filters
+    order: [file.name, formula.grade, formula.participants]
+    filters:
+      and:
+        - list(note.tags).contains("product")
+        - formula.grade > 90
+    limit: 1
+`);
+  }
   if (scenario === "formula-filters" || scenario === "invalid-formula") {
     return parseBasesDocument(`filters: note["score"] > 80
 formulas:

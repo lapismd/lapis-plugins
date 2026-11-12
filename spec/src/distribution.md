@@ -481,3 +481,5 @@ Imported Bases filter fixes retain normal npm patch delivery and the existing mo
 LN-BASE-046 ships as a separate Bases patch group; its expression compiler remains private and the public document model/write format is unchanged.
 
 LN-BASE-047 is a separate value-helper patch group. Audit disposition metadata preserves the distinction between corrected defects, intentional native behavior and deferred host features; no release is implied by local validation.
+
+LN-BASE-048 collection compatibility is a separate Bases patch group delivered through normal npm ranges; private query registrations do not add public exports.
