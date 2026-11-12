@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { App } from "@lapis-notes/api";
+  import CanvasFileContent from "./canvas-file-content.svelte";
   import { MarkdownEmbed } from "@lapis-notes/markdown/embed";
   import { Handle, Position, type NodeProps } from "@xyflow/svelte";
   import { getContext } from "svelte";
@@ -17,11 +18,12 @@
   );
   const app = $derived(canvasApp?.current);
 
+  const canvasSource = getContext<{ readonly current: string } | undefined>("lapis-canvas-source");
   const nodeLabel = $derived(displayNodeValue(data));
   const resolvedColor = $derived(resolveCanvasColor(data.color));
   const isGroupNode = $derived(data.kind === "group");
   const hasFilePreview = $derived(
-    data.kind === "file" && Boolean(data.previewValue?.trim()),
+    data.kind === "file" && data.previewValue !== undefined,
   );
   const surfaceStyle = $derived.by(() => {
     if (!resolvedColor) {
@@ -53,7 +55,7 @@
       {#if data.kind === "text"}
         <div class="canvas-node-markdown-preview">
           {#if app}
-            <MarkdownEmbed {app} value={data.text ?? ""} />
+            <MarkdownEmbed {app} sourcePath={canvasSource?.current ?? ""} value={data.text ?? ""} />
           {:else}
             <div class="canvas-node-text">{data.text ?? ""}</div>
           {/if}
@@ -69,6 +71,10 @@
           {:else}
             <div class="canvas-node-text">{data.previewValue ?? ""}</div>
           {/if}
+        </div>
+      {:else if data.kind === "file" && app && data.file}
+        <div class="canvas-node-markdown-preview">
+          <CanvasFileContent {app} path={data.file} subpath={data.subpath} sourcePath={canvasSource?.current ?? ""} />
         </div>
       {:else if data.kind === "link"}
         <div class="canvas-node-text">

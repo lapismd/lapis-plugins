@@ -61,6 +61,7 @@ vi.mock("@lapis-notes/api", async () => {
   return {
     EmbedRegistry: MockEmbedRegistry,
     Plugin: MockPlugin,
+    mountComponent: vi.fn((_component, options) => ({ props: options.props, destroy: vi.fn() })),
   };
 });
 
@@ -142,4 +143,20 @@ describe("CanvasPlugin", () => {
 
     expect(app.embedRegistry.get("canvas")).toBeNull();
   });
+  it("owns and disposes source-file listeners for a mounted canvas embed", async () => {
+    const app = createMockApp();
+    app.vault.on = vi.fn(() => ({ event: "modify" }));
+    app.vault.offref = vi.fn();
+    app.vault.read.mockResolvedValue('{"nodes":[]}');
+    const plugin = new CanvasPlugin(app);
+    await plugin.onload();
+    const file = { path: "Live.canvas", extension: "canvas", copy() { return { ...this }; } };
+    const container = { isConnected: true, style: {}, classList: { add: vi.fn() }, replaceChildren: vi.fn() };
+    const handle = (app.embedRegistry.get("canvas") as any)({ app, containerEl: container, state: { file } });
+    await Promise.resolve();
+    expect(app.vault.on).toHaveBeenCalledWith("modify", expect.any(Function));
+    handle.destroy();
+    expect(app.vault.offref).toHaveBeenCalled();
+  });
+
 });

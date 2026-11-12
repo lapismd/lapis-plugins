@@ -1,7 +1,8 @@
 <script lang="ts">
   import { TFile, type App } from "@lapis-notes/api";
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
-  import { createLapisMiraFileAdapter, FileEmbed } from "@lapis-notes/markdown/embed";
+  import { createLapisMiraFileAdapter } from "@lapis-notes/markdown/embed";
+  import CanvasFileContent from "../canvas-file-content.svelte";
   import { EditableMarkdownPreview } from "@lapismd/mira/preview";
   import "@lapismd/mira/preview/styles.css";
   import { getContext, tick, untrack } from "svelte";
@@ -98,6 +99,8 @@
     textNodeValue = value;
     updateNodeData(id, { text: value });
   };
+  const canvasSource = getContext<{ readonly current: string } | undefined>("lapis-canvas-source");
+  const vaultFileAdapter = $derived(app ? createLapisMiraFileAdapter(app) : null);
   const textAdapter = createCanvasTextAdapter(textSource, writeText,
     documentSession?.current
       ? (_path, session) => documentSession.current!.bindText(id, session, (value) => {
@@ -105,9 +108,7 @@
         writeText(value);
       })
       : undefined,
-  );
-  const vaultFileAdapter = $derived(
-    app ? createLapisMiraFileAdapter(app) : null,
+    untrack(() => vaultFileAdapter ? { adapter: vaultFileAdapter, file: textFile, sourcePath: canvasSource?.current ?? "" } : undefined),
   );
   let wasSelectedOnPointerDown = $state(false);
   let visibleHandleTop = $state(false);
@@ -580,16 +581,7 @@
   let isEditablePreviewNode = $derived(
     !useLowZoomNodePreview && (data.kind === "text" || isEditableMarkdownFile),
   );
-  let embedSourcePath = $derived.by(() => {
-    if (!app) {
-      return "";
-    }
-
-    const activeView = app.workspace.activeLeaf?.view as
-      | { file?: TFile | null }
-      | undefined;
-    return activeView?.file?.path ?? "";
-  });
+  const embedSourcePath = $derived(canvasSource?.current ?? "");
   let linkHost = $derived.by(() => {
     if (data.kind !== "link" || !data.url) {
       return null;
@@ -1116,14 +1108,7 @@
               bind:editing={isEditing}
             />
           {:else if app}
-            <FileEmbed
-              {app}
-              id={fileNodeId}
-              file={resolvedFile}
-              text={resolvedFile?.name}
-              sectionId={fileNodeSectionId}
-              sourcePath={embedSourcePath}
-            />
+            <CanvasFileContent {app} path={data.file ?? ""} subpath={data.subpath} sourcePath={embedSourcePath} />
           {/if}
         </div>
       {/if}

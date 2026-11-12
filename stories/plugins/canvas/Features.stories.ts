@@ -1,4 +1,4 @@
-import type { App } from "@lapis-notes/api";
+import { mountComponent, type App } from "@lapis-notes/api";
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, userEvent, waitFor, within } from "storybook/test";
 import { CanvasEmbed } from "@lapis-notes/canvas";
@@ -9,6 +9,7 @@ import {
   SAMPLE_LINK_CANVAS_PATH,
   SAMPLE_SECTION_CANVAS_PATH,
   SAMPLE_TEXT_CANVAS_PATH,
+  SAMPLE_READING_NOTE_PATH,
 } from "@lapis-notes/canvas";
 import ViewingPanelDemo from "./panels/ViewingPanelDemo.svelte";
 
@@ -742,5 +743,133 @@ export const CrossBoardClipboard: Story = {
       native.readText = read;
       native.writeText = write;
     }
+  },
+};
+
+const liveEmbedDocument = JSON.stringify({ metadata: { preserve: true }, nodes: [
+  { id: "live-text", type: "text", x: 0, y: 0, width: 260, height: 180, text: "Canvas before update" },
+  { id: "live-file", type: "file", x: 320, y: 0, width: 260, height: 180, file: "Live note.md" },
+], edges: [{ id: "live-edge", fromNode: "live-text", toNode: "live-file" }] });
+const liveEmbedFiles = { "Live.canvas": liveEmbedDocument, "Live note.md": "# Live file body\nOriginal file content.", [SAMPLE_READING_NOTE_PATH]: "# Live embed\n![[Live.canvas]]" };
+
+export const LiveCanvasSource: Story = {
+  name: "Note embeds update with their canvas and recover invalid sources",
+  parameters: featureParameters("A mounted note embed follows source modifications, rejects invalid documents without changing disk, recovers, and opens the original canvas."),
+  render: () => ({ Component: ViewingPanelDemo, props: { layout: "middle-top-tabs", focus: "note", files: liveEmbedFiles } }),
+  play: async ({ canvasElement }) => {
+    const app = await canvasOwner(canvasElement);
+    const embed = await waitFor(() => { const value = canvasElement.querySelector<HTMLElement>("[data-canvas-embed]"); expect(value).not.toBeNull(); return value!; });
+    await waitFor(() => expect(embed).toHaveTextContent("Canvas before update"));
+    const file = app.vault.getFileByPath("Live.canvas")!;
+    const next = JSON.parse(liveEmbedDocument); next.nodes[0].text = "Canvas after update";
+    const raw = JSON.stringify(next);
+    await app.vault.modify(file, raw);
+    await waitFor(() => expect(embed).toHaveTextContent("Canvas after update"));
+    await app.vault.modify(file, "[]");
+    await waitFor(() => expect(embed.querySelector("[data-canvas-embed-error]")).not.toBeNull());
+    expect(await app.vault.read(file)).toBe("[]");
+    await app.vault.modify(file, raw);
+    await waitFor(() => expect(embed).toHaveTextContent("Canvas after update"));
+    expect(await app.vault.read(file)).toBe(raw);
+    expect(within(embed).queryByRole("button", { name: "Toggle Interactivity", exact: true })).toBeNull();
+    await userEvent.click(within(embed).getByRole("button", { name: "Open original canvas", exact: true }));
+    await waitFor(() => expect(canvasElement.querySelector(".canvas-view-root:not([data-canvas-embed])")).not.toBeNull());
+  },
+};
+
+export const LiveEmbedFileContent: Story = {
+  name: "Note embeds resolve live vault-file content",
+  parameters: featureParameters("Read-only Canvas file cards resolve their note body through the owning App and update when that file changes."),
+  render: () => ({ Component: ViewingPanelDemo, props: { layout: "middle-top-tabs", focus: "note", files: liveEmbedFiles } }),
+  play: async ({ canvasElement }) => {
+    const app = await canvasOwner(canvasElement);
+    const embed = await waitFor(() => { const value = canvasElement.querySelector<HTMLElement>("[data-canvas-embed]"); expect(value).not.toBeNull(); return value!; });
+    await waitFor(() => expect(embed).toHaveTextContent("Live file body"));
+    await app.vault.modify(app.vault.getFileByPath("Live note.md")!, "# Live file updated\nFresh body.");
+    await waitFor(() => expect(embed).toHaveTextContent("Live file updated"));
+    expect(await app.vault.read(app.vault.getFileByPath("Live.canvas")!)).toBe(liveEmbedDocument);
+  },
+};
+
+export const ProvidedEmbedContent: Story = {
+  name: "Controlled embed previews override vault content",
+  parameters: featureParameters("The public fileContents input keeps its controlled-preview precedence even when an App is supplied for navigation and Markdown rendering."),
+  render: () => ({ Component: ViewingPanelDemo, props: { layout: "middle-top-tabs" } }),
+  play: async ({ canvasElement }) => {
+    const app = await canvasOwner(canvasElement);
+    const file = await app.vault.create("Override.md", "# Actual vault body");
+    const host = canvasElement.ownerDocument.createElement("div");
+    host.style.cssText = "position:absolute;inset:20px;z-index:10;width:600px;height:360px";
+    canvasElement.append(host);
+    const component = mountComponent(CanvasEmbed, { target: host, props: {
+      app, value: { nodes: [{ id: "override", type: "file", file: file.path, x: 0, y: 0, width: 360, height: 240 }] }, fileContents: { [file.path]: "# Injected preview body" },
+    } });
+    try {
+      await waitFor(() => expect(host).toHaveTextContent("Injected preview body"));
+      expect(host).not.toHaveTextContent("Actual vault body");
+      expect(await app.vault.read(file)).toBe("# Actual vault body");
+    } finally { component.destroy(); host.remove(); }
+  },
+};
+
+
+export const RecursiveCanvasEmbeds: Story = {
+  name: "Nested Canvas previews stop direct and Markdown cycles",
+  parameters: featureParameters("The owned source chain spans Markdown and independent component mounts. Repeated references stop with open-original navigation without modifying any source."),
+  render: () => ({ Component: ViewingPanelDemo, props: { layout: "middle-top-tabs", focus: "note", files: {
+    [SAMPLE_READING_NOTE_PATH]: "# Recursive previews\n![[Recursive.canvas]]",
+    "Recursive.canvas": JSON.stringify({ nodes: [
+      { id: "direct", type: "file", file: "Recursive.canvas", x: 0, y: 0, width: 320, height: 240 },
+      { id: "indirect", type: "file", file: "Loop.md", x: 360, y: 0, width: 320, height: 240 },
+    ], edges: [] }),
+    "Loop.md": "# Indirect chain\n![[Recursive.canvas]]",
+  } } }),
+  play: async ({ canvasElement }) => {
+    const app = await canvasOwner(canvasElement);
+    const source = app.vault.getFileByPath("Recursive.canvas")!;
+    const before = await app.vault.read(source);
+    await waitFor(() => expect(within(canvasElement).getAllByRole("note").filter((element) => element.textContent?.includes("already appears"))).toHaveLength(2));
+    expect(canvasElement.querySelectorAll("[data-canvas-embed]")).toHaveLength(1);
+    expect(within(canvasElement).getAllByRole("button", { name: "Open original canvas", exact: true })).toHaveLength(3);
+    expect(await app.vault.read(source)).toBe(before);
+  },
+};
+
+export const LiveEmbedGeometry: Story = {
+  name: "Live Canvas embeds refit changed source geometry",
+  parameters: featureParameters("A live source change outside the previous camera bounds remains visible in the responsive read-only frame."),
+  render: () => ({ Component: ViewingPanelDemo, props: { layout: "middle-top-tabs", focus: "note", files: liveEmbedFiles } }),
+  play: async ({ canvasElement }) => {
+    const app = await canvasOwner(canvasElement);
+    const embed = await waitFor(() => { const value = canvasElement.querySelector<HTMLElement>("[data-canvas-embed]"); expect(value).not.toBeNull(); return value!; });
+    await waitFor(() => expect(embed).toHaveTextContent("Canvas before update"));
+    const next = JSON.parse(liveEmbedDocument); next.nodes[0].x = 12000;
+    await app.vault.modify(app.vault.getFileByPath("Live.canvas")!, JSON.stringify(next));
+    await waitFor(() => {
+      const card = embed.querySelector<HTMLElement>('[data-id="live-text"]')!.getBoundingClientRect();
+      const frame = embed.querySelector<HTMLElement>(".canvas-view-surface")!.getBoundingClientRect();
+      expect(card.left).toBeGreaterThanOrEqual(frame.left - 1);
+      expect(card.right).toBeLessThanOrEqual(frame.right + 1);
+      expect(card.width).toBeGreaterThan(0);
+    });
+  },
+};
+
+
+export const CanvasCameraStability: Story = {
+  name: "Canvas fitting preserves an explicit zoom choice",
+  parameters: featureParameters("Once the board is initialized, late startup timers cannot reset the reader's explicit zoom choice."),
+  render: () => ({ Component: ViewingPanelDemo, props: { layout: "middle-top-tabs", focus: "note", files: liveEmbedFiles } }),
+  play: async ({ canvasElement }) => {
+    await canvasOwner(canvasElement);
+    const embed = await waitFor(() => { const value = canvasElement.querySelector<HTMLElement>("[data-canvas-embed]"); expect(value).not.toBeNull(); return value!; });
+    await waitFor(() => expect(embed).toHaveTextContent("Canvas before update"));
+    const viewport = embed.querySelector<HTMLElement>(".svelte-flow__viewport")!;
+    const initial = Number(viewport.style.transform.match(/scale\(([^)]+)\)/)?.[1]);
+    await userEvent.click(within(embed).getByRole("button", { name: "Zoom Out", exact: true }));
+    await waitFor(() => expect(Number(viewport.style.transform.match(/scale\(([^)]+)\)/)?.[1])).toBeCloseTo(initial / 1.2, 6));
+    const chosen = viewport.style.transform;
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+    expect(viewport.style.transform).toBe(chosen);
   },
 };

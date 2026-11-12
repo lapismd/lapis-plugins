@@ -5,6 +5,8 @@
     PanOnScrollMode,
     SvelteFlow,
   } from "@xyflow/svelte";
+  import { acquireCanvasStyles } from "../lib/canvas-styles";
+  import { canvasOwnerKey } from "../lib/canvas-embed-boundary";
   import CanvasActions from "./canvas-actions.svelte";
   import { CanvasHistory } from "../lib/canvas-history";
   import { canvasMutationGroup } from "../lib/canvas-authoring";
@@ -35,6 +37,7 @@
 
   type Props = {
     app: App;
+    sourcePath?: string;
     documentSession?: CanvasDocumentSession | null;
     inputBlocked?: boolean;
     rawJson: string;
@@ -50,6 +53,7 @@
 
   let {
     app,
+    sourcePath = "",
     documentSession = null,
     inputBlocked = false,
     rawJson,
@@ -63,6 +67,8 @@
     onRetrySave,
   }: Props = $props();
 
+  setContext("lapis-canvas-readonly", { current: false });
+  setContext("lapis-canvas-source", { get current() { return sourcePath; } });
   setContext("lapis-canvas-app", {
     get current() {
       return app;
@@ -97,6 +103,8 @@
   const textSessions = new Map<string, number>();
   let contextPoint = $state<{ x: number; y: number } | null>(null);
   let surface = $state<HTMLElement | null>(null);
+
+  $effect(() => { if (surface) return acquireCanvasStyles(surface.ownerDocument); });
 
   function applyDocument(document: JsonCanvas, selected = new Set<string>()): void {
     if (inputBlocked) throw new Error("Canvas editing is temporarily protected");
@@ -746,7 +754,7 @@
     </div>
   </div>
 {:else}
-  <div class="canvas-view-root" bind:this={surface}>
+  <div class="canvas-view-root" bind:this={surface} data-canvas-boundary data-canvas-owner={canvasOwnerKey(app)} data-canvas-source-path={sourcePath || undefined}>
     {#if saveState === "error"}
       <div class="canvas-save-error" role="alert">
         <span>Canvas changes could not be saved: {saveError ?? "Unknown error"}</span>

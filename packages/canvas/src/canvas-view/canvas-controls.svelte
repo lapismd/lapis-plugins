@@ -4,6 +4,8 @@
   import Plus from "@lucide/svelte/icons/plus";
   import RotateCcw from "@lucide/svelte/icons/rotate-ccw";
 
+  let { readOnly = false }: { readOnly?: boolean } = $props();
+
   const { setZoom, zoomIn, zoomOut } = useSvelteFlow();
 
   async function resetZoom(): Promise<void> {
@@ -11,7 +13,7 @@
   }
 </script>
 
-<Controls position="top-right" showZoom={false}>
+<Controls position="top-right" showZoom={false} showLock={!readOnly}>
   {#snippet before()}
     <ControlButton
       class="svelte-flow__controls-zoomin"

@@ -6,7 +6,7 @@ The package lives at `packages/canvas` as version `0.2.3` with runtime id `lapis
 
 A file named `*.canvas` is associated exclusively with that view, and `registerExtensions(["canvas"], "lapis-canvas")` agrees. The embed registry entry `canvas` mounts the read-only `CanvasEmbed`, so `![[Sample.canvas]]` shows the board without writing it back. The embed fits that board into its frame after layout, so the nodes stay readable. Create new canvas asks `fileManager.getAvailablePathForAttachment` for `Untitled Canvas.canvas`, creates an empty document, and opens it. Snap to grid defaults off and snap to objects defaults on. Those settings stay on the plugin class.
 
-The copied board keeps text, file, link, and group nodes, connectors, pane clipping, and the JSON Canvas parse and save path. Markdown previews and editors inside a node use a transparent surface, so they show the node fill, including a colour preset. Block spacing inside those cards stays compact: reading-view margins do not open a full note column inside the node. `@xyflow/svelte` is the canvas engine. It is bundled. Its stylesheet is injected when the plugin loads. It is not a host external.
+The copied board keeps text, file, link, and group nodes, connectors, pane clipping, and the JSON Canvas parse and save path. Markdown previews and editors inside a node use a transparent surface, so they show the node fill, including a colour preset. Block spacing inside those cards stays compact: reading-view margins do not open a full note column inside the node. `@xyflow/svelte` is the canvas engine. It is bundled. Its foundation stylesheet is leased by each mounted board in its owning document and released when the last board is destroyed. It is not a host external.
 
 `Plugins/Canvas/Registry Screenshots` supplies the release-page capture. The banner is the open canvas and the gallery card is the note embed, both `visual-pending`. This slice does not publish the package and does not add it to a host profile.
 
@@ -55,6 +55,11 @@ The copied board keeps text, file, link, and group nodes, connectors, pane clipp
 | LN-CANVAS-034 | Selection copy, cut, duplicate and paste MUST retain group contents and internal connectors, allocate fresh pasted node/edge identities, remap references and preserve extension fields. Clipboard snapshots MUST include pending virtual text without acknowledging it. Plain Markdown paste MUST create a text card; editor paste MUST remain native. Clipboard-permission fallback MUST follow the owning App across its boards and be cleared on plugin unload. |
 | LN-CANVAS-035 | Canvas drop handling MUST resolve existing vault paths and HTTP(S) URLs at the pointer, support standard URI-list comments and multiple targets, and ignore unsafe URL schemes. One drop MUST form one undoable document mutation. A receiver alone MUST NOT be presented as File Explorer drag-source integration. |
 
+| LN-CANVAS-036 | Mounted Canvas embeds MUST track matching source modifications, file and folder renames, deletion and recreation. Stale reads and work finishing after disposal MUST NOT publish. Source failures and malformed documents MUST remain visible without writing the source. |
+| LN-CANVAS-037 | Both board surfaces MUST resolve file cards through the explicit owning App, including Markdown subpaths and other registered file embeds. Virtual text-card links MUST resolve relative to the owning Canvas, while their writes and editing bindings remain owned by the parent document. Explicit public fileContents previews, including empty strings, MUST take precedence over vault reads. |
+| LN-CANVAS-038 | Nested rendering MUST detect repeated canonical Canvas paths within the same App's parent chain, including chains through Markdown, and MUST stop after six ancestor boards. Sibling instances and equal paths in different Apps MUST remain independent. Detached Markdown fragments MUST be checked after attachment; stopped previews MUST offer open-original navigation. |
+| LN-CANVAS-039 | Read-only Canvas embeds MUST provide bounded responsive frames, a read-only label and open-original navigation. They MUST fit after public viewport/node readiness, source changes and frame resizing, without delayed startup fits resetting an explicit zoom choice. Mounted surfaces MUST lease foundation CSS independently across Apps and documents. |
+
 ## Alignment sequence
 
 Implement and qualify these independently reviewable slices in order:
@@ -76,7 +81,7 @@ remains a separate release gate. All changed stories stay `visual-pending`.
 
 Package tests cover JSON Canvas parse and save helpers, the runtime id, the exclusive `*.canvas` association, and the `canvas` embed registration. `Plugins/Canvas/Panels` opens the legacy feature board in every placement and, in Middle (Top Tabs), shows the note embed. `Plugins/Canvas/Features` checks each node kind, a heading section, labeled connectors, and the note embed.
 
-`src/lib/json-canvas-safety.test.ts` verifies rejection without data loss, imported geometry and stacking, extension retention after editing, and omitted arrow defaults. Live embedding, theme and remaining parity requirements remain planned until their focused acceptance lands. Creation/history/clipboard receiver behavior is covered by LN-CANVAS-032 through LN-CANVAS-035; File Explorer drag-source integration remains separately tracked under LN-CANVAS-012.
+`src/lib/json-canvas-safety.test.ts` verifies rejection without data loss, imported geometry and stacking, extension retention after editing, and omitted arrow defaults. Live embedding lifecycle and file-content acceptance is covered by LN-CANVAS-036 through LN-CANVAS-039. Shared colour presentation and the remaining theme/parity requirements remain in progress. Creation/history/clipboard receiver behavior is covered by LN-CANVAS-032 through LN-CANVAS-035; File Explorer drag-source integration remains separately tracked under LN-CANVAS-012.
 
 ## Writer lifecycle qualification
 

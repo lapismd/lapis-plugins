@@ -8,6 +8,9 @@
     SvelteFlow,
   } from "@xyflow/svelte";
 
+  import { acquireCanvasStyles } from "./lib/canvas-styles";
+  import { canvasOwnerKey } from "./lib/canvas-embed-boundary";
+  import CanvasControls from "./canvas-view/canvas-controls.svelte";
   import CanvasEdge from "./canvas-view/canvas-edge.svelte";
   import CanvasFitController from "./canvas-view/canvas-fit-controller.svelte";
   import CanvasEmbedNode from "./canvas-embed-node.svelte";
@@ -24,6 +27,9 @@
   type Props = {
     app?: App;
     value: JsonCanvas | string;
+    sourcePath?: string;
+    loadError?: string | null;
+    compact?: boolean;
     class?: string;
     minZoom?: number;
     fileContents?: CanvasEmbedFileContents;
@@ -32,11 +38,16 @@
   let {
     app,
     value,
+    sourcePath = "",
+    loadError = null,
+    compact = false,
     class: className = "",
     minZoom = 0.03,
     fileContents = {},
   }: Props = $props();
 
+  setContext("lapis-canvas-readonly", { current: true });
+  setContext("lapis-canvas-source", { get current() { return sourcePath; } });
   setContext("lapis-canvas-app", {
     get current() {
       return app;
@@ -52,6 +63,7 @@
 
   const parsedDocument = $derived.by(() => {
     try {
+      if (loadError) throw new Error(loadError);
       return {
         canvas:
           typeof value === "string"
@@ -102,6 +114,21 @@
     };
   });
 
+  let surface = $state<HTMLElement | null>(null);
+  $effect(() => { if (surface) return acquireCanvasStyles(surface.ownerDocument); });
+
+  let navigationError = $state<string | null>(null);
+  const sourceFile = $derived.by(() => {
+    void value;
+    void loadError;
+    return app && sourcePath ? app.vault.getFileByPath(sourcePath) : null;
+  });
+  async function openOriginal(): Promise<void> {
+    if (!app || !sourceFile) return;
+    try { await app.openFile(sourceFile); }
+    catch (error) { navigationError = error instanceof Error ? error.message : String(error); }
+  }
+
   function mergeClassName(
     baseClassName: string,
     extraClassName: string,
@@ -110,20 +137,31 @@
   }
 </script>
 
-{#if parsedDocument.error}
-  <div class="canvas-view-error" data-canvas-embed-error>
-    <div class="canvas-view-error-card">
-      <h2>Canvas file could not be parsed</h2>
-      <p>The supplied JSON Canvas document is invalid.</p>
-      <pre>{parsedDocument.error}</pre>
+<section bind:this={surface} class={mergeClassName("canvas-view-root canvas-embed", className)} class:canvas-embed-static={!sourcePath || compact}
+  data-canvas-boundary data-canvas-owner={canvasOwnerKey(app)} data-canvas-embed data-canvas-source-path={sourcePath || undefined} aria-label={sourcePath ? `Embedded canvas: ${sourcePath}` : "Embedded canvas"}>
+  {#if sourcePath}
+    <header class="canvas-embed-header">
+      <span class="canvas-embed-path">{sourcePath}</span>
+      <span class="canvas-embed-mode">Read-only</span>
+      <button type="button" disabled={!sourceFile} onclick={() => void openOriginal()} aria-label="Open original canvas">Open canvas</button>
+    </header>
+  {/if}
+  {#if navigationError}<p role="alert">{navigationError}</p>{/if}
+  {#if parsedDocument.error}
+    <div class="canvas-view-error" data-canvas-embed-error role="alert">
+      <div class="canvas-view-error-card">
+        <h2>Canvas file could not be read</h2>
+        <p>The supplied JSON Canvas document is unavailable or invalid.</p>
+        <pre>{parsedDocument.error}</pre>
+      </div>
     </div>
-  </div>
-{:else}
-  <div class={mergeClassName("canvas-view-root", className)} data-canvas-embed>
+  {:else}
     <div class="canvas-view-surface">
       <SvelteFlow
         edges={flowDocument.edges}
         elementsSelectable={false}
+        edgesFocusable={false}
+        nodesFocusable={false}
         {edgeTypes}
         fitView
         {minZoom}
@@ -139,8 +177,20 @@
       >
         <Background />
         <MiniMap />
-        <CanvasFitController />
+        <CanvasControls readOnly />
+        <CanvasFitController responsive revision={value} container={surface} />
       </SvelteFlow>
     </div>
-  </div>
-{/if}
+  {/if}
+</section>
+
+<style>
+  .canvas-embed { display: flex; flex-direction: column; width: 100%; height: clamp(16rem, 45vh, 32rem); min-height: 12rem; max-height: 75vh; overflow: hidden; resize: vertical; }
+  .canvas-embed-static { height: 100%; min-height: 0; max-height: none; resize: none; }
+  .canvas-embed-header { display: flex; flex: none; align-items: center; gap: 8px; padding: 6px 10px; border-bottom: 1px solid var(--background-modifier-border); background: var(--background-primary); color: var(--text-normal); font-size: 12px; }
+  .canvas-embed-path { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .canvas-embed-mode { color: var(--text-muted); }
+  button { min-height: 28px; padding: 4px 8px; border: 1px solid var(--background-modifier-border); border-radius: 5px; background: var(--background-primary); color: var(--text-normal); cursor: pointer; }
+  button:focus-visible { outline: 2px solid var(--interactive-accent); outline-offset: 2px; }
+  button:disabled { opacity: 0.5; cursor: default; }
+</style>
