@@ -34,11 +34,6 @@ const meta = {
   tags: ["visual-pending"],
   parameters: {
     layout: "fullscreen",
-    a11y: {
-      context: {
-        exclude: [".canvas-node-label", ".canvas-node-shell"],
-      },
-    },
     docs: {
       ...PANEL_DOCS_PARAMETERS,
       description: {

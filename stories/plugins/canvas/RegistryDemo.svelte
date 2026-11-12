@@ -32,7 +32,6 @@
 <PanelDemo
   kind="explorer"
   layout="left-sidebar"
-  hideSidebars
   diagnostics="none"
   plugins={[
     {

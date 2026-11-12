@@ -224,3 +224,15 @@ test("selected cards expose touch connection targets and accept a native connect
     toNode: "b",
   });
 });
+
+test("selected touch cards expose an actionable edit control without prior hover", async ({ page }) => {
+  const root = rootOf(page), node = root.locator('.svelte-flow__node[data-id="a"]');
+  await tap(page, root.getByText('Select cards', { exact: true }));
+  await tap(page, root.getByRole('checkbox', { name: 'Alpha (a)', exact: true }));
+  await tap(page, root.getByText('Select cards', { exact: true }));
+  const edit = node.getByRole('button', { name: 'Edit text node', exact: true });
+  await expect(edit).toHaveCSS('opacity', '1');
+  await expect(edit).toHaveCSS('pointer-events', 'auto');
+  await tap(page, edit);
+  await expect(node.locator('[contenteditable="true"]').first()).toBeVisible();
+});

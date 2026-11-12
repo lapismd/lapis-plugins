@@ -84,6 +84,18 @@
   stroke-linejoin: round;
 }
 
+.canvas-view-root .svelte-flow__attribution {
+  background: var(--canvas-readable-board, var(--background-primary));
+}
+.canvas-view-root .svelte-flow .svelte-flow__attribution a,
+.canvas-view-root .svelte-flow .svelte-flow__attribution a:hover {
+  color: var(--canvas-readable-text, var(--text-normal));
+}
+.canvas-view-root .svelte-flow .svelte-flow__attribution a:focus-visible {
+  outline: 2px solid var(--canvas-readable-indicator, var(--interactive-accent));
+  outline-offset: 2px;
+}
+
 .canvas-view-surface .canvas-alignment-guides {
   position: absolute;
   inset: 0;
@@ -179,7 +191,17 @@
 .canvas-view-surface [id^="svelte-flow__node-desc-"],
 .canvas-view-surface [id^="svelte-flow__edge-desc-"],
 .canvas-view-surface [id^="svelte-flow__aria-live-"] {
-  display: none !important;
+  display: block !important;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
 }
 
 .canvas-node-label {
@@ -205,7 +227,7 @@
   padding: 4px 8px;
   border: 1px solid var(--canvas-node-border, var(--background-modifier-border));
   border-radius: 6px;
-  color: var(--text-normal);
+  color: var(--canvas-node-text, var(--text-normal));
   background: var(--canvas-node-fill, var(--background-primary));
   opacity: 0;
   pointer-events: none;
@@ -341,7 +363,7 @@
   transform-origin: top right;
 }
 
-.canvas-group-label-input {
+.canvas-node-shell .canvas-group-label-input {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -366,7 +388,7 @@
 
 .canvas-group-label-input::placeholder {
   color: inherit;
-  opacity: 0.78;
+  opacity: 1;
 }
 
 .canvas-group-label-input:focus {
@@ -705,6 +727,11 @@
 
 .canvas-node-shell-group {
   pointer-events: auto;
+}
+
+/* Group paint stays behind cards without changing flow zIndex or JSON order. */
+.canvas-view-root .svelte-flow__node:has(> .canvas-node-shell > .canvas-node-label-group) {
+  z-index: -1 !important;
 }
 
 .canvas-node-shell .canvas-node-resize-handle {
@@ -1154,7 +1181,7 @@
   .canvas-node-shell .canvas-node-handle-left { transform: translate(-50%, -50%); }
   .canvas-node-shell .canvas-node-handle::before { left: 50%; top: 50%; transform: translate(-50%, -50%); }
   .canvas-node-shell.selected .canvas-node-resize-handle { width: 44px; height: 44px; border: 2px solid var(--canvas-readable-indicator, var(--interactive-accent)) !important; background: var(--canvas-readable-surface, var(--background-primary)) !important; }
-  .canvas-node-shell.selected .canvas-card-edit-button { opacity: 1; min-height: 44px; min-width: 44px; }
+  .canvas-node-shell.selected .canvas-card-edit-button { opacity: 1; pointer-events: auto; min-height: 44px; min-width: 44px; }
   .canvas-view-root :is(.canvas-node-toolbar-button, .canvas-authoring button, .canvas-navigation button, .canvas-navigation select) { min-height: 44px; min-width: 44px; }
 }
 
@@ -1210,3 +1237,64 @@
   word-break: break-word;
   color: var(--text-muted);
 }
+
+
+/* Semantic presentation values are shared by editable and read-only cards. */
+.canvas-view-root {
+  color: var(--canvas-readable-text, var(--text-normal));
+}
+.canvas-view-root .svelte-flow__controls {
+  --xy-controls-button-background-color: var(--canvas-readable-surface);
+  --xy-controls-button-color: var(--canvas-readable-text);
+  --xy-controls-button-background-color-hover: var(--canvas-readable-surface);
+  --xy-controls-button-color-hover: var(--canvas-readable-text);
+}
+.canvas-node-shell {
+  --mira-foreground: var(--canvas-node-text);
+  --mira-muted-foreground: var(--canvas-node-muted);
+  --mira-link: var(--canvas-node-link);
+  --mira-link-hover: var(--canvas-node-link);
+  --mira-h1-color: var(--canvas-node-text);
+  --mira-h2-color: var(--canvas-node-text);
+  --mira-h3-color: var(--canvas-node-text);
+  --mira-h4-color: var(--canvas-node-text);
+  --mira-h5-color: var(--canvas-node-text);
+  --mira-h6-color: var(--canvas-node-text);
+  --text-normal: var(--canvas-node-text);
+  --text-muted: var(--canvas-node-muted);
+  --text-faint: var(--canvas-node-muted);
+  --text-accent: var(--canvas-node-link);
+  --text-accent-hover: var(--canvas-node-link);
+  --link-color: var(--canvas-node-link);
+  --link-color-hover: var(--canvas-node-link);
+  --foreground: var(--canvas-node-text);
+  --muted-foreground: var(--canvas-node-muted);
+  --popover-foreground: var(--canvas-node-text);
+}
+.canvas-node-file-label, .canvas-edge-passive-label {
+  background: var(--canvas-readable-surface, var(--background-secondary));
+  color: var(--canvas-readable-text, var(--text-normal));
+}
+.canvas-view-root :is(button, input, [role="button"], [tabindex="0"]):focus-visible {
+  outline: 2px solid var(--canvas-readable-indicator, var(--interactive-accent));
+  outline-offset: 3px;
+}
+.canvas-view-surface .svelte-flow__node.selected .canvas-node-label,
+.canvas-node-shell.selected .canvas-node-label {
+  border-color: var(--canvas-node-selected-border);
+}
+.canvas-node-shell .canvas-node-resize-handle,
+.canvas-node-shell .canvas-node-resize-line {
+  outline-color: var(--canvas-node-selected-border);
+}
+
+.canvas-view-surface .svelte-flow {
+  --xy-background-color: var(--canvas-readable-board);
+  --xy-selection-border: 2px solid var(--canvas-readable-indicator);
+  background-color: var(--canvas-readable-board);
+}
+.canvas-node-shell {
+  --canvas-node-handle-fill: var(--canvas-node-selected-border);
+}
+
+.canvas-embed .canvas-node-markdown-preview { pointer-events: auto; }
