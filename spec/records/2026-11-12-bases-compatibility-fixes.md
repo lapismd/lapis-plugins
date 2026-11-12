@@ -38,8 +38,7 @@ timeout, threshold or baseline has been weakened.
 
 The complete Bases story family now reports 29 passing / 3 pre-existing failing cases across 7 files, including the new imported-filter case. No new interaction or axe failures were found.
 
-Full final Storybook and additional grouped-fix validation are recorded below
-as the work completes.
+Final Storybook and additional grouped-fix validation are recorded below.
 
 ## Group 2: expressions and formula execution
 
@@ -96,11 +95,69 @@ reports 47 supported / 9 partial / 24 gaps / 9 manual areas; final suite and rem
 status are recorded after completion below.
 
 Group 3 source validation: all 18 workspace check/test tasks and 17 build tasks
-pass, including 216 Bases unit tests, 81 compatibility checks and 39 focused
+pass, including 217 Bases unit tests, 81 compatibility checks and 39 focused
 release/audit/CI tooling tests. Audit has no new upstream documentation drift.
-The full unsharded Storybook run is in progress; interaction status remains
-partial pending its final result and the three accepted Kanban failures.
+The completed Storybook sweep is recorded below; interaction status remains
+partial because of the reproduced pre-existing failures.
 
 An additional duration edge regression reproduced a missing `w` alias (1 failed /
 8 passed in the exact functions target). Normalizing it to the existing native
 week unit fixes the case; a third duration conformance probe now covers `1w`.
+
+A final candidate-selection regression reproduced bracketed property IDs being
+treated as literal metadata keys (1 failure before). AppDatabase now declines
+that lowering so the expression evaluator handles the typed property reference;
+all 10 exact candidate-query tests pass afterward.
+
+## Final qualification status
+
+Source fix groups remain separate JJ changes:
+
+- `suryklxt`: imported filters and safe candidate selection.
+- `rzswxzxq`: expression compilation, typed bracket keys and formula safety.
+- `yqvluwpn`: value helpers and explicit retained-difference tracking.
+
+All 18 workspace check/test tasks and 17 builds pass; Bases has 217 passing unit
+cases. The audit has 81 passing baseline checks and 146 behavior probes: 108
+match and 38 remain explicit compatibility differences. Original failing
+expectations fell from 57 to 38 with no previously passing probe regressed.
+All 203 release-tooling tests pass. Spec validation, mdbook, spec-first and App
+ownership pass. QMD doctor/search still use the documented native-module fallback;
+no global tool installation was changed.
+
+The final npm tarball includes the private expression compiler and excludes all
+audit fixtures. The deterministic payload is bound to source commit
+`beb888468e1135554fab9a1cbe6c8a78303a20c2`; reproduction and checksum verification
+pass for SHA-256 `d8c64cc0a48d1cd5ae12146321adc33bd28334420a6e4780598b0bc6564685c5`.
+The complete static Storybook build, npm-pack/publint and payload checks were
+refreshed from that exact clean source revision and pass. These local artifacts do
+not imply signed publication or registry consumer qualification.
+
+The unsharded full catalog recorded 211 passing, 5 failing and 19 skipped cases
+before a browser connection closed at the AI Catalog family. It did not complete
+all 64 files. The AI Catalog file passes all 6 cases in a fresh pre-fix process.
+The bounded repository-standard sweep then ran all eight shards sequentially,
+continuing after failed shards to collect complete evidence. All 64 files were
+attempted: 61 files passed and 3 failed; 281 cases passed, 5 failed and 57 retained
+cases were skipped. No browser-disconnect error occurred in that sweep.
+A final cold exact-source run of the entire Bases family reports 31 passed and
+the same three Kanban failures (34 cases).
+
+In addition to the three accepted Kanban failures, exact pre-fix runs reproduce:
+
+- `OutgoingLinks.stories.ts > Middle Top Tabs`: hover-preview replacement appends
+  the old content instead of replacing it. Owner: Markdown preview/test editing
+  boundary (and its underlying editor integration).
+- `canvas/Features.stories.ts > Group imported cards below their content`:
+  multi-selection never exposes Create group. Owner: Canvas grouping/test input
+  boundary.
+
+Both are unchanged before these Bases fixes (2 failures on the pre-fix audit
+head), and neither its story nor owner implementation was changed. All UI and
+accessibility acceptance is reported as partial rather than green. No assertion,
+timeout, baseline, skip list or workflow protection has been weakened.
+
+The review branch is `audit/bases-obsidian-20261112`. Pushing it again failed in
+the configured SSH signer with `1Password: failed to fill whole buffer`. Signing
+settings remain unchanged. The fix commits are local; hosted CI for them has not
+started and no npm, public release or registry dispatch occurred.
