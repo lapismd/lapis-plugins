@@ -176,3 +176,13 @@ test("reviewed merged text resets pending editor buffers after conditional persi
   expect(JSON.parse(f.disk).nodes[0].text).toBe("Reviewed merged text");
   expect(f.session.dirty).toBe(false);
 });
+
+test("clipboard snapshots include pending text without acknowledging or writing it", () => {
+  const f = fixture();
+  const e = attach(f);
+  e.update("Pending clipboard text");
+  const snapshot = f.session.snapshot(JSON.parse(f.disk));
+  expect(snapshot.nodes?.[0]).toMatchObject({ text: "Pending clipboard text" });
+  expect(f.session.dirty).toBe(true);
+  expect(f.vault.modifyIfUnchanged).not.toHaveBeenCalled();
+});

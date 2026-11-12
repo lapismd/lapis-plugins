@@ -5,6 +5,10 @@
     PanOnScrollMode,
     SvelteFlow,
   } from "@xyflow/svelte";
+  import CanvasActions from "./canvas-actions.svelte";
+  import { CanvasHistory } from "../lib/canvas-history";
+  import { canvasMutationGroup } from "../lib/canvas-authoring";
+  import type { CanvasBoardController } from "../lib/canvas-board-controller";
   import CanvasAlignmentGuides from "./canvas-alignment-guides.svelte";
   import CanvasControls from "./canvas-controls.svelte";
   import CanvasFitController from "./canvas-fit-controller.svelte";
@@ -24,7 +28,7 @@
     type JsonCanvas,
   } from "../lib/json-canvas";
   import CanvasEdge from "./canvas-edge.svelte";
-  import { setContext, untrack } from "svelte";
+  import { setContext, tick, untrack } from "svelte";
   import type { App } from "@lapis-notes/api";
 
   import type { CanvasDocumentSession } from "../lib/canvas-document-session";
@@ -32,6 +36,7 @@
   type Props = {
     app: App;
     documentSession?: CanvasDocumentSession | null;
+    inputBlocked?: boolean;
     rawJson: string;
     parseError: string | null;
     snapToGrid: boolean;
@@ -46,6 +51,7 @@
   let {
     app,
     documentSession = null,
+    inputBlocked = false,
     rawJson,
     parseError,
     snapToGrid,
@@ -81,6 +87,48 @@
   let resolvedError = $state<string | null>(untrack(() => parseError));
   let lastPersistedRawJson = $state(untrack(() => rawJson));
   let isHydrating = $state(true);
+
+  let historyState = $state({ undo: false, redo: false });
+  const history = new CanvasHistory(() => {
+    historyState = { undo: history.canUndo, redo: history.canRedo };
+  });
+  let historyNavigation: string | null = null;
+  let gesture = 0;
+  const textSessions = new Map<string, number>();
+  let contextPoint = $state<{ x: number; y: number } | null>(null);
+  let surface = $state<HTMLElement | null>(null);
+
+  function applyDocument(document: JsonCanvas, selected = new Set<string>()): void {
+    if (inputBlocked) throw new Error("Canvas editing is temporarily protected");
+    const flow = toFlowDocument(document);
+    canvas = document;
+    nodes = flow.nodes.map((node) => ({ ...node, selected: selected.has(node.id) }));
+    edges = flow.edges;
+  }
+
+  const board: CanvasBoardController = {
+    get canUndo() { return historyState.undo; },
+    get canRedo() { return historyState.redo; },
+    read: () => {
+      const current = serializeFlowDocument(nodes, edges, canvas ?? {});
+      return documentSession?.snapshot(current) ?? current;
+    },
+    apply: applyDocument,
+    flush: async () => { await documentSession?.flush(); await tick(); },
+    undo: async () => {
+      await board.flush();
+      const raw = history.undo();
+      if (raw !== null) { historyNavigation = raw; applyDocument(parseJsonCanvas(raw)); }
+    },
+    redo: async () => {
+      await board.flush();
+      const raw = history.redo();
+      if (raw !== null) { historyNavigation = raw; applyDocument(parseJsonCanvas(raw)); }
+    },
+    beginGesture: () => { gesture++; },
+    beginText: (id) => { textSessions.set(id, (textSessions.get(id) ?? 0) + 1); },
+  };
+  setContext("lapis-canvas-board", board);
 
   const ALIGNMENT_GUIDE_THRESHOLD = 4;
   const ALIGNMENT_GUIDE_PADDING = 18;
@@ -478,6 +526,7 @@
   }: {
     nodes: FlowCanvasNode[];
   }): void {
+    board.beginGesture();
     updateAlignmentGuides(draggedNodes);
 
     const memberships = calculateGroupMembership(nodes);
@@ -596,6 +645,8 @@
       edges = flow.edges;
       resolvedError = null;
       lastPersistedRawJson = normalizedRawJson;
+      history.reset(normalizedRawJson);
+      historyNavigation = null;
       isHydrating = false;
     } catch (error) {
       canvas = null;
@@ -617,12 +668,18 @@
 
     const nextCanvas = serializeFlowDocument(nodes, edges, untrack(() => canvas) ?? {});
     const nextRawJson = stringifyJsonCanvas(nextCanvas);
+    const previousCanvas = untrack(() => canvas) ?? {};
     canvas = nextCanvas;
 
     if (nextRawJson === lastPersistedRawJson) {
       return;
     }
 
+    if (historyNavigation === nextRawJson) {
+      historyNavigation = null;
+    } else {
+      history.record(nextRawJson, canvasMutationGroup(previousCanvas, nextCanvas, (id) => textSessions.get(id) ?? 0, gesture));
+    }
     lastPersistedRawJson = nextRawJson;
     onDocumentChange(nextRawJson);
   });
@@ -689,7 +746,7 @@
     </div>
   </div>
 {:else}
-  <div class="canvas-view-root">
+  <div class="canvas-view-root" bind:this={surface}>
     {#if saveState === "error"}
       <div class="canvas-save-error" role="alert">
         <span>Canvas changes could not be saved: {saveError ?? "Unknown error"}</span>
@@ -714,12 +771,15 @@
           nodesConnectable
           elementsSelectable
           snapGrid={snapToGrid ? [20, 20] : undefined}
+          onpanecontextmenu={({ event }) => { event.preventDefault(); contextPoint = { x: event.clientX, y: event.clientY }; }}
+          onbeforedelete={async () => { try { await board.flush(); return true; } catch { return false; } }}
           onconnect={handleConnect}
           onnodedragstart={handleNodeDragStart}
           onnodedrag={handleNodeDrag}
           onnodedragstop={handleNodeDragStop}
           onnodeclick={handleNodeClick}
         >
+          <CanvasActions {app} {inputBlocked} {surface} bind:contextPoint />
           <CanvasFitController />
           <CanvasSelectionToolbar />
           <CanvasAlignmentGuides guides={alignmentGuides} />

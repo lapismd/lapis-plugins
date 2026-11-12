@@ -172,14 +172,15 @@ export class CanvasView extends FileView {
     ++this.loadGeneration;
     const saves = this.saves;
     const component = this.component;
-    this.component = null;
     if (saves) {
       saves.retire(() => component?.destroy());
+      this.component = null;
       void saves.flush().catch((error: unknown) => {
         console.error("Canvas changes could not be saved during teardown", error);
       });
     } else {
       component?.destroy();
+      this.component = null;
     }
   }
 
@@ -226,11 +227,15 @@ export class CanvasView extends FileView {
     const container = this.containerEl;
     if (this.inputHolds++ === 0) this.wasInert = Boolean(container.inert);
     container.inert = true;
+    if (this.component) this.component.props.inputBlocked = true;
     let held = true;
     return () => {
       if (!held) return;
       held = false;
-      if (--this.inputHolds === 0) container.inert = this.wasInert;
+      if (--this.inputHolds === 0) {
+        container.inert = this.wasInert;
+        if (this.component) this.component.props.inputBlocked = this.wasInert;
+      }
     };
   }
 
@@ -261,6 +266,7 @@ export class CanvasView extends FileView {
       props: {
         app: this.app,
         documentSession: saves,
+        inputBlocked: this.inputHolds > 0 || Boolean(this.containerEl.inert),
         rawJson: this.rawJson,
         parseError: this.parseError,
         saveState: this.saveState,

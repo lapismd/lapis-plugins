@@ -50,6 +50,11 @@ The copied board keeps text, file, link, and group nodes, connectors, pane clipp
 | LN-CANVAS-030 | Canvas input protection MUST synchronously hold its virtual text editors. Reviewed local, external and merged conflict recovery and protected native saved-text refresh MUST synchronize the parent JSON and all affected editor buffers before releasing protection. Removed cards MUST release their old draft only after the reviewed document is accepted. |
 | LN-CANVAS-031 | Guarded file rename MUST flush pending text-card edits before moving the file and rebind the existing Canvas view's writer to the new path. Unexpected teardown MUST retain pending editor buffers and their component until complete JSON persistence or reviewed recovery succeeds. |
 
+| LN-CANVAS-032 | Empty and populated boards MUST expose accessible text, vault-file, media, HTTP(S) and group creation controls, plus pointer-positioned context creation. Creation dialogs MUST share App input protection, and queued creation commands MUST NOT mutate a protected board. |
+| LN-CANVAS-033 | Canvas MUST retain bounded document undo/redo history for its mutations, coalescing geometry gestures and each text editing session. Board shortcuts MUST leave focused editor and form shortcuts intact. Undo/redo MUST persist the restored document and retain extension fields and imported geometry. |
+| LN-CANVAS-034 | Selection copy, cut, duplicate and paste MUST retain group contents and internal connectors, allocate fresh pasted node/edge identities, remap references and preserve extension fields. Clipboard snapshots MUST include pending virtual text without acknowledging it. Plain Markdown paste MUST create a text card; editor paste MUST remain native. Clipboard-permission fallback MUST follow the owning App across its boards and be cleared on plugin unload. |
+| LN-CANVAS-035 | Canvas drop handling MUST resolve existing vault paths and HTTP(S) URLs at the pointer, support standard URI-list comments and multiple targets, and ignore unsafe URL schemes. One drop MUST form one undoable document mutation. A receiver alone MUST NOT be presented as File Explorer drag-source integration. |
+
 ## Alignment sequence
 
 Implement and qualify these independently reviewable slices in order:
@@ -71,7 +76,7 @@ remains a separate release gate. All changed stories stay `visual-pending`.
 
 Package tests cover JSON Canvas parse and save helpers, the runtime id, the exclusive `*.canvas` association, and the `canvas` embed registration. `Plugins/Canvas/Panels` opens the legacy feature board in every placement and, in Middle (Top Tabs), shows the note embed. `Plugins/Canvas/Features` checks each node kind, a heading section, labeled connectors, and the note embed.
 
-`src/lib/json-canvas-safety.test.ts` verifies rejection without data loss, imported geometry and stacking, extension retention after editing, and omitted arrow defaults. Full authoring, live embedding, theme, and parity requirements remain planned until their focused acceptance lands.
+`src/lib/json-canvas-safety.test.ts` verifies rejection without data loss, imported geometry and stacking, extension retention after editing, and omitted arrow defaults. Live embedding, theme and remaining parity requirements remain planned until their focused acceptance lands. Creation/history/clipboard receiver behavior is covered by LN-CANVAS-032 through LN-CANVAS-035; File Explorer drag-source integration remains separately tracked under LN-CANVAS-012.
 
 ## Writer lifecycle qualification
 
