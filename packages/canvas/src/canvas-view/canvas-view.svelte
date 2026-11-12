@@ -17,13 +17,14 @@
   import CanvasControls from "./canvas-controls.svelte";
   import CanvasNavigation from "./canvas-navigation.svelte";
   import CanvasFitController from "./canvas-fit-controller.svelte";
+  import CanvasTouchSelection from "./canvas-touch-selection.svelte";
   import CanvasNode from "./canvas-node.svelte";
   import CanvasSelectionToolbar from "./canvas-selection-toolbar.svelte";
   import {
     CanvasFlowEdgeType,
     createFlowEdge,
     CanvasFlowNodeType,
-    parseNodeSize,
+    readFlowNodeSize,
     parseJsonCanvas,
     serializeFlowDocument,
     stringifyJsonCanvas,
@@ -241,7 +242,7 @@
   }
 
   function getNodeBounds(node: FlowCanvasNode): NodeBounds {
-    const size = parseNodeSize(node.style);
+    const size = readFlowNodeSize(node);
     const left = node.position.x;
     const top = node.position.y;
     const right = left + size.width;
@@ -780,7 +781,8 @@
           panActivationKey=" "
           panOnScroll
           panOnScrollMode={PanOnScrollMode.Free}
-          panOnDrag={false}
+          panOnDrag={[1]}
+          zoomOnPinch
           selectionOnDrag
           zoomOnScroll={false}
           nodesDraggable
@@ -809,6 +811,7 @@
           <Background />
           <CanvasControls />
           <CanvasNavigation />
+          <CanvasTouchSelection />
           <MiniMap />
         </SvelteFlow>
       {/if}

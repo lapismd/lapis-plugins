@@ -211,5 +211,8 @@
   "stories/plugins/bases/kanban/BasesKanban.stories.ts": {
     "kind": "component",
     "subject": "@lapis-notes/bases#BasesViewSurface"
+  },
+  "stories/plugins/canvas/Touch.stories.ts": {
+    "kind": "application"
   }
 }

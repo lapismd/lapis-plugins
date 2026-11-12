@@ -249,3 +249,5 @@ LN-BASE-047 leaves host-specific this binding, typed file/link wrappers and real
 LN-BASE-048 collection callbacks are evaluated in Bases with lexical query variables and explicit note context; they add no ambient App state or host service contract.
 
 LN-BASE-049 date and editor helpers remain source-owned query behavior. This change adds no host this binding, native service state or implicit App lookup.
+
+Canvas touch gestures and explicit selection remain plugin-owned under LN-CANVAS-051/052; native acceptance must drive real touch input.

@@ -33,7 +33,7 @@
     DEFAULT_NODE_HEIGHT,
     DEFAULT_NODE_WIDTH,
     displayNodeValue,
-    parseNodeSize,
+    readFlowNodeSize,
     PRESET_COLORS,
     resolveCanvasColor,
     type FlowCanvasNode,
@@ -270,9 +270,7 @@
       return;
     }
 
-    const size = parseNodeSize(
-      typeof currentNode.style === "string" ? currentNode.style : undefined,
-    );
+    const size = readFlowNodeSize(currentNode);
     const width = currentNode.measured?.width ?? size.width;
     const height = currentNode.measured?.height ?? size.height;
 
@@ -851,7 +849,6 @@
     {minHeight}
     color="transparent"
     handleClass="canvas-node-resize-handle"
-    handleStyle="background-color: transparent !important; border-color: transparent !important;"
     lineClass="canvas-node-resize-line"
     lineStyle="border-color: transparent !important; background-color: transparent !important;"
   />

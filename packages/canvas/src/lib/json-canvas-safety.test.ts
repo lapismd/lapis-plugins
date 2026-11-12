@@ -18,6 +18,13 @@ const card = {
 };
 
 describe("JSON Canvas file safety", () => {
+  test("persists public resize dimensions instead of the original presentation style", () => {
+    const input = { nodes: [{ ...card, extension: "keep" }] };
+    const flow = toFlowDocument(input);
+    flow.nodes[0].width = 285;
+    flow.nodes[0].height = 165;
+    expect(serializeFlowDocument(flow.nodes, flow.edges, input).nodes?.[0]).toEqual({ ...input.nodes[0], width: 285, height: 165 });
+  });
   test("preserves imported dimensions smaller than the editor resize minimum", () => {
     const input = { nodes: [{ ...card, width: 12, height: 8 }] };
     const flow = toFlowDocument(input);
