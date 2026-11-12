@@ -78,8 +78,10 @@ checked as explicit compilation-error probes, alongside the governed error story
 4. **P2 surfaces:** typed rendered values, custom/grouped summaries, manual
    groups, named embeds, map provider and remaining workflow acceptance.
 
-These are follow-up implementation slices. This change adds audit tooling and
-evidence; it does not alter the public plugin contract or repair the listed gaps.
+The filter, formula, collection and scalar date-helper slices are implemented.
+See the generated report for remaining arithmetic, regex, file/link and host gaps.
+Each implementation group retains a separate commit and patch Changeset; the
+public plugin document model and deliberate differences remain unchanged.
 
 ## Retained differences
 
@@ -88,4 +90,6 @@ source evidence. `intentional` preserves an established product contract;
 `deferred` identifies a separate feature explicitly retained as future work.
 Neither flag changes expected Obsidian results, hides failing probes, or implies
 that every other unresolved gap was deliberate. Case-insensitive text matching,
-the native saved-filter model and variadic list extension remain unchanged.
+the native saved-filter model, variadic list extension and nonmutating list
+reversal remain unchanged. The reverse mutation probe retains Obsidian's in-place
+expectation and records the deliberate mismatch.

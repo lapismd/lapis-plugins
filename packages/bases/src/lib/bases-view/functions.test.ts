@@ -47,6 +47,11 @@ import {
 } from "./functions-core";
 
 describe("Bases runtime functions", () => {
+  test("retains nonmutating native list reversal", () => {
+    const input = [1, 2, 3];
+    expect(reverseList(input)).toEqual([3, 2, 1]);
+    expect(input).toEqual([1, 2, 3]);
+  });
   test("distinguishes present zero values and empty objects", () => {
     expect(isEmpty(0)).toBe(false);
     expect(isEmpty(new Decimal("0"))).toBe(false);

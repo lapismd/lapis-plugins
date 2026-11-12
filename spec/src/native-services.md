@@ -239,3 +239,7 @@ Bases candidate limits under LN-BASE-004 are safe only when every predicate is l
 LN-BASE-046 performs final expression/formula evaluation in Bases. It adds no native state, global App binding or database syntax contract.
 
 LN-BASE-047 leaves host-specific this binding, typed file/link wrappers and real map-provider integration deferred under LN-BASE-012. Scalar helper fixes add no ambient App or native service state.
+
+LN-BASE-048 collection callbacks are evaluated in Bases with lexical query variables and explicit note context; they add no ambient App state or host service contract.
+
+LN-BASE-049 date and editor helpers remain source-owned query behavior. This change adds no host this binding, native service state or implicit App lookup.

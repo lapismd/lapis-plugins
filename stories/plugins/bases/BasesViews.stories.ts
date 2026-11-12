@@ -131,6 +131,56 @@ export const InvalidFormula: Story = {
   },
 };
 
+export const CollectionFilters: Story = {
+  parameters: storyParameters(
+    "collection-filters",
+    "List membership, scoped filter/reduce callbacks and formula projection execute against real indexed note metadata."
+  ),
+  render: renderScenario("collection-filters"),
+  play: async ({ canvasElement }) => {
+    const canvas = await waitForView(
+      canvasElement,
+      "collection-filters",
+      "table"
+    );
+    await waitFor(() => {
+      expect(
+        canvas.getByRole("link", { name: "Aurora.md", exact: true })
+      ).toBeVisible();
+      expect(canvas.getByText("95", { exact: true })).toBeVisible();
+      expect(
+        canvas.getByText("Maya Chen, Priya Shah", { exact: true })
+      ).toBeVisible();
+      expect(
+        canvas.queryByRole("link", { name: "Harbor.md", exact: true })
+      ).not.toBeInTheDocument();
+    });
+  },
+};
+
+export const DateHelpers: Story = {
+  parameters: storyParameters(
+    "date-helpers",
+    "Documented date-only, Moment formatting, clock output and epoch conversion execute through the real indexed App."
+  ),
+  render: renderScenario("date-helpers"),
+  play: async ({ canvasElement }) => {
+    const canvas = await waitForView(canvasElement, "date-helpers", "table");
+    await waitFor(() => {
+      expect(
+        canvas.getByRole("link", { name: "Aurora.md", exact: true })
+      ).toBeVisible();
+      expect(
+        canvas.getByText("2025-01-02 00:00:00", { exact: true })
+      ).toBeVisible();
+      expect(canvas.getByText("12:30:45", { exact: true })).toBeVisible();
+      expect(
+        canvas.queryByRole("link", { name: "Harbor.md", exact: true })
+      ).not.toBeInTheDocument();
+    });
+  },
+};
+
 async function expectFileLinkPreview(canvasElement: HTMLElement) {
   const link = within(canvasElement).getByRole("link", { name: "Aurora.md" });
   expect(getComputedStyle(link).textDecorationLine).toBe("none");

@@ -54,6 +54,7 @@
     "js-yaml": "^4.1.0",
     "lodash-es": "^4.17.21",
     "luxon": "^3.7.1",
+    "moment": "^2.31.0",
     "peaql": "^0.1.25"
   },
   "peerDependencies": {

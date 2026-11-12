@@ -1,4 +1,7 @@
-import { compileBasesExpression } from "./expression-compiler";
+import {
+  compileBasesExpression,
+  parseBasesExpression,
+} from "./expression-compiler";
 import {
   AttributeExpression,
   BooleanExpression,
@@ -75,10 +78,18 @@ export function validateFilterPredicate(
   }
 
   try {
-    const predicate = parsePredicate(query);
-    if (predicate) {
-      return { valid: true, predicate, error: null };
+    // Syntax validation must use the same dialect as execution, without
+    // evaluating formula references or leaking private lowering names into UI.
+    parseBasesExpression(query);
+    let predicate: unknown = { column: "", op: "", custom: query, value: "" };
+    try {
+      const [legacy, errors] = parseQuery(`SELECT 1 WHERE ${query}`);
+      if (!errors.length && legacy instanceof Query && legacy.where)
+        predicate = resolveQuery(legacy.where);
+    } catch {
+      // Advanced Bases syntax remains an editable custom expression.
     }
+    return { valid: true, predicate, error: null };
   } catch {
     // The editor keeps the draft available for correction and reports one
     // stable, user-facing message instead of leaking parser internals.
