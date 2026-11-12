@@ -1,5 +1,7 @@
 <script lang="ts">
-  import { tick } from "svelte";
+  import { getContext, tick } from "svelte";
+  import { arrangeCanvas, canvasLayoutRoots, CANVAS_LAYOUT_ACTIONS, type CanvasLayoutAction } from "../lib/canvas-layout";
+  import type { CanvasBoardController } from "../lib/canvas-board-controller";
   import {
     NodeToolbar,
     Position,
@@ -28,6 +30,38 @@
   const { deleteElements, fitBounds, getNodesBounds, updateNodeData } =
     useSvelteFlow<FlowCanvasNode, Edge>();
 
+  const board = getContext<CanvasBoardController | undefined>("lapis-canvas-board");
+  let layoutMenu = $state<HTMLDetailsElement | null>(null);
+  let arranging = $state(false);
+  let arrangementError = $state<string | null>(null);
+  async function arrange(action: CanvasLayoutAction): Promise<void> {
+    if (!board || arranging) return;
+    const ids = new Set(selectedNodeIds);
+    arranging = true;
+    arrangementError = null;
+    try {
+      await board.flush();
+      board.beginGesture();
+      board.apply(arrangeCanvas(board.read(), ids, action), ids);
+      await tick();
+      if (layoutMenu) layoutMenu.open = false;
+    } catch (error) {
+      arrangementError = error instanceof Error ? error.message : String(error);
+    } finally { arranging = false; }
+  }
+
+  $effect(() => {
+    if (!layoutMenu) return;
+    const target = layoutMenu;
+    const keydown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape" || !target.open) return;
+      event.preventDefault(); event.stopPropagation(); target.open = false;
+      target.querySelector("summary")?.focus();
+    };
+    target.addEventListener("keydown", keydown);
+    return () => target.removeEventListener("keydown", keydown);
+  });
+
   let toolbarElement = $state<HTMLElement | null>(null);
   let nativeColorInput = $state<HTMLInputElement | null>(null);
   let nativeColorValue = $state("#8260ff");
@@ -36,6 +70,7 @@
 
   let selectedNodes = $derived(store.selectedNodes);
   let selectedNodeIds = $derived(selectedNodes.map((node) => node.id));
+  const layoutRoots = $derived(board ? canvasLayoutRoots(board.read(), new Set(selectedNodeIds)).length : 0);
   let selectedNodesCount = $derived(selectedNodes.length);
   let sharedColor = $derived.by(() => {
     const uniqueColors = new Set(
@@ -178,6 +213,7 @@
     }
 
     isColorMenuOpen = false;
+    if (layoutMenu) layoutMenu.open = false;
   });
 
   $effect(() => {
@@ -245,6 +281,14 @@
 >
   <div bind:this={toolbarElement} class="canvas-node-toolbar-content">
     <div class="canvas-node-toolbar-actions">
+      <details class="canvas-selection-layout" bind:this={layoutMenu}>
+        <summary>Arrange</summary>
+        <div class="canvas-selection-layout-menu" role="group" aria-label="Arrange selected cards">
+          {#each CANVAS_LAYOUT_ACTIONS as [action, label]}
+            <button type="button" disabled={arranging || layoutRoots < (action.startsWith("distribute") ? 3 : 2)} onclick={() => void arrange(action)}>{label}</button>
+          {/each}
+        </div>
+      </details>
       <button
         type="button"
         class="canvas-node-toolbar-button"
@@ -286,6 +330,7 @@
       </button>
     </div>
 
+    {#if arrangementError}<p role="alert">{arrangementError}</p>{/if}
     {#if isColorMenuOpen}
       <div class="canvas-node-color-popover nodrag nopan">
         <button
@@ -330,3 +375,14 @@
     {/if}
   </div>
 </NodeToolbar>
+
+
+<style>
+  .canvas-selection-layout { position: relative; color: var(--canvas-readable-text, var(--text-normal)); }
+  summary { padding: 8px; cursor: pointer; font-size: 12px; border-radius: 5px; }
+  summary:focus-visible { outline: 2px solid var(--canvas-readable-indicator, var(--interactive-accent)); }
+  .canvas-selection-layout-menu { position: absolute; top: 100%; left: 0; z-index: 10; display: grid; gap: 3px; width: 230px; max-height: 320px; overflow: auto; padding: 6px; border: 1px solid var(--canvas-readable-indicator, var(--background-modifier-border)); border-radius: 8px; background: var(--canvas-readable-surface, var(--background-secondary)); box-shadow: 0 8px 20px var(--background-modifier-box-shadow); }
+  .canvas-selection-layout-menu button { min-height: 36px; padding: 6px 8px; border: 0; border-radius: 5px; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+  .canvas-selection-layout-menu button:hover, .canvas-selection-layout-menu button:focus-visible { outline: 2px solid var(--canvas-readable-indicator, var(--interactive-accent)); outline-offset: -2px; }
+  .canvas-selection-layout-menu button:disabled { opacity: 0.5; cursor: default; }
+</style>

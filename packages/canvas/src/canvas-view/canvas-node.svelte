@@ -346,20 +346,6 @@
     void enterEditMode();
   }
 
-  function handleNodeKeyDown(event: KeyboardEvent): void {
-    if (
-      (event.key !== "Enter" && event.key !== " ") ||
-      !selected ||
-      isEditing ||
-      !isEditablePreviewNode
-    ) {
-      return;
-    }
-
-    event.preventDefault();
-    void enterEditMode();
-  }
-
   function editNode(): void {
     isColorMenuOpen = false;
     void enterEditMode();
@@ -1142,19 +1128,16 @@
   {/snippet}
 
   {#if isEditablePreviewNode}
+    <button type="button" class="canvas-card-edit-button nodrag nopan" onclick={editNode}
+      aria-label={data.kind === "text" ? "Edit text node" : "Edit markdown file node"}>Edit</button>
     <div
       class:canvas-node-label-group={data.kind === "group"}
       class:nodrag={isEditing}
       class:nopan={isEditing}
       class="canvas-node-label"
-      onclick={handleNodeClick}
-      onkeydown={handleNodeKeyDown}
+      onpointerup={handleNodeClick}
       onpointerdown={rememberSelectionState}
-      role="button"
-      tabindex="0"
-      aria-label={data.kind === "text"
-        ? "Edit text node"
-        : "Edit markdown file node"}
+      role="presentation"
     >
       {@render nodeLabelContent()}
     </div>
