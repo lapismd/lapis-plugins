@@ -3,6 +3,7 @@
   import Minus from "@lucide/svelte/icons/minus";
   import Plus from "@lucide/svelte/icons/plus";
   import RotateCcw from "@lucide/svelte/icons/rotate-ccw";
+  import CanvasExport from "./canvas-export.svelte";
 
   let { readOnly = false }: { readOnly?: boolean } = $props();
 
@@ -16,6 +17,7 @@
 
 <Controls position="top-right" showZoom={false} showFitView={false} showLock={!readOnly}>
   {#snippet before()}
+    {#if !readOnly}<CanvasExport />{/if}
     <ControlButton
       class="svelte-flow__controls-zoomin"
       title="Zoom In"

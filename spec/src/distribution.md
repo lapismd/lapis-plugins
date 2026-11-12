@@ -503,3 +503,4 @@ Canvas touch gestures and explicit selection remain plugin-owned under LN-CANVAS
 
 Canvas web cards own HTTP(S) admission and explicit sandboxed previews under LN-CANVAS-054/055; remote frame loading must not mutate vault content.
 Text-to-note conversion uses the owning App and a captured board operation under LN-CANVAS-056/057. Installed runtime acceptance must verify lossless replacement and retained-note undo; publication remains a separate gate.
+PNG export is bundled under LN-CANVAS-058/059 using a normal html-to-image registry range. Runtime acceptance verifies actual PNG output and privacy choices; export adds no publication or host profile authority.

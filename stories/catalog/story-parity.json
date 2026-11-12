@@ -1,4 +1,7 @@
 {
+  "stories/plugins/canvas/Export.stories.ts": {
+    "kind": "application"
+  },
   "stories/plugins/canvas/NoteConversion.stories.ts": {
     "kind": "application"
   },

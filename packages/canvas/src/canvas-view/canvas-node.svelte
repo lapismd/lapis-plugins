@@ -795,6 +795,7 @@
   class:selected
   class:canvas-node-shell-group={data.kind === "group"}
   class="canvas-node-shell"
+  data-canvas-card-kind={data.kind}
   data-visible-handle-top={visibleHandleTop ? "true" : undefined}
   data-visible-handle-right={visibleHandleRight ? "true" : undefined}
   data-visible-handle-bottom={visibleHandleBottom ? "true" : undefined}

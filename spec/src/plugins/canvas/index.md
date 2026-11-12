@@ -80,6 +80,9 @@ The copied board keeps text, file, link, and group nodes, connectors, pane clipp
 
 ## Alignment sequence
 
+| LN-CANVAS-058 | Editable boards MUST offer PNG export for the entire board, including connector curves and labels outside card bounds, or current viewport, with explicit 1x/2x/4x quality and transparent backgrounds on capable desktop/browser hosts. Export MUST preserve source bytes and camera state, bound image dimensions without silent quality reduction, and explain empty or unavailable cases. |
+| LN-CANVAS-059 | PNG export MUST offer independent text, file-content/path, address and decoded-local-image privacy choices. File contents/paths, addresses and images MUST be omitted by default. Web frames, remote images, editing chrome and newly fetched fonts MUST stay excluded. Private snapshot DOM and temporary resources MUST be disposed after success or failure; captured board ownership MUST prevent downloads after a source transition. |
+
 | LN-CANVAS-056 | Text-to-note conversion MUST flush pending card Markdown, create a collision-free note through the owning App's public vault/file manager, preserve card identity, geometry, extensions and connectors, and record one undoable card-kind replacement. Undo MUST retain the created note. Creation failure MUST leave the original text card available for retry. |
 | LN-CANVAS-057 | An asynchronous conversion MUST capture its board owner, source and document session before admission. A file/owner transition, disposal, protection or concurrent target edit MUST prevent stale replacement. A note already created when completion becomes stale MUST remain in the vault; failure reporting MUST identify that retained note. |
 

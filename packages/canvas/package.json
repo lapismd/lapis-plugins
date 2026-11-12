@@ -46,7 +46,8 @@
     "@lapismd/design-core": "^0.12.4",
     "@lapismd/mira": "~0.1.5",
     "@lucide/svelte": "^0.523.0",
-    "@xyflow/svelte": "^1.2.4"
+    "@xyflow/svelte": "^1.2.4",
+    "html-to-image": "^1.11.13"
   },
   "peerDependencies": {
     "@codemirror/autocomplete": "^6.18.6",
