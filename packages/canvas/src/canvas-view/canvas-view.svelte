@@ -27,8 +27,11 @@
   import { setContext, untrack } from "svelte";
   import type { App } from "@lapis-notes/api";
 
+  import type { CanvasDocumentSession } from "../lib/canvas-document-session";
+
   type Props = {
     app: App;
+    documentSession?: CanvasDocumentSession | null;
     rawJson: string;
     parseError: string | null;
     snapToGrid: boolean;
@@ -42,6 +45,7 @@
 
   let {
     app,
+    documentSession = null,
     rawJson,
     parseError,
     snapToGrid,
@@ -57,6 +61,10 @@
     get current() {
       return app;
     },
+  });
+
+  setContext("lapis-canvas-document", {
+    get current() { return documentSession; },
   });
 
   const nodeTypes = {

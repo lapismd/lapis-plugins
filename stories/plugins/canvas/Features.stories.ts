@@ -371,3 +371,137 @@ export const ExternalConflict: Story = {
     expect(app.fileEditingSessions.textConflicts.entries).toHaveLength(0);
   },
 };
+
+const editableTextDocument = JSON.stringify({ nodes: [{ id: "draft", type: "text", x: 0, y: 0, width: 360, height: 240, text: "Original card text" }] });
+
+export const TextBeforeSwitch: Story = {
+  name: "Pending text-card edits flush before switching",
+  parameters: featureParameters("A real Mira text-card draft belongs to the parent Canvas writer before its debounce, and switching files drains both editor and JSON persistence."),
+  render: () => ({
+    Component: ViewingPanelDemo,
+    props: { layout: "middle-top-tabs", canvasPath: "Draft.canvas", files: { "Draft.canvas": editableTextDocument } },
+  }),
+  play: async ({ canvasElement }) => {
+    const app = await canvasOwner(canvasElement);
+    const next = await app.vault.create("After draft.canvas", JSON.stringify({ nodes: [{ id: "after", type: "text", x: 0, y: 0, width: 260, height: 160, text: "After the draft" }] }));
+    const board = within(canvasElement);
+    await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-id="draft"] .canvas-node-label')!);
+    await userEvent.click(await board.findByRole("button", { name: "Edit node", exact: true }));
+    const editor = await waitFor(() => {
+      const editor = canvasElement.querySelector<HTMLElement>('[data-id="draft"] [contenteditable="true"]');
+      expect(editor).not.toBeNull();
+      return editor!;
+    });
+    await userEvent.click(editor);
+    await userEvent.keyboard("{Control>}a{/Control}Pending card draft");
+    expect(app.fileEditingSessions.hasDirty("Draft.canvas")).toBe(true);
+    await app.workspace.activeLeaf!.openFile(next);
+    await waitFor(() => expect(canvasElement.textContent).toContain("After the draft"));
+    const saved = JSON.parse(await app.vault.read(app.vault.getFileByPath("Draft.canvas")!));
+    expect(saved.nodes[0].text.trim()).toBe("Pending card draft");
+    expect(app.fileEditingSessions.hasDirty("Draft.canvas")).toBe(false);
+  },
+};
+
+export const TextBeforeRename: Story = {
+  name: "Pending text-card edits follow a guarded rename",
+  parameters: featureParameters("The public file manager guards and flushes pending card text before rename; the existing Canvas view rebinds its writer to the new file."),
+  render: () => ({
+    Component: ViewingPanelDemo,
+    props: { layout: "middle-top-tabs", canvasPath: "Draft.canvas", files: { "Draft.canvas": editableTextDocument } },
+  }),
+  play: async ({ canvasElement }) => {
+    const app = await canvasOwner(canvasElement);
+    const board = within(canvasElement);
+    await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-id="draft"] .canvas-node-label')!);
+    await userEvent.click(await board.findByRole("button", { name: "Edit node", exact: true }));
+    const editor = await waitFor(() => {
+      const value = canvasElement.querySelector<HTMLElement>('[data-id="draft"] [contenteditable="true"]');
+      expect(value).not.toBeNull();
+      return value!;
+    });
+    await userEvent.click(editor);
+    await userEvent.keyboard("{Control>}a{/Control}Renamed card draft");
+    await app.fileManager.renameFile(app.vault.getFileByPath("Draft.canvas")!, "Renamed.canvas");
+    await waitFor(() => expect((app.workspace.activeLeaf!.view as unknown as { file: { path: string } }).file.path).toBe("Renamed.canvas"));
+    expect(app.vault.getFileByPath("Draft.canvas")).toBeNull();
+    expect(JSON.parse(await app.vault.read(app.vault.getFileByPath("Renamed.canvas")!)).nodes[0].text.trim()).toBe("Renamed card draft");
+    await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-id="draft"] .canvas-node-label')!);
+    await userEvent.click(await board.findByRole("button", { name: "Set color", exact: true }));
+    await userEvent.click(board.getByRole("button", { name: "Set node color 4", exact: true }));
+    await app.fileEditingSessions.flush("Renamed.canvas");
+    expect(JSON.parse(await app.vault.read(app.vault.getFileByPath("Renamed.canvas")!)).nodes[0].color).toBe("4");
+    expect(app.fileEditingSessions.hasDirty("Draft.canvas")).toBe(false);
+  },
+};
+
+export const PendingTextConflict: Story = {
+  name: "Pending text-card conflicts retain the complete draft",
+  parameters: featureParameters("A real Mira draft participates in Canvas conflict review and becomes clean only after the complete JSON document is durably acknowledged."),
+  render: () => ({
+    Component: ViewingPanelDemo,
+    props: { layout: "middle-top-tabs", canvasPath: "Draft.canvas", files: { "Draft.canvas": editableTextDocument } },
+  }),
+  play: async ({ canvasElement }) => {
+    const app = await canvasOwner(canvasElement);
+    const file = app.vault.getFileByPath("Draft.canvas")!;
+    const external = JSON.parse(editableTextDocument);
+    external.nodes[0].text = "External card text";
+    const externalRaw = JSON.stringify(external);
+    await app.vault.modify(file, externalRaw);
+    const board = within(canvasElement);
+    await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-id="draft"] .canvas-node-label')!);
+    await userEvent.click(await board.findByRole("button", { name: "Edit node", exact: true }));
+    const editor = await waitFor(() => {
+      const value = canvasElement.querySelector<HTMLElement>('[data-id="draft"] [contenteditable="true"]');
+      expect(value).not.toBeNull();
+      return value!;
+    });
+    await userEvent.click(editor);
+    await userEvent.keyboard("{Control>}a{/Control}Reviewed pending card draft");
+    await waitFor(() => expect(app.fileEditingSessions.textConflicts.entries).toHaveLength(1));
+    const conflict = app.fileEditingSessions.textConflicts.entries[0];
+    expect(JSON.parse(conflict.local).nodes[0].text.trim()).toBe("Reviewed pending card draft");
+    expect(await app.vault.read(file)).toBe(externalRaw);
+    await conflict.resolve("keep-local");
+    expect(JSON.parse(await app.vault.read(file)).nodes[0].text.trim()).toBe("Reviewed pending card draft");
+    expect(app.fileEditingSessions.hasDirty("Draft.canvas")).toBe(false);
+    expect(app.fileEditingSessions.textConflicts.entries).toHaveLength(0);
+  },
+};
+
+export const PendingTextUseExternal: Story = {
+  name: "Reviewed external text resets the card editor buffer",
+  parameters: featureParameters("Accepting the external version updates the live editor and graph together; a stale text-card effect must not queue the discarded draft again."),
+  render: () => ({
+    Component: ViewingPanelDemo,
+    props: { layout: "middle-top-tabs", canvasPath: "Draft.canvas", files: { "Draft.canvas": editableTextDocument } },
+  }),
+  play: async ({ canvasElement }) => {
+    const app = await canvasOwner(canvasElement);
+    const file = app.vault.getFileByPath("Draft.canvas")!;
+    const external = JSON.parse(editableTextDocument);
+    external.nodes[0].text = "Accepted external card text";
+    const externalRaw = JSON.stringify(external);
+    await app.vault.modify(file, externalRaw);
+    const board = within(canvasElement);
+    await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-id="draft"] .canvas-node-label')!);
+    await userEvent.click(await board.findByRole("button", { name: "Edit node", exact: true }));
+    const editor = await waitFor(() => {
+      const value = canvasElement.querySelector<HTMLElement>('[data-id="draft"] [contenteditable="true"]');
+      expect(value).not.toBeNull();
+      return value!;
+    });
+    await userEvent.click(editor);
+    await userEvent.keyboard("{Control>}a{/Control}Discard this local draft");
+    await waitFor(() => expect(app.fileEditingSessions.textConflicts.entries).toHaveLength(1));
+    await app.fileEditingSessions.textConflicts.entries[0].resolve("use-external");
+    await app.fileEditingSessions.flush("Draft.canvas");
+    expect(await app.vault.read(file)).toBe(externalRaw);
+    await waitFor(() => expect(canvasElement.querySelector('[data-id="draft"]')).toHaveTextContent("Accepted external card text"));
+    await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-id="draft"] .canvas-node-label')!);
+    await userEvent.click(await board.findByRole("button", { name: "Edit node", exact: true }));
+    await waitFor(() => expect(canvasElement.querySelector('[data-id="draft"] [contenteditable="true"]')).toHaveTextContent("Accepted external card text"));
+    expect(app.fileEditingSessions.hasDirty("Draft.canvas")).toBe(false);
+  },
+};

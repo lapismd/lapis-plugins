@@ -5,6 +5,9 @@ import {
   type FileEditingSession,
   type TFile,
 } from "@lapis-notes/api";
+import { tick } from "svelte";
+import type { MiraMarkdownEditingBinding, MiraMarkdownEditingSession } from "@lapismd/mira/extensions";
+import { CanvasTextSessions } from "./canvas-text-sessions";
 import { CanvasSaveQueue, type CanvasSaveStatus } from "./canvas-save-queue";
 
 type Options = {
@@ -18,6 +21,7 @@ type Options = {
 
 /** One App-owned writer for one captured Canvas destination. */
 export class CanvasDocumentSession implements FileEditingSession {
+  private readonly texts: CanvasTextSessions;
   private readonly queue: CanvasSaveQueue;
   private readonly persistence: FileTextPersistence;
   private registration!: FileEditingRegistration;
@@ -27,6 +31,11 @@ export class CanvasDocumentSession implements FileEditingSession {
   private releaseRetired: (() => void) | null = null;
 
   constructor(private readonly options: Options) {
+    this.texts = new CanvasTextSessions(() => {
+      this.registration?.changed();
+      this.persistence?.updateLocal(this.texts.local(this.value));
+      this.finishRetirement();
+    });
     const conditional = options.app.vault.supportsConditionalTextWrites;
     this.value = options.baseline ?? "";
     this.persistence = new FileTextPersistence({
@@ -34,22 +43,37 @@ export class CanvasDocumentSession implements FileEditingSession {
       file: options.file.copy(),
       baseline: options.baseline,
       conflicts: options.app.fileEditingSessions.textConflicts,
-      local: () => this.value,
-      protect: () => {
-        const release = options.hold();
-        return {
-          release: () => {
-            release();
-            this.registration.changed();
-            this.finishRetirement();
-          },
-          saved: () => this.queue.acknowledge(),
-          reset: (value) => {
-            this.value = value;
-            options.reset(value);
-          },
-          resetSaved: () => this.queue.acknowledge(),
-        };
+      local: () => this.texts.local(this.value),
+      protect: async () => {
+        const releaseInput = this.hold();
+        try {
+          await tick();
+          const texts = await this.texts.recover();
+          return {
+            release: () => {
+              texts.release();
+              releaseInput();
+              this.registration.changed();
+              this.finishRetirement();
+            },
+            saved: () => {
+              this.value = this.texts.local(this.value);
+              texts.saved();
+              this.options.reset(this.value);
+              this.queue.acknowledge();
+            },
+            reset: async (value: string) => {
+              texts.reset(value);
+              this.value = value;
+              options.reset(value);
+              await tick();
+            },
+            resetSaved: () => this.queue.acknowledge(),
+          };
+        } catch (error) {
+          releaseInput();
+          throw error;
+        }
       },
       settle: () => this.queue.settle(),
       serialize: (run) => options.app.fileEditingSessions.recover(this, () => this.serialize(run)),
@@ -79,18 +103,32 @@ export class CanvasDocumentSession implements FileEditingSession {
   }
 
   readonly native = {
-    hold: () => this.options.hold(),
+    hold: () => this.hold(),
     savedText: () => this.persistence.baseline,
-    refreshSavedText: (value: string | null) => {
-      if (this.dirty) throw new Error("Cannot replace unsaved Canvas changes");
-      this.persistence.acceptBaseline(value);
-      this.value = value ?? "";
-      this.options.reset(this.value);
+    refreshSavedText: async (value: string | null) => {
+      const release = this.hold();
+      try {
+        await tick();
+        if (this.dirty) throw new Error("Cannot replace unsaved Canvas changes");
+        const texts = await this.texts.recover();
+        try {
+          if (this.dirty) throw new Error("Cannot replace unsaved Canvas changes");
+          texts.reset(value ?? "");
+          this.persistence.acceptBaseline(value);
+          this.value = value ?? "";
+          this.options.reset(this.value);
+          await tick();
+        } finally {
+          texts.release();
+        }
+      } finally {
+        release();
+      }
     },
   };
 
   get dirty(): boolean {
-    return this.queue.dirty || this.persistence.hasConflict;
+    return this.queue.dirty || this.texts.dirty || this.persistence.hasConflict;
   }
 
   ready(): Promise<void> {
@@ -99,19 +137,21 @@ export class CanvasDocumentSession implements FileEditingSession {
 
   enqueue(value: string): void {
     this.value = value;
-    this.persistence.updateLocal(value);
+    this.persistence.updateLocal(this.texts.local(value));
     this.queue.enqueue(value);
   }
 
   async flush(): Promise<void> {
     await this.registration.ready();
+    await this.texts.flush();
+    await tick();
     await this.queue.flush();
     if (this.persistence.hasConflict) throw new Error("Resolve the Canvas file conflict before continuing");
     this.finishRetirement();
   }
 
   async protect(): Promise<() => void> {
-    const release = this.options.hold();
+    const release = this.hold();
     try {
       await this.flush();
       return release;
@@ -121,9 +161,35 @@ export class CanvasDocumentSession implements FileEditingSession {
     }
   }
 
+  bindText(id: string, session: MiraMarkdownEditingSession, write: (value: string) => void | Promise<void>): MiraMarkdownEditingBinding {
+    const release = this.texts.bind(id, session);
+    return {
+      write: async (value) => {
+        await write(value);
+        await tick();
+        // Joining the JSON queue directly avoids recursively flushing the Mira
+        // writer whose bound callback is currently waiting for durability.
+        await this.queue.flush();
+      },
+      release,
+    };
+  }
+
+  private hold(): () => void {
+    const releaseInput = this.options.hold();
+    const releaseTexts = this.texts.hold();
+    let held = true;
+    return () => {
+      if (!held) return;
+      held = false;
+      releaseTexts();
+      releaseInput();
+    };
+  }
+
   /** Registry retains dirty detached writers; release rendering only after recovery. */
   retire(cleanup: () => void): void {
-    this.releaseRetired = this.options.hold();
+    this.releaseRetired = this.hold();
     this.retired = cleanup;
     this.registration();
     this.finishRetirement();

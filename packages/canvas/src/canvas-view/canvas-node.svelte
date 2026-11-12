@@ -41,6 +41,8 @@
     toCanvasFileRef,
   } from "../lib/canvas-text-preview";
 
+  import type { CanvasDocumentSession } from "../lib/canvas-document-session";
+
   let { id, data, selected }: NodeProps<FlowCanvasNode> = $props();
 
   const canvasApp = getContext<{ readonly current: App | undefined } | undefined>(
@@ -83,9 +85,19 @@
   };
   let textNodeValue = $state(textSource.value);
   const textFile = $derived(canvasTextFile(id));
-  const textAdapter = createCanvasTextAdapter(textSource, (value) => {
+  const documentSession = getContext<{ readonly current: CanvasDocumentSession | null } | undefined>("lapis-canvas-document");
+  const writeText = (value: string) => {
     textNodeValue = value;
-  });
+    updateNodeData(id, { text: value });
+  };
+  const textAdapter = createCanvasTextAdapter(textSource, writeText,
+    documentSession?.current
+      ? (_path, session) => documentSession.current!.bindText(id, session, (value) => {
+        textSource.value = value;
+        writeText(value);
+      })
+      : undefined,
+  );
   const vaultFileAdapter = $derived(
     app ? createLapisMiraFileAdapter(app) : null,
   );

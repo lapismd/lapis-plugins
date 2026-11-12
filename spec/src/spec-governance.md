@@ -1,8 +1,10 @@
 # Specification Governance
 
-Canvas conditional-persistence qualification (LN-CANVAS-027/028) keeps the broader embedded-buffer and rename lifecycle requirement LN-CANVAS-011 in progress. Public API peer floors and release intent MUST track the contracts actually consumed; producer tests do not imply native host release acceptance.
+Canvas writer lifecycle LN-CANVAS-011 is source-qualified by LN-CANVAS-024 through LN-CANVAS-031. Pending-buffer, guarded rename and retained teardown tests use real public App/Mira integration. Optional conditional capability and installed native Desktop release limitations remain explicit in the owning chapter.
 
-Canvas save-queue qualification distinguishes delivered board mutations from pending embedded text buffers and native admission. LN-CANVAS-024/025/026 have focused transition and retry evidence; LN-CANVAS-011 retains its incomplete status until the full lifecycle contract is qualified.
+Canvas conditional-persistence qualification (LN-CANVAS-027/028) is supplemented by the embedded-buffer and rename evidence under LN-CANVAS-029/030/031. Public API peer floors and release intent MUST track the contracts actually consumed; producer tests do not imply native host release acceptance.
+
+Canvas save-queue qualification distinguishes delivered board mutations from pending embedded text buffers and native admission. LN-CANVAS-024/025/026 have focused transition and retry evidence; LN-CANVAS-029/030/031 supply the separate virtual-editor and rename qualification.
 
 The Canvas alignment sequence distinguishes implemented file-safety contracts from planned authoring, history, embed, theme and parity work. Verification MUST retain that distinction and record focused regressions before widening to source, artifact and consumer gates.
 

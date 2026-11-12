@@ -260,6 +260,7 @@ export class CanvasView extends FileView {
       target: this.containerEl,
       props: {
         app: this.app,
+        documentSession: saves,
         rawJson: this.rawJson,
         parseError: this.parseError,
         saveState: this.saveState,
