@@ -34,7 +34,7 @@
     type JsonCanvas,
   } from "../lib/json-canvas";
   import CanvasEdge from "./canvas-edge.svelte";
-  import { setContext, tick, untrack } from "svelte";
+  import { onDestroy, setContext, tick, untrack } from "svelte";
   import type { App } from "@lapis-notes/api";
 
   import type { CanvasDocumentSession } from "../lib/canvas-document-session";
@@ -110,6 +110,8 @@
   let reconnecting = false;
   let connectionError = $state<string | null>(null);
   let droppedConnection = $state<Parameters<OnConnectEnd> | null>(null);
+  let active = true;
+  onDestroy(() => { active = false; });
 
   $effect(() => { if (surface) return acquireCanvasStyles(surface.ownerDocument); });
 
@@ -143,6 +145,19 @@
     },
     beginGesture: () => { gesture++; },
     beginText: (id) => { textSessions.set(id, (textSessions.get(id) ?? 0) + 1); },
+    capture: () => {
+      const owner = app, path = sourcePath, session = documentSession;
+      const assertCurrent = () => {
+        if (!active || owner !== app || path !== sourcePath || session !== documentSession) throw new Error("The Canvas destination changed.");
+        if (inputBlocked) throw new Error("Canvas editing is temporarily protected");
+      };
+      return {
+        assertCurrent,
+        read: () => { assertCurrent(); return board.read(); },
+        apply: (document, selected) => { assertCurrent(); board.beginGesture(); board.apply(document, selected); },
+        flush: async () => { assertCurrent(); await session?.flush(); await tick(); assertCurrent(); },
+      };
+    },
   };
   setContext("lapis-canvas-board", board);
 

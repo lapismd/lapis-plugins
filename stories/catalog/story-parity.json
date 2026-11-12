@@ -1,4 +1,7 @@
 {
+  "stories/plugins/canvas/NoteConversion.stories.ts": {
+    "kind": "application"
+  },
   "stories/plugins/ai/AiChat.stories.ts": {
     "kind": "component",
     "subject": "@lapis-notes/ai#AiChatPanel"

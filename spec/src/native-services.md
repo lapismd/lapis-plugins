@@ -257,3 +257,4 @@ LN-BASE-049 date and editor helpers remain source-owned query behavior. This cha
 Canvas touch gestures and explicit selection remain plugin-owned under LN-CANVAS-051/052; native acceptance must drive real touch input.
 
 Canvas web cards own HTTP(S) admission and explicit sandboxed previews under LN-CANVAS-054/055; remote frame loading must not mutate vault content.
+Text-to-note conversion uses public owning-vault creation and collision-safe paths under LN-CANVAS-056/057. Captured board identity prevents asynchronous completion from targeting a later file or owner.

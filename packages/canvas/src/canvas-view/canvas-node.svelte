@@ -4,6 +4,7 @@
   import { createLapisMiraFileAdapter } from "@lapis-notes/markdown/embed";
   import CanvasGroupBackground from "../canvas-group-background.svelte";
   import CanvasGroupBackgroundControls from "./canvas-group-background-controls.svelte";
+  import CanvasNoteConversion from "./canvas-note-conversion.svelte";
   import CanvasWebPreview from "../canvas-web-preview.svelte";
   import { canvasWebUrl } from "../lib/canvas-web-url";
   import CanvasFileContent from "../canvas-file-content.svelte";
@@ -845,6 +846,7 @@
     >
       <div class="canvas-node-toolbar-content">
         <div class="canvas-node-toolbar-actions">
+          {#if data.kind === "text" && app}<CanvasNoteConversion {app} nodeId={id} />{/if}
           <button
             type="button"
             class="canvas-node-toolbar-button"
