@@ -1,4 +1,5 @@
 <script lang="ts">
+  import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import {
     BaseEdge,
     EdgeLabel,
@@ -618,10 +619,6 @@
   });
 </script>
 
-<style>
-  .canvas-connector-reconnect-dot { display: block; width: 12px; height: 12px; margin: 16px; border: 2px solid var(--canvas-readable-indicator, var(--text-normal)); border-radius: 50%; background: var(--canvas-readable-surface, var(--background-primary)); }
-</style>
-
 {#if selected || isHovered}
   <path
     class="canvas-flow-edge-glow"
@@ -680,10 +677,24 @@
 {/if}
 
 {#if selected && !readOnly?.current}
-  <EdgeReconnectAnchor type="source" position={{ x: sourceX, y: sourceY }} size={44} class="canvas-connector-reconnect" aria-hidden="true" title="Drag to reconnect source">
+  <EdgeReconnectAnchor
+    type="source"
+    position={{ x: sourceX, y: sourceY }}
+    size={44}
+    class="canvas-connector-reconnect"
+    aria-hidden="true"
+    title="Drag to reconnect source"
+  >
     <span class="canvas-connector-reconnect-dot"></span>
   </EdgeReconnectAnchor>
-  <EdgeReconnectAnchor type="target" position={{ x: targetX, y: targetY }} size={44} class="canvas-connector-reconnect" aria-hidden="true" title="Drag to reconnect target">
+  <EdgeReconnectAnchor
+    type="target"
+    position={{ x: targetX, y: targetY }}
+    size={44}
+    class="canvas-connector-reconnect"
+    aria-hidden="true"
+    title="Drag to reconnect target"
+  >
     <span class="canvas-connector-reconnect-dot"></span>
   </EdgeReconnectAnchor>
   <path
@@ -707,21 +718,31 @@
 {#if selected}
   <EdgeLabel x={edgeGeometry.centerX} y={edgeGeometry.centerY} transparent>
     {#if !isEditingLabel}
-      <button
-        type="button"
-        class="canvas-edge-label-hit-target nodrag nopan"
-        style:--canvas-edge-label-interaction-scale={editableLabelScale}
-        aria-label="Edit connector label"
-        title="Edit connector label"
-        onclick={editLabel}
+      <Tooltip.Root
+        ><Tooltip.Trigger
+          >{#snippet child({ props: tooltipProps })}<button
+              {...tooltipProps}
+              type="button"
+              class="canvas-edge-label-hit-target nodrag nopan"
+              style:--canvas-edge-label-interaction-scale={editableLabelScale}
+              aria-label="Edit connector label"
+              onclick={editLabel}
+            >
+              {#if displayLabel}
+                <span class="canvas-edge-label-hit-target-text"
+                  >{displayLabel}</span
+                >
+              {/if}
+              <span
+                class="canvas-edge-label-hit-target-measure"
+                aria-hidden="true"
+              >
+                {displayLabel ?? "Connector label"}
+              </span>
+            </button>{/snippet}</Tooltip.Trigger
+        ><Tooltip.Content sideOffset={6}>Edit connector label</Tooltip.Content
+        ></Tooltip.Root
       >
-        {#if displayLabel}
-          <span class="canvas-edge-label-hit-target-text">{displayLabel}</span>
-        {/if}
-        <span class="canvas-edge-label-hit-target-measure" aria-hidden="true">
-          {displayLabel ?? "Connector label"}
-        </span>
-      </button>
     {/if}
     <div
       bind:this={toolbarAnchorElement}
@@ -739,107 +760,160 @@
         <div class="canvas-edge-toolbar-content">
           <div class="canvas-node-toolbar-actions">
             {#if !readOnly?.current}<CanvasConnectionControls {id} />{/if}
-            <button
-              type="button"
-              class="canvas-node-toolbar-button"
-              onclick={removeEdge}
-              aria-label="Remove connector"
-              title="Remove connector"
+            <Tooltip.Root
+              ><Tooltip.Trigger
+                >{#snippet child({ props: tooltipProps })}<button
+                    {...tooltipProps}
+                    type="button"
+                    class="canvas-node-toolbar-button"
+                    onclick={removeEdge}
+                    aria-label="Remove connector"
+                  >
+                    <Trash2 aria-hidden="true" />
+                  </button>{/snippet}</Tooltip.Trigger
+              ><Tooltip.Content sideOffset={6}>Remove connector</Tooltip.Content
+              ></Tooltip.Root
             >
-              <Trash2 aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              class="canvas-node-toolbar-button"
-              onclick={editLabel}
-              aria-label="Edit connector label"
-              title="Edit connector label"
+            <Tooltip.Root
+              ><Tooltip.Trigger
+                >{#snippet child({ props: tooltipProps })}<button
+                    {...tooltipProps}
+                    type="button"
+                    class="canvas-node-toolbar-button"
+                    onclick={editLabel}
+                    aria-label="Edit connector label"
+                  >
+                    <Pencil aria-hidden="true" />
+                  </button>{/snippet}</Tooltip.Trigger
+              ><Tooltip.Content sideOffset={6}
+                >Edit connector label</Tooltip.Content
+              ></Tooltip.Root
             >
-              <Pencil aria-hidden="true" />
-            </button>
             {#if displayLabel}
-              <button
-                type="button"
-                class="canvas-node-toolbar-button"
-                onclick={removeLabel}
-                aria-label="Remove connector label"
-                title="Remove connector label"
+              <Tooltip.Root
+                ><Tooltip.Trigger
+                  >{#snippet child({ props: tooltipProps })}<button
+                      {...tooltipProps}
+                      type="button"
+                      class="canvas-node-toolbar-button"
+                      onclick={removeLabel}
+                      aria-label="Remove connector label"
+                    >
+                      <X aria-hidden="true" />
+                    </button>{/snippet}</Tooltip.Trigger
+                ><Tooltip.Content sideOffset={6}
+                  >Remove connector label</Tooltip.Content
+                ></Tooltip.Root
               >
-                <X aria-hidden="true" />
-              </button>
             {/if}
-            <button
-              type="button"
-              class:active={isColorMenuOpen}
-              class="canvas-node-toolbar-button"
-              onclick={toggleColorMenu}
-              aria-label="Set connector color"
-              title="Set connector color"
-              aria-haspopup="dialog"
-              aria-expanded={isColorMenuOpen}
+            <Tooltip.Root
+              ><Tooltip.Trigger
+                >{#snippet child({ props: tooltipProps })}<button
+                    {...tooltipProps}
+                    type="button"
+                    class:active={isColorMenuOpen}
+                    class="canvas-node-toolbar-button"
+                    onclick={toggleColorMenu}
+                    aria-label="Set connector color"
+                    aria-haspopup="dialog"
+                    aria-expanded={isColorMenuOpen}
+                  >
+                    <Palette aria-hidden="true" />
+                  </button>{/snippet}</Tooltip.Trigger
+              ><Tooltip.Content sideOffset={6}
+                >Set connector color</Tooltip.Content
+              ></Tooltip.Root
             >
-              <Palette aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              class="canvas-node-toolbar-button"
-              onclick={zoomToEdge}
-              aria-label="Zoom to connector"
-              title="Zoom to connector"
+            <Tooltip.Root
+              ><Tooltip.Trigger
+                >{#snippet child({ props: tooltipProps })}<button
+                    {...tooltipProps}
+                    type="button"
+                    class="canvas-node-toolbar-button"
+                    onclick={zoomToEdge}
+                    aria-label="Zoom to connector"
+                  >
+                    <Expand aria-hidden="true" />
+                  </button>{/snippet}</Tooltip.Trigger
+              ><Tooltip.Content sideOffset={6}
+                >Zoom to connector</Tooltip.Content
+              ></Tooltip.Root
             >
-              <Expand aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              class:active={isDirectionMenuOpen}
-              class="canvas-node-toolbar-button"
-              onclick={toggleDirectionMenu}
-              aria-label="Set line direction"
-              title="Set line direction"
-              aria-haspopup="dialog"
-              aria-expanded={isDirectionMenuOpen}
+            <Tooltip.Root
+              ><Tooltip.Trigger
+                >{#snippet child({ props: tooltipProps })}<button
+                    {...tooltipProps}
+                    type="button"
+                    class:active={isDirectionMenuOpen}
+                    class="canvas-node-toolbar-button"
+                    onclick={toggleDirectionMenu}
+                    aria-label="Set line direction"
+                    aria-haspopup="dialog"
+                    aria-expanded={isDirectionMenuOpen}
+                  >
+                    {#if directionMode === "bidirectional"}
+                      <ArrowLeftRight aria-hidden="true" />
+                    {:else if directionMode === "unidirectional"}
+                      <ArrowRight aria-hidden="true" />
+                    {:else}
+                      <Minus aria-hidden="true" />
+                    {/if}
+                  </button>{/snippet}</Tooltip.Trigger
+              ><Tooltip.Content sideOffset={6}
+                >Set line direction</Tooltip.Content
+              ></Tooltip.Root
             >
-              {#if directionMode === "bidirectional"}
-                <ArrowLeftRight aria-hidden="true" />
-              {:else if directionMode === "unidirectional"}
-                <ArrowRight aria-hidden="true" />
-              {:else}
-                <Minus aria-hidden="true" />
-              {/if}
-            </button>
           </div>
 
           {#if isColorMenuOpen}
             <div class="canvas-edge-color-popover nodrag nopan">
-              <button
-                type="button"
-                class:selected={!data?.color}
-                class="canvas-node-color canvas-node-color-clear"
-                onclick={() => chooseColor(undefined)}
-                aria-label="Clear connector color"
-                title="Clear connector color"
-              ></button>
+              <Tooltip.Root
+                ><Tooltip.Trigger
+                  >{#snippet child({ props: tooltipProps })}<button
+                      {...tooltipProps}
+                      type="button"
+                      class:selected={!data?.color}
+                      class="canvas-node-color canvas-node-color-clear"
+                      onclick={() => chooseColor(undefined)}
+                      aria-label="Clear connector color"
+                    ></button>{/snippet}</Tooltip.Trigger
+                ><Tooltip.Content sideOffset={6}
+                  >Clear connector color</Tooltip.Content
+                ></Tooltip.Root
+              >
 
               {#each Object.entries(PRESET_COLORS) as [colorId, colorValue] (colorId)}
-                <button
-                  type="button"
-                  class:selected={data?.color === colorId}
-                  class="canvas-node-color"
-                  style:--canvas-node-swatch={colorValue}
-                  onclick={() => chooseColor(colorId)}
-                  aria-label={`Set connector color ${colorId}`}
-                  title={`Set connector color ${colorId}`}
-                ></button>
+                <Tooltip.Root
+                  ><Tooltip.Trigger
+                    >{#snippet child({ props: tooltipProps })}<button
+                        {...tooltipProps}
+                        type="button"
+                        class:selected={data?.color === colorId}
+                        class="canvas-node-color"
+                        style:--canvas-node-swatch={colorValue}
+                        onclick={() => chooseColor(colorId)}
+                        aria-label={`Set connector color ${colorId}`}
+                      ></button>{/snippet}</Tooltip.Trigger
+                  ><Tooltip.Content sideOffset={6}
+                    >{`Set connector color ${colorId}`}</Tooltip.Content
+                  ></Tooltip.Root
+                >
               {/each}
 
-              <button
-                type="button"
-                class:selected={hasCustomColor}
-                class="canvas-node-color canvas-node-color-custom"
-                onclick={openNativeColorPicker}
-                aria-label="Choose custom connector color"
-                title="Choose custom connector color"
-              ></button>
+              <Tooltip.Root
+                ><Tooltip.Trigger
+                  >{#snippet child({ props: tooltipProps })}<button
+                      {...tooltipProps}
+                      type="button"
+                      class:selected={hasCustomColor}
+                      class="canvas-node-color canvas-node-color-custom"
+                      onclick={openNativeColorPicker}
+                      aria-label="Choose custom connector color"
+                    ></button>{/snippet}</Tooltip.Trigger
+                ><Tooltip.Content sideOffset={6}
+                  >Choose custom connector color</Tooltip.Content
+                ></Tooltip.Root
+              >
               <input
                 bind:this={nativeColorInput}
                 class="canvas-node-native-color-input"
@@ -854,39 +928,55 @@
 
           {#if isDirectionMenuOpen}
             <div class="canvas-edge-direction-popover nodrag nopan">
-              <button
-                type="button"
-                class:active={directionMode === "none"}
-                class="canvas-edge-direction-button"
-                onclick={() => chooseDirection("none")}
-                aria-label="Set line direction to non-directional"
-                title="Non-directional"
+              <Tooltip.Root
+                ><Tooltip.Trigger
+                  >{#snippet child({ props: tooltipProps })}<button
+                      {...tooltipProps}
+                      type="button"
+                      class:active={directionMode === "none"}
+                      class="canvas-edge-direction-button"
+                      onclick={() => chooseDirection("none")}
+                      aria-label="Set line direction to non-directional"
+                    >
+                      <Minus aria-hidden="true" />
+                      <span>Non-directional</span>
+                    </button>{/snippet}</Tooltip.Trigger
+                ><Tooltip.Content sideOffset={6}
+                  >Non-directional</Tooltip.Content
+                ></Tooltip.Root
               >
-                <Minus aria-hidden="true" />
-                <span>Non-directional</span>
-              </button>
-              <button
-                type="button"
-                class:active={directionMode === "unidirectional"}
-                class="canvas-edge-direction-button"
-                onclick={() => chooseDirection("unidirectional")}
-                aria-label="Set line direction to unidirectional"
-                title="Unidirectional"
+              <Tooltip.Root
+                ><Tooltip.Trigger
+                  >{#snippet child({ props: tooltipProps })}<button
+                      {...tooltipProps}
+                      type="button"
+                      class:active={directionMode === "unidirectional"}
+                      class="canvas-edge-direction-button"
+                      onclick={() => chooseDirection("unidirectional")}
+                      aria-label="Set line direction to unidirectional"
+                    >
+                      <ArrowRight aria-hidden="true" />
+                      <span>Unidirectional</span>
+                    </button>{/snippet}</Tooltip.Trigger
+                ><Tooltip.Content sideOffset={6}>Unidirectional</Tooltip.Content
+                ></Tooltip.Root
               >
-                <ArrowRight aria-hidden="true" />
-                <span>Unidirectional</span>
-              </button>
-              <button
-                type="button"
-                class:active={directionMode === "bidirectional"}
-                class="canvas-edge-direction-button"
-                onclick={() => chooseDirection("bidirectional")}
-                aria-label="Set line direction to bidirectional"
-                title="Bidirectional"
+              <Tooltip.Root
+                ><Tooltip.Trigger
+                  >{#snippet child({ props: tooltipProps })}<button
+                      {...tooltipProps}
+                      type="button"
+                      class:active={directionMode === "bidirectional"}
+                      class="canvas-edge-direction-button"
+                      onclick={() => chooseDirection("bidirectional")}
+                      aria-label="Set line direction to bidirectional"
+                    >
+                      <ArrowLeftRight aria-hidden="true" />
+                      <span>Bidirectional</span>
+                    </button>{/snippet}</Tooltip.Trigger
+                ><Tooltip.Content sideOffset={6}>Bidirectional</Tooltip.Content
+                ></Tooltip.Root
               >
-                <ArrowLeftRight aria-hidden="true" />
-                <span>Bidirectional</span>
-              </button>
             </div>
           {/if}
         </div>
@@ -921,3 +1011,15 @@
     </div>
   </EdgeLabel>
 {/if}
+
+<style>
+  .canvas-connector-reconnect-dot {
+    display: block;
+    width: 12px;
+    height: 12px;
+    margin: 16px;
+    border: 2px solid var(--canvas-readable-indicator, var(--text-normal));
+    border-radius: 50%;
+    background: var(--canvas-readable-surface, var(--background-primary));
+  }
+</style>

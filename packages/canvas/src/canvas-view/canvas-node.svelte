@@ -1,4 +1,5 @@
 <script lang="ts">
+  import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import { TFile, type App } from "@lapis-notes/api";
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
   import { createLapisMiraFileAdapter } from "@lapis-notes/markdown/embed";
@@ -661,101 +662,101 @@
       <div class="canvas-node-toolbar-content">
         <div class="canvas-node-toolbar-actions">
           {#if data.kind === "text" && app}<CanvasNoteConversion {app} nodeId={id} />{/if}
-          <button
+          <Tooltip.Root><Tooltip.Trigger>{#snippet child({ props: tooltipProps })}<button {...tooltipProps}
             type="button"
             class="canvas-node-toolbar-button"
             onclick={removeNode}
             aria-label="Remove node"
-            title="Remove node"
+            
           >
             <Trash2 aria-hidden="true" />
-          </button>
-          <button
+          </button>{/snippet}</Tooltip.Trigger><Tooltip.Content sideOffset={6}>Remove node</Tooltip.Content></Tooltip.Root>
+          <Tooltip.Root><Tooltip.Trigger>{#snippet child({ props: tooltipProps })}<button {...tooltipProps}
             type="button"
             class:active={isColorMenuOpen}
             class="canvas-node-toolbar-button"
             onclick={toggleColorMenu}
             aria-label="Set color"
-            title="Set color"
+            
             aria-haspopup="dialog"
             aria-expanded={isColorMenuOpen}
           >
             <Palette aria-hidden="true" />
-          </button>
-          <button
+          </button>{/snippet}</Tooltip.Trigger><Tooltip.Content sideOffset={6}>Set color</Tooltip.Content></Tooltip.Root>
+          <Tooltip.Root><Tooltip.Trigger>{#snippet child({ props: tooltipProps })}<button {...tooltipProps}
             type="button"
             class="canvas-node-toolbar-button"
             onclick={zoomToNode}
             aria-label="Zoom to selection"
-            title="Zoom to selection"
+            
           >
             <Expand aria-hidden="true" />
-          </button>
+          </button>{/snippet}</Tooltip.Trigger><Tooltip.Content sideOffset={6}>Zoom to selection</Tooltip.Content></Tooltip.Root>
           {#if data.kind === "group"}
             {#if app}<CanvasGroupBackgroundControls {app} nodeId={id} background={data.background} backgroundStyle={data.backgroundStyle} onOpen={() => { isColorMenuOpen = false; }} />{/if}
-            <button
+            <Tooltip.Root><Tooltip.Trigger>{#snippet child({ props: tooltipProps })}<button {...tooltipProps}
               type="button"
               class="canvas-node-toolbar-button"
               onclick={editLabel}
               aria-label="Edit label"
-              title="Edit label"
+              
             >
               <Type aria-hidden="true" />
-            </button>
+            </button>{/snippet}</Tooltip.Trigger><Tooltip.Content sideOffset={6}>Edit label</Tooltip.Content></Tooltip.Root>
             {#if hasGroupLabel}
-              <button
+              <Tooltip.Root><Tooltip.Trigger>{#snippet child({ props: tooltipProps })}<button {...tooltipProps}
                 type="button"
                 class="canvas-node-toolbar-button"
                 onclick={removeLabel}
                 aria-label="Remove label"
-                title="Remove label"
+                
               >
                 <X aria-hidden="true" />
-              </button>
+              </button>{/snippet}</Tooltip.Trigger><Tooltip.Content sideOffset={6}>Remove label</Tooltip.Content></Tooltip.Root>
             {/if}
           {/if}
-          <button
+          <Tooltip.Root><Tooltip.Trigger>{#snippet child({ props: tooltipProps })}<button {...tooltipProps}
             type="button"
             class="canvas-node-toolbar-button"
             onclick={editNode}
             aria-label="Edit node"
-            title="Edit node"
+            
           >
             <Pencil aria-hidden="true" />
-          </button>
+          </button>{/snippet}</Tooltip.Trigger><Tooltip.Content sideOffset={6}>Edit node</Tooltip.Content></Tooltip.Root>
         </div>
 
         {#if isColorMenuOpen}
           <div class="canvas-node-color-popover nodrag nopan">
-            <button
+            <Tooltip.Root><Tooltip.Trigger>{#snippet child({ props: tooltipProps })}<button {...tooltipProps}
               type="button"
               class:selected={!data.color}
               class="canvas-node-color canvas-node-color-clear"
               onclick={() => chooseColor(undefined)}
               aria-label="Clear node color"
-              title="Clear node color"
-            ></button>
+              
+            ></button>{/snippet}</Tooltip.Trigger><Tooltip.Content sideOffset={6}>Clear node color</Tooltip.Content></Tooltip.Root>
 
             {#each colorOptions as [colorId, colorValue] (colorId)}
-              <button
+              <Tooltip.Root><Tooltip.Trigger>{#snippet child({ props: tooltipProps })}<button {...tooltipProps}
                 type="button"
                 class:selected={data.color === colorId}
                 class="canvas-node-color"
                 style:--canvas-node-swatch={colorValue}
                 onclick={() => chooseColor(colorId)}
                 aria-label={`Set node color ${colorId}`}
-                title={`Set node color ${colorId}`}
-              ></button>
+                
+              ></button>{/snippet}</Tooltip.Trigger><Tooltip.Content sideOffset={6}>{`Set node color ${colorId}`}</Tooltip.Content></Tooltip.Root>
             {/each}
 
-            <button
+            <Tooltip.Root><Tooltip.Trigger>{#snippet child({ props: tooltipProps })}<button {...tooltipProps}
               type="button"
               class:selected={hasCustomColor}
               class="canvas-node-color canvas-node-color-custom"
               onclick={openNativeColorPicker}
               aria-label="Choose custom node color"
-              title="Choose custom node color"
-            ></button>
+              
+            ></button>{/snippet}</Tooltip.Trigger><Tooltip.Content sideOffset={6}>Choose custom node color</Tooltip.Content></Tooltip.Root>
             <input
               bind:this={nativeColorInput}
               class="canvas-node-native-color-input"

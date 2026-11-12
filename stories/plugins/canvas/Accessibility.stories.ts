@@ -1,3 +1,4 @@
+import { expandCanvasTools } from "./canvas-story-helpers";
 import type { App } from "@lapis-notes/api";
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, userEvent, waitFor, within } from "storybook/test";
@@ -213,10 +214,12 @@ function contrastStories(mode: "light" | "dark", embed: boolean): Story {
       );
       await waitFor(verify);
       const control = board.querySelector<HTMLButtonElement>(
-        ".svelte-flow__controls button:not(:disabled)",
+        '[aria-label="Canvas zoom"] button:not(:disabled)',
       )!;
       control.focus();
       expect(control).toHaveFocus();
+      // Shared buttons animate their focus colours; measure the settled state.
+      await waitFor(() => {
       expect(getComputedStyle(control).outlineStyle).not.toBe("none");
       expect(
         Number.parseFloat(getComputedStyle(control).outlineWidth),
@@ -226,13 +229,16 @@ function contrastStories(mode: "light" | "dark", embed: boolean): Story {
           pixel(control, getComputedStyle(control).color),
           background(control),
         ),
+        "focused zoom control icon contrast",
       ).toBeGreaterThanOrEqual(3);
       expect(
         ratio(
           pixel(control, getComputedStyle(control).outlineColor),
           background(control),
         ),
+        "focused zoom control outline contrast",
       ).toBeGreaterThanOrEqual(3);
+      });
       expect(
         await app.vault.read(app.vault.getFileByPath("Contrast.canvas")!),
       ).toBe(document);
@@ -315,6 +321,7 @@ function controlContrast(mode: "light" | "dark"): Story {
           ".canvas-view-root:not([data-canvas-embed])",
         )!,
         board = within(root);
+      await expandCanvasTools(root);
       const verify = (scope: HTMLElement) => {
         for (const element of scope.querySelectorAll<HTMLElement>(
           'h2,p,label,legend,button,input:not([type="checkbox"]),select',
@@ -357,13 +364,13 @@ function controlContrast(mode: "light" | "dark"): Story {
           board.getByRole("button", { name: "Export PNG", exact: true }),
         ).toHaveFocus(),
       );
-      await userEvent.click(board.getByText("Select cards", { exact: true }));
+      await userEvent.click(board.getByRole("button", { name: "Select cards", exact: true }));
       await userEvent.click(board.getByRole("checkbox", { name: /\(text\)$/ }));
       await expect(
         board.getByRole("checkbox", { name: /\(text\)$/ }),
       ).toBeChecked();
-      verify(board.getByRole("group", { name: "Card selection", exact: true }));
-      await userEvent.click(board.getByText("Select cards", { exact: true }));
+      verify(board.getByRole("grid", { name: "Canvas cards", exact: true }));
+      await userEvent.click(board.getByRole("button", { name: "Select cards", exact: true }));
       const convert = await board.findByRole("button", {
         name: "Convert to note",
         exact: true,
@@ -384,7 +391,7 @@ function controlContrast(mode: "light" | "dark"): Story {
         within(note).getByRole("button", { name: "Cancel", exact: true }),
       );
       await waitFor(() => expect(convert).toHaveFocus());
-      await userEvent.click(board.getByText("Select cards", { exact: true }));
+      await userEvent.click(board.getByRole("button", { name: "Select cards", exact: true }));
       await userEvent.click(board.getByRole("checkbox", { name: /\(text\)$/ }));
       await userEvent.click(
         board.getByRole("checkbox", { name: /\(group\)$/ }),
@@ -392,7 +399,7 @@ function controlContrast(mode: "light" | "dark"): Story {
       await expect(
         board.getByRole("checkbox", { name: /\(group\)$/ }),
       ).toBeChecked();
-      await userEvent.click(board.getByText("Select cards", { exact: true }));
+      await userEvent.click(board.getByRole("button", { name: "Select cards", exact: true }));
       await userEvent.click(
         await board.findByRole("button", {
           name: "Set group background",

@@ -363,7 +363,7 @@
   transform-origin: top right;
 }
 
-.canvas-node-shell .canvas-group-label-input {
+.canvas-node-shell .canvas-group-label-badge .canvas-group-label-input {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -391,7 +391,7 @@
   opacity: 1;
 }
 
-.canvas-group-label-input:focus {
+.canvas-group-label-badge .canvas-group-label-input:focus {
   outline: none;
 }
 
@@ -786,9 +786,9 @@
     --canvas-node-selected-border,
     var(--interactive-accent-hover, var(--interactive-accent))
   );
-  border-width: 3px;
-  box-shadow: inset 0 0 0 1px
-    color-mix(in srgb, var(--interactive-accent) 55%, transparent);
+  outline: 2px solid var(--canvas-readable-indicator, var(--interactive-accent));
+  outline-offset: 2px;
+  box-shadow: none;
 }
 
 .canvas-node-label {
@@ -1001,12 +1001,12 @@
   border-color: transparent;
   background: conic-gradient(
     from 0deg,
-    var(--color-red),
-    var(--color-orange),
-    var(--color-green),
-    var(--color-cyan),
-    var(--color-purple),
-    var(--color-red)
+    rgb(var(--canvas-color-1, 251, 70, 76)),
+    rgb(var(--canvas-color-2, 233, 151, 63)),
+    rgb(var(--canvas-color-4, 68, 207, 110)),
+    rgb(var(--canvas-color-5, 60, 210, 213)),
+    rgb(var(--canvas-color-6, 168, 130, 255)),
+    rgb(var(--canvas-color-1, 251, 70, 76))
   );
 }
 
@@ -1090,7 +1090,7 @@
 }
 
 .canvas-node-handle-source {
-  --canvas-node-handle-fill: var(--color-green);
+  --canvas-node-handle-fill: rgb(var(--canvas-color-4, 68, 207, 110));
 }
 
 .canvas-node-handle.source.connectingfrom,
@@ -1217,7 +1217,7 @@
   background: color-mix(
     in srgb,
     var(--background-secondary) 88%,
-    var(--color-red) 12%
+    rgb(var(--canvas-color-1, 251, 70, 76)) 12%
   );
 }
 
@@ -1298,3 +1298,6 @@
 }
 
 .canvas-embed .canvas-node-markdown-preview { pointer-events: auto; }
+
+.canvas-group-label-badge:focus-within { outline: 2px solid var(--canvas-readable-indicator, var(--interactive-accent)); outline-offset: 2px; }
+.canvas-node-shell.selected .canvas-node-label-group { border-style: solid; }

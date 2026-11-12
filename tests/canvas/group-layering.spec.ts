@@ -21,11 +21,12 @@ for (const dark of [false, true])
         ? root.getByRole("button", { name: "Load web preview", exact: true })
         : root
             .locator(".canvas-node-label")
-            .filter({ hasText: "Canvas overview" });
+            .filter({ hasText: "Where the land meets the sea" });
       await expect(card).toBeVisible();
+      await expect.poll(() => root.locator("[data-canvas-background-probe]").evaluate((image: HTMLImageElement) => image.naturalWidth)).toBe(900);
       await expect
         .poll(() =>
-          root.locator(".canvas-group-label-input").evaluate((label) => {
+          root.locator('[data-id="plan"] .canvas-group-label-input').evaluate((label) => {
             const canvas = document.createElement("canvas");
             canvas.width = canvas.height = 1;
             const context = canvas.getContext("2d")!;
@@ -75,6 +76,7 @@ for (const dark of [false, true])
         const app = host.__lapisApp;
         return app.vault.read(app.vault.getFileByPath("Sample.canvas"));
       });
+      await card.scrollIntoViewIfNeeded();
       await expect
         .poll(() =>
           card.evaluate((label) => {
@@ -83,14 +85,14 @@ for (const dark of [false, true])
                 rect.x + rect.width / 2,
                 rect.y + rect.height / 2,
               );
-            return top === label || label.contains(top);
+            return { reachable: top === label || label.contains(top), covering: top?.className };
           }),
         )
-        .toBe(true);
+        .toMatchObject({ reachable: true });
       if (!embed) {
         await card.click({ position: { x: 20, y: 20 } });
         await expect(
-          root.getByRole("button", { name: "Edit text node", exact: true }),
+          root.locator('[data-id="question"]').getByRole("button", { name: "Edit text node", exact: true }),
         ).toBeVisible();
       }
       const order = await page.evaluate(async () => {

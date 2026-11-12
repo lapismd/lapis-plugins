@@ -103,7 +103,6 @@
   data-file-path={baseTarget}
   data-editable={editable ? "true" : "false"}
   data-editing={editing ? "true" : "false"}
-  data-mira-theme="obsidian"
 >
   <header class="lapis-file-embed__header">
     {#if !editable}
@@ -145,6 +144,7 @@
 
 <style>
   .lapis-file-embed {
+    --mira-focus-ring: var(--ui-workspace-focus-ring, var(--ring));
     display: flex;
     box-sizing: border-box;
     width: 100%;

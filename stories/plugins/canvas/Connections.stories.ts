@@ -1,3 +1,4 @@
+import { expandCanvasTools } from "./canvas-story-helpers";
 import type { App } from "@lapis-notes/api";
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, userEvent, waitFor, within } from "storybook/test";
@@ -30,6 +31,7 @@ export const EndpointEditing: Story = {
   play: async ({ canvasElement }) => {
     const app = await waitFor(() => { const host = canvasElement.querySelector<HTMLElement>('[data-panel-kind="canvas"][data-status="ready"]') as (HTMLElement & { __lapisApp?: App }) | null; expect(host?.__lapisApp).toBeDefined(); return host!.__lapisApp!; }, { timeout: 30_000 });
     const root = canvasElement.querySelector<HTMLElement>(".canvas-view-root:not([data-canvas-embed])")!;
+    await expandCanvasTools(root);
     const board = within(root);
     const select = async () => {
       const edge = await waitFor(() => { const value = root.querySelector<SVGElement>('.svelte-flow__edge[data-id="ab"]'); expect(value).not.toBeNull(); return value!; });

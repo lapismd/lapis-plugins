@@ -648,3 +648,5 @@ existing behavioral baseline assertion and reject changes to source hashes,
 observations, reviewed upstream identity, feature coverage or other report
 content before writing. It MUST NOT update the accepted compatibility baseline.
 Ordinary audit invocation MUST continue to reject stale reports.
+
+Canvas review retains real WorkspaceShell composition and visual-pending tags. Shared tooltip descriptions, collapsed controls and measured colour matrices supplement the released accessibility stories without exclusions or baseline replacement.

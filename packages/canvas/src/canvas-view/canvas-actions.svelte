@@ -1,18 +1,19 @@
 <script lang="ts">
+  import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import type { App, TFile } from "@lapis-notes/api";
-  import { Panel, useStore, useSvelteFlow } from "@xyflow/svelte";
+  import { useStore, useSvelteFlow } from "@xyflow/svelte";
   import { getContext, tick } from "svelte";
   import Type from "@lucide/svelte/icons/type";
   import FilePlus from "@lucide/svelte/icons/file-plus";
   import Image from "@lucide/svelte/icons/image";
   import Link from "@lucide/svelte/icons/link";
   import SquareDashed from "@lucide/svelte/icons/square-dashed";
-  import Undo from "@lucide/svelte/icons/undo";
-  import Redo from "@lucide/svelte/icons/redo";
   import Copy from "@lucide/svelte/icons/copy";
   import Scissors from "@lucide/svelte/icons/scissors";
   import Clipboard from "@lucide/svelte/icons/clipboard";
   import CopyPlus from "@lucide/svelte/icons/copy-plus";
+  import ChevronsRight from "@lucide/svelte/icons/chevrons-right";
+  import SquarePen from "@lucide/svelte/icons/square-pen";
   import { readCanvasClipboard, writeCanvasClipboard } from "../lib/canvas-clipboard";
   import { createCanvasLongPress } from "../lib/canvas-long-press";
   import type { CanvasBoardController } from "../lib/canvas-board-controller";
@@ -24,6 +25,8 @@
   const store = useStore<FlowCanvasNode, FlowCanvasEdge>();
   const { screenToFlowPosition, deleteElements } = useSvelteFlow<FlowCanvasNode, FlowCanvasEdge>();
   let toolbar: HTMLDivElement;
+  let expanded = $state(false);
+  const toolsId = `canvas-tools-${crypto.randomUUID()}`;
   let contextMenu = $state<HTMLDivElement>();
   let dialog: HTMLDialogElement;
   let kind = $state<"file" | "media" | "link">("file");
@@ -206,71 +209,353 @@
   });
 </script>
 
-<svelte:window onpointerdown={(event) => { if (contextPoint && !contextMenu?.contains(event.target as Node)) contextPoint = null; }} />
+<svelte:window
+  onpointerdown={(event) => {
+    if (contextPoint && !contextMenu?.contains(event.target as Node))
+      contextPoint = null;
+  }}
+/>
 
-<Panel position="top-left" class="canvas-authoring-panel">
-  <div class="canvas-authoring nodrag nopan nowheel" role="toolbar" aria-label="Canvas authoring" bind:this={toolbar}>
-    <button type="button" aria-label="Add text card" title="Add text card" onclick={() => run(() => add("text"))}><Type /></button>
-    <button type="button" aria-label="Add vault file" title="Add vault file" onclick={() => run(() => open("file"))}><FilePlus /></button>
-    <button type="button" aria-label="Add media" title="Add media" onclick={() => run(() => open("media"))}><Image /></button>
-    <button type="button" aria-label="Add web page" title="Add web page" onclick={() => run(() => open("link"))}><Link /></button>
-    <button type="button" aria-label="Add group" title="Add group" onclick={() => run(() => add("group"))}><SquareDashed /></button>
-    <button type="button" aria-label="Undo" title="Undo (Ctrl/Cmd+Z)" disabled={!board.canUndo} onclick={() => run(() => board.undo())}><Undo /></button>
-    <button type="button" aria-label="Redo" title="Redo (Ctrl/Cmd+Shift+Z)" disabled={!board.canRedo} onclick={() => run(() => board.redo())}><Redo /></button>
-    <button type="button" aria-label="Duplicate selection" title="Duplicate selection (Ctrl/Cmd+D)" disabled={!selected.size} onclick={() => run(duplicate)}><CopyPlus /></button>
-    <button type="button" aria-label="Copy selection" title="Copy selection" disabled={!selected.size} onclick={() => run(copySelection)}><Copy /></button>
-    <button type="button" aria-label="Cut selection" title="Cut selection" disabled={!selected.size} onclick={() => run(cutSelection)}><Scissors /></button>
-    <button type="button" aria-label="Paste cards" title="Paste cards" onclick={() => run(pasteSelection)}><Clipboard /></button>
+<div class="canvas-authoring-panel" style="max-width:100%">
+  <div
+    class="canvas-authoring nodrag nopan nowheel"
+    role="toolbar"
+    aria-label="Canvas authoring"
+    bind:this={toolbar}
+  >
+    <Tooltip.Root
+      ><Tooltip.Trigger
+        >{#snippet child({ props: tooltipProps })}<button
+            {...tooltipProps}
+            type="button"
+            aria-label={expanded
+              ? "Collapse authoring tools"
+              : "Expand authoring tools"}
+            aria-expanded={expanded}
+            aria-controls={toolsId}
+            onclick={() => {
+              expanded = !expanded;
+            }}
+          >
+            {#if expanded}<ChevronsRight aria-hidden="true" />{:else}<SquarePen
+                aria-hidden="true"
+              />{/if}
+          </button>{/snippet}</Tooltip.Trigger
+      ><Tooltip.Content sideOffset={6}
+        >{expanded
+          ? "Collapse authoring tools"
+          : "Expand authoring tools"}</Tooltip.Content
+      ></Tooltip.Root
+    >
+    <div id={toolsId} class="canvas-authoring-tools" hidden={!expanded}>
+      <Tooltip.Root
+        ><Tooltip.Trigger
+          >{#snippet child({ props: tooltipProps })}<button
+              {...tooltipProps}
+              type="button"
+              aria-label="Add text card"
+              onclick={() => run(() => add("text"))}><Type /></button
+            >{/snippet}</Tooltip.Trigger
+        ><Tooltip.Content sideOffset={6}>Add text card</Tooltip.Content
+        ></Tooltip.Root
+      >
+      <Tooltip.Root
+        ><Tooltip.Trigger
+          >{#snippet child({ props: tooltipProps })}<button
+              {...tooltipProps}
+              type="button"
+              aria-label="Add vault file"
+              onclick={() => run(() => open("file"))}><FilePlus /></button
+            >{/snippet}</Tooltip.Trigger
+        ><Tooltip.Content sideOffset={6}>Add vault file</Tooltip.Content
+        ></Tooltip.Root
+      >
+      <Tooltip.Root
+        ><Tooltip.Trigger
+          >{#snippet child({ props: tooltipProps })}<button
+              {...tooltipProps}
+              type="button"
+              aria-label="Add media"
+              onclick={() => run(() => open("media"))}><Image /></button
+            >{/snippet}</Tooltip.Trigger
+        ><Tooltip.Content sideOffset={6}>Add media</Tooltip.Content
+        ></Tooltip.Root
+      >
+      <Tooltip.Root
+        ><Tooltip.Trigger
+          >{#snippet child({ props: tooltipProps })}<button
+              {...tooltipProps}
+              type="button"
+              aria-label="Add web page"
+              onclick={() => run(() => open("link"))}><Link /></button
+            >{/snippet}</Tooltip.Trigger
+        ><Tooltip.Content sideOffset={6}>Add web page</Tooltip.Content
+        ></Tooltip.Root
+      >
+      <Tooltip.Root
+        ><Tooltip.Trigger
+          >{#snippet child({ props: tooltipProps })}<button
+              {...tooltipProps}
+              type="button"
+              aria-label="Add group"
+              onclick={() => run(() => add("group"))}><SquareDashed /></button
+            >{/snippet}</Tooltip.Trigger
+        ><Tooltip.Content sideOffset={6}>Add group</Tooltip.Content
+        ></Tooltip.Root
+      >
+      <Tooltip.Root
+        ><Tooltip.Trigger
+          >{#snippet child({ props: tooltipProps })}<button
+              {...tooltipProps}
+              type="button"
+              aria-label="Duplicate selection"
+              disabled={!selected.size}
+              onclick={() => run(duplicate)}><CopyPlus /></button
+            >{/snippet}</Tooltip.Trigger
+        ><Tooltip.Content sideOffset={6}
+          >Duplicate selection (Ctrl/Cmd+D)</Tooltip.Content
+        ></Tooltip.Root
+      >
+      <Tooltip.Root
+        ><Tooltip.Trigger
+          >{#snippet child({ props: tooltipProps })}<button
+              {...tooltipProps}
+              type="button"
+              aria-label="Copy selection"
+              disabled={!selected.size}
+              onclick={() => run(copySelection)}><Copy /></button
+            >{/snippet}</Tooltip.Trigger
+        ><Tooltip.Content sideOffset={6}>Copy selection</Tooltip.Content
+        ></Tooltip.Root
+      >
+      <Tooltip.Root
+        ><Tooltip.Trigger
+          >{#snippet child({ props: tooltipProps })}<button
+              {...tooltipProps}
+              type="button"
+              aria-label="Cut selection"
+              disabled={!selected.size}
+              onclick={() => run(cutSelection)}><Scissors /></button
+            >{/snippet}</Tooltip.Trigger
+        ><Tooltip.Content sideOffset={6}>Cut selection</Tooltip.Content
+        ></Tooltip.Root
+      >
+      <Tooltip.Root
+        ><Tooltip.Trigger
+          >{#snippet child({ props: tooltipProps })}<button
+              {...tooltipProps}
+              type="button"
+              aria-label="Paste cards"
+              onclick={() => run(pasteSelection)}><Clipboard /></button
+            >{/snippet}</Tooltip.Trigger
+        ><Tooltip.Content sideOffset={6}>Paste cards</Tooltip.Content
+        ></Tooltip.Root
+      >
+    </div>
   </div>
-  <div class="canvas-authoring-status" role="status" aria-live="polite">{message}</div>
-</Panel>
+  <div class="canvas-authoring-status" role="status" aria-live="polite">
+    {message}
+  </div>
+</div>
 
 {#if contextPoint}
-  <div class="canvas-create-menu nodrag nopan" role="dialog" aria-label="Create canvas card" bind:this={contextMenu}
-    style:left={`${Math.min(contextPoint.x, window.innerWidth - 180)}px`} style:top={`${Math.min(contextPoint.y, window.innerHeight - 220)}px`}
-    onkeydown={(event) => { if (event.key === "Escape") { contextPoint = null; toolbar.querySelector<HTMLButtonElement>("button")?.focus(); } }} tabindex="-1">
-    <button type="button" onclick={() => run(() => add("text"))}>Add text card</button>
-    <button type="button" onclick={() => run(() => open("file"))}>Add vault file</button>
-    <button type="button" onclick={() => run(() => open("media"))}>Add media</button>
-    <button type="button" onclick={() => run(() => open("link"))}>Add web page</button>
-    <button type="button" onclick={() => run(() => add("group"))}>Add group</button>
+  <div
+    class="canvas-create-menu nodrag nopan"
+    role="dialog"
+    aria-label="Create canvas card"
+    bind:this={contextMenu}
+    style:left={`${Math.min(contextPoint.x, window.innerWidth - 180)}px`}
+    style:top={`${Math.min(contextPoint.y, window.innerHeight - 220)}px`}
+    onkeydown={(event) => {
+      if (event.key === "Escape") {
+        contextPoint = null;
+        toolbar.querySelector<HTMLButtonElement>("button")?.focus();
+      }
+    }}
+    tabindex="-1"
+  >
+    <button type="button" onclick={() => run(() => add("text"))}
+      >Add text card</button
+    >
+    <button type="button" onclick={() => run(() => open("file"))}
+      >Add vault file</button
+    >
+    <button type="button" onclick={() => run(() => open("media"))}
+      >Add media</button
+    >
+    <button type="button" onclick={() => run(() => open("link"))}
+      >Add web page</button
+    >
+    <button type="button" onclick={() => run(() => add("group"))}
+      >Add group</button
+    >
   </div>
 {/if}
 
-<dialog bind:this={dialog} inert={inputBlocked} aria-labelledby={dialogId} class="canvas-create-dialog">
-  <form onsubmit={(event) => { event.preventDefault(); run(() => submit(event)); }}>
-    <h2 id={dialogId}>{kind === "link" ? "Add web page" : kind === "media" ? "Add media" : "Add vault file"}</h2>
+<dialog
+  bind:this={dialog}
+  inert={inputBlocked}
+  aria-labelledby={dialogId}
+  class="canvas-create-dialog"
+>
+  <form
+    onsubmit={(event) => {
+      event.preventDefault();
+      run(() => submit(event));
+    }}
+  >
+    <h2 id={dialogId}>
+      {kind === "link"
+        ? "Add web page"
+        : kind === "media"
+          ? "Add media"
+          : "Add vault file"}
+    </h2>
     {#if kind === "link"}
       <label for={`${dialogId}-value`}>Web address</label>
-      <input id={`${dialogId}-value`} type="url" required bind:value placeholder="https://example.com" />
+      <input
+        id={`${dialogId}-value`}
+        type="url"
+        required
+        bind:value
+        placeholder="https://example.com"
+      />
     {:else}
       <label for={`${dialogId}-value`}>Vault file</label>
       <select id={`${dialogId}-value`} required bind:value>
         <option value="">Choose a file</option>
-        {#each files as file (file.path)}<option value={file.path}>{file.path}</option>{/each}
+        {#each files as file (file.path)}<option value={file.path}
+            >{file.path}</option
+          >{/each}
       </select>
-      {#if !files.length}<p>No matching files are available in this vault.</p>{/if}
+      {#if !files.length}<p>
+          No matching files are available in this vault.
+        </p>{/if}
     {/if}
     {#if formError}<p role="alert">{formError}</p>{/if}
-    <div><button type="button" onclick={close}>Cancel</button><button type="submit" disabled={!value}>Add card</button></div>
+    <div>
+      <button type="button" onclick={close}>Cancel</button><button
+        type="submit"
+        disabled={!value}>Add card</button
+      >
+    </div>
   </form>
 </dialog>
 
 <style>
-  .canvas-authoring { display: flex; flex-wrap: wrap; gap: 2px; max-width: min(380px, calc(100vw - 110px)); padding: 4px; border: 1px solid var(--background-modifier-border); border-radius: 8px; background: var(--background-primary); color: var(--text-normal); box-shadow: 0 2px 8px #0002; }
-  button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 30px; border: 1px solid transparent; border-radius: 5px; padding: 5px 7px; background: transparent; color: inherit; cursor: pointer; }
-  button :global(svg) { width: 16px; height: 16px; }
-  button:hover:not(:disabled) { background: var(--background-modifier-hover); }
-  button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--interactive-accent); outline-offset: 2px; }
-  button:disabled { opacity: 0.45; cursor: default; }
-  .canvas-authoring-status { max-width: 380px; margin-top: 4px; border-radius: 4px; background: var(--background-primary); color: var(--text-normal); font-size: 12px; }
-  .canvas-authoring-status:not(:empty) { padding: 4px 6px; }
-  .canvas-create-menu { position: fixed; z-index: 1001; display: flex; flex-direction: column; min-width: 170px; padding: 6px; border: 1px solid var(--background-modifier-border); border-radius: 8px; background: var(--background-primary); color: var(--text-normal); box-shadow: 0 4px 16px #0003; }
-  .canvas-create-menu button { justify-content: flex-start; }
-  .canvas-create-dialog { max-width: min(420px, calc(100vw - 32px)); width: 100%; border: 1px solid var(--background-modifier-border); border-radius: 10px; padding: 20px; background: var(--background-primary); color: var(--text-normal); }
-  .canvas-create-dialog::backdrop { background: #0006; }
-  form { display: flex; flex-direction: column; gap: 12px; }
-  h2 { font-size: 1.1rem; margin: 0; }
-  input, select { width: 100%; padding: 8px; border: 1px solid var(--background-modifier-border); border-radius: 5px; background: var(--background-primary); color: var(--text-normal); }
-  form > div { display: flex; justify-content: flex-end; gap: 8px; }
+  .canvas-authoring {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    width: max-content;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 4px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 8px;
+    background: var(--background-primary);
+    color: var(--text-normal);
+    box-shadow: 0 2px 8px #0002;
+  }
+  .canvas-authoring-tools:not([hidden]) {
+    display: contents;
+  }
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 30px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    padding: 5px 7px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+  button :global(svg) {
+    width: 16px;
+    height: 16px;
+  }
+  button:hover:not(:disabled) {
+    background: var(--background-modifier-hover);
+  }
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible {
+    outline: 2px solid var(--interactive-accent);
+    outline-offset: 2px;
+  }
+  button:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+  @media (pointer: coarse) {
+    .canvas-authoring button {
+      min-width: 44px;
+      min-height: 44px;
+    }
+  }
+  .canvas-authoring-status {
+    max-width: 380px;
+    margin-top: 4px;
+    border-radius: 4px;
+    background: var(--background-primary);
+    color: var(--text-normal);
+    font-size: 12px;
+  }
+  .canvas-authoring-status:not(:empty) {
+    padding: 4px 6px;
+  }
+  .canvas-create-menu {
+    position: fixed;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    min-width: 170px;
+    padding: 6px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 8px;
+    background: var(--background-primary);
+    color: var(--text-normal);
+    box-shadow: 0 4px 16px #0003;
+  }
+  .canvas-create-menu button {
+    justify-content: flex-start;
+  }
+  .canvas-create-dialog {
+    max-width: min(420px, calc(100vw - 32px));
+    width: 100%;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 10px;
+    padding: 20px;
+    background: var(--background-primary);
+    color: var(--text-normal);
+  }
+  .canvas-create-dialog::backdrop {
+    background: #0006;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  h2 {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+  input,
+  select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 5px;
+    background: var(--background-primary);
+    color: var(--text-normal);
+  }
+  form > div {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
 </style>

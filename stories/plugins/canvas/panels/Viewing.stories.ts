@@ -8,6 +8,7 @@ import {
   placementParameters,
 } from "../../_shared/panels/panel-story-helpers";
 import "../../_shared/panels/Panel.docs.css";
+import { researchCanvasFiles } from "../research-fixture";
 import ViewingPanelDemo from "./ViewingPanelDemo.svelte";
 
 const PLACEMENT_HOST: Record<PanelDemoLayout, string> = {
@@ -38,7 +39,7 @@ const meta = {
       ...PANEL_DOCS_PARAMETERS,
       description: {
         component:
-          "The legacy feature canvas, with a colored text note, two file notes, a link, a group, and three labeled connectors, in the shared workspace shell, in every governed panel placement. Middle (Top Tabs) also embeds that canvas in a note.",
+          "An original coastal research board with grouped notes, a field sketch, a checklist, a web reference, and labeled connections, in the shared workspace shell, in every governed panel placement. Middle (Top Tabs) also embeds that canvas in a note.",
       },
     },
   },
@@ -73,7 +74,7 @@ function placementStory(layout: PanelDemoLayout, description: string): Story {
     parameters: viewingParameters(layout, description),
     render: () => ({
       Component: ViewingPanelDemo,
-      props: { layout },
+      props: { layout, files: researchCanvasFiles() },
     }),
     play: async ({ canvasElement }) => {
       await waitFor(
@@ -94,6 +95,8 @@ function placementStory(layout: PanelDemoLayout, description: string): Story {
         { timeout: 30_000 },
       );
       expect(fileView.querySelector(".svelte-flow")).not.toBeNull();
+      expect(fileView.querySelectorAll(".svelte-flow__node")).toHaveLength(8);
+      await waitFor(() => expect(fileView.querySelector('[data-id="landscape"] img')).toBeVisible(), { timeout: 30_000 });
       const host = fileView.closest(
         `[data-ui-component="${PLACEMENT_HOST[layout]}"]`,
       );
@@ -145,7 +148,7 @@ function expectSidebar(
 
 export const MiddleTopTabs = placementStory(
   "middle-top-tabs",
-  "The feature canvas in the middle pane, with the same board embedded in a note.",
+  "A mixed-media research board in the middle pane, with the same board embedded in a note.",
 );
 export const StackedTabs = placementStory(
   "stacked-tabs",

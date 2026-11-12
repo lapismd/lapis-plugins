@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { describeCanvasWebsite } from "./lib/canvas-web-card";
   import { canvasWebUrl } from "./lib/canvas-web-url";
   let { url }: { url: string } = $props();
   const address = $derived(canvasWebUrl(url));
+  const website = $derived(describeCanvasWebsite(url));
   const host = $derived(address ? new URL(address).host : "");
   let preview = $state(false);
   let loaded = $state(false);
@@ -26,6 +28,8 @@
 
 <div class="canvas-web-card nodrag nopan nowheel" data-canvas-web-card>
   {#if address}
+    <p class="canvas-web-title">{website?.title ?? host}</p>
+    <p class="canvas-web-host">{host}</p>
     <div class="canvas-web-actions">
       <a href={address} target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" aria-label="Open link" title={`Open ${host}`}>{url}</a>
       <button type="button" aria-expanded={preview} onclick={() => { preview = !preview; loaded = false; failed = false; }}>{preview ? "Close preview" : "Load web preview"}</button>
@@ -53,6 +57,8 @@
   button { min-height: 36px; padding: 6px 8px; border: 1px solid var(--canvas-readable-indicator, var(--background-modifier-border)); border-radius: 5px; background: var(--canvas-readable-surface, var(--background-primary)); color: var(--canvas-readable-text, var(--text-normal)); font: inherit; cursor: pointer; }
   :is(button, a):focus-visible { outline: 2px solid var(--canvas-readable-indicator, var(--interactive-accent)); outline-offset: 2px; }
   .canvas-web-frame :global(iframe) { display: block; width: 100%; min-height: 160px; margin-top: 8px; border: 1px solid var(--canvas-readable-indicator, var(--background-modifier-border)); border-radius: 5px; background: white; }
+  .canvas-web-title { font-size: 1rem; font-weight: 600; }
+  .canvas-web-host { font-size: 12px; }
   p { margin: 6px 0 0; line-height: 1.4; }
   .canvas-web-address { display: block; margin-top: 6px; overflow-wrap: anywhere; }
   @media (pointer: coarse) { button, a { min-height: 44px; } a { display: inline-flex; align-items: center; } }

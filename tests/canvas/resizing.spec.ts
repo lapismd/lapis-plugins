@@ -21,6 +21,7 @@ test("mouse resize persists card and group dimensions through undo and redo", as
     });
   const card = root.locator('.svelte-flow__node[data-id="a"]');
   await expect(card).toBeVisible();
+  await root.getByRole("button", { name: "Expand authoring tools", exact: true }).click();
   const before = await read();
   await card.focus();
   await page.keyboard.press("Enter");

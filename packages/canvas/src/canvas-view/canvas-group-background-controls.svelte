@@ -1,4 +1,5 @@
 <script lang="ts">
+  import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import type { App } from "@lapis-notes/api";
   import { getContext, tick } from "svelte";
   import Image from "@lucide/svelte/icons/image";
@@ -52,32 +53,137 @@
   }
 </script>
 
-<button bind:this={setButton} type="button" class="canvas-node-toolbar-button" aria-label="Set group background" title="Set group background" aria-haspopup="dialog" onclick={() => void open()}><Image aria-hidden="true" /></button>
+<Tooltip.Root
+  ><Tooltip.Trigger
+    >{#snippet child({ props: tooltipProps })}<button
+        {...tooltipProps}
+        bind:this={setButton}
+        type="button"
+        class="canvas-node-toolbar-button"
+        aria-label="Set group background"
+        aria-haspopup="dialog"
+        onclick={() => void open()}><Image aria-hidden="true" /></button
+      >{/snippet}</Tooltip.Trigger
+  ><Tooltip.Content sideOffset={6}>Set group background</Tooltip.Content
+  ></Tooltip.Root
+>
 {#if background}
-  <button type="button" class="canvas-node-toolbar-button" disabled={working} aria-label="Remove group background" title="Remove group background" onclick={() => void remove()}><X aria-hidden="true" /></button>
+  <Tooltip.Root
+    ><Tooltip.Trigger
+      >{#snippet child({ props: tooltipProps })}<button
+          {...tooltipProps}
+          type="button"
+          class="canvas-node-toolbar-button"
+          disabled={working}
+          aria-label="Remove group background"
+          onclick={() => void remove()}><X aria-hidden="true" /></button
+        >{/snippet}</Tooltip.Trigger
+    ><Tooltip.Content sideOffset={6}>Remove group background</Tooltip.Content
+    ></Tooltip.Root
+  >
 {/if}
 {#if error && !opened}<p role="alert">{error}</p>{/if}
 {#if opened}
-  <dialog class="nodrag nopan" bind:this={dialog} inert={board?.inputBlocked ?? false} aria-labelledby={titleId} onpointerup={(event) => event.stopPropagation()} onclose={() => { opened = false; }}>
-    <form onsubmit={(event) => { event.preventDefault(); void apply(); }}>
+  <dialog
+    class="nodrag nopan"
+    bind:this={dialog}
+    inert={board?.inputBlocked ?? false}
+    aria-labelledby={titleId}
+    onpointerup={(event) => event.stopPropagation()}
+    onclose={() => {
+      opened = false;
+    }}
+  >
+    <form
+      onsubmit={(event) => {
+        event.preventDefault();
+        void apply();
+      }}
+    >
       <h2 id={titleId}>Group background</h2>
-      <label>Image file<input list={`${titleId}-images`} bind:value={path} required disabled={working} aria-invalid={error ? "true" : undefined} /></label>
-      <datalist id={`${titleId}-images`}>{#each files as file (file.path)}<option value={file.path}></option>{/each}</datalist>
-      <label>Background sizing<select bind:value={sizing} disabled={working}><option value="cover">Fill group</option><option value="ratio">Fit image</option><option value="repeat">Repeat image</option></select></label>
+      <label
+        >Image file<input
+          list={`${titleId}-images`}
+          bind:value={path}
+          required
+          disabled={working}
+          aria-invalid={error ? "true" : undefined}
+        /></label
+      >
+      <datalist id={`${titleId}-images`}
+        >{#each files as file (file.path)}<option value={file.path}
+          ></option>{/each}</datalist
+      >
+      <label
+        >Background sizing<select bind:value={sizing} disabled={working}
+          ><option value="cover">Fill group</option><option value="ratio"
+            >Fit image</option
+          ><option value="repeat">Repeat image</option></select
+        ></label
+      >
       {#if error}<p role="alert">{error}</p>{/if}
-      <div class="actions"><button type="button" disabled={working} onclick={() => dialog?.close()}>Cancel</button><button type="submit" disabled={working}>Apply background</button></div>
+      <div class="actions">
+        <button type="button" disabled={working} onclick={() => dialog?.close()}
+          >Cancel</button
+        ><button type="submit" disabled={working}>Apply background</button>
+      </div>
     </form>
   </dialog>
 {/if}
 
 <style>
-  dialog { width: min(420px, calc(100vw - 32px)); padding: 20px; border: 1px solid var(--background-modifier-border); border-radius: 12px; color: var(--canvas-readable-text, var(--text-normal)); background: var(--canvas-readable-surface, var(--background-primary)); }
-  dialog::backdrop { background: rgb(0 0 0 / 35%); }
-  form { display: grid; gap: 14px; }
-  h2 { margin: 0; font-size: 18px; }
-  label { display: grid; gap: 5px; font-size: 13px; }
-  input, select { min-height: 36px; border: 1px solid var(--canvas-readable-indicator, var(--background-modifier-border)); border-radius: 5px; padding: 6px 8px; color: inherit; background: inherit; font: inherit; }
-  .actions { display: flex; justify-content: flex-end; gap: 8px; }
-  .actions button { min-height: 36px; padding: 6px 12px; border: 1px solid var(--canvas-readable-indicator, var(--background-modifier-border)); border-radius: 5px; color: inherit; background: inherit; cursor: pointer; }
-  [role="alert"] { margin: 0; font-size: 13px; }
+  dialog {
+    width: min(420px, calc(100vw - 32px));
+    padding: 20px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 12px;
+    color: var(--canvas-readable-text, var(--text-normal));
+    background: var(--canvas-readable-surface, var(--background-primary));
+  }
+  dialog::backdrop {
+    background: rgb(0 0 0 / 35%);
+  }
+  form {
+    display: grid;
+    gap: 14px;
+  }
+  h2 {
+    margin: 0;
+    font-size: 18px;
+  }
+  label {
+    display: grid;
+    gap: 5px;
+    font-size: 13px;
+  }
+  input,
+  select {
+    min-height: 36px;
+    border: 1px solid
+      var(--canvas-readable-indicator, var(--background-modifier-border));
+    border-radius: 5px;
+    padding: 6px 8px;
+    color: inherit;
+    background: inherit;
+    font: inherit;
+  }
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  .actions button {
+    min-height: 36px;
+    padding: 6px 12px;
+    border: 1px solid
+      var(--canvas-readable-indicator, var(--background-modifier-border));
+    border-radius: 5px;
+    color: inherit;
+    background: inherit;
+    cursor: pointer;
+  }
+  [role="alert"] {
+    margin: 0;
+    font-size: 13px;
+  }
 </style>

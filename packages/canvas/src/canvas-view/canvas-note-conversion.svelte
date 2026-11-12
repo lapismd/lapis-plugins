@@ -1,4 +1,5 @@
 <script lang="ts">
+  import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import type { App } from "@lapis-notes/api";
   import FileOutput from "@lucide/svelte/icons/file-output";
   import { getContext, tick } from "svelte";
@@ -35,7 +36,7 @@
   }
 </script>
 
-<button bind:this={button} type="button" class="canvas-node-toolbar-button" aria-label="Convert to note" title="Convert to note" aria-haspopup="dialog" disabled={working || board.inputBlocked} onclick={() => void open()}><FileOutput aria-hidden="true" /></button>
+<Tooltip.Root><Tooltip.Trigger>{#snippet child({ props: tooltipProps })}<button {...tooltipProps} bind:this={button} type="button" class="canvas-node-toolbar-button" aria-label="Convert to note"  aria-haspopup="dialog" disabled={working || board.inputBlocked} onclick={() => void open()}><FileOutput aria-hidden="true" /></button>{/snippet}</Tooltip.Trigger><Tooltip.Content sideOffset={6}>Convert to note</Tooltip.Content></Tooltip.Root>
 {#if opened}
   <dialog class="nodrag nopan" bind:this={dialog} inert={board.inputBlocked} aria-labelledby={titleId} onpointerup={(event) => event.stopPropagation()} oncancel={(event) => { if (working) event.preventDefault(); }} onclose={() => { opened = false; }}>
     <form onsubmit={(event) => { event.preventDefault(); void convert(); }}>

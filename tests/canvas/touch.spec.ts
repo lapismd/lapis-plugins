@@ -139,13 +139,14 @@ test("native touch moves, resizes, edits and groups selected cards without hover
     { x: initial.x + 75, y: initial.y + 55 },
   );
   await expect.poll(async () => (await read(page)).nodes[0].x).not.toBe(0);
-  await tap(page, root.getByText("Select cards", { exact: true }));
+  await tap(page, root.getByRole("button", {name:"Expand navigation tools",exact:true}));
+  await tap(page, root.getByRole("button", { name: "Select cards", exact: true }));
   const checkbox = root.getByRole("checkbox", {
     name: "Alpha (a)",
     exact: true,
   });
   if (!(await checkbox.isChecked())) await tap(page, checkbox);
-  await tap(page, root.getByText("Select cards", { exact: true }));
+  await tap(page, root.getByRole("button", { name: "Select cards", exact: true }));
   const resize = node.locator(".canvas-node-resize-handle.bottom.right");
   await expect(resize).toBeVisible();
   const handle = (await resize.boundingBox())!;
@@ -176,12 +177,12 @@ test("native touch moves, resizes, edits and groups selected cards without hover
   const editor = node.locator('[contenteditable="true"]').first();
   await expect(editor).toBeVisible();
   await editor.fill("Touch edited");
-  await tap(page, root.getByText("Select cards", { exact: true }));
+  await tap(page, root.getByRole("button", { name: "Select cards", exact: true }));
   await tap(
     page,
     root.getByRole("checkbox", { name: "Beta (b)", exact: true }),
   );
-  await tap(page, root.getByText("Select cards", { exact: true }));
+  await tap(page, root.getByRole("button", { name: "Select cards", exact: true }));
   await tap(
     page,
     root.getByRole("button", { name: "Create group", exact: true }),
@@ -202,12 +203,13 @@ test("selected cards expose touch connection targets and accept a native connect
 }) => {
   const root = rootOf(page),
     cdp = await context.newCDPSession(page);
-  await tap(page, root.getByText("Select cards", { exact: true }));
+  await tap(page, root.getByRole("button", {name:"Expand navigation tools",exact:true}));
+  await tap(page, root.getByRole("button", { name: "Select cards", exact: true }));
   await tap(
     page,
     root.getByRole("checkbox", { name: "Alpha (a)", exact: true }),
   );
-  await tap(page, root.getByText("Select cards", { exact: true }));
+  await tap(page, root.getByRole("button", { name: "Select cards", exact: true }));
   const source = root.locator('[data-id="a"] [data-handleid="right-source"]');
   await expect(source).toBeVisible();
   const from = (await source.boundingBox())!;
@@ -227,9 +229,10 @@ test("selected cards expose touch connection targets and accept a native connect
 
 test("selected touch cards expose an actionable edit control without prior hover", async ({ page }) => {
   const root = rootOf(page), node = root.locator('.svelte-flow__node[data-id="a"]');
-  await tap(page, root.getByText('Select cards', { exact: true }));
+  await tap(page, root.getByRole("button", {name:"Expand navigation tools",exact:true}));
+  await tap(page, root.getByRole('button', { name:'Select cards', exact: true }));
   await tap(page, root.getByRole('checkbox', { name: 'Alpha (a)', exact: true }));
-  await tap(page, root.getByText('Select cards', { exact: true }));
+  await tap(page, root.getByRole('button', { name:'Select cards', exact: true }));
   const edit = node.getByRole('button', { name: 'Edit text node', exact: true });
   await expect(edit).toHaveCSS('opacity', '1');
   await expect(edit).toHaveCSS('pointer-events', 'auto');

@@ -8,6 +8,8 @@ test("native navigation shortcuts and Escape preserve stored data and normal for
   );
   const root = page.locator(".canvas-view-root:not([data-canvas-embed])");
   await expect(root.locator('[data-id="a"]')).toBeVisible();
+  await root.getByRole("button", {name:"Expand authoring tools",exact:true}).click();
+  await root.getByRole("button", {name:"Expand navigation tools",exact:true}).click();
   const read = () =>
     page.evaluate(async () => {
       const app = (

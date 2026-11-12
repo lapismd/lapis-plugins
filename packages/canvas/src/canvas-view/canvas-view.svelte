@@ -1,4 +1,5 @@
 <script lang="ts">
+  import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import {
     Background,
     MiniMap,
@@ -9,16 +10,13 @@
   import { createCanvasTheme } from "../lib/canvas-theme.svelte";
   import { acquireCanvasStyles } from "../lib/canvas-styles";
   import { canvasOwnerKey } from "../lib/canvas-embed-boundary";
-  import CanvasActions from "./canvas-actions.svelte";
   import { CanvasHistory } from "../lib/canvas-history";
   import { canvasMutationGroup } from "../lib/canvas-authoring";
   import CanvasConnectionDrop from "./canvas-connection-drop.svelte";
   import type { CanvasBoardController } from "../lib/canvas-board-controller";
   import CanvasAlignmentGuides from "./canvas-alignment-guides.svelte";
   import CanvasControls from "./canvas-controls.svelte";
-  import CanvasNavigation from "./canvas-navigation.svelte";
   import CanvasFitController from "./canvas-fit-controller.svelte";
-  import CanvasTouchSelection from "./canvas-touch-selection.svelte";
   import CanvasNode from "./canvas-node.svelte";
   import CanvasSelectionToolbar from "./canvas-selection-toolbar.svelte";
   import {
@@ -49,6 +47,7 @@
     parseError: string | null;
     snapToGrid: boolean;
     snapToObjects: boolean;
+    onUpdateSettings?: (next: { snapToGrid?: boolean; snapToObjects?: boolean }) => Promise<void>;
     onDocumentChange: (rawJson: string) => void;
     onReload: () => void;
     saveState?: "saved" | "saving" | "error";
@@ -65,6 +64,7 @@
     parseError,
     snapToGrid,
     snapToObjects,
+    onUpdateSettings,
     onDocumentChange,
     onReload,
     saveState = "saved",
@@ -791,6 +791,7 @@
     {/if}
     <div class="canvas-view-surface">
       {#if !isHydrating}
+        <Tooltip.Provider delayDuration={350}>
         <SvelteFlow
           bind:nodes
           bind:edges
@@ -822,17 +823,15 @@
           onnodedragstop={handleNodeDragStop}
           onnodeclick={handleNodeClick}
         >
-          <CanvasActions {app} {inputBlocked} {surface} bind:contextPoint />
           <CanvasFitController container={surface} />
           <CanvasConnectionDrop request={droppedConnection} onDone={() => { droppedConnection = null; }} onError={(reason) => { connectionError = reason; }} />
           <CanvasSelectionToolbar />
           <CanvasAlignmentGuides guides={alignmentGuides} />
           <Background />
-          <CanvasControls />
-          <CanvasNavigation />
-          <CanvasTouchSelection />
-          <MiniMap bgColor="var(--canvas-readable-board)" nodeColor={(node) => node.data.kind === "group" ? "transparent" : "var(--canvas-readable-indicator)"} nodeStrokeColor="var(--canvas-readable-indicator)" maskColor="transparent" maskStrokeColor="var(--canvas-readable-indicator)" maskStrokeWidth={2} />
+          <CanvasControls {app} {inputBlocked} {surface} {snapToGrid} {snapToObjects} {onUpdateSettings} bind:contextPoint />
+          <MiniMap position="bottom-left" bgColor="var(--canvas-readable-board)" nodeColor={(node) => node.data.kind === "group" ? "transparent" : "var(--canvas-readable-indicator)"} nodeStrokeColor="var(--canvas-readable-indicator)" maskColor="transparent" maskStrokeColor="var(--canvas-readable-indicator)" maskStrokeWidth={2} />
         </SvelteFlow>
+        </Tooltip.Provider>
       {/if}
     </div>
   </div>

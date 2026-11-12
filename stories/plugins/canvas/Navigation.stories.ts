@@ -1,3 +1,4 @@
+import { expandCanvasTools } from "./canvas-story-helpers";
 import type { App } from "@lapis-notes/api";
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, userEvent, waitFor, within } from "storybook/test";
@@ -130,6 +131,7 @@ export const KeyboardNavigation: Story = {
         root.querySelector('.svelte-flow__node[data-id="a"]'),
       ).toBeVisible(),
     );
+    await expandCanvasTools(root);
     const board = within(root);
     const help = board.getByRole("button", {
       name: "Canvas help",
@@ -185,10 +187,9 @@ export const KeyboardNavigation: Story = {
     await userEvent.keyboard("{Alt>}{ArrowRight}{/Alt}");
     await waitFor(() => expect(viewport.style.transform).not.toBe(before));
     const group = root.querySelector<HTMLElement>('[data-id="g"]')!;
-    await userEvent.selectOptions(
-      board.getByRole("combobox", { name: "Jump to group", exact: true }),
-      "g",
-    );
+    await userEvent.click(board.getByRole("button", { name: "Jump to group", exact: true }));
+    await userEvent.type(within(canvasElement.ownerDocument.body).getByRole("combobox", { name: "Search groups", exact: true }), "Research");
+    await userEvent.keyboard("{ArrowDown}{Enter}");
     await waitFor(() => {
       const frame = root.getBoundingClientRect(),
         bounds = group.getBoundingClientRect();
@@ -199,12 +200,12 @@ export const KeyboardNavigation: Story = {
     });
     await waitFor(() =>
       expect(
-        board.getByRole("combobox", { name: "Jump to group", exact: true }),
-      ).toHaveValue(""),
+        board.getByRole("button", { name: "Jump to group", exact: true }),
+      ).toHaveFocus(),
     );
-    await userEvent.click(
-      board.getByRole("button", { name: "Add web page", exact: true }),
-    );
+    const addWebPage = board.getByRole("button", { name: "Add web page", exact: true });
+    await waitFor(() => expect(getComputedStyle(addWebPage).pointerEvents).not.toBe("none"));
+    await userEvent.click(addWebPage);
     const create = board.getByRole("dialog", {
       name: "Add web page",
       exact: true,
@@ -271,6 +272,7 @@ export const ReadOnlyNavigation: Story = {
           new DOMMatrix(getComputedStyle(camera).transform).a,
         ).toBeLessThan(1);
     });
+    await expandCanvasTools(embeds[0]);
     const board = within(embeds[0]);
     expect(
       board.queryByRole("button", { name: "Fit selected cards", exact: true }),

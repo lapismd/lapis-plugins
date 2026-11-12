@@ -1,3 +1,4 @@
+import { expandCanvasTools } from "./canvas-story-helpers";
 import type { App } from "@lapis-notes/api";
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, userEvent, waitFor, within } from "storybook/test";
@@ -85,8 +86,9 @@ export const ExplicitSelection: Story = {
     const root = canvasElement.querySelector<HTMLElement>(
       ".canvas-view-root:not([data-canvas-embed])",
     )!;
+    await expandCanvasTools(root);
     const board = within(root);
-    await userEvent.click(board.getByText("Select cards", { exact: true }));
+    await userEvent.click(board.getByRole("button", { name: "Select cards", exact: true }));
     await userEvent.click(
       board.getByRole("checkbox", { name: "Alpha (a)", exact: true }),
     );

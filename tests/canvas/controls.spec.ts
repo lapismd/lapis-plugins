@@ -1,0 +1,33 @@
+import { expect, test } from "@playwright/test";
+
+test("collapsed rail keeps settings within the pane and zoom-to-fit below reset", async ({ page }) => {
+  await page.setViewportSize({ width: 1074, height: 988 });
+  await page.goto("/iframe.html?id=plugins-canvas-registry-screenshots--overview&viewMode=story");
+  const root = page.locator(".canvas-view-root:not([data-canvas-embed])");
+  const authoring = root.getByRole("button", { name: "Expand authoring tools", exact: true });
+  const navigation = root.getByRole("button", { name: "Expand navigation tools", exact: true });
+  await expect(authoring).toHaveAttribute("aria-expanded", "false");
+  await expect(navigation).toHaveAttribute("aria-expanded", "false");
+  const minimap = await root.locator(".svelte-flow__minimap").boundingBox();
+  const rail = await root.locator(".canvas-control-rail").boundingBox();
+  expect(minimap!.x + minimap!.width).toBeLessThan(rail!.x);
+  const reset = await root.getByRole("button", { name: "Reset zoom", exact: true }).boundingBox();
+  const fit = await root.getByRole("button", { name: "Fit all cards", exact: true }).boundingBox();
+  expect(fit!.y).toBeGreaterThanOrEqual(reset!.y + reset!.height);
+  const trigger = root.getByRole("button", { name: "Canvas settings", exact: true });
+  await trigger.click();
+  const popover = page.locator('[data-ui-component="popover"][aria-label="Canvas settings"]');
+  await expect(popover).toBeVisible();
+  const surface = await root.locator(".canvas-view-surface").boundingBox();
+  const content = await popover.boundingBox(), button = await trigger.boundingBox();
+  expect(content!.y).toBeGreaterThanOrEqual(surface!.y);
+  expect(content!.x).toBeGreaterThanOrEqual(surface!.x);
+  expect(button!.x - (content!.x + content!.width)).toBeGreaterThanOrEqual(11);
+  await expect(popover.getByRole("heading")).toHaveCount(0);
+  const grid = popover.getByRole("checkbox", { name: "Snap to grid", exact: true });
+  await grid.click();
+  await expect(grid).toBeChecked();
+  await page.keyboard.press("Escape");
+  await trigger.click();
+  await expect(popover.getByRole("checkbox", { name: "Snap to grid", exact: true })).toBeChecked();
+});

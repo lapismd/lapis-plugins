@@ -542,3 +542,5 @@ existing behavioral baseline assertion and reject changes to source hashes,
 observations, reviewed upstream identity, feature coverage or other report
 content before writing. It MUST NOT update the accepted compatibility baseline.
 Ordinary audit invocation MUST continue to reject stale reports.
+
+Canvas Review and Contrast join the audited application-story inventory. Panel and registry examples share an offline coastal research board; Canvas media is refreshed from its fixed declared story IDs before packaging.

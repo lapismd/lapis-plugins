@@ -274,6 +274,7 @@ export class CanvasView extends FileView {
         saveError: this.saveError,
         snapToGrid: this.plugin?.settings.snapToGrid ?? false,
         snapToObjects: this.plugin?.settings.snapToObjects ?? true,
+        onUpdateSettings: async (next) => { await this.plugin?.updateSettings(next); },
         onDocumentChange: (nextRawJson: string) => {
           if (!saves || this.saves !== saves) return;
           this.rawJson = nextRawJson;

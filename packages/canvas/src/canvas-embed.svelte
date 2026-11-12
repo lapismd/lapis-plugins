@@ -1,4 +1,5 @@
 <script lang="ts">
+  import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import type { App } from "@lapis-notes/api";
   import { setContext } from "svelte";
   import {
@@ -12,7 +13,6 @@
   import { acquireCanvasStyles } from "./lib/canvas-styles";
   import { canvasOwnerKey } from "./lib/canvas-embed-boundary";
   import CanvasControls from "./canvas-view/canvas-controls.svelte";
-  import CanvasNavigation from "./canvas-view/canvas-navigation.svelte";
   import CanvasEdge from "./canvas-view/canvas-edge.svelte";
   import CanvasFitController from "./canvas-view/canvas-fit-controller.svelte";
   import CanvasEmbedNode from "./canvas-embed-node.svelte";
@@ -162,6 +162,7 @@
     </div>
   {:else}
     <div class="canvas-view-surface">
+      <Tooltip.Provider delayDuration={350}>
       <SvelteFlow
         ariaLabelConfig={{
           "node.a11yDescription.default": "Read-only canvas card. Use Open canvas to edit the original.",
@@ -186,11 +187,11 @@
         zoomOnScroll={false}
       >
         <Background />
-        <MiniMap bgColor="var(--canvas-readable-board)" nodeColor={(node) => node.data.kind === "group" ? "transparent" : "var(--canvas-readable-indicator)"} nodeStrokeColor="var(--canvas-readable-indicator)" maskColor="transparent" maskStrokeColor="var(--canvas-readable-indicator)" maskStrokeWidth={2} />
+        <MiniMap position="bottom-left" bgColor="var(--canvas-readable-board)" nodeColor={(node) => node.data.kind === "group" ? "transparent" : "var(--canvas-readable-indicator)"} nodeStrokeColor="var(--canvas-readable-indicator)" maskColor="transparent" maskStrokeColor="var(--canvas-readable-indicator)" maskStrokeWidth={2} />
         <CanvasControls readOnly />
-        <CanvasNavigation readOnly />
         <CanvasFitController responsive revision={value} container={surface} />
       </SvelteFlow>
+      </Tooltip.Provider>
     </div>
   {/if}
 </section>

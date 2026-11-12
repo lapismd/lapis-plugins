@@ -16,7 +16,7 @@ describe("Markdown file surface", () => {
     expect(source).toContain("export async function flush");
     expect(source).toContain("export async function exit");
     expect(source).toContain('data-editing={editing ? "true" : "false"}');
-    expect(source).toContain('data-mira-theme="obsidian"');
+    expect(source).not.toContain("data-mira-theme=");
     expect(source).toContain('data-editing="false"');
     expect(source).toContain('data-editing="true"');
     expect(source).toContain("untrack(() => onEditingChange?.(next))");

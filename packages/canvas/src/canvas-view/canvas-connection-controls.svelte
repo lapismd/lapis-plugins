@@ -1,4 +1,5 @@
 <script lang="ts">
+  import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import { getContext, tick } from "svelte";
   import { useSvelteFlow } from "@xyflow/svelte";
   import ArrowLeft from "@lucide/svelte/icons/arrow-left";
@@ -59,17 +60,68 @@
   }
 </script>
 
-<button type="button" class="canvas-node-toolbar-button" aria-label="Follow source card" title="Follow source card" onclick={() => void follow("from")}><ArrowLeft aria-hidden="true" /></button>
-<button type="button" class="canvas-node-toolbar-button" aria-label="Follow target card" title="Follow target card" onclick={() => void follow("to")}><ArrowRight aria-hidden="true" /></button>
+<Tooltip.Root
+  ><Tooltip.Trigger
+    >{#snippet child({ props: tooltipProps })}<button
+        {...tooltipProps}
+        type="button"
+        class="canvas-node-toolbar-button"
+        aria-label="Follow source card"
+        onclick={() => void follow("from")}
+        ><ArrowLeft aria-hidden="true" /></button
+      >{/snippet}</Tooltip.Trigger
+  ><Tooltip.Content sideOffset={6}>Follow source card</Tooltip.Content
+  ></Tooltip.Root
+>
+<Tooltip.Root
+  ><Tooltip.Trigger
+    >{#snippet child({ props: tooltipProps })}<button
+        {...tooltipProps}
+        type="button"
+        class="canvas-node-toolbar-button"
+        aria-label="Follow target card"
+        onclick={() => void follow("to")}
+        ><ArrowRight aria-hidden="true" /></button
+      >{/snippet}</Tooltip.Trigger
+  ><Tooltip.Content sideOffset={6}>Follow target card</Tooltip.Content
+  ></Tooltip.Root
+>
 <details bind:this={menu} class="canvas-connection-menu nodrag nopan nowheel">
   <summary>Reconnect</summary>
-  <form onsubmit={(event) => { event.preventDefault(); void apply(); }}>
+  <form
+    onsubmit={(event) => {
+      event.preventDefault();
+      void apply();
+    }}
+  >
     <fieldset disabled={working || board.inputBlocked}>
       <legend>Connector endpoints</legend>
-      <label>Source card<select bind:value={fromNode}>{#each cards as card (card.id)}<option value={card.id}>{label(card.id)}</option>{/each}</select></label>
-      <label>Source side<select bind:value={fromSide}>{#each sides as side}<option value={side}>{side}</option>{/each}</select></label>
-      <label>Target card<select bind:value={toNode}>{#each cards as card (card.id)}<option value={card.id}>{label(card.id)}</option>{/each}</select></label>
-      <label>Target side<select bind:value={toSide}>{#each sides as side}<option value={side}>{side}</option>{/each}</select></label>
+      <label
+        >Source card<select bind:value={fromNode}
+          >{#each cards as card (card.id)}<option value={card.id}
+              >{label(card.id)}</option
+            >{/each}</select
+        ></label
+      >
+      <label
+        >Source side<select bind:value={fromSide}
+          >{#each sides as side}<option value={side}>{side}</option
+            >{/each}</select
+        ></label
+      >
+      <label
+        >Target card<select bind:value={toNode}
+          >{#each cards as card (card.id)}<option value={card.id}
+              >{label(card.id)}</option
+            >{/each}</select
+        ></label
+      >
+      <label
+        >Target side<select bind:value={toSide}
+          >{#each sides as side}<option value={side}>{side}</option
+            >{/each}</select
+        ></label
+      >
       <button type="submit">Apply endpoints</button>
     </fieldset>
     {#if error}<p role="alert">{error}</p>{/if}
@@ -77,12 +129,56 @@
 </details>
 
 <style>
-  .canvas-connection-menu { position: relative; font-size: 12px; }
-  summary { padding: 8px; cursor: pointer; border-radius: 5px; }
-  form { position: absolute; top: 100%; left: 0; width: 250px; padding: 10px; border: 1px solid var(--canvas-readable-indicator, var(--background-modifier-border)); border-radius: 8px; color: var(--canvas-readable-text, var(--text-normal)); background: var(--canvas-readable-surface, var(--background-primary)); box-shadow: 0 8px 20px var(--background-modifier-box-shadow); }
-  fieldset { margin: 0; padding: 0; border: 0; display: grid; gap: 8px; }
-  label { display: grid; gap: 3px; }
-  select, button { min-height: 36px; padding: 6px; border: 1px solid var(--canvas-readable-indicator, var(--background-modifier-border)); border-radius: 5px; color: inherit; background: inherit; font: inherit; }
-  p { margin: 8px 0 0; }
-  :is(summary, select, button):focus-visible { outline: 2px solid var(--canvas-readable-indicator, var(--interactive-accent)); outline-offset: 2px; }
+  .canvas-connection-menu {
+    position: relative;
+    font-size: 12px;
+  }
+  summary {
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  form {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 250px;
+    padding: 10px;
+    border: 1px solid
+      var(--canvas-readable-indicator, var(--background-modifier-border));
+    border-radius: 8px;
+    color: var(--canvas-readable-text, var(--text-normal));
+    background: var(--canvas-readable-surface, var(--background-primary));
+    box-shadow: 0 8px 20px var(--background-modifier-box-shadow);
+  }
+  fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: grid;
+    gap: 8px;
+  }
+  label {
+    display: grid;
+    gap: 3px;
+  }
+  select,
+  button {
+    min-height: 36px;
+    padding: 6px;
+    border: 1px solid
+      var(--canvas-readable-indicator, var(--background-modifier-border));
+    border-radius: 5px;
+    color: inherit;
+    background: inherit;
+    font: inherit;
+  }
+  p {
+    margin: 8px 0 0;
+  }
+  :is(summary, select, button):focus-visible {
+    outline: 2px solid
+      var(--canvas-readable-indicator, var(--interactive-accent));
+    outline-offset: 2px;
+  }
 </style>
