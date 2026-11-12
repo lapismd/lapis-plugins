@@ -22,10 +22,12 @@
     layout,
     canvasPath = SAMPLE_CANVAS_PATH,
     focus = "canvas",
+    files = {},
   }: {
     layout: PanelDemoLayout;
     canvasPath?: string;
     focus?: "canvas" | "note";
+    files?: Record<string, string>;
   } = $props();
 
   let app = $state<App | null>(null);
@@ -46,7 +48,7 @@
     let cancelled = false;
     const runtimePromise = bootPanelDemo("bookmarks", layout, {
       diagnostics: "none",
-      files: sampleCanvasFiles(),
+      files: { ...sampleCanvasFiles(), ...files },
       plugins: [
         {
           plugin: CanvasPlugin,

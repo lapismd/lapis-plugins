@@ -161,7 +161,7 @@
         ? getArrowTipDirection(sourcePosition)
         : undefined;
     const targetArrowDirection =
-      data?.toEnd === "arrow"
+      (data?.toEnd ?? "arrow") === "arrow"
         ? getArrowTipDirection(targetPosition)
         : undefined;
     const adjustedSourceX = sourceArrowDirection
@@ -217,7 +217,7 @@
   let hasCustomColor = $derived(
     Boolean(data?.color && !presetColorIds.has(data.color)),
   );
-  let directionMode = $derived(getDirectionMode(data?.fromEnd, data?.toEnd));
+  let directionMode = $derived(getDirectionMode(data?.fromEnd, data?.toEnd ?? "arrow"));
 
   function getDirectionMode(
     fromEnd: EdgeEnd | undefined,
@@ -255,14 +255,15 @@
   ): void {
     const ends = endsForDirection(direction);
 
-    updateEdge(
-      id,
-      createFlowEdgePresentation({
-        fromEnd: ends.fromEnd,
-        toEnd: ends.toEnd,
-        color,
-      }),
-    );
+    const presentation = createFlowEdgePresentation({
+      fromEnd: ends.fromEnd,
+      toEnd: ends.toEnd,
+      color,
+    });
+    updateEdge(id, {
+      ...presentation,
+      data: { ...presentation.data, original: data?.original },
+    });
   }
 
   function updateEdgeLabel(nextLabel: string): void {

@@ -1,4 +1,5 @@
 import type { Edge, EdgeMarkerType, Node } from "@xyflow/svelte";
+import { validateJsonCanvas } from "./validate-json-canvas";
 
 export type CanvasColor = string;
 export type NodeType = "text" | "file" | "link" | "group";
@@ -100,6 +101,7 @@ export const PRESET_COLORS: Record<string, string> = {
 };
 
 export type FlowNodeData = {
+  original?: CanvasNode;
   kind: NodeType;
   text?: string;
   file?: string;
@@ -114,6 +116,7 @@ export type FlowNodeData = {
 };
 
 export type FlowEdgeData = {
+  original?: CanvasEdge;
   fromEnd?: EdgeEnd;
   toEnd?: EdgeEnd;
   color?: CanvasColor;
@@ -129,9 +132,7 @@ export function createEmptyCanvas(): JsonCanvas {
 
 export function parseJsonCanvas(rawJson: string): JsonCanvas {
   const parsed = rawJson.trim() ? JSON.parse(rawJson) : {};
-  if (!parsed || typeof parsed !== "object") {
-    throw new Error("Canvas file must contain a JSON object.");
-  }
+  validateJsonCanvas(parsed);
   return parsed as JsonCanvas;
 }
 
@@ -140,7 +141,9 @@ export function stringifyJsonCanvas(canvas: JsonCanvas): string {
 }
 
 export function normalizeCanvas(canvas: JsonCanvas): JsonCanvas {
+  validateJsonCanvas(canvas);
   return {
+    ...canvas,
     nodes: [...(canvas.nodes ?? [])],
     edges: [...(canvas.edges ?? [])],
   };
@@ -162,13 +165,14 @@ export function toFlowDocument(canvas: JsonCanvas): {
   nodes: FlowCanvasNode[];
   edges: FlowCanvasEdge[];
 } {
-  const nodes = (canvas.nodes ?? []).map<FlowCanvasNode>((node) => ({
+  validateJsonCanvas(canvas);
+  const nodes = (canvas.nodes ?? []).map<FlowCanvasNode>((node, index) => ({
     id: node.id,
     type: CanvasFlowNodeType,
     position: { x: node.x, y: node.y },
-    data: toFlowNodeData(node),
+    data: { ...toFlowNodeData(node), original: node },
     style: createNodeStyle(node.width, node.height),
-    zIndex: node.type === "group" ? 0 : 1,
+    zIndex: index,
     sourcePosition: undefined,
     targetPosition: undefined,
   }));
@@ -193,6 +197,7 @@ export function toFlowDocument(canvas: JsonCanvas): {
         targetHandle: edge.toSide ? toTargetHandleId(edge.toSide) : undefined,
         label: edge.label,
         ...edgePresentation,
+        data: { ...edgePresentation.data, original: edge },
       };
     });
 
@@ -202,10 +207,12 @@ export function toFlowDocument(canvas: JsonCanvas): {
 export function serializeFlowDocument(
   nodes: FlowCanvasNode[],
   edges: FlowCanvasEdge[],
+  original: JsonCanvas = {},
 ): JsonCanvas {
-  const canvasNodes = nodes.map<CanvasNode>((node) => {
+  const canvasNodes = [...nodes].sort((a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0)).map<CanvasNode>((node) => {
     const size = parseNodeSize(node.style);
     const common = {
+      ...node.data.original,
       id: node.id,
       x: Math.round(node.position.x),
       y: Math.round(node.position.y),
@@ -249,6 +256,7 @@ export function serializeFlowDocument(
   const canvasEdges = edges
     .filter((edge) => edge.source && edge.target)
     .map<CanvasEdge>((edge) => ({
+      ...edge.data?.original,
       id: edge.id,
       fromNode: edge.source,
       fromSide: toHandleId(edge.sourceHandle),
@@ -261,6 +269,7 @@ export function serializeFlowDocument(
     }));
 
   return {
+    ...original,
     nodes: canvasNodes,
     edges: canvasEdges,
   };
@@ -321,7 +330,7 @@ export function createFlowEdgePresentation(options: {
     type: CanvasFlowEdgeType,
     style: createEdgeStyle(resolvedColor),
     markerStart: createEdgeMarker(options.fromEnd, resolvedColor),
-    markerEnd: createEdgeMarker(options.toEnd, resolvedColor),
+    markerEnd: createEdgeMarker(options.toEnd ?? "arrow", resolvedColor),
     data: {
       fromEnd: options.fromEnd,
       toEnd: options.toEnd,
@@ -333,8 +342,8 @@ export function createFlowEdgePresentation(options: {
 
 export function createNodeStyle(width: number, height: number): string {
   return [
-    `width: ${Math.max(width, 120)}px`,
-    `height: ${Math.max(height, 80)}px`,
+    `width: ${width}px`,
+    `height: ${height}px`,
   ].join("; ");
 }
 

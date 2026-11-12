@@ -1,5 +1,7 @@
 # Specification Governance
 
+The Canvas alignment sequence distinguishes implemented file-safety contracts from planned authoring, history, embed, theme and parity work. Verification MUST retain that distinction and record focused regressions before widening to source, artifact and consumer gates.
+
 Bases embed acceptance covers both rendered content and resource disposal,
 then remounts populated views for review. Markdown, Board and Activity entries
 remain classified integrations using the real App and public renderer; shared

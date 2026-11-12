@@ -1,5 +1,7 @@
 # Distribution and Releases
 
+Canvas file-safety patch artifacts MUST retain the JSON Canvas round-trip and endpoint-default contracts (LN-CANVAS-005/006/007). Npm and runtime archives qualify the same source; patch release intent does not authorize publication.
+
 Bases file and fenced Markdown embeds retain a bounded read-only query toolbar
 and disposable Shadcn Alert errors. Governed Board and Activity embed stories
 exercise two simultaneous instances; plugin media is regenerated from the
