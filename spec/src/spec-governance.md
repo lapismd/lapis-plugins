@@ -1,5 +1,7 @@
 # Specification Governance
 
+LN-CANVAS-048 qualifies navigation separately from geometry edits: camera commands preserve exact stored bytes, respect focused form/editor input and own help focus/protection. Read-only help omits editable-card instructions.
+
 LN-CANVAS-046/047 distinguish pure endpoint retention, keyboard form and follow interactions from native pointer gestures. The static CI lane runs Playwright drag and cancellation cases after building Storybook; synthetic pointer events alone do not qualify these workflows.
 
 Canvas background qualification separates resource-lease lifecycle tests from real protected dialogs, image decoding, persistence and note-embed acceptance (LN-CANVAS-044/045). Stories remain visual-pending.

@@ -66,6 +66,9 @@ The copied board keeps text, file, link, and group nodes, connectors, pane clipp
 | LN-CANVAS-045 | Group background controls MUST validate existing vault images, preserve unrelated document data and support undo/redo. Background dialogs MUST share App input protection and retain the existing background when validation or persistence fails. |
 | LN-CANVAS-046 | Selected connectors MUST expose source and target drag anchors and keyboard-accessible endpoint editors. Reconnection MUST preserve connector identity, label, arrows, colour and extension fields, retain cancelled connections and participate in board undo/redo. Protected boards MUST reject reconnection. Connector controls MUST remain reachable beside fixed board panels. |
 | LN-CANVAS-047 | Connectors MUST offer navigation to either attached card. A new connection dropped on empty board space MUST create one text card and connector in one undoable mutation, honour its starting handle direction, flush pending editors and preserve unrelated content. Cancelled reconnection and drops on controls or cards MUST NOT create cards. |
+| LN-CANVAS-048 | Views and embeds MUST offer fit-all, named-group jumps, reset and zoom controls with keyboard help; editable boards MUST also offer fit-selection. Shortcuts MUST belong to the focused board, leave form and editor input intact, respect reduced motion and preserve stored document bytes. Read-only help MUST omit editing instructions, and modal help MUST share owning App input protection. |
+| LN-CANVAS-050 | Editable boards MUST retain their camera when the first card is added or dropped onto an empty board. A user camera interaction MUST cancel a pending automatic startup fit. Native File Explorer drops MUST retain the source note and remain undoable. |
+| LN-CANVAS-049 | Embedded boards MUST expose named widget groups without duplicate region landmarks when a note embeds the same Canvas more than once. |
 
 ## Alignment sequence
 
@@ -88,7 +91,7 @@ remains a separate release gate. All changed stories stay `visual-pending`.
 
 Package tests cover JSON Canvas parse and save helpers, the runtime id, the exclusive `*.canvas` association, and the `canvas` embed registration. `Plugins/Canvas/Panels` opens the legacy feature board in every placement and, in Middle (Top Tabs), shows the note embed. `Plugins/Canvas/Features` checks each node kind, a heading section, labeled connectors, and the note embed.
 
-`src/lib/json-canvas-safety.test.ts` verifies rejection without data loss, imported geometry and stacking, extension retention after editing, and omitted arrow defaults. Live embedding lifecycle and file-content acceptance is covered by LN-CANVAS-036 through LN-CANVAS-039. Shared colour presentation and the remaining theme/parity requirements remain in progress. Creation/history/clipboard receiver behavior is covered by LN-CANVAS-032 through LN-CANVAS-035; File Explorer drag-source integration remains separately tracked under LN-CANVAS-012.
+`src/lib/json-canvas-safety.test.ts` verifies rejection without data loss, imported geometry and stacking, extension retention after editing, and omitted arrow defaults. Live embedding lifecycle and file-content acceptance is covered by LN-CANVAS-036 through LN-CANVAS-039. Shared colour presentation and the remaining theme/parity requirements remain in progress. Creation/history/clipboard receiver behavior is covered by LN-CANVAS-032 through LN-CANVAS-035; Native File Explorer drag-source integration and empty-board camera preservation are qualified under LN-CANVAS-050.
 
 ## Writer lifecycle qualification
 

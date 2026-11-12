@@ -1,5 +1,7 @@
 # Distribution and Releases
 
+Canvas view/embed navigation shares bundled controls and public XYFlow camera APIs without new host dependencies. Camera commands retain document bytes and runtime publication stays separate (LN-CANVAS-048).
+
 Canvas connector artifacts retain endpoint identity and imported extension fields through reconnection (LN-CANVAS-046/047). Native pointer acceptance runs against the built public Storybook bundle in the static CI lane.
 
 Canvas group backgrounds use public vault resource leases and preserve stored image paths and sizing fields. No new runtime host external or publication route is introduced (LN-CANVAS-044/045).
