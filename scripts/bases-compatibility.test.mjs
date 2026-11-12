@@ -1,0 +1,79 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import {
+  functionKeys,
+  validateInventory,
+  renderReport,
+} from "./bases-compatibility-core.mjs";
+
+const read = (name) =>
+  JSON.parse(
+    readFileSync(
+      new URL(`../docs/bases-compatibility/${name}`, import.meta.url),
+      "utf8"
+    )
+  );
+const upstream = read("upstream.json");
+const inventory = read("inventory.json");
+
+test("function discovery keeps receiver types and duplicate method names distinct", () => {
+  assert.deepEqual(
+    functionKeys(
+      "## Global\n### `date()`\n## Date type\n### `date()`\n## String type\n### `isEmpty()`\n## List type\n### `isEmpty()`"
+    ),
+    ["global.date", "date.date", "string.isEmpty", "list.isEmpty"]
+  );
+});
+
+test("inventory rejects missing coverage, duplicate identities and evidence-free claims", () => {
+  validateInventory(inventory, upstream);
+  const without = structuredClone(inventory);
+  without.features = without.features.filter(
+    (item) => !item.functions?.includes("global.date")
+  );
+  assert.throws(
+    () => validateInventory(without, upstream),
+    /Every documented function/
+  );
+  const duplicate = structuredClone(inventory);
+  duplicate.features.push(duplicate.features[0]);
+  assert.throws(
+    () => validateInventory(duplicate, upstream),
+    /Duplicate feature/
+  );
+  const unsupported = structuredClone(inventory);
+  unsupported.features[0].probes = [];
+  assert.throws(
+    () => validateInventory(unsupported, upstream),
+    /No probe or review/
+  );
+});
+
+test("report exposes failed observations and does not count manual reviews as passing probes", () => {
+  const report = {
+    results: [
+      {
+        ...inventory.features[0],
+        status: "partial",
+        observations: [
+          { id: "pass", pass: true },
+          {
+            id: "fail",
+            pass: false,
+            expected: ["one"],
+            actual: ["one", "two"],
+          },
+        ],
+      },
+      { ...inventory.features.at(-1), status: "review-required" },
+    ],
+  };
+  const markdown = renderReport(report, upstream);
+  assert.match(
+    markdown,
+    /0 supported, 1 partial, 0 gaps, 1 requiring manual review/
+  );
+  assert.match(markdown, /expected.*one.*actual.*two/);
+  assert.match(markdown, /review-required \| 0\/0/);
+});

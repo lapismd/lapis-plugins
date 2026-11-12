@@ -464,3 +464,8 @@ entries. Generating private acceptance data does not dispatch registry updates
 or publish new plugin versions.
 
 The History transient-feedback patch is qualified as an unpublished source candidate under LN-HIST-019. Local npm-pack and deterministic payload verification do not authorize npm publication, signed public assets or registry dispatch; those remain separate release gates.
+
+## Bases compatibility evidence
+
+Under LN-BASE-045, the CI unit job MUST run `pnpm audit:bases` independently of the package test cache and retain the compatibility reports as artifacts. Known compatibility gaps MUST remain explicit evidence; this audit MUST NOT replace normal package, browser, accessibility or release gates.
+An independent advisory job MUST compare current upstream documentation with the reviewed snapshot and retain its drift report. Network failures and upstream changes MUST remain visible without changing the blocking offline acceptance result.

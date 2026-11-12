@@ -218,3 +218,10 @@ frontmatter writer; it introduces no native service, compatibility singleton
 or additional application routing.
 
 History feedback recovery preserves LN-HIST-016/019 passive observation: healthy status reads dismiss transient workspace notices without writing notification history. This changes no service admission, native owner, transport, mutation port or teardown authority.
+
+## Bases audit boundary
+
+The LN-BASE-045 offline query fixture starts at normalized metadata records.
+It MUST NOT claim acceptance of native indexing, AppDatabase candidate pushdown,
+or application lifecycle behavior. Those service boundaries retain their owning
+native and application acceptance requirements.

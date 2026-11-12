@@ -161,6 +161,7 @@ fixtures MAY retain explicit wider columns to demonstrate both scroll directions
 | LN-BASE-042 | Card bodies MUST default to the themed body surface while preserving explicit card surface customisation. Registry examples MUST configure short cover headers through real view configuration and contain enough realistic records to demonstrate vertical scrolling. |
 | LN-BASE-043 | Lists MUST render compact records with configured primary identity, a wrapping row of labelled secondary properties aligned on their first text baseline, and collapsible group headings with counts. Group values MUST be bold and tags MUST use the shared Lapis Tag List. Grouped records MUST be indented beneath their parent heading and start with a decorative Lucide bullet. Values MUST have usable minimum widths, with numbers kept on one line and long text bounded to two lines with ellipsis while retaining its complete accessible value and edit source. Writable properties MUST activate editors on click or keyboard; Escape MUST discard uncommitted drafts. Existing per-type commits, read-only values and file navigation MUST remain intact, and Table/Card editing MUST remain unchanged. |
 | LN-BASE-044 | Unknown view types MUST retain their configuration and render a centred Shadcn Empty state with an icon, unsupported-view title, configured type and guidance to the existing view menu. |
+| LN-BASE-045 | Bases MUST retain a versioned Obsidian compatibility inventory with stable feature IDs, documented expectations, executable query evidence and explicit manual acceptance gaps. The offline audit MUST detect regressions, newly passing probes and stale reports; an explicit upstream check MUST detect documentation drift and untracked documented functions. Audit success MUST NOT claim full product parity or waive existing acceptance lanes. |
 
 ## Public surface
 
@@ -204,7 +205,7 @@ This intake preserves the legacy package rather than expanding it. A real map
 provider, complete Obsidian value wrappers and method-style formula semantics,
 `this` binding, richer file/link behavior, deeper grouped summaries, removal of
 the compatibility/runtime duplication, and behavioral parity beyond exported
-name comparison remain future work tracked in `MIGRATION.md`.
+name comparison remain future work tracked in the [compatibility audit](../../../../docs/bases-compatibility/README.md).
 The current query source lowers safe candidates into AppDatabase filters and
 reads unbounded candidate sets in stable path pages. A fully lowered view limit
 uses one bounded sorted page; final PEaQL evaluation remains authoritative.

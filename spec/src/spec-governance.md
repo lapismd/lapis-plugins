@@ -569,3 +569,10 @@ List, Card, fallback and registry-media changes. Media regeneration does not
 approve or replace Visual Delta baselines.
 
 LN-HIST-019 records the passive History feedback regression at its owning helper and keeps source checks, rebuilt package consumer acceptance and published-image acceptance distinct. Temporary consumer tarball overrides are isolated validation inputs and are not committed dependency protocols or release evidence.
+
+## Compatibility audit evidence
+
+LN-BASE-045 governs the documentation-derived Bases audit. Its generated reports
+MUST keep known gaps distinct from accepted baseline outcomes. Updating an audit
+baseline MUST retain reviewed expected results and stable feature identities;
+manual acceptance remains required for unexecuted browser and host behavior.
