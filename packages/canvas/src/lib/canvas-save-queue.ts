@@ -11,6 +11,28 @@ export class CanvasSaveQueue {
     private readonly changed: (status: CanvasSaveStatus, error?: unknown) => void,
   ) {}
 
+  get dirty(): boolean {
+    return this.pending !== null || this.active !== null;
+  }
+
+  /** Recovery joins in-flight writes without retrying the conflicting draft. */
+  async settle(): Promise<void> {
+    this.clearTimer();
+    await this.active?.catch(() => undefined);
+  }
+
+  /** Called only under an editing/recovery lease after persistence has settled. */
+  acknowledge(): void {
+    this.clearTimer();
+    this.pending = null;
+    this.changed("saved");
+  }
+
+  private clearTimer(): void {
+    if (this.timer) clearTimeout(this.timer);
+    this.timer = null;
+  }
+
   enqueue(value: string): void {
     this.pending = value;
     this.changed("saving");
@@ -23,10 +45,7 @@ export class CanvasSaveQueue {
   }
 
   async flush(): Promise<void> {
-    if (this.timer) {
-      clearTimeout(this.timer);
-      this.timer = null;
-    }
+    this.clearTimer();
     if (this.active) {
       await this.active;
       return this.flush();
@@ -35,21 +54,20 @@ export class CanvasSaveQueue {
 
     const value = this.pending;
     this.pending = null;
-    this.changed("saving");
+    let failure: unknown;
     this.active = Promise.resolve()
       .then(() => this.persist(value))
-      .then(() => {
-        this.changed(this.pending === null ? "saved" : "saving");
-      })
       .catch((error: unknown) => {
         // An older failure must not replace the newer queued buffer.
         if (this.pending === null) this.pending = value;
-        this.changed("error", error);
+        failure = error;
         throw error;
       })
       .finally(() => {
         this.active = null;
+        this.changed(failure === undefined ? (this.pending === null ? "saved" : "saving") : "error", failure);
       });
+    this.changed("saving");
     await this.active;
     return this.flush();
   }

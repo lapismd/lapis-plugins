@@ -43,6 +43,9 @@ The copied board keeps text, file, link, and group nodes, connectors, pane clipp
 | LN-CANVAS-025 | Loading, unloading, reloading and closing a Canvas file MUST await its existing queued board saves before changing the binding or destroying the view. Failed flush MUST reject the transition and retain the current draft for retry. The pane MUST block input during a transition. A stale asynchronous read MUST NOT replace or keep blocking the newer binding; board changes delivered during a read MUST drain before publication. |
 | LN-CANVAS-026 | Canvas file views MUST use the public reactive mounting contract for live settings and save-state updates. Own-save acknowledgements MUST NOT replace the active board document or reset its selection. A save failure MUST leave the board mounted and expose an accessible Retry save action. |
 
+| LN-CANVAS-027 | Each opened Canvas board MUST register a destination-bound writer with its owning App before publication and await native admission when present. App guards MUST protect its input and flush queued board writes. Hosts advertising conditional text writes MUST use the public persistence contract against acknowledged bytes, without falling back after a conditional failure. Other hosts MAY retain their existing persistence under the public API capability contract. External changes MUST publish App-owned conflicts supporting reviewed keep-local, use-external, merged-text and refresh actions. |
+| LN-CANVAS-028 | Unexpected synchronous teardown MUST unregister the board writer while retaining failed changes in the App registry. The protected board and its recovery callbacks MUST remain available until the retained writer is clean; successful retry or reviewed conflict recovery MUST release the component. |
+
 ## Alignment sequence
 
 Implement and qualify these independently reviewable slices in order:
@@ -69,9 +72,10 @@ Package tests cover JSON Canvas parse and save helpers, the runtime id, the excl
 ## Save-queue scope
 
 LN-CANVAS-024/025/026 cover board mutations already delivered to the owning file
-view. LN-CANVAS-011 remains in progress: App editing-session registration,
-conditional conflict handling, native admission and draining pending embedded
-Mira text buffers require separate qualification before full writer-lifecycle
-alignment is claimed. Rename admission and synchronous host disposal remain
+view. LN-CANVAS-027/028 add App registration, conditional board conflicts, native
+admission and retained teardown recovery. The Canvas API peer floor is 0.2.4,
+which supplies those public contracts. LN-CANVAS-011 remains in progress:
+draining pending embedded Mira text buffers requires separate qualification
+before full writer-lifecycle alignment is claimed. Rename admission and synchronous host disposal remain
 part of that broader contract. Reload is not an implicit discard of a failed
 draft; explicit retry must succeed before it replaces the document.
