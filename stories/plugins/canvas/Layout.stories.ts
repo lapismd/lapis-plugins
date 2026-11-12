@@ -60,3 +60,73 @@ export const SelectionArrangement: Story = {
     expect(saved.edges).toEqual(JSON.parse(document).edges);
   },
 };
+
+const backgroundDocument = JSON.stringify({ metadata: { keep: true }, nodes: [
+  { id: "group", type: "group", x: 0, y: 0, width: 500, height: 300, label: "Travel plan", background: "Art.svg", extension: "retain" },
+], edges: [] });
+export const GroupBackgrounds: Story = {
+  name: "Groups render and edit owned image backgrounds",
+  render: () => ({ Component: ViewingPanelDemo, props: { layout: "middle-top-tabs", canvasPath: "Background.canvas", files: {
+    "Background.canvas": backgroundDocument,
+    "Art.svg": '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="10"><rect width="20" height="10" fill="#268b86"/></svg>',
+    "Other.svg": '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="20"><rect width="40" height="20" fill="#a66f2c"/></svg>',
+  } } }),
+  play: async ({ canvasElement }) => {
+    const app = await waitFor(() => { const host = canvasElement.querySelector<HTMLElement>('[data-panel-kind="canvas"][data-status="ready"]') as (HTMLElement & { __lapisApp?: App }) | null; expect(host?.__lapisApp).toBeDefined(); return host!.__lapisApp!; }, { timeout: 30_000 });
+    const root = canvasElement.querySelector<HTMLElement>(".canvas-view-root:not([data-canvas-embed])")!;
+    const read = async () => { await app.fileEditingSessions.flush("Background.canvas"); return JSON.parse(await app.vault.read(app.vault.getFileByPath("Background.canvas")!)); };
+    const image = () => root.querySelector<HTMLImageElement>("[data-canvas-background-probe]");
+    await waitFor(() => expect(image()?.naturalWidth).toBe(20));
+    const background = () => root.querySelector<HTMLElement>("[data-canvas-group-background]")!;
+    expect(getComputedStyle(background()).backgroundSize).toBe("cover");
+    await waitFor(() => expect(root.closest("[inert]")).toBeNull());
+    await waitFor(() => expect(root.querySelector('.svelte-flow__node[data-id="group"]')).toBeVisible());
+    root.querySelector<HTMLElement>('.svelte-flow__node[data-id="group"]')!.focus();
+    expect(root.querySelector('.svelte-flow__node[data-id="group"]')).toHaveFocus();
+    await userEvent.keyboard("{Enter}");
+    await waitFor(() => expect(root.querySelector('.svelte-flow__node[data-id="group"]')).toHaveClass("selected"));
+    const open = async () => { await userEvent.click(await within(root).findByRole("button", { name: "Set group background", exact: true })); return within(canvasElement.ownerDocument.body).getByRole("dialog", { name: "Group background", exact: true }); };
+    let dialog = await open();
+    let release!: () => void, began!: () => void;
+    const gate = new Promise<void>((resolve) => { release = resolve; });
+    const started = new Promise<void>((resolve) => { began = resolve; });
+    const guarded = app.fileEditingSessions.guard("Background.canvas", async () => { began(); await gate; });
+    await started;
+    try { expect((dialog as HTMLDialogElement).inert).toBe(true); }
+    finally { release(); await guarded; }
+    expect((dialog as HTMLDialogElement).inert).toBe(false);
+    await userEvent.selectOptions(within(dialog).getByLabelText("Background sizing"), "ratio");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Apply background" }));
+    await waitFor(() => expect(getComputedStyle(background()).backgroundSize).toBe("contain"));
+    await waitFor(async () => expect((await read()).nodes[0].backgroundStyle).toBe("ratio"));
+    dialog = await open();
+    await userEvent.selectOptions(within(dialog).getByLabelText("Background sizing"), "repeat");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Apply background" }));
+    await waitFor(() => expect(getComputedStyle(background()).backgroundRepeat).toBe("repeat"));
+    dialog = await open();
+    await userEvent.clear(within(dialog).getByLabelText("Image file"));
+    await userEvent.type(within(dialog).getByLabelText("Image file"), "Absent.png");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Apply background" }));
+    await expect(within(dialog).getByRole("alert")).toHaveTextContent("existing vault image");
+    expect((await read()).nodes[0].background).toBe("Art.svg");
+    await userEvent.clear(within(dialog).getByLabelText("Image file"));
+    await userEvent.type(within(dialog).getByLabelText("Image file"), "Other.svg");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Apply background" }));
+    await waitFor(() => expect(image()?.naturalWidth).toBe(40));
+    await userEvent.click(await within(root).findByRole("button", { name: "Remove group background", exact: true }));
+    await waitFor(() => expect(root.querySelector("[data-canvas-group-background]")).toBeNull());
+    await waitFor(async () => expect((await read()).nodes[0].background).toBeUndefined());
+    await userEvent.click(within(root).getByRole("button", { name: "Undo", exact: true }));
+    await waitFor(() => expect(image()?.naturalWidth).toBe(40));
+    const saved = await read();
+    expect(saved.nodes[0]).toMatchObject({ width: 500, height: 300, background: "Other.svg", backgroundStyle: "repeat", extension: "retain" });
+    expect(saved.metadata).toEqual({ keep: true });
+    const note = await app.vault.create("Background embed.md", "![[Background.canvas]]");
+    const leaf = app.workspace.getLeaf(true);
+    await leaf.setViewState({ type: "markdown", state: { file: note.path, mode: "preview" } });
+    app.workspace.revealLeaf(leaf);
+    const embed = await waitFor(() => { const value = canvasElement.querySelector<HTMLElement>("[data-canvas-embed]"); expect(value).not.toBeNull(); return value!; });
+    await waitFor(() => expect(embed.querySelector<HTMLImageElement>("[data-canvas-background-probe]")?.naturalWidth).toBe(40));
+    expect(within(embed).queryByRole("button", { name: "Set group background" })).toBeNull();
+  },
+};

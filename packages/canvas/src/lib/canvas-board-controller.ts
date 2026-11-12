@@ -1,6 +1,7 @@
 import type { JsonCanvas } from "./json-canvas";
 
 export type CanvasBoardController = {
+  readonly inputBlocked: boolean;
   readonly canUndo: boolean;
   readonly canRedo: boolean;
   read(): JsonCanvas;

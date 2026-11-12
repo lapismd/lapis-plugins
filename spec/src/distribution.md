@@ -1,5 +1,7 @@
 # Distribution and Releases
 
+Canvas group backgrounds use public vault resource leases and preserve stored image paths and sizing fields. No new runtime host external or publication route is introduced (LN-CANVAS-044/045).
+
 Canvas selection-layout artifacts add thirteen geometry commands without changing entity identities, extensions or host dependency protocols (LN-CANVAS-042). Group descendants translate with their selected root and runtime release remains separately qualified.
 
 Canvas live embed artifacts retain public controlled-preview inputs and bundle their registered file-content renderer. Mounted surfaces lease XYFlow foundation CSS; no publication, host profile or dependency protocol changes (LN-CANVAS-036 through LN-CANVAS-039).

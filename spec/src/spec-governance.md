@@ -1,5 +1,7 @@
 # Specification Governance
 
+Canvas background qualification separates resource-lease lifecycle tests from real protected dialogs, image decoding, persistence and note-embed acceptance (LN-CANVAS-044/045). Stories remain visual-pending.
+
 LN-CANVAS-042 separates pure layout evidence from real selection-toolbar persistence and undo/redo. Imported dimensions remain authoritative except when an explicit equal-size command changes that dimension. Stories stay visual-pending and no baseline is replaced.
 
 Canvas live-embed evidence separates source subscription ownership, public content resolution, bounded recursion and responsive camera behavior. LN-CANVAS-014 stays in progress until shared colour presentation is qualified; lifecycle completion does not approve visual baselines or publication.
