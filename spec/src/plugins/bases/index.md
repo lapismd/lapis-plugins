@@ -260,3 +260,17 @@ asserts actual horizontal board and vertical lane movement.
 
 Activity lane headings retain their date, count and themed top border when
 stuck in the owned scroll viewport, with one separator at the resting day edge.
+
+## Imported filter compatibility
+
+LN-BASE-003 accepts global expression strings and per-view `filters` alongside
+Lapis-native `filter`. Strings normalize to single-expression AND groups across
+all built-in and custom layouts. The native singular key wins when both are
+present; the import alias MUST be removed so edits cannot persist stale clauses.
+Saved files retain the existing Lapis model. Malformed filter groups MUST fail
+instead of broadening the result set by discarding their predicates.
+
+Under LN-BASE-004, candidate limits MUST only be pushed into AppDatabase when
+all document and view restrictions are lowered. Any-of multi-tag predicates
+MUST NOT become all-tag candidate restrictions. Final PEaQL filtering precedes
+limits for raw, OR, NOT and unsupported predicates.

@@ -2,7 +2,7 @@
   "BASES-YAML-001": [
     {
       "id": "string",
-      "pass": false
+      "pass": true
     },
     {
       "id": "object",
@@ -12,7 +12,7 @@
   "BASES-YAML-002": [
     {
       "id": "obsidian-key",
-      "pass": false
+      "pass": true
     },
     {
       "id": "lapis-key",
@@ -22,7 +22,7 @@
   "BASES-YAML-003": [
     {
       "id": "obsidian-composition",
-      "pass": false
+      "pass": true
     },
     {
       "id": "native-composition",

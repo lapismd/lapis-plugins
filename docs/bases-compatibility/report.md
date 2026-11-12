@@ -2,7 +2,7 @@
 
 Documentation reviewed: 2026-11-12. This is documentation-derived acceptance against Lapis source, not a live Obsidian differential test.
 
-32 supported, 22 partial, 25 gaps, 10 requiring manual review. Counts describe the selected probes, not a percentage of product parity.
+35 supported, 19 partial, 25 gaps, 10 requiring manual review. Counts describe the selected probes, not a percentage of product parity.
 
 Run `pnpm audit:bases` to check behavior and report freshness; `pnpm audit:bases:update` explicitly accepts changed results. Run `pnpm audit:bases:upstream` to detect upstream documentation drift. See [audit workflow](README.md).
 
@@ -16,9 +16,9 @@ Supported means all listed probes passed; partial means some passed; gap means n
 
 | ID | Priority | Feature | Result | Probes | Notes |
 | --- | --- | --- | --- | --- | --- |
-| BASES-YAML-001 | P0 | [Global string filters](https://help.obsidian.md/bases/syntax) | partial | 1/2 | document-core.ts accepts object filters only; a discarded predicate includes extra files. |
-| BASES-YAML-002 | P0 | [Per-view filters key](https://help.obsidian.md/bases/syntax) | partial | 1/2 | Obsidian uses views[].filters; Lapis evaluates views[].filter. Preserve both source and behavior when adding compatibility. |
-| BASES-YAML-003 | P0 | [Global AND view filters](https://help.obsidian.md/bases/syntax) | partial | 1/2 | Checks imported Obsidian documents as well as the Lapis-native singular key. |
+| BASES-YAML-001 | P0 | [Global string filters](https://help.obsidian.md/bases/syntax) | supported | 2/2 | Global string predicates normalize to a single-expression AND group; object filters remain supported. |
+| BASES-YAML-002 | P0 | [Per-view filters key](https://help.obsidian.md/bases/syntax) | supported | 2/2 | Obsidian views[].filters imports into the native singular filter model; native filter wins when both keys exist, and writes retain the Lapis format. |
+| BASES-YAML-003 | P0 | [Global AND view filters](https://help.obsidian.md/bases/syntax) | supported | 2/2 | Global and per-view predicates compose with AND for imported and native documents. |
 | BASES-FILTER-001 | P1 | [Recursive and/or/not groups](https://help.obsidian.md/bases/syntax) | supported | 4/4 | Full loader-to-query acceptance; not excludes any matching child. |
 | BASES-FILTER-002 | P1 | [Comparison operators](https://help.obsidian.md/bases/syntax) | partial | 6/7 | Exact resulting files, including zero values. |
 | BASES-FILTER-003 | P1 | [Symbolic boolean operators and truthiness](https://help.obsidian.md/bases/syntax) | partial | 3/7 | Parser acceptance alone does not prove logical evaluation. |
@@ -107,24 +107,6 @@ Supported means all listed probes passed; partial means some passed; gap means n
 | BASES-FORMULA-003 | P1 | [Circular references and diagnostics](https://help.obsidian.md/bases/syntax) | review-required | 0/0 | Formula substitution repeatedly rewrites bracket references without cycle detection. Deliberate cyclic input is not executed in-process because it can hang. |
 
 ## Failing probes
-
-### BASES-YAML-001: Global string filters
-
-Owner: lapis-plugins/packages/bases. document-core.ts accepts object filters only; a discarded predicate includes extra files.
-
-- string — `"status != \"done\""`: expected `["alpha","gamma"]`; actual `["alpha","beta","gamma"]`.
-
-### BASES-YAML-002: Per-view filters key
-
-Owner: lapis-plugins/packages/bases. Obsidian uses views[].filters; Lapis evaluates views[].filter. Preserve both source and behavior when adding compatibility.
-
-- obsidian-key — `{"views":[{"type":"table","name":"Table","order":["file.path"],"filters":{"and":["status != \"open\""]}}]}`: expected `["beta"]`; actual `["alpha","beta","gamma"]`.
-
-### BASES-YAML-003: Global AND view filters
-
-Owner: lapis-plugins/packages/bases. Checks imported Obsidian documents as well as the Lapis-native singular key.
-
-- obsidian-composition — `{"filters":{"and":["status != \"done\""]},"views":[{"type":"table","name":"Table","order":["file.path"],"filters":{"and":["price > 5"]}}]}`: expected `["alpha"]`; actual `["alpha","gamma"]`.
 
 ### BASES-FILTER-002: Comparison operators
 

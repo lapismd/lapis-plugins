@@ -7,7 +7,7 @@
       "priority": "P0",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/syntax",
-      "notes": "document-core.ts accepts object filters only; a discarded predicate includes extra files.",
+      "notes": "Global string predicates normalize to a single-expression AND group; object filters remain supported.",
       "probes": [
         {
           "id": "string",
@@ -39,7 +39,7 @@
       "priority": "P0",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/syntax",
-      "notes": "Obsidian uses views[].filters; Lapis evaluates views[].filter. Preserve both source and behavior when adding compatibility.",
+      "notes": "Obsidian views[].filters imports into the native singular filter model; native filter wins when both keys exist, and writes retain the Lapis format.",
       "probes": [
         {
           "id": "obsidian-key",
@@ -95,7 +95,7 @@
       "priority": "P0",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/syntax",
-      "notes": "Checks imported Obsidian documents as well as the Lapis-native singular key.",
+      "notes": "Global and per-view predicates compose with AND for imported and native documents.",
       "probes": [
         {
           "id": "obsidian-composition",

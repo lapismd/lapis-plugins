@@ -8,11 +8,16 @@ import {
   type BasesAllOptions,
   type QueryController,
 } from "@lapis-notes/api";
-import type { BasesDocument, BasesViewRegistration } from "@lapis-notes/bases";
+import {
+  parseBasesDocument,
+  type BasesDocument,
+  type BasesViewRegistration,
+} from "@lapis-notes/bases";
 
 export type BasesFixtureProfile = "default" | "registry" | "embed";
 
 export type BasesViewScenario =
+  | "imported-filters"
   | "table"
   | "editable-cells"
   | "query-controls"
@@ -217,6 +222,7 @@ const views: BasesDocument["views"] = [
 ];
 
 const activeViewNames: Record<BasesViewScenario, string> = {
+  "imported-filters": "Imported filters",
   table: "Portfolio table",
   "editable-cells": "Editable fields",
   "query-controls": "Portfolio table",
@@ -237,8 +243,21 @@ const activeViewNames: Record<BasesViewScenario, string> = {
 
 export function createBasesViewsDocument(
   scenario: BasesViewScenario,
-  profile: BasesFixtureProfile = "default",
+  profile: BasesFixtureProfile = "default"
 ): BasesDocument {
+  if (scenario === "imported-filters") {
+    return parseBasesDocument(`filters: note.score > 80
+views:
+  - type: table
+    name: Imported filters
+    order: [file.name, note.score]
+    sort:
+      - property: file.path
+        direction: DESC
+    filters: note.score > 90
+    limit: 1
+`);
+  }
   if (scenario.startsWith("kanban-") || scenario === "activity") {
     return {
       filters: { and: [] },
@@ -332,7 +351,7 @@ export function createBasesViewsDocument(
 
 export function createBasesViewsSeed(
   scenario?: BasesViewScenario,
-  profile: BasesFixtureProfile = "default",
+  profile: BasesFixtureProfile = "default"
 ): Record<string, string | ArrayBuffer> {
   if (scenario?.startsWith("kanban-") || scenario === "activity") {
     return {
@@ -351,7 +370,7 @@ export function createBasesViewsSeed(
       ...referenceFiles(
         scenario === "activity"
           ? "notes"
-          : (scenario.slice(7) as ReferenceCollection),
+          : (scenario.slice(7) as ReferenceCollection)
       ),
     };
   }
@@ -361,14 +380,14 @@ export function createBasesViewsSeed(
     "Bases/Projects.base": JSON.stringify(
       createBasesViewsDocument("table"),
       null,
-      2,
+      2
     ),
     ...(profile === "default" ? projectNotes : createRegistryProjectNotes()),
     ...(scenario === "list"
       ? {
           "Projects/Aurora.md": projectNotes["Projects/Aurora.md"].replace(
             "\n---\n# Aurora",
-            '\ncontext: "Coordinate the research synthesis, accessibility review, partner handover and publication schedule across the writing team while preserving source evidence, unresolved questions and the next decision for every workstream."\n---\n# Aurora',
+            '\ncontext: "Coordinate the research synthesis, accessibility review, partner handover and publication schedule across the writing team while preserving source evidence, unresolved questions and the next decision for every workstream."\n---\n# Aurora'
           ),
         }
       : {}),

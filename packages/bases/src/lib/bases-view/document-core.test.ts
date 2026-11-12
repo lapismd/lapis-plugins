@@ -2,6 +2,45 @@ import { describe, expect, it } from "vitest";
 import { normalizeBasesDocument } from "./document-core";
 
 describe("normalizeBasesDocument", () => {
+  it.each(["table", "cards", "list", "map", "kanban", "activity", "custom"])(
+    "retains imported global and per-view string predicates for %s",
+    (type) => {
+      const document = normalizeBasesDocument({
+        filters: 'status != "done"',
+        views: [{ type, name: "Imported", filters: "price > 5" }],
+      });
+      expect(document.filters).toEqual({ and: ['status != "done"'] });
+      expect(document.views[0].filter).toEqual({ and: ["price > 5"] });
+      expect(document.views[0]).not.toHaveProperty("filters");
+    }
+  );
+
+  it("keeps the native filter authoritative when both spellings are present", () => {
+    const document = normalizeBasesDocument({
+      views: [
+        { type: "table", filter: { and: ["price > 5"] }, filters: "price < 0" },
+      ],
+    });
+    expect(document.views[0].filter).toEqual({ and: ["price > 5"] });
+    expect(document.views[0]).not.toHaveProperty("filters");
+  });
+
+  it.each([
+    { and: "price > 5" },
+    { xor: ["price > 5"] },
+    { and: [{ or: [42] }] },
+  ])(
+    "rejects malformed filters rather than dropping predicates: %j",
+    (filters) => {
+      expect(() => normalizeBasesDocument({ filters })).toThrow(
+        /Invalid Bases filter/
+      );
+      expect(() =>
+        normalizeBasesDocument({ views: [{ type: "table", filters }] })
+      ).toThrow(/Invalid Bases filter/);
+    }
+  );
+
   it("creates a default table document for empty input", () => {
     const document = normalizeBasesDocument(undefined);
 

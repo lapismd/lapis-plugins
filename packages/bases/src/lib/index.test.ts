@@ -8,7 +8,7 @@ vi.stubGlobal(
     observe() {}
     unobserve() {}
     disconnect() {}
-  },
+  }
 );
 
 const {
@@ -20,6 +20,19 @@ const {
 } = await import("./index");
 
 describe("@lapis-notes/bases public exports", () => {
+  it("round-trips imported filters without retaining a stale plural alias", () => {
+    const document = parseBasesDocument(
+      'filters: status != "done"\nviews:\n  - type: table\n    name: Imported\n    filters: price > 5\n'
+    );
+    expect(document.filters).toEqual({ and: ['status != "done"'] });
+    expect(document.views[0].filter).toEqual({ and: ["price > 5"] });
+    document.views[0].filter = { and: ["price > 10"] };
+    expect(
+      parseBasesDocument(serializeBasesDocument(document)).views[0].filter
+    ).toEqual({ and: ["price > 10"] });
+    expect(document.views[0]).not.toHaveProperty("filters");
+  });
+
   it("imports the real public source entrypoint", () => {
     expect(BasesPlugin).toBeTypeOf("function");
     expect(BasesViewSurface).toBeTruthy();
@@ -30,14 +43,14 @@ describe("@lapis-notes/bases public exports", () => {
 
   it("publishes the plugin entrypoint and explicit stylesheet", () => {
     const manifest = JSON.parse(
-      readFileSync(path.resolve(process.cwd(), "package.json"), "utf8"),
+      readFileSync(path.resolve(process.cwd(), "package.json"), "utf8")
     ) as {
       name: string;
       exports: Record<string, unknown>;
     };
     const source = readFileSync(
       path.resolve(process.cwd(), "src/lib/index.ts"),
-      "utf8",
+      "utf8"
     );
 
     expect(manifest.name).toBe("@lapis-notes/bases");
@@ -54,7 +67,7 @@ describe("@lapis-notes/bases public exports", () => {
   it("does not replace host typography tokens from its packaged stylesheet", () => {
     const styles = readFileSync(
       path.resolve(process.cwd(), "src/lib/styles.css"),
-      "utf8",
+      "utf8"
     );
     const rootThemeBlock = styles.match(/:root,\s*:host\s*\{(?<body>[^}]*)\}/u)
       ?.groups?.body;

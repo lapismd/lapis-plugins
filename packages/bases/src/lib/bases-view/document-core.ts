@@ -6,6 +6,41 @@ import type {
   TableView,
 } from "./models";
 
+function normalizeFilters(input: unknown): Filters {
+  if (input === null || input === undefined || input === "")
+    return emptyFilter();
+  if (typeof input === "string") return { and: [input] };
+  if (typeof input !== "object" || Array.isArray(input)) {
+    throw new Error(
+      "Invalid Bases filter: expected an expression or filter group."
+    );
+  }
+  const entries = Object.entries(input);
+  if (
+    entries.length !== 1 ||
+    !["and", "or", "not"].includes(entries[0][0]) ||
+    !Array.isArray(entries[0][1])
+  ) {
+    throw new Error("Invalid Bases filter: expected an and, or or not array.");
+  }
+  const [operator, values] = entries[0];
+  return {
+    [operator]: values.map((value: unknown) => {
+      if (typeof value === "string") return value;
+      if (
+        value &&
+        typeof value === "object" &&
+        "column" in value &&
+        "op" in value &&
+        typeof value.column === "string" &&
+        typeof value.op === "string"
+      )
+        return value;
+      return normalizeFilters(value);
+    }),
+  } as Filters;
+}
+
 function emptyFilter(): Filters {
   return { and: [] };
 }
@@ -56,7 +91,11 @@ function normalizeView(
 ): AnyBasesView | null {
   if (!view || typeof view !== "object") return null;
 
-  const candidate = view as Partial<AnyBasesView> & Record<string, unknown>;
+  const { filters: importedFilters, ...candidate } =
+    view as Partial<AnyBasesView> & Record<string, unknown>;
+  // The singular key remains the native model/write format. Remove the import
+  // alias so subsequent UI edits cannot leave a second, stale predicate behind.
+  const filter = normalizeFilters(candidate.filter ?? importedFilters);
   if (candidate.type === "table") {
     return {
       ...defaultTableView(),
@@ -68,10 +107,7 @@ function normalizeView(
           )
         : [],
       sort: Array.isArray(candidate.sort) ? candidate.sort : [],
-      filter:
-        candidate.filter && typeof candidate.filter === "object"
-          ? (candidate.filter as Filters)
-          : emptyFilter(),
+      filter,
       limit: typeof candidate.limit === "number" ? candidate.limit : 0,
       columnSize:
         candidate.columnSize && typeof candidate.columnSize === "object"
@@ -95,10 +131,7 @@ function normalizeView(
           )
         : [],
       sort: Array.isArray(candidate.sort) ? candidate.sort : [],
-      filter:
-        candidate.filter && typeof candidate.filter === "object"
-          ? (candidate.filter as Filters)
-          : emptyFilter(),
+      filter,
       limit: typeof candidate.limit === "number" ? candidate.limit : 0,
       summaries:
         candidate.summaries && typeof candidate.summaries === "object"
@@ -132,10 +165,7 @@ function normalizeView(
           )
         : [],
       sort: Array.isArray(candidate.sort) ? candidate.sort : [],
-      filter:
-        candidate.filter && typeof candidate.filter === "object"
-          ? (candidate.filter as Filters)
-          : emptyFilter(),
+      filter,
       limit: typeof candidate.limit === "number" ? candidate.limit : 0,
       summaries:
         candidate.summaries && typeof candidate.summaries === "object"
@@ -159,10 +189,7 @@ function normalizeView(
           )
         : [],
       sort: Array.isArray(candidate.sort) ? candidate.sort : [],
-      filter:
-        candidate.filter && typeof candidate.filter === "object"
-          ? (candidate.filter as Filters)
-          : emptyFilter(),
+      filter,
       limit: typeof candidate.limit === "number" ? candidate.limit : 0,
       summaries:
         candidate.summaries && typeof candidate.summaries === "object"
@@ -202,10 +229,7 @@ function normalizeView(
           )
         : [],
       sort: Array.isArray(candidate.sort) ? candidate.sort : [],
-      filter:
-        candidate.filter && typeof candidate.filter === "object"
-          ? (candidate.filter as Filters)
-          : emptyFilter(),
+      filter,
       limit: typeof candidate.limit === "number" ? candidate.limit : 0,
       summaries:
         candidate.summaries && typeof candidate.summaries === "object"
@@ -237,10 +261,7 @@ export function normalizeBasesDocument(input: unknown): BasesDocument {
       : normalizedViews[0].name;
 
   return {
-    filters:
-      candidate.filters && typeof candidate.filters === "object"
-        ? (candidate.filters as Filters)
-        : emptyFilter(),
+    filters: normalizeFilters(candidate.filters),
     properties:
       candidate.properties && typeof candidate.properties === "object"
         ? candidate.properties

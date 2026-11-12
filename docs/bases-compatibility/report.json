@@ -9,7 +9,7 @@
       "luxon": "3.7.2"
     },
     "sources": {
-      "document-core.ts": "e7565a329db8bcb69f8680f8411f380f58676d28c1beb453d1f949a479ab7342",
+      "document-core.ts": "9cb39ea10bc6f6f62dab7a382edf5a569a647abecf9a4050a291acd3053cb9db",
       "filter-parser.ts": "66672e8096db30389bebc7c6e3468707837c973dbd75dd9fbf77ab63644722fb",
       "functions.ts": "857651c47e62f05198c110789a95b6290ae2991c1a69ae3c74045045925d8dc8",
       "functions-core.ts": "0018f5ff86abbcb661115795b22c02a2b498b5d5e2ad4ccdc8020c65df301f5e",
@@ -24,7 +24,7 @@
       "priority": "P0",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/syntax",
-      "notes": "document-core.ts accepts object filters only; a discarded predicate includes extra files.",
+      "notes": "Global string predicates normalize to a single-expression AND group; object filters remain supported.",
       "probes": [
         {
           "id": "string",
@@ -49,18 +49,17 @@
           ]
         }
       ],
-      "status": "partial",
+      "status": "supported",
       "observations": [
         {
           "id": "string",
-          "pass": false,
+          "pass": true,
           "expected": [
             "alpha",
             "gamma"
           ],
           "actual": [
             "alpha",
-            "beta",
             "gamma"
           ]
         },
@@ -84,7 +83,7 @@
       "priority": "P0",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/syntax",
-      "notes": "Obsidian uses views[].filters; Lapis evaluates views[].filter. Preserve both source and behavior when adding compatibility.",
+      "notes": "Obsidian views[].filters imports into the native singular filter model; native filter wins when both keys exist, and writes retain the Lapis format.",
       "probes": [
         {
           "id": "obsidian-key",
@@ -133,18 +132,16 @@
           ]
         }
       ],
-      "status": "partial",
+      "status": "supported",
       "observations": [
         {
           "id": "obsidian-key",
-          "pass": false,
+          "pass": true,
           "expected": [
             "beta"
           ],
           "actual": [
-            "alpha",
-            "beta",
-            "gamma"
+            "beta"
           ]
         },
         {
@@ -165,7 +162,7 @@
       "priority": "P0",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/syntax",
-      "notes": "Checks imported Obsidian documents as well as the Lapis-native singular key.",
+      "notes": "Global and per-view predicates compose with AND for imported and native documents.",
       "probes": [
         {
           "id": "obsidian-composition",
@@ -224,17 +221,16 @@
           ]
         }
       ],
-      "status": "partial",
+      "status": "supported",
       "observations": [
         {
           "id": "obsidian-composition",
-          "pass": false,
+          "pass": true,
           "expected": [
             "alpha"
           ],
           "actual": [
-            "alpha",
-            "gamma"
+            "alpha"
           ]
         },
         {

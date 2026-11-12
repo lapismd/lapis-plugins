@@ -225,3 +225,5 @@ The LN-BASE-045 offline query fixture starts at normalized metadata records.
 It MUST NOT claim acceptance of native indexing, AppDatabase candidate pushdown,
 or application lifecycle behavior. Those service boundaries retain their owning
 native and application acceptance requirements.
+
+Bases candidate limits under LN-BASE-004 are safe only when every predicate is lowered. Final PEaQL-only restrictions require complete paginated candidates before the view limit applies; no native service contract is changed.

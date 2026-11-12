@@ -469,3 +469,5 @@ The History transient-feedback patch is qualified as an unpublished source candi
 
 Under LN-BASE-045, the CI unit job MUST run `pnpm audit:bases` independently of the package test cache and retain the compatibility reports as artifacts. Known compatibility gaps MUST remain explicit evidence; this audit MUST NOT replace normal package, browser, accessibility or release gates.
 An independent advisory job MUST compare current upstream documentation with the reviewed snapshot and retain its drift report. Network failures and upstream changes MUST remain visible without changing the blocking offline acceptance result.
+
+Imported Bases filter fixes retain normal npm patch delivery and the existing model/write format. LN-BASE-003/004 qualification distinguishes source and real-App catalog evidence from later registry consumer adoption.
