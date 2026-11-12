@@ -35,6 +35,9 @@
     snapToObjects: boolean;
     onDocumentChange: (rawJson: string) => void;
     onReload: () => void;
+    saveState?: "saved" | "saving" | "error";
+    saveError?: string | null;
+    onRetrySave?: () => void;
   };
 
   let {
@@ -45,6 +48,9 @@
     snapToObjects,
     onDocumentChange,
     onReload,
+    saveState = "saved",
+    saveError = null,
+    onRetrySave,
   }: Props = $props();
 
   setContext("lapis-canvas-app", {
@@ -676,6 +682,12 @@
   </div>
 {:else}
   <div class="canvas-view-root">
+    {#if saveState === "error"}
+      <div class="canvas-save-error" role="alert">
+        <span>Canvas changes could not be saved: {saveError ?? "Unknown error"}</span>
+        <button type="button" class="canvas-view-button" onclick={onRetrySave}>Retry save</button>
+      </div>
+    {/if}
     <div class="canvas-view-surface">
       {#if !isHydrating}
         <SvelteFlow
@@ -711,3 +723,25 @@
     </div>
   </div>
 {/if}
+
+<style>
+  .canvas-view-root {
+    position: relative;
+  }
+
+  .canvas-save-error {
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    right: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    color: var(--text-normal);
+    background: var(--background-secondary);
+    border-bottom: 1px solid var(--background-modifier-border);
+  }
+</style>

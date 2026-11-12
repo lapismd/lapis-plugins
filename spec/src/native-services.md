@@ -1,5 +1,7 @@
 # Native first-party plugin services
 
+The Canvas board queue captures its App/file destination but does not introduce native editing admission. Full native writer ownership and pending embedded-buffer draining remain outstanding under LN-CANVAS-011; queue qualification MUST NOT be presented as native release acceptance.
+
 Canvas editable-document validation belongs to the Canvas plugin (LN-CANVAS-005). Native Search retains its separately tested tolerant canvas-text extractor; it MUST NOT become an editable-file repair or persistence authority.
 
 Rolling dependency-image reviews update only the verified CI image pin. They

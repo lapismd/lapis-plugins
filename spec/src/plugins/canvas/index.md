@@ -39,6 +39,10 @@ The copied board keeps text, file, link, and group nodes, connectors, pane clipp
 | LN-CANVAS-022 | Desktop-capable hosts MUST support PNG export of the full board or current viewport with quality and privacy options. Empty boards and unavailable export capabilities MUST show a clear disabled state or explanation. |
 | LN-CANVAS-023 | Text cards MUST support conversion into a vault note through the owning App, retain their position and connections, and surface failed creation without deleting the original text. |
 
+| LN-CANVAS-024 | Each opened Canvas file MUST own a destination-bound save queue. Writes MUST serialize, explicit flush MUST drain the latest queued value, background failures MUST be handled, and an older failed write MUST NOT replace a newer queued draft. |
+| LN-CANVAS-025 | Loading, unloading, reloading and closing a Canvas file MUST await its existing queued board saves before changing the binding or destroying the view. Failed flush MUST reject the transition and retain the current draft for retry. The pane MUST block input during a transition. A stale asynchronous read MUST NOT replace or keep blocking the newer binding; board changes delivered during a read MUST drain before publication. |
+| LN-CANVAS-026 | Canvas file views MUST use the public reactive mounting contract for live settings and save-state updates. Own-save acknowledgements MUST NOT replace the active board document or reset its selection. A save failure MUST leave the board mounted and expose an accessible Retry save action. |
+
 ## Alignment sequence
 
 Implement and qualify these independently reviewable slices in order:
@@ -61,3 +65,13 @@ remains a separate release gate. All changed stories stay `visual-pending`.
 Package tests cover JSON Canvas parse and save helpers, the runtime id, the exclusive `*.canvas` association, and the `canvas` embed registration. `Plugins/Canvas/Panels` opens the legacy feature board in every placement and, in Middle (Top Tabs), shows the note embed. `Plugins/Canvas/Features` checks each node kind, a heading section, labeled connectors, and the note embed.
 
 `src/lib/json-canvas-safety.test.ts` verifies rejection without data loss, imported geometry and stacking, extension retention after editing, and omitted arrow defaults. Full authoring, persistence, embedding, theme, and parity requirements remain planned until their focused acceptance lands.
+
+## Save-queue scope
+
+LN-CANVAS-024/025/026 cover board mutations already delivered to the owning file
+view. LN-CANVAS-011 remains in progress: App editing-session registration,
+conditional conflict handling, native admission and draining pending embedded
+Mira text buffers require separate qualification before full writer-lifecycle
+alignment is claimed. Rename admission and synchronous host disposal remain
+part of that broader contract. Reload is not an implicit discard of a failed
+draft; explicit retry must succeed before it replaces the document.

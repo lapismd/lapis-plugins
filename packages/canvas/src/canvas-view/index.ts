@@ -1,10 +1,14 @@
 import {
   FileView,
+  mountComponent,
+  type MountComponent,
   type Menu,
+  type App,
   type TFile,
   type WorkspaceLeaf,
 } from "@lapis-notes/api";
-import { mount, unmount } from "svelte";
+import type { ComponentProps } from "svelte";
+import { CanvasSaveQueue } from "../lib/canvas-save-queue";
 import CanvasViewComponent from "./canvas-view.svelte";
 import type { CanvasPlugin, CanvasSettings } from "../canvas-plugin";
 
@@ -12,12 +16,16 @@ export const CanvasViewType = "lapis-canvas";
 type CanvasSaveState = "saved" | "saving" | "error";
 
 export class CanvasView extends FileView {
-  private component: any = null;
+  private component: MountComponent<ComponentProps<typeof CanvasViewComponent>> | null = null;
   private rawJson = "";
   private parseError: string | null = null;
   private saveState: CanvasSaveState = "saved";
-  private queuedRawJson: string | null = null;
-  private saveTimer: ReturnType<typeof setTimeout> | null = null;
+  private saves: CanvasSaveQueue | null = null;
+  private saveError: string | null = null;
+  private loadGeneration = 0;
+  private transitionToken = 0;
+  private transitioning = false;
+  private wasInert = false;
   private plugin: CanvasPlugin | null;
 
   constructor(leaf?: WorkspaceLeaf, plugin?: CanvasPlugin) {
@@ -76,35 +84,62 @@ export class CanvasView extends FileView {
     return Promise.resolve();
   }
 
-  protected onClose(): Promise<void> {
-    return Promise.resolve();
+  protected async onClose(): Promise<void> {
+    await this.protectTransition(async () => { await this.saves?.flush(); });
   }
 
   async onLoadFile(file: TFile): Promise<void> {
-    this.file = file.copy();
-    await this.readFile(file);
-    await this.setState({ ...this.getState(), file: file.path });
-    if (this.loaded) {
-      this.render();
-    }
+    return this.protectTransition(async () => {
+      const generation = ++this.loadGeneration;
+      const app = this.app;
+      const target = file.copy();
+      await this.saves?.flush();
+      const result = await this.readFile(target, app);
+      await this.saves?.flush();
+      if (generation !== this.loadGeneration) return;
+      if (this.app !== app) throw new Error("Canvas load application changed");
+      this.file = target;
+      this.rawJson = result.value;
+      this.parseError = result.error;
+      this.saveError = null;
+      this.saveState = "saved";
+      const destination = this.file;
+      const saves = new CanvasSaveQueue(
+        (value) => app.vault.modify(destination, value),
+        (status, error) => {
+          if (this.saves !== saves) return;
+          this.saveState = status;
+          this.saveError = error === undefined ? null : error instanceof Error ? error.message : String(error);
+          this.updateComponentProps();
+        },
+      );
+      this.saves = saves;
+      await this.setState({ ...this.getState(), file: target.path });
+      if (generation !== this.loadGeneration) return;
+      if (this.loaded) {
+        this.render();
+      }
+    });
   }
 
   async onUnloadFile(): Promise<void> {
-    this.file = null;
-    this.rawJson = "";
-    this.parseError = null;
-    await this.setState({ ...this.getState(), file: "" });
-    if (this.loaded) {
-      this.render();
-    }
+    return this.protectTransition(async () => {
+      const generation = ++this.loadGeneration;
+      await this.saves?.flush();
+      if (generation !== this.loadGeneration) return;
+      this.saves = null;
+      this.file = null;
+      this.rawJson = "";
+      this.parseError = null;
+      await this.setState({ ...this.getState(), file: "" });
+      if (this.loaded) {
+        this.render();
+      }
+    });
   }
 
   async onRename(file: TFile): Promise<void> {
-    this.file = file.copy();
-    await this.setState({ ...this.getState(), file: file.path });
-    if (this.loaded) {
-      this.render();
-    }
+    await this.onLoadFile(file);
   }
 
   canAcceptExtension(extension: string): boolean {
@@ -112,19 +147,15 @@ export class CanvasView extends FileView {
   }
 
   onunload(): void {
-    if (this.saveTimer) {
-      clearTimeout(this.saveTimer);
-      this.saveTimer = null;
+    ++this.loadGeneration;
+    const saves = this.saves;
+    if (saves) {
+      void saves.flush().catch((error: unknown) => {
+        console.error("Canvas changes could not be saved during teardown", error);
+      });
     }
-
-    if (this.queuedRawJson && this.file) {
-      void this.app.vault.modify(this.file, this.queuedRawJson);
-    }
-
-    if (this.component) {
-      unmount(this.component);
-      this.component = null;
-    }
+    this.component?.destroy();
+    this.component = null;
   }
 
   getViewType(): string {
@@ -140,66 +171,31 @@ export class CanvasView extends FileView {
   }
 
   async reloadFromDisk(): Promise<void> {
-    if (!this.file) {
-      return;
-    }
-
-    if (this.saveTimer) {
-      clearTimeout(this.saveTimer);
-      this.saveTimer = null;
-    }
-
-    this.queuedRawJson = null;
-    await this.readFile(this.file);
-    this.saveState = "saved";
-    this.render();
+    if (this.file) await this.onLoadFile(this.file);
   }
 
-  private async readFile(file: TFile): Promise<void> {
+  private async readFile(file: TFile, app: App): Promise<{ value: string; error: string | null }> {
     try {
-      this.rawJson = await this.app.vault.read(file);
-      this.parseError = null;
+      return { value: await app.vault.read(file), error: null };
     } catch (error) {
-      this.rawJson = "";
-      this.parseError = error instanceof Error ? error.message : String(error);
+      return { value: "", error: error instanceof Error ? error.message : String(error) };
     }
   }
 
-  private handleDocumentChange(rawJson: string): void {
-    this.rawJson = rawJson;
-    this.queuedRawJson = rawJson;
-    this.saveState = "saving";
-    this.updateComponentProps();
-
-    if (this.saveTimer) {
-      clearTimeout(this.saveTimer);
-    }
-
-    this.saveTimer = setTimeout(() => {
-      void this.flushSave();
-    }, 250);
-  }
-
-  private async flushSave(): Promise<void> {
-    if (!this.file || !this.queuedRawJson) {
-      return;
-    }
-
-    const nextRawJson = this.queuedRawJson;
-    this.queuedRawJson = null;
-    this.saveTimer = null;
-
+  private async protectTransition(operation: () => Promise<void>): Promise<void> {
+    const container = this.containerEl;
+    const token = ++this.transitionToken;
+    if (!this.transitioning) this.wasInert = Boolean(container.inert);
+    this.transitioning = true;
+    container.inert = true;
     try {
-      await this.app.vault.modify(this.file, nextRawJson);
-      this.rawJson = nextRawJson;
-      this.saveState = "saved";
-    } catch (error) {
-      this.queuedRawJson = nextRawJson;
-      this.saveState = "error";
-      this.parseError = error instanceof Error ? error.message : String(error);
+      await operation();
+    } finally {
+      if (token === this.transitionToken) {
+        container.inert = this.wasInert;
+        this.transitioning = false;
+      }
     }
-
-    this.updateComponentProps();
   }
 
   private updateComponentProps(): void {
@@ -207,10 +203,9 @@ export class CanvasView extends FileView {
       return;
     }
 
-    this.component.props.file = this.file;
-    this.component.props.rawJson = this.rawJson;
     this.component.props.parseError = this.parseError;
     this.component.props.saveState = this.saveState;
+    this.component.props.saveError = this.saveError;
   }
 
   private render(): void {
@@ -219,26 +214,32 @@ export class CanvasView extends FileView {
     }
 
     if (this.component) {
-      unmount(this.component);
+      this.component.destroy();
       this.component = null;
     }
 
     this.containerEl.empty();
-    this.component = mount(CanvasViewComponent, {
+    const saves = this.saves;
+    this.component = mountComponent(CanvasViewComponent, {
       target: this.containerEl,
       props: {
         app: this.app,
-        file: this.file,
         rawJson: this.rawJson,
         parseError: this.parseError,
         saveState: this.saveState,
+        saveError: this.saveError,
         snapToGrid: this.plugin?.settings.snapToGrid ?? false,
         snapToObjects: this.plugin?.settings.snapToObjects ?? true,
         onDocumentChange: (nextRawJson: string) => {
-          this.handleDocumentChange(nextRawJson);
+          if (!saves || this.saves !== saves) return;
+          this.rawJson = nextRawJson;
+          saves.enqueue(nextRawJson);
+        },
+        onRetrySave: () => {
+          void saves?.flush().catch(() => undefined);
         },
         onReload: () => {
-          void this.reloadFromDisk();
+          void this.reloadFromDisk().catch(() => undefined);
         },
       },
     });
