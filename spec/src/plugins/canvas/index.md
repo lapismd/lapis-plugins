@@ -62,6 +62,8 @@ The copied board keeps text, file, link, and group nodes, connectors, pane clipp
 
 | LN-CANVAS-042 | Selection layout MUST expose left/center/right and top/middle/bottom alignment, horizontal/vertical equal-gap distribution, row/column/grid arrangement and equal width/height. Each command MUST flush pending editors, form one undoable mutation and preserve identities, connectors, extensions and unaffected dimensions. Selected groups MUST move contained descendants once; selection inside a selected group MUST NOT become a second layout unit. Distribution MUST retain outside anchors and require three independent cards. Layout controls MUST support keyboard activation and Escape dismissal. |
 | LN-CANVAS-043 | Editable card previews MUST expose a separate focusable edit action outside rendered Markdown controls. Card selection and pointer editing MUST remain available without nesting interactive controls inside a button wrapper. |
+| LN-CANVAS-044 | Group background images MUST resolve through the owning App relative to the Canvas source. Views and embeds MUST support cover, aspect-ratio and repeat presentation, recover from matching vault changes and show missing-image failures. Each mounted background MUST release its resource leases and subscriptions, including stale asynchronous reads. |
+| LN-CANVAS-045 | Group background controls MUST validate existing vault images, preserve unrelated document data and support undo/redo. Background dialogs MUST share App input protection and retain the existing background when validation or persistence fails. |
 
 ## Alignment sequence
 

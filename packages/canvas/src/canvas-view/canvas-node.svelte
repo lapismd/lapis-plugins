@@ -2,6 +2,8 @@
   import { TFile, type App } from "@lapis-notes/api";
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
   import { createLapisMiraFileAdapter } from "@lapis-notes/markdown/embed";
+  import CanvasGroupBackground from "../canvas-group-background.svelte";
+  import CanvasGroupBackgroundControls from "./canvas-group-background-controls.svelte";
   import CanvasFileContent from "../canvas-file-content.svelte";
   import { EditableMarkdownPreview } from "@lapismd/mira/preview";
   import "@lapismd/mira/preview/styles.css";
@@ -895,6 +897,7 @@
             <Expand aria-hidden="true" />
           </button>
           {#if data.kind === "group"}
+            {#if app}<CanvasGroupBackgroundControls {app} nodeId={id} background={data.background} backgroundStyle={data.backgroundStyle} onOpen={() => { isColorMenuOpen = false; }} />{/if}
             <button
               type="button"
               class="canvas-node-toolbar-button"
@@ -1099,6 +1102,7 @@
         </div>
       {/if}
     {:else if data.kind === "group"}
+      {#if data.background}<CanvasGroupBackground {app} path={data.background} mode={data.backgroundStyle} sourcePath={canvasSource?.current ?? ""} />{/if}
       <div class="canvas-group-surface-spacer" aria-hidden="true"></div>
     {:else}
       <input

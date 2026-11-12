@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { App } from "@lapis-notes/api";
+  import CanvasGroupBackground from "./canvas-group-background.svelte";
   import CanvasFileContent from "./canvas-file-content.svelte";
   import { MarkdownEmbed } from "@lapis-notes/markdown/embed";
   import { Handle, Position, type NodeProps } from "@xyflow/svelte";
@@ -48,6 +49,7 @@
 
   <div class:canvas-node-label-group={isGroupNode} class="canvas-node-label">
     {#if data.kind === "group"}
+      {#if data.background}<CanvasGroupBackground {app} path={data.background} mode={data.backgroundStyle} sourcePath={canvasSource?.current ?? ""} />{/if}
       <div class="canvas-group-surface-spacer"></div>
     {:else}
       <div class="canvas-node-kind">{data.kind}</div>

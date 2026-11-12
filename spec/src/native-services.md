@@ -1,5 +1,7 @@
 # Native first-party plugin services
 
+Canvas background dialogs use the existing parent editing guard. Image reads and URL disposal belong to each mounted surface; background changes introduce no writer or native service (LN-CANVAS-044/045).
+
 Canvas layout flushes existing virtual editors through the parent board controller before one document mutation (LN-CANVAS-042). App input protection and native producer admission remain unchanged; layout introduces no separate writer or service.
 
 Read-only Canvas source listeners and nested rendering remain renderer-owned. Virtual text links delegate public vault reads while their edits retain the existing parent producer; native admission and installed-release qualification remain unchanged (LN-CANVAS-037).

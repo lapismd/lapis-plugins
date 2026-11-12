@@ -115,6 +115,7 @@
   }
 
   const board: CanvasBoardController = {
+    get inputBlocked() { return inputBlocked; },
     get canUndo() { return historyState.undo; },
     get canRedo() { return historyState.redo; },
     read: () => {
