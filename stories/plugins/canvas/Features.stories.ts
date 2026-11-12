@@ -264,17 +264,17 @@ export const SaveBeforeSwitch: Story = {
     const app = await canvasOwner(canvasElement);
     const nextRaw = JSON.stringify({ nodes: [{ id: "next", type: "text", x: 0, y: 0, width: 260, height: 160, text: "Next board" }] });
     const nextFile = await app.vault.create("Next.canvas", nextRaw);
-    const original = app.vault.modify.bind(app.vault);
+    const original = app.vault.modifyIfUnchanged.bind(app.vault);
     let finish!: () => void;
     const gate = new Promise<void>((resolve) => { finish = resolve; });
     let began!: () => void;
     const started = new Promise<void>((resolve) => { began = resolve; });
-    app.vault.modify = async (file, data, options) => {
+    app.vault.modifyIfUnchanged = async (file, data, expected, options) => {
       if (file.path === "Imported.canvas") {
         began();
         await gate;
       }
-      return original(file, data, options);
+      return original(file, data, expected, options);
     };
     let switching: Promise<void> | undefined;
     try {
@@ -296,7 +296,7 @@ export const SaveBeforeSwitch: Story = {
       try {
         await switching;
       } finally {
-        app.vault.modify = original;
+        app.vault.modifyIfUnchanged = original;
       }
     }
   },
@@ -311,14 +311,14 @@ export const RetrySave: Story = {
   }),
   play: async ({ canvasElement }) => {
     const app = await canvasOwner(canvasElement);
-    const original = app.vault.modify.bind(app.vault);
+    const original = app.vault.modifyIfUnchanged.bind(app.vault);
     let rejectNext = true;
-    app.vault.modify = async (file, data, options) => {
+    app.vault.modifyIfUnchanged = async (file, data, expected, options) => {
       if (file.path === "Imported.canvas" && rejectNext) {
         rejectNext = false;
         throw new Error("Storage temporarily unavailable");
       }
-      return original(file, data, options);
+      return original(file, data, expected, options);
     };
     try {
       const board = within(canvasElement);
@@ -336,7 +336,38 @@ export const RetrySave: Story = {
         expect(board.queryByRole("alert")).toBeNull();
       });
     } finally {
-      app.vault.modify = original;
+      app.vault.modifyIfUnchanged = original;
     }
+  },
+};
+
+export const ExternalConflict: Story = {
+  name: "External changes require a reviewed recovery",
+  parameters: featureParameters("A stale Canvas save preserves external bytes and publishes the App-owned conflict; keeping the local board uses the reviewed external baseline."),
+  render: () => ({
+    Component: ViewingPanelDemo,
+    props: { layout: "middle-top-tabs", canvasPath: "Imported.canvas", files: { "Imported.canvas": importedDocument } },
+  }),
+  play: async ({ canvasElement }) => {
+    const app = await canvasOwner(canvasElement);
+    const file = app.vault.getFileByPath("Imported.canvas")!;
+    const external = JSON.parse(importedDocument);
+    external.nodes[0].text = "Externally changed card";
+    const externalRaw = JSON.stringify(external);
+    await app.vault.modify(file, externalRaw);
+    const board = within(canvasElement);
+    await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-id="small"] .canvas-node-label')!);
+    await userEvent.click(await board.findByRole("button", { name: "Set color", exact: true }));
+    await userEvent.click(board.getByRole("button", { name: "Set node color 4", exact: true }));
+    await waitFor(() => expect(app.fileEditingSessions.textConflicts.entries).toHaveLength(1));
+    expect(await app.vault.read(file)).toBe(externalRaw);
+    expect(app.fileEditingSessions.textConflicts.entries[0].external).toBe(externalRaw);
+    expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(2);
+    await app.fileEditingSessions.textConflicts.entries[0].resolve("keep-local");
+    await waitFor(() => expect(board.queryByRole("alert")).toBeNull());
+    const saved = JSON.parse(await app.vault.read(file));
+    expect(saved.nodes[0]).toMatchObject({ text: "Imported", color: "4" });
+    expect(saved.metadata).toEqual({ origin: "JSON Canvas" });
+    expect(app.fileEditingSessions.textConflicts.entries).toHaveLength(0);
   },
 };

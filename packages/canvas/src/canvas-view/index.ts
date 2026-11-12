@@ -8,7 +8,7 @@ import {
   type WorkspaceLeaf,
 } from "@lapis-notes/api";
 import type { ComponentProps } from "svelte";
-import { CanvasSaveQueue } from "../lib/canvas-save-queue";
+import { CanvasDocumentSession } from "../lib/canvas-document-session";
 import CanvasViewComponent from "./canvas-view.svelte";
 import type { CanvasPlugin, CanvasSettings } from "../canvas-plugin";
 
@@ -20,11 +20,13 @@ export class CanvasView extends FileView {
   private rawJson = "";
   private parseError: string | null = null;
   private saveState: CanvasSaveState = "saved";
-  private saves: CanvasSaveQueue | null = null;
+  private saves: CanvasDocumentSession | null = null;
   private saveError: string | null = null;
   private loadGeneration = 0;
   private transitionToken = 0;
   private transitioning = false;
+  private releaseTransition: (() => void) | null = null;
+  private inputHolds = 0;
   private wasInert = false;
   private plugin: CanvasPlugin | null;
 
@@ -98,21 +100,40 @@ export class CanvasView extends FileView {
       await this.saves?.flush();
       if (generation !== this.loadGeneration) return;
       if (this.app !== app) throw new Error("Canvas load application changed");
-      this.file = target;
-      this.rawJson = result.value;
-      this.parseError = result.error;
-      this.saveError = null;
-      this.saveState = "saved";
-      const destination = this.file;
-      const saves = new CanvasSaveQueue(
-        (value) => app.vault.modify(destination, value),
-        (status, error) => {
+      const previous = this.saves;
+      const saves = new CanvasDocumentSession({
+        app,
+        file: target,
+        baseline: result.error === null ? result.value : null,
+        hold: () => this.holdInput(),
+        reset: (value) => {
+          if (this.saves !== saves) return;
+          this.rawJson = value;
+          if (this.component) this.component.props.rawJson = value;
+        },
+        changed: (status, error) => {
           if (this.saves !== saves) return;
           this.saveState = status;
           this.saveError = error === undefined ? null : error instanceof Error ? error.message : String(error);
           this.updateComponentProps();
         },
-      );
+      });
+      try {
+        await saves.ready();
+        if (generation !== this.loadGeneration) {
+          saves.retire(() => {});
+          return;
+        }
+      } catch (error) {
+        saves.retire(() => {});
+        throw error;
+      }
+      previous?.retire(() => {});
+      this.file = target;
+      this.rawJson = result.value;
+      this.parseError = result.error;
+      this.saveError = null;
+      this.saveState = "saved";
       this.saves = saves;
       await this.setState({ ...this.getState(), file: target.path });
       if (generation !== this.loadGeneration) return;
@@ -127,6 +148,7 @@ export class CanvasView extends FileView {
       const generation = ++this.loadGeneration;
       await this.saves?.flush();
       if (generation !== this.loadGeneration) return;
+      this.saves?.retire(() => {});
       this.saves = null;
       this.file = null;
       this.rawJson = "";
@@ -149,13 +171,16 @@ export class CanvasView extends FileView {
   onunload(): void {
     ++this.loadGeneration;
     const saves = this.saves;
+    const component = this.component;
+    this.component = null;
     if (saves) {
+      saves.retire(() => component?.destroy());
       void saves.flush().catch((error: unknown) => {
         console.error("Canvas changes could not be saved during teardown", error);
       });
+    } else {
+      component?.destroy();
     }
-    this.component?.destroy();
-    this.component = null;
   }
 
   getViewType(): string {
@@ -183,19 +208,30 @@ export class CanvasView extends FileView {
   }
 
   private async protectTransition(operation: () => Promise<void>): Promise<void> {
-    const container = this.containerEl;
     const token = ++this.transitionToken;
-    if (!this.transitioning) this.wasInert = Boolean(container.inert);
+    if (!this.transitioning) this.releaseTransition = this.holdInput();
     this.transitioning = true;
-    container.inert = true;
     try {
       await operation();
     } finally {
       if (token === this.transitionToken) {
-        container.inert = this.wasInert;
+        this.releaseTransition?.();
+        this.releaseTransition = null;
         this.transitioning = false;
       }
     }
+  }
+
+  private holdInput(): () => void {
+    const container = this.containerEl;
+    if (this.inputHolds++ === 0) this.wasInert = Boolean(container.inert);
+    container.inert = true;
+    let held = true;
+    return () => {
+      if (!held) return;
+      held = false;
+      if (--this.inputHolds === 0) container.inert = this.wasInert;
+    };
   }
 
   private updateComponentProps(): void {

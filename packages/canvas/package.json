@@ -56,7 +56,7 @@
     "@codemirror/search": "^6.5.11",
     "@codemirror/state": "^6.6.0",
     "@codemirror/view": "^6.42.1",
-    "@lapis-notes/api": "^0.2.0",
+    "@lapis-notes/api": "^0.2.4",
     "@lapis-notes/markdown": "^0.2.3",
     "@lezer/common": "^1.5.2",
     "@lezer/highlight": "^1.2.3",

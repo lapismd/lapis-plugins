@@ -573,12 +573,14 @@ function normalizeScripts(scripts) {
   return normalized;
 }
 
-function normalizeDependencies(dependencies, _plugin) {
+function normalizeDependencies(dependencies, plugin) {
   const normalized = {};
   for (const [name, version] of Object.entries(dependencies).sort(([a], [b]) =>
     a.localeCompare(b)
   )) {
-    normalized[name] = frameworkPackageVersions.get(name) ?? version;
+    // Canvas uses App editing sessions and conditional text persistence from 0.2.4.
+    const canvasApi = plugin === "canvas" && name === "@lapis-notes/api";
+    normalized[name] = canvasApi ? "^0.2.4" : frameworkPackageVersions.get(name) ?? version;
   }
   return normalized;
 }
