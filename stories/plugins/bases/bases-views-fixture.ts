@@ -20,6 +20,7 @@ export type BasesViewScenario =
   | "imported-filters"
   | "formula-filters"
   | "collection-filters"
+  | "date-helpers"
   | "invalid-formula"
   | "table"
   | "editable-cells"
@@ -228,6 +229,7 @@ const activeViewNames: Record<BasesViewScenario, string> = {
   "imported-filters": "Imported filters",
   "formula-filters": "Formula filters",
   "collection-filters": "Collection filters",
+  "date-helpers": "Date helpers",
   "invalid-formula": "Invalid formula",
   table: "Portfolio table",
   "editable-cells": "Editable fields",
@@ -251,6 +253,21 @@ export function createBasesViewsDocument(
   scenario: BasesViewScenario,
   profile: BasesFixtureProfile = "default"
 ): BasesDocument {
+  if (scenario === "date-helpers") {
+    return parseBasesDocument(`formulas:
+  day: 'date("2025-01-02T12:30:45").date().format("YYYY-MM-DD HH:mm:ss")'
+  clock: 'date("2025-01-02T12:30:45").time()'
+views:
+  - type: table
+    name: Date helpers
+    order: [file.name, formula.day, formula.clock]
+    filters:
+      and:
+        - note.score > 93
+        - number(date("1970-01-02")) > 0
+    limit: 1
+`);
+  }
   if (scenario === "collection-filters") {
     return parseBasesDocument(`formulas:
   grade: '[note.score, 1].reduce(acc + value, 0)'

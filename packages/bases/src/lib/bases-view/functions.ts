@@ -3,6 +3,7 @@ import { createFunction, Decimal, VARARG } from "peaql";
 import { VaultFile } from "./db";
 import { DateTime, Duration } from "luxon";
 import "./collection-functions";
+import "./date-functions";
 import {
   ceil,
   contains,

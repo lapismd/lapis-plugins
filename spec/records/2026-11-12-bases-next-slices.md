@@ -19,3 +19,21 @@ The eight-shard collection sweep attempted all 64 files. It reproduced three Kan
 Static Storybook and npm-pack passed. Payload preparation correctly refused the uncommitted working copy; exact-source payload reproduction and checksum verification follow the source commit.
 
 The final cold Bases family run completes all 35 cases: 32 pass and only the same three accepted Kanban assertions fail. No new functional/axe failure appears in Bases.
+
+## Date helpers and draft validation — LN-BASE-049
+
+Exact command: `pnpm --dir packages/bases exec vitest run src/lib/bases-view/date-compatibility.test.ts src/lib/bases-view/filter-predicate-validation.test.ts`. Before implementation: 16 failures / 6 passes (12 date failures and 4 draft-validation failures). Collection source payload reproduction and checksum verification pass on signed source `46ae55b5`; SHA-256 `9da23a68f24d4bd36b1f9852b882fa580b189fdb60bf210d9c96c1c1704b9314`.
+
+Date/helper and draft-validation targets pass all 24 cases after adding native Date and native SQL string-format coverage. The string-receiver format guard reproduced 1 failure / 15 passes before selecting the native formatter overload ahead of the date fallback; global SQL formatting remains unchanged. The final focused date/draft/native-helper cohort has 34 passes. The broader sweep was stopped before changing that guard, and the final suite is restarted from fresh browser processes.
+
+The audit additionally records an intentional reversal difference: native reverse returns a copy and does not mutate note metadata. A new documentation-derived mutation probe retains Obsidian's in-place expectation and remains failing; its difference flag does not turn it into a pass. A native-helper test locks input preservation. The two functional groups close 18 original failing probes (38 to 20); the new deliberate-mutation probe makes 21 current nonmatches. The expanded inventory has 158 probes, 137 matches, 63 supported areas / 8 partial / 9 gaps / 9 manual areas. No previously passing probe regressed.
+
+Moment 2.31.0 is a normal registry dependency bundled with Bases. Installation initially applied pre-existing local pnpm hooks; the lockfile was narrowed to the eight Moment-only lines and a frozen install with `--ignore-pnpmfile --ignore-scripts` restored the registry graph without changing loader configuration. The audit records the resolved Moment version. QMD doctor/search still report the native Node ABI 147 mismatch and use the documented rg fallback; spec-validator remains at the latest Deno-free 0.2.0.
+
+## Final source qualification
+
+The final source passes workspace check/test/build (18/18, 18/18, 17/17 tasks), with 277 Bases unit tests, 81 audit baseline checks, 203 release-tooling tests, specification validation, mdbook, spec-first and App ownership. All five focused imported/formula/error/collection/date stories pass interaction and axe. Upstream documentation drift remains empty. Static Storybook, npm-pack and publint pass from this source.
+
+All eight standard shards attempted the complete 64-file catalog. The final completed results are 61 passing files / 3 failing files, 295 passing cases / 10 baseline-reproduced failing cases / 57 existing skipped cases. Failures are 3 Kanban, 1 Markdown preview and 6 Canvas cases, including the five newly observed Canvas cases reproduced on merged main. The first shard 8 attempt lost its browser connection while importing skipped Sync stories; one exact cold-process retry passes all 8 files (16 active passes / 33 existing skips). That retry changes no source, skips, assertions, deadlines or baselines. Local interaction/accessibility acceptance remains partial.
+
+Source fix groups remain separate commits with patch Changesets. Sharing the follow-up and starting hosted CI await the requested explicit acceptance of the five additional reproduced Canvas failures; the earlier accepted Kanban cases remain separately tracked. No package, public asset or registry release occurs.

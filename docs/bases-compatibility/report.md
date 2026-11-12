@@ -2,7 +2,7 @@
 
 Documentation reviewed: 2026-11-12. This is documentation-derived acceptance against Lapis source, not a live Obsidian differential test.
 
-59 supported, 8 partial, 13 gaps, 9 requiring manual review. Counts describe the selected probes, not a percentage of product parity.
+63 supported, 8 partial, 9 gaps, 9 requiring manual review. Counts describe the selected probes, not a percentage of product parity.
 
 Run `pnpm audit:bases` to check behavior and report freshness; `pnpm audit:bases:update` explicitly accepts changed results. Run `pnpm audit:bases:upstream` to detect upstream documentation drift. See [audit workflow](README.md).
 
@@ -27,7 +27,7 @@ Supported means all listed probes passed; partial means some passed; gap means n
 | BASES-FORMULA-001 | P1 | [Formula references in filters](https://help.obsidian.md/bases/syntax) | supported | 2/2 | Dotted and bracketed formula references resolve through the same execution compiler without rewriting string literals. |
 | BASES-FORMULA-002 | P1 | [Formula chains and formula sorting](https://help.obsidian.md/bases/syntax) | supported | 2/2 | Formula chains preserve arithmetic precedence and both formula-ID spellings sort by evaluated values. |
 | BASES-CONTEXT-001 | P1 | [this binding](https://help.obsidian.md/bases/syntax) | gap | 0/1 | A query has no owning-note binding in BasesTable or QueryController; real embed ownership needs a host fixture. |
-| BASES-DATE-001 | P1 | [Date fields and arithmetic](https://help.obsidian.md/bases/syntax) | partial | 2/4 | Luxon values must implement the documented Bases date and duration semantics. |
+| BASES-DATE-001 | P1 | [Date fields and arithmetic](https://help.obsidian.md/bases/syntax) | partial | 4/6 | Date fields include clock components. Date arithmetic remains explicitly unresolved; passing field probes do not establish arithmetic support. |
 | BASES-FILE-001 | P1 | [File fields](https://help.obsidian.md/bases/syntax) | supported | 7/7 | The runtime basename uses the extension-free TFile.basename field; other selected metadata fields remain unchanged. |
 | BASES-LINK-001 | P1 | [Frontmatter links resolve as typed links](https://help.obsidian.md/bases/syntax) | gap | 0/2 | Documented wikilinks support asFile and file comparisons; current metadata keeps raw strings. |
 | BASES-FUNC-001 | P1 | [global.escapeHTML](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
@@ -43,15 +43,15 @@ Supported means all listed probes passed; partial means some passed; gap means n
 | BASES-FUNC-011 | P1 | [global.max](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-012 | P1 | [global.min](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-013 | P1 | [global.now](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-014 | P1 | [global.number](https://help.obsidian.md/bases/functions) | partial | 2/3 | Date objects coerce to epoch milliseconds; existing scalar coercions remain available. |
-| BASES-FUNC-015 | P1 | [global.today](https://help.obsidian.md/bases/functions) | gap | 0/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
+| BASES-FUNC-014 | P1 | [global.number](https://help.obsidian.md/bases/functions) | supported | 3/3 | Date objects coerce to epoch milliseconds; existing scalar coercions remain available. |
+| BASES-FUNC-015 | P1 | [global.today](https://help.obsidian.md/bases/functions) | supported | 2/2 | today() returns local midnight; now() retains the clock. |
 | BASES-FUNC-016 | P1 | [global.random](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-017 | P1 | [any.isTruthy](https://help.obsidian.md/bases/functions) | supported | 2/2 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-018 | P1 | [any.isType](https://help.obsidian.md/bases/functions) | supported | 3/3 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-019 | P1 | [any.toString](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-020 | P1 | [date.date](https://help.obsidian.md/bases/functions) | gap | 0/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-021 | P1 | [date.format](https://help.obsidian.md/bases/functions) | gap | 0/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-022 | P1 | [date.time](https://help.obsidian.md/bases/functions) | gap | 0/1 | Obsidian returns HH:mm:ss; Luxon ISO time includes offsets and milliseconds. |
+| BASES-FUNC-020 | P1 | [date.date](https://help.obsidian.md/bases/functions) | supported | 2/2 | date.date() clears the clock before chained formatting. |
+| BASES-FUNC-021 | P1 | [date.format](https://help.obsidian.md/bases/functions) | supported | 2/2 | Date format uses Moment token semantics, including literals and ordinals; native SQL format remains unchanged. |
+| BASES-FUNC-022 | P1 | [date.time](https://help.obsidian.md/bases/functions) | supported | 1/1 | Date and native JavaScript Date helpers return HH:mm:ss rather than an ISO timestamp with an offset. |
 | BASES-FUNC-023 | P1 | [date.relative](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-024 | P1 | [date.isEmpty](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-025 | P1 | [string.contains](https://help.obsidian.md/bases/functions) | partial | 1/2 | functions-core.ts lowercases both operands; Obsidian follows JavaScript case sensitivity. |
@@ -83,7 +83,7 @@ Supported means all listed probes passed; partial means some passed; gap means n
 | BASES-FUNC-051 | P1 | [list.join](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-052 | P1 | [list.map](https://help.obsidian.md/bases/functions) | supported | 3/3 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-053 | P1 | [list.reduce](https://help.obsidian.md/bases/functions) | supported | 3/3 | Method reduce evaluates expression then initial value with lexical acc/value/index; native direct-helper ordering is preserved. |
-| BASES-FUNC-054 | P1 | [list.reverse](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
+| BASES-FUNC-054 | P1 | [list.reverse](https://help.obsidian.md/bases/functions) | partial | 1/2 | Return values match; documented in-place mutation remains an explicit intentional difference. |
 | BASES-FUNC-055 | P1 | [list.slice](https://help.obsidian.md/bases/functions) | supported | 3/3 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-056 | P1 | [list.sort](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-057 | P1 | [list.unique](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
@@ -124,6 +124,7 @@ These flags explain retained behavior or deferred scope. They do not turn failin
 | BASES-FUNC-025 | intentional | Keep case-insensitive text matching so existing saved filters retain their meaning. Obsidian case sensitivity remains a reported difference. Evidence: functions-core.ts contains; functions.test.ts existing-semantics regression |
 | BASES-FUNC-026 | intentional | Keep the established case-insensitive canonical alias and containsAllOf extension. Evidence: functions.test.ts registers upstream contains aliases with existing semantics |
 | BASES-FUNC-027 | intentional | Keep the established case-insensitive canonical alias and containsAnyOf extension. Evidence: functions.test.ts registers upstream contains aliases with existing semantics |
+| BASES-FUNC-054 | intentional | Retain native copy-returning reverse semantics so query transforms do not mutate indexed note metadata or their input lists. Obsidian documents in-place reverse; its mutation expectation remains a visible failing probe. Evidence: functions-core.ts reverseList; functions.test.ts input preservation; LN-BASE-048 |
 | BASES-FUNC-058 | deferred | Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity. Evidence: LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion |
 | BASES-FUNC-059 | deferred | Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity. Evidence: LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion |
 | BASES-FUNC-060 | deferred | Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity. Evidence: LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion |
@@ -139,7 +140,7 @@ Owner: lapis-plugins/packages/bases. A query has no owning-note binding in Bases
 
 ### BASES-DATE-001: Date fields and arithmetic
 
-Owner: lapis-plugins/packages/bases. Luxon values must implement the documented Bases date and duration semantics.
+Owner: lapis-plugins/packages/bases. Date fields include clock components. Date arithmetic remains explicitly unresolved; passing field probes do not establish arithmetic support.
 
 - add-month — `(date("2024-12-01") + "1M").format("YYYY-MM-DD")`: expected `"2025-01-01"`; error `Unsupported operator(+): (datetime + string)`.
 - date-difference — `number(date("2025-01-03") - date("2025-01-01"))`: expected `172800000`; actual `0`.
@@ -162,36 +163,6 @@ Owner: lapis-plugins/packages/bases. A path must resolve to a File object; retur
 Owner: lapis-plugins/packages/bases. Checks typed file resolution; display overload needs host rendering acceptance.
 
 - example-1 — `link("Notes/Beta.md").asFile().name`: expected `"Beta.md"`; error `column is not structured: string`.
-
-### BASES-FUNC-014: global.number
-
-Owner: lapis-plugins/packages/bases. Date objects coerce to epoch milliseconds; existing scalar coercions remain available.
-
-- example-3 — `number(date("1970-01-02"))`: expected `86400000`; actual `null`.
-
-### BASES-FUNC-015: global.today
-
-Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
-
-- example-1 — `today().hour`: expected `0`; error `structured type has no attribute "hour"`.
-
-### BASES-FUNC-020: date.date
-
-Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
-
-- example-1 — `date("2025-01-02T12:30:00").date()`: expected `"2025-01-02T00:00:00.000Z"`; actual `"2025-01-02T12:30:00.000Z"`.
-
-### BASES-FUNC-021: date.format
-
-Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
-
-- example-1 — `date("2025-01-02").format("YYYY-MM-DD")`: expected `"2025-01-02"`; error `no function matches "format(datetime, string)" name and argument type`.
-
-### BASES-FUNC-022: date.time
-
-Owner: lapis-plugins/packages/bases. Obsidian returns HH:mm:ss; Luxon ISO time includes offsets and milliseconds.
-
-- example-1 — `date("2025-01-02T12:30:00").time()`: expected `"12:30:00"`; error `Invalid Bases expression.`.
 
 ### BASES-FUNC-025: string.contains
 
@@ -229,6 +200,12 @@ Owner: lapis-plugins/packages/bases. String separators accept the optional split
 Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
 
 - example-1 — `(2.5).round()`: expected `3`; actual `2.5`.
+
+### BASES-FUNC-054: list.reverse
+
+Owner: lapis-plugins/packages/bases. Return values match; documented in-place mutation remains an explicit intentional difference.
+
+- documented-in-place-mutation — `[[1,2]].map([list(value).reverse(), value])`: expected `[[[2,1],[2,1]]]`; actual `[[[2,1],[1,2]]]`.
 
 ### BASES-FUNC-058: link.asFile
 

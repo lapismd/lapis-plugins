@@ -664,7 +664,7 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/syntax",
-      "notes": "Luxon values must implement the documented Bases date and duration semantics.",
+      "notes": "Date fields include clock components. Date arithmetic remains explicitly unresolved; passing field probes do not establish arithmetic support.",
       "probes": [
         {
           "id": "year",
@@ -689,6 +689,18 @@
           "mode": "expression",
           "expression": "number(date(\"2025-01-03\") - date(\"2025-01-01\"))",
           "expected": 172800000
+        },
+        {
+          "id": "hour-field",
+          "mode": "expression",
+          "expression": "date(\"2025-01-02T12:30:45\").hour",
+          "expected": 12
+        },
+        {
+          "id": "millisecond-field",
+          "mode": "expression",
+          "expression": "date(\"2025-01-02T12:30:45.123\").millisecond",
+          "expected": 123
         }
       ]
     },
@@ -1115,13 +1127,19 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/functions",
-      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "notes": "today() returns local midnight; now() retains the clock.",
       "probes": [
         {
           "id": "example-1",
           "mode": "expression",
           "expression": "today().hour",
           "expected": 0
+        },
+        {
+          "id": "midnight-clock",
+          "mode": "expression",
+          "expression": "today().time()",
+          "expected": "00:00:00"
         }
       ],
       "functions": [
@@ -1228,13 +1246,19 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/functions",
-      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "notes": "date.date() clears the clock before chained formatting.",
       "probes": [
         {
           "id": "example-1",
           "mode": "expression",
           "expression": "date(\"2025-01-02T12:30:00\").date()",
           "expected": "2025-01-02T00:00:00.000Z"
+        },
+        {
+          "id": "chained-truncation",
+          "mode": "expression",
+          "expression": "now().date().format(\"YYYY-MM-DD HH:mm:ss\")",
+          "expected": "2026-11-12 00:00:00"
         }
       ],
       "functions": [
@@ -1247,13 +1271,19 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/functions",
-      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "notes": "Date format uses Moment token semantics, including literals and ordinals; native SQL format remains unchanged.",
       "probes": [
         {
           "id": "example-1",
           "mode": "expression",
           "expression": "date(\"2025-01-02\").format(\"YYYY-MM-DD\")",
           "expected": "2025-01-02"
+        },
+        {
+          "id": "moment-tokens",
+          "mode": "expression",
+          "expression": "date(\"2025-01-02\").format(\"[On] MMMM Do, YYYY\")",
+          "expected": "On January 2nd, 2025"
         }
       ],
       "functions": [
@@ -1266,7 +1296,7 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/functions",
-      "notes": "Obsidian returns HH:mm:ss; Luxon ISO time includes offsets and milliseconds.",
+      "notes": "Date and native JavaScript Date helpers return HH:mm:ss rather than an ISO timestamp with an offset.",
       "probes": [
         {
           "id": "example-1",
@@ -2038,7 +2068,7 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/functions",
-      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "notes": "Return values match; documented in-place mutation remains an explicit intentional difference.",
       "probes": [
         {
           "id": "example-1",
@@ -2049,11 +2079,33 @@
             2,
             1
           ]
+        },
+        {
+          "id": "documented-in-place-mutation",
+          "mode": "expression",
+          "expression": "[[1,2]].map([list(value).reverse(), value])",
+          "expected": [
+            [
+              [
+                2,
+                1
+              ],
+              [
+                2,
+                1
+              ]
+            ]
+          ]
         }
       ],
       "functions": [
         "list.reverse"
-      ]
+      ],
+      "difference": {
+        "kind": "intentional",
+        "reason": "Retain native copy-returning reverse semantics so query transforms do not mutate indexed note metadata or their input lists. Obsidian documents in-place reverse; its mutation expectation remains a visible failing probe.",
+        "evidence": "functions-core.ts reverseList; functions.test.ts input preservation; LN-BASE-048"
+      }
     },
     {
       "id": "BASES-FUNC-055",

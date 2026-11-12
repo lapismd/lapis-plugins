@@ -193,6 +193,7 @@ afterAll(() => {
           .version,
         peaql: read("packages/bases/node_modules/peaql/package.json").version,
         luxon: read("packages/bases/node_modules/luxon/package.json").version,
+        moment: read("packages/bases/node_modules/moment/package.json").version,
       },
       sources: Object.fromEntries(
         [
@@ -202,6 +203,7 @@ afterAll(() => {
           "functions.ts",
           "functions-core.ts",
           "collection-functions.ts",
+          "date-functions.ts",
           "db.ts",
           "file-fields-core.ts",
         ].map((name) => [

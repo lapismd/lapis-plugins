@@ -333,8 +333,8 @@ export function relative(date: DateTime | Date) {
 
 export function time(date: DateTime | Date) {
   if (date instanceof Date) {
-    return relative(DateTime.fromJSDate(date));
+    return time(DateTime.fromJSDate(date));
   }
   if (!(date instanceof DateTime)) return;
-  return date.toISOTime();
+  return date.toFormat("HH:mm:ss");
 }

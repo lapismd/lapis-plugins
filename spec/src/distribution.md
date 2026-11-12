@@ -483,3 +483,5 @@ LN-BASE-046 ships as a separate Bases patch group; its expression compiler remai
 LN-BASE-047 is a separate value-helper patch group. Audit disposition metadata preserves the distinction between corrected defects, intentional native behavior and deferred host features; no release is implied by local validation.
 
 LN-BASE-048 collection compatibility is a separate Bases patch group delivered through normal npm ranges; private query registrations do not add public exports.
+
+LN-BASE-049 is a separate Bases patch group. Moment is a bundled registry dependency for the documented date-format language; no host import or public export is added.
