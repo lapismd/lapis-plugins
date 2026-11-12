@@ -1,6 +1,6 @@
 import { startCase, toLower } from "lodash-es";
 import { DateTime, Duration } from "luxon";
-import { Decimal, isNull } from "peaql";
+import { Decimal, isNull, parseDuration } from "peaql";
 
 export function isEmpty(obj: unknown) {
   if (obj === null || obj === undefined) return true;
@@ -8,16 +8,21 @@ export function isEmpty(obj: unknown) {
     return obj.length == 0;
   } else if (Array.isArray(obj)) {
     return obj.length == 0;
-  } else if (typeof obj === "number") {
-    return obj === 0;
-  } else if (obj instanceof Decimal) {
-    return obj.number === 0;
+  } else if (typeof obj === "number" || obj instanceof Decimal) {
+    return false;
+  } else if (
+    typeof obj === "object" &&
+    !(obj instanceof Date) &&
+    !(obj instanceof DateTime) &&
+    !(obj instanceof Duration)
+  ) {
+    return Object.keys(obj).length === 0;
   }
   return false;
 }
 
 export function isTruthy(value: unknown) {
-  return Boolean(value);
+  return Boolean(value instanceof Decimal ? value.number : value);
 }
 
 export function valueToString(value: unknown) {
@@ -76,8 +81,12 @@ export function trim(value: string) {
   return value.trim();
 }
 
-export function split(value: string, separator: string) {
-  return value.split(separator);
+export function split(
+  value: string,
+  separator: string | RegExp,
+  limit?: number
+) {
+  return value.split(separator, limit);
 }
 
 export function replace(value: string, search: string, replacement: string) {
@@ -112,11 +121,15 @@ export function floor(value: number) {
   return Math.floor(value);
 }
 
-export function list<T>(...value: T[]) {
-  return value;
+export function list<T>(value: T[]): T[];
+export function list<T>(...value: T[]): T[];
+export function list(...value: unknown[]): unknown[] {
+  return value.length === 1 && Array.isArray(value[0]) ? value[0] : value;
 }
 
 export function number(value: unknown) {
+  if (value instanceof DateTime) return value.toMillis();
+  if (value instanceof Date) return value.getTime();
   if (typeof value === "number") return value;
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : null;
@@ -171,13 +184,22 @@ export function date(value: string | number | Date | DateTime) {
   if (value instanceof DateTime) return value;
   if (value instanceof Date) return DateTime.fromJSDate(value);
   if (typeof value === "number") return DateTime.fromMillis(value);
-  return DateTime.fromISO(value);
+  const iso = DateTime.fromISO(value);
+  return iso.isValid ? iso : DateTime.fromSQL(value);
 }
 
 export function duration(value: string | number | Duration) {
   if (value instanceof Duration) return value;
   if (typeof value === "number") return Duration.fromMillis(value);
-  return Duration.fromISO(value);
+  const iso = Duration.fromISO(value);
+  if (iso.isValid) return iso;
+  // Preserve ISO durations while keeping Bases' case-sensitive M (month)
+  // distinct from m (minute) in the native interval parser.
+  return parseDuration(
+    value
+      .replace(/(\d)\s*M(?=$|[^a-zA-Z])/g, "$1 months")
+      .replace(/(\d)\s*w(?=$|[^a-zA-Z])/g, "$1 weeks")
+  );
 }
 
 export function html(value: string) {
@@ -234,7 +256,7 @@ export function asLink(value: string | { path: string }) {
 
 export function linksTo(
   value: string | { path: string },
-  target: string | { path: string },
+  target: string | { path: string }
 ) {
   return normalizeFileLike(value) === normalizeFileLike(target);
 }
@@ -242,9 +264,9 @@ export function linksTo(
 export function ifValue<TTruthy, TFalsy = null>(
   condition: unknown,
   truthy: TTruthy,
-  falsy?: TFalsy,
+  falsy?: TFalsy
 ) {
-  return condition ? truthy : (falsy ?? null);
+  return condition ? truthy : falsy ?? null;
 }
 
 export function mapItems(obj: any, items: Resolvable, expr: Resolvable) {
@@ -254,7 +276,7 @@ export function mapItems(obj: any, items: Resolvable, expr: Resolvable) {
     values = [values];
   }
   return values.map((value: any, index: number) =>
-    expr.resolve({ ...(obj || {}), value, index }),
+    expr.resolve({ ...(obj || {}), value, index })
   );
 }
 
@@ -266,7 +288,7 @@ export function filterItems(obj: any, items: Resolvable, expr: Resolvable) {
   }
   return values.filter(
     (value: any, index: number) =>
-      !!expr.resolve({ ...(obj || {}), value, index }),
+      !!expr.resolve({ ...(obj || {}), value, index })
   );
 }
 
@@ -274,7 +296,7 @@ export function reduceItems(
   obj: any,
   items: Resolvable,
   initial: Resolvable,
-  expr: Resolvable,
+  expr: Resolvable
 ) {
   let values: any = items.resolve(obj);
   if (isNull(values)) return null;

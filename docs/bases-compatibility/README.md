@@ -80,3 +80,12 @@ checked as explicit compilation-error probes, alongside the governed error story
 
 These are follow-up implementation slices. This change adds audit tooling and
 evidence; it does not alter the public plugin contract or repair the listed gaps.
+
+## Retained differences
+
+`inventory.json` may attach a reviewed `difference` with a kind, rationale and
+source evidence. `intentional` preserves an established product contract;
+`deferred` identifies a separate feature explicitly retained as future work.
+Neither flag changes expected Obsidian results, hides failing probes, or implies
+that every other unresolved gap was deliberate. Case-insensitive text matching,
+the native saved-filter model and variadic list extension remain unchanged.

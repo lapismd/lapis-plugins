@@ -67,7 +67,7 @@ export class VaultFile extends Structure {
         return context.name;
       }),
       new AttributeGetter("basename", String, (context: TFile) => {
-        return context.baseName;
+        return context.basename;
       }),
       new AttributeGetter("name", String, (context: TFile) => {
         return context.name;

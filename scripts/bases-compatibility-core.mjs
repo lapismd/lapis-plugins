@@ -40,6 +40,13 @@ export function validateInventory(inventory, upstream) {
       `Missing evidence for ${feature.id}`
     );
     assert(["P0", "P1", "P2"].includes(feature.priority));
+    if (feature.difference) {
+      assert(["intentional", "deferred"].includes(feature.difference.kind));
+      assert(
+        feature.difference.reason && feature.difference.evidence,
+        `Missing difference rationale for ${feature.id}`
+      );
+    }
     assert(
       upstream.documents.some((doc) => feature.source.startsWith(doc.url)),
       `Unknown source for ${feature.id}`
@@ -127,6 +134,24 @@ export function renderReport(report, upstream) {
         observations.length
       } | ${escape(item.notes)} |`
     );
+  }
+  const differences = report.results.filter((item) => item.difference);
+  if (differences.length) {
+    lines.push(
+      "",
+      "## Retained differences",
+      "",
+      "These flags explain retained behavior or deferred scope. They do not turn failing Obsidian expectations into passes.",
+      "",
+      "| ID | Disposition | Rationale and evidence |",
+      "| --- | --- | --- |"
+    );
+    for (const item of differences)
+      lines.push(
+        `| ${item.id} | ${item.difference.kind} | ${escape(
+          item.difference.reason
+        )} Evidence: ${escape(item.difference.evidence)} |`
+      );
   }
   lines.push("", "## Failing probes", "");
   for (const item of report.results) {

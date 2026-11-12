@@ -87,7 +87,12 @@
             "beta"
           ]
         }
-      ]
+      ],
+      "difference": {
+        "kind": "intentional",
+        "reason": "Retain the native singular filter model/write format for existing documents and integrations; import the Obsidian spelling at the read boundary.",
+        "evidence": "document-core.ts; models.ts; serializeBasesDocument; LN-BASE-003"
+      }
     },
     {
       "id": "BASES-YAML-003",
@@ -646,7 +651,12 @@
           "expression": "this.file.path",
           "expected": "Notes/Context.md"
         }
-      ]
+      ],
+      "difference": {
+        "kind": "deferred",
+        "reason": "Host-specific this binding needs an explicit owning-file context contract; do not infer it from a global App.",
+        "evidence": "LN-BASE-012; QueryController and BasesTable"
+      }
     },
     {
       "id": "BASES-DATE-001",
@@ -688,7 +698,7 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/syntax",
-      "notes": "Tests runtime metadata, not display wrappers; tags include nested frontmatter tags.",
+      "notes": "The runtime basename uses the extension-free TFile.basename field; other selected metadata fields remain unchanged.",
       "probes": [
         {
           "id": "name",
@@ -758,7 +768,12 @@
           "expression": "link(\"Notes/Beta.md\") == link(\"[[Notes/Beta.md]]\")",
           "expected": true
         }
-      ]
+      ],
+      "difference": {
+        "kind": "deferred",
+        "reason": "Typed link/file resolution requires the complete host-owned value-wrapper contract, not a string approximation.",
+        "evidence": "LN-BASE-012; functions-core.ts; bases.svelte.ts"
+      }
     },
     {
       "id": "BASES-FUNC-001",
@@ -785,7 +800,7 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/functions",
-      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "notes": "Accept ISO and documented space-separated date/time strings, preserving existing native and epoch constructors.",
       "probes": [
         {
           "id": "example-1",
@@ -810,7 +825,7 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/functions",
-      "notes": "Obsidian shorthand units differ from Luxon ISO durations.",
+      "notes": "Accept documented shorthand durations, distinguishing M (month) from m (minute), while retaining native ISO durations.",
       "probes": [
         {
           "id": "example-1",
@@ -823,6 +838,12 @@
           "mode": "expression",
           "expression": "duration(\"2 hours\")",
           "expected": 7200000
+        },
+        {
+          "id": "short-week",
+          "mode": "expression",
+          "expression": "duration(\"1w\")",
+          "expected": 604800000
         }
       ],
       "functions": [
@@ -846,7 +867,12 @@
       ],
       "functions": [
         "global.file"
-      ]
+      ],
+      "difference": {
+        "kind": "deferred",
+        "reason": "Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity.",
+        "evidence": "LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion"
+      }
     },
     {
       "id": "BASES-FUNC-005",
@@ -862,6 +888,11 @@
       "review": {
         "evidence": "functions.ts returns scalar strings for html/image and a local Icon class; bases.svelte.ts converts these via generic value wrappers.",
         "acceptance": "Mount a governed formula cell and verify typed HTML, image or icon rendering and safe teardown."
+      },
+      "difference": {
+        "kind": "deferred",
+        "reason": "Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity.",
+        "evidence": "LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion"
       }
     },
     {
@@ -903,6 +934,11 @@
       "review": {
         "evidence": "functions.ts returns scalar strings for html/image and a local Icon class; bases.svelte.ts converts these via generic value wrappers.",
         "acceptance": "Mount a governed formula cell and verify typed HTML, image or icon rendering and safe teardown."
+      },
+      "difference": {
+        "kind": "deferred",
+        "reason": "Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity.",
+        "evidence": "LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion"
       }
     },
     {
@@ -919,6 +955,11 @@
       "review": {
         "evidence": "functions.ts returns scalar strings for html/image and a local Icon class; bases.svelte.ts converts these via generic value wrappers.",
         "acceptance": "Mount a governed formula cell and verify typed HTML, image or icon rendering and safe teardown."
+      },
+      "difference": {
+        "kind": "deferred",
+        "reason": "Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity.",
+        "evidence": "LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion"
       }
     },
     {
@@ -938,7 +979,12 @@
       ],
       "functions": [
         "global.link"
-      ]
+      ],
+      "difference": {
+        "kind": "deferred",
+        "reason": "Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity.",
+        "evidence": "LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion"
+      }
     },
     {
       "id": "BASES-FUNC-010",
@@ -968,7 +1014,12 @@
       ],
       "functions": [
         "global.list"
-      ]
+      ],
+      "difference": {
+        "kind": "intentional",
+        "reason": "Keep the native variadic list extension in addition to single-list preservation.",
+        "evidence": "functions.ts VARARG registration; functions.test.ts list(a,b,c)"
+      }
     },
     {
       "id": "BASES-FUNC-011",
@@ -1033,7 +1084,7 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/functions",
-      "notes": "Date coercion must return epoch milliseconds.",
+      "notes": "Date objects coerce to epoch milliseconds; existing scalar coercions remain available.",
       "probes": [
         {
           "id": "example-1",
@@ -1289,7 +1340,12 @@
       ],
       "functions": [
         "string.contains"
-      ]
+      ],
+      "difference": {
+        "kind": "intentional",
+        "reason": "Keep case-insensitive text matching so existing saved filters retain their meaning. Obsidian case sensitivity remains a reported difference.",
+        "evidence": "functions-core.ts contains; functions.test.ts existing-semantics regression"
+      }
     },
     {
       "id": "BASES-FUNC-026",
@@ -1314,7 +1370,12 @@
       ],
       "functions": [
         "string.containsAll"
-      ]
+      ],
+      "difference": {
+        "kind": "intentional",
+        "reason": "Keep the established case-insensitive canonical alias and containsAllOf extension.",
+        "evidence": "functions.test.ts registers upstream contains aliases with existing semantics"
+      }
     },
     {
       "id": "BASES-FUNC-027",
@@ -1339,7 +1400,12 @@
       ],
       "functions": [
         "string.containsAny"
-      ]
+      ],
+      "difference": {
+        "kind": "intentional",
+        "reason": "Keep the established case-insensitive canonical alias and containsAnyOf extension.",
+        "evidence": "functions.test.ts registers upstream contains aliases with existing semantics"
+      }
     },
     {
       "id": "BASES-FUNC-028",
@@ -1504,7 +1570,7 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/functions",
-      "notes": "Check optional limit and RegExp overloads, not only the two-argument string form.",
+      "notes": "String separators accept the optional split limit. Regular-expression literal parsing remains an unresolved gap.",
       "probes": [
         {
           "id": "example-1",
@@ -1660,7 +1726,7 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/functions",
-      "notes": "A present numeric zero is not empty.",
+      "notes": "Present zero values are not empty; missing values still are.",
       "probes": [
         {
           "id": "example-1",
@@ -2038,7 +2104,12 @@
       ],
       "functions": [
         "link.asFile"
-      ]
+      ],
+      "difference": {
+        "kind": "deferred",
+        "reason": "Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity.",
+        "evidence": "LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion"
+      }
     },
     {
       "id": "BASES-FUNC-059",
@@ -2057,7 +2128,12 @@
       ],
       "functions": [
         "link.linksTo"
-      ]
+      ],
+      "difference": {
+        "kind": "deferred",
+        "reason": "Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity.",
+        "evidence": "LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion"
+      }
     },
     {
       "id": "BASES-FUNC-060",
@@ -2076,7 +2152,12 @@
       ],
       "functions": [
         "file.asLink"
-      ]
+      ],
+      "difference": {
+        "kind": "deferred",
+        "reason": "Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity.",
+        "evidence": "LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion"
+      }
     },
     {
       "id": "BASES-FUNC-061",
@@ -2184,7 +2265,7 @@
       "priority": "P1",
       "owner": "lapis-plugins/packages/bases",
       "source": "https://help.obsidian.md/bases/functions",
-      "notes": "Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.",
+      "notes": "Plain objects with no own properties are empty; date and duration objects remain non-empty.",
       "probes": [
         {
           "id": "example-1",
@@ -2308,6 +2389,11 @@
       "review": {
         "evidence": "src/lib/bases-view/map-view/view.svelte",
         "acceptance": "Provide a real map provider and test geospatial data, navigation and disposal."
+      },
+      "difference": {
+        "kind": "deferred",
+        "reason": "The current product deliberately renders map-unavailable until a real provider is supplied.",
+        "evidence": "LN-BASE-005/012; map-view/view.svelte"
       }
     },
     {

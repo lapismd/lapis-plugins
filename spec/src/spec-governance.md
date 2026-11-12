@@ -580,3 +580,5 @@ manual acceptance remains required for unexecuted browser and host behavior.
 LN-BASE-003/004 regressions cover previously discarded filters and premature candidate limits. Compatibility report baselines may advance only after exact expected results pass; unresolved or deliberate differences remain explicit.
 
 LN-BASE-046 query checks retain every earlier passing conformance probe. New expected outcomes are reviewed alongside exact regression and invalid-formula recovery evidence.
+
+Under LN-BASE-045/047, intentional/deferred audit labels MUST retain source evidence and rationale. They MUST NOT remove Obsidian expectations or reclassify failing probes as passing.

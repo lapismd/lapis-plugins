@@ -473,3 +473,5 @@ An independent advisory job MUST compare current upstream documentation with the
 Imported Bases filter fixes retain normal npm patch delivery and the existing model/write format. LN-BASE-003/004 qualification distinguishes source and real-App catalog evidence from later registry consumer adoption.
 
 LN-BASE-046 ships as a separate Bases patch group; its expression compiler remains private and the public document model/write format is unchanged.
+
+LN-BASE-047 is a separate value-helper patch group. Audit disposition metadata preserves the distinction between corrected defects, intentional native behavior and deferred host features; no release is implied by local validation.

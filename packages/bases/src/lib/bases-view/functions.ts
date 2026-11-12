@@ -151,6 +151,7 @@ createFunction("title", [String], String, title, true);
 
 createFunction("trim", [String], String, trim, true);
 createFunction("split", [String, String], [String], split, true);
+createFunction("split", [String, String, Number], [String], split, true);
 createFunction("replace", [String, String, String], String, replace, true);
 createFunction("repeat", [String, Number], String, repeat, true);
 createFunction("escapeHTML", [String], String, escapeHTML, true);

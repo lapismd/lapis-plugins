@@ -77,3 +77,29 @@ test("report exposes failed observations and does not count manual reviews as pa
   assert.match(markdown, /expected.*one.*actual.*two/);
   assert.match(markdown, /review-required \| 0\/0/);
 });
+
+test("intentional differences retain failed expectations and require rationale", () => {
+  const annotated = structuredClone(inventory);
+  annotated.features[0].difference = {
+    kind: "intentional",
+    reason: "Preserve native writes",
+    evidence: "document-core.ts",
+  };
+  validateInventory(annotated, upstream);
+  const item = {
+    ...annotated.features[0],
+    status: "partial",
+    observations: [
+      { id: "difference", pass: false, expected: true, actual: false },
+    ],
+  };
+  const report = renderReport({ results: [item] }, upstream);
+  assert.match(report, /0 supported, 1 partial/);
+  assert.match(report, /Retained differences/);
+  assert.match(report, /expected.*true.*actual.*false/);
+  annotated.features[0].difference.evidence = "";
+  assert.throws(
+    () => validateInventory(annotated, upstream),
+    /Missing difference rationale/
+  );
+});

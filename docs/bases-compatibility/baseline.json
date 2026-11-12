@@ -190,7 +190,7 @@
     },
     {
       "id": "basename",
-      "pass": false
+      "pass": true
     },
     {
       "id": "path",
@@ -236,17 +236,21 @@
     },
     {
       "id": "example-2",
-      "pass": false
+      "pass": true
     }
   ],
   "BASES-FUNC-003": [
     {
       "id": "example-1",
-      "pass": false
+      "pass": true
     },
     {
       "id": "example-2",
-      "pass": false
+      "pass": true
+    },
+    {
+      "id": "short-week",
+      "pass": true
     }
   ],
   "BASES-FUNC-004": [
@@ -278,7 +282,7 @@
     },
     {
       "id": "example-2",
-      "pass": false
+      "pass": true
     }
   ],
   "BASES-FUNC-011": [
@@ -480,7 +484,7 @@
     },
     {
       "id": "example-2",
-      "pass": false
+      "pass": true
     },
     {
       "id": "example-3",
@@ -526,7 +530,7 @@
   "BASES-FUNC-042": [
     {
       "id": "example-1",
-      "pass": false
+      "pass": true
     },
     {
       "id": "example-2",
@@ -704,7 +708,7 @@
     },
     {
       "id": "example-2",
-      "pass": false
+      "pass": true
     }
   ],
   "BASES-FUNC-066": [

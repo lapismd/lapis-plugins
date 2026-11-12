@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest";
+import { Decimal } from "peaql";
 import {
   ceil,
   containsAll,
@@ -15,6 +16,7 @@ import {
   ifValue,
   isType,
   isTruthy,
+  isEmpty,
   join,
   keys,
   length,
@@ -45,6 +47,26 @@ import {
 } from "./functions-core";
 
 describe("Bases runtime functions", () => {
+  test("distinguishes present zero values and empty objects", () => {
+    expect(isEmpty(0)).toBe(false);
+    expect(isEmpty(new Decimal("0"))).toBe(false);
+    expect(isEmpty({})).toBe(true);
+    expect(isEmpty({ score: 0 })).toBe(false);
+    expect(isTruthy(new Decimal("0"))).toBe(false);
+  });
+
+  test("preserves an existing list and accepts documented constructor values", () => {
+    const input = [1, 2];
+    expect(list(input)).toBe(input);
+    expect(date("2025-01-02 12:30:00").isValid).toBe(true);
+    expect(duration("1d").as("days")).toBe(1);
+    expect(duration("1w").as("days")).toBe(7);
+    expect(duration("1M").months).toBe(1);
+    expect(duration("1m").minutes).toBe(1);
+    expect(number(date("1970-01-02T00:00:00Z"))).toBe(86400000);
+    expect(split("a,b,c", ",", 2)).toEqual(["a", "b"]);
+  });
+
   test("registers upstream contains aliases with existing semantics", () => {
     expect(containsAny("Hello World", "world", "x")).toBe(true);
     expect(containsAll("Hello World", "hello", "world")).toBe(true);
@@ -59,7 +81,7 @@ describe("Bases runtime functions", () => {
     expect(reverseString("stressed")).toBe("desserts");
     expect(sliceString("abcdef", 1, 4)).toBe("bcd");
     expect(escapeHTML(`<a href="x">O'Hai</a>`)).toBe(
-      "&lt;a href=&quot;x&quot;&gt;O&#39;Hai&lt;/a&gt;",
+      "&lt;a href=&quot;x&quot;&gt;O&#39;Hai&lt;/a&gt;"
     );
     expect(file("[[Folder/Note]]")).toBe("Folder/Note");
     expect(html("<strong>note</strong>")).toBe("<strong>note</strong>");
@@ -119,12 +141,12 @@ describe("Bases runtime functions", () => {
     expect(
       mapItems({}, items, {
         resolve: ({ value }: { value: number }) => value * 2,
-      }),
+      })
     ).toEqual([2, 4, 6, 8]);
     expect(
       filterItems({}, items, {
         resolve: ({ value }: { value: number }) => value % 2 === 0,
-      }),
+      })
     ).toEqual([2, 4]);
     expect(
       reduceItems(
@@ -139,8 +161,8 @@ describe("Bases runtime functions", () => {
             accumulator: number;
             value: number;
           }) => accumulator + value,
-        },
-      ),
+        }
+      )
     ).toBe(10);
   });
 });

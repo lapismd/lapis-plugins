@@ -70,3 +70,37 @@ expanded exact query/parser target passes 66 tests. The audit retains every
 previous passing probe and now reports 41 supported / 14 partial / 25 gaps / 9
 manual areas after adding explicit cycle-error probes. The complete Bases family reports 31 passes and only the same three accepted Kanban failures (34 cases). Three underlying UI fixtures were added to the governed catalog;
 no visual baselines were generated or updated.
+
+## Group 3: value semantics and retained differences
+
+Canonical contract: LN-BASE-047.
+
+The exact functions target initially had 2 failing regression cases / 7 passing;
+all 9 now pass. Present numeric zero and Decimal zero are not empty; empty plain
+objects are. Decimal truthiness uses its numeric value. A single list is retained
+without nesting or copying, and native variadic construction remains supported.
+ISO and space-separated date/time inputs work, shorthand durations distinguish
+M (month) from m (minute), dates coerce to epoch milliseconds, split honors a
+string-separator limit, and file.basename uses the extension-free public field.
+
+The inventory now annotates retained differences with rationale and evidence.
+Case-insensitive contains aliases are supported by an existing explicit regression
+and deliberately remain unchanged. Native filter writes and variadic lists are
+retained extensions. Typed file/link/rendered-value wrappers, owning-file this
+binding and real maps remain deferred features under LN-BASE-012. Other remaining
+gaps are not presumed deliberate. A tooling regression proves that these labels
+do not convert failed expectations into passes or hide the observed mismatch.
+
+After the source fixes, all earlier passing probes remain passing. The audit
+reports 47 supported / 9 partial / 24 gaps / 9 manual areas; final suite and remote
+status are recorded after completion below.
+
+Group 3 source validation: all 18 workspace check/test tasks and 17 build tasks
+pass, including 216 Bases unit tests, 81 compatibility checks and 39 focused
+release/audit/CI tooling tests. Audit has no new upstream documentation drift.
+The full unsharded Storybook run is in progress; interaction status remains
+partial pending its final result and the three accepted Kanban failures.
+
+An additional duration edge regression reproduced a missing `w` alias (1 failed /
+8 passed in the exact functions target). Normalizing it to the existing native
+week unit fixes the case; a third duration conformance probe now covers `1w`.

@@ -2,7 +2,7 @@
 
 Documentation reviewed: 2026-11-12. This is documentation-derived acceptance against Lapis source, not a live Obsidian differential test.
 
-41 supported, 14 partial, 25 gaps, 9 requiring manual review. Counts describe the selected probes, not a percentage of product parity.
+47 supported, 9 partial, 24 gaps, 9 requiring manual review. Counts describe the selected probes, not a percentage of product parity.
 
 Run `pnpm audit:bases` to check behavior and report freshness; `pnpm audit:bases:update` explicitly accepts changed results. Run `pnpm audit:bases:upstream` to detect upstream documentation drift. See [audit workflow](README.md).
 
@@ -28,22 +28,22 @@ Supported means all listed probes passed; partial means some passed; gap means n
 | BASES-FORMULA-002 | P1 | [Formula chains and formula sorting](https://help.obsidian.md/bases/syntax) | supported | 2/2 | Formula chains preserve arithmetic precedence and both formula-ID spellings sort by evaluated values. |
 | BASES-CONTEXT-001 | P1 | [this binding](https://help.obsidian.md/bases/syntax) | gap | 0/1 | A query has no owning-note binding in BasesTable or QueryController; real embed ownership needs a host fixture. |
 | BASES-DATE-001 | P1 | [Date fields and arithmetic](https://help.obsidian.md/bases/syntax) | partial | 2/4 | Luxon values must implement the documented Bases date and duration semantics. |
-| BASES-FILE-001 | P1 | [File fields](https://help.obsidian.md/bases/syntax) | partial | 6/7 | Tests runtime metadata, not display wrappers; tags include nested frontmatter tags. |
+| BASES-FILE-001 | P1 | [File fields](https://help.obsidian.md/bases/syntax) | supported | 7/7 | The runtime basename uses the extension-free TFile.basename field; other selected metadata fields remain unchanged. |
 | BASES-LINK-001 | P1 | [Frontmatter links resolve as typed links](https://help.obsidian.md/bases/syntax) | gap | 0/2 | Documented wikilinks support asFile and file comparisons; current metadata keeps raw strings. |
 | BASES-FUNC-001 | P1 | [global.escapeHTML](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-002 | P1 | [global.date](https://help.obsidian.md/bases/functions) | partial | 1/2 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-003 | P1 | [global.duration](https://help.obsidian.md/bases/functions) | gap | 0/2 | Obsidian shorthand units differ from Luxon ISO durations. |
+| BASES-FUNC-002 | P1 | [global.date](https://help.obsidian.md/bases/functions) | supported | 2/2 | Accept ISO and documented space-separated date/time strings, preserving existing native and epoch constructors. |
+| BASES-FUNC-003 | P1 | [global.duration](https://help.obsidian.md/bases/functions) | supported | 3/3 | Accept documented shorthand durations, distinguishing M (month) from m (minute), while retaining native ISO durations. |
 | BASES-FUNC-004 | P1 | [global.file](https://help.obsidian.md/bases/functions) | gap | 0/1 | A path must resolve to a File object; returning the path text is insufficient. |
 | BASES-FUNC-005 | P1 | [global.html](https://help.obsidian.md/bases/functions) | review-required | 0/0 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-006 | P1 | [global.if](https://help.obsidian.md/bases/functions) | supported | 2/2 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-007 | P1 | [global.image](https://help.obsidian.md/bases/functions) | review-required | 0/0 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-008 | P1 | [global.icon](https://help.obsidian.md/bases/functions) | review-required | 0/0 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-009 | P1 | [global.link](https://help.obsidian.md/bases/functions) | gap | 0/1 | Checks typed file resolution; display overload needs host rendering acceptance. |
-| BASES-FUNC-010 | P1 | [global.list](https://help.obsidian.md/bases/functions) | partial | 1/2 | An existing list must remain unchanged rather than becoming a nested list. |
+| BASES-FUNC-010 | P1 | [global.list](https://help.obsidian.md/bases/functions) | supported | 2/2 | An existing list must remain unchanged rather than becoming a nested list. |
 | BASES-FUNC-011 | P1 | [global.max](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-012 | P1 | [global.min](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-013 | P1 | [global.now](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-014 | P1 | [global.number](https://help.obsidian.md/bases/functions) | partial | 2/3 | Date coercion must return epoch milliseconds. |
+| BASES-FUNC-014 | P1 | [global.number](https://help.obsidian.md/bases/functions) | partial | 2/3 | Date objects coerce to epoch milliseconds; existing scalar coercions remain available. |
 | BASES-FUNC-015 | P1 | [global.today](https://help.obsidian.md/bases/functions) | gap | 0/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-016 | P1 | [global.random](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-017 | P1 | [any.isTruthy](https://help.obsidian.md/bases/functions) | supported | 2/2 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
@@ -64,14 +64,14 @@ Supported means all listed probes passed; partial means some passed; gap means n
 | BASES-FUNC-032 | P1 | [string.repeat](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-033 | P1 | [string.reverse](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-034 | P1 | [string.slice](https://help.obsidian.md/bases/functions) | supported | 2/2 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-035 | P1 | [string.split](https://help.obsidian.md/bases/functions) | partial | 1/3 | Check optional limit and RegExp overloads, not only the two-argument string form. |
+| BASES-FUNC-035 | P1 | [string.split](https://help.obsidian.md/bases/functions) | partial | 2/3 | String separators accept the optional split limit. Regular-expression literal parsing remains an unresolved gap. |
 | BASES-FUNC-036 | P1 | [string.startsWith](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-037 | P1 | [string.title](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-038 | P1 | [string.trim](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-039 | P1 | [number.abs](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-040 | P1 | [number.ceil](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-041 | P1 | [number.floor](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-042 | P1 | [number.isEmpty](https://help.obsidian.md/bases/functions) | partial | 1/2 | A present numeric zero is not empty. |
+| BASES-FUNC-042 | P1 | [number.isEmpty](https://help.obsidian.md/bases/functions) | supported | 2/2 | Present zero values are not empty; missing values still are. |
 | BASES-FUNC-043 | P1 | [number.round](https://help.obsidian.md/bases/functions) | partial | 1/2 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-044 | P1 | [number.toFixed](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-045 | P1 | [list.contains](https://help.obsidian.md/bases/functions) | gap | 0/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
@@ -94,7 +94,7 @@ Supported means all listed probes passed; partial means some passed; gap means n
 | BASES-FUNC-062 | P1 | [file.hasProperty](https://help.obsidian.md/bases/functions) | supported | 2/2 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-063 | P1 | [file.hasTag](https://help.obsidian.md/bases/functions) | supported | 2/2 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-064 | P1 | [file.inFolder](https://help.obsidian.md/bases/functions) | supported | 2/2 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
-| BASES-FUNC-065 | P1 | [object.isEmpty](https://help.obsidian.md/bases/functions) | partial | 1/2 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
+| BASES-FUNC-065 | P1 | [object.isEmpty](https://help.obsidian.md/bases/functions) | supported | 2/2 | Plain objects with no own properties are empty; date and duration objects remain non-empty. |
 | BASES-FUNC-066 | P1 | [object.keys](https://help.obsidian.md/bases/functions) | supported | 1/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-067 | P1 | [object.values](https://help.obsidian.md/bases/functions) | gap | 0/1 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
 | BASES-FUNC-068 | P1 | [regular-expression.matches](https://help.obsidian.md/bases/functions) | gap | 0/2 | Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior. |
@@ -105,6 +105,29 @@ Supported means all listed probes passed; partial means some passed; gap means n
 | BASES-VIEW-005 | P2 | [Embeds and named-view fragments](https://help.obsidian.md/bases/views) | review-required | 0/0 | Read-only file and fenced embeds exist; Obsidian ![[File.base#View]] selection requires focused host acceptance. |
 | BASES-VIEW-006 | P2 | [Search, edit, create, export and clipboard](https://help.obsidian.md/bases/views) | review-required | 0/0 | Lapis has governed workflow and editable-cell stories; copying formatted results and complete Obsidian workflow parity are unverified. |
 | BASES-FORMULA-003 | P1 | [Circular references and diagnostics](https://help.obsidian.md/bases/syntax) | supported | 2/2 | The execution compiler rejects circular and unknown formula references; the UI retains its editing toolbar and shows a bounded error. Source and governed story regressions cover this behavior. |
+
+## Retained differences
+
+These flags explain retained behavior or deferred scope. They do not turn failing Obsidian expectations into passes.
+
+| ID | Disposition | Rationale and evidence |
+| --- | --- | --- |
+| BASES-YAML-002 | intentional | Retain the native singular filter model/write format for existing documents and integrations; import the Obsidian spelling at the read boundary. Evidence: document-core.ts; models.ts; serializeBasesDocument; LN-BASE-003 |
+| BASES-CONTEXT-001 | deferred | Host-specific this binding needs an explicit owning-file context contract; do not infer it from a global App. Evidence: LN-BASE-012; QueryController and BasesTable |
+| BASES-LINK-001 | deferred | Typed link/file resolution requires the complete host-owned value-wrapper contract, not a string approximation. Evidence: LN-BASE-012; functions-core.ts; bases.svelte.ts |
+| BASES-FUNC-004 | deferred | Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity. Evidence: LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion |
+| BASES-FUNC-005 | deferred | Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity. Evidence: LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion |
+| BASES-FUNC-007 | deferred | Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity. Evidence: LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion |
+| BASES-FUNC-008 | deferred | Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity. Evidence: LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion |
+| BASES-FUNC-009 | deferred | Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity. Evidence: LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion |
+| BASES-FUNC-010 | intentional | Keep the native variadic list extension in addition to single-list preservation. Evidence: functions.ts VARARG registration; functions.test.ts list(a,b,c) |
+| BASES-FUNC-025 | intentional | Keep case-insensitive text matching so existing saved filters retain their meaning. Obsidian case sensitivity remains a reported difference. Evidence: functions-core.ts contains; functions.test.ts existing-semantics regression |
+| BASES-FUNC-026 | intentional | Keep the established case-insensitive canonical alias and containsAllOf extension. Evidence: functions.test.ts registers upstream contains aliases with existing semantics |
+| BASES-FUNC-027 | intentional | Keep the established case-insensitive canonical alias and containsAnyOf extension. Evidence: functions.test.ts registers upstream contains aliases with existing semantics |
+| BASES-FUNC-058 | deferred | Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity. Evidence: LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion |
+| BASES-FUNC-059 | deferred | Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity. Evidence: LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion |
+| BASES-FUNC-060 | deferred | Complete typed file/link or rendered-value wrappers are a separate host integration feature. Existing scalar helpers are retained without claiming wrapper parity. Evidence: LN-BASE-012; functions-core.ts and bases.svelte.ts value conversion |
+| BASES-VIEW-002 | deferred | The current product deliberately renders map-unavailable until a real provider is supplied. Evidence: LN-BASE-005/012; map-view/view.svelte |
 
 ## Failing probes
 
@@ -121,31 +144,12 @@ Owner: lapis-plugins/packages/bases. Luxon values must implement the documented 
 - add-month — `(date("2024-12-01") + "1M").format("YYYY-MM-DD")`: expected `"2025-01-01"`; error `Unsupported operator(+): (datetime + string)`.
 - date-difference — `number(date("2025-01-03") - date("2025-01-01"))`: expected `172800000`; actual `0`.
 
-### BASES-FILE-001: File fields
-
-Owner: lapis-plugins/packages/bases. Tests runtime metadata, not display wrappers; tags include nested frontmatter tags.
-
-- basename — `file.basename`: expected `"Alpha"`; actual `"Alpha.md"`.
-
 ### BASES-LINK-001: Frontmatter links resolve as typed links
 
 Owner: lapis-plugins/packages/bases. Documented wikilinks support asFile and file comparisons; current metadata keeps raw strings.
 
 - frontmatter-link — `authors[0].asFile().name`: expected `"Beta.md"`; error `Invalid Bases expression.`.
 - link-equality — `link("Notes/Beta.md") == link("[[Notes/Beta.md]]")`: expected `true`; actual `false`.
-
-### BASES-FUNC-002: global.date
-
-Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
-
-- example-2 — `date("2025-01-02 12:30:00")`: expected `"2025-01-02T12:30:00.000Z"`; actual `null`.
-
-### BASES-FUNC-003: global.duration
-
-Owner: lapis-plugins/packages/bases. Obsidian shorthand units differ from Luxon ISO durations.
-
-- example-1 — `duration("1d")`: expected `86400000`; actual `null`.
-- example-2 — `duration("2 hours")`: expected `7200000`; actual `null`.
 
 ### BASES-FUNC-004: global.file
 
@@ -159,15 +163,9 @@ Owner: lapis-plugins/packages/bases. Checks typed file resolution; display overl
 
 - example-1 — `link("Notes/Beta.md").asFile().name`: expected `"Beta.md"`; error `column is not structured: string`.
 
-### BASES-FUNC-010: global.list
-
-Owner: lapis-plugins/packages/bases. An existing list must remain unchanged rather than becoming a nested list.
-
-- example-2 — `list([1,2])`: expected `[1,2]`; actual `[[1,2]]`.
-
 ### BASES-FUNC-014: global.number
 
-Owner: lapis-plugins/packages/bases. Date coercion must return epoch milliseconds.
+Owner: lapis-plugins/packages/bases. Date objects coerce to epoch milliseconds; existing scalar coercions remain available.
 
 - example-3 — `number(date("1970-01-02"))`: expected `86400000`; actual `null`.
 
@@ -222,16 +220,9 @@ Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the select
 
 ### BASES-FUNC-035: string.split
 
-Owner: lapis-plugins/packages/bases. Check optional limit and RegExp overloads, not only the two-argument string form.
+Owner: lapis-plugins/packages/bases. String separators accept the optional split limit. Regular-expression literal parsing remains an unresolved gap.
 
-- example-2 — `"a,b,c".split(",",2)`: expected `["a","b"]`; error `no function matches "split(string, string, integer)" name and argument type`.
 - example-3 — `"a,b,c".split(/,/)`: expected `["a","b","c"]`; error `Invalid Bases expression.`.
-
-### BASES-FUNC-042: number.isEmpty
-
-Owner: lapis-plugins/packages/bases. A present numeric zero is not empty.
-
-- example-1 — `(0).isEmpty()`: expected `false`; actual `true`.
 
 ### BASES-FUNC-043: number.round
 
@@ -329,12 +320,6 @@ Owner: lapis-plugins/packages/bases. Must inspect the source file's outgoing lin
 Owner: lapis-plugins/packages/bases. Requires a typed link with resolution rather than a wikilink string.
 
 - example-1 — `file.asLink().asFile().name`: expected `"Alpha.md"`; error `no function matches "asLink(tfile)" name and argument type`.
-
-### BASES-FUNC-065: object.isEmpty
-
-Owner: lapis-plugins/packages/bases. Real query-engine acceptance for the selected examples; does not establish all overloads, null semantics or rendered behavior.
-
-- example-2 — `empty.isEmpty()`: expected `true`; actual `false`.
 
 ### BASES-FUNC-067: object.values
 
