@@ -14,6 +14,7 @@
   import Clipboard from "@lucide/svelte/icons/clipboard";
   import CopyPlus from "@lucide/svelte/icons/copy-plus";
   import { readCanvasClipboard, writeCanvasClipboard } from "../lib/canvas-clipboard";
+  import { createCanvasLongPress } from "../lib/canvas-long-press";
   import type { CanvasBoardController } from "../lib/canvas-board-controller";
   import { canvasDropTargets, createCanvasCard, pasteCanvas, selectedCanvas } from "../lib/canvas-authoring";
   import type { FlowCanvasNode, FlowCanvasEdge, NodeType } from "../lib/json-canvas";
@@ -168,6 +169,14 @@
   $effect(() => {
     if (!surface) return;
     const target = surface;
+    const hold = createCanvasLongPress((point) => { contextPoint = point; }, () => !inputBlocked && !dialog?.open);
+    const start = (event: PointerEvent) => hold.start(event, event.target instanceof Element && event.target.classList.contains("svelte-flow__pane"));
+    const move = (event: PointerEvent) => hold.move(event);
+    const end = (event: PointerEvent) => hold.end(event);
+    target.addEventListener("pointerdown", start, true);
+    target.addEventListener("pointermove", move, true);
+    target.ownerDocument.addEventListener("pointerup", end, true);
+    target.ownerDocument.addEventListener("pointercancel", end, true);
     const copy = (event: ClipboardEvent) => copyEvent(event);
     const cut = (event: ClipboardEvent) => copyEvent(event, true);
     const dragover = (event: DragEvent) => { if (!dialog?.open && !editing(event.target)) event.preventDefault(); };
@@ -178,6 +187,11 @@
     target.addEventListener("dragover", dragover, true);
     target.addEventListener("drop", drop, true);
     return () => {
+      hold.dispose();
+      target.removeEventListener("pointerdown", start, true);
+      target.removeEventListener("pointermove", move, true);
+      target.ownerDocument.removeEventListener("pointerup", end, true);
+      target.ownerDocument.removeEventListener("pointercancel", end, true);
       target.removeEventListener("keydown", keyboard);
       target.removeEventListener("copy", copy);
       target.removeEventListener("cut", cut);

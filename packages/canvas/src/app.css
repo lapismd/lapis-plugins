@@ -1139,6 +1139,25 @@
   transform: translate(-50%, -50%);
 }
 
+@media (hover: none), (pointer: coarse) {
+  .canvas-node-shell.selected .canvas-node-handle-source,
+  .canvas-view-surface:has(.canvas-node-handle.source.connectingfrom) .canvas-node-handle.target {
+    width: 44px;
+    height: 44px;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all !important;
+  }
+  .canvas-node-shell .canvas-node-handle-top { transform: translate(-50%, -50%); }
+  .canvas-node-shell .canvas-node-handle-bottom { transform: translate(-50%, 50%); }
+  .canvas-node-shell .canvas-node-handle-right { transform: translate(50%, -50%); }
+  .canvas-node-shell .canvas-node-handle-left { transform: translate(-50%, -50%); }
+  .canvas-node-shell .canvas-node-handle::before { left: 50%; top: 50%; transform: translate(-50%, -50%); }
+  .canvas-node-shell.selected .canvas-node-resize-handle { width: 44px; height: 44px; border: 2px solid var(--canvas-readable-indicator, var(--interactive-accent)) !important; background: var(--canvas-readable-surface, var(--background-primary)) !important; }
+  .canvas-node-shell.selected .canvas-card-edit-button { opacity: 1; min-height: 44px; min-width: 44px; }
+  .canvas-view-root :is(.canvas-node-toolbar-button, .canvas-authoring button, .canvas-navigation button, .canvas-navigation select) { min-height: 44px; min-width: 44px; }
+}
+
 .canvas-view-surface :global(.canvas-flow-edge-path),
 .canvas-view-surface :global(.canvas-flow-edge-glow) {
   vector-effect: non-scaling-stroke;

@@ -600,3 +600,5 @@ Under LN-BASE-045/047, intentional/deferred audit labels MUST retain source evid
 LN-BASE-048 retains original failing expectations and adds callback scope evidence; explicit audit updates must preserve every previously passing probe.
 
 LN-BASE-049 shares strict syntax parsing between execution and editor drafts without requiring formula definitions during syntax validation. Audit results retain original date-arithmetic gaps.
+
+Canvas touch gestures and explicit selection remain plugin-owned under LN-CANVAS-051/052; native acceptance must drive real touch input.

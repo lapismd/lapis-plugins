@@ -21,7 +21,7 @@ export const PointerConnections: Story = {
   render: () => ({ Component: ViewingPanelDemo, props: { layout: "middle-top-tabs", canvasPath: "Connections.canvas", files: { "Connections.canvas": JSON.stringify(input) } } }),
   play: async ({ canvasElement }) => {
     await waitFor(() => expect(canvasElement.querySelector('.svelte-flow__node[data-id="a"]')).toBeVisible(), { timeout: 30_000 });
-    expect(canvasElement.querySelectorAll(".svelte-flow__edge")).toHaveLength(1);
+    await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__edge")).toHaveLength(1));
   },
 };
 export const EndpointEditing: Story = {

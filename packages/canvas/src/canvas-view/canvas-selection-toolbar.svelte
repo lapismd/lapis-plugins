@@ -16,7 +16,6 @@
   import {
     PRESET_COLORS,
     createFlowNode,
-    createNodeStyle,
     type FlowCanvasNode,
   } from "../lib/json-canvas";
 
@@ -135,10 +134,8 @@
       y: Math.round(bounds.y - GROUP_PADDING_TOP),
     });
 
-    groupNode.style = createNodeStyle(
-      Math.round(bounds.width + GROUP_PADDING_X * 2),
-      Math.round(bounds.height + GROUP_PADDING_TOP + GROUP_PADDING_BOTTOM),
-    );
+    groupNode.width = Math.round(bounds.width + GROUP_PADDING_X * 2);
+    groupNode.height = Math.round(bounds.height + GROUP_PADDING_TOP + GROUP_PADDING_BOTTOM);
     groupNode.selected = true;
     groupNode.zIndex = Math.min(0, ...store.nodes.map((node) => node.zIndex ?? 0)) - 1;
 

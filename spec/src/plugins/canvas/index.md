@@ -70,6 +70,11 @@ The copied board keeps text, file, link, and group nodes, connectors, pane clipp
 | LN-CANVAS-050 | Editable boards MUST retain their camera when the first card is added or dropped onto an empty board. A user camera interaction MUST cancel a pending automatic startup fit. Native File Explorer drops MUST retain the source note and remain undoable. |
 | LN-CANVAS-049 | Embedded boards MUST expose named widget groups without duplicate region landmarks when a note embeds the same Canvas more than once. |
 
+| LN-CANVAS-051 | Touch panning and pinch zoom MUST retain native gesture handling. A stationary empty-pane hold MAY open creation after 500ms; movement beyond 10px, a second contact, release, cancellation, App protection and disposal MUST cancel pending creation. Mouse selection MUST remain available. |
+| LN-CANVAS-052 | Touch users MUST have explicit multi-card selection and visible connection, resize and edit targets without hover. Selection controls MUST share App input protection, preserve document bytes, and enable existing grouping and connector actions. |
+
+| LN-CANVAS-053 | Mouse and touch resize dimensions MUST flow through public node width/height fields into persistence, bounds, grouping and navigation. Imported positive dimensions MUST remain intact before resizing; undo/redo MUST restore complete geometry and preserve unrelated fields. Presentation styles MUST NOT override resized dimensions. |
+
 ## Alignment sequence
 
 Implement and qualify these independently reviewable slices in order:

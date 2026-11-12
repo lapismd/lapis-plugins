@@ -493,3 +493,5 @@ LN-BASE-047 is a separate value-helper patch group. Audit disposition metadata p
 LN-BASE-048 collection compatibility is a separate Bases patch group delivered through normal npm ranges; private query registrations do not add public exports.
 
 LN-BASE-049 is a separate Bases patch group. Moment is a bundled registry dependency for the documented date-format language; no host import or public export is added.
+
+Canvas touch gestures and explicit selection remain plugin-owned under LN-CANVAS-051/052; native acceptance must drive real touch input.

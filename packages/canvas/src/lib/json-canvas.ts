@@ -171,7 +171,8 @@ export function toFlowDocument(canvas: JsonCanvas): {
     type: CanvasFlowNodeType,
     position: { x: node.x, y: node.y },
     data: { ...toFlowNodeData(node), original: node },
-    style: createNodeStyle(node.width, node.height),
+    width: node.width,
+    height: node.height,
     zIndex: index,
     sourcePosition: undefined,
     targetPosition: undefined,
@@ -209,49 +210,51 @@ export function serializeFlowDocument(
   edges: FlowCanvasEdge[],
   original: JsonCanvas = {},
 ): JsonCanvas {
-  const canvasNodes = [...nodes].sort((a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0)).map<CanvasNode>((node) => {
-    const size = parseNodeSize(node.style);
-    const common = {
-      ...node.data.original,
-      id: node.id,
-      x: Math.round(node.position.x),
-      y: Math.round(node.position.y),
-      width: size.width,
-      height: size.height,
-      color: node.data.color,
-    };
+  const canvasNodes = [...nodes]
+    .sort((a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0))
+    .map<CanvasNode>((node) => {
+      const size = readFlowNodeSize(node);
+      const common = {
+        ...node.data.original,
+        id: node.id,
+        x: Math.round(node.position.x),
+        y: Math.round(node.position.y),
+        width: size.width,
+        height: size.height,
+        color: node.data.color,
+      };
 
-    switch (node.data.kind) {
-      case "file":
-        return {
-          ...common,
-          type: "file",
-          file: node.data.file ?? "",
-          subpath: node.data.subpath || undefined,
-        };
-      case "link":
-        return {
-          ...common,
-          type: "link",
-          url: node.data.url ?? "",
-        };
-      case "group":
-        return {
-          ...common,
-          type: "group",
-          label: node.data.label || undefined,
-          background: node.data.background || undefined,
-          backgroundStyle: node.data.backgroundStyle,
-        };
-      case "text":
-      default:
-        return {
-          ...common,
-          type: "text",
-          text: node.data.text ?? "",
-        };
-    }
-  });
+      switch (node.data.kind) {
+        case "file":
+          return {
+            ...common,
+            type: "file",
+            file: node.data.file ?? "",
+            subpath: node.data.subpath || undefined,
+          };
+        case "link":
+          return {
+            ...common,
+            type: "link",
+            url: node.data.url ?? "",
+          };
+        case "group":
+          return {
+            ...common,
+            type: "group",
+            label: node.data.label || undefined,
+            background: node.data.background || undefined,
+            backgroundStyle: node.data.backgroundStyle,
+          };
+        case "text":
+        default:
+          return {
+            ...common,
+            type: "text",
+            text: node.data.text ?? "",
+          };
+      }
+    });
 
   const canvasEdges = edges
     .filter((edge) => edge.source && edge.target)
@@ -288,7 +291,8 @@ export function createFlowNode(
     type: CanvasFlowNodeType,
     position,
     data: createFlowNodeData(kind, value),
-    style: createNodeStyle(width, height),
+    width,
+    height,
     zIndex: kind === "group" ? 0 : 1,
   };
 }
@@ -341,10 +345,7 @@ export function createFlowEdgePresentation(options: {
 }
 
 export function createNodeStyle(width: number, height: number): string {
-  return [
-    `width: ${width}px`,
-    `height: ${height}px`,
-  ].join("; ");
+  return [`width: ${width}px`, `height: ${height}px`].join("; ");
 }
 
 export function parseNodeSize(style: string | undefined): {
@@ -359,6 +360,20 @@ export function parseNodeSize(style: string | undefined): {
     height: heightMatch
       ? Math.round(Number(heightMatch[1]))
       : DEFAULT_NODE_HEIGHT,
+  };
+}
+
+export function readFlowNodeSize(
+  node: Pick<FlowCanvasNode, "width" | "height" | "style">,
+): { width: number; height: number } {
+  const fallback = parseNodeSize(node.style);
+  const dimension = (value: number | undefined, otherwise: number) =>
+    typeof value === "number" && Number.isFinite(value) && value > 0
+      ? Math.max(1, Math.round(value))
+      : otherwise;
+  return {
+    width: dimension(node.width, fallback.width),
+    height: dimension(node.height, fallback.height),
   };
 }
 
