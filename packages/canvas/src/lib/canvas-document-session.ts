@@ -7,6 +7,7 @@ import {
 } from "@lapis-notes/api";
 import { tick } from "svelte";
 import type { MiraMarkdownEditingBinding, MiraMarkdownEditingSession } from "@lapismd/mira/extensions";
+import { parseJsonCanvas, type JsonCanvas } from "./json-canvas";
 import { CanvasTextSessions } from "./canvas-text-sessions";
 import { CanvasSaveQueue, type CanvasSaveStatus } from "./canvas-save-queue";
 
@@ -159,6 +160,11 @@ export class CanvasDocumentSession implements FileEditingSession {
       release();
       throw error;
     }
+  }
+
+  /** Read-only command/clipboard snapshot; pending editor text stays unacknowledged. */
+  snapshot(document: JsonCanvas): JsonCanvas {
+    return parseJsonCanvas(this.texts.local(JSON.stringify(document)));
   }
 
   bindText(id: string, session: MiraMarkdownEditingSession, write: (value: string) => void | Promise<void>): MiraMarkdownEditingBinding {

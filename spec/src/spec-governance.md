@@ -1,5 +1,7 @@
 # Specification Governance
 
+Canvas authoring/history distinguishes creation and drop-receiver evidence from real File Explorer drag-source adoption. LN-CANVAS-012 stays in progress until the owning drag source is qualified; LN-CANVAS-032 through LN-CANVAS-035 govern the implemented receiver, history and clipboard surface.
+
 Canvas writer lifecycle LN-CANVAS-011 is source-qualified by LN-CANVAS-024 through LN-CANVAS-031. Pending-buffer, guarded rename and retained teardown tests use real public App/Mira integration. Optional conditional capability and installed native Desktop release limitations remain explicit in the owning chapter.
 
 Canvas conditional-persistence qualification (LN-CANVAS-027/028) is supplemented by the embedded-buffer and rename evidence under LN-CANVAS-029/030/031. Public API peer floors and release intent MUST track the contracts actually consumed; producer tests do not imply native host release acceptance.

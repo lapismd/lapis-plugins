@@ -1,5 +1,7 @@
 # Distribution and Releases
 
+Canvas authoring/history patch artifacts retain document extensions, remapped selection clipboard and pending text snapshots (LN-CANVAS-032 through LN-CANVAS-035). No host dependency, static profile or publication authority changes; File Explorer drag-source adoption remains separately qualified.
+
 Canvas pending text buffers share the parent file writer and require durable JSON acknowledgement (LN-CANVAS-029/030/031). Patch intent includes the producer/source lifecycle contract; installed native Desktop release qualification and publication remain separate.
 
 Canvas App-owned persistence requires API ^0.2.4 and retains normal registry semver dependencies. Its patch artifact qualification covers LN-CANVAS-027/028; publication remains a separate approval gate.

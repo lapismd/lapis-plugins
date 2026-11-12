@@ -41,6 +41,7 @@
     toCanvasFileRef,
   } from "../lib/canvas-text-preview";
 
+  import type { CanvasBoardController } from "../lib/canvas-board-controller";
   import type { CanvasDocumentSession } from "../lib/canvas-document-session";
 
   let { id, data, selected }: NodeProps<FlowCanvasNode> = $props();
@@ -85,6 +86,13 @@
   };
   let textNodeValue = $state(textSource.value);
   const textFile = $derived(canvasTextFile(id));
+  const board = getContext<CanvasBoardController | undefined>("lapis-canvas-board");
+  let editingSessionStarted = false;
+  $effect(() => {
+    const active = isEditing && data.kind === "text";
+    if (active && !editingSessionStarted) board?.beginText(id);
+    editingSessionStarted = active;
+  });
   const documentSession = getContext<{ readonly current: CanvasDocumentSession | null } | undefined>("lapis-canvas-document");
   const writeText = (value: string) => {
     textNodeValue = value;
@@ -858,6 +866,7 @@
     </div>
   {/if}
   <NodeResizer
+    onResizeStart={() => board?.beginGesture()}
     {minWidth}
     {minHeight}
     color="transparent"

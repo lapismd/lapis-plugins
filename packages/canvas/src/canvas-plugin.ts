@@ -3,6 +3,7 @@ import manifestSpec from "../manifest.json";
 import xyflowStyles from "@xyflow/svelte/dist/style.css?inline";
 import { mount, unmount } from "svelte";
 import CanvasEmbed from "./canvas-embed.svelte";
+import { clearCanvasClipboard } from "./lib/canvas-clipboard";
 import { CanvasView } from "./canvas-view";
 import {
   CANVAS_EMBED_EXTENSION,
@@ -151,6 +152,7 @@ export class CanvasPlugin extends Plugin {
   }
 
   onunload(): void {
+    clearCanvasClipboard(this.app);
     removeCanvasStyles();
   }
 

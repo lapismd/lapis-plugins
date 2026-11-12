@@ -505,3 +505,242 @@ export const PendingTextUseExternal: Story = {
     expect(app.fileEditingSessions.hasDirty("Draft.canvas")).toBe(false);
   },
 };
+
+export const EmptyBoardAuthoring: Story = {
+  name: "Empty boards create cards with undo and redo",
+  parameters: featureParameters("Accessible authoring controls populate a new empty board and creation participates in persistent board history."),
+  render: () => ({
+    Component: ViewingPanelDemo,
+    props: { layout: "middle-top-tabs", canvasPath: "Empty.canvas", files: { "Empty.canvas": '{"nodes":[],"edges":[]}' } },
+  }),
+  play: async ({ canvasElement }) => {
+    const app = await canvasOwner(canvasElement);
+    const board = within(canvasElement);
+    await userEvent.click(await board.findByRole("button", { name: "Add text card", exact: true }));
+    await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(1));
+    await userEvent.click(board.getByRole("button", { name: "Add group", exact: true }));
+    await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(2));
+    await userEvent.click(board.getByRole("button", { name: "Undo", exact: true }));
+    await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(1));
+    await userEvent.click(board.getByRole("button", { name: "Redo", exact: true }));
+    await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(2));
+    await app.fileEditingSessions.flush("Empty.canvas");
+    const saved = JSON.parse(await app.vault.read(app.vault.getFileByPath("Empty.canvas")!));
+    expect(saved.nodes.map((node: { type: string }) => node.type).sort()).toEqual(["group", "text"]);
+  },
+};
+
+export const FileAndWebAuthoring: Story = {
+  name: "File and web creation respects App input protection",
+  parameters: featureParameters("Vault-file and HTTP(S) authoring use accessible dialogs, and App guards protect modal input along with the board."),
+  render: () => ({
+    Component: ViewingPanelDemo,
+    props: { layout: "middle-top-tabs", canvasPath: "Empty.canvas", files: { "Empty.canvas": '{"nodes":[],"edges":[]}' } },
+  }),
+  play: async ({ canvasElement }) => {
+    const app = await canvasOwner(canvasElement);
+    const file = await app.vault.create("Picker note.md", "# Picker note");
+    const board = within(canvasElement);
+    await userEvent.click(await board.findByRole("button", { name: "Add vault file", exact: true }));
+    const dialog = board.getByRole("dialog", { name: "Add vault file", exact: true });
+    await userEvent.selectOptions(within(dialog).getByLabelText("Vault file"), file.path);
+    let release!: () => void;
+    let began!: () => void;
+    const started = new Promise<void>((resolve) => { began = resolve; });
+    const gate = new Promise<void>((resolve) => { release = resolve; });
+    const guarded = app.fileEditingSessions.guard("Empty.canvas", async () => { began(); await gate; });
+    try {
+      await started;
+      expect((dialog as HTMLDialogElement).inert).toBe(true);
+    } finally {
+      release();
+      await guarded;
+    }
+    expect((dialog as HTMLDialogElement).inert).toBe(false);
+    await userEvent.click(within(dialog).getByRole("button", { name: "Add card", exact: true }));
+    await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(1));
+    await userEvent.click(board.getByRole("button", { name: "Add web page", exact: true }));
+    const web = board.getByRole("dialog", { name: "Add web page", exact: true });
+    await userEvent.type(within(web).getByLabelText("Web address"), "https://example.com/canvas");
+    await userEvent.click(within(web).getByRole("button", { name: "Add card", exact: true }));
+    await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(2));
+    await app.fileEditingSessions.flush("Empty.canvas");
+    const saved = JSON.parse(await app.vault.read(app.vault.getFileByPath("Empty.canvas")!));
+    expect(saved.nodes).toEqual(expect.arrayContaining([expect.objectContaining({ type: "file", file: file.path }), expect.objectContaining({ type: "link", url: "https://example.com/canvas" })]));
+  },
+};
+
+export const ClipboardHistory: Story = {
+  name: "Selection clipboard remaps cards and connectors with history",
+  parameters: featureParameters("Duplicate, cut and paste keep the selected subgraph and remap IDs and internal edges; undo and redo restore the complete document."),
+  render: () => ({
+    Component: ViewingPanelDemo,
+    props: { layout: "middle-top-tabs", canvasPath: "Imported.canvas", files: { "Imported.canvas": importedDocument } },
+  }),
+  play: async ({ canvasElement }) => {
+    const app = await canvasOwner(canvasElement);
+    const board = within(canvasElement);
+    const node = (id: string) => canvasElement.querySelector<HTMLElement>(`[data-id="${id}"] .canvas-node-label`)!;
+    await userEvent.click(node("small"));
+    await userEvent.keyboard("{Control>}");
+    await userEvent.click(node("target"));
+    await userEvent.keyboard("{/Control}");
+    await userEvent.click(board.getByRole("button", { name: "Duplicate selection", exact: true }));
+    await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(4));
+    await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__edge")).toHaveLength(2));
+    await userEvent.click(board.getByRole("button", { name: "Undo", exact: true }));
+    await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(2));
+    await userEvent.click(board.getByRole("button", { name: "Redo", exact: true }));
+    await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(4));
+    // History restores document state; explicitly select the duplicate pair.
+    const added = Array.from(canvasElement.querySelectorAll<HTMLElement>(".svelte-flow__node")).filter((element) => !["small", "target"].includes(element.dataset.id!));
+    await userEvent.click(added[0].querySelector<HTMLElement>(".canvas-node-label")!);
+    await userEvent.keyboard("{Control>}");
+    await userEvent.click(added[1].querySelector<HTMLElement>(".canvas-node-label")!);
+    await userEvent.keyboard("{/Control}");
+    const removedIds = added.map((element) => element.dataset.id);
+    await userEvent.click(board.getByRole("button", { name: "Cut selection", exact: true }));
+    await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(2));
+    await userEvent.click(board.getByRole("button", { name: "Paste cards", exact: true }));
+    await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(4));
+    await app.fileEditingSessions.flush("Imported.canvas");
+    const saved = JSON.parse(await app.vault.read(app.vault.getFileByPath("Imported.canvas")!));
+    expect(new Set(saved.nodes.map((node: { id: string }) => node.id)).size).toBe(4);
+    expect(saved.nodes.some((node: { id: string }) => removedIds.includes(node.id))).toBe(false);
+    expect(saved.edges).toHaveLength(2);
+    expect(saved.metadata).toEqual({ origin: "JSON Canvas" });
+    for (const edge of saved.edges) {
+      expect(saved.nodes.some((node: { id: string }) => node.id === edge.fromNode)).toBe(true);
+      expect(saved.nodes.some((node: { id: string }) => node.id === edge.toNode)).toBe(true);
+    }
+  },
+};
+
+export const TextEditingHistory: Story = {
+  name: "Text editor undo and board history keep their own sessions",
+  parameters: featureParameters("Editor shortcuts operate on text, and a completed text session becomes one board history entry after its pending draft is drained."),
+  render: () => ({
+    Component: ViewingPanelDemo,
+    props: { layout: "middle-top-tabs", canvasPath: "Draft.canvas", files: { "Draft.canvas": editableTextDocument } },
+  }),
+  play: async ({ canvasElement }) => {
+    const app = await canvasOwner(canvasElement);
+    const board = within(canvasElement);
+    await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-id="draft"] .canvas-node-label')!);
+    await userEvent.click(await board.findByRole("button", { name: "Edit node", exact: true }));
+    const editor = await waitFor(() => {
+      const value = canvasElement.querySelector<HTMLElement>('[data-id="draft"] [contenteditable="true"]');
+      expect(value).not.toBeNull(); return value!;
+    });
+    await userEvent.click(editor);
+    await userEvent.keyboard("{Control>}a{/Control}First text draft");
+    await app.fileEditingSessions.flush("Draft.canvas");
+    const beforeEditorUndo = editor.textContent;
+    await userEvent.keyboard("{Control>}z{/Control}");
+    await waitFor(() => expect(editor.textContent).not.toBe(beforeEditorUndo));
+    expect(editor.isConnected).toBe(true);
+    await userEvent.keyboard("{Control>}a{/Control}Completed text draft");
+    await app.fileEditingSessions.flush("Draft.canvas");
+    await userEvent.click(board.getByRole("button", { name: "Undo", exact: true }));
+    await app.fileEditingSessions.flush("Draft.canvas");
+    expect(JSON.parse(await app.vault.read(app.vault.getFileByPath("Draft.canvas")!)).nodes[0].text).toBe("Original card text");
+    await userEvent.click(board.getByRole("button", { name: "Redo", exact: true }));
+    await app.fileEditingSessions.flush("Draft.canvas");
+    expect(JSON.parse(await app.vault.read(app.vault.getFileByPath("Draft.canvas")!)).nodes[0].text.trim()).toBe("Completed text draft");
+  },
+};
+
+export const DropAndContextAuthoring: Story = {
+  name: "Vault paths and URLs drop at the pointer and context actions create groups",
+  parameters: featureParameters("A standard URI list creates vault-file and HTTP(S) cards at the drop point; comments and unsafe protocols are ignored. Context creation is available without a selection."),
+  render: () => ({
+    Component: ViewingPanelDemo,
+    props: { layout: "middle-top-tabs", canvasPath: "Empty.canvas", files: { "Empty.canvas": '{"nodes":[],"edges":[]}' } },
+  }),
+  play: async ({ canvasElement }) => {
+    const app = await canvasOwner(canvasElement);
+    await app.vault.create("Dropped note.md", "# Dropped note");
+    await within(canvasElement).findByRole("toolbar", { name: "Canvas authoring", exact: true });
+    const pane = await waitFor(() => {
+      const value = canvasElement.querySelector<HTMLElement>(".svelte-flow__pane");
+      expect(value).not.toBeNull(); return value!;
+    });
+    const rect = pane.getBoundingClientRect();
+    const transfer = new DataTransfer();
+    transfer.setData("text/uri-list", "# Canvas drop\nhttps://example.com/dropped\nDropped note.md\njavascript:alert(1)");
+    const toolbar = within(canvasElement).getByRole("toolbar", { name: "Canvas authoring", exact: true });
+    expect(toolbar.closest(".canvas-view-root")?.contains(pane), "drop pane belongs to the editable board").toBe(true);
+    const dropped = new DragEvent("drop", { bubbles: true, cancelable: true, clientX: rect.left + rect.width / 3, clientY: rect.top + rect.height / 3, dataTransfer: transfer });
+    pane.dispatchEvent(dropped);
+    expect(dropped.defaultPrevented, "board consumes the drop").toBe(true);
+    await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(2));
+    await app.fileEditingSessions.flush("Empty.canvas");
+    const saved = JSON.parse(await app.vault.read(app.vault.getFileByPath("Empty.canvas")!));
+    expect(saved.nodes[0]).toMatchObject({ type: "link", url: "https://example.com/dropped" });
+    expect(saved.nodes[1]).toMatchObject({ type: "file", file: "Dropped note.md", x: saved.nodes[0].x + 40, y: saved.nodes[0].y + 40 });
+    await userEvent.click(within(canvasElement).getByRole("button", { name: "Undo", exact: true }));
+    await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(0));
+    await userEvent.click(within(canvasElement).getByRole("button", { name: "Redo", exact: true }));
+    await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(2));
+    const current = pane.getBoundingClientRect();
+    pane.dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true, clientX: current.left + 100, clientY: current.top + 120, button: 2 }));
+    const menu = await within(canvasElement).findByRole("dialog", { name: "Create canvas card", exact: true });
+    await userEvent.click(within(menu).getByRole("button", { name: "Add group", exact: true }));
+    await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(3));
+    expect(within(canvasElement).queryByRole("dialog", { name: "Create canvas card", exact: true })).toBeNull();
+  },
+};
+
+export const PlainTextPaste: Story = {
+  name: "Plain Markdown paste creates a text card",
+  parameters: featureParameters("Pasting text on the board creates a text card while editor paste remains untouched; creation can be undone."),
+  render: () => ({
+    Component: ViewingPanelDemo,
+    props: { layout: "middle-top-tabs", canvasPath: "Empty.canvas", files: { "Empty.canvas": '{"nodes":[],"edges":[]}' } },
+  }),
+  play: async ({ canvasElement }) => {
+    const app = await canvasOwner(canvasElement);
+    const button = await within(canvasElement).findByRole("button", { name: "Paste cards", exact: true });
+    button.focus();
+    const transfer = new DataTransfer();
+    transfer.setData("text/plain", "# Pasted card\nA Markdown paragraph.");
+    button.dispatchEvent(new ClipboardEvent("paste", { bubbles: true, cancelable: true, clipboardData: transfer }));
+    await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(1));
+    await app.fileEditingSessions.flush("Empty.canvas");
+    expect(JSON.parse(await app.vault.read(app.vault.getFileByPath("Empty.canvas")!)).nodes[0]).toMatchObject({ type: "text", text: "# Pasted card\nA Markdown paragraph." });
+    await userEvent.click(within(canvasElement).getByRole("button", { name: "Undo", exact: true }));
+    await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(0));
+  },
+};
+
+export const CrossBoardClipboard: Story = {
+  name: "Clipboard fallback follows the owning App across boards",
+  parameters: featureParameters("When browser clipboard permission is unavailable, copied Canvas cards still paste into another board in the same App without crossing vault ownership."),
+  render: () => ({
+    Component: ViewingPanelDemo,
+    props: { layout: "middle-top-tabs", canvasPath: "Imported.canvas", files: { "Imported.canvas": importedDocument } },
+  }),
+  play: async ({ canvasElement }) => {
+    const app = await canvasOwner(canvasElement);
+    const native = navigator.clipboard;
+    const read = native.readText;
+    const write = native.writeText;
+    native.readText = async () => { throw new DOMException("Clipboard unavailable", "NotAllowedError"); };
+    native.writeText = async () => { throw new DOMException("Clipboard unavailable", "NotAllowedError"); };
+    try {
+      const board = within(canvasElement);
+      await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-id="small"] .canvas-node-label')!);
+      await userEvent.click(board.getByRole("button", { name: "Copy selection", exact: true }));
+      await waitFor(() => expect(board.getByRole("status")).toHaveTextContent("Selection copied within this vault"));
+      const next = await app.vault.create("Clipboard destination.canvas", '{"nodes":[],"edges":[]}');
+      await app.workspace.activeLeaf!.openFile(next);
+      await userEvent.click(await board.findByRole("button", { name: "Paste cards", exact: true }));
+      await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(1));
+      await app.fileEditingSessions.flush(next.path);
+      expect(JSON.parse(await app.vault.read(next)).nodes[0]).toMatchObject({ type: "text", text: "Imported", width: 80, height: 60 });
+    } finally {
+      native.readText = read;
+      native.writeText = write;
+    }
+  },
+};
