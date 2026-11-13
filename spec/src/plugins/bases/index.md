@@ -280,3 +280,13 @@ MUST NOT become all-tag candidate restrictions. Final PEaQL filtering precedes
 limits for raw, OR, NOT and unsupported predicates.
 
 LN-BASE-046 bracketed property IDs MUST remain at the typed final evaluator boundary rather than being mistaken for literal AppDatabase property names during filter/sort pushdown. Such predicates MUST NOT admit an early candidate limit.
+
+## Website media refresh — November 13, 2026
+
+The website refresh regenerates all seven declared Bases registry media items
+from the existing fixed capture stories at source version 0.3.1. The banner
+retains Cover cards and the separate Overview retains Grouped List. Kanban and
+Activity gallery captures remain included. Both themes use the existing
+1200x800, 2x capture contract. No runtime, story assertion or visual baseline
+changes are part of this refresh. The immutable receipt is
+[the website media record](../../../records/2026-11-13-bases-website-media.md).
