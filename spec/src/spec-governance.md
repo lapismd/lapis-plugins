@@ -1,5 +1,9 @@
 # Specification Governance
 
+The Hono override floor is 4.13.16. Root and parked Sync audits must reject
+the 4.13.13/4.13.14 MCP-SDK resolutions and pass after lockfile alignment;
+no CVE ignore is added.
+
 Parked Sync's independently audited registry graph includes Hono Node adapter
 2.1.6. Source qualification retains its existing private/skipped status and
 does not add a vulnerability exception or release authorization.

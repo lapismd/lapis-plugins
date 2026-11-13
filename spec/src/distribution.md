@@ -1,5 +1,9 @@
 # Distribution and Releases
 
+The Hono security override now selects 4.13.16 or later so MCP-SDK audit
+findings fail closed without advisory exceptions (LP-SPEC-017, LP-SPEC-048).
+Publication remains a separate approval gate.
+
 Canvas 0.3.0 publishes a bounded `releases["0.3.0"].changelog` override because
 its Changesets section exceeds the 4000-character registry note limit.
 Conversion still fails without truncation (LP-SPEC-021).

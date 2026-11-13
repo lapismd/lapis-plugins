@@ -1,5 +1,8 @@
 # Native first-party plugin services
 
+Raising the Hono override to 4.13.16 repairs the MCP-SDK audit path. It
+introduces no native producer, service or transport.
+
 Canvas 0.3.0's registry changelog override is presentation metadata. It
 introduces no native producer, service or transport.
 
