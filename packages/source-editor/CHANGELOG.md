@@ -1,5 +1,11 @@
 # Source Editor changelog
 
+## 0.1.8
+
+### Patch Changes
+
+- [#95](https://github.com/lapismd/lapis-plugins/pull/95) [`23605d7`](https://github.com/lapismd/lapis-plugins/commit/23605d7e44739714d9aca45e8ff005f8b4aa89c6) Thanks [@lapismd-dependency-bot](https://github.com/apps/lapismd-dependency-bot)! - Refresh first-party Lapis dependencies to the published versions recorded in this pull request.
+
 ## 0.1.7
 
 ### Patch Changes
