@@ -399,6 +399,9 @@ Generated-output cleanup is protected by LP-SPEC-028 and focused filesystem
 tests that distinguish full preparation from a single-plugin rebuild.
 Changesets owns package changelogs under LP-SPEC-029; documentation sync tests
 must prove candidate preparation preserves existing release history.
+Oversized Changesets sections use a validated
+`releases[version].changelog` override rather than truncation; Canvas 0.3.0
+records that override under LP-SPEC-021.
 Applying and deleting a consumed Changeset maps the resulting version metadata
 to Distribution, this governance chapter, and every selected plugin chapter so
 release-only changes cannot bypass the same specification review as behavior.

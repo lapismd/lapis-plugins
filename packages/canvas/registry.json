@@ -12,7 +12,15 @@
     "icon": "network",
     "accent": "#8B5CF6"
   },
-  "releases": {},
+  "releases": {
+    "0.3.0": {
+      "changelog": {
+        "title": "Canvas 0.3.0",
+        "tags": ["feature", "fix"],
+        "description": "### Minor Changes\n\n- Add accessible Canvas card creation, protected file/media/web dialogs, drops, undo/redo, and selection copy, cut, paste and duplicate with remapped connectors.\n- Reconnect either connector endpoint, follow attached cards, and create a linked text card from empty-space drops.\n- Render vault-image group backgrounds with cover, fit and repeat sizing, plus protected undoable replacement and removal.\n- Keep note embeds live across source changes, resolve vault-file content and text-card links, stop recursive previews, and provide responsive read-only frames.\n- Add scoped navigation shortcuts, fit-all/selection controls, named-group jumps and accessible keyboard help.\n- Export full-board or viewport PNG images with quality, transparency and content-privacy options.\n- Validate URL-card navigation and offer sandboxed web previews with an external-link fallback.\n- Align, distribute, arrange and equalize selected cards as undoable commands.\n- Convert text cards into owning-vault Markdown notes while preserving geometry, connectors and undo history.\n- Support touch panning, pinch zoom, long-press creation and explicit card selection.\n\n### Patch Changes\n\n- Register Canvas writers with the owning App, await native admission, preserve external edits, and retain failed detached saves. Requires API 0.2.4.\n- Validate JSON Canvas before editing and preserve imported dimensions, stacking and extension fields.\n- Keep queued saves attached to the original file, serialize writes, and flush before transitions.\n- Share theme-resolved card colours, restore screen-reader descriptions, and expose separate keyboard edit actions.\n- Flush pending text-card editors before switching, renaming or teardown."
+      }
+    }
+  },
   "media": {
     "banner": {
       "alt": "Lapis Canvas showing the feature board with a text note, two file notes, a link, a group, and three labeled connectors, both sidebars closed.",
