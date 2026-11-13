@@ -48,6 +48,18 @@ test("full-board PNG retains dimensions, privacy, camera and original source", a
   const root = rootOf(page),
     before = await read(page),
     camera = await root.locator(".svelte-flow__viewport").getAttribute("style");
+  const point = await root
+    .locator(".canvas-flow-edge-path")
+    .evaluate((element) => {
+      const path = element as SVGPathElement,
+        point = path.getPointAtLength(path.getTotalLength() / 2);
+      const screen = new DOMPoint(point.x, point.y).matrixTransform(
+        path.getScreenCTM()!,
+      );
+      return { x: screen.x, y: screen.y };
+    });
+  await page.mouse.click(point.x, point.y);
+  await expect(root.locator(".canvas-edge-toolbar")).toBeVisible();
   const requests: string[] = [];
   page.on("request", (request) => {
     if (request.url().includes("private.example.test"))
@@ -93,6 +105,8 @@ test("full-board PNG retains dimensions, privacy, camera and original source", a
   expect(svg).not.toContain("Private plan.md");
   expect(svg).not.toContain("secret-address");
   expect(svg).not.toContain("<iframe");
+  expect(svg).not.toContain("<button");
+  expect(svg).not.toContain("<select");
   expect(requests).toEqual([]);
   expect(
     await root.locator(".svelte-flow__viewport").getAttribute("style"),

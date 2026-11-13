@@ -7,6 +7,8 @@
   import CanvasNoteConversion from "./canvas-note-conversion.svelte";
   import CanvasWebPreview from "../canvas-web-preview.svelte";
   import { canvasWebUrl } from "../lib/canvas-web-url";
+  import { canvasCardStyle, defaultCanvasTheme } from "../lib/canvas-contrast";
+  import type { CanvasThemeContext } from "../lib/canvas-theme.svelte";
   import CanvasFileContent from "../canvas-file-content.svelte";
   import { EditableMarkdownPreview } from "@lapismd/mira/preview";
   import "@lapismd/mira/preview/styles.css";
@@ -38,7 +40,6 @@
     displayNodeValue,
     readFlowNodeSize,
     PRESET_COLORS,
-    resolveCanvasColor,
     type FlowCanvasNode,
   } from "../lib/json-canvas";
   import {
@@ -120,104 +121,6 @@
   let visibleHandleRight = $state(false);
   let visibleHandleBottom = $state(false);
   let visibleHandleLeft = $state(false);
-
-  type RgbColor = [number, number, number];
-
-  function parseCanvasColorToRgb(
-    color: string | undefined,
-  ): RgbColor | undefined {
-    if (!color) {
-      return undefined;
-    }
-
-    const normalized = color.trim();
-    const hexMatch = normalized.match(/^#([\da-f]{3}|[\da-f]{6})$/i);
-
-    if (hexMatch) {
-      const hex =
-        hexMatch[1].length === 3
-          ? hexMatch[1]
-              .split("")
-              .map((value) => `${value}${value}`)
-              .join("")
-          : hexMatch[1];
-
-      return [
-        Number.parseInt(hex.slice(0, 2), 16),
-        Number.parseInt(hex.slice(2, 4), 16),
-        Number.parseInt(hex.slice(4, 6), 16),
-      ];
-    }
-
-    const rgbMatch = normalized.match(/^rgba?\(([^)]+)\)$/i);
-    if (rgbMatch) {
-      const parts = rgbMatch[1]
-        .split(",")
-        .slice(0, 3)
-        .map((value) => Number.parseFloat(value.trim()));
-
-      if (parts.every((value) => Number.isFinite(value))) {
-        return [parts[0] ?? 0, parts[1] ?? 0, parts[2] ?? 0];
-      }
-    }
-
-    const fallbackVarMatch = normalized.match(
-      /var\(--canvas-color-\d+,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/i,
-    );
-    if (fallbackVarMatch) {
-      return [
-        Number.parseInt(fallbackVarMatch[1] ?? "0", 10),
-        Number.parseInt(fallbackVarMatch[2] ?? "0", 10),
-        Number.parseInt(fallbackVarMatch[3] ?? "0", 10),
-      ];
-    }
-
-    return undefined;
-  }
-
-  function mixRgb(
-    base: RgbColor,
-    overlay: RgbColor,
-    overlayWeight: number,
-  ): RgbColor {
-    const baseWeight = 1 - overlayWeight;
-    return [
-      Math.round(base[0] * baseWeight + overlay[0] * overlayWeight),
-      Math.round(base[1] * baseWeight + overlay[1] * overlayWeight),
-      Math.round(base[2] * baseWeight + overlay[2] * overlayWeight),
-    ];
-  }
-
-  function rgbToCss(color: RgbColor): string {
-    return `rgb(${color[0]} ${color[1]} ${color[2]})`;
-  }
-
-  function toLinearSrgb(channel: number): number {
-    const normalized = channel / 255;
-    return normalized <= 0.04045
-      ? normalized / 12.92
-      : ((normalized + 0.055) / 1.055) ** 2.4;
-  }
-
-  function chooseBlackOrWhiteText(background: RgbColor): "black" | "white" {
-    const [red, green, blue] = background;
-    const perceivedBrightness = Math.sqrt(
-      0.299 * red ** 2 + 0.587 * green ** 2 + 0.114 * blue ** 2,
-    );
-
-    return perceivedBrightness > 140 ? "black" : "white";
-  }
-
-  function isLightCanvasColor(color: string | undefined): boolean {
-    const rgb = parseCanvasColorToRgb(color);
-    if (!rgb) {
-      return false;
-    }
-
-    const [red, green, blue] = rgb;
-    const perceivedLuminance = (red * 299 + green * 587 + blue * 114) / 1000;
-    return perceivedLuminance >= 168;
-  }
 
   function extensionFromPath(path: string | undefined): string {
     if (!path) {
@@ -423,90 +326,8 @@
   let minHeight = $derived(
     data.kind === "group" ? MIN_GROUP_HEIGHT : MIN_NODE_HEIGHT,
   );
-  let accentColor = $derived(
-    resolveCanvasColor(data.color) ?? "var(--background-modifier-border)",
-  );
-  let nodeFill = $derived.by(() => {
-    if (data.kind === "group") {
-      return data.color
-        ? `color-mix(in srgb, ${accentColor} 14%, transparent)`
-        : "color-mix(in srgb, var(--background-secondary) 75%, transparent)";
-    }
-
-    return data.color
-      ? `color-mix(in srgb, ${accentColor} 18%, var(--background-secondary))`
-      : "var(--background-secondary)";
-  });
-  let nodeBorder = $derived(
-    data.color
-      ? `color-mix(in srgb, ${accentColor} 45%, var(--background-modifier-border))`
-      : "var(--background-modifier-border)",
-  );
-  let nodeInputBackground = $derived(
-    data.color
-      ? `color-mix(in srgb, ${accentColor} 10%, var(--surface-inline-input-background))`
-      : "var(--surface-inline-input-background)",
-  );
-  let kindColor = $derived(
-    data.color
-      ? `color-mix(in srgb, ${accentColor} 70%, var(--text-normal))`
-      : "var(--canvas-card-label-color, var(--text-faint))",
-  );
-  let nodeShadow = $derived(
-    data.color
-      ? `inset 0 0 0 1px color-mix(in srgb, ${accentColor} 20%, transparent)`
-      : "none",
-  );
-  let selectedBorderColor = $derived(
-    data.color
-      ? nodeBorder
-      : "var(--interactive-accent-hover, var(--interactive-accent))",
-  );
-  let groupLabelBackgroundRgb = $derived.by(() => {
-    if (data.kind !== "group" || !data.color) {
-      return undefined;
-    }
-
-    const accentRgb = parseCanvasColorToRgb(accentColor);
-    if (!accentRgb) {
-      return undefined;
-    }
-
-    return isLightCanvasColor(accentColor)
-      ? mixRgb(accentRgb, [255, 255, 255], 0.28)
-      : mixRgb(accentRgb, [0, 0, 0], 0.22);
-  });
-  let groupLabelBackground = $derived(
-    data.kind === "group"
-      ? data.color
-        ? groupLabelBackgroundRgb
-          ? rgbToCss(groupLabelBackgroundRgb)
-          : isLightCanvasColor(accentColor)
-            ? `color-mix(in srgb, ${accentColor} 72%, white 28%)`
-            : `color-mix(in srgb, ${accentColor} 78%, black 22%)`
-        : "color-mix(in srgb, var(--background-modifier-border) 78%, black 22%)"
-      : "transparent",
-  );
-  let groupLabelBorder = $derived(
-    data.kind === "group"
-      ? data.color
-        ? isLightCanvasColor(accentColor)
-          ? `color-mix(in srgb, ${accentColor} 54%, black 46%)`
-          : `color-mix(in srgb, ${accentColor} 52%, black 48%)`
-        : "color-mix(in srgb, var(--background-modifier-border) 68%, black 32%)"
-      : "transparent",
-  );
-  let groupLabelTextColor = $derived(
-    data.kind === "group"
-      ? data.color
-        ? groupLabelBackgroundRgb
-          ? chooseBlackOrWhiteText(groupLabelBackgroundRgb)
-          : isLightCanvasColor(accentColor)
-            ? "black"
-            : "white"
-        : "var(--text-normal)"
-      : "var(--text-normal)",
-  );
+  const theme = getContext<CanvasThemeContext | undefined>("lapis-canvas-theme");
+  const presentationStyle = $derived(canvasCardStyle(theme?.current ?? defaultCanvasTheme, data.color, data.kind === "group"));
   let toolbarScale = $derived(1 / Math.max(viewport.current.zoom, 0.0001));
   let groupLabelScale = $derived(Math.max(viewport.current.zoom, 0.9));
   let useLowZoomNodePreview = $derived(
@@ -800,17 +621,8 @@
   data-visible-handle-right={visibleHandleRight ? "true" : undefined}
   data-visible-handle-bottom={visibleHandleBottom ? "true" : undefined}
   data-visible-handle-left={visibleHandleLeft ? "true" : undefined}
-  style:--canvas-node-accent={accentColor}
-  style:--canvas-node-fill={nodeFill}
-  style:--canvas-node-border={nodeBorder}
-  style:--canvas-node-input-background={nodeInputBackground}
-  style:--canvas-node-kind-color={kindColor}
-  style:--canvas-node-shadow={nodeShadow}
-  style:--canvas-group-label-background={groupLabelBackground}
-  style:--canvas-group-label-border={groupLabelBorder}
-  style:--canvas-group-label-text={groupLabelTextColor}
+  style={presentationStyle}
   style:--canvas-group-label-scale={groupLabelScale}
-  style:--canvas-node-selected-border={selectedBorderColor}
 >
   {#if data.kind === "file" && fileNodeDisplayName && !useLowZoomNodePreview}
     <div class="canvas-node-file-label">{fileNodeDisplayName}</div>
@@ -823,6 +635,7 @@
         type="text"
         value={displayNodeValue(data)}
         oninput={handleInput}
+        aria-label="Group label"
         placeholder="Group label"
       />
     </div>
@@ -1093,6 +906,7 @@
         type="text"
         value={displayNodeValue(data)}
         oninput={handleInput}
+        aria-label={data.kind === "link" ? "Web address" : "Group label"}
         placeholder={data.kind === "link"
           ? "https://example.com"
           : "Group label"}

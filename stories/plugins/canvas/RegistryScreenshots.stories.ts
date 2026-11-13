@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
-import { expect, waitFor } from "storybook/test";
+import { expect, waitFor, within } from "storybook/test";
 import { WORKSPACE_SHELL_DOCS_PARAMETERS } from "../../workspace/docs-parameters";
 import { registryPanelApp } from "../_shared/registry/registry-story-helpers";
 import {
@@ -19,16 +19,11 @@ const meta = {
   tags: ["registry-media", "visual-pending"],
   parameters: {
     layout: "fullscreen",
-    a11y: {
-      context: {
-        exclude: [".canvas-node-label", ".canvas-node-shell"],
-      },
-    },
     docs: {
       ...WORKSPACE_SHELL_DOCS_PARAMETERS,
       description: {
         component:
-          "An app-backed JSON Canvas, and the same file embedded in a note. Both sidebars stay closed.",
+          "An app-backed JSON Canvas, and the same file embedded in a note, with Explorer open.",
       },
     },
   },
@@ -44,20 +39,25 @@ function shellRender(document: "file" | "embedded"): Story["render"] {
   })) as Story["render"];
 }
 
-function expectClosedSidebars(canvasElement: HTMLElement): void {
-  for (const side of ["left-sidebar", "right-sidebar"]) {
-    const surface = canvasElement.querySelector<HTMLElement>(
-      `[data-workspace-surface="${side}"]`,
-    );
-    expect(surface?.getBoundingClientRect().width ?? 0).toBeLessThan(2);
-  }
+function expectExplorer(canvasElement: HTMLElement): void {
+  const left = canvasElement.querySelector<HTMLElement>(
+    '[data-workspace-surface="left-sidebar"]',
+  );
+  const right = canvasElement.querySelector<HTMLElement>(
+    '[data-workspace-surface="right-sidebar"]',
+  );
+  expect(left?.getBoundingClientRect().width ?? 0).toBeGreaterThan(200);
+  expect(
+    within(left!).getByRole("button", { name: "Sample.canvas", exact: true }),
+  ).toBeVisible();
+  expect(right?.getBoundingClientRect().width ?? 0).toBeLessThan(2);
 }
 
 export const Overview: Story = {
   name: "Overview",
   parameters: registryStoryParameters(
     registrySource,
-    "The seeded canvas fills the shell with both sidebars closed.",
+    "The seeded canvas fills the shell beside its Explorer files.",
   ),
   render: shellRender("file"),
   play: async ({ canvasElement }) => {
@@ -72,7 +72,7 @@ export const Overview: Story = {
         );
         expect(view, status).not.toBeNull();
         expect(view?.querySelector(".svelte-flow"), status).not.toBeNull();
-        expectClosedSidebars(canvasElement);
+        expectExplorer(canvasElement);
       },
       { timeout: 20_000 },
     );
@@ -93,7 +93,7 @@ export const Embedded: Story = {
         const node = embed?.querySelector<HTMLElement>(".svelte-flow__node");
         expect(embed?.querySelector(".svelte-flow")).not.toBeNull();
         expect(node?.getBoundingClientRect().width ?? 0).toBeGreaterThan(40);
-        expectClosedSidebars(canvasElement);
+        expectExplorer(canvasElement);
       },
       { timeout: 30_000 },
     );

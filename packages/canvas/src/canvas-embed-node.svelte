@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { App } from "@lapis-notes/api";
   import CanvasGroupBackground from "./canvas-group-background.svelte";
+  import { canvasCardStyle, defaultCanvasTheme } from "./lib/canvas-contrast";
+  import type { CanvasThemeContext } from "./lib/canvas-theme.svelte";
   import CanvasFileContent from "./canvas-file-content.svelte";
   import CanvasWebPreview from "./canvas-web-preview.svelte";
   import { MarkdownEmbed } from "@lapis-notes/markdown/embed";
@@ -9,7 +11,6 @@
 
   import {
     displayNodeValue,
-    resolveCanvasColor,
     type FlowCanvasNode,
   } from "./lib/json-canvas";
 
@@ -22,21 +23,12 @@
 
   const canvasSource = getContext<{ readonly current: string } | undefined>("lapis-canvas-source");
   const nodeLabel = $derived(displayNodeValue(data));
-  const resolvedColor = $derived(resolveCanvasColor(data.color));
+  const theme = getContext<CanvasThemeContext | undefined>("lapis-canvas-theme");
   const isGroupNode = $derived(data.kind === "group");
   const hasFilePreview = $derived(
     data.kind === "file" && data.previewValue !== undefined,
   );
-  const surfaceStyle = $derived.by(() => {
-    if (!resolvedColor) {
-      return undefined;
-    }
-
-    return [
-      `--canvas-node-accent: ${resolvedColor}`,
-      `--canvas-node-fill: color-mix(in srgb, ${resolvedColor} 12%, var(--background-secondary))`,
-    ].join("; ");
-  });
+  const surfaceStyle = $derived(canvasCardStyle(theme?.current ?? defaultCanvasTheme, data.color, isGroupNode));
 </script>
 
 <div class="canvas-node-shell" style={surfaceStyle}>

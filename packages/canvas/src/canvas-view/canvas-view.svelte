@@ -6,6 +6,7 @@
     SvelteFlow,
     type OnConnectEnd,
   } from "@xyflow/svelte";
+  import { createCanvasTheme } from "../lib/canvas-theme.svelte";
   import { acquireCanvasStyles } from "../lib/canvas-styles";
   import { canvasOwnerKey } from "../lib/canvas-embed-boundary";
   import CanvasActions from "./canvas-actions.svelte";
@@ -71,6 +72,8 @@
     onRetrySave,
   }: Props = $props();
 
+  const theme = createCanvasTheme();
+  setContext("lapis-canvas-theme", theme);
   setContext("lapis-canvas-readonly", { current: false });
   setContext("lapis-canvas-source", { get current() { return sourcePath; } });
   setContext("lapis-canvas-app", {
@@ -114,6 +117,7 @@
   onDestroy(() => { active = false; });
 
   $effect(() => { if (surface) return acquireCanvasStyles(surface.ownerDocument); });
+  $effect(() => { if (surface) return theme.attach(surface); });
 
   function applyDocument(document: JsonCanvas, selected = new Set<string>(), selectedEdges = new Set<string>()): void {
     if (inputBlocked) throw new Error("Canvas editing is temporarily protected");
@@ -777,7 +781,7 @@
     </div>
   </div>
 {:else}
-  <div class="canvas-view-root" bind:this={surface} data-canvas-boundary data-canvas-owner={canvasOwnerKey(app)} data-canvas-source-path={sourcePath || undefined}>
+  <div class="canvas-view-root" style={theme.style} bind:this={surface} data-canvas-boundary data-canvas-owner={canvasOwnerKey(app)} data-canvas-source-path={sourcePath || undefined}>
     {#if connectionError}<p class="canvas-connection-error" role="alert">{connectionError}</p>{/if}
     {#if saveState === "error"}
       <div class="canvas-save-error" role="alert">
@@ -827,7 +831,7 @@
           <CanvasControls />
           <CanvasNavigation />
           <CanvasTouchSelection />
-          <MiniMap />
+          <MiniMap bgColor="var(--canvas-readable-board)" nodeColor={(node) => node.data.kind === "group" ? "transparent" : "var(--canvas-readable-indicator)"} nodeStrokeColor="var(--canvas-readable-indicator)" maskColor="transparent" maskStrokeColor="var(--canvas-readable-indicator)" maskStrokeWidth={2} />
         </SvelteFlow>
       {/if}
     </div>

@@ -9,6 +9,8 @@ compatible union ranges. The exact History source check must reject mixed
 0.12.3/0.12.4 settings types before the fix and pass after registry alignment;
 normal functional and accessibility gates remain required for dependency PRs.
 
+Canvas contrast qualification measures browser-computed colours in both modes and removes card accessibility exclusions. Source Mira regressions are repaired upstream before registry consumption. Numeric contrast, interaction/axe, packed consumer acceptance and visual review remain distinct evidence (LN-CANVAS-040/041).
+
 LN-CANVAS-048 qualifies navigation separately from geometry edits: camera commands preserve exact stored bytes, respect focused form/editor input and own help focus/protection. Read-only help omits editable-card instructions.
 
 LN-CANVAS-046/047 distinguish pure endpoint retention, keyboard form and follow interactions from native pointer gestures. The static CI lane runs Playwright drag and cancellation cases after building Storybook; synthetic pointer events alone do not qualify these workflows.

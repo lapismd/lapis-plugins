@@ -10,6 +10,8 @@
   } from "@xyflow/svelte";
   import { getContext, tick } from "svelte";
   import CanvasConnectionControls from "./canvas-connection-controls.svelte";
+  import { canvasAccent, defaultCanvasTheme, readableColor, rgbCss } from "../lib/canvas-contrast";
+  import type { CanvasThemeContext } from "../lib/canvas-theme.svelte";
   import ArrowLeftRight from "@lucide/svelte/icons/arrow-left-right";
   import ArrowRight from "@lucide/svelte/icons/arrow-right";
   import Expand from "@lucide/svelte/icons/expand";
@@ -201,7 +203,10 @@
         : undefined,
     };
   });
-  let edgeColor = $derived(data?.resolvedColor ?? "var(--text-muted)");
+  const theme = getContext<CanvasThemeContext | undefined>("lapis-canvas-theme");
+  const palette = $derived(theme?.current ?? defaultCanvasTheme);
+  const edgeColor = $derived(rgbCss(readableColor(data?.color ? canvasAccent(palette, data.color) : palette.muted, [palette.board], 3)));
+  const edgeHalo = $derived(rgbCss(palette.board));
   let toolbarScale = $derived(1 / Math.max(viewport.current.zoom, 0.0001));
   let labelScale = $derived(Math.max(viewport.current.zoom, 0.0001));
   let editableLabelScale = $derived(Math.max(viewport.current.zoom, 1));
@@ -628,6 +633,7 @@
   ></path>
 {/if}
 
+<path class="canvas-flow-edge-halo" d={edgeGeometry.path} fill="none" stroke={edgeHalo} stroke-width={selected || isHovered ? 10 : 8} pointer-events="none" />
 <BaseEdge
   {id}
   path={edgeGeometry.path}
@@ -660,6 +666,7 @@
     class="canvas-flow-edge-arrow"
     d={edgeGeometry.sourceArrowPath}
     fill={edgeColor}
+    stroke={edgeHalo} stroke-width="2" paint-order="stroke"
   ></path>
 {/if}
 
@@ -668,6 +675,7 @@
     class="canvas-flow-edge-arrow"
     d={edgeGeometry.targetArrowPath}
     fill={edgeColor}
+    stroke={edgeHalo} stroke-width="2" paint-order="stroke"
   ></path>
 {/if}
 

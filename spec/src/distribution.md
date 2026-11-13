@@ -5,6 +5,8 @@ union ranges to the same 0.12.4 package identity as settings registrations.
 The lockfile retains other dependency versions and the separate legacy 0.9
 consumer line; it does not replace registry packages with local paths.
 
+Canvas contrast candidates share computed card presentation between views and embeds, preserve JSON colours and require the qualified Mira controlled-preview fix (LN-CANVAS-040/041). Temporary packed acceptance changes no source dependency protocol; registry intake and runtime qualification remain separate gates.
+
 Canvas view/embed navigation shares bundled controls and public XYFlow camera APIs without new host dependencies. Camera commands retain document bytes and runtime publication stays separate (LN-CANVAS-048).
 
 Canvas connector artifacts retain endpoint identity and imported extension fields through reconnection (LN-CANVAS-046/047). Native pointer acceptance runs against the built public Storybook bundle in the static CI lane.

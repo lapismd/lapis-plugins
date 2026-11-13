@@ -8,7 +8,7 @@ export type CanvasExportPrivacy = {
   images: boolean;
 };
 const omit =
-  "script, style, link, iframe, object, embed, audio, video, source, .canvas-node-toolbar, .svelte-flow__node-toolbar, .svelte-flow__handle, .canvas-node-resize-handle, .canvas-node-resize-line, .canvas-node-edge-activator, .canvas-card-edit-button, [data-canvas-background-probe], .canvas-web-actions button, .canvas-web-fallback";
+  "script, style, link, iframe, object, embed, audio, video, source, .canvas-node-toolbar, .svelte-flow__node-toolbar, .svelte-flow__handle, .canvas-node-resize-handle, .canvas-node-resize-line, .canvas-node-edge-activator, .canvas-card-edit-button, .canvas-edge-toolbar-anchor, .canvas-connector-reconnect, .canvas-flow-edge-hit-area, .canvas-edge-label-hit-target-measure, .canvas-edge-label-editor, [data-canvas-background-probe], .canvas-web-actions button, .canvas-web-fallback";
 const svgAttributes = new Set([
   "d",
   "viewBox",
@@ -71,6 +71,12 @@ export function canvasExportSnapshot(
     if (node.nodeType === Node.TEXT_NODE)
       return doc.createTextNode(node.textContent ?? "");
     if (!(node instanceof Element) || node.matches(omit)) return null;
+    const connectorLabel = node.matches(".canvas-edge-label-hit-target");
+    if (
+      connectorLabel &&
+      !node.querySelector(".canvas-edge-label-hit-target-text")
+    )
+      return null;
     const kind = node
       .closest("[data-canvas-card-kind]")
       ?.getAttribute("data-canvas-card-kind");
@@ -80,9 +86,10 @@ export function canvasExportSnapshot(
       node.matches(".canvas-node-file-label")
     )
       return null;
-    const copy = doc.createElementNS(node.namespaceURI, node.localName) as
-      | HTMLElement
-      | SVGElement;
+    const copy = doc.createElementNS(
+      node.namespaceURI,
+      connectorLabel ? "span" : node.localName,
+    ) as HTMLElement | SVGElement;
     const computed = view.getComputedStyle(node);
     for (const property of Array.from(computed)) {
       const value = computed.getPropertyValue(property);
