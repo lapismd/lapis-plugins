@@ -1,5 +1,11 @@
 # Native first-party plugin services
 
+Raising the Hono override to 4.13.16 repairs the MCP-SDK audit path. It
+introduces no native producer, service or transport.
+
+Canvas 0.3.0's registry changelog override is presentation metadata. It
+introduces no native producer, service or transport.
+
 The Design Core 0.12.4 dependency intake keeps History settings components and
 their owning App registration on one compatible shared package identity.
 Public settings, runtime ownership and native service contracts remain intact.

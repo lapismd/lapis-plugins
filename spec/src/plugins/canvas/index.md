@@ -8,7 +8,7 @@ A file named `*.canvas` is associated exclusively with that view, and `registerE
 
 The copied board keeps text, file, link, and group nodes, connectors, pane clipping, and the JSON Canvas parse and save path. Markdown previews and editors inside a node use a transparent surface, so they show the node fill, including a colour preset. Block spacing inside those cards stays compact: reading-view margins do not open a full note column inside the node. `@xyflow/svelte` is the canvas engine. It is bundled. Its foundation stylesheet is leased by each mounted board in its owning document and released when the last board is destroyed. It is not a host external.
 
-`Plugins/Canvas/Registry Screenshots` supplies the release-page capture. The banner is the open canvas and the gallery card is the note embed, both `visual-pending`. This slice does not publish the package and does not add it to a host profile.
+`Plugins/Canvas/Registry Screenshots` supplies the release-page capture. The banner is the open canvas and the gallery card is the note embed, both `visual-pending`. This slice does not publish the package and does not add it to a host profile. The 0.3.0 registry source ships a bounded `releases["0.3.0"].changelog` override. Changesets history remains intact; published registry notes fail closed when the version section exceeds 4000 characters.
 
 ## Requirements
 

@@ -1,5 +1,13 @@
 # Distribution and Releases
 
+The Hono security override now selects 4.13.16 or later so MCP-SDK audit
+findings fail closed without advisory exceptions (LP-SPEC-017, LP-SPEC-048).
+Publication remains a separate approval gate.
+
+Canvas 0.3.0 publishes a bounded `releases["0.3.0"].changelog` override because
+its Changesets section exceeds the 4000-character registry note limit.
+Conversion still fails without truncation (LP-SPEC-021).
+
 The Design Core 0.12.4 intake resolves History and Markdown's existing compatible
 union ranges to the same 0.12.4 package identity as settings registrations.
 The lockfile retains other dependency versions and the separate legacy 0.9

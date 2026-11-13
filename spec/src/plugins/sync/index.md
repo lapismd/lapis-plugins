@@ -2,7 +2,9 @@
 
 The package requires published Design Core `^0.7.4` for prepared browser CSS
 and bundled fonts through public exports. Application state and existing plugin
-behavior retain their owning contracts.
+behavior retain their owning contracts. Its independent audit graph now
+overrides Hono below 4.13.16 to the patched range so MCP-SDK findings fail
+closed without a new CVE ignore.
 Its separately frozen review graph verifies the released Core artifact and the
 same explicit composed Bits patch as the root. Source qualification does not
 enable this parked package or complete its outstanding consumer/native gates.

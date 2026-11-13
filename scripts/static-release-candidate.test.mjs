@@ -4,8 +4,12 @@ import { mkdtemp, mkdir, readFile, writeFile, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
+import { registryChangelogFromMarkdown } from "@lapis-notes/api/registry/schema";
 import { packageOfficialPlugin } from "./plugin-release.mjs";
 import { prepareStaticReleaseCandidate } from "./lib/static-release-candidate.mjs";
+
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 test("static candidates bind npm and signed deterministic archives without Nostr configuration", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "lapis-static-candidate-"));
@@ -110,7 +114,52 @@ test("static candidates bind npm and signed deterministic archives without Nostr
       }),
       /checksum/
     );
+    await writeFile(
+      path.join(packageRoot, "CHANGELOG.md"),
+      `## 1.0.0\n${"x".repeat(4001)}\n`
+    );
+    await assert.rejects(prepareStaticReleaseCandidate(options), /4000/);
+    await writeFile(
+      path.join(packageRoot, "registry.json"),
+      JSON.stringify({
+        schemaVersion: 2,
+        releases: {
+          "1.0.0": {
+            changelog: {
+              title: "Graph 1.0.0",
+              tags: ["feature"],
+              description: "Bounded override.",
+            },
+          },
+        },
+      })
+    );
+    const overridden = await prepareStaticReleaseCandidate(options);
+    assert.equal(overridden.changelog.description, "Bounded override.");
   } finally {
     await rm(root, { recursive: true, force: true });
   }
+});
+
+test("Canvas 0.3.0 ships a bounded registry changelog override", async () => {
+  const markdown = await readFile(
+    path.join(repoRoot, "packages/canvas/CHANGELOG.md"),
+    "utf8"
+  );
+  const registry = JSON.parse(
+    await readFile(path.join(repoRoot, "packages/canvas/registry.json"), "utf8")
+  );
+  assert.throws(
+    () => registryChangelogFromMarkdown("Canvas", "0.3.0", markdown),
+    /4000/
+  );
+  const notes = registryChangelogFromMarkdown(
+    "Canvas",
+    "0.3.0",
+    markdown,
+    registry.releases["0.3.0"].changelog
+  );
+  assert.equal(notes.title, "Canvas 0.3.0");
+  assert.ok(notes.description.length <= 4000);
+  assert.deepEqual(notes.tags, ["feature", "fix"]);
 });

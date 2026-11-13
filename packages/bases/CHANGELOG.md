@@ -1,5 +1,21 @@
 # Bases changelog
 
+## 0.3.1
+
+### Patch Changes
+
+- [#86](https://github.com/lapismd/lapis-plugins/pull/86) [`569b6c9`](https://github.com/lapismd/lapis-plugins/commit/569b6c90cbd46b1f78d9c9c9f55f913fdfeaa126) Thanks [@stevejuma](https://github.com/stevejuma)! - Correct typed-list query overloads and lexical collection callbacks while retaining explicit parser gaps.
+
+- [#86](https://github.com/lapismd/lapis-plugins/pull/86) [`569b6c9`](https://github.com/lapismd/lapis-plugins/commit/569b6c90cbd46b1f78d9c9c9f55f913fdfeaa126) Thanks [@stevejuma](https://github.com/stevejuma)! - Correct date helper semantics and share strict Bases syntax validation with filter drafts.
+
+- [#83](https://github.com/lapismd/lapis-plugins/pull/83) [`8c199eb`](https://github.com/lapismd/lapis-plugins/commit/8c199eb17116ac1226c58aef6bbccc0ef81c3bc9) Thanks [@stevejuma](https://github.com/stevejuma)! - Compile filter and formula expressions consistently, preserve bracketed note keys and arithmetic precedence, sort evaluated formulas, and report cyclic or invalid formulas without freezing the view.
+
+- [#83](https://github.com/lapismd/lapis-plugins/pull/83) [`dce054c`](https://github.com/lapismd/lapis-plugins/commit/dce054c8931198b443db21acefacaa7a6f16b50c) Thanks [@stevejuma](https://github.com/stevejuma)! - Preserve imported global string and per-view filters across layouts, reject malformed groups, and apply candidate limits only after all remaining filters can be evaluated safely.
+
+- [#83](https://github.com/lapismd/lapis-plugins/pull/83) [`eabd95f`](https://github.com/lapismd/lapis-plugins/commit/eabd95f1830f55b6e1a933a362e114e02c746d6f) Thanks [@stevejuma](https://github.com/stevejuma)! - Correct empty-value and list-constructor semantics, accept documented date/duration constructors and split limits, convert dates to epoch milliseconds, and expose extension-free basenames. Preserve established case-insensitive matching and native extensions.
+
+- [#76](https://github.com/lapismd/lapis-plugins/pull/76) [`7590f94`](https://github.com/lapismd/lapis-plugins/commit/7590f949cff2b4403f5c5bdf49e9ad4696f15e2d) Thanks [@lapismd-dependency-bot](https://github.com/apps/lapismd-dependency-bot)! - Refresh first-party Lapis dependencies to the published versions recorded in this pull request.
+
 ## 0.3.0
 
 ### Minor Changes

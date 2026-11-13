@@ -1,5 +1,9 @@
 # Specification Governance
 
+The Hono override floor is 4.13.16. Root and parked Sync audits must reject
+the 4.13.13/4.13.14 MCP-SDK resolutions and pass after lockfile alignment;
+no CVE ignore is added.
+
 Parked Sync's independently audited registry graph includes Hono Node adapter
 2.1.6. Source qualification retains its existing private/skipped status and
 does not add a vulnerability exception or release authorization.
@@ -399,6 +403,9 @@ Generated-output cleanup is protected by LP-SPEC-028 and focused filesystem
 tests that distinguish full preparation from a single-plugin rebuild.
 Changesets owns package changelogs under LP-SPEC-029; documentation sync tests
 must prove candidate preparation preserves existing release history.
+Oversized Changesets sections use a validated
+`releases[version].changelog` override rather than truncation; Canvas 0.3.0
+records that override under LP-SPEC-021.
 Applying and deleting a consumed Changeset maps the resulting version metadata
 to Distribution, this governance chapter, and every selected plugin chapter so
 release-only changes cannot bypass the same specification review as behavior.
