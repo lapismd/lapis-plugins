@@ -535,3 +535,10 @@ publication preflight admits Workspace 0.4.1 alongside 0.3. Qualification uses r
 API 0.4.0, UI 0.1.10, File Explorer 0.2.6, Language Service 0.1.4 and
 Workspace 0.4.1 with Core 0.13.2/Mira 0.2. No native producer, parked package
 activation, runtime ownership change or publication bypass is introduced.
+
+Under LN-BASE-045, release versioning MAY refresh only observed package and
+dependency version provenance in compatibility reports. It MUST run every
+existing behavioral baseline assertion and reject changes to source hashes,
+observations, reviewed upstream identity, feature coverage or other report
+content before writing. It MUST NOT update the accepted compatibility baseline.
+Ordinary audit invocation MUST continue to reject stale reports.

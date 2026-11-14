@@ -97,6 +97,7 @@ export function versionPublicPackages() {
       run("pnpm", ["exec", "changeset", "version"]);
       versioned = true;
       run("pnpm", ["packages:sync"]);
+      run("pnpm", ["audit:bases", "--refresh-provenance"]);
     }
   } catch (error) {
     restoreSnapshots = !versioned;

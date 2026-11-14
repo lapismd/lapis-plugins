@@ -289,3 +289,10 @@ The public API peer admits the released `^0.4.0` host in addition to its
 existing 0.2 range. Shared shell qualification uses API 0.4.0, UI 0.1.10,
 Workspace 0.4.1, Core 0.13.2 and Mira 0.2 through registry exports. Runtime
 identity, explicit App ownership and this plugin's behavior remain unchanged.
+
+Under LN-BASE-045, release versioning MAY refresh only observed package and
+dependency version provenance in compatibility reports. It MUST run every
+existing behavioral baseline assertion and reject changes to source hashes,
+observations, reviewed upstream identity, feature coverage or other report
+content before writing. It MUST NOT update the accepted compatibility baseline.
+Ordinary audit invocation MUST continue to reject stale reports.

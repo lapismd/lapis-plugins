@@ -184,3 +184,20 @@ export function renderReport(report, upstream) {
     lines.push(`- [${doc.path}](${doc.url}), Git blob \`${doc.blob}\`.`);
   return lines.join("\n") + "\n";
 }
+
+
+export function assertProvenanceOnlyRefresh(previous, actual) {
+  assert.deepEqual(
+    Object.keys(previous.implementation.dependencies).sort(),
+    Object.keys(actual.implementation.dependencies).sort(),
+    "Provenance refresh cannot change dependency identities"
+  );
+  const admitted = structuredClone(previous);
+  admitted.implementation.packageVersion = actual.implementation.packageVersion;
+  admitted.implementation.dependencies = structuredClone(actual.implementation.dependencies);
+  assert.deepEqual(
+    admitted,
+    actual,
+    "Provenance refresh cannot change compatibility evidence"
+  );
+}

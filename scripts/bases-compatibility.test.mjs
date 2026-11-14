@@ -103,3 +103,35 @@ test("intentional differences retain failed expectations and require rationale",
     /Missing difference rationale/
   );
 });
+
+
+test("provenance refresh admits only observed versions without mutating evidence", async () => {
+  const { assertProvenanceOnlyRefresh } = await import("./bases-compatibility-core.mjs");
+  const previous = read("report.json");
+  const actual = structuredClone(previous);
+  actual.implementation.packageVersion = "0.3.3";
+  actual.implementation.dependencies["@lapis-notes/api"] = "0.4.0";
+  const frozen = structuredClone(previous);
+  assertProvenanceOnlyRefresh(previous, actual);
+  assert.deepEqual(previous, frozen);
+});
+
+test("provenance refresh rejects behavioral, source, inventory and dependency-key drift", async () => {
+  const { assertProvenanceOnlyRefresh } = await import("./bases-compatibility-core.mjs");
+  assert.equal(typeof assertProvenanceOnlyRefresh, "function");
+  const previous = read("report.json");
+  const mutations = [
+    (r) => { r.results[0].status = "unreviewed"; },
+    (r) => { r.results[0].observations[0].pass = !r.results[0].observations[0].pass; },
+    (r) => { r.implementation.sources["db.ts"] = "changed"; },
+    (r) => { r.upstreamReviewedAt = "unreviewed"; },
+    (r) => { r.results.pop(); },
+    (r) => { r.implementation.dependencies.unreviewed = "1.0.0"; },
+  ];
+  for (const mutate of mutations) {
+    const actual = structuredClone(previous);
+    actual.implementation.packageVersion = "0.3.3";
+    mutate(actual);
+    assert.throws(() => assertProvenanceOnlyRefresh(previous, actual));
+  }
+});
