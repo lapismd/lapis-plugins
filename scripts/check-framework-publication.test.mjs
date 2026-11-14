@@ -12,20 +12,20 @@ test("checks the published framework ranges and controller without Community", (
       return {
         status: 0,
         stdout: JSON.stringify(
-          coordinate.includes("workspace") ? ["0.2.0"] : "0.1.2"
+          coordinate.includes("workspace") ? ["0.3.5", "0.4.1"] : "0.1.2",
         ),
       };
     },
   });
-  assert.ok(coordinates.includes("@lapis-notes/api@^0.2.0"));
-  assert.ok(coordinates.includes("@lapis-notes/workspace@^0.3.0"));
+  assert.ok(coordinates.includes("@lapis-notes/api@^0.2.0 || ^0.4.0"));
+  assert.ok(coordinates.includes("@lapis-notes/workspace@^0.3.0 || ^0.4.1"));
   assert.ok(coordinates.includes("@lapis-notes/file-explorer@^0.2.0"));
   assert.ok(coordinates.includes("@lapis-notes/ui@^0.1.4"));
   assert.ok(coordinates.includes("@lapis-notes/language-service@^0.1.2"));
   assert.ok(coordinates.includes("@lapismd/ai-controller@^0.1.0"));
   assert.equal(coordinates.length, 6);
   assert.ok(
-    coordinates.every((coordinate) => !coordinate.includes("community"))
+    coordinates.every((coordinate) => !coordinate.includes("community")),
   );
 });
 
@@ -37,7 +37,7 @@ test("missing packages and empty npm responses fail the prerequisite", () => {
   ]) {
     assert.throws(
       () => checkFrameworkPublication({ lookup: () => result }),
-      /prerequisite unavailable|no published versions/
+      /prerequisite unavailable|no published versions/,
     );
   }
 });
@@ -45,7 +45,7 @@ test("missing packages and empty npm responses fail the prerequisite", () => {
 test("the actual aggregate rejects every skipped, failed, and cancelled lane", () => {
   const workflow = readFileSync(
     new URL("../.github/workflows/ci.yml", import.meta.url),
-    "utf8"
+    "utf8",
   );
   const script = workflow
     .split("  validate:")[1]
@@ -78,7 +78,7 @@ test("the actual aggregate rejects every skipped, failed, and cancelled lane", (
       assert.notEqual(
         run({ ...success, [lane]: result }).status,
         0,
-        `${lane}: ${result}`
+        `${lane}: ${result}`,
       );
     }
   assert.notEqual(
@@ -87,7 +87,7 @@ test("the actual aggregate rejects every skipped, failed, and cancelled lane", (
       FRAMEWORK_READY: "false",
       ...Object.fromEntries(lanes.slice(2).map((lane) => [lane, "skipped"])),
     }).status,
-    0
+    0,
   );
   for (const result of ["skipped", "failure", "cancelled", ""]) {
     assert.notEqual(run({ ...success, CHANGES: result }).status, 0);
@@ -101,7 +101,7 @@ test("the actual aggregate rejects every skipped, failed, and cancelled lane", (
 test("the actual aggregate accepts only a successful spec route with full lanes skipped", () => {
   const workflow = readFileSync(
     new URL("../.github/workflows/ci.yml", import.meta.url),
-    "utf8"
+    "utf8",
   );
   const script = workflow
     .split("  validate:")[1]
@@ -134,7 +134,7 @@ test("the actual aggregate accepts only a successful spec route with full lanes 
       assert.notEqual(
         run({ ...success, [lane]: result }).status,
         0,
-        `${lane}: ${result}`
+        `${lane}: ${result}`,
       );
     }
   }
@@ -143,7 +143,7 @@ test("the actual aggregate accepts only a successful spec route with full lanes 
       assert.notEqual(
         run({ ...success, [lane]: result }).status,
         0,
-        `${lane}: ${result}`
+        `${lane}: ${result}`,
       );
     }
   }

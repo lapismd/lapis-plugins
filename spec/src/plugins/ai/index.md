@@ -598,3 +598,8 @@ The combined first-party maintenance intake resolves the compatible Core
 0.13 package line to released 0.13.2 alongside Mira 0.2. Package dependencies
 remain registry semver ranges; runtime identity, App ownership and this
 plugin's behavior contracts remain unchanged.
+
+The public API peer admits the released `^0.4.0` host in addition to its
+existing 0.2 range. Shared shell qualification uses API 0.4.0, UI 0.1.10,
+Workspace 0.4.1, Core 0.13.2 and Mira 0.2 through registry exports. Runtime
+identity, explicit App ownership and this plugin's behavior remain unchanged.

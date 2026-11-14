@@ -271,3 +271,10 @@ PNG capture uses the owning browser document and a captured board operation unde
 The Bases renderer metadata intake does not change native service ownership,
 protocols, installation or native qualification. It only declares the existing
 versioned browser store host module required by the refreshed registry graph.
+
+The API 0.4 host intake retains the existing 0.2 peer line, including Canvas
+0.2.4's editing-session floor. Active packages admit API 0.4.0 and the framework
+publication preflight admits Workspace 0.4.1 alongside 0.3. Qualification uses released registry
+API 0.4.0, UI 0.1.10, File Explorer 0.2.6, Language Service 0.1.4 and
+Workspace 0.4.1 with Core 0.13.2/Mira 0.2. No native producer, parked package
+activation, runtime ownership change or publication bypass is introduced.

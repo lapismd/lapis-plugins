@@ -284,3 +284,8 @@ LN-BASE-046 bracketed property IDs MUST remain at the typed final evaluator boun
 The Design Core 0.13 dependency intake uses the existing versioned Svelte store
 host contract in the Bases archive. Its runtime descriptor declares this
 shared module; Bases behavior and App ownership are unchanged.
+
+The public API peer admits the released `^0.4.0` host in addition to its
+existing 0.2 range. Shared shell qualification uses API 0.4.0, UI 0.1.10,
+Workspace 0.4.1, Core 0.13.2 and Mira 0.2 through registry exports. Runtime
+identity, explicit App ownership and this plugin's behavior remain unchanged.

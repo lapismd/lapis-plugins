@@ -89,3 +89,8 @@ The package test toolchain uses patched Vite 6.4.4 and Vitest 4.1.12
 or newer within the existing major versions. Shared catalog qualification uses
 the patched Storybook toolchain described in distribution; application behavior
 and public package ownership remain unchanged.
+
+The public API peer admits the released `^0.4.0` host in addition to its
+existing 0.2 range. Shared shell qualification uses API 0.4.0, UI 0.1.10,
+Workspace 0.4.1, Core 0.13.2 and Mira 0.2 through registry exports. Runtime
+identity, explicit App ownership and this plugin's behavior remain unchanged.

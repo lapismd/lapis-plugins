@@ -71,7 +71,7 @@
     "@tanstack/svelte-virtual": "^3.13.46"
   },
   "peerDependencies": {
-    "@lapis-notes/api": "^0.2.0",
+    "@lapis-notes/api": "^0.2.0 || ^0.4.0",
     "@lapismd/jj-history": "^0.1.0",
     "svelte": "^5.0.0"
   },
