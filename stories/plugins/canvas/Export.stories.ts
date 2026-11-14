@@ -102,7 +102,7 @@ export const Options: Story = {
       board = within(root);
     const zoom = () =>
       new DOMMatrix(
-        getComputedStyle(root.querySelector(".svelte-flow__viewport")!)
+        root.querySelector<HTMLElement>(".svelte-flow__viewport")!.style
           .transform,
       ).a;
     await waitFor(() => expect(zoom()).toBeLessThan(0.99));
