@@ -581,7 +581,7 @@ function normalizeDependencies(dependencies, plugin) {
   )) {
     // Canvas uses App editing sessions and conditional text persistence from 0.2.4.
     const canvasApi = plugin === "canvas" && name === "@lapis-notes/api";
-    normalized[name] = canvasApi ? "^0.2.4" : frameworkPackageVersions.get(name) ?? version;
+    normalized[name] = canvasApi ? "^0.2.4 || ^0.4.0" : frameworkPackageVersions.get(name) ?? version;
   }
   return normalized;
 }

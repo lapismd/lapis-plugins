@@ -287,3 +287,8 @@ The Mira 0.2 renderer cohort requires editor, AI and Mermaid packages
 Markdown preview MUST use the compatible published adapter contract without
 consumer casts or local dependency aliases. The Core 0.13 lockfile entry
 resolves to 0.13.2 alongside the host settings provider.
+
+The public API peer admits the released `^0.4.0` host in addition to its
+existing 0.2 range. Shared shell qualification uses API 0.4.0, UI 0.1.10,
+Workspace 0.4.1, Core 0.13.2 and Mira 0.2 through registry exports. Runtime
+identity, explicit App ownership and this plugin's behavior remain unchanged.

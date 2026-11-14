@@ -206,3 +206,8 @@ The Core 0.13 maintenance lockfile resolves the existing compatible History
 dependency to 0.13.2, matching the settings registration provider. Its public
 compatibility union remains unchanged; nominal controller identity MUST NOT
 be concealed with a cast or an alias.
+
+The public API peer admits the released `^0.4.0` host in addition to its
+existing 0.2 range. Shared shell qualification uses API 0.4.0, UI 0.1.10,
+Workspace 0.4.1, Core 0.13.2 and Mira 0.2 through registry exports. Runtime
+identity, explicit App ownership and this plugin's behavior remain unchanged.

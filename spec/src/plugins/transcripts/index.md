@@ -85,3 +85,8 @@ Teardown MUST abort pending rendering and dispose a cleanup returned after
 the surface has closed, without remounting or writing the note.
 `Plugins/Transcripts/Embed Lifecycle` exercises the actual component for
 late cleanup and asynchronous-decline fallback; visual approval remains separate.
+
+The public API peer admits the released `^0.4.0` host in addition to its
+existing 0.2 range. Shared shell qualification uses API 0.4.0, UI 0.1.10,
+Workspace 0.4.1, Core 0.13.2 and Mira 0.2 through registry exports. Runtime
+identity, explicit App ownership and this plugin's behavior remain unchanged.
