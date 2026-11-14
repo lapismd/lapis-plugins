@@ -522,3 +522,9 @@ module emitted by the Design Core 0.13 intake. Metadata synchronization MUST
 retain that declaration, and the existing emitted-import audit MUST reject
 archives whose shared-dependency list omits it. No raw private Svelte imports
 are admitted.
+
+The combined maintenance intake consumes released Core 0.13.2, Mira 0.2.0
+and matching 0.0.4 editor extensions. History and Markdown retain their
+public Core compatibility unions while their lockfile entries match the root
+provider. The full PR range requires each affected package chapter; a bot
+exemption cannot replace canonical main-branch evidence.

@@ -73,3 +73,15 @@ remain explicitly identified as boot status rather than alternate app chrome.
 Package construction uses the declared `src` root explicitly so the published
 `dist/index.js` and declaration entrypoints are present in clean containers.
 The default `src/lib` assumption cannot qualify the package export contract.
+
+The combined first-party maintenance intake resolves the compatible Core
+0.13 package line to released 0.13.2 alongside Mira 0.2. Package dependencies
+remain registry semver ranges; runtime identity, App ownership and this
+plugin's behavior contracts remain unchanged.
+
+Under LN-TX-001, file embeds MUST await Mira 0.2 custom renderer results.
+A declined asynchronous render MUST use the ordinary Markdown fallback.
+Teardown MUST abort pending rendering and dispose a cleanup returned after
+the surface has closed, without remounting or writing the note.
+`Plugins/Transcripts/Embed Lifecycle` exercises the actual component for
+late cleanup and asynchronous-decline fallback; visual approval remains separate.

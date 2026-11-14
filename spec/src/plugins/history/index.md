@@ -201,3 +201,8 @@ local candidate until the separate release gate.
 Current App-backed catalog seeds and copyable host examples use `.lapis`
 for application state, matching the Notes-wide default. Historical vault data
 and the frozen Deno host are not migrated or edited.
+
+The Core 0.13 maintenance lockfile resolves the existing compatible History
+dependency to 0.13.2, matching the settings registration provider. Its public
+compatibility union remains unchanged; nominal controller identity MUST NOT
+be concealed with a cast or an alias.

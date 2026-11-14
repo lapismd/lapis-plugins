@@ -180,3 +180,8 @@ the sort button, and the row gutter.
 `Plugins/CSV/Panels/Canvas` opens the sheet in every governed placement.
 Middle (Top Tabs) embeds that sheet in a note, edits a canvas cell, resizes
 a column, and reads the new text back from the file. It stays `visual-pending`.
+
+The combined first-party maintenance intake resolves the compatible Core
+0.13 package line to released 0.13.2 alongside Mira 0.2. Package dependencies
+remain registry semver ranges; runtime identity, App ownership and this
+plugin's behavior contracts remain unchanged.

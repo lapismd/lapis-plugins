@@ -24,7 +24,7 @@ extensions.
 The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.
 
-Version 0.2.0 consumes published Mira `~0.1.4` and the matching 0.0.3 editor
+The current renderer intake consumes published Mira `~0.2.0` and the matching 0.0.4 editor
 and optional plugin releases.
 Its generated manifest, README installation coordinate and authentic Changesets
 changelog agree on the independent release version.
@@ -281,3 +281,9 @@ Notebook canvas-table adoption may widen Markdown’s Design Core compatibility 
 The Markdown compatibility range MUST admit released Design Core 0.9 for shared Notebook tables while retaining qualified 0.7.4 and 0.8 hosts. The private catalog qualifies that published 0.9 graph. Markdown runtime behavior and public exports remain unchanged; the owning release evidence separates candidate archives from final registry qualification.
 
 The private catalog development dependency on History uses `^0.2.0`, matching the existing workspace package and API 0.2 host cohort. This avoids accidentally installing the obsolete 0.1.4 registry host graph during Markdown compatibility lock refresh; History and CSV runtime source remain unchanged.
+
+The Mira 0.2 renderer cohort requires editor, AI and Mermaid packages
+`~0.0.4`; older 0.0.3 editors use the earlier synchronous embed adapter.
+Markdown preview MUST use the compatible published adapter contract without
+consumer casts or local dependency aliases. The Core 0.13 lockfile entry
+resolves to 0.13.2 alongside the host settings provider.

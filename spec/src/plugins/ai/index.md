@@ -593,3 +593,8 @@ Catalog fixtures declare their actual composition under LP-SPEC-054. Synthetic
 setup actions use the separate LP-SPEC-055 fixture-controls surface; application
 stories retain the production WorkspaceShell. Loading and failure placeholders
 remain explicitly identified as boot status rather than alternate app chrome.
+
+The combined first-party maintenance intake resolves the compatible Core
+0.13 package line to released 0.13.2 alongside Mira 0.2. Package dependencies
+remain registry semver ranges; runtime identity, App ownership and this
+plugin's behavior contracts remain unchanged.

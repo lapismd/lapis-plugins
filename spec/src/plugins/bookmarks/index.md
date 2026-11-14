@@ -120,3 +120,8 @@ Current shared-shell qualification uses the released Design Core 0.6
 public boundary and matching Notes framework archives. Published dependency
 ranges now admit that boundary directly; the Avatar repair remains a recorded
 local candidate until the separate release gate.
+
+The combined first-party maintenance intake resolves the compatible Core
+0.13 package line to released 0.13.2 alongside Mira 0.2. Package dependencies
+remain registry semver ranges; runtime identity, App ownership and this
+plugin's behavior contracts remain unchanged.

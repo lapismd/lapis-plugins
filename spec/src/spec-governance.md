@@ -628,3 +628,9 @@ LN-CANVAS-058/059 separate PNG geometry/quality tests, accessible options, actua
 The Bases dependency intake retains the fail-closed emitted host-import audit.
 Metadata synchronization records its versioned Svelte store dependency and does
 not broaden the approved host-module allowlist.
+
+The combined maintenance intake consumes released Core 0.13.2, Mira 0.2.0
+and matching 0.0.4 editor extensions. History and Markdown retain their
+public Core compatibility unions while their lockfile entries match the root
+provider. The full PR range requires each affected package chapter; a bot
+exemption cannot replace canonical main-branch evidence.

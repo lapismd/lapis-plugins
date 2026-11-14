@@ -70,3 +70,8 @@ The package test toolchain uses patched Vite 6.4.4 and Vitest 4.1.12
 or newer within the existing major versions. Shared catalog qualification uses
 the patched Storybook toolchain described in distribution; application behavior
 and public package ownership remain unchanged.
+
+The combined first-party maintenance intake resolves the compatible Core
+0.13 package line to released 0.13.2 alongside Mira 0.2. Package dependencies
+remain registry semver ranges; runtime identity, App ownership and this
+plugin's behavior contracts remain unchanged.

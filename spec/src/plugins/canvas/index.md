@@ -126,3 +126,8 @@ by the public API contract. An attempted conditional write never falls back.
 Installed native Desktop release qualification and publication remain separate
 from these producer/source tests. Reload is not an implicit discard of a failed
 draft; explicit retry or reviewed recovery must succeed first.
+
+The combined first-party maintenance intake resolves the compatible Core
+0.13 package line to released 0.13.2 alongside Mira 0.2. Package dependencies
+remain registry semver ranges; runtime identity, App ownership and this
+plugin's behavior contracts remain unchanged.

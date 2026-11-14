@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@lapismd/design-core": "^0.13.1",
-    "@lapismd/mira": "~0.1.5",
+    "@lapismd/mira": "~0.2.0",
     "@lucide/svelte": "^0.523.0",
     "@xyflow/svelte": "^1.2.4",
     "html-to-image": "^1.11.13"
