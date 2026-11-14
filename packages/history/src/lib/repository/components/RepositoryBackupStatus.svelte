@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import RepositoryUpstreamActions from "./RepositoryUpstreamActions.svelte";
   import type { SyncController } from "../controllers/sync-controller.js";
+  import type { RepositoryUpstreamBinding } from "../controllers/remotes-settings.js";
   import * as Popover from "@lapismd/design-core/shadcn/popover";
   import { RelativeTime } from "@lapismd/design-core/shadcn/relative-time";
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
@@ -11,20 +12,19 @@
   import CircleAlert from "@lucide/svelte/icons/circle-alert";
   import RepositoryIdentifiers from "./RepositoryIdentifiers.svelte";
   import { encodeJjChangeId } from "../controllers/graph/repository-log-graph.js";
-  import type {
-    BackupController,
-    BackupStatus,
-  } from "../controllers/backup.js";
+  import type { BackupController, BackupStatus } from "../controllers/backup.js";
   let {
     controller,
     openRevision,
     copyText,
     upstream,
+    remote,
   }: {
     controller: BackupController;
     openRevision(operation: string, revision: string): Promise<void>;
     copyText(value: string): Promise<void>;
     upstream?: SyncController;
+    remote?: RepositoryUpstreamBinding;
   } = $props();
   let value: BackupStatus = $state({
     phase: "saving",
@@ -49,20 +49,11 @@
   }
 </script>
 
-<div
-  class="backup-status"
-  aria-label="Vault backup"
-  aria-busy={value.phase === "saving"}
->
+<div class="backup-status" aria-label="Vault backup" aria-busy={value.phase === "saving"}>
   <Popover.Root bind:open>
     <Popover.Trigger>
       {#snippet child({ props })}
-        <button
-          {...props}
-          type="button"
-          class="summary"
-          aria-label={`Vault history: ${label}`}
-        >
+        <button {...props} type="button" class="summary" aria-label={`Vault history: ${label}`}>
           {#if value.phase === "ready"}<Check aria-hidden="true" />
           {:else if value.phase === "failed"}<CircleAlert aria-hidden="true" />
           {:else}<History aria-hidden="true" />{/if}
@@ -80,10 +71,10 @@
       <section class="backup-card" aria-label="Vault history details">
         <header>
           <History aria-hidden="true" /><strong>Local history</strong>
-          <RepositoryUpstreamActions
-            controller={upstream}
-            unavailable={value.phase !== "ready"}
-          />
+          {#if !remote}<RepositoryUpstreamActions
+              controller={upstream}
+              unavailable={value.phase !== "ready"}
+            />{/if}
         </header>
         {#if value.checkpoint}
           <button type="button" class="subject" onclick={inspect}
@@ -95,27 +86,15 @@
             commitId={value.checkpoint.commit}
             changeId={encodeJjChangeId(value.checkpoint.change_id)}
           />
-          <span
-            >Last saved <RelativeTime
-              timestamp={value.checkpoint.timestamp_millis}
-            /></span
-          >
+          <span>Last saved <RelativeTime timestamp={value.checkpoint.timestamp_millis} /></span>
           <p>
-            Saved editor and external file changes are captured automatically.
-            Unsaved editor changes appear after saving.
+            Saved editor and external file changes are captured automatically. Unsaved editor
+            changes appear after saving.
           </p>
-          <button type="button" class="open-log" onclick={inspect}
-            >Open in JJ Log</button
-          >
+          <button type="button" class="open-log" onclick={inspect}>Open in JJ Log</button>
         {:else if value.phase === "saving"}
-          <div
-            class="loading"
-            role="status"
-            aria-label="Preparing local history"
-          >
-            <Skeleton style="height:1rem;width:90%" /><Skeleton
-              style="height:1rem;width:65%"
-            />
+          <div class="loading" role="status" aria-label="Preparing local history">
+            <Skeleton style="height:1rem;width:90%" /><Skeleton style="height:1rem;width:65%" />
           </div>
         {:else}<p>
             {value.phase === "closed"
@@ -125,14 +104,18 @@
       </section>
     </Popover.Content>
   </Popover.Root>
+  {#if remote}<RepositoryUpstreamActions
+      {remote}
+      compact
+      unavailable={value.phase !== "ready"}
+    />{/if}
   <button
     type="button"
     class="refresh"
     aria-label="Save vault checkpoint now"
     title="Save vault checkpoint now"
     disabled={value.phase === "saving" || value.phase === "closed"}
-    onclick={() => controller.refresh()}
-    ><RefreshCw aria-hidden="true" /></button
+    onclick={() => controller.refresh()}><RefreshCw aria-hidden="true" /></button
   >
 </div>
 

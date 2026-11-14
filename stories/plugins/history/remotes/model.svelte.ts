@@ -191,6 +191,16 @@ export class RemotesFixture {
         });
         feedback.recovered();
       },
+      pullBackup: async () => {
+        this.record("pull", "backup");
+        this.update("backup", { busy: "fetching" });
+        await this.pause();
+        this.update("backup", {
+          busy: undefined,
+          observation: { incoming: 0, outgoing: 3, fetchedAt: "just now" },
+        });
+        feedback.recovered();
+      },
       reviewPush: async (target) => {
         this.record("review", target);
         this.update(target, {

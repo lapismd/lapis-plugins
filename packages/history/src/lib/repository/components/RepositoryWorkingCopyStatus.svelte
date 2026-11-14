@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import RepositoryUpstreamActions from "./RepositoryUpstreamActions.svelte";
   import type { SyncController } from "../controllers/sync-controller.js";
+  import type { RepositoryUpstreamBinding } from "../controllers/remotes-settings.js";
   import * as Popover from "@lapismd/design-core/shadcn/popover";
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
   import { FileChangeStats } from "@lapismd/design-core/diff";
@@ -20,11 +21,13 @@
     openRevision,
     copyText,
     upstream,
+    remote,
   }: {
     controller: WorkingCopyController;
     openRevision(operation: string, revision: string): Promise<void>;
     copyText(value: string): Promise<void>;
     upstream?: SyncController;
+    remote?: RepositoryUpstreamBinding;
   } = $props();
   let statusState: WorkingCopyState = $state({ busy: true, status: "loading" });
   let open = $state(false);
@@ -84,17 +87,17 @@
     >
       <section class="working-card" aria-label="Working copy details">
         <header>
-          <GitCommitHorizontal aria-hidden="true" /><strong>Working copy</strong
-          >{#if value}<span class="workspace">{value.workspace}</span>{/if}
-          <RepositoryUpstreamActions
-            controller={upstream}
-            unavailable={statusState.busy}
-          />
+          <GitCommitHorizontal aria-hidden="true" /><strong>Working copy</strong>{#if value}<span
+              class="workspace">{value.workspace}</span
+            >{/if}
+          {#if !remote}<RepositoryUpstreamActions
+              controller={upstream}
+              unavailable={statusState.busy}
+            />{/if}
         </header>
         {#if value}
           <button type="button" class="subject" onclick={inspect}
-            >{value.description.split(/\r?\n/u)[0] ||
-              "(no description)"}</button
+            >{value.description.split(/\r?\n/u)[0] || "(no description)"}</button
           >
           <div class="identifiers">
             <RepositoryIdentifiers
@@ -114,10 +117,7 @@
             />
           </div>
           <div class="totals">
-            <span
-              >{value.files} changed {value.files === 1
-                ? "file"
-                : "files"}</span
+            <span>{value.files} changed {value.files === 1 ? "file" : "files"}</span
             >{#if value.lines}<FileChangeStats
                 additions={value.lines.additions}
                 deletions={value.lines.deletions}
@@ -127,32 +127,28 @@
               >{/if}
           </div>
           <p>
-            Includes unsnapshotted files and saved editor changes compared with
-            the working-copy parent. Editor changes appear after saving.
+            Includes unsnapshotted files and saved editor changes compared with the working-copy
+            parent. Editor changes appear after saving.
           </p>
-          <button type="button" class="open-log" onclick={inspect}
-            >Open in JJ Log</button
-          >
+          <button type="button" class="open-log" onclick={inspect}>Open in JJ Log</button>
         {:else if statusState.status === "loading"}
           <div class="loading" role="status" aria-label="Reading working copy">
             <Skeleton style="height:1rem;width:90%" /><Skeleton
               style="height:1rem;width:65%"
             /><Skeleton style="height:1rem;width:80%" />
           </div>
-        {:else}<p>
-            Status is unavailable. Refresh to read the current working copy.
-          </p>{/if}
+        {:else}<p>Status is unavailable. Refresh to read the current working copy.</p>{/if}
       </section>
     </Popover.Content>
   </Popover.Root>
+  {#if remote}<RepositoryUpstreamActions {remote} compact unavailable={statusState.busy} />{/if}
   <button
     type="button"
     class="refresh"
     aria-label="Refresh working copy status"
     title="Refresh working copy status"
     disabled={statusState.busy}
-    onclick={() => controller.refresh()}
-    ><RefreshCw aria-hidden="true" /></button
+    onclick={() => controller.refresh()}><RefreshCw aria-hidden="true" /></button
   >
 </div>
 

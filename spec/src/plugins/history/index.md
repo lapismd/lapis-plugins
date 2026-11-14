@@ -216,6 +216,12 @@ retains package identity, explicit App ownership and separate native/release gat
 
 ## Remotes and credentials review
 
+The review MUST use the full viewport and genuine WorkspaceShell footer, without
+a description banner or a separate remote toolbar above History. Fetch/pull/push
+actions MUST reuse the existing repository status widgets and upstream icons,
+augmented with the selected target and Settings entry. Settings retains its
+explicit remote actions. Compact layouts use the native status overflow.
+
 The [preview inventory](../../../../docs/repository-remotes-preview.md) defines
 the first UI review slice under LN-HIST-020. Shared settings, history actions,
 credential dialogs and push review remain unregistered in runtime plugin

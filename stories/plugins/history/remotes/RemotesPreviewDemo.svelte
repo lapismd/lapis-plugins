@@ -2,7 +2,6 @@
   import { onMount, tick } from "svelte";
   import type { App } from "@lapis-notes/api";
   import { WorkspaceShell } from "@lapis-notes/workspace";
-  import FixtureControls from "../../../catalog/FixtureControls.svelte";
   import { attachRemotesPreview, createRemotesPreview } from "./runtime.svelte";
   import type { RemotesScenario } from "./model.svelte";
   let {
@@ -10,18 +9,20 @@
     scenario = "connected",
     settings = true,
     narrow = false,
+    legacyStatus = false,
   }: {
     host?: "desktop" | "server";
     scenario?: RemotesScenario;
     settings?: boolean;
     narrow?: boolean;
+    legacyStatus?: boolean;
   } = $props();
   let app = $state.raw<App>();
   let element: HTMLDivElement;
   let failure = $state("");
   onMount(() => {
     let disposed = false;
-    const opening = createRemotesPreview(host, scenario, settings);
+    const opening = createRemotesPreview(host, scenario, legacyStatus);
     void opening
       .then(async (runtime) => {
         if (disposed) return;
@@ -42,13 +43,11 @@
 </script>
 
 <div class="preview" data-ui-theme="lapis" style:max-width={narrow ? "390px" : undefined}>
-  <FixtureControls placement="inline" label="Repository remotes · UI review">
-    Mock services only. Credentials and transfers stay in memory. {host === "server"
-      ? "Server"
-      : "Desktop"} presentation.
-  </FixtureControls>
   <div class="workspace" data-remotes-preview bind:this={element}>
-    {#if failure}<p role="alert">{failure}</p>{:else if app}<WorkspaceShell {app} />{/if}
+    {#if failure}<p role="alert">{failure}</p>{:else if app}<WorkspaceShell
+        {app}
+        displayMode="desktop"
+      />{/if}
   </div>
 </div>
 

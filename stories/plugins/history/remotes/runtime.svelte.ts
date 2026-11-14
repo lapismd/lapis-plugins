@@ -6,6 +6,7 @@ import { createRepositoryStory, cleanupRepositoryStories } from "../repository/r
 import RemotesPreviewSettingsPage from "./RemotesPreviewSettingsPage.svelte";
 import RemotesPreviewHistory from "./RemotesPreviewHistory.svelte";
 import { RemotesFixture, type RemotesScenario } from "./model.svelte";
+import { mountRemotesStatus } from "./status";
 
 type Runtime = Awaited<ReturnType<typeof createRepositoryStory>> & {
   fixture: RemotesFixture;
@@ -25,9 +26,9 @@ export function remotesPreviewFor(canvas: HTMLElement): Runtime {
 export function createRemotesPreview(
   host: "desktop" | "server",
   scenario: RemotesScenario,
-  settings: boolean,
+  legacyStatus = false,
 ) {
-  const opening = boot(host, scenario, settings);
+  const opening = boot(host, scenario, legacyStatus);
   openings.add(opening);
   return opening;
 }
@@ -39,7 +40,7 @@ export async function cleanupRemotesPreviews() {
 async function boot(
   host: "desktop" | "server",
   scenario: RemotesScenario,
-  settings: boolean,
+  legacyStatus: boolean,
 ): Promise<Runtime> {
   const runtime = await createRepositoryStory("middle", false, "ready", true);
   let fixture!: RemotesFixture;
@@ -71,6 +72,7 @@ async function boot(
   const openSettings = () => {
     registration.open("repository-history.remotes");
   };
+  const stopStatus = await mountRemotesStatus(plugin, fixture, openSettings, legacyStatus);
   class PreviewView extends View {
     #component?: ReturnType<typeof mount>;
     constructor(leaf: WorkspaceLeaf) {
@@ -90,7 +92,7 @@ async function boot(
     onload() {
       this.#component = mount(RemotesPreviewHistory, {
         target: this.containerEl,
-        props: { plugin, fixture, onManage: openSettings },
+        props: { plugin },
       });
     }
     onunload() {
@@ -112,6 +114,7 @@ async function boot(
       };
       getWorkspaceHostBinding(app.workspace).controller.settings.close();
       await tick();
+      await stopStatus();
       registration.dispose();
       await runtime.dispose();
       disposeModels();

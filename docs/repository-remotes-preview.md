@@ -13,36 +13,49 @@ Run `pnpm storybook -- --port 6017 --host 127.0.0.1` from this workspace, then o
 - [History entry](http://127.0.0.1:6017/?path=/story/plugins-history-repository-remotes-and-credentials--history-entry)
 - [Narrow dark Server](http://127.0.0.1:6017/?path=/story/plugins-history-repository-remotes-and-credentials--server-narrow-dark)
 
-All examples carry `visual-pending`. The dotted fixture label sits outside the
-production WorkspaceShell and identifies mock actions. No visual baselines are
-created or approved by this work.
+All 33 examples carry `visual-pending`. Each shows the full WorkspaceShell with
+the repository status bar, without a description banner or a remote toolbar
+above History. All actions use memory services. No visual baselines are created
+or approved by this work.
 
 ## State inventory
 
-| Story                                     | Review surface                                                       |
-| ----------------------------------------- | -------------------------------------------------------------------- |
-| Desktop / Server                          | Separate backup/original settings, credentials and host custody copy |
-| Dark / Narrow / Server Narrow Dark        | Theme, pane width, scrolling and dialog layout                       |
-| Disconnected                              | Empty connections; save without transfer; anonymous HTTPS            |
-| Public HTTPS / Read Only                  | Fetch available, push unavailable                                    |
-| Missing Credentials                       | Retained connection with reconnect guidance                          |
-| Locked Server Store                       | Encrypted custody unavailable; credential writes disabled            |
-| SSH Unavailable                           | Server host configuration required; no private-key upload            |
-| Fetching                                  | Busy action controls; current files and history pin preserved        |
-| Push Review                               | Exact remote, branch, bookmark, full commit and outgoing count       |
-| Rejected Push                             | Failure toast; no claim that publication succeeded                   |
-| Unknown Push / Observe Does Not Republish | Retained request and explicit observation/stop                       |
-| Device Sign In / Expired Device Sign In   | Device code, cancellation, expiry and restart                        |
-| Save Is Not Transfer                      | Save only; backup connection and auto-sync remain unchanged          |
-| Manual Fetch And Push                     | Explicit test/fetch, then review before publication                  |
-| Save Credential / Forget Credential       | Secret-free inventory and scoped missing-credential state            |
-| Keyboard Credential Dialog                | Keyboard activation, Escape, restored focus and cleared token        |
-| History Entry / History Needs Connection  | Target-labelled actions and Manage remotes entry                     |
+| Story                                      | Review surface                                                       |
+| ------------------------------------------ | -------------------------------------------------------------------- |
+| Desktop / Server                           | Separate backup/original settings, credentials and host custody copy |
+| Dark / Narrow / Server Narrow Dark         | Theme, pane width, scrolling and dialog layout                       |
+| Disconnected                               | Empty connections; save without transfer; anonymous HTTPS            |
+| Public HTTPS / Read Only                   | Fetch available, push unavailable                                    |
+| Missing Credentials                        | Retained connection with reconnect guidance                          |
+| Locked Server Store                        | Encrypted custody unavailable; credential writes disabled            |
+| SSH Unavailable / SSH Connected            | Host identity availability and connection; no private-key upload     |
+| Fetching                                   | Busy action controls; current files and history pin preserved        |
+| Push Review                                | Exact remote, branch, bookmark, full commit and outgoing count       |
+| Rejected Push                              | Failure toast; no claim that publication succeeded                   |
+| Unknown Push / Observe Does Not Republish  | Retained request and explicit observation/stop                       |
+| Device Sign In / Expired Device Sign In    | Device code, cancellation, expiry and restart                        |
+| Save Is Not Transfer                       | Save only; backup connection and auto-sync remain unchanged          |
+| Automatic Sync Requires Opt In             | New backup connections retain manual transfer mode                   |
+| Unknown Push Keeps Connection              | Uncertain publication prevents connection changes                    |
+| Sign In Completes                          | Scoped account completion without transferring vault data            |
+| Manual Fetch And Push                      | Explicit test/fetch, then review before publication                  |
+| Save Credential / Forget Credential        | Secret-free inventory and scoped missing-credential state            |
+| Keyboard Credential Dialog                 | Keyboard activation, Escape, restored focus and cleared token        |
+| History Entry / History Needs Connection   | Existing footer icons, target labels and Manage remotes entry        |
+| Footer Fetch And Push / Footer Backup Pull | Target-isolated footer actions and reviewed publication              |
+| Narrow Footer                              | Existing status overflow menu retains repository actions             |
+| Existing Status Controls                   | Original controller-based fetch/pull/push popover remains functional |
 
 The review presentation uses the package's real RepositoryPanel inside the
-WorkspaceShell, with an optional remote toolbar composition. Settings uses the
-real Settings surface with a catalog-only section registration. Existing app
-plugin registration, backup services and settings remain unchanged.
+WorkspaceShell. Its existing RepositoryWorkingCopyStatus, RepositoryBackupStatus
+and RepositoryUpstreamActions components supply the footer actions through the
+public status-bar registration API. The same fetch/pull/push icons gain target
+labels, last-fetched counts and a Manage remotes entry. Original pull remains
+unavailable. Narrow layouts use the shell's existing status overflow menus.
+Settings retains fetch/push controls in both target sections and uses the real
+Settings surface with a catalog-only section registration. The optional remote
+binding is not adopted by either application; existing controller behavior is
+covered separately.
 
 ## Decisions retained for subsequent slices
 

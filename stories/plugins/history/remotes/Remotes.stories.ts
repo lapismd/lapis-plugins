@@ -7,10 +7,12 @@ const meta = {
   title: "Plugins/History/Repository/Remotes and credentials",
   component: RemotesPreviewDemo,
   tags: ["visual-pending", "!autodocs"],
-  parameters: { layout: "fullscreen", a11y: { test: "error" } },
+  parameters: { layout: "fullscreen", catalogLayout: "full-viewport", a11y: { test: "error" } },
   beforeEach: () => cleanupRemotesPreviews,
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
+    await expect(canvasElement.querySelector("[data-fixture-controls]")).toBeNull();
+    await expect(canvasElement.querySelector(".remote-toolbar")).toBeNull();
     await expect(
       await canvas.findByRole("heading", { name: "Remotes and credentials" }, { timeout: 30_000 }),
     ).toBeVisible();
@@ -271,8 +273,13 @@ export const HistoryEntry: Story = {
   args: { settings: false },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const footer = within(
+      await canvas.findByRole("contentinfo", { name: "Workspace status" }, { timeout: 30_000 }),
+    );
+    await expect(canvasElement.querySelector("[data-fixture-controls]")).toBeNull();
+    await expect(canvasElement.querySelector(".remote-toolbar")).toBeNull();
     await userEvent.click(
-      await canvas.findByRole(
+      await footer.findByRole(
         "button",
         { name: "Manage remotes for original repository" },
         { timeout: 30_000 },
@@ -287,17 +294,124 @@ export const HistoryNeedsConnection: Story = {
   args: { settings: false, scenario: "disconnected" },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const footer = within(
+      await canvas.findByRole("contentinfo", { name: "Workspace status" }, { timeout: 30_000 }),
+    );
     await expect(
-      await canvas.findByRole("button", { name: "Fetch original repository" }, { timeout: 30_000 }),
+      await footer.findByRole("button", { name: "Fetch original repository" }, { timeout: 30_000 }),
     ).toBeDisabled();
     await expect(
-      canvas.getByRole("button", { name: "Review push to original repository" }),
+      footer.getByRole("button", { name: "Review push to original repository" }),
     ).toBeDisabled();
     await userEvent.click(
-      canvas.getByRole("button", { name: "Manage remotes for original repository" }),
+      footer.getByRole("button", { name: "Manage remotes for original repository" }),
     );
     await expect(
       await canvas.findByRole("heading", { name: "Remotes and credentials" }),
     ).toBeVisible();
+  },
+};
+export const FooterFetchAndPush: Story = {
+  args: { settings: false },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const footer = within(
+      await canvas.findByRole("contentinfo", { name: "Workspace status" }, { timeout: 30_000 }),
+    );
+    await expect(
+      footer.getByRole("button", { name: /^Working copy details: 3 files/ }),
+    ).toBeVisible();
+    await expect(
+      footer.getByRole("button", { name: "Vault history: Saved locally" }),
+    ).toBeVisible();
+    await expect(footer.getByRole("button", { name: "Pull original repository" })).toBeDisabled();
+    const fixture = remotesPreviewFor(canvasElement).fixture;
+    await userEvent.click(footer.getByRole("button", { name: "Fetch original repository" }));
+    await waitFor(() =>
+      expect(
+        fixture.activity.some((item) => item.kind === "fetch" && item.target === "original"),
+      ).toBe(true),
+    );
+    await waitFor(() => expect(fixture.target("original").busy).toBeUndefined());
+    await userEvent.click(
+      footer.getByRole("button", { name: "Review push to original repository" }),
+    );
+    const dialog = within(
+      await within(document.body).findByRole("dialog", { name: "Push to original repository?" }),
+    );
+    await userEvent.click(dialog.getByRole("button", { name: "Push to origin/main" }));
+    await waitFor(() => expect(fixture.target("original").observation?.outgoing).toBe(0));
+    await expect(fixture.target("backup").observation?.outgoing).toBe(3);
+    await expect(canvasElement.querySelector(".remote-toolbar")).toBeNull();
+    await expect(
+      canvas.getByRole("contentinfo", { name: "Workspace status" }).getBoundingClientRect().bottom,
+    ).toBeLessThanOrEqual(window.innerHeight);
+  },
+};
+export const FooterBackupPull: Story = {
+  args: { settings: false },
+  play: async ({ canvasElement }) => {
+    const footer = within(
+      await within(canvasElement).findByRole(
+        "contentinfo",
+        { name: "Workspace status" },
+        { timeout: 30_000 },
+      ),
+    );
+    await userEvent.click(footer.getByRole("button", { name: "Pull vault backup" }));
+    const fixture = remotesPreviewFor(canvasElement).fixture;
+    await waitFor(() => expect(fixture.target("backup").observation?.incoming).toBe(0));
+    await expect(fixture.target("original").observation?.incoming).toBe(2);
+    await expect(fixture.activity).toEqual([{ kind: "pull", target: "backup", id: undefined }]);
+  },
+};
+export const NarrowFooter: Story = {
+  args: { settings: false, narrow: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const footer = await canvas.findByRole(
+      "contentinfo",
+      { name: "Workspace status" },
+      { timeout: 30_000 },
+    );
+    await expect(footer).toBeVisible();
+    const more = await within(footer).findByRole("button", { name: "More left status items" });
+    await userEvent.click(more);
+    const fetch = await within(document.body).findByRole("button", {
+      name: "Fetch original repository",
+    });
+    await waitFor(() => expect(fetch).toBeVisible());
+    await userEvent.click(fetch);
+    await waitFor(() =>
+      expect(
+        remotesPreviewFor(canvasElement).fixture.activity.some(
+          (item) => item.kind === "fetch" && item.target === "original",
+        ),
+      ).toBe(true),
+    );
+  },
+};
+export const ExistingStatusControls: Story = {
+  args: { settings: false, legacyStatus: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const footer = within(
+      await canvas.findByRole("contentinfo", { name: "Workspace status" }, { timeout: 30_000 }),
+    );
+    await userEvent.click(footer.getByRole("button", { name: /^Working copy details:/ }));
+    const details = within(
+      await within(document.body).findByRole("region", { name: "Working copy details" }),
+    );
+    const fixture = remotesPreviewFor(canvasElement).fixture;
+    for (const [label, kind] of [
+      ["Fetch from upstream", "legacy-fetch"],
+      ["Pull from upstream", "legacy-pull"],
+      ["Push to upstream", "legacy-push"],
+    ]) {
+      const button = details.getByRole("button", { name: label });
+      await waitFor(() => expect(button).not.toBeDisabled());
+      await userEvent.click(button);
+      await waitFor(() => expect(fixture.activity.some((item) => item.kind === kind)).toBe(true));
+    }
   },
 };

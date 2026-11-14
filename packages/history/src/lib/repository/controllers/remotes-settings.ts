@@ -36,6 +36,14 @@ export type RemoteTargetSettings = {
   review?: RemotePushReview;
   publication?: { id: string; commit: string; outcome: "unknown" | "stopped" };
 };
+/** Optional binding for the existing repository status-bar upstream controls. */
+export type RepositoryUpstreamBinding = {
+  target: RemoteTargetSettings;
+  fetch(): void;
+  push(): void;
+  pull?(): void;
+  manage(): void;
+};
 export type RemotesSettingsState = {
   host: "desktop" | "server";
   storage: "available" | "locked" | "unavailable";
@@ -50,6 +58,7 @@ export interface RemotesSettingsActions {
   save(target: RemoteTarget, draft: RemoteConnectionDraft): Promise<void>;
   test(target: RemoteTarget): Promise<void>;
   fetch(target: RemoteTarget): Promise<void>;
+  pullBackup(): Promise<void>;
   reviewPush(target: RemoteTarget): Promise<void>;
   push(target: RemoteTarget, reviewId: string): Promise<void>;
   dismissReview(target: RemoteTarget): void;
