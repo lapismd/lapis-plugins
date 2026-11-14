@@ -267,3 +267,7 @@ Canvas touch gestures and explicit selection remain plugin-owned under LN-CANVAS
 Canvas web cards own HTTP(S) admission and explicit sandboxed previews under LN-CANVAS-054/055; remote frame loading must not mutate vault content.
 Text-to-note conversion uses public owning-vault creation and collision-safe paths under LN-CANVAS-056/057. Captured board identity prevents asynchronous completion from targeting a later file or owner.
 PNG capture uses the owning browser document and a captured board operation under LN-CANVAS-058/059. It does not introduce a native writer, change the live camera or fetch remote resources for capture.
+
+The Bases renderer metadata intake does not change native service ownership,
+protocols, installation or native qualification. It only declares the existing
+versioned browser store host module required by the refreshed registry graph.

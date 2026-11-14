@@ -54,6 +54,7 @@
     fallback = "";
     if (!resolved || !element || !current) return;
     let disposed = false;
+    const controller = new AbortController();
     let cleanup: void | (() => void);
     void Promise.resolve(
       resolved.resolveLink({
@@ -78,7 +79,7 @@
           return;
         }
       }
-      const rendered = resolved.renderEmbed?.(
+      const rendered = await resolved.renderEmbed?.(
         {
           href: current,
           path: file.path,
@@ -87,7 +88,12 @@
           label: currentCaption,
         },
         element,
+        { signal: controller.signal },
       );
+      if (disposed) {
+        if (typeof rendered === "function") rendered();
+        return;
+      }
       if (rendered !== false) {
         cleanup = rendered ?? undefined;
         return;
@@ -97,6 +103,7 @@
     });
     return () => {
       disposed = true;
+      controller.abort();
       cleanup?.();
       element.replaceChildren();
     };

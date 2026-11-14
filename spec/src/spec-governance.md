@@ -624,3 +624,13 @@ Canvas touch gestures and explicit selection remain plugin-owned under LN-CANVAS
 Canvas web cards own HTTP(S) admission and explicit sandboxed previews under LN-CANVAS-054/055; remote frame loading must not mutate vault content.
 LN-CANVAS-056/057 govern text-card conversion through public owning-App contracts, lossless card replacement, retained-note undo and stale asynchronous completion. Functional, accessibility, installed runtime and visual evidence remain separate.
 LN-CANVAS-058/059 separate PNG geometry/quality tests, accessible options, actual native downloads and private snapshot/resource disposal. Functional image validation does not approve a visual baseline or a plugin release.
+
+The Bases dependency intake retains the fail-closed emitted host-import audit.
+Metadata synchronization records its versioned Svelte store dependency and does
+not broaden the approved host-module allowlist.
+
+The combined maintenance intake consumes released Core 0.13.2, Mira 0.2.0
+and matching 0.0.4 editor extensions. History and Markdown retain their
+public Core compatibility unions while their lockfile entries match the root
+provider. The full PR range requires each affected package chapter; a bot
+exemption cannot replace canonical main-branch evidence.

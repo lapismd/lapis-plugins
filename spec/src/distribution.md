@@ -516,3 +516,15 @@ Canvas touch gestures and explicit selection remain plugin-owned under LN-CANVAS
 Canvas web cards own HTTP(S) admission and explicit sandboxed previews under LN-CANVAS-054/055; remote frame loading must not mutate vault content.
 Text-to-note conversion uses the owning App and a captured board operation under LN-CANVAS-056/057. Installed runtime acceptance must verify lossless replacement and retained-note undo; publication remains a separate gate.
 PNG export is bundled under LN-CANVAS-058/059 using a normal html-to-image registry range. Runtime acceptance verifies actual PNG output and privacy choices; export adds no publication or host profile authority.
+
+Bases runtime descriptors MUST declare the exact versioned Svelte store host
+module emitted by the Design Core 0.13 intake. Metadata synchronization MUST
+retain that declaration, and the existing emitted-import audit MUST reject
+archives whose shared-dependency list omits it. No raw private Svelte imports
+are admitted.
+
+The combined maintenance intake consumes released Core 0.13.2, Mira 0.2.0
+and matching 0.0.4 editor extensions. History and Markdown retain their
+public Core compatibility unions while their lockfile entries match the root
+provider. The full PR range requires each affected package chapter; a bot
+exemption cannot replace canonical main-branch evidence.

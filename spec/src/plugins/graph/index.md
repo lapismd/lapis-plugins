@@ -173,3 +173,8 @@ Catalog validation follows LP-SPEC-054/055: application fixtures fill the actual
 browser viewport and synthetic setup stays in the declared fixture-controls
 boundary. The focus/preview scenario establishes its file through the owned
 workspace before checking pointer interaction.
+
+The combined first-party maintenance intake resolves the compatible Core
+0.13 package line to released 0.13.2 alongside Mira 0.2. Package dependencies
+remain registry semver ranges; runtime identity, App ownership and this
+plugin's behavior contracts remain unchanged.

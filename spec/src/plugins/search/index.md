@@ -286,3 +286,8 @@ rebuild control instead of a client database writer.
 
 The [source adapter receipt](../../../records/2026-10-26-native-search-adapter.md)
 records independent API, plugin source, consumer and actual-host gates.
+
+The combined first-party maintenance intake resolves the compatible Core
+0.13 package line to released 0.13.2 alongside Mira 0.2. Package dependencies
+remain registry semver ranges; runtime identity, App ownership and this
+plugin's behavior contracts remain unchanged.

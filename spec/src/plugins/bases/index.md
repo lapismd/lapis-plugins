@@ -280,3 +280,7 @@ MUST NOT become all-tag candidate restrictions. Final PEaQL filtering precedes
 limits for raw, OR, NOT and unsupported predicates.
 
 LN-BASE-046 bracketed property IDs MUST remain at the typed final evaluator boundary rather than being mistaken for literal AppDatabase property names during filter/sort pushdown. Such predicates MUST NOT admit an early candidate limit.
+
+The Design Core 0.13 dependency intake uses the existing versioned Svelte store
+host contract in the Bases archive. Its runtime descriptor declares this
+shared module; Bases behavior and App ownership are unchanged.

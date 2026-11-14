@@ -226,5 +226,10 @@
   },
   "stories/plugins/canvas/WebPreviews.stories.ts": {
     "kind": "application"
+  },
+  "stories/plugins/transcripts/EmbedLifecycle.stories.ts": {
+    "kind": "integration",
+    "requirement": "LN-TX-001",
+    "reason": "Mounts the actual TranscriptFileEmbed to qualify asynchronous renderer cleanup and Markdown fallback; does not claim full-shell parity."
   }
 }
