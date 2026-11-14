@@ -1,5 +1,11 @@
 # Spell Check changelog
 
+## 0.1.5
+
+### Patch Changes
+
+- [#103](https://github.com/lapismd/lapis-plugins/pull/103) [`694be86`](https://github.com/lapismd/lapis-plugins/commit/694be869a1494851a86b48d79a36d28541b9db36) Thanks [@stevejuma](https://github.com/stevejuma)! - Admit the released API 0.4 host alongside the existing API 0.2 contract and qualify the matching published Workspace/Core/Mira cohort.
+
 ## 0.1.4
 
 ### Patch Changes

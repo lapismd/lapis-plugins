@@ -1,6 +1,6 @@
 {
   "name": "@lapis-notes/source-editor",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {

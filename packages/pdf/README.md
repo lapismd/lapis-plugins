@@ -13,7 +13,7 @@ Register the exported plugin class in the application's `PluginProfile`. Import
 registration so the host owns its lifecycle.
 
 The runtime plugin ID is `lapis-pdf`. A matching signed
-`lapis-pdf-0.2.1.lapis-plugin` archive is attached to the
+`lapis-pdf-0.2.2.lapis-plugin` archive is attached to the
 package-scoped GitHub release for manual or registry installation.
 
 See the [repository README](https://github.com/lapismd/lapis-plugins#readme) for
