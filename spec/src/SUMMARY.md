@@ -31,6 +31,8 @@
   - [Plugins / Spell Check](plugins/spellcheck/index.md)
   - [Plugins / Transcripts](plugins/transcripts/index.md)
   - [Plugins / Sync](plugins/sync/index.md)
+    - [Sync implementation context](plugins/sync/implementation-context.md)
+    - [Sync future implementation plan](plugins/sync/implementation-plan.md)
   - [Plugins / Word Count](plugins/wordcount/index.md)
 - [Verification](verification.md)
 - [Native service verification](native-verification.md)
