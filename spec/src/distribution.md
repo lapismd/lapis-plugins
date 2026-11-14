@@ -1,5 +1,9 @@
 # Distribution and Releases
 
+LN-HIST-020 adds unregistered repository remote review components and a
+memory-backed shared catalog. The preview Changeset describes package contents
+only; it does not authorize publication or qualify live host remote transport.
+
 The Hono security override now selects 4.13.16 or later so MCP-SDK audit
 findings fail closed without advisory exceptions (LP-SPEC-017, LP-SPEC-048).
 Publication remains a separate approval gate.

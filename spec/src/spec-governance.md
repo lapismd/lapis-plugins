@@ -1,5 +1,11 @@
 # Specification Governance
 
+Story composition inventory follows the current Jujutsu working-copy file list,
+including new stories in non-colocated workspaces. Git-only checkouts retain
+their Git inventory. A failed Jujutsu inventory MUST fail the check instead of
+silently selecting a stale Git index. This preserves LP-SPEC-054 classification
+and production-shell checks for the LN-HIST-020 remote UI review slice.
+
 The Hono override floor is 4.13.16. Root and parked Sync audits must reject
 the 4.13.13/4.13.14 MCP-SDK resolutions and pass after lockfile alignment;
 no CVE ignore is added.

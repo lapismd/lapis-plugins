@@ -1,5 +1,10 @@
 # Native first-party plugin services
 
+The LN-HIST-020 remote UI review receives catalog-owned memory adapters only.
+It introduces no native credential custody, repository write admission or host
+service registration. Those remain separate native implementation and consumer
+acceptance slices after UI review.
+
 Raising the Hono override to 4.13.16 repairs the MCP-SDK audit path. It
 introduces no native producer, service or transport.
 

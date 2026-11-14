@@ -1,8 +1,5 @@
 import { App, MemoryAppDatabase, MemoryVaultAdapter } from "@lapis-notes/api";
-import {
-  bindRepository,
-  RepositoryPlugin,
-} from "@lapis-notes/history/repository";
+import { bindRepository, RepositoryPlugin } from "@lapis-notes/history/repository";
 import { operationFixture } from "../../../../packages/history/test/repository/fixtures/operations";
 import { repositoryLayout, type Placement } from "./layout";
 
@@ -11,9 +8,10 @@ const openings = new Set<Promise<Runtime>>();
 export function createRepositoryStory(
   placement: Placement,
   operations: boolean,
-  scenario: string
+  scenario: string,
+  original = false,
 ) {
-  const opening = bootRepositoryStory(placement, operations, scenario);
+  const opening = bootRepositoryStory(placement, operations, scenario, original);
   openings.add(opening);
   return opening;
 }
@@ -24,7 +22,8 @@ export async function cleanupRepositoryStories() {
 async function bootRepositoryStory(
   placement: Placement,
   operations: boolean,
-  scenario: string
+  scenario: string,
+  original: boolean,
 ) {
   const fixture = operationFixture(scenario);
   let app!: App;
@@ -34,9 +33,7 @@ async function bootRepositoryStory(
       configPath: ".lapis/app.json",
       adapter: new MemoryVaultAdapter({
         ".lapis/app.json": "{}",
-        ".lapis/workspace.json": JSON.stringify(
-          repositoryLayout(placement, operations)
-        ),
+        ".lapis/workspace.json": JSON.stringify(repositoryLayout(placement, operations)),
       }),
       appDatabase: new MemoryAppDatabase("repository-story"),
       workspaceShell: { application: { name: "Lapis Notes" } },
@@ -45,23 +42,21 @@ async function bootRepositoryStory(
   });
   const unbind = bindRepository(app, () => ({
     reader: fixture.reader,
+    ...(original ? { original: fixture.reader, sources: async () => ({ original: true }) } : {}),
     close: () => fixture.close(),
   }));
   let closing: Promise<void> | undefined;
   const dispose = () =>
     (closing ??= (async () => {
       await app.workspace.disposeWorkspaceHost();
-      for (const plugin of [...app.plugins.corePlugins].reverse())
-        await plugin.disable();
+      for (const plugin of [...app.plugins.corePlugins].reverse()) await plugin.disable();
       unbind();
       await app.metadataCache.dispose();
       await app.appDatabase.close();
       disposeModels();
     })());
   try {
-    app.plugins.registerCorePlugins([
-      { plugin: RepositoryPlugin, required: true },
-    ]);
+    app.plugins.registerCorePlugins([{ plugin: RepositoryPlugin, required: true }]);
     await app.vault.load();
     await app.configuration.load();
     await app.plugins.loadPlugins({

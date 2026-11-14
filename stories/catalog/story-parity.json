@@ -237,5 +237,8 @@
   },
   "stories/plugins/canvas/Contrast.stories.ts": {
     "kind": "application"
+  },
+  "stories/plugins/history/remotes/Remotes.stories.ts": {
+    "kind": "application"
   }
 }

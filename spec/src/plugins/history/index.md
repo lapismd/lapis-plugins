@@ -84,6 +84,7 @@ chrome for host review compositions without depending on a desktop source path.
 | LN-HIST-017 | Repository History MUST adapt the explicit App-owned native History index port through public contracts. Query and context MUST retain immutable saved identities, bounded request values and native failures. The selected port MUST take precedence over legacy service injection; its absence MUST NOT invent transport, admission or repository navigation authority.                                                        |
 | LN-HIST-018 | A backup service MAY expose explicit persisted selection separately from observation. When selected, observer start/stop and plugin teardown MUST NOT disable native capture. Settings MUST use the explicit selection action and reconcile saved state after failure without replay. Existing hosts without that extension MUST retain their prior behavior.                                                                    |
 | LN-HIST-019 | Repository feedback MUST use transient workspace notices. Healthy and recovered observations MUST dismiss only transient notices and MUST NOT clear or write persisted notification history.                                                                                                                                                                                                                                     |
+| LN-HIST-020 | Remotes and credentials MUST first be reviewed in shared production components mounted only by memory-backed Storybook fixtures. The preview MUST distinguish managed backup and admitted original JJ targets, explicit save/test/fetch/reviewed push, host-specific credential custody, opt-in backup synchronization and retained unknown push identities. It MUST NOT activate host transports, persist secrets or change existing plugin behavior. |
 | LN-HIST-001 | The repo MUST ship `@lapis-notes/history` at `packages/history` as an independently versioned first-party external plugin. An application profile MAY enable it by default. It MUST NOT reuse AI conversation-history view types or commands.                                                                                                                                                                                    |
 | LN-HIST-002 | History MUST capture vault create, modify, rename, delete, and restore events into `AppDatabase` file-history tables only. It MUST NOT write snapshots into the vault, `.obsidian/`, or `.lapis/`.                                                                                                                                                                                                                               |
 | LN-HIST-003 | Tracking MUST skip internal `.lapis` paths, glob excludes, binaries, oversized files, and read failures. Defaults MUST be 256 KiB, 50 revisions, a 10s modify merge window, and the documented exclude globs. Empty include-glob and extension allowlists MUST track remaining UTF-8 text.                                                                                                                                       |
@@ -212,3 +213,22 @@ The public API peer admits released `^0.6.0` alongside its existing 0.2 and
 Language Service 0.1.6, Workspace 0.4.3, Core 0.13.2 and Mira 0.2 through
 registry exports. [Registry qualification](../../../records/2026-11-14-skills-api06-release-intake.md)
 retains package identity, explicit App ownership and separate native/release gates.
+
+## Remotes and credentials review
+
+The [preview inventory](../../../../docs/repository-remotes-preview.md) defines
+the first UI review slice under LN-HIST-020. Shared settings, history actions,
+credential dialogs and push review remain unregistered in runtime plugin
+composition. The only adapters are catalog-owned, memory-backed fixtures.
+Credential submission clears the transient token field; inventories and activity
+contain identities only. Saving never performs a test, fetch or push.
+
+Backup and original connections have independent names, endpoints, branches and
+credentials. Original publication selects one local bookmark. Unknown outcomes
+retain the original request for observation without replay. New backup
+connections start with automatic synchronization off.
+
+Desktop OS storage, server encryption, SSH host setup and live publication are
+proposed UI states, not qualified implementations. Plain Git admission, original
+pull/merge, force-push and key management remain outside this slice. Review and
+app adoption, native custody/transport acceptance and release are separate gates.
