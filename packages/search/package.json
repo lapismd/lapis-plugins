@@ -48,7 +48,7 @@
     "./registry.json": "./registry.json"
   },
   "dependencies": {
-    "@lapismd/design-core": "^0.13.1",
+    "@lapismd/design-core": "^0.13.2",
     "@lucide/svelte": "^0.523.0"
   },
   "peerDependencies": {
