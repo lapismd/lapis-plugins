@@ -1,9 +1,5 @@
-//! Object graph handling for Lapis Sync.
-//!
-//! Manages content-addressed blobs, manifests, and chunked file storage.
+//! Object storage and manifests for content-addressed files.
 
-// TODO: Implement object graph operations
-// - Blob storage and retrieval
-// - Manifest parsing and generation
-// - File chunking and reassembly
-// - Encrypted object handling
+pub mod manifests;
+
+pub use manifests::*;

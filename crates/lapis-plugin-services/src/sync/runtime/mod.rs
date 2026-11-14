@@ -1,13 +1,9 @@
-//! Runtime engine for Lapis Sync.
-//!
-//! Implements local engine state, checkpoint management, apply logic,
-//! membership authority, and reconciliation.
+//! Runtime engine for local sync state, membership authority, and merge planning.
 
-// TODO: Implement runtime operations
-// - Local engine state management
-// - Checkpoint creation and validation
-// - Outbox management
-// - Apply logic with guarded mutations
-// - Membership authority and cutoff proofs
-// - Ancestry tracking and reconciliation
-// - Merge planning
+pub mod membership_authority;
+pub mod local_engine;
+pub mod merge;
+
+pub use membership_authority::*;
+pub use local_engine::*;
+pub use merge::*;
