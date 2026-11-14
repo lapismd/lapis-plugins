@@ -1,5 +1,16 @@
 # AI changelog
 
+## 0.1.12
+
+### Patch Changes
+
+- [#100](https://github.com/lapismd/lapis-plugins/pull/100) [`e6d245b`](https://github.com/lapismd/lapis-plugins/commit/e6d245bec5cb0cfb8ae0a7b48240f8a8507964ea) Thanks [@stevejuma](https://github.com/stevejuma)! - Refresh first-party Lapis dependencies to the published versions recorded in this pull request.
+
+- [#103](https://github.com/lapismd/lapis-plugins/pull/103) [`694be86`](https://github.com/lapismd/lapis-plugins/commit/694be869a1494851a86b48d79a36d28541b9db36) Thanks [@stevejuma](https://github.com/stevejuma)! - Admit the released API 0.4 host alongside the existing API 0.2 contract and qualify the matching published Workspace/Core/Mira cohort.
+
+- Updated dependencies [[`e6d245b`](https://github.com/lapismd/lapis-plugins/commit/e6d245bec5cb0cfb8ae0a7b48240f8a8507964ea), [`694be86`](https://github.com/lapismd/lapis-plugins/commit/694be869a1494851a86b48d79a36d28541b9db36)]:
+  - @lapis-notes/markdown@0.2.6
+
 ## 0.1.11
 
 ### Patch Changes
