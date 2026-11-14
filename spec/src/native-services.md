@@ -290,3 +290,9 @@ Canvas review adds no native service or parser changes. Settings and selection u
 Native hosts consume skill asset data through public package exports or verified installed-plugin files. Skill installation belongs to the shared application service; plugin archives contain workflow text and grant no native execution authority.
 
 The legacy AI skill-update command delegates to App skill management so the admitted native service retains write authority.
+
+Under LP-SPEC-010, compatible internal peer updates MUST preserve the declared
+independent bump; out-of-range peers MUST retain major-version escalation. The
+frozen Changesets 2 CLI uses its range-aware peer option, guarded by a real CLI
+regression for both cases. [Peer release qualification](../records/2026-11-14-skill-release-peer-versioning.md)
+records the Markdown 0.3 peer intake without native or publisher-authority changes.

@@ -548,3 +548,9 @@ Canvas Review and Contrast join the audited application-story inventory. Panel a
 Skill contributions carry their complete authored directories in both npm and signed plugin payloads. `stagePackagedSkills` rejects symlinks and missing entrypoints; metadata synchronization keeps `skills.json` tied to the owning package version. Explicit vault updates use installation receipts rather than replacing arbitrary agent files.
 
 Signed skill archives and npm assets are byte-compared in [archive qualification](../records/2026-11-14-plugin-skill-archives.md), including every skill body and license.
+
+Under LP-SPEC-010, compatible internal peer updates MUST preserve the declared
+independent bump; out-of-range peers MUST retain major-version escalation. The
+frozen Changesets 2 CLI uses its range-aware peer option, guarded by a real CLI
+regression for both cases. [Peer release qualification](../records/2026-11-14-skill-release-peer-versioning.md)
+records the Markdown 0.3 peer intake without native or publisher-authority changes.

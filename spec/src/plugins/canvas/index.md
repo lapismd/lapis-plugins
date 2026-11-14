@@ -160,3 +160,7 @@ Installation is explicit at the vault root. Package upgrades supply new skill
 content; skill updates preserve locally modified directories. `skills.json`
 and signed archives MUST contain the same authored skill bytes. Qualification
 is tracked separately from consumer adoption.
+
+The Markdown peer and development ranges also admit compatible `^0.3.0` while
+retaining the existing 0.2 floor. [Peer release qualification](../../../records/2026-11-14-skill-release-peer-versioning.md)
+keeps this compatible dependency intake on its declared independent bump.
