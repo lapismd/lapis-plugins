@@ -27,3 +27,22 @@ Reports and logs: focused before `a79fff14-0fa5-455d-b457-85e07e9fd407`,
 focused after `4ed43d9a-dc29-4575-a8e5-82133366c0dd`, and
 `/tmp/canvas-export-camera-qualification.log` for the complete affected surface.
 Broader hosted PR qualification remains separate from these local receipts.
+
+
+Hosted follow-up `43573548350` reproduced one mismatch after the scale-only
+repair: inline scale had already reached 1, but translation was still
+-9.49993 rather than its final -9.5. That attempt is not claimed as a repair.
+The story now requires the complete exact pose: scale 1 and the translation
+calculated from the unchanged fixed node bounds and actual flow dimensions.
+The final byte-for-byte camera assertion remains unchanged. No epsilon,
+settling delay, retry, timeout increase or product readiness shim is introduced.
+
+The complete-pose repair passes the exact original Docker shard command
+`pnpm test:storybook -- --shard=3/4`: all 44 interaction/accessibility cases,
+including the retained strict export case, pass. The complete Canvas family
+also passes all 66 cases. The validation preparation retains its existing
+23 passing / three skipped preflight cases; no skip is added by this change.
+All 51 package build/check/test tasks, all three specification lanes, a fresh
+static Storybook and the unchanged governed audit pass again. The focused
+cold run report is `8dcbb6a2-e5cf-4a1e-9300-8cff575922d7`;
+`/tmp/canvas-export-complete-pose-qualification.log` records the wider commands.
