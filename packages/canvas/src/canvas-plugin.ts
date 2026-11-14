@@ -1,3 +1,4 @@
+import packagedAgentSkills from "@lapis-notes/canvas/skills.json";
 import { Plugin, mountComponent, type MountComponent, type App, type PluginManifest, type TFile } from "@lapis-notes/api";
 import manifestSpec from "../manifest.json";
 import type { ComponentProps } from "svelte";
@@ -28,6 +29,7 @@ export const DEFAULT_CANVAS_SETTINGS: CanvasSettings = {
 const emptyCanvasDocument = JSON.stringify({ nodes: [], edges: [] }, null, 2);
 
 export class CanvasPlugin extends Plugin {
+  readonly packagedAgentSkills = packagedAgentSkills;
   settings: CanvasSettings = { ...DEFAULT_CANVAS_SETTINGS };
 
   constructor(

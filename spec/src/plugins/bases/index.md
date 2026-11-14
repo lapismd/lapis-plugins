@@ -296,3 +296,11 @@ existing behavioral baseline assertion and reject changes to source hashes,
 observations, reviewed upstream identity, feature coverage or other report
 content before writing. It MUST NOT update the accepted compatibility baseline.
 Ordinary audit invocation MUST continue to reject stale reports.
+
+### Packaged agent skill
+
+This plugin contributes its packaged skill directory through `agentSkills`.
+Installation is explicit at the vault root. Package upgrades supply new skill
+content; skill updates preserve locally modified directories. `skills.json`
+and signed archives MUST contain the same authored skill bytes. Qualification
+is tracked separately from consumer adoption.

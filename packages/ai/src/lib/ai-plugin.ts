@@ -494,7 +494,7 @@ export class AiPlugin extends Plugin {
   }
 
   async updateBundledSkills(): Promise<void> {
-    await seedBundledSkills(this.app.vault, { overwrite: true });
+    await this.app.commands.executeCommand("app:update-plugin-skills");
     this.skillRegistry.invalidate();
   }
 

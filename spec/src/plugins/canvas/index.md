@@ -151,3 +151,11 @@ fixture MUST reach both scale 1 and the translation for its fitted bounds. Neith
 a rounded computed CSS matrix nor scale alone proves animation completion.
 The unchanged source and exact inline transform remain required after canceling
 export options; no tolerance or additional browser budget replaces them.
+
+### Packaged agent skill
+
+This plugin contributes its packaged skill directory through `agentSkills`.
+Installation is explicit at the vault root. Package upgrades supply new skill
+content; skill updates preserve locally modified directories. `skills.json`
+and signed archives MUST contain the same authored skill bytes. Qualification
+is tracked separately from consumer adoption.

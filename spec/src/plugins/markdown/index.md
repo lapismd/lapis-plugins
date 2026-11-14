@@ -296,3 +296,15 @@ The public API peer admits the released `^0.4.0` host in addition to its
 existing 0.2 range. Shared shell qualification uses API 0.4.0, UI 0.1.10,
 Workspace 0.4.1, Core 0.13.2 and Mira 0.2 through registry exports. Runtime
 identity, explicit App ownership and this plugin's behavior remain unchanged.
+
+### Packaged agent skill
+
+This plugin contributes its packaged skill directory through `agentSkills`.
+Installation is explicit at the vault root. Package upgrades supply new skill
+content; skill updates preserve locally modified directories. `skills.json`
+and signed archives MUST contain the same authored skill bytes. Qualification
+is tracked separately from consumer adoption.
+The authored skill example is checked by the production metadata parser for
+properties, headings, aliases and internal/image references.
+[Example qualification](../../../records/2026-11-14-skill-example-verification.md)
+retains the exact target and complete package results.

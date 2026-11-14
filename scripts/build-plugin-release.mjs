@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { stagePackagedSkills } from "./plugin-skill-assets.mjs";
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import {
@@ -114,6 +115,7 @@ async function buildPlugin(plugin) {
     path.join(packageRoot, "manifest.json"),
     path.join(runtimeDir, "manifest.json"),
   );
+  await stagePackagedSkills(packageRoot, runtimeDir, manifest);
   const stylesPath = path.join(runtimeDir, "styles.css");
   if (!existsSync(stylesPath)) await writeFile(stylesPath, "");
 
@@ -209,7 +211,9 @@ async function buildRuntime(plugin, packageRoot, outDir, manifest) {
     worker: {
       format: "es",
       plugins: () =>
-        plugin.packageName === "@lapis-notes/docx" ? [docxExportPolyfills()] : [],
+        plugin.packageName === "@lapis-notes/docx"
+          ? [docxExportPolyfills()]
+          : [],
     },
     build: {
       ...entryBuildOptions,

@@ -45,6 +45,14 @@
           "requiresReloadOnUpdate": false
         }
       }
+    },
+    "contributes": {
+      "agentSkills": [
+        {
+          "name": "lapis-bases",
+          "directory": "skills/lapis-bases"
+        }
+      ]
     }
   }
 }

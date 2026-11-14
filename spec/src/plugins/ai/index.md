@@ -603,3 +603,7 @@ The public API peer admits the released `^0.4.0` host in addition to its
 existing 0.2 range. Shared shell qualification uses API 0.4.0, UI 0.1.10,
 Workspace 0.4.1, Core 0.13.2 and Mira 0.2 through registry exports. Runtime
 identity, explicit App ownership and this plugin's behavior remain unchanged.
+
+Legacy bundled-skill seeding remains missing-only even when the historical update entrypoint requests overwrite. Existing directories have no provenance receipt and remain user-owned. New plugin-skill updates use the shared receipt-based installer.
+
+The legacy Update bundled skills entrypoint delegates to the protected App update command; it does not request direct seed replacement.
