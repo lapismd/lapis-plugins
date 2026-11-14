@@ -39,7 +39,8 @@
             "svelte/renderer/5.56.10/internal/client",
             "svelte/renderer/5.56.10/internal/disclose-version",
             "svelte/renderer/5.56.10/internal/flags/legacy",
-            "svelte/renderer/5.56.10/reactivity"
+            "svelte/renderer/5.56.10/reactivity",
+            "svelte/renderer/5.56.10/store"
           ],
           "requiresReloadOnUpdate": false
         }

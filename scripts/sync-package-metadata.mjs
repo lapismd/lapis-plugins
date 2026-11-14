@@ -45,6 +45,7 @@ const rendererSharedDependencies = new Map(
       "svelte/internal/disclose-version",
       "svelte/internal/flags/legacy",
       "svelte/reactivity",
+      "svelte/store",
     ],
     bookmarks: [
       "svelte",
