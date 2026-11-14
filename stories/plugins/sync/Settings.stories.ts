@@ -7,7 +7,7 @@ import { PreviewAccountHost } from "./preview-account";
 const meta = {
   title: "Plugins/Sync/Settings",
   component: SyncWorkspaceDemo,
-  tags: ["!autodocs", "visual-pending", "test", "sync-unfinished"],
+  tags: ["!autodocs", "visual-pending", "test"],
   parameters: { layout: "fullscreen" },
 } satisfies Meta<typeof SyncWorkspaceDemo>;
 export default meta;

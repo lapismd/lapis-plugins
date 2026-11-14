@@ -43,10 +43,8 @@ export default defineConfig({
       {
         extends: true,
         plugins: [
-          // Sync is unfinished. Tagged stories stay in the catalog and are skipped.
           storybookTest({
             configDir: path.join(dirname, ".storybook"),
-            tags: { skip: ["sync-unfinished"] },
           }),
         ],
         optimizeDeps: {
