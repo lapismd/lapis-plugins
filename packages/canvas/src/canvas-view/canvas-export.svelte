@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { ControlButton, useStore, useSvelteFlow } from "@xyflow/svelte";
+  import { useStore, useSvelteFlow } from "@xyflow/svelte";
+  import ToolButton from "./canvas-tool-button.svelte";
   import Download from "@lucide/svelte/icons/download";
   import { getContext, tick } from "svelte";
   import type { CanvasBoardController } from "../lib/canvas-board-controller";
@@ -43,7 +44,7 @@
   }
 </script>
 
-<ControlButton disabled={!available || !store.nodes.length || board.inputBlocked} title={reason} aria-label="Export PNG" onclick={() => void open()}><Download /></ControlButton>
+<ToolButton label="Export PNG" tooltip={reason} disabled={!available || !store.nodes.length || board.inputBlocked} onclick={() => void open()}><Download /></ToolButton>
 <dialog class="canvas-export-dialog nodrag nopan nowheel" bind:this={dialog} inert={board.inputBlocked} aria-labelledby={titleId} onpointerup={(event) => event.stopPropagation()} oncancel={(event) => { if (working) event.preventDefault(); }} onclose={() => store.domNode?.querySelector<HTMLButtonElement>('button[aria-label="Export PNG"]')?.focus()}>
   <form onsubmit={(event) => { event.preventDefault(); void save(); }}>
     <h2 id={titleId}>Export Canvas as PNG</h2>

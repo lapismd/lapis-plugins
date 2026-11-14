@@ -1,0 +1,143 @@
+// Original, offline fixture inspired by the mixed-media research boards on
+// obsidian.md/canvas. No remote image or webpage is required to review it.
+export function researchCanvasFiles(): Record<string, string> {
+  return {
+    "Sample.canvas": JSON.stringify(
+      {
+        nodes: [
+          {
+            id: "research",
+            type: "group",
+            label: "01 · Collect & connect",
+            color: "5",
+            x: -40,
+            y: -60,
+            width: 790,
+            height: 640,
+          },
+          {
+            id: "plan",
+            type: "group",
+            label: "02 · Make a field guide",
+            background: "Research/Saltmarsh.svg",
+            color: "3",
+            x: 840,
+            y: -60,
+            width: 400,
+            height: 640,
+          },
+          {
+            id: "question",
+            type: "text",
+            text: "# Where the land meets the sea\n\nA field guide to the saltmarsh.\n\n**Question:** How does this landscape change with the tide?",
+            color: "6",
+            x: 0,
+            y: 0,
+            width: 300,
+            height: 220,
+          },
+          {
+            id: "field-note",
+            type: "file",
+            file: "Research/Field notes.md",
+            color: "2",
+            x: 390,
+            y: 0,
+            width: 310,
+            height: 240,
+          },
+          {
+            id: "landscape",
+            type: "file",
+            file: "Research/Saltmarsh.svg",
+            x: 0,
+            y: 300,
+            width: 340,
+            height: 220,
+          },
+          {
+            id: "reference",
+            type: "link",
+            url: "https://en.wikipedia.org/wiki/Salt_marsh",
+            color: "4",
+            x: 410,
+            y: 340,
+            width: 290,
+            height: 230,
+          },
+          {
+            id: "connections",
+            type: "text",
+            text: "## Follow the connections\n\nTides → channels → plant life\n\n> Look for the small patterns that tell the bigger story.\n\nCompare sketches with the field notes.",
+            color: "1",
+            x: 880,
+            y: 0,
+            width: 320,
+            height: 230,
+          },
+          {
+            id: "checklist",
+            type: "file",
+            file: "Research/Plan the visit.md",
+            color: "3",
+            x: 880,
+            y: 320,
+            width: 320,
+            height: 220,
+          },
+        ],
+        edges: [
+          {
+            id: "ask",
+            fromNode: "question",
+            fromSide: "right",
+            toNode: "field-note",
+            toSide: "left",
+            label: "observe",
+          },
+          {
+            id: "look",
+            fromNode: "question",
+            fromSide: "bottom",
+            toNode: "landscape",
+            toSide: "top",
+            label: "look closer",
+          },
+          {
+            id: "source",
+            fromNode: "field-note",
+            fromSide: "bottom",
+            toNode: "reference",
+            toSide: "top",
+            label: "read more",
+          },
+          {
+            id: "synthesise",
+            fromNode: "field-note",
+            fromSide: "right",
+            toNode: "connections",
+            toSide: "left",
+            label: "connect",
+          },
+          {
+            id: "act",
+            fromNode: "connections",
+            fromSide: "bottom",
+            toNode: "checklist",
+            toSide: "top",
+            label: "next steps",
+          },
+        ],
+      },
+      null,
+      2
+    ),
+    "Research/Field notes.md":
+      "# At the water’s edge\n\nThe channel fills before the marsh disappears.\n\n## Things to notice\n\n- Sea lavender at the high-water line\n- Wading birds along the creek\n- Ripples left in the mud\n",
+    "Research/Plan the visit.md":
+      "# Pack light, look closely\n\n- [x] Check the tide table\n- [ ] Bring a notebook and binoculars\n- [ ] Sketch the creek at low tide\n- [ ] Compare the same view at sunset\n",
+    "Notes/Reading.md":
+      "# A notebook without edges\n\nCollect notes, images, questions and references on one board.\n\n![[Sample.canvas]]\n\nA plain paragraph stays a Markdown preview.\n",
+    "Research/Saltmarsh.svg": `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520"><title>Saltmarsh field sketch</title><defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#c4dce4"/><stop offset="1" stop-color="#f4e9ca"/></linearGradient></defs><path fill="url(#sky)" d="M0 0h900v520H0z"/><circle cx="704" cy="111" r="48" fill="#f7dca0"/><path fill="#a5bba0" d="M0 252Q170 176 330 233T650 210T900 248V520H0z"/><path fill="#658c77" d="M0 303Q170 258 340 288T630 272T900 296V520H0z"/><path fill="#c8dce0" d="M430 260q-210 55-50 100t-55 160h220q155-115-15-153t-100-107"/><path fill="#d7c393" d="M0 398q180-35 290 60l-40 62H0zm900-45q-100 33-190 130l-5 37h195z"/><g stroke="#486e55" stroke-width="5" fill="none"><path d="m62 433 8-62m0 32-22-26m22 15 24-32m66 118 10-75m0 36-24-21m24 8 26-32m577 44 8-60m0 28-22-28m22 15 24-30"/></g><g stroke="#405c62" stroke-width="3" fill="none"><path d="m328 144 14-7 14 7m36-19 13-7 13 7m-53 43 10-5 10 5"/></g></svg>`,
+  };
+}

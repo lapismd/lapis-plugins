@@ -6,11 +6,12 @@
     sampleCanvasFiles,
   } from "@lapis-notes/canvas";
   import type { PanelDemoOpenDocument } from "../_shared/panels/create-panel-demo";
+  import { researchCanvasFiles } from "./research-fixture";
   import PanelDemo from "../_shared/panels/PanelDemo.svelte";
 
   let { document = "file" }: { document?: "file" | "embedded" } = $props();
 
-  const files = sampleCanvasFiles();
+  const files = { ...sampleCanvasFiles(), ...researchCanvasFiles() };
 
   const openDocument = $derived<PanelDemoOpenDocument>(
     document === "embedded"

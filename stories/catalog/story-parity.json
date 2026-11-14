@@ -231,5 +231,11 @@
     "kind": "integration",
     "requirement": "LN-TX-001",
     "reason": "Mounts the actual TranscriptFileEmbed to qualify asynchronous renderer cleanup and Markdown fallback; does not claim full-shell parity."
+  },
+  "stories/plugins/canvas/Review.stories.ts": {
+    "kind": "application"
+  },
+  "stories/plugins/canvas/Contrast.stories.ts": {
+    "kind": "application"
   }
 }

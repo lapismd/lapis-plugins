@@ -1,3 +1,4 @@
+import { expandCanvasTools } from "./canvas-story-helpers";
 import { mountComponent, type App } from "@lapis-notes/api";
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, userEvent, waitFor, within } from "storybook/test";
@@ -262,6 +263,7 @@ export const SaveBeforeSwitch: Story = {
   }),
   play: async ({ canvasElement }) => {
     const app = await canvasOwner(canvasElement);
+    await expandCanvasTools(canvasElement);
     const nextRaw = JSON.stringify({ nodes: [{ id: "next", type: "text", x: 0, y: 0, width: 260, height: 160, text: "Next board" }] });
     const nextFile = await app.vault.create("Next.canvas", nextRaw);
     const original = app.vault.modifyIfUnchanged.bind(app.vault);
@@ -278,7 +280,8 @@ export const SaveBeforeSwitch: Story = {
     };
     let switching: Promise<void> | undefined;
     try {
-      const board = within(canvasElement);
+      await expandCanvasTools(canvasElement);
+    const board = within(canvasElement);
       await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-id="small"] .canvas-node-label')!);
       await userEvent.click(await board.findByRole("button", { name: "Set color", exact: true }));
       await userEvent.click(board.getByRole("button", { name: "Set node color 4", exact: true }));
@@ -311,6 +314,7 @@ export const RetrySave: Story = {
   }),
   play: async ({ canvasElement }) => {
     const app = await canvasOwner(canvasElement);
+    await expandCanvasTools(canvasElement);
     const original = app.vault.modifyIfUnchanged.bind(app.vault);
     let rejectNext = true;
     app.vault.modifyIfUnchanged = async (file, data, expected, options) => {
@@ -321,7 +325,8 @@ export const RetrySave: Story = {
       return original(file, data, expected, options);
     };
     try {
-      const board = within(canvasElement);
+      await expandCanvasTools(canvasElement);
+    const board = within(canvasElement);
       await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-id="small"] .canvas-node-label')!);
       await userEvent.click(await board.findByRole("button", { name: "Set color", exact: true }));
       await userEvent.click(board.getByRole("button", { name: "Set node color 4", exact: true }));
@@ -350,11 +355,13 @@ export const ExternalConflict: Story = {
   }),
   play: async ({ canvasElement }) => {
     const app = await canvasOwner(canvasElement);
+    await expandCanvasTools(canvasElement);
     const file = app.vault.getFileByPath("Imported.canvas")!;
     const external = JSON.parse(importedDocument);
     external.nodes[0].text = "Externally changed card";
     const externalRaw = JSON.stringify(external);
     await app.vault.modify(file, externalRaw);
+    await expandCanvasTools(canvasElement);
     const board = within(canvasElement);
     await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-id="small"] .canvas-node-label')!);
     await userEvent.click(await board.findByRole("button", { name: "Set color", exact: true }));
@@ -383,7 +390,9 @@ export const TextBeforeSwitch: Story = {
   }),
   play: async ({ canvasElement }) => {
     const app = await canvasOwner(canvasElement);
+    await expandCanvasTools(canvasElement);
     const next = await app.vault.create("After draft.canvas", JSON.stringify({ nodes: [{ id: "after", type: "text", x: 0, y: 0, width: 260, height: 160, text: "After the draft" }] }));
+    await expandCanvasTools(canvasElement);
     const board = within(canvasElement);
     await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-id="draft"] .canvas-node-label')!);
     await userEvent.click(await board.findByRole("button", { name: "Edit node", exact: true }));
@@ -412,6 +421,8 @@ export const TextBeforeRename: Story = {
   }),
   play: async ({ canvasElement }) => {
     const app = await canvasOwner(canvasElement);
+    await expandCanvasTools(canvasElement);
+    await expandCanvasTools(canvasElement);
     const board = within(canvasElement);
     await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-id="draft"] .canvas-node-label')!);
     await userEvent.click(await board.findByRole("button", { name: "Edit node", exact: true }));
@@ -444,11 +455,13 @@ export const PendingTextConflict: Story = {
   }),
   play: async ({ canvasElement }) => {
     const app = await canvasOwner(canvasElement);
+    await expandCanvasTools(canvasElement);
     const file = app.vault.getFileByPath("Draft.canvas")!;
     const external = JSON.parse(editableTextDocument);
     external.nodes[0].text = "External card text";
     const externalRaw = JSON.stringify(external);
     await app.vault.modify(file, externalRaw);
+    await expandCanvasTools(canvasElement);
     const board = within(canvasElement);
     await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-id="draft"] .canvas-node-label')!);
     await userEvent.click(await board.findByRole("button", { name: "Edit node", exact: true }));
@@ -479,11 +492,13 @@ export const PendingTextUseExternal: Story = {
   }),
   play: async ({ canvasElement }) => {
     const app = await canvasOwner(canvasElement);
+    await expandCanvasTools(canvasElement);
     const file = app.vault.getFileByPath("Draft.canvas")!;
     const external = JSON.parse(editableTextDocument);
     external.nodes[0].text = "Accepted external card text";
     const externalRaw = JSON.stringify(external);
     await app.vault.modify(file, externalRaw);
+    await expandCanvasTools(canvasElement);
     const board = within(canvasElement);
     await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-id="draft"] .canvas-node-label')!);
     await userEvent.click(await board.findByRole("button", { name: "Edit node", exact: true }));
@@ -515,6 +530,8 @@ export const EmptyBoardAuthoring: Story = {
   }),
   play: async ({ canvasElement }) => {
     const app = await canvasOwner(canvasElement);
+    await expandCanvasTools(canvasElement);
+    await expandCanvasTools(canvasElement);
     const board = within(canvasElement);
     await userEvent.click(await board.findByRole("button", { name: "Add text card", exact: true }));
     await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(1));
@@ -539,7 +556,9 @@ export const FileAndWebAuthoring: Story = {
   }),
   play: async ({ canvasElement }) => {
     const app = await canvasOwner(canvasElement);
+    await expandCanvasTools(canvasElement);
     const file = await app.vault.create("Picker note.md", "# Picker note");
+    await expandCanvasTools(canvasElement);
     const board = within(canvasElement);
     await userEvent.click(await board.findByRole("button", { name: "Add vault file", exact: true }));
     const dialog = board.getByRole("dialog", { name: "Add vault file", exact: true });
@@ -579,6 +598,8 @@ export const ClipboardHistory: Story = {
   }),
   play: async ({ canvasElement }) => {
     const app = await canvasOwner(canvasElement);
+    await expandCanvasTools(canvasElement);
+    await expandCanvasTools(canvasElement);
     const board = within(canvasElement);
     const node = (id: string) => canvasElement.querySelector<HTMLElement>(`[data-id="${id}"] .canvas-node-label`)!;
     await userEvent.click(node("small"));
@@ -625,6 +646,8 @@ export const TextEditingHistory: Story = {
   }),
   play: async ({ canvasElement }) => {
     const app = await canvasOwner(canvasElement);
+    await expandCanvasTools(canvasElement);
+    await expandCanvasTools(canvasElement);
     const board = within(canvasElement);
     await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-id="draft"] .canvas-node-label')!);
     await userEvent.click(await board.findByRole("button", { name: "Edit node", exact: true }));
@@ -659,6 +682,7 @@ export const DropAndContextAuthoring: Story = {
   }),
   play: async ({ canvasElement }) => {
     const app = await canvasOwner(canvasElement);
+    await expandCanvasTools(canvasElement);
     await app.vault.create("Dropped note.md", "# Dropped note");
     await within(canvasElement).findByRole("toolbar", { name: "Canvas authoring", exact: true });
     const pane = await waitFor(() => {
@@ -700,6 +724,7 @@ export const PlainTextPaste: Story = {
   }),
   play: async ({ canvasElement }) => {
     const app = await canvasOwner(canvasElement);
+    await expandCanvasTools(canvasElement);
     const button = await within(canvasElement).findByRole("button", { name: "Paste cards", exact: true });
     button.focus();
     const transfer = new DataTransfer();
@@ -722,18 +747,21 @@ export const CrossBoardClipboard: Story = {
   }),
   play: async ({ canvasElement }) => {
     const app = await canvasOwner(canvasElement);
+    await expandCanvasTools(canvasElement);
     const native = navigator.clipboard;
     const read = native.readText;
     const write = native.writeText;
     native.readText = async () => { throw new DOMException("Clipboard unavailable", "NotAllowedError"); };
     native.writeText = async () => { throw new DOMException("Clipboard unavailable", "NotAllowedError"); };
     try {
-      const board = within(canvasElement);
+      await expandCanvasTools(canvasElement);
+    const board = within(canvasElement);
       await userEvent.click(canvasElement.querySelector<HTMLElement>('[data-id="small"] .canvas-node-label')!);
       await userEvent.click(board.getByRole("button", { name: "Copy selection", exact: true }));
       await waitFor(() => expect(board.getByRole("status")).toHaveTextContent("Selection copied within this vault"));
       const next = await app.vault.create("Clipboard destination.canvas", '{"nodes":[],"edges":[]}');
       await app.workspace.activeLeaf!.openFile(next);
+      await expandCanvasTools(canvasElement);
       await userEvent.click(await board.findByRole("button", { name: "Paste cards", exact: true }));
       await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(1));
       await app.fileEditingSessions.flush(next.path);
@@ -757,6 +785,7 @@ export const LiveCanvasSource: Story = {
   render: () => ({ Component: ViewingPanelDemo, props: { layout: "middle-top-tabs", focus: "note", files: liveEmbedFiles } }),
   play: async ({ canvasElement }) => {
     const app = await canvasOwner(canvasElement);
+    await expandCanvasTools(canvasElement);
     const embed = await waitFor(() => { const value = canvasElement.querySelector<HTMLElement>("[data-canvas-embed]"); expect(value).not.toBeNull(); return value!; });
     await waitFor(() => expect(embed).toHaveTextContent("Canvas before update"));
     const file = app.vault.getFileByPath("Live.canvas")!;
@@ -782,6 +811,7 @@ export const LiveEmbedFileContent: Story = {
   render: () => ({ Component: ViewingPanelDemo, props: { layout: "middle-top-tabs", focus: "note", files: liveEmbedFiles } }),
   play: async ({ canvasElement }) => {
     const app = await canvasOwner(canvasElement);
+    await expandCanvasTools(canvasElement);
     const embed = await waitFor(() => { const value = canvasElement.querySelector<HTMLElement>("[data-canvas-embed]"); expect(value).not.toBeNull(); return value!; });
     await waitFor(() => expect(embed).toHaveTextContent("Live file body"));
     await app.vault.modify(app.vault.getFileByPath("Live note.md")!, "# Live file updated\nFresh body.");
@@ -796,6 +826,7 @@ export const ProvidedEmbedContent: Story = {
   render: () => ({ Component: ViewingPanelDemo, props: { layout: "middle-top-tabs" } }),
   play: async ({ canvasElement }) => {
     const app = await canvasOwner(canvasElement);
+    await expandCanvasTools(canvasElement);
     const file = await app.vault.create("Override.md", "# Actual vault body");
     const host = canvasElement.ownerDocument.createElement("div");
     host.style.cssText = "position:absolute;inset:20px;z-index:10;width:600px;height:360px";
@@ -825,6 +856,7 @@ export const RecursiveCanvasEmbeds: Story = {
   } } }),
   play: async ({ canvasElement }) => {
     const app = await canvasOwner(canvasElement);
+    await expandCanvasTools(canvasElement);
     const source = app.vault.getFileByPath("Recursive.canvas")!;
     const before = await app.vault.read(source);
     await waitFor(() => expect(within(canvasElement).getAllByRole("note").filter((element) => element.textContent?.includes("already appears"))).toHaveLength(2));
@@ -840,6 +872,7 @@ export const LiveEmbedGeometry: Story = {
   render: () => ({ Component: ViewingPanelDemo, props: { layout: "middle-top-tabs", focus: "note", files: liveEmbedFiles } }),
   play: async ({ canvasElement }) => {
     const app = await canvasOwner(canvasElement);
+    await expandCanvasTools(canvasElement);
     const embed = await waitFor(() => { const value = canvasElement.querySelector<HTMLElement>("[data-canvas-embed]"); expect(value).not.toBeNull(); return value!; });
     await waitFor(() => expect(embed).toHaveTextContent("Canvas before update"));
     const next = JSON.parse(liveEmbedDocument); next.nodes[0].x = 12000;

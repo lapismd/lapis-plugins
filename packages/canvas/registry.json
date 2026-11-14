@@ -23,7 +23,7 @@
   },
   "media": {
     "banner": {
-      "alt": "Lapis Canvas showing the feature board with a text note, two file notes, a link, a group, and three labeled connectors, both sidebars closed.",
+      "alt": "Lapis Canvas showing a coastal research board with grouped notes, an original field sketch, a checklist, a web reference, and labeled connections beside Explorer.",
       "images": {
         "preview": {
           "path": "registry-assets/banner.preview.webp"
@@ -47,7 +47,7 @@
   "gallery": [
     {
       "id": "embedded-note",
-      "alt": "A reading note with both sidebars closed, embedding the canvas board beneath a short introduction.",
+      "alt": "A reading note beside Explorer, embedding the coastal research board beneath a short introduction.",
       "images": {
         "preview": {
           "path": "registry-assets/gallery/embedded-note.preview.webp"

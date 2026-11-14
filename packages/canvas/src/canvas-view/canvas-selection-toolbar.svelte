@@ -1,4 +1,5 @@
 <script lang="ts">
+  import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import { getContext, tick } from "svelte";
   import { arrangeCanvas, canvasLayoutRoots, CANVAS_LAYOUT_ACTIONS, type CanvasLayoutAction } from "../lib/canvas-layout";
   import type { CanvasBoardController } from "../lib/canvas-board-controller";
@@ -280,85 +281,137 @@
     <div class="canvas-node-toolbar-actions">
       <details class="canvas-selection-layout" bind:this={layoutMenu}>
         <summary>Arrange</summary>
-        <div class="canvas-selection-layout-menu" role="group" aria-label="Arrange selected cards">
+        <div
+          class="canvas-selection-layout-menu"
+          role="group"
+          aria-label="Arrange selected cards"
+        >
           {#each CANVAS_LAYOUT_ACTIONS as [action, label]}
-            <button type="button" disabled={arranging || layoutRoots < (action.startsWith("distribute") ? 3 : 2)} onclick={() => void arrange(action)}>{label}</button>
+            <Tooltip.Root
+              ><Tooltip.Trigger
+                >{#snippet child({ props: tooltipProps })}<button
+                    {...tooltipProps}
+                    type="button"
+                    disabled={arranging ||
+                      layoutRoots < (action.startsWith("distribute") ? 3 : 2)}
+                    onclick={() => void arrange(action)}>{label}</button
+                  >{/snippet}</Tooltip.Trigger
+              ><Tooltip.Content sideOffset={6}>{label}</Tooltip.Content
+              ></Tooltip.Root
+            >
           {/each}
         </div>
       </details>
-      <button
-        type="button"
-        class="canvas-node-toolbar-button"
-        onclick={createGroupFromSelection}
-        aria-label="Create group"
-        title="Create group"
+      <Tooltip.Root
+        ><Tooltip.Trigger
+          >{#snippet child({ props: tooltipProps })}<button
+              {...tooltipProps}
+              type="button"
+              class="canvas-node-toolbar-button"
+              onclick={createGroupFromSelection}
+              aria-label="Create group"
+            >
+              <SquarePlus aria-hidden="true" />
+            </button>{/snippet}</Tooltip.Trigger
+        ><Tooltip.Content sideOffset={6}>Create group</Tooltip.Content
+        ></Tooltip.Root
       >
-        <SquarePlus aria-hidden="true" />
-      </button>
-      <button
-        type="button"
-        class="canvas-node-toolbar-button"
-        onclick={removeSelectedNodes}
-        aria-label="Remove selected nodes"
-        title="Remove selected nodes"
+      <Tooltip.Root
+        ><Tooltip.Trigger
+          >{#snippet child({ props: tooltipProps })}<button
+              {...tooltipProps}
+              type="button"
+              class="canvas-node-toolbar-button"
+              onclick={removeSelectedNodes}
+              aria-label="Remove selected nodes"
+            >
+              <Trash2 aria-hidden="true" />
+            </button>{/snippet}</Tooltip.Trigger
+        ><Tooltip.Content sideOffset={6}>Remove selected nodes</Tooltip.Content
+        ></Tooltip.Root
       >
-        <Trash2 aria-hidden="true" />
-      </button>
-      <button
-        type="button"
-        class:active={isColorMenuOpen}
-        class="canvas-node-toolbar-button"
-        onclick={toggleColorMenu}
-        aria-label="Set color"
-        title="Set color"
-        aria-haspopup="dialog"
-        aria-expanded={isColorMenuOpen}
+      <Tooltip.Root
+        ><Tooltip.Trigger
+          >{#snippet child({ props: tooltipProps })}<button
+              {...tooltipProps}
+              type="button"
+              class:active={isColorMenuOpen}
+              class="canvas-node-toolbar-button"
+              onclick={toggleColorMenu}
+              aria-label="Set color"
+              aria-haspopup="dialog"
+              aria-expanded={isColorMenuOpen}
+            >
+              <Palette aria-hidden="true" />
+            </button>{/snippet}</Tooltip.Trigger
+        ><Tooltip.Content sideOffset={6}>Set color</Tooltip.Content
+        ></Tooltip.Root
       >
-        <Palette aria-hidden="true" />
-      </button>
-      <button
-        type="button"
-        class="canvas-node-toolbar-button"
-        onclick={zoomToSelection}
-        aria-label="Zoom to selection"
-        title="Zoom to selection"
+      <Tooltip.Root
+        ><Tooltip.Trigger
+          >{#snippet child({ props: tooltipProps })}<button
+              {...tooltipProps}
+              type="button"
+              class="canvas-node-toolbar-button"
+              onclick={zoomToSelection}
+              aria-label="Zoom to selection"
+            >
+              <Expand aria-hidden="true" />
+            </button>{/snippet}</Tooltip.Trigger
+        ><Tooltip.Content sideOffset={6}>Zoom to selection</Tooltip.Content
+        ></Tooltip.Root
       >
-        <Expand aria-hidden="true" />
-      </button>
     </div>
 
     {#if arrangementError}<p role="alert">{arrangementError}</p>{/if}
     {#if isColorMenuOpen}
       <div class="canvas-node-color-popover nodrag nopan">
-        <button
-          type="button"
-          class:selected={!sharedColor}
-          class="canvas-node-color canvas-node-color-clear"
-          onclick={() => applyColor(undefined)}
-          aria-label="Clear node color"
-          title="Clear node color"
-        ></button>
+        <Tooltip.Root
+          ><Tooltip.Trigger
+            >{#snippet child({ props: tooltipProps })}<button
+                {...tooltipProps}
+                type="button"
+                class:selected={!sharedColor}
+                class="canvas-node-color canvas-node-color-clear"
+                onclick={() => applyColor(undefined)}
+                aria-label="Clear node color"
+              ></button>{/snippet}</Tooltip.Trigger
+          ><Tooltip.Content sideOffset={6}>Clear node color</Tooltip.Content
+          ></Tooltip.Root
+        >
 
         {#each colorOptions as [colorId, colorValue] (colorId)}
-          <button
-            type="button"
-            class:selected={sharedColor === colorId}
-            class="canvas-node-color"
-            style:--canvas-node-swatch={colorValue}
-            onclick={() => applyColor(colorId)}
-            aria-label={`Set node color ${colorId}`}
-            title={`Set node color ${colorId}`}
-          ></button>
+          <Tooltip.Root
+            ><Tooltip.Trigger
+              >{#snippet child({ props: tooltipProps })}<button
+                  {...tooltipProps}
+                  type="button"
+                  class:selected={sharedColor === colorId}
+                  class="canvas-node-color"
+                  style:--canvas-node-swatch={colorValue}
+                  onclick={() => applyColor(colorId)}
+                  aria-label={`Set node color ${colorId}`}
+                ></button>{/snippet}</Tooltip.Trigger
+            ><Tooltip.Content sideOffset={6}
+              >{`Set node color ${colorId}`}</Tooltip.Content
+            ></Tooltip.Root
+          >
         {/each}
 
-        <button
-          type="button"
-          class:selected={hasCustomColor}
-          class="canvas-node-color canvas-node-color-custom"
-          onclick={openNativeColorPicker}
-          aria-label="Choose custom node color"
-          title="Choose custom node color"
-        ></button>
+        <Tooltip.Root
+          ><Tooltip.Trigger
+            >{#snippet child({ props: tooltipProps })}<button
+                {...tooltipProps}
+                type="button"
+                class:selected={hasCustomColor}
+                class="canvas-node-color canvas-node-color-custom"
+                onclick={openNativeColorPicker}
+                aria-label="Choose custom node color"
+              ></button>{/snippet}</Tooltip.Trigger
+          ><Tooltip.Content sideOffset={6}
+            >Choose custom node color</Tooltip.Content
+          ></Tooltip.Root
+        >
         <input
           bind:this={nativeColorInput}
           class="canvas-node-native-color-input"
@@ -373,13 +426,57 @@
   </div>
 </NodeToolbar>
 
-
 <style>
-  .canvas-selection-layout { position: relative; color: var(--canvas-readable-text, var(--text-normal)); }
-  summary { padding: 8px; cursor: pointer; font-size: 12px; border-radius: 5px; }
-  summary:focus-visible { outline: 2px solid var(--canvas-readable-indicator, var(--interactive-accent)); }
-  .canvas-selection-layout-menu { position: absolute; top: 100%; left: 0; z-index: 10; display: grid; gap: 3px; width: 230px; max-height: 320px; overflow: auto; padding: 6px; border: 1px solid var(--canvas-readable-indicator, var(--background-modifier-border)); border-radius: 8px; background: var(--canvas-readable-surface, var(--background-secondary)); box-shadow: 0 8px 20px var(--background-modifier-box-shadow); }
-  .canvas-selection-layout-menu button { min-height: 36px; padding: 6px 8px; border: 0; border-radius: 5px; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
-  .canvas-selection-layout-menu button:hover, .canvas-selection-layout-menu button:focus-visible { outline: 2px solid var(--canvas-readable-indicator, var(--interactive-accent)); outline-offset: -2px; }
-  .canvas-selection-layout-menu button:disabled { opacity: 0.5; cursor: default; }
+  .canvas-selection-layout {
+    position: relative;
+    color: var(--canvas-readable-text, var(--text-normal));
+  }
+  summary {
+    padding: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: 5px;
+  }
+  summary:focus-visible {
+    outline: 2px solid
+      var(--canvas-readable-indicator, var(--interactive-accent));
+  }
+  .canvas-selection-layout-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 10;
+    display: grid;
+    gap: 3px;
+    width: 230px;
+    max-height: 320px;
+    overflow: auto;
+    padding: 6px;
+    border: 1px solid
+      var(--canvas-readable-indicator, var(--background-modifier-border));
+    border-radius: 8px;
+    background: var(--canvas-readable-surface, var(--background-secondary));
+    box-shadow: 0 8px 20px var(--background-modifier-box-shadow);
+  }
+  .canvas-selection-layout-menu button {
+    min-height: 36px;
+    padding: 6px 8px;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .canvas-selection-layout-menu button:hover,
+  .canvas-selection-layout-menu button:focus-visible {
+    outline: 2px solid
+      var(--canvas-readable-indicator, var(--interactive-accent));
+    outline-offset: -2px;
+  }
+  .canvas-selection-layout-menu button:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
 </style>

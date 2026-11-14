@@ -95,7 +95,6 @@
 <div
   class="lapis-markdown-file-surface"
   data-ui-component="markdown-file-surface"
-  data-mira-theme="obsidian"
   data-editing={editing ? "true" : "false"}
   role="document"
   ondblclick={activate}
@@ -115,6 +114,7 @@
 
 <style>
   .lapis-markdown-file-surface {
+    --mira-focus-ring: var(--ui-workspace-focus-ring, var(--ring));
     --mira-preview-background: var(
       --ui-markdown-file-surface-background,
       transparent

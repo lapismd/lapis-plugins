@@ -284,3 +284,5 @@ refreshing Bases report provenance under LN-BASE-045. The provenance-only mode
 MUST preserve native and TypeScript source fingerprints, accepted observations
 and baseline outcomes; package version synchronization cannot admit a native
 behavior change or replace native artifact acceptance.
+
+Canvas review adds no native service or parser changes. Settings and selection use existing App protection and plugin configuration contracts; PNG export and note conversion retain their released runtime and ownership boundaries.
