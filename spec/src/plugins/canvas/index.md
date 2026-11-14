@@ -136,3 +136,10 @@ The public API peer admits the released `^0.4.0` host in addition to its
 existing 0.2 range. Shared shell qualification uses API 0.4.0, UI 0.1.10,
 Workspace 0.4.1, Core 0.13.2 and Mira 0.2 through registry exports. Runtime
 identity, explicit App ownership and this plugin's behavior remain unchanged.
+
+Camera-preservation acceptance MUST wait for Reset zoom to finish at its exact
+inline camera pose before recording the pre-export transform. The fixed export
+fixture MUST reach both scale 1 and the translation for its fitted bounds. Neither
+a rounded computed CSS matrix nor scale alone proves animation completion.
+The unchanged source and exact inline transform remain required after canceling
+export options; no tolerance or additional browser budget replaces them.

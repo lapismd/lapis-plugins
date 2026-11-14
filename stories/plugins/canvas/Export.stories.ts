@@ -2,7 +2,7 @@ import type { App } from "@lapis-notes/api";
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
 import { expect, userEvent, waitFor, within } from "storybook/test";
 import ViewingPanelDemo from "./panels/ViewingPanelDemo.svelte";
-const input = JSON.stringify({
+const model = {
   metadata: "keep",
   nodes: [
     {
@@ -35,7 +35,8 @@ const input = JSON.stringify({
     },
   ],
   edges: [{ id: "af", fromNode: "a", toNode: "f" }],
-});
+};
+const input = JSON.stringify(model);
 const meta = {
   title: "Plugins/Canvas/Export",
   component: ViewingPanelDemo,
@@ -100,16 +101,33 @@ export const Options: Story = {
         ".canvas-view-root:not([data-canvas-embed])",
       )!,
       board = within(root);
-    const zoom = () =>
+    const pose = () =>
       new DOMMatrix(
-        getComputedStyle(root.querySelector(".svelte-flow__viewport")!)
+        root.querySelector<HTMLElement>(".svelte-flow__viewport")!.style
           .transform,
-      ).a;
+      );
+    const zoom = () => pose().a;
+    const flow = root.querySelector<HTMLElement>(".svelte-flow")!;
+    const center = {
+      x:
+        (Math.min(...model.nodes.map((node) => node.x)) +
+          Math.max(...model.nodes.map((node) => node.x + node.width))) /
+        2,
+      y:
+        (Math.min(...model.nodes.map((node) => node.y)) +
+          Math.max(...model.nodes.map((node) => node.y + node.height))) /
+        2,
+    };
     await waitFor(() => expect(zoom()).toBeLessThan(0.99));
     await userEvent.click(
       board.getByRole("button", { name: "Reset zoom", exact: true }),
     );
-    await waitFor(() => expect(zoom()).toBe(1));
+    await waitFor(() => {
+      const camera = pose();
+      expect(camera.a).toBe(1);
+      expect(camera.e).toBe(flow.clientWidth / 2 - center.x);
+      expect(camera.f).toBe(flow.clientHeight / 2 - center.y);
+    });
     const before = await app.vault.read(
         app.vault.getFileByPath("Export.canvas")!,
       ),
