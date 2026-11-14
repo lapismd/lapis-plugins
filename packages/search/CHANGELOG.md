@@ -1,5 +1,11 @@
 # Search changelog
 
+## 0.1.11
+
+### Patch Changes
+
+- [#105](https://github.com/lapismd/lapis-plugins/pull/105) [`6b2dc23`](https://github.com/lapismd/lapis-plugins/commit/6b2dc23b6e922e96038f288c24e11b26c20f5a72) Thanks [@lapismd-dependency-bot](https://github.com/apps/lapismd-dependency-bot)! - Refresh first-party Lapis dependencies to the published versions recorded in this pull request.
+
 ## 0.1.10
 
 ### Patch Changes
