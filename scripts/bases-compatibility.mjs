@@ -16,10 +16,10 @@ const read = (name) =>
 const args = process.argv.slice(2);
 if (
   args.length > 1 ||
-  (args.length && !["--write", "--upstream"].includes(args[0]))
+  (args.length && !["--write", "--upstream", "--refresh-provenance"].includes(args[0]))
 ) {
   throw new Error(
-    "Usage: node scripts/bases-compatibility.mjs [--write|--upstream]"
+    "Usage: node scripts/bases-compatibility.mjs [--write|--upstream|--refresh-provenance]"
   );
 }
 const upstream = read("upstream.json");
@@ -76,6 +76,8 @@ if (args[0] === "--upstream") {
       env: {
         ...process.env,
         BASES_COMPATIBILITY_WRITE: args[0] === "--write" ? "1" : "0",
+        BASES_COMPATIBILITY_REFRESH_PROVENANCE:
+          args[0] === "--refresh-provenance" ? "1" : "0",
       },
       stdio: "inherit",
     }

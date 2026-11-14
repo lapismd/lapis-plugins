@@ -50,6 +50,18 @@ duplicate IDs and report classification. The dedicated Vitest configuration and
 observer fixture do not change existing package tests or runtime code. Audit
 fixtures are outside published `dist` exports.
 
+## Release provenance refresh
+
+`pnpm release:version` reruns the full audit with `--refresh-provenance` after
+versioning and synchronizing package metadata. That mode may update only the
+observed package and dependency versions. It retains every normal behavioral
+baseline assertion and rejects changed source hashes, feature coverage, upstream
+identity or observations before writing either report. It never writes
+`baseline.json`. Ordinary `pnpm audit:bases` still rejects stale provenance.
+
+Use the explicit reviewed evidence-update workflow above for behavior changes;
+provenance refresh cannot accept them.
+
 ## Scope and evidence limits
 
 This compares Lapis source with the reviewed Obsidian documentation. It does not

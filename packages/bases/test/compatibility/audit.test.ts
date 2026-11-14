@@ -15,6 +15,7 @@ import {
 } from "../../src/lib/bases-view/filter-parser";
 import {
   renderReport,
+  assertProvenanceOnlyRefresh,
   validateInventory,
 } from "../../../../scripts/bases-compatibility-core.mjs";
 
@@ -244,6 +245,14 @@ afterAll(() => {
       ])
     );
     writeFileSync(pathJoin(baselinePath), JSON.stringify(next, null, 2) + "\n");
+    writeFileSync(pathJoin("docs/bases-compatibility/report.json"), json);
+    writeFileSync(pathJoin("docs/bases-compatibility/report.md"), markdown);
+  } else if (process.env.BASES_COMPATIBILITY_REFRESH_PROVENANCE === "1") {
+    expect(Object.fromEntries(results.map((result: any) => [
+      result.id,
+      result.observations.map((probe: any) => ({ id: probe.id, pass: probe.pass })),
+    ]))).toEqual(baseline);
+    assertProvenanceOnlyRefresh(read("docs/bases-compatibility/report.json"), report);
     writeFileSync(pathJoin("docs/bases-compatibility/report.json"), json);
     writeFileSync(pathJoin("docs/bases-compatibility/report.md"), markdown);
   } else {

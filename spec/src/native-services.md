@@ -278,3 +278,9 @@ publication preflight admits Workspace 0.4.1 alongside 0.3. Qualification uses r
 API 0.4.0, UI 0.1.10, File Explorer 0.2.6, Language Service 0.1.4 and
 Workspace 0.4.1 with Core 0.13.2/Mira 0.2. No native producer, parked package
 activation, runtime ownership change or publication bypass is introduced.
+
+Release versioning retains the independent native qualification lanes while
+refreshing Bases report provenance under LN-BASE-045. The provenance-only mode
+MUST preserve native and TypeScript source fingerprints, accepted observations
+and baseline outcomes; package version synchronization cannot admit a native
+behavior change or replace native artifact acceptance.
