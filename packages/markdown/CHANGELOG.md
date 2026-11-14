@@ -1,5 +1,13 @@
 # Markdown changelog
 
+## 0.2.7
+
+### Patch Changes
+
+- [#111](https://github.com/lapismd/lapis-plugins/pull/111) [`a76d286`](https://github.com/lapismd/lapis-plugins/commit/a76d286a7fd29043e542508195312a1437845a91) Thanks [@stevejuma](https://github.com/stevejuma)! - Use collapsed-by-default Canvas toolbars on one right control rail, searchable card and group pickers, shared tooltips, saved snapping controls and zoom-to-fit. Add richer offline examples and readable titles and hostnames to website cards. Keep group outlines stable, render the custom colour picker as a rainbow swatch, and retain readable zoom controls when an embedded board uses a different colour scheme from its host.
+
+  Let nested Markdown file previews inherit their owning surface palette and retain workspace focus rings so coloured Canvas cards stay readable in both light and dark modes.
+
 ## 0.2.6
 
 ### Patch Changes
