@@ -5,6 +5,12 @@ import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
+// Isolated checkouts must not contend with another catalog's fixed API port.
+const browserPort = Number(
+  process.env.LAPIS_PLUGINS_BROWSER_TEST_PORT ?? 63422
+);
+if (!Number.isInteger(browserPort) || browserPort < 1 || browserPort > 65535)
+  throw new Error("LAPIS_PLUGINS_BROWSER_TEST_PORT must be a TCP port");
 
 export default defineConfig({
   optimizeDeps: {
@@ -73,7 +79,7 @@ export default defineConfig({
           setupFiles: ["./.storybook/vitest.setup.ts"],
           testTimeout: 120_000,
           browser: {
-            api: { host: "127.0.0.1", port: 63422, strictPort: true },
+            api: { host: "127.0.0.1", port: browserPort, strictPort: true },
             enabled: true,
             headless: true,
             provider: playwright({ launchOptions: { channel: "chromium" } }),

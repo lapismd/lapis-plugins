@@ -285,8 +285,13 @@ function referenceStory(scenario: BasesViewScenario, title: string): Story {
         within(editorRoot).getByRole("button", { name: "Expand properties" }),
       ).toBeVisible();
       await userEvent.click(editor);
-      await userEvent.keyboard("{Control>}{End}{/Control}");
-      await userEvent.type(editor, " Verified during board review.");
+      // Use CodeMirror's platform-native document-end binding before pasting.
+      await userEvent.keyboard(
+        /Mac/.test(navigator.platform)
+          ? "{Meta>}{ArrowDown}{/Meta}"
+          : "{Control>}{End}{/Control}",
+      );
+      await userEvent.paste(" Verified during board review.");
       await userEvent.click(page.getByRole("button", { name: /Back ESC/ }));
       const filePath =
         scenario === "kanban-roles"

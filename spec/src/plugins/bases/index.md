@@ -257,6 +257,10 @@ through the real App. Their grouping property is `phase`, not a required `status
 The reference is CV Studio sample content at `34486d1e`; fixed dates and extra
 non-domain values keep the fixtures portable. The shared card renderer supplies summaries, generic badges and an ordered two-column metadata grid.
 
+The reference editing plays use the public clipboard interaction to enter text
+through CodeMirror, retaining persisted-file and title-edit assertions under
+LN-BASE-011 rather than simulating unsupported multiline DOM selection.
+
 The catalog groups Board and Activity examples under `Plugins/Bases/Views/Kanban`.
 Reference collections include multiple cards per lane; the scrolling scenario
 uses 24 groups with 16 Markdown files each in a bounded pane. Its interaction

@@ -100,6 +100,11 @@ and complete catalog counts, public-archive provenance and the inherited Zod
 advisory are recorded in `spec/records/2026-10-25-bases-filter-names.md`.
 The advisory requires fresh acceptance for this patch before commit.
 
+Isolated catalog checkouts may select `LAPIS_PLUGINS_BROWSER_TEST_PORT` to
+retain a strict browser API listener without occupying another checkout's port.
+Invalid ports fail before startup; interaction assertions and shard coverage
+remain unchanged under LP-SPEC-053.
+
 LP-SPEC-053 defaults local portable validation to isolated Docker workers;
 hosted CI explicitly uses its provisioned native runtime. The repository-owned
 composition plugin enforces LP-SPEC-054 and LP-SPEC-055 beside existing Docs,

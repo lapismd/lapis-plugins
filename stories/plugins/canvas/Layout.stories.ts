@@ -1,3 +1,4 @@
+import { primaryShortcut } from "./keyboard";
 import { expandCanvasTools } from "./canvas-story-helpers";
 import type { App } from "@lapis-notes/api";
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
@@ -27,10 +28,10 @@ export const SelectionArrangement: Story = {
     await expandCanvasTools(root);
     const board = within(root);
     await userEvent.click(root.querySelector<HTMLElement>('[data-id="a"] .canvas-node-label')!);
-    await userEvent.keyboard("{Control>}");
+    await userEvent.keyboard(primaryShortcut("{Control>}"));
     await userEvent.click(root.querySelector<HTMLElement>('[data-id="b"] .canvas-node-label')!);
     await userEvent.click(root.querySelector<HTMLElement>('[data-id="c"] .canvas-node-label')!);
-    await userEvent.keyboard("{/Control}");
+    await userEvent.keyboard(primaryShortcut("{/Control}"));
     await waitFor(() => expect(root.querySelectorAll(".svelte-flow__node.selected")).toHaveLength(3));
     await userEvent.click(board.getByText("Arrange", { exact: true }));
     const alignLeft = board.getByRole("button", { name: "Align left", exact: true });
@@ -49,10 +50,10 @@ export const SelectionArrangement: Story = {
     await waitFor(async () => expect((await read()).nodes.map((node: { x: number }) => node.x)).toEqual([0, 0, 0]));
     // History restores geometry; selection is explicit for the next command.
     await userEvent.click(root.querySelector<HTMLElement>('[data-id="a"] .canvas-node-label')!);
-    await userEvent.keyboard("{Control>}");
+    await userEvent.keyboard(primaryShortcut("{Control>}"));
     await userEvent.click(root.querySelector<HTMLElement>('[data-id="b"] .canvas-node-label')!);
     await userEvent.click(root.querySelector<HTMLElement>('[data-id="c"] .canvas-node-label')!);
-    await userEvent.keyboard("{/Control}");
+    await userEvent.keyboard(primaryShortcut("{/Control}"));
     await userEvent.click(board.getByText("Arrange", { exact: true }));
     await userEvent.click(board.getByRole("button", { name: "Arrange in a row", exact: true }));
     const saved = await waitFor(async () => { const value = await read(); expect(value.nodes.map((node: { x: number; y: number }) => [node.x, node.y])).toEqual([[0, 0], [144, 0], [368, 0]]); return value; });

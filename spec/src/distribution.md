@@ -553,6 +553,11 @@ Skill contributions carry their complete authored directories in both npm and si
 
 Signed skill archives and npm assets are byte-compared in [archive qualification](../records/2026-11-14-plugin-skill-archives.md), including every skill body and license.
 
+Catalog acceptance may select a checkout-local Vitest browser API port with
+`LAPIS_PLUGINS_BROWSER_TEST_PORT`. The port must be an integer from 1 to 65535;
+the default remains 63422. This isolates independent workspaces without changing
+published package metadata, runtime admission or release artifact generation.
+
 Under LP-SPEC-010, compatible internal peer updates MUST preserve the declared
 independent bump; out-of-range peers MUST retain major-version escalation. The
 frozen Changesets 2 CLI uses its range-aware peer option, guarded by a real CLI
