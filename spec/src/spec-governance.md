@@ -650,3 +650,7 @@ content before writing. It MUST NOT update the accepted compatibility baseline.
 Ordinary audit invocation MUST continue to reject stale reports.
 
 Canvas review retains real WorkspaceShell composition and visual-pending tags. Shared tooltip descriptions, collapsed controls and measured colour matrices supplement the released accessibility stories without exclusions or baseline replacement.
+
+The plugin skill packaging regression checks authored assets against npm exports and the signed release file list. Skill changes retain separate source qualification and consumer adoption evidence; source checks do not authorize publication.
+
+[Skill archive evidence](../records/2026-11-14-plugin-skill-archives.md) retains signed-file inclusion, public npm parity and the failed prerequisite attempts.

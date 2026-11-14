@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { readPackagedSkills } from "./plugin-skill-assets.mjs";
 import assert from "node:assert/strict";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -12,18 +13,18 @@ import {
 
 const repositoryRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
-  ".."
+  "..",
 );
 const mode = process.argv[2] ?? "--check";
 assert.ok(
   mode === "--check" || mode === "--write",
-  "Usage: sync-package-metadata.mjs --check|--write"
+  "Usage: sync-package-metadata.mjs --check|--write",
 );
 
 import { versionedRendererHostSpecifier } from "./lib/svelte-runtime-contract.mjs";
 import { rendererCompilerVersionFromLockfile } from "./lib/runtime-host-modules.mjs";
 const rendererVersion = rendererCompilerVersionFromLockfile(
-  await readFile(path.join(repositoryRoot, "pnpm-lock.yaml"), "utf8")
+  await readFile(path.join(repositoryRoot, "pnpm-lock.yaml"), "utf8"),
 );
 const rendererSharedDependencies = new Map(
   Object.entries({
@@ -142,7 +143,7 @@ const rendererSharedDependencies = new Map(
     "source-editor": [],
     spellcheck: [],
     wordcount: [],
-  })
+  }),
 );
 
 const descriptions = new Map([
@@ -234,11 +235,33 @@ const sharedDependencies = new Map([
       "@lapis-notes/api/agent-tools",
     ],
   ],
-  ["slides", ["@lapis-notes/api", "@lapis-notes/api/editor/core", "@lapis-notes/api/editor/language-service"]],
+  [
+    "slides",
+    [
+      "@lapis-notes/api",
+      "@lapis-notes/api/editor/core",
+      "@lapis-notes/api/editor/language-service",
+    ],
+  ],
   ["pdf", ["@lapis-notes/api", "@lapis-notes/api/workspace-host"]],
-  ["canvas", ["@lapis-notes/api", "@lapis-notes/api/editor/core", "@lapis-notes/api/editor/language-service"]],
+  [
+    "canvas",
+    [
+      "@lapis-notes/api",
+      "@lapis-notes/api/editor/core",
+      "@lapis-notes/api/editor/language-service",
+    ],
+  ],
   ["docx", ["@lapis-notes/api"]],
-  ["csv", ["@lapis-notes/api", "@lapis-notes/api/editor/core", "@lapis-notes/api/menu", "@lapis-notes/api/workspace-host"]],
+  [
+    "csv",
+    [
+      "@lapis-notes/api",
+      "@lapis-notes/api/editor/core",
+      "@lapis-notes/api/menu",
+      "@lapis-notes/api/workspace-host",
+    ],
+  ],
   ["transcripts", ["@lapis-notes/api"]],
   [
     "source-editor",
@@ -377,7 +400,7 @@ const editorSharedDependencies = new Map(
     ],
     spellcheck: [],
     wordcount: ["@codemirror/state", "@codemirror/view"],
-  })
+  }),
 );
 
 const findings = [];
@@ -391,15 +414,24 @@ for (const plugin of pluginPackages) {
   const normalizedManifest = normalizeManifest(
     manifest,
     plugin,
-    packageJson.version
+    packageJson.version,
   );
   const normalizedPackage = normalizePackage(
     packageJson,
     normalizedManifest,
-    plugin
+    plugin,
   );
   await compareOrWrite(packagePath, packageJson, normalizedPackage);
   await compareOrWrite(manifestPath, manifest, normalizedManifest);
+  if (normalizedManifest.lapis?.contributes?.agentSkills?.length) {
+    const file = path.join(packageRoot, "skills.json");
+    const bundles = await readPackagedSkills(packageRoot, normalizedManifest);
+    await compareOrWrite(
+      file,
+      JSON.parse(await readFile(file, "utf8")),
+      bundles,
+    );
+  }
 }
 
 if (findings.length) {
@@ -409,7 +441,7 @@ if (findings.length) {
   console.log(
     mode === "--write"
       ? `Synchronized ${pluginPackages.length} plugin package manifests.`
-      : `Verified ${pluginPackages.length} plugin package manifests.`
+      : `Verified ${pluginPackages.length} plugin package manifests.`,
   );
 }
 
@@ -423,7 +455,7 @@ function normalizeManifest(manifest, plugin, packageVersion) {
     ...rendererSharedDependencies
       .get(plugin.directory)
       .map((specifier) =>
-        versionedRendererHostSpecifier(specifier, rendererVersion)
+        versionedRendererHostSpecifier(specifier, rendererVersion),
       ),
   ];
   const lapis = manifest.lapis ?? {};
@@ -488,6 +520,9 @@ function normalizePackage(packageJson, manifest, plugin) {
     "LICENSE.md",
     "!dist/**/*.test.*",
     "!dist/**/*.spec.*",
+    ...(["bases", "canvas", "markdown"].includes(plugin.directory)
+      ? ["skills", "skills.json"]
+      : []),
   ];
   normalized.sideEffects = ["**/*.css"];
   normalized.svelte = "./dist/index.js";
@@ -509,7 +544,7 @@ function normalizePackage(packageJson, manifest, plugin) {
     if (normalized[field]) {
       normalized[field] = normalizeDependencies(
         normalized[field],
-        plugin.directory
+        plugin.directory,
       );
     }
   }
@@ -568,7 +603,7 @@ function normalizeScripts(scripts) {
   if (normalized.check?.includes("packages/plugins/")) {
     normalized.check = normalized.check.replace(
       /pnpm --dir \.\.\/\.\.\/\.\. check:no-tailwind packages\/plugins\/plugin-[^ ]+\/src && /,
-      ""
+      "",
     );
   }
   return normalized;
@@ -577,11 +612,13 @@ function normalizeScripts(scripts) {
 function normalizeDependencies(dependencies, plugin) {
   const normalized = {};
   for (const [name, version] of Object.entries(dependencies).sort(([a], [b]) =>
-    a.localeCompare(b)
+    a.localeCompare(b),
   )) {
     // Canvas uses App editing sessions and conditional text persistence from 0.2.4.
     const canvasApi = plugin === "canvas" && name === "@lapis-notes/api";
-    normalized[name] = canvasApi ? "^0.2.4 || ^0.4.0" : frameworkPackageVersions.get(name) ?? version;
+    normalized[name] = canvasApi
+      ? "^0.2.4 || ^0.4.0"
+      : (frameworkPackageVersions.get(name) ?? version);
   }
   return normalized;
 }
@@ -597,8 +634,8 @@ async function compareOrWrite(filePath, current, normalized) {
     findings.push(
       `${path.relative(
         repositoryRoot,
-        filePath
-      )} is not synchronized; run pnpm packages:sync`
+        filePath,
+      )} is not synchronized; run pnpm packages:sync`,
     );
   }
 }

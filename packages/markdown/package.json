@@ -23,7 +23,9 @@
     "CHANGELOG.md",
     "LICENSE.md",
     "!dist/**/*.test.*",
-    "!dist/**/*.spec.*"
+    "!dist/**/*.spec.*",
+    "skills",
+    "skills.json"
   ],
   "sideEffects": [
     "**/*.css"
@@ -50,7 +52,8 @@
     },
     "./manifest.json": "./manifest.json",
     "./styles.css": "./styles.css",
-    "./registry.json": "./registry.json"
+    "./registry.json": "./registry.json",
+    "./skills.json": "./skills.json"
   },
   "dependencies": {
     "@lapismd/design-core": "^0.7.4 || ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.12.0 || ^0.13.0",

@@ -1,3 +1,4 @@
+import packagedAgentSkills from "@lapis-notes/markdown/skills.json";
 import {
   Plugin,
   type App,
@@ -105,6 +106,7 @@ export {
 export { default as MarkdownSidebarPanel } from "$lib/views/sidebar-panel/markdown-sidebar-panel.svelte";
 
 export class MarkdownPlugin extends Plugin {
+  readonly packagedAgentSkills = packagedAgentSkills;
   private readonly aiRun = createDemoAiRun();
 
   constructor(

@@ -544,3 +544,7 @@ content before writing. It MUST NOT update the accepted compatibility baseline.
 Ordinary audit invocation MUST continue to reject stale reports.
 
 Canvas Review and Contrast join the audited application-story inventory. Panel and registry examples share an offline coastal research board; Canvas media is refreshed from its fixed declared story IDs before packaging.
+
+Skill contributions carry their complete authored directories in both npm and signed plugin payloads. `stagePackagedSkills` rejects symlinks and missing entrypoints; metadata synchronization keeps `skills.json` tied to the owning package version. Explicit vault updates use installation receipts rather than replacing arbitrary agent files.
+
+Signed skill archives and npm assets are byte-compared in [archive qualification](../records/2026-11-14-plugin-skill-archives.md), including every skill body and license.

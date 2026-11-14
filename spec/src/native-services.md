@@ -286,3 +286,7 @@ and baseline outcomes; package version synchronization cannot admit a native
 behavior change or replace native artifact acceptance.
 
 Canvas review adds no native service or parser changes. Settings and selection use existing App protection and plugin configuration contracts; PNG export and note conversion retain their released runtime and ownership boundaries.
+
+Native hosts consume skill asset data through public package exports or verified installed-plugin files. Skill installation belongs to the shared application service; plugin archives contain workflow text and grant no native execution authority.
+
+The legacy AI skill-update command delegates to App skill management so the admitted native service retains write authority.
