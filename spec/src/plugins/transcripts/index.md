@@ -91,3 +91,7 @@ The public API peer admits released `^0.6.0` alongside its existing 0.2 and
 Language Service 0.1.6, Workspace 0.4.3, Core 0.13.2 and Mira 0.2 through
 registry exports. [Registry qualification](../../../records/2026-11-14-skills-api06-release-intake.md)
 retains package identity, explicit App ownership and separate native/release gates.
+
+The Markdown peer and development ranges also admit compatible `^0.3.0` while
+retaining the existing 0.2 floor. [Peer release qualification](../../../records/2026-11-14-skill-release-peer-versioning.md)
+keeps this compatible dependency intake on its declared independent bump.

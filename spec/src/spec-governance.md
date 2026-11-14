@@ -654,3 +654,9 @@ Canvas review retains real WorkspaceShell composition and visual-pending tags. S
 The plugin skill packaging regression checks authored assets against npm exports and the signed release file list. Skill changes retain separate source qualification and consumer adoption evidence; source checks do not authorize publication.
 
 [Skill archive evidence](../records/2026-11-14-plugin-skill-archives.md) retains signed-file inclusion, public npm parity and the failed prerequisite attempts.
+
+Under LP-SPEC-010, compatible internal peer updates MUST preserve the declared
+independent bump; out-of-range peers MUST retain major-version escalation. The
+frozen Changesets 2 CLI uses its range-aware peer option, guarded by a real CLI
+regression for both cases. [Peer release qualification](../records/2026-11-14-skill-release-peer-versioning.md)
+records the Markdown 0.3 peer intake without native or publisher-authority changes.

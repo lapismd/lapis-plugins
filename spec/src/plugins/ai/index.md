@@ -608,3 +608,7 @@ retains package identity, explicit App ownership and separate native/release gat
 Legacy bundled-skill seeding remains missing-only even when the historical update entrypoint requests overwrite. Existing directories have no provenance receipt and remain user-owned. New plugin-skill updates use the shared receipt-based installer.
 
 The legacy Update bundled skills entrypoint delegates to the protected App update command; it does not request direct seed replacement.
+
+The Markdown peer and development ranges also admit compatible `^0.3.0` while
+retaining the existing 0.2 floor. [Peer release qualification](../../../records/2026-11-14-skill-release-peer-versioning.md)
+keeps this compatible dependency intake on its declared independent bump.
