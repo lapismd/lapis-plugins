@@ -1,5 +1,4 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import { RESEARCH_SKILL_MARKDOWN } from "./bundled/research";
 import { seedBundledSkills } from "./seed";
 
 let Vault: typeof import("@lapis-notes/api/vault").Vault;
@@ -10,7 +9,7 @@ beforeAll(async () => {
 });
 
 describe("seedBundledSkills", () => {
-  it("writes packaged skills only when missing and overwrites packaged names on update", async () => {
+  it("writes missing skills and preserves local edits on every update", async () => {
     const vault = new Vault(new MemoryVaultAdapter());
     await vault.load();
     await seedBundledSkills(vault);
@@ -22,6 +21,6 @@ describe("seedBundledSkills", () => {
     await seedBundledSkills(vault);
     expect(await vault.cachedRead(research!)).toBe("user edited research");
     await seedBundledSkills(vault, { overwrite: true });
-    expect(await vault.cachedRead(research!)).toBe(RESEARCH_SKILL_MARKDOWN);
+    expect(await vault.cachedRead(research!)).toBe("user edited research");
   });
 });

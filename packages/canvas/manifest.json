@@ -43,6 +43,14 @@
           "requiresReloadOnUpdate": false
         }
       }
+    },
+    "contributes": {
+      "agentSkills": [
+        {
+          "name": "lapis-json-canvas",
+          "directory": "skills/lapis-json-canvas"
+        }
+      ]
     }
   }
 }

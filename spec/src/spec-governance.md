@@ -635,12 +635,12 @@ public Core compatibility unions while their lockfile entries match the root
 provider. The full PR range requires each affected package chapter; a bot
 exemption cannot replace canonical main-branch evidence.
 
-The API 0.4 host intake retains the existing 0.2 peer line, including Canvas
-0.2.4's editing-session floor. Active packages admit API 0.4.0 and the framework
-publication preflight admits Workspace 0.4.1 alongside 0.3. Qualification uses released registry
-API 0.4.0, UI 0.1.10, File Explorer 0.2.6, Language Service 0.1.4 and
-Workspace 0.4.1 with Core 0.13.2/Mira 0.2. No native producer, parked package
-activation, runtime ownership change or publication bypass is introduced.
+The API 0.6 host intake retains the existing 0.2/0.4 peer lines and Canvas's
+0.2.4 editing-session floor. Root qualification uses registry API 0.6.0,
+File Explorer 0.2.8, Language Service 0.1.6, Workspace 0.4.3, UI 0.1.10,
+Core 0.13.2 and Mira 0.2. [Release intake](../records/2026-11-14-skills-api06-release-intake.md)
+separates published exports, signed skill assets and consumer rollout. No parked
+package activation, native ownership change or publication bypass is introduced.
 
 Under LN-BASE-045, release versioning MAY refresh only observed package and
 dependency version provenance in compatibility reports. It MUST run every
@@ -650,3 +650,7 @@ content before writing. It MUST NOT update the accepted compatibility baseline.
 Ordinary audit invocation MUST continue to reject stale reports.
 
 Canvas review retains real WorkspaceShell composition and visual-pending tags. Shared tooltip descriptions, collapsed controls and measured colour matrices supplement the released accessibility stories without exclusions or baseline replacement.
+
+The plugin skill packaging regression checks authored assets against npm exports and the signed release file list. Skill changes retain separate source qualification and consumer adoption evidence; source checks do not authorize publication.
+
+[Skill archive evidence](../records/2026-11-14-plugin-skill-archives.md) retains signed-file inclusion, public npm parity and the failed prerequisite attempts.

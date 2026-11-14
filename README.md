@@ -63,3 +63,16 @@ asset contract.
 
 Portable checks, builds and tests default to Docker. See [validation](docs/validation.md)
 for image preparation, remote execution, explicit native runs and story composition checks.
+
+## Agent skills
+
+Bases, Canvas and Markdown contribute Lapis-specific skills in their npm and
+signed plugin packages. Use **Install plugin skills** in the application command
+palette to install enabled plugins' workflows under the vault's `.agents/skills`.
+Use **Update plugin skills** after upgrading plugins. Updates preserve complete
+skill directories with local edits, added/deleted files or missing installation
+receipts, and report the skipped names. They never upgrade plugins themselves.
+
+The authenticated `lapis skills list`, `lapis skills install` and
+`lapis skills update` commands provide the same native service for a selected
+`--vault`; `--skill` selects one workflow. The host owns the CLI skill.

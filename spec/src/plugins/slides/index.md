@@ -95,7 +95,8 @@ and the frozen Deno host are not migrated or edited.
 
 Release recovery prepares `slides@0.1.2` from the current source through the common signed-archive pipeline. The earlier `0.1.1` npm version and GitHub assets remain immutable. Package, archive and Storybook qualification precede the manual publication gate.
 
-The public API peer admits the released `^0.4.0` host in addition to its
-existing 0.2 range. Shared shell qualification uses API 0.4.0, UI 0.1.10,
-Workspace 0.4.1, Core 0.13.2 and Mira 0.2 through registry exports. Runtime
-identity, explicit App ownership and this plugin's behavior remain unchanged.
+The public API peer admits released `^0.6.0` alongside its existing 0.2 and
+0.4 ranges. Shared shell qualification uses API 0.6.0, File Explorer 0.2.8,
+Language Service 0.1.6, Workspace 0.4.3, Core 0.13.2 and Mira 0.2 through
+registry exports. [Registry qualification](../../../records/2026-11-14-skills-api06-release-intake.md)
+retains package identity, explicit App ownership and separate native/release gates.

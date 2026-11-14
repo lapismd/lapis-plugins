@@ -292,7 +292,20 @@ Markdown preview MUST use the compatible published adapter contract without
 consumer casts or local dependency aliases. The Core 0.13 lockfile entry
 resolves to 0.13.2 alongside the host settings provider.
 
-The public API peer admits the released `^0.4.0` host in addition to its
-existing 0.2 range. Shared shell qualification uses API 0.4.0, UI 0.1.10,
-Workspace 0.4.1, Core 0.13.2 and Mira 0.2 through registry exports. Runtime
-identity, explicit App ownership and this plugin's behavior remain unchanged.
+The public API peer admits released `^0.6.0` alongside its existing 0.2 and
+0.4 ranges. Shared shell qualification uses API 0.6.0, File Explorer 0.2.8,
+Language Service 0.1.6, Workspace 0.4.3, Core 0.13.2 and Mira 0.2 through
+registry exports. [Registry qualification](../../../records/2026-11-14-skills-api06-release-intake.md)
+retains package identity, explicit App ownership and separate native/release gates.
+
+### Packaged agent skill
+
+This plugin contributes its packaged skill directory through `agentSkills`.
+Installation is explicit at the vault root. Package upgrades supply new skill
+content; skill updates preserve locally modified directories. `skills.json`
+and signed archives MUST contain the same authored skill bytes. Qualification
+is tracked separately from consumer adoption.
+The authored skill example is checked by the production metadata parser for
+properties, headings, aliases and internal/image references.
+[Example qualification](../../../records/2026-11-14-skill-example-verification.md)
+retains the exact target and complete package results.

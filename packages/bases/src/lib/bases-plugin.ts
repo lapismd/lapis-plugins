@@ -1,3 +1,4 @@
+import packagedAgentSkills from "@lapis-notes/bases/skills.json";
 import { BASES_FILE_ICON } from "./bases-file-icon";
 import {
   type App,
@@ -23,6 +24,7 @@ type BasesRenderHandle = {
 };
 
 export class BasesPlugin extends Plugin {
+  readonly packagedAgentSkills = packagedAgentSkills;
   constructor(
     app: App,
     manifest: PluginManifest = manifestSpec as PluginManifest,

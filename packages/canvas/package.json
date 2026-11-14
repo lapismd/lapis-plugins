@@ -24,7 +24,9 @@
     "CHANGELOG.md",
     "LICENSE.md",
     "!dist/**/*.test.*",
-    "!dist/**/*.spec.*"
+    "!dist/**/*.spec.*",
+    "skills",
+    "skills.json"
   ],
   "sideEffects": [
     "**/*.css"
@@ -40,7 +42,8 @@
     },
     "./manifest.json": "./manifest.json",
     "./styles.css": "./styles.css",
-    "./registry.json": "./registry.json"
+    "./registry.json": "./registry.json",
+    "./skills.json": "./skills.json"
   },
   "dependencies": {
     "@lapismd/design-core": "^0.13.2",
@@ -57,7 +60,7 @@
     "@codemirror/search": "^6.5.11",
     "@codemirror/state": "^6.6.0",
     "@codemirror/view": "^6.42.1",
-    "@lapis-notes/api": "^0.2.4 || ^0.4.0",
+    "@lapis-notes/api": "^0.2.4 || ^0.4.0 || ^0.6.0",
     "@lapis-notes/markdown": "^0.2.7",
     "@lezer/common": "^1.5.2",
     "@lezer/highlight": "^1.2.3",

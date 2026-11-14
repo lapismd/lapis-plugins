@@ -46,6 +46,14 @@
           "requiresReloadOnUpdate": false
         }
       }
+    },
+    "contributes": {
+      "agentSkills": [
+        {
+          "name": "lapis-markdown",
+          "directory": "skills/lapis-markdown"
+        }
+      ]
     }
   }
 }
