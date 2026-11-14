@@ -1,5 +1,13 @@
 # Transcripts
 
+## 0.2.8
+
+### Patch Changes
+
+- [#113](https://github.com/lapismd/lapis-plugins/pull/113) [`48d4fd7`](https://github.com/lapismd/lapis-plugins/commit/48d4fd7abc585d05b8ccfa3bf4c161d4c301117a) Thanks [@stevejuma](https://github.com/stevejuma)! - Admit the released API 0.6 host alongside earlier supported API ranges. Qualify the active plugin cohort against the registry API with plugin-contributed skill contracts.
+
+- [#116](https://github.com/lapismd/lapis-plugins/pull/116) [`f7de0f8`](https://github.com/lapismd/lapis-plugins/commit/f7de0f85ec7608d0bc4d0a40e0c07fc6f7a8c42f) Thanks [@stevejuma](https://github.com/stevejuma)! - Admit the compatible Markdown 0.3 skill package alongside the existing 0.2 peer line. Keep dependent plugins on their intended independent patch or minor releases.
+
 ## 0.2.7
 
 ### Patch Changes

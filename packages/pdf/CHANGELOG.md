@@ -1,5 +1,11 @@
 # PDF
 
+## 0.2.3
+
+### Patch Changes
+
+- [#113](https://github.com/lapismd/lapis-plugins/pull/113) [`48d4fd7`](https://github.com/lapismd/lapis-plugins/commit/48d4fd7abc585d05b8ccfa3bf4c161d4c301117a) Thanks [@stevejuma](https://github.com/stevejuma)! - Admit the released API 0.6 host alongside earlier supported API ranges. Qualify the active plugin cohort against the registry API with plugin-contributed skill contracts.
+
 ## 0.2.2
 
 ### Patch Changes
