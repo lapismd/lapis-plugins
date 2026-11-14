@@ -52,3 +52,14 @@ The retained packs are private validation candidates at their source versions.
 They must never overwrite existing public registry coordinates. Exact-head
 hosted qualification, Changesets versioning, publication and registry-only
 Tasks/other consumer admission remain separate gates.
+
+
+Hosted CI exposed one additional report-freshness failure in the separate
+`pnpm audit:bases` gate. All 81 behavior cases passed; the only generated JSON
+difference was the observed root API version, 0.2.4 to 0.4.0. A fresh frozen
+registry installation reproduced that exact one-suite failure. The checked-in
+report now retains the actual 0.4.0 provenance after asserting that no other
+JSON value changed. The Markdown report, source hashes, observations, accepted
+compatibility baseline and all assertions remain byte-identical. Root
+`pnpm test` does not include this separate audit, so its earlier 1,340 passing
+cases did not establish report freshness.
