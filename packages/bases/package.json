@@ -1,6 +1,6 @@
 {
   "name": "@lapis-notes/bases",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "description": "Lapis Notes Bases plugin",
   "license": "Apache-2.0",
   "type": "module",
