@@ -7,8 +7,8 @@
   },
   "dependencies": {
     "image": "ghcr.io/lapismd/lapis-plugins-ci",
-    "tag": "lock-44d0952436467b99",
-    "lockfileSha256": "44d0952436467b991331f02a9b1ef36bf98978fe4ed5a840d79becb334954881",
-    "digest": "sha256:0f6890be17f28110d08117413c5862abce9453f5231a89bfc410c47243b67cc9"
+    "tag": "lock-b4625a596b72faa6",
+    "lockfileSha256": "b4625a596b72faa6023fcf0a241a9f65dcdcdf11fcbd838fdb72a6b017862498",
+    "digest": "sha256:48771041873eddcc06a8baca830b62dc0dfa08a4b8c54005f05ea52061a69439"
   }
 }
