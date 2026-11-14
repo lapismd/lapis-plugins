@@ -120,7 +120,7 @@ export const packageNames = new Set(
 );
 
 export const frameworkPackageVersions = new Map([
-  ["@lapis-notes/api", "^0.2.0 || ^0.4.0"],
+  ["@lapis-notes/api", "^0.2.0 || ^0.4.0 || ^0.6.0"],
   ["@lapis-notes/file-explorer", "^0.2.0"],
   ["@lapis-notes/language-service", "^0.1.2"],
   ["@lapis-notes/ui", "^0.1.4"],

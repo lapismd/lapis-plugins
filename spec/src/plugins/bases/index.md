@@ -285,10 +285,11 @@ The Design Core 0.13 dependency intake uses the existing versioned Svelte store
 host contract in the Bases archive. Its runtime descriptor declares this
 shared module; Bases behavior and App ownership are unchanged.
 
-The public API peer admits the released `^0.4.0` host in addition to its
-existing 0.2 range. Shared shell qualification uses API 0.4.0, UI 0.1.10,
-Workspace 0.4.1, Core 0.13.2 and Mira 0.2 through registry exports. Runtime
-identity, explicit App ownership and this plugin's behavior remain unchanged.
+The public API peer admits released `^0.6.0` alongside its existing 0.2 and
+0.4 ranges. Shared shell qualification uses API 0.6.0, File Explorer 0.2.8,
+Language Service 0.1.6, Workspace 0.4.3, Core 0.13.2 and Mira 0.2 through
+registry exports. [Registry qualification](../../../records/2026-11-14-skills-api06-release-intake.md)
+retains package identity, explicit App ownership and separate native/release gates.
 
 Under LN-BASE-045, release versioning MAY refresh only observed package and
 dependency version provenance in compatibility reports. It MUST run every
