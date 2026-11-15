@@ -1,5 +1,13 @@
 # History changelog
 
+## 0.3.1
+
+### Patch Changes
+
+- [#124](https://github.com/lapismd/lapis-plugins/pull/124) [`025e455`](https://github.com/lapismd/lapis-plugins/commit/025e455896eb78224df983d98a53a9b88c521fee) Thanks [@stevejuma](https://github.com/stevejuma)! - Show progress for the selected remote operation and read retained native status
+  following a failed response, preserving recovery identities without replaying
+  fetch or publication commands.
+
 ## 0.3.0
 
 ### Minor Changes
