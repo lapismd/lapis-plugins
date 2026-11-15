@@ -65,7 +65,14 @@ of the settings surface. No visual baselines are updated.
 Archive preparation requires an empty JJ working-copy commit and initially
 refuses the uncommitted candidate. This source candidate is committed before
 running archive reproduction/signature verification and release-tool tests.
-Those remaining checks and hosted CI are still required before publication.
+Candidate source `138a46a1` then passes complete `pnpm plugin:build` and
+`pnpm plugin:verify`: every plugin payload reproduces deterministically and its
+release metadata/signature checks pass. `pnpm test:release` passes with zero
+failures. The History candidate payload SHA256 is
+`d01d7d0f652a194bb367b5e6f39356fe584924f9d98e9dc5175ade0500ef52ae`.
+These are local candidate artifacts, not a new public 0.3.2 release; the minor
+Changeset supplies the production adoption version. Hosted CI is still required
+before publication.
 
 The new source stories and old preview inventory remain `visual-pending`.
 Source fixtures do not qualify HTTP/Tauri admission, real credential custody,
