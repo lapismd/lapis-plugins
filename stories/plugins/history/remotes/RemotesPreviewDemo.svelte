@@ -10,19 +10,21 @@
     settings = true,
     narrow = false,
     legacyStatus = false,
+    operations = false,
   }: {
     host?: "desktop" | "server";
     scenario?: RemotesScenario;
     settings?: boolean;
     narrow?: boolean;
     legacyStatus?: boolean;
+    operations?: boolean;
   } = $props();
   let app = $state.raw<App>();
   let element: HTMLDivElement;
   let failure = $state("");
   onMount(() => {
     let disposed = false;
-    const opening = createRemotesPreview(host, scenario, legacyStatus);
+    const opening = createRemotesPreview(host, scenario, legacyStatus, operations);
     void opening
       .then(async (runtime) => {
         if (disposed) return;

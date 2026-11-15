@@ -17,6 +17,7 @@
     plugin,
     fixture,
     kind,
+    presentation = "split",
     workingCopy,
     backup,
     onManage,
@@ -24,14 +25,15 @@
   }: {
     plugin: RepositoryPlugin;
     fixture: RemotesFixture;
-    kind: RemoteTarget;
+    kind?: RemoteTarget;
+    presentation?: "split";
     workingCopy: WorkingCopyController;
     backup: BackupController;
     onManage(): void;
     legacy?: SyncController;
   } = $props();
   const settings = untrack(() => getWorkspaceHostBinding(plugin.app.workspace).controller.settings);
-  const target = $derived(fixture.target(kind));
+  const target = $derived(fixture.target("original"));
   async function perform(action: () => Promise<void>) {
     try {
       await action();
@@ -41,33 +43,33 @@
   }
   const remote: RepositoryUpstreamBinding = $derived({
     target,
-    fetch: () => void perform(() => fixture.actions.fetch(kind)),
-    push: () => void perform(() => fixture.actions.reviewPush(kind)),
-    pull: kind === "backup" ? () => void perform(() => fixture.actions.pullBackup()) : undefined,
+    fetch: () => void perform(() => fixture.actions.fetch("original")),
+    push: () => void perform(() => fixture.actions.reviewPush("original")),
     manage: onManage,
   });
 </script>
 
-{#if kind === "original"}
+{#if legacy && kind === "backup"}
+  <RepositoryBackupStatus
+    controller={backup}
+    upstream={legacy}
+    openRevision={(operation, revision) => plugin.open(operation, revision)}
+    copyText={(value) => plugin.copyIdentifier(value)}
+  />
+{:else}
   <RepositoryWorkingCopyStatus
     controller={workingCopy}
+    {backup}
+    presentation={legacy ? "full" : presentation}
     remote={legacy ? undefined : remote}
     upstream={legacy}
     openRevision={(operation, revision) => plugin.open(operation, revision, "original")}
     copyText={(value) => plugin.copyIdentifier(value)}
   />
-{:else}
-  <RepositoryBackupStatus
-    controller={backup}
-    remote={legacy ? undefined : remote}
-    upstream={legacy}
-    openRevision={(operation, revision) => plugin.open(operation, revision)}
-    copyText={(value) => plugin.copyIdentifier(value)}
-  />
 {/if}
-{#if !settings.dialogOpen}<RemotePushReview
+{#if !legacy && presentation === "split" && !settings.dialogOpen}<RemotePushReview
     {target}
     busy={Boolean(target.busy)}
-    onClose={() => fixture.actions.dismissReview(kind)}
-    onPush={(id) => void perform(() => fixture.actions.push(kind, id))}
+    onClose={() => fixture.actions.dismissReview("original")}
+    onPush={(id) => void perform(() => fixture.actions.push("original", id))}
   />{/if}

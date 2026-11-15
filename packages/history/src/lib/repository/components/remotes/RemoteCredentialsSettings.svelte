@@ -5,6 +5,7 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Input } from "@lapismd/design-core/shadcn/input";
   import { Badge } from "@lapismd/design-core/shadcn/badge";
+  import ForgeIcon from "../backup/ForgeIcon.svelte";
   import KeyRound from "@lucide/svelte/icons/key-round";
   import BackupCard from "../backup/BackupCard.svelte";
   import BackupSelect from "../backup/BackupSelect.svelte";
@@ -134,7 +135,8 @@
       <Button
         variant="outline"
         disabled={busy || locked || !snapshot.deviceSignInAvailable}
-        onclick={() => void perform(() => commands.beginSignIn())}>Sign in to GitHub</Button
+        onclick={() => void perform(() => commands.beginSignIn())}
+        ><ForgeIcon provider="github" decorative />Sign in to GitHub</Button
       >
       <Button variant="ghost" disabled={busy || locked} onclick={() => edit(undefined, "forgejo")}
         >Add Forgejo account</Button
@@ -260,15 +262,19 @@
   <Dialog.Content>
     <Dialog.Header
       ><Dialog.Title>Sign in to GitHub</Dialog.Title><Dialog.Description
-        >Enter this code on GitHub, then check the authorization here.</Dialog.Description
+        >Copy the code and open GitHub to paste it, then check the authorization here.</Dialog.Description
       ></Dialog.Header
     >
     {#if snapshot.authorization}<p class="device-code">
         <code>{snapshot.authorization.code}</code>
       </p>
-      <a href={snapshot.authorization.url} target="_blank" rel="noopener noreferrer"
-        >Open GitHub device sign-in</a
+      <Button
+        variant="outline"
+        disabled={busy || snapshot.authorization.state === "expired"}
+        onclick={() => void perform(() => commands.openSignIn())}
+        ><ForgeIcon provider="github" decorative />Copy code and open GitHub</Button
       >
+      <p class="guidance">{snapshot.authorization.url}</p>
       {#if snapshot.authorization.state === "expired"}<p role="status">
           This code has expired. Start sign-in again for a new code.
         </p>{/if}

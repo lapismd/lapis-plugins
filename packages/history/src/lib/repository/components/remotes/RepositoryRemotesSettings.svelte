@@ -60,7 +60,7 @@
       </Field.Field>
       <p class="guidance">
         New connections start with automatic synchronization off. Enabling it allows background
-        fetch, merge and push for the vault backup.
+        fetch and push for the vault backup.
       </p>
     </BackupCard>{/if}
 </div>

@@ -19,7 +19,7 @@ export async function mountRemotesStatus(
   plugin: RepositoryPlugin,
   fixture: RemotesFixture,
   onManage: () => void,
-  legacyStatus = false,
+  legacyStatus = false
 ) {
   const current = commit();
   const workingCopy = new WorkingCopyController(
@@ -34,7 +34,7 @@ export async function mountRemotesStatus(
       lines: { additions: 24, deletions: 6 },
       uncounted: 0,
     }),
-    repositoryFeedback(plugin.app, "Working copy status"),
+    repositoryFeedback(plugin.app, "Working copy status")
   );
   const saved: BackupStatus = {
     phase: "ready",
@@ -48,28 +48,54 @@ export async function mountRemotesStatus(
     },
   };
   const backup = new BackupController(
-    { start: async () => saved, capture: async () => saved, stop: async () => {} },
-    repositoryFeedback(plugin.app, "Vault backup status"),
+    {
+      start: async () => saved,
+      capture: async () => saved,
+      stop: async () => {},
+    },
+    repositoryFeedback(plugin.app, "Vault backup status")
   );
   await Promise.all([workingCopy.refresh(), backup.start()]);
   const closingViews: Promise<void>[] = [];
   const legacy = legacyStatus ? legacyStatusController(fixture) : undefined;
-  const stops = (["original", "backup"] as const).map((kind) =>
+  const items = legacyStatus
+    ? [
+        { kind: "original" as const, presentation: undefined },
+        { kind: "backup" as const, presentation: undefined },
+      ]
+    : [{ kind: undefined, presentation: "split" as const }];
+  const stops = items.map(({ kind, presentation }) =>
     plugin.app.statusBar.registerItem({
-      id: kind === "original" ? "repository-history:working-copy" : "repository-history:backup",
+      id: kind
+        ? `repository-history:${kind}`
+        : `repository-history:${presentation}`,
       sourcePlugin: plugin.id,
-      alignment: kind === "original" ? "left" : "right",
+      alignment:
+        presentation === "split"
+          ? "center"
+          : kind === "backup"
+          ? "right"
+          : "left",
       priority: 15,
       mount: (host) => {
         const component = mount(RemotesPreviewStatus, {
           target: host,
-          props: { plugin, fixture, kind, workingCopy, backup, onManage, legacy },
+          props: {
+            plugin,
+            fixture,
+            kind,
+            presentation,
+            workingCopy,
+            backup,
+            onManage,
+            legacy,
+          },
         });
         return () => {
           closingViews.push(unmount(component));
         };
       },
-    }),
+    })
   );
   return async () => {
     for (const stop of stops) stop();

@@ -6,6 +6,7 @@
   import { onMount, onDestroy, untrack } from "svelte";
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
   import { createLogCanvas } from "../controllers/log-canvas.js";
+  import RepositoryOperationHeads from "./RepositoryOperationHeads.svelte";
   import RepositoryLogHeader from "./RepositoryLogHeader.svelte";
   import type { HistoryController } from "../controllers/history-controller.js";
   import { initialHistoryState } from "../controllers/history-state.js";
@@ -15,8 +16,11 @@
   import RepositoryRestoreDialog from "./RepositoryRestoreDialog.svelte";
   import type { RestoreController } from "../controllers/restore.js";
   import { openHistoryRevision } from "../controllers/open-history-revision.js";
+  import type { RepositoryUpstreamBinding } from "../controllers/remotes-settings.js";
   let {
     controller,
+    remote,
+    showContextPickers = false,
     sources,
     initialOperation,
     initialRevision,
@@ -25,6 +29,8 @@
     restore,
   }: {
     sources?: HistorySourcePicker;
+    remote?: RepositoryUpstreamBinding;
+    showContextPickers?: boolean;
     controller: HistoryController;
     initialOperation?: string;
     initialRevision?: string;
@@ -34,9 +40,7 @@
   } = $props();
   let snapshot = $state(initialHistoryState());
   let conflictsOpen = $state(false);
-  const selectionContext = $derived(
-    `${snapshot.operation ?? ""}/${snapshot.revision?.id ?? ""}`,
-  );
+  const selectionContext = $derived(`${snapshot.operation ?? ""}/${snapshot.revision?.id ?? ""}`);
   $effect(() => {
     selectionContext;
     untrack(() => {
@@ -44,20 +48,14 @@
     });
   });
   const operations = $derived([
-    ...new Set([
-      ...snapshot.heads,
-      ...(snapshot.operation ? [snapshot.operation] : []),
-    ]),
+    ...new Set([...snapshot.heads, ...(snapshot.operation ? [snapshot.operation] : [])]),
   ]);
   const canvas = createLogCanvas();
   onDestroy(() => void canvas.dispose());
-  const selection = $derived(
-    `${snapshot.revision?.id ?? ""}/${snapshot.path ?? ""}`,
-  );
+  const selection = $derived(`${snapshot.revision?.id ?? ""}/${snapshot.path ?? ""}`);
   const restoreCheckpoint = $derived(
     snapshot.revision
-      ? snapshot.revision.workspaces.length &&
-        snapshot.revision.parents.length === 1
+      ? snapshot.revision.workspaces.length && snapshot.revision.parents.length === 1
         ? snapshot.revision.parents[0]
         : snapshot.revision.id
       : undefined,
@@ -81,8 +79,7 @@
     let mounted = true;
     const unsubscribe = controller.subscribe((value) => (snapshot = value));
     void (initialLoad ?? controller.refresh(initialOperation)).then(() => {
-      if (mounted && initialRevision)
-        return openHistoryRevision(controller, initialRevision);
+      if (mounted && initialRevision) return openHistoryRevision(controller, initialRevision);
     });
     return () => {
       mounted = false;
@@ -92,22 +89,13 @@
 </script>
 
 <RepositoryShell>
-  <section
-    class="repository-panel"
-    aria-label="Repository history"
-    aria-busy={snapshot.busy}
-  >
+  <section class="repository-panel" aria-label="Repository history" aria-busy={snapshot.busy}>
     <div class="repository-columns">
-      <ColumnCanvas.Root
-        controller={canvas}
-        aria-label="Repository history columns"
-      >
-        <ColumnCanvas.Column
-          id="revisions"
-          columnTitle="JJ Log"
-          aria-label="Revisions"
-        >
+      <ColumnCanvas.Root controller={canvas} aria-label="Repository history columns">
+        <ColumnCanvas.Column id="revisions" columnTitle="JJ Log" aria-label="Revisions">
           <RepositoryLogHeader
+            {remote}
+            {showContextPickers}
             {sources}
             {copyText}
             workspaces={repositoryWorkspaces(snapshot.commits)}
@@ -126,8 +114,7 @@
                 label="Preparing repository history…"
               />
             {:else if snapshot.phase === "unavailable"}<p role="status">
-                Repository history is unavailable for this vault. Refresh to try
-                again.
+                Repository history is unavailable for this vault. Refresh to try again.
               </p>
             {:else if !snapshot.headsReady}<RepositorySkeleton
                 label="Loading repository operations…"
@@ -137,6 +124,11 @@
                   ? "Choose an operation to inspect its history."
                   : "No repository operations available."}
               </p>
+              {#if snapshot.heads.length > 1}<RepositoryOperationHeads
+                  heads={snapshot.heads}
+                  disabled={snapshot.busy}
+                  onSelect={(operation) => void controller.selectOperation(operation)}
+                />{/if}
             {/if}
 
             {#if snapshot.snapshot}
@@ -146,8 +138,7 @@
                 {copyText}
                 onOpenDiff={() => canvas.open("diff")}
                 onResolveConflicts={() => (conflictsOpen = true)}
-                onRestoreVault={restore?.service.previewVault &&
-                restoreCheckpoint
+                onRestoreVault={restore?.service.previewVault && restoreCheckpoint
                   ? () => restore.prepareVault(restoreCheckpoint!)
                   : undefined}
               />

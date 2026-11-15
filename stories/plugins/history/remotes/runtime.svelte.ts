@@ -1,8 +1,15 @@
 import { mount, unmount, tick } from "svelte";
-import { View, type WorkspaceLeaf, type WorkspaceCustomSetting } from "@lapis-notes/api";
+import {
+  View,
+  type WorkspaceLeaf,
+  type WorkspaceCustomSetting,
+} from "@lapis-notes/api";
 import { getWorkspaceHostBinding } from "@lapis-notes/api/workspace-host";
 import type { RepositoryPlugin } from "@lapis-notes/history/repository";
-import { createRepositoryStory, cleanupRepositoryStories } from "../repository/runtime.svelte";
+import {
+  createRepositoryStory,
+  cleanupRepositoryStories,
+} from "../repository/runtime.svelte";
 import RemotesPreviewSettingsPage from "./RemotesPreviewSettingsPage.svelte";
 import RemotesPreviewHistory from "./RemotesPreviewHistory.svelte";
 import { RemotesFixture, type RemotesScenario } from "./model.svelte";
@@ -27,8 +34,9 @@ export function createRemotesPreview(
   host: "desktop" | "server",
   scenario: RemotesScenario,
   legacyStatus = false,
+  operations = false
 ) {
-  const opening = boot(host, scenario, legacyStatus);
+  const opening = boot(host, scenario, legacyStatus, operations);
   openings.add(opening);
   return opening;
 }
@@ -41,6 +49,7 @@ async function boot(
   host: "desktop" | "server",
   scenario: RemotesScenario,
   legacyStatus: boolean,
+  operations: boolean
 ): Promise<Runtime> {
   const runtime = await createRepositoryStory("middle", false, "ready", true);
   let fixture!: RemotesFixture;
@@ -48,7 +57,9 @@ async function boot(
     fixture = new RemotesFixture(runtime.app, host, scenario);
   });
   const app = runtime.app;
-  const plugin = app.plugins.plugins.get("repository-history") as RepositoryPlugin;
+  const plugin = app.plugins.plugins.get(
+    "repository-history"
+  ) as RepositoryPlugin;
   const field: WorkspaceCustomSetting & { fixture: RemotesFixture } = {
     id: "repository-history.remotes",
     type: "custom",
@@ -67,12 +78,21 @@ async function boot(
       page: RemotesPreviewSettingsPage,
       fields: [field],
     },
-    source: { get: () => undefined, set: async () => {}, subscribe: () => () => {} },
+    source: {
+      get: () => undefined,
+      set: async () => {},
+      subscribe: () => () => {},
+    },
   });
   const openSettings = () => {
     registration.open("repository-history.remotes");
   };
-  const stopStatus = await mountRemotesStatus(plugin, fixture, openSettings, legacyStatus);
+  const stopStatus = await mountRemotesStatus(
+    plugin,
+    fixture,
+    openSettings,
+    legacyStatus
+  );
   class PreviewView extends View {
     #component?: ReturnType<typeof mount>;
     constructor(leaf: WorkspaceLeaf) {
@@ -82,7 +102,7 @@ async function boot(
       return "repository-remotes-preview";
     }
     getDisplayText() {
-      return "Repository History";
+      return operations ? "Repository Op Log" : "Repository History";
     }
     getIcon() {
       return "git-branch";
@@ -92,7 +112,7 @@ async function boot(
     onload() {
       this.#component = mount(RemotesPreviewHistory, {
         target: this.containerEl,
-        props: { plugin },
+        props: { plugin, fixture, onManage: openSettings, operations },
       });
     }
     onunload() {
@@ -100,7 +120,10 @@ async function boot(
       this.#component = undefined;
     }
   }
-  plugin.registerView("repository-remotes-preview", (leaf) => new PreviewView(leaf));
+  plugin.registerView(
+    "repository-remotes-preview",
+    (leaf) => new PreviewView(leaf)
+  );
   const leaf = app.workspace.getLeaf("tab");
   await leaf.setViewState({ type: "repository-remotes-preview" });
   await app.workspace.revealLeaf(leaf);
@@ -110,7 +133,10 @@ async function boot(
       fixture.state = {
         ...fixture.state,
         authorization: undefined,
-        targets: fixture.state.targets.map((target) => ({ ...target, review: undefined })),
+        targets: fixture.state.targets.map((target) => ({
+          ...target,
+          review: undefined,
+        })),
       };
       getWorkspaceHostBinding(app.workspace).controller.settings.close();
       await tick();

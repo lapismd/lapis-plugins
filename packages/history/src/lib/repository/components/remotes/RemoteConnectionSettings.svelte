@@ -232,14 +232,14 @@
         />
         <p class="guidance" role="status">
           {target.busy === "fetching"
-            ? "Fetching remote history… Current files and the selected history pin stay unchanged."
+            ? "Fetching remote history and reconciling tracked bookmarks…"
             : target.busy === "testing"
               ? "Checking the saved connection…"
               : target.busy === "pushing"
                 ? "Publishing the reviewed commit…"
                 : target.observation
                   ? `${target.observation.incoming} incoming · ${target.observation.outgoing} outgoing · Last fetched ${target.observation.fetchedAt}`
-                  : "Commit counts appear after a fetch. Fetch does not change current files."}
+                  : "Commit counts appear after a fetch. Tracked bookmarks follow JJ’s fetch behavior."}
         </p>
         {#if target.status === "credentials-required"}<p class="guidance">
             Choose an available credential to reconnect. Local history remains available.

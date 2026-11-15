@@ -25,24 +25,32 @@ export type RemotesScenario =
 const commit = "94bd176ba2bd75903a0cd5c1ac7d143e09214284";
 export const initialRemotesState = (
   host: "desktop" | "server",
-  scenario: RemotesScenario,
+  scenario: RemotesScenario
 ): RemotesSettingsState => {
-  const targets: RemoteTargetSettings[] = (["backup", "original"] as const).map((target) => ({
-    target,
-    status: "connected",
-    bookmarks: target === "original" ? ["main", "feature/notes"] : [],
-    canFetch: true,
-    canPush: true,
-    connection: {
-      name: target === "backup" ? "backup" : "origin",
-      url: `https://github.com/alex/${target === "backup" ? "notes-backup" : "knowledge"}.git`,
-      branch: "main",
-      bookmark: target === "original" ? "main" : "",
-      authentication: target === "backup" ? "forge" : "token",
-      credential: target === "backup" ? "github" : "repository",
-    },
-    observation: { incoming: 2, outgoing: target === "backup" ? 3 : 1, fetchedAt: "just now" },
-  }));
+  const targets: RemoteTargetSettings[] = (["backup", "original"] as const).map(
+    (target) => ({
+      target,
+      status: "connected",
+      bookmarks: target === "original" ? ["main", "feature/notes"] : [],
+      canFetch: true,
+      canPush: true,
+      connection: {
+        name: target === "backup" ? "backup" : "origin",
+        url: `https://github.com/alex/${
+          target === "backup" ? "notes-backup" : "knowledge"
+        }.git`,
+        branch: "main",
+        bookmark: target === "original" ? "main" : "",
+        authentication: target === "backup" ? "forge" : "token",
+        credential: target === "backup" ? "github" : "repository",
+      },
+      observation: {
+        incoming: 2,
+        outgoing: target === "backup" ? 3 : 1,
+        fetchedAt: "just now",
+      },
+    })
+  );
   const state: RemotesSettingsState = {
     host,
     targets,
@@ -123,7 +131,11 @@ export const initialRemotesState = (
       remoteCommit: "1a".repeat(20),
     };
   if (scenario === "unknown")
-    original.publication = { id: "push-original-1", commit, outcome: "unknown" };
+    original.publication = {
+      id: "push-original-1",
+      commit,
+      outcome: "unknown",
+    };
   if (scenario === "device-sign-in" || scenario === "expired-sign-in")
     state.authorization = {
       code: "ABCD-EFGH",
@@ -136,16 +148,22 @@ export const initialRemotesState = (
 /** All effects are memory-only. Activity never retains submitted tokens. */
 export class RemotesFixture {
   state: RemotesSettingsState = $state()!;
-  readonly activity: { kind: string; target?: RemoteTarget; id?: string }[] = [];
+  readonly activity: { kind: string; target?: RemoteTarget; id?: string }[] =
+    [];
+  deviceHandoff?: { code: string; url: string };
   #sequence = 0;
   readonly actions: RemotesSettingsActions;
   constructor(
     app: App,
     host: "desktop" | "server",
-    readonly scenario: RemotesScenario,
+    readonly scenario: RemotesScenario
   ) {
     this.state = initialRemotesState(host, scenario);
-    const feedback = repositoryFeedback(app, "Repository remotes", "repository-remotes-preview");
+    const feedback = repositoryFeedback(
+      app,
+      "Repository remotes",
+      "repository-remotes-preview"
+    );
     const notice = (message: string) =>
       app.notifications.notify({
         id: "repository-remotes-result",
@@ -161,7 +179,8 @@ export class RemotesFixture {
         this.record("save", target);
         this.update(target, {
           connection: { ...draft },
-          status: draft.authentication === "anonymous" ? "read-only" : "connected",
+          status:
+            draft.authentication === "anonymous" ? "read-only" : "connected",
           canFetch: true,
           canPush: draft.authentication !== "anonymous",
           observation: undefined,
@@ -191,16 +210,6 @@ export class RemotesFixture {
         });
         feedback.recovered();
       },
-      pullBackup: async () => {
-        this.record("pull", "backup");
-        this.update("backup", { busy: "fetching" });
-        await this.pause();
-        this.update("backup", {
-          busy: undefined,
-          observation: { incoming: 0, outgoing: 3, fetchedAt: "just now" },
-        });
-        feedback.recovered();
-      },
       reviewPush: async (target) => {
         this.record("review", target);
         this.update(target, {
@@ -222,8 +231,12 @@ export class RemotesFixture {
         await this.pause();
         this.update(target, { busy: undefined, review: undefined });
         if (scenario === "rejected")
-          throw Error("The remote branch changed. Fetch updates and review the push again.");
-        this.update(target, { observation: { incoming: 0, outgoing: 0, fetchedAt: "just now" } });
+          throw Error(
+            "The remote branch changed. Fetch updates and review the push again."
+          );
+        this.update(target, {
+          observation: { incoming: 0, outgoing: 0, fetchedAt: "just now" },
+        });
         feedback.recovered();
         notice("Reviewed commit published.");
       },
@@ -240,22 +253,33 @@ export class RemotesFixture {
         this.requireRequest(target, requestId);
         this.record("stop", target, requestId);
         this.update(target, {
-          publication: { ...this.target(target).publication!, outcome: "stopped" },
+          publication: {
+            ...this.target(target).publication!,
+            outcome: "stopped",
+          },
         });
       },
       setAutomaticSync: async (enabled) => {
         this.record("automatic-sync");
         this.state = { ...this.state, automaticSync: enabled };
       },
-      saveCredential: async ({ label, host: credentialHost, username, replace, provider }) => {
-        if (this.state.storage !== "available") throw Error("Credential store is locked.");
+      saveCredential: async ({
+        label,
+        host: credentialHost,
+        username,
+        replace,
+        provider,
+      }) => {
+        if (this.state.storage !== "available")
+          throw Error("Credential store is locked.");
         this.record("save-credential");
         const credential = {
           id: replace ?? `credential-${++this.#sequence}`,
           label,
           host: credentialHost,
           username,
-          method: provider === "https" ? ("token" as const) : ("forge" as const),
+          method:
+            provider === "https" ? ("token" as const) : ("forge" as const),
           available: true,
         };
         this.state = {
@@ -274,8 +298,13 @@ export class RemotesFixture {
           credentials: this.state.credentials.filter((item) => item.id !== id),
           targets: this.state.targets.map((target) =>
             target.connection?.credential === id
-              ? { ...target, status: "credentials-required", canFetch: false, canPush: false }
-              : target,
+              ? {
+                  ...target,
+                  status: "credentials-required",
+                  canFetch: false,
+                  canPush: false,
+                }
+              : target
           ),
         };
       },
@@ -289,6 +318,19 @@ export class RemotesFixture {
             state: "pending",
           },
         };
+      },
+      openSignIn: async () => {
+        const authorization = this.state.authorization;
+        if (!authorization || authorization.state !== "pending")
+          throw Error("Restart sign-in to get a current code.");
+        // The catalog records the browser/clipboard handoff without opening a real login.
+        this.deviceHandoff = {
+          code: authorization.code,
+          url: authorization.url,
+        };
+        this.record("copy-device-code");
+        this.record("open-device-url");
+        notice("Preview: sample code and GitHub URL handoff recorded.");
       },
       checkSignIn: async () => {
         this.record("check-sign-in");
@@ -324,7 +366,7 @@ export class RemotesFixture {
     this.state = {
       ...this.state,
       targets: this.state.targets.map((value) =>
-        value.target === target ? { ...value, ...patch } : value,
+        value.target === target ? { ...value, ...patch } : value
       ),
     };
   }

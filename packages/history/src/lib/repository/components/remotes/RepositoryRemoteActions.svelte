@@ -1,11 +1,9 @@
 <script lang="ts">
-  import { Button } from "@lapismd/design-core/shadcn/button";
-  import ArrowDownToLine from "@lucide/svelte/icons/arrow-down-to-line";
-  import ArrowUpFromLine from "@lucide/svelte/icons/arrow-up-from-line";
-  import Settings2 from "@lucide/svelte/icons/settings-2";
+  import RepositoryUpstreamActions from "../RepositoryUpstreamActions.svelte";
   import {
     remoteTargetLabel,
     type RemoteTargetSettings,
+    type RepositoryUpstreamBinding,
   } from "../../controllers/remotes-settings.js";
   let {
     target,
@@ -21,7 +19,12 @@
     onManage?(): void;
   } = $props();
   const label = $derived(remoteTargetLabel(target.target));
-  const unavailable = $derived(disabled || Boolean(target.busy));
+  const remote: RepositoryUpstreamBinding = $derived({
+    target,
+    fetch: onFetch,
+    push: onPush,
+    manage: onManage,
+  });
 </script>
 
 <div
@@ -35,40 +38,7 @@
         · {target.connection.name}/{target.connection.branch}</span
       >{/if}</span
   >
-  <div class="buttons">
-    <Button
-      variant="outline"
-      size="sm"
-      aria-label={`Fetch ${label.toLowerCase()}`}
-      disabled={unavailable || !target.canFetch}
-      onclick={onFetch}
-    >
-      <ArrowDownToLine data-icon="inline-start" />Fetch{#if target.observation}<span
-          aria-label="Incoming commits">{target.observation.incoming}</span
-        >{/if}
-    </Button>
-    <Button
-      variant="outline"
-      size="sm"
-      aria-label={`Review push to ${label.toLowerCase()}`}
-      disabled={unavailable ||
-        !target.canPush ||
-        Boolean(target.publication?.outcome === "unknown")}
-      onclick={onPush}
-    >
-      <ArrowUpFromLine data-icon="inline-start" />Push{#if target.observation}<span
-          aria-label="Outgoing commits">{target.observation.outgoing}</span
-        >{/if}
-    </Button>
-    {#if onManage}<Button
-        variant="ghost"
-        size="sm"
-        aria-label={`Manage remotes for ${label.toLowerCase()}`}
-        onclick={onManage}
-      >
-        <Settings2 data-icon="inline-start" />Manage remotes
-      </Button>{/if}
-  </div>
+  <RepositoryUpstreamActions {remote} unavailable={disabled} />
 </div>
 
 <style>
@@ -89,10 +59,5 @@
   .target > span {
     font-weight: 400;
     color: var(--muted-foreground);
-  }
-  .buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
   }
 </style>

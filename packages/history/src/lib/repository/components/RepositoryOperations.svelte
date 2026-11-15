@@ -4,6 +4,7 @@
   import { repositoryWorkspaces } from "../controllers/workspaces.js";
   import { onMount, onDestroy, untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
+  import RepositoryOperationHeads from "./RepositoryOperationHeads.svelte";
   import RepositoryLogHeader from "./RepositoryLogHeader.svelte";
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
   import type { OperationController } from "../controllers/operation-controller.js";
@@ -14,14 +15,17 @@
   import RepositoryOperationColumn from "./RepositoryOperationColumn.svelte";
   import RepositoryShell from "./RepositoryShell.svelte";
   import RepositoryGraph from "./RepositoryGraph.svelte";
+  import type { RepositoryUpstreamBinding } from "../controllers/remotes-settings.js";
   let {
     controller,
+    remote,
     sources,
     initialOperation,
     copyText,
     onHistory,
   }: {
     sources?: HistorySourcePicker;
+    remote?: RepositoryUpstreamBinding;
     controller: OperationController;
     initialOperation?: string;
     copyText(value: string): Promise<void>;
@@ -32,9 +36,7 @@
     ...new Set([...state.heads, ...(state.operation ? [state.operation] : [])]),
   ]);
   const rows = $derived(operationRows(state.nodes));
-  const selection = $derived(
-    `${state.selected?.id ?? ""}/${state.files.path ?? ""}`,
-  );
+  const selection = $derived(`${state.selected?.id ?? ""}/${state.files.path ?? ""}`);
   const canvas = createLogCanvas();
   let selectedOperation: string | undefined;
   onDestroy(() => void canvas.dispose());
@@ -70,12 +72,9 @@
   >
     <div class="operation-columns">
       <ColumnCanvas.Root controller={canvas} aria-label="Operation log columns">
-        <ColumnCanvas.Column
-          id="revisions"
-          columnTitle="Op Log"
-          aria-label="Operations"
-        >
+        <ColumnCanvas.Column id="revisions" columnTitle="Op Log" aria-label="Operations">
           <RepositoryLogHeader
+            {remote}
             {sources}
             {copyText}
             nodes={state.nodes}
@@ -93,12 +92,9 @@
             onRefresh={() => controller.refresh()}
           />
           <ColumnCanvas.Body>
-            {#if state.phase === "loading"}<RepositorySkeleton
-                label="Preparing operation log…"
-              />
+            {#if state.phase === "loading"}<RepositorySkeleton label="Preparing operation log…" />
             {:else if state.phase === "unavailable"}<p role="status">
-                Operation log is unavailable for this vault. Refresh to try
-                again.
+                Operation log is unavailable for this vault. Refresh to try again.
               </p>
             {:else if !state.headsReady}<RepositorySkeleton
                 label="Loading repository operations…"
@@ -107,7 +103,13 @@
                 {state.heads.length > 1
                   ? "Choose an operation to inspect its ancestry."
                   : "No repository operations available."}
-              </p>{/if}
+              </p>
+              {#if state.heads.length > 1}<RepositoryOperationHeads
+                  heads={state.heads}
+                  disabled={state.busy}
+                  onSelect={(operation) => void controller.selectPin(operation)}
+                />{/if}
+            {/if}
             {#if state.snapshot}
               {#if state.selected && !state.nodes.some((node) => node.id === state.selected?.id)}
                 <section aria-label="Selected operation outside loaded graph">
@@ -163,9 +165,7 @@
                   disabled={state.busy}
                   onclick={() => controller.more()}>More operations</Button
                 >{/if}
-              {#if state.nodes.length === 200}<p>
-                  Showing the first 200 operations.
-                </p>{/if}
+              {#if state.nodes.length === 200}<p>Showing the first 200 operations.</p>{/if}
             {/if}
           </ColumnCanvas.Body>
         </ColumnCanvas.Column>

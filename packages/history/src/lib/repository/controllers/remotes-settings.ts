@@ -1,6 +1,11 @@
 /** Presentation-only ports. Hosts retain repository admission and secret custody. */
 export type RemoteTarget = "backup" | "original";
-export type RemoteAuthentication = "anonymous" | "token" | "forge" | "ssh-agent" | "ssh-default";
+export type RemoteAuthentication =
+  | "anonymous"
+  | "token"
+  | "forge"
+  | "ssh-agent"
+  | "ssh-default";
 export type RemoteConnectionDraft = {
   name: string;
   url: string;
@@ -41,8 +46,7 @@ export type RepositoryUpstreamBinding = {
   target: RemoteTargetSettings;
   fetch(): void;
   push(): void;
-  pull?(): void;
-  manage(): void;
+  manage?(): void;
 };
 export type RemotesSettingsState = {
   host: "desktop" | "server";
@@ -58,7 +62,6 @@ export interface RemotesSettingsActions {
   save(target: RemoteTarget, draft: RemoteConnectionDraft): Promise<void>;
   test(target: RemoteTarget): Promise<void>;
   fetch(target: RemoteTarget): Promise<void>;
-  pullBackup(): Promise<void>;
   reviewPush(target: RemoteTarget): Promise<void>;
   push(target: RemoteTarget, reviewId: string): Promise<void>;
   dismissReview(target: RemoteTarget): void;
@@ -75,6 +78,8 @@ export interface RemotesSettingsActions {
   }): Promise<void>;
   forgetCredential(id: string): Promise<void>;
   beginSignIn(): Promise<void>;
+  /** Copy the current unexpired code, then open its approved verification URL. */
+  openSignIn(): Promise<void>;
   checkSignIn(): Promise<void>;
   cancelSignIn(): Promise<void>;
   report(error: unknown): void;
@@ -82,9 +87,14 @@ export interface RemotesSettingsActions {
 export const remoteTargetLabel = (target: RemoteTarget) =>
   target === "backup" ? "Vault backup" : "Original repository";
 
-export function credentialMatchesRemote(credential: RemoteCredential, endpoint: string): boolean {
+export function credentialMatchesRemote(
+  credential: RemoteCredential,
+  endpoint: string
+): boolean {
   try {
-    return credential.host.toLowerCase() === new URL(endpoint).host.toLowerCase();
+    return (
+      credential.host.toLowerCase() === new URL(endpoint).host.toLowerCase()
+    );
   } catch {
     return false;
   }
@@ -101,17 +111,24 @@ export function remoteDisplayUrl(value: string): string {
     url.hash = "";
     return url.href;
   } catch {
-    return /^[\w.-]+@[\w.-]+:[\w./-]+$/.test(value) ? value : "Remote address unavailable";
+    return /^[\w.-]+@[\w.-]+:[\w./-]+$/.test(value)
+      ? value
+      : "Remote address unavailable";
   }
 }
 export function validRemoteDraft(draft: RemoteConnectionDraft): boolean {
   if (!validRef(draft.name) || !validRef(draft.branch)) return false;
-  if (/^[\w.-]+@[\w.-]+:[\w./-]+$/.test(draft.url)) return draft.authentication.startsWith("ssh-");
+  if (/^[\w.-]+@[\w.-]+:[\w./-]+$/.test(draft.url))
+    return draft.authentication.startsWith("ssh-");
   try {
     const url = new URL(draft.url);
     if (!url.hostname || url.password || url.search || url.hash) return false;
     if (url.protocol === "ssh:") return draft.authentication.startsWith("ssh-");
-    return url.protocol === "https:" && !url.username && !draft.authentication.startsWith("ssh-");
+    return (
+      url.protocol === "https:" &&
+      !url.username &&
+      !draft.authentication.startsWith("ssh-")
+    );
   } catch {
     return false;
   }
@@ -127,7 +144,11 @@ function validRef(value: string): boolean {
     value
       .split("/")
       .every(
-        (part) => part && !part.startsWith(".") && !part.endsWith(".") && !part.endsWith(".lock"),
+        (part) =>
+          part &&
+          !part.startsWith(".") &&
+          !part.endsWith(".") &&
+          !part.endsWith(".lock")
       )
   );
 }
