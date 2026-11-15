@@ -1,5 +1,13 @@
 # History changelog
 
+## 0.5.0
+
+### Minor Changes
+
+- [#138](https://github.com/lapismd/lapis-plugins/pull/138) [`d13859a`](https://github.com/lapismd/lapis-plugins/commit/d13859a5462de81d0bd18e3ae7f40f3598a1377d) Thanks [@stevejuma](https://github.com/stevejuma)! - Observe native vault backup synchronization through an optional host port. Reuse
+  the existing sync card and conflict inspector for progress, explicit resolution
+  and exact apply recovery without scheduling transfers in the renderer.
+
 ## 0.4.0
 
 ### Minor Changes
