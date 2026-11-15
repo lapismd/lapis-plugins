@@ -1,6 +1,6 @@
 {
   "name": "@lapis-notes/history",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Lapis Notes file history plugin",
   "license": "Apache-2.0",
   "type": "module",
