@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Snippet } from "svelte";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import { Switch } from "@lapismd/design-core/shadcn/switch";
   import BackupCard from "../backup/BackupCard.svelte";
@@ -9,10 +10,11 @@
     RemotesSettingsState,
   } from "../../controllers/remotes-settings.js";
   let {
+    automaticSynchronization,
     showReviews = true,
     state: snapshot,
     actions: commands,
-  }: { state: RemotesSettingsState; actions: RemotesSettingsActions; showReviews?: boolean } = $props();
+  }: { state: RemotesSettingsState; actions: RemotesSettingsActions; showReviews?: boolean; automaticSynchronization?: Snippet } = $props();
   const id = $props.id();
   let busy = $state(false);
   const backup = $derived(snapshot.targets.find((target) => target.target === "backup"));
@@ -43,7 +45,8 @@
       actions={commands}
     />{/each}
   <RemoteCredentialsSettings state={snapshot} actions={commands} />
-  {#if backup}<BackupCard
+  {#if automaticSynchronization}{@render automaticSynchronization()}
+  {:else if backup}<BackupCard
       title="Automatic backup synchronization"
       description="Original repository fetch and push always stay manual."
     >

@@ -6,14 +6,14 @@
   import BackupCard from "./BackupCard.svelte";
   import RefreshCw from "@lucide/svelte/icons/refresh-cw";
   import GitMerge from "@lucide/svelte/icons/git-merge";
-  import type { SyncController } from "../../controllers/sync-controller.js";
+  import type { SyncPresentation } from "../../controllers/native-sync.js";
   import type { SyncState } from "../../controllers/sync.js";
   let {
     controller,
     setEnabled,
     onReview,
   }: {
-    controller: SyncController;
+    controller: SyncPresentation;
     setEnabled(enabled: boolean): Promise<void>;
     onReview(): void;
   } = $props();
@@ -58,7 +58,7 @@
     <Button
       variant="outline"
       size="sm"
-      disabled={snapshot.busy || !snapshot.enabled}
+      disabled={snapshot.busy || !snapshot.enabled || (snapshot.recovery && !!controller.resume)}
       onclick={() => controller.run()}
       ><RefreshCw data-icon="inline-start" />Sync now</Button
     >
@@ -69,6 +69,12 @@
         onclick={onReview}
         ><GitMerge data-icon="inline-start" />Review {snapshot.proposal
           .conflicts.length} conflicts</Button
+      >{/if}
+    {#if snapshot.recovery && controller.resume}<Button
+        variant="outline"
+        size="sm"
+        disabled={snapshot.busy}
+        onclick={() => controller.resume?.()}>Retry applying merged files</Button
       >{/if}
     {#if snapshot.recovery}<Button
         variant="outline"

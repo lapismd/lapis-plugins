@@ -52,6 +52,8 @@ export type RepositoryRemotesCommand = { expectedRevision: number } & (
 );
 /** Commands contain no filesystem paths. Native hosts never return stored secrets. */
 export interface RepositoryRemotesService {
+  /** Native vault-owned scheduling, status and exact recovery, when admitted. */
+  synchronization?: import("./native-sync.js").RepositoryNativeSyncService;
   read(): Promise<RepositoryRemotesSnapshot>;
   execute(
     command: RepositoryRemotesCommand

@@ -1,5 +1,11 @@
 # Distribution and Releases
 
+The LN-HIST-021 native synchronization extension is an optional public host port
+with an independent History minor release intent. Existing hosts retain their
+current contract. Production sync and conflict components are reused through a
+presentation interface, with no bundled native engine. Registry artifacts and
+application intake still require their own source and consumer qualification.
+
 LN-HIST-020 includes a patch to the public remote presentation controller: selected-target progress and status-only recovery after failed responses. Signed archives, npm publication and host adoption remain separate gates; this patch introduces no runtime registration or native transfer authority.
 
 LN-HIST-020 adds unregistered repository remote review components and a

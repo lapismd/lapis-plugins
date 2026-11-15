@@ -12,10 +12,12 @@ import type {
 } from "../controllers/remotes-settings.js";
 import type { RepositoryPlugin } from "./repository-plugin.js";
 import RemoteReviewHost from "./remotes/RemoteReviewHost.svelte";
+import { NativeSyncObserver } from "../controllers/native-sync-observer.js";
 export const REMOTES_SETTINGS = "repository-history.remotes";
 /** One enabled plugin owns native observation and reviews, independent of footer
  * and settings visibility. No renderer schedules transfers or stores secrets. */
 export class RepositoryRemotes {
+  readonly synchronization?: NativeSyncObserver;
   readonly controller: RepositoryRemotesController;
   readonly actions: RemotesSettingsActions;
   #state = $state<RemotesSettingsState>();
@@ -28,6 +30,14 @@ export class RepositoryRemotes {
     private readonly plugin: RepositoryPlugin,
     service: RepositoryRemotesService
   ) {
+    if (service.synchronization)
+      this.synchronization = new NativeSyncObserver(
+        service.synchronization,
+        plugin.feedback(
+          "Vault synchronization",
+          "repository-history:native-sync"
+        )
+      );
     this.controller = new RepositoryRemotesController(service, (error) =>
       this.report(error)
     );
@@ -76,6 +86,7 @@ export class RepositoryRemotes {
       callback: () => this.manage(),
     });
     await this.refresh();
+    await this.synchronization?.start();
   }
   async refresh(): Promise<void> {
     try {
@@ -122,6 +133,7 @@ export class RepositoryRemotes {
   }
   async close(): Promise<void> {
     this.#closed = true;
+    await this.synchronization?.close();
     this.controller.close();
     this.#stop?.();
     this.#stop = undefined;

@@ -4,6 +4,7 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import type { RepositoryRemotes } from "../repository-remotes.svelte.js";
   import RepositoryRemotesSettings from "./RepositoryRemotesSettings.svelte";
+  import BackupSettings from "../backup/BackupSettings.svelte";
   let { field }: Pick<WorkspaceCustomSettingProps, "field"> = $props();
   const owner = $derived((field as WorkspaceCustomSetting & { remotes: RepositoryRemotes }).remotes);
   let root: HTMLDivElement;
@@ -35,8 +36,22 @@
 </script>
 
 <div bind:this={root}>
+  {#snippet nativeSynchronization()}
+    {#if owner.synchronization}<BackupSettings
+      sync={owner.synchronization}
+      setSyncEnabled={async (enabled) => {
+        try {
+          await owner.actions.setAutomaticSync(enabled);
+        } catch (error) {
+          owner.report(error);
+        }
+        await owner.synchronization?.refresh();
+      }}
+    />{/if}
+  {/snippet}
   {#if owner.state}
-    <RepositoryRemotesSettings state={owner.state} actions={owner.actions} showReviews={false} />
+    <RepositoryRemotesSettings state={owner.state} actions={owner.actions} showReviews={false}
+      automaticSynchronization={owner.synchronization ? nativeSynchronization : undefined} />
   {:else}
     <div role="status">Repository connections are not loaded.</div>
     <Button variant="outline" onclick={() => void owner.refresh()}>Refresh connection settings</Button>

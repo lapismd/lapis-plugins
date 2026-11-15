@@ -22,3 +22,9 @@ export type {
   RepositoryRemoteCapabilities,
 } from "./controllers/remotes-service.js";
 export { RepositoryRemotesController } from "./controllers/remotes-controller.js";
+export type {
+  RepositoryNativeSyncService,
+  RepositoryNativeSyncCommand,
+  RepositoryNativeSyncSnapshot,
+  SyncPresentation,
+} from "./controllers/native-sync.js";

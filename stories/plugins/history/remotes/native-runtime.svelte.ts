@@ -13,15 +13,21 @@ import {
   operation,
   revision,
 } from "../../../../packages/history/test/repository/fixtures/fixture";
+import {
+  NativeSyncFixture,
+  type NativeSyncScenario,
+} from "./native-sync-fixture";
 
 export async function createNativeRemotesStory(
   host: "desktop" | "server",
   footer: boolean,
-  operations: boolean
+  operations: boolean,
+  syncScenario?: NativeSyncScenario
 ) {
   let fixture!: RemotesFixture;
   let sequence = 0;
   const commands: { kind: string; target?: string }[] = [];
+  let synchronization: NativeSyncFixture | undefined;
   const runtime = await createRepositoryStory(
     "middle",
     operations,
@@ -31,6 +37,14 @@ export async function createNativeRemotesStory(
       data: { showWorkingCopyStatus: footer },
       services(app, base) {
         fixture = new RemotesFixture(app, host, "connected");
+        if (syncScenario) {
+          synchronization = new NativeSyncFixture(
+            syncScenario,
+            () => sequence,
+            () => fixture.state.automaticSync
+          );
+          fixture.state.automaticSync = synchronization.initialEnabled;
+        }
         const read: RepositoryRemotesService["read"] = async () => ({
           revision: sequence,
           capabilities: {
@@ -51,6 +65,12 @@ export async function createNativeRemotesStory(
             kind: command.kind,
             ...("target" in command ? { target: command.target } : {}),
           });
+          if (
+            command.kind === "set_automatic_sync" &&
+            syncScenario === "selection-failure"
+          ) {
+            throw Error("Native backup selection unavailable");
+          }
           ++sequence;
           const a = fixture.actions;
           switch (command.kind) {
@@ -111,6 +131,7 @@ export async function createNativeRemotesStory(
         return {
           ...base,
           remotes: {
+            synchronization,
             read,
             execute,
             openSignIn: () => fixture.actions.openSignIn(),
@@ -139,7 +160,7 @@ export async function createNativeRemotesStory(
   const plugin = runtime.app.plugins.plugins.get(
     "repository-history"
   ) as RepositoryPlugin;
-  return { ...runtime, plugin, fixture, commands };
+  return { ...runtime, plugin, fixture, commands, synchronization };
 }
 type Runtime = Awaited<ReturnType<typeof createNativeRemotesStory>>;
 const mounted = new WeakMap<HTMLElement, Runtime>();
@@ -147,9 +168,15 @@ const openings = new Set<Promise<Runtime>>();
 export function openNativeRemotesStory(
   host: "desktop" | "server",
   footer: boolean,
-  operations: boolean
+  operations: boolean,
+  syncScenario?: NativeSyncScenario
 ) {
-  const promise = createNativeRemotesStory(host, footer, operations);
+  const promise = createNativeRemotesStory(
+    host,
+    footer,
+    operations,
+    syncScenario
+  );
   openings.add(promise);
   return promise;
 }

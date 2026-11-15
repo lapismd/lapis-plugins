@@ -1,5 +1,12 @@
 # Specification Governance
 
+LN-HIST-021 qualification includes passive native status without transfer
+scheduling, exact recovery identities, stale/late response fencing and teardown.
+Retain the missing-observer and rejected-selection baselines. Failed selection
+must reach a transient notice without an unhandled promise. The application
+coverage inventory includes the complete native sync shell family; all stories
+remain visual-pending and native transport evidence remains separate.
+
 LN-HIST-020 qualification separates pending-target progress, safe recovery reads and late-disposal fencing from live native publication. Preserve exact before/after failures, original mutation errors and single-execution assertions. Source/controller and catalog passes cannot qualify host credential or network acceptance.
 
 Story composition inventory follows the current Jujutsu working-copy file list,
