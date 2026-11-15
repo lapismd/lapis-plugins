@@ -1,5 +1,15 @@
 # History changelog
 
+## 0.4.0
+
+### Minor Changes
+
+- [#133](https://github.com/lapismd/lapis-plugins/pull/133) [`138a46a`](https://github.com/lapismd/lapis-plugins/commit/138a46a1d1851523a2384e967685089c9cca76be) Thanks [@stevejuma](https://github.com/stevejuma)! - Adopt host-provided native remotes in Repository History settings, both log
+  headers and the existing Git footer. One plugin-owned push review remains
+  available while the footer is hidden. Keep storage and adoption settings
+  independent of forge accounts, and leave synchronization to native hosts when
+  they provide remote services.
+
 ## 0.3.2
 
 ### Patch Changes
