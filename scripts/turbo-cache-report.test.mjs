@@ -16,7 +16,7 @@ test("Turbo cache reporting distinguishes remote, local, and executed tasks", ()
   );
 });
 
-test("CI workflow consumes the checked-in image and never caches .turbo with Actions", async () => {
+test("CI workflow consumes verified current-input images and never caches .turbo with Actions", async () => {
   const { readFile } = await import("node:fs/promises");
   const workflow = await readFile(
     new URL("../.github/workflows/ci.yml", import.meta.url),
@@ -26,7 +26,7 @@ test("CI workflow consumes the checked-in image and never caches .turbo with Act
     workflow.match(/\$\{\{ needs\.image-pin\.outputs\.reference \}\}/g)?.length,
     7
   );
-  assert.match(workflow, /jq -er .*\.ci\/images\.json/);
+  assert.match(workflow, /uses: \.\/\.github\/workflows\/resolve-dependency-image\.yml/);
   assert.doesNotMatch(
     workflow,
     /uses:\s*actions\/cache|path:\s*[^\n]*\.turbo/i

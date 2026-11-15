@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  packages: read
 
 concurrency:
   group: lapis-plugins-version-packages
@@ -17,19 +18,9 @@ env:
 
 jobs:
   image-pin:
-    runs-on: ubuntu-latest
-    outputs:
-      reference: ${{ steps.image.outputs.reference }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-      - name: Resolve the verified dependency image
-        id: image
-        run: |
-          set -euo pipefail
-          reference="$(jq -er '.dependencies | select(.image and (.digest | test("^sha256:[a-f0-9]{64}$"))) | .image + "@" + .digest' .ci/images.json)"
-          echo "reference=$reference" >> "$GITHUB_OUTPUT"
+    uses: ./.github/workflows/resolve-dependency-image.yml
+    with:
+      artifact-name: version-packages-dependency-image
 
   version:
     name: Open version pull request

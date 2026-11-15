@@ -188,17 +188,9 @@ jobs:
 
   image-pin:
     if: vars.STATIC_RELEASE_ENABLED == 'true'
-    runs-on: ubuntu-latest
-    outputs:
-      reference: ${{ steps.image.outputs.reference }}
-    steps:
-      - uses: actions/checkout@v7
-      - name: Resolve the verified dependency image
-        id: image
-        run: |
-          set -euo pipefail
-          reference="$(jq -er '.dependencies | select(.image and (.digest | test("^sha256:[a-f0-9]{64}$"))) | .image + "@" + .digest' .ci/images.json)"
-          echo "reference=$reference" >> "$GITHUB_OUTPUT"
+    uses: ./.github/workflows/resolve-dependency-image.yml
+    with:
+      artifact-name: release-dependency-image
 
   validate:
     if: vars.STATIC_RELEASE_ENABLED == 'true'
