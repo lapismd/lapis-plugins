@@ -6,8 +6,7 @@ on:
       - main
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 concurrency:
   group: lapis-plugins-version-packages
@@ -22,7 +21,9 @@ jobs:
     outputs:
       reference: ${{ steps.image.outputs.reference }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
       - name: Resolve the verified dependency image
         id: image
         run: |
@@ -40,20 +41,33 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
+          persist-credentials: false
       - uses: ./.github/actions/ci-setup
       - name: Decide whether a changeset can bump a published package
         id: releasable
         run: node scripts/version-public-packages.mjs --check
+      - name: Mint repository-scoped version PR token
+        if: steps.releasable.outputs.releasable == 'true'
+        id: app
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3
+        with:
+          client-id: ${{ vars.LAPIS_DEPENDENCY_APP_CLIENT_ID }}
+          private-key: ${{ secrets.LAPIS_DEPENDENCY_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          permission-contents: write
+          permission-pull-requests: write
       - name: Open the version pull request
         if: steps.releasable.outputs.releasable == 'true'
-        uses: changesets/action@v1.8.0
+        uses: changesets/action@63a615b9cd06ba9a3e6d13796c7fbcb080a60a0b # v1.8.0
         with:
           version: pnpm release:version
           commitMode: github-api
+          createGithubReleases: false
           title: "chore: version Lapis plugins"
           commit: "chore: version Lapis plugins"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app.outputs.token }}

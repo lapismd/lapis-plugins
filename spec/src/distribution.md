@@ -278,6 +278,13 @@ Plugin behavior corrections use an independent package patch changeset and
 retain focused owning-package checks plus real consumer Storybook acceptance as
 release evidence. Preparing that candidate does not authorize npm publication,
 public release assets, or registry dispatch.
+
+Under LP-SPEC-016, generated version PRs MUST use the existing dependency App
+with contents/PR writes scoped to this repository. The workflow token MUST
+remain read-only and checkout MUST NOT persist credentials. Token creation
+MUST follow public-package eligibility, and missing App credentials MUST fail
+without falling back to the workflow token. The version step MUST NOT publish
+packages or create GitHub releases; ordinary candidate CI remains required.
 Registry media refinement MUST preserve the fixed story IDs and output
 dimensions while strengthening each story's final-state assertions. Shared
 fixtures MAY stabilize source-specific diagnostics after the real provider has
