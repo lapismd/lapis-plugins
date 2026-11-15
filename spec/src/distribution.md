@@ -575,3 +575,7 @@ new package cohort after its own integration qualification.
 The remotes catalog resolves the published API 0.6.2 patch and its registry
 integrity, replacing the ignored development archive used to qualify the source
 fix. The root range makes the required projection correction explicit.
+
+Registry dependency intake MUST refresh compatibility-report dependency provenance
+through its guarded provenance-only command when the installed API changes.
+Behavior expectations and visual baselines remain independently governed.
