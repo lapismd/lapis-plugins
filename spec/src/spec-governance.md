@@ -675,3 +675,7 @@ independent bump; out-of-range peers MUST retain major-version escalation. The
 frozen Changesets 2 CLI uses its range-aware peer option, guarded by a real CLI
 regression for both cases. [Peer release qualification](../records/2026-11-14-skill-release-peer-versioning.md)
 records the Markdown 0.3 peer intake without native or publisher-authority changes.
+
+The API 0.6.2 intake retires the temporary History catalog archive. Hosted
+multiple-head recovery failures remain recorded, with unchanged assertions
+rerun against the published source fix rather than a catalog workaround.

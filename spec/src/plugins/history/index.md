@@ -273,3 +273,7 @@ transfer after saving, persist tokens, or accept late responses after disposal.
 Connection tests are explicit reachability/authentication checks without
 publication. Host implementations own credential custody and endpoint admission;
 presentation validation cannot authorize transport.
+
+Registry qualification for optional-state projection consumes API `^0.6.2` from
+npm. The temporary built API archive is retired after publication; hosted
+multiple-head recovery stories retain their exact first-click assertions.
