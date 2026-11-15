@@ -1,8 +1,9 @@
 use super::*;
 use crate::sync::runtime::{
-    AuthenticatedHistoryGraph, HistoryMembership, MembershipAuthorizationRecord,
-    authorize_membership_record, plan_reconciliation_graph, validate_authenticated_history_graph,
-    validate_membership,
+    AuthenticatedHistoryGraph, GuardedApplyIntent, GuardedApplyReceipt, GuardedFileGeneration,
+    HistoryMembership, MembershipAuthorizationRecord, PublicationReceipt,
+    authorize_membership_record, plan_apply_recovery_step, plan_reconciliation_graph,
+    publication_attempt_outcome, validate_authenticated_history_graph, validate_membership,
 };
 use serde_json::Value;
 use std::cmp::Ordering;
@@ -331,6 +332,89 @@ fn incoming_graph_matches_complete_outputs_and_failures() {
             serde_json::from_value(fixture["graph"].clone()).unwrap();
         assert!(
             validate_authenticated_history_graph(&graph).is_err(),
+            "{}",
+            fixture["name"]
+        );
+    }
+}
+
+#[test]
+fn outbox_retry_matches_complete_outputs_and_failures() {
+    let fixtures = fixtures();
+    let section = &fixtures["outboxRetry"];
+    for fixture in section["successes"].as_array().unwrap() {
+        let revision: PublicationReceipt =
+            serde_json::from_value(fixture["revisionReceipt"].clone()).unwrap();
+        let head: Option<PublicationReceipt> = fixture
+            .get("headReceipt")
+            .map(|value| serde_json::from_value(value.clone()).unwrap());
+        let result = publication_attempt_outcome(
+            fixture["revisionEventId"].as_str().unwrap(),
+            fixture["headEventId"].as_str().unwrap(),
+            &revision,
+            head.as_ref(),
+        )
+        .unwrap();
+        assert_eq!(
+            serde_json::to_value(result).unwrap(),
+            fixture["output"],
+            "{}",
+            fixture["name"]
+        );
+    }
+    for fixture in section["failures"].as_array().unwrap() {
+        let revision =
+            serde_json::from_value::<PublicationReceipt>(fixture["revisionReceipt"].clone());
+        let head = fixture
+            .get("headReceipt")
+            .map(|value| serde_json::from_value::<PublicationReceipt>(value.clone()));
+        let failed = match (revision, head) {
+            (Ok(revision), Some(Ok(head))) => publication_attempt_outcome(
+                fixture["revisionEventId"].as_str().unwrap(),
+                fixture["headEventId"].as_str().unwrap(),
+                &revision,
+                Some(&head),
+            )
+            .is_err(),
+            (Ok(revision), None) => publication_attempt_outcome(
+                fixture["revisionEventId"].as_str().unwrap(),
+                fixture["headEventId"].as_str().unwrap(),
+                &revision,
+                None,
+            )
+            .is_err(),
+            _ => true,
+        };
+        assert!(failed, "{}", fixture["name"]);
+    }
+}
+
+#[test]
+fn apply_recovery_matches_complete_outputs_and_failures() {
+    let fixtures = fixtures();
+    let section = &fixtures["applyRecovery"];
+    for fixture in section["successes"].as_array().unwrap() {
+        let intent: GuardedApplyIntent = serde_json::from_value(fixture["intent"].clone()).unwrap();
+        let current: HashMap<String, GuardedFileGeneration> =
+            serde_json::from_value(fixture["current"].clone()).unwrap();
+        let recovered: Option<GuardedApplyReceipt> =
+            serde_json::from_value(fixture["recoveredReceipt"].clone()).unwrap();
+        let actual = plan_apply_recovery_step(&intent, &current, recovered.as_ref()).unwrap();
+        assert_eq!(
+            serde_json::to_value(actual).unwrap(),
+            fixture["output"],
+            "{}",
+            fixture["name"]
+        );
+    }
+    for fixture in section["failures"].as_array().unwrap() {
+        let intent: GuardedApplyIntent = serde_json::from_value(fixture["intent"].clone()).unwrap();
+        let current: HashMap<String, GuardedFileGeneration> =
+            serde_json::from_value(fixture["current"].clone()).unwrap();
+        let recovered: Option<GuardedApplyReceipt> =
+            serde_json::from_value(fixture["recoveredReceipt"].clone()).unwrap();
+        assert!(
+            plan_apply_recovery_step(&intent, &current, recovered.as_ref()).is_err(),
             "{}",
             fixture["name"]
         );

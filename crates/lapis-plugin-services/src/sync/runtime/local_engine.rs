@@ -6,7 +6,7 @@
 use crate::sync::protocol::revision::RevisionPayload;
 use crate::sync::protocol::types::SignedNostrEvent;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -122,7 +122,8 @@ pub enum MergeResolution {
 }
 
 /// Publication receipt state.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
 pub enum PublicationState {
     Staged,
     Accepted,
@@ -131,9 +132,268 @@ pub enum PublicationState {
 
 /// Publication receipt.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct PublicationReceipt {
     pub event_id: String,
     pub state: PublicationState,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum PublicationAttemptOutcome {
+    Retain,
+    PublishHead,
+    Complete,
+}
+
+#[derive(Debug, Error, PartialEq, Eq)]
+pub enum PublicationAttemptError {
+    #[error("Destination acknowledged a different revision")]
+    RevisionMismatch,
+    #[error("Destination acknowledged a different HEAD")]
+    HeadMismatch,
+}
+
+pub fn publication_attempt_outcome(
+    revision_event_id: &str,
+    head_event_id: &str,
+    revision_receipt: &PublicationReceipt,
+    head_receipt: Option<&PublicationReceipt>,
+) -> Result<PublicationAttemptOutcome, PublicationAttemptError> {
+    if revision_receipt.event_id != revision_event_id {
+        return Err(PublicationAttemptError::RevisionMismatch);
+    }
+    if revision_receipt.state == PublicationState::Staged {
+        return Ok(PublicationAttemptOutcome::Retain);
+    }
+    let Some(head_receipt) = head_receipt else {
+        return Ok(PublicationAttemptOutcome::PublishHead);
+    };
+    if head_receipt.event_id != head_event_id {
+        return Err(PublicationAttemptError::HeadMismatch);
+    }
+    Ok(if head_receipt.state == PublicationState::Staged {
+        PublicationAttemptOutcome::Retain
+    } else {
+        PublicationAttemptOutcome::Complete
+    })
+}
+
+/// Stable file identity and host generation used by guarded apply recovery.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct GuardedFileGeneration {
+    pub file_id: String,
+    pub content_generation: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub host_file_id: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum GuardedApplyOperationKind {
+    Write,
+    Remove,
+}
+
+/// One expected-version filesystem mutation in a durable apply intent.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct GuardedApplyOperation {
+    pub id: String,
+    pub kind: GuardedApplyOperationKind,
+    pub path: String,
+    pub expected: Option<GuardedFileGeneration>,
+    pub file_id: String,
+}
+
+/// Durable host acknowledgement for one guarded mutation.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct GuardedApplyReceipt {
+    pub operation: GuardedApplyOperation,
+    pub result: Option<GuardedFileGeneration>,
+}
+
+/// Pure recovery input. The opaque object index is committed only after finalize.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GuardedApplyIntent {
+    pub id: String,
+    pub revision_event_id: String,
+    pub before: HashMap<String, GuardedFileGeneration>,
+    pub index: serde_json::Value,
+    pub operations: Vec<GuardedApplyOperation>,
+    pub completed: HashMap<String, GuardedApplyReceipt>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(tag = "kind", rename_all = "kebab-case")]
+pub enum ApplyRecoveryStep {
+    Mutate { operation: GuardedApplyOperation },
+    RecordReceipt { receipt: GuardedApplyReceipt },
+    Finalize,
+}
+
+#[derive(Debug, Error, PartialEq, Eq)]
+pub enum ApplyRecoveryError {
+    #[error("Apply intent contains duplicate operation IDs")]
+    DuplicateOperation,
+    #[error("Apply receipts are not a durable operation prefix")]
+    NonPrefixReceipt,
+    #[error("Apply intent contains a receipt for an unknown operation")]
+    UnknownReceipt,
+    #[error("Host apply receipt does not match its operation")]
+    ReceiptMismatch,
+    #[error("Invalid guarded write receipt")]
+    InvalidWriteReceipt,
+    #[error("Removal receipt still names a file")]
+    InvalidRemoveReceipt,
+    #[error("Stale apply target; preserve the changed working file")]
+    StaleTarget,
+    #[error("File changed after apply; retain the recovery intent")]
+    ChangedAfterReceipt,
+    #[error("Vault changed during apply; retain the recovery intent")]
+    ChangedVault,
+}
+
+fn same_guarded_version(
+    left: Option<&GuardedFileGeneration>,
+    right: Option<&GuardedFileGeneration>,
+) -> bool {
+    left == right
+}
+
+fn same_guarded_vault(
+    current: &HashMap<String, GuardedFileGeneration>,
+    expected: &HashMap<String, GuardedFileGeneration>,
+) -> bool {
+    current.len() == expected.len()
+        && expected
+            .iter()
+            .all(|(path, version)| same_guarded_version(current.get(path), Some(version)))
+}
+
+fn validate_guarded_receipt(
+    operation: &GuardedApplyOperation,
+    receipt: &GuardedApplyReceipt,
+) -> Result<(), ApplyRecoveryError> {
+    if receipt.operation != *operation {
+        return Err(ApplyRecoveryError::ReceiptMismatch);
+    }
+    match operation.kind {
+        GuardedApplyOperationKind::Remove => {
+            if receipt.result.is_some() {
+                return Err(ApplyRecoveryError::InvalidRemoveReceipt);
+            }
+        }
+        GuardedApplyOperationKind::Write => {
+            let result = receipt
+                .result
+                .as_ref()
+                .ok_or(ApplyRecoveryError::InvalidWriteReceipt)?;
+            if result.file_id != operation.file_id
+                || result.content_generation > 9_007_199_254_740_991
+            {
+                return Err(ApplyRecoveryError::InvalidWriteReceipt);
+            }
+            if let Some(expected) = operation.expected.as_ref()
+                && expected.file_id == result.file_id
+                && expected.host_file_id == result.host_file_id
+                && result.content_generation <= expected.content_generation
+            {
+                return Err(ApplyRecoveryError::InvalidWriteReceipt);
+            }
+        }
+    }
+    Ok(())
+}
+
+fn validate_completed_prefix(intent: &GuardedApplyIntent) -> Result<(), ApplyRecoveryError> {
+    let mut operation_ids = HashSet::new();
+    let mut found_incomplete = false;
+    for operation in &intent.operations {
+        if !operation_ids.insert(operation.id.as_str()) {
+            return Err(ApplyRecoveryError::DuplicateOperation);
+        }
+        match intent.completed.get(&operation.id) {
+            None => found_incomplete = true,
+            Some(receipt) => {
+                if found_incomplete {
+                    return Err(ApplyRecoveryError::NonPrefixReceipt);
+                }
+                validate_guarded_receipt(operation, receipt)?;
+            }
+        }
+    }
+    if intent
+        .completed
+        .keys()
+        .any(|operation_id| !operation_ids.contains(operation_id.as_str()))
+    {
+        return Err(ApplyRecoveryError::UnknownReceipt);
+    }
+    Ok(())
+}
+
+fn guarded_expected_current(intent: &GuardedApplyIntent) -> HashMap<String, GuardedFileGeneration> {
+    let mut expected = intent.before.clone();
+    for operation in &intent.operations {
+        let Some(receipt) = intent.completed.get(&operation.id) else {
+            continue;
+        };
+        if let Some(result) = receipt.result.as_ref() {
+            expected.insert(operation.path.clone(), result.clone());
+        } else {
+            expected.remove(&operation.path);
+        }
+    }
+    expected
+}
+
+/// Decide the only safe next recovery action without performing filesystem I/O.
+pub fn plan_apply_recovery_step(
+    intent: &GuardedApplyIntent,
+    current: &HashMap<String, GuardedFileGeneration>,
+    recovered_receipt: Option<&GuardedApplyReceipt>,
+) -> Result<ApplyRecoveryStep, ApplyRecoveryError> {
+    validate_completed_prefix(intent)?;
+    let operation = intent
+        .operations
+        .iter()
+        .find(|operation| !intent.completed.contains_key(&operation.id));
+    let Some(operation) = operation else {
+        if !same_guarded_vault(current, &guarded_expected_current(intent)) {
+            return Err(ApplyRecoveryError::ChangedVault);
+        }
+        return Ok(ApplyRecoveryStep::Finalize);
+    };
+    let mut expected = guarded_expected_current(intent);
+    if let Some(receipt) = recovered_receipt {
+        validate_guarded_receipt(operation, receipt)?;
+        if !same_guarded_version(current.get(&operation.path), receipt.result.as_ref()) {
+            return Err(ApplyRecoveryError::ChangedAfterReceipt);
+        }
+        if let Some(result) = receipt.result.as_ref() {
+            expected.insert(operation.path.clone(), result.clone());
+        } else {
+            expected.remove(&operation.path);
+        }
+        if !same_guarded_vault(current, &expected) {
+            return Err(ApplyRecoveryError::ChangedVault);
+        }
+        return Ok(ApplyRecoveryStep::RecordReceipt {
+            receipt: receipt.clone(),
+        });
+    }
+    if !same_guarded_version(current.get(&operation.path), operation.expected.as_ref()) {
+        return Err(ApplyRecoveryError::StaleTarget);
+    }
+    if !same_guarded_vault(current, &expected) {
+        return Err(ApplyRecoveryError::ChangedVault);
+    }
+    Ok(ApplyRecoveryStep::Mutate {
+        operation: operation.clone(),
+    })
 }
 
 /// Complete local engine state.

@@ -98,8 +98,8 @@ This qualifies a source oracle; native services are still pending.
 
 Status: **in progress.** The shared protocol corpus, signed-event verification,
 attestation readers, membership/cutoff authority, dependency validation and
-ancestry reconciliation are implemented; retry, apply, merge and
-complete-history targets remain open in the Stage 2
+ancestry reconciliation, stable publication retry and pure guarded-apply
+recovery are implemented; merge and complete-history targets remain open in the Stage 2
 receipt.
 
 Owner: Plugins native services; prerequisite: stage 1 oracle. Add pure codecs,

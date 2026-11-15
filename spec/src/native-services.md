@@ -134,6 +134,15 @@ verified alternate encrypted archives for one immutable signed event. Fetching,
 durable staging, authority lookup and current-file observation remain explicit
 host responsibilities.
 
+Stable publication retry and guarded-apply recovery now share complete-output
+transitions with the TypeScript engine. Publication admission distinguishes
+staged, accepted and applied receipts without regenerating outbox identity.
+Apply recovery validates a durable prefix of idempotent receipts, prototype-
+shaped operation IDs and paths, the expected whole-vault generation set and a
+recovered mutation result before it can record progress or finalize. The Rust
+transition performs no filesystem or repository I/O; durable receipt storage,
+exclusive mutation ownership and crash qualification remain host-owned gates.
+
 This intake covers the existing lightweight metadata extractor. Task, custom
 projection and extension processors remain separate migration work. It neither
 loads JavaScript into the Rust service nor qualifies either host's owner cutover.

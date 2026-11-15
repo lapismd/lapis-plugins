@@ -176,12 +176,91 @@ function expectedCurrent(intent: ApplyIntent): Record<string, FileGeneration> {
     structuredClone(intent.before),
   );
   for (const operation of intent.operations) {
+    if (!Object.hasOwn(intent.completed, operation.id)) continue;
     const receipt = intent.completed[operation.id];
-    if (!receipt) continue;
     if (receipt.result) expected[operation.path] = receipt.result;
     else delete expected[operation.path];
   }
   return expected;
+}
+
+function sameVault(
+  current: Record<string, FileGeneration>,
+  expected: Record<string, FileGeneration>,
+): boolean {
+  return (
+    Object.keys(current).length === Object.keys(expected).length &&
+    Object.entries(expected).every(([path, version]) =>
+      sameVersion(generationAt(current, path), version),
+    )
+  );
+}
+
+function validateCompletedPrefix(intent: ApplyIntent): void {
+  const operationIds = new Set<string>();
+  let foundIncomplete = false;
+  for (const operation of intent.operations) {
+    if (operationIds.has(operation.id))
+      throw new Error("Apply intent contains duplicate operation IDs");
+    operationIds.add(operation.id);
+    const receipt = Object.hasOwn(intent.completed, operation.id)
+      ? intent.completed[operation.id]
+      : undefined;
+    if (!receipt) {
+      foundIncomplete = true;
+      continue;
+    }
+    if (foundIncomplete)
+      throw new Error("Apply receipts are not a durable operation prefix");
+    validateReceipt(operation, receipt);
+  }
+  if (Object.keys(intent.completed).some((id) => !operationIds.has(id)))
+    throw new Error("Apply intent contains a receipt for an unknown operation");
+}
+
+export type ApplyRecoveryStep =
+  | { kind: "mutate"; operation: ApplyOperation }
+  | { kind: "record-receipt"; receipt: ApplyReceipt }
+  | { kind: "finalize" };
+
+/** Pure recovery decision over durable intent, observed files and host receipt. */
+export function planApplyRecoveryStep(
+  intent: ApplyIntent,
+  current: Record<string, FileGeneration>,
+  recoveredReceipt: ApplyReceipt | null,
+): ApplyRecoveryStep {
+  validateCompletedPrefix(intent);
+  const operation = intent.operations.find(
+    (candidate) => !Object.hasOwn(intent.completed, candidate.id),
+  );
+  if (!operation) {
+    const expected = expectedCurrent(intent);
+    if (!sameVault(current, expected))
+      throw new Error("Vault changed during apply; retain the recovery intent");
+    return { kind: "finalize" };
+  }
+  const expected = expectedCurrent(intent);
+  if (recoveredReceipt) {
+    validateReceipt(operation, recoveredReceipt);
+    if (
+      !sameVersion(
+        generationAt(current, operation.path),
+        recoveredReceipt.result,
+      )
+    )
+      throw new Error("File changed after apply; retain the recovery intent");
+    if (recoveredReceipt.result)
+      expected[operation.path] = recoveredReceipt.result;
+    else delete expected[operation.path];
+    if (!sameVault(current, expected))
+      throw new Error("Vault changed during apply; retain the recovery intent");
+    return { kind: "record-receipt", receipt: recoveredReceipt };
+  }
+  if (!sameVersion(generationAt(current, operation.path), operation.expected))
+    throw new Error("Stale apply target; preserve the changed working file");
+  if (!sameVault(current, expected))
+    throw new Error("Vault changed during apply; retain the recovery intent");
+  return { kind: "mutate", operation: structuredClone(operation) };
 }
 
 /** The caller holds the local state mutation queue for the complete apply. */
@@ -227,20 +306,15 @@ export async function resumeGuardedApply(
         operation.id,
         operationAuthority(authority),
       );
+      const current = fileGenerations(await options.vault.list());
+      const planned = planApplyRecoveryStep(intent, current, recovered);
       if (recovered) {
-        validateReceipt(operation, recovered);
+        if (planned.kind !== "record-receipt")
+          throw new Error("Invalid apply recovery transition");
         receipt = recovered;
       } else {
-        const current = fileGenerations(await options.vault.list());
-        if (
-          !sameVersion(
-            generationAt(current, operation.path),
-            operation.expected,
-          )
-        )
-          throw new Error(
-            "Stale apply target; preserve the changed working file",
-          );
+        if (planned.kind !== "mutate")
+          throw new Error("Invalid apply recovery transition");
         const file = byPath.get(operation.path);
         if (operation.kind === "write" && !file)
           throw new Error("Missing apply content");
@@ -251,8 +325,8 @@ export async function resumeGuardedApply(
         );
         validateReceipt(operation, receipt);
       }
-      const current = fileGenerations(await options.vault.list());
-      if (!sameVersion(generationAt(current, operation.path), receipt.result))
+      const after = fileGenerations(await options.vault.list());
+      if (!sameVersion(generationAt(after, operation.path), receipt.result))
         throw new Error("File changed after apply; retain the recovery intent");
       intent.completed[operation.id] = structuredClone(receipt);
       if (receipt.result && intent.index.paths[operation.path])
@@ -265,14 +339,8 @@ export async function resumeGuardedApply(
   const authority = await requireAuthority(options);
   await authorize();
   const current = fileGenerations(await options.vault.list());
-  const expected = expectedCurrent(intent);
-  if (
-    Object.keys(current).length !== Object.keys(expected).length ||
-    Object.entries(expected).some(
-      ([path, version]) => !sameVersion(generationAt(current, path), version),
-    )
-  )
-    throw new Error("Vault changed during apply; retain the recovery intent");
+  if (planApplyRecoveryStep(intent, current, null).kind !== "finalize")
+    throw new Error("Invalid apply recovery transition");
   // Every mutation has a verified receipt and every untouched file is still current.
   state.index = intent.index;
   state.localRevisionId = intent.revisionEventId;

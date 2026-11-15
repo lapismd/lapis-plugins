@@ -37,6 +37,14 @@ import {
   validateAuthenticatedHistoryGraph,
   type AuthenticatedHistoryGraph,
 } from "../runtime/incoming-reader.js";
+import { publicationAttemptOutcome } from "../runtime/local-engine.js";
+import type { PublicationReceipt } from "../runtime/contracts.js";
+import { planApplyRecoveryStep } from "../runtime/guarded-apply.js";
+import type {
+  ApplyIntent,
+  ApplyReceipt,
+  FileGeneration,
+} from "../runtime/incoming-contracts.js";
 
 type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
 type FixtureCorpus = {
@@ -105,6 +113,38 @@ type FixtureCorpus = {
       output: Json;
     }>;
     failures: Array<{ name: string; graph: AuthenticatedHistoryGraph }>;
+  };
+  outboxRetry: {
+    successes: Array<{
+      name: string;
+      revisionEventId: string;
+      headEventId: string;
+      revisionReceipt: PublicationReceipt;
+      headReceipt?: PublicationReceipt;
+      output: string;
+    }>;
+    failures: Array<{
+      name: string;
+      revisionEventId: string;
+      headEventId: string;
+      revisionReceipt: Json;
+      headReceipt?: Json;
+    }>;
+  };
+  applyRecovery: {
+    successes: Array<{
+      name: string;
+      intent: ApplyIntent;
+      current: Record<string, FileGeneration>;
+      recoveredReceipt: ApplyReceipt | null;
+      output: Json;
+    }>;
+    failures: Array<{
+      name: string;
+      intent: ApplyIntent;
+      current: Record<string, FileGeneration>;
+      recoveredReceipt: ApplyReceipt | null;
+    }>;
   };
   membershipAuthority: {
     membership: HistoryMembership;
@@ -349,6 +389,52 @@ describe("frozen TypeScript/Rust protocol parity fixtures", () => {
     "incoming graph failure: $name",
     (fixture) => {
       expect(() => validateAuthenticatedHistoryGraph(fixture.graph)).toThrow();
+    },
+  );
+
+  it.each(fixtures.outboxRetry.successes)(
+    "outbox retry: $name",
+    (fixture) => {
+      expect(publicationAttemptOutcome(fixture)).toBe(fixture.output);
+    },
+  );
+
+  it.each(fixtures.outboxRetry.failures)(
+    "outbox retry failure: $name",
+    (fixture) => {
+      expect(() =>
+        publicationAttemptOutcome(
+          fixture as unknown as Parameters<
+            typeof publicationAttemptOutcome
+          >[0],
+        ),
+      ).toThrow();
+    },
+  );
+
+  it.each(fixtures.applyRecovery.successes)(
+    "apply recovery: $name",
+    (fixture) => {
+      expect(
+        planApplyRecoveryStep(
+          fixture.intent,
+          fixture.current,
+          fixture.recoveredReceipt,
+        ),
+      ).toEqual(fixture.output);
+    },
+  );
+
+  it.each(fixtures.applyRecovery.failures)(
+    "apply recovery failure: $name",
+    (fixture) => {
+      expect(() =>
+        planApplyRecoveryStep(
+          fixture.intent,
+          fixture.current,
+          fixture.recoveredReceipt,
+        ),
+      ).toThrow();
     },
   );
 

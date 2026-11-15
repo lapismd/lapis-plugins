@@ -235,6 +235,162 @@
       }
     ]
   },
+  "outboxRetry": {
+    "successes": [
+      { "name": "revision remains staged", "revisionEventId": "revision", "headEventId": "head", "revisionReceipt": { "eventId": "revision", "state": "staged" }, "output": "retain" },
+      { "name": "accepted revision proceeds to HEAD", "revisionEventId": "revision", "headEventId": "head", "revisionReceipt": { "eventId": "revision", "state": "accepted" }, "output": "publish-head" },
+      { "name": "applied revision proceeds to HEAD", "revisionEventId": "revision", "headEventId": "head", "revisionReceipt": { "eventId": "revision", "state": "applied" }, "output": "publish-head" },
+      { "name": "staged HEAD retains exact outbox", "revisionEventId": "revision", "headEventId": "head", "revisionReceipt": { "eventId": "revision", "state": "accepted" }, "headReceipt": { "eventId": "head", "state": "staged" }, "output": "retain" },
+      { "name": "accepted HEAD completes", "revisionEventId": "revision", "headEventId": "head", "revisionReceipt": { "eventId": "revision", "state": "accepted" }, "headReceipt": { "eventId": "head", "state": "accepted" }, "output": "complete" },
+      { "name": "applied HEAD completes", "revisionEventId": "revision", "headEventId": "head", "revisionReceipt": { "eventId": "revision", "state": "applied" }, "headReceipt": { "eventId": "head", "state": "applied" }, "output": "complete" }
+    ],
+    "failures": [
+      { "name": "wrong revision acknowledgement", "revisionEventId": "revision", "headEventId": "head", "revisionReceipt": { "eventId": "other", "state": "accepted" } },
+      { "name": "wrong HEAD acknowledgement", "revisionEventId": "revision", "headEventId": "head", "revisionReceipt": { "eventId": "revision", "state": "accepted" }, "headReceipt": { "eventId": "other", "state": "accepted" } },
+      { "name": "unknown revision state", "revisionEventId": "revision", "headEventId": "head", "revisionReceipt": { "eventId": "revision", "state": "unknown" } },
+      { "name": "unknown HEAD state", "revisionEventId": "revision", "headEventId": "head", "revisionReceipt": { "eventId": "revision", "state": "accepted" }, "headReceipt": { "eventId": "head", "state": "unknown" } }
+    ]
+  },
+  "applyRecovery": {
+    "successes": [
+      {
+        "name": "mutation required",
+        "intent": {
+          "id": "apply-1",
+          "revisionEventId": "revision-target",
+          "before": {
+            "a.md": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" },
+            "b.md": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }
+          },
+          "index": { "revisionEventId": "revision-target", "rootHash": "root", "paths": {}, "treeHashes": {}, "treeEpochs": {} },
+          "operations": [
+            { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" },
+            { "id": "apply-1:1", "kind": "remove", "path": "b.md", "expected": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }, "fileId": "file-b" }
+          ],
+          "completed": {}
+        },
+        "current": {
+          "a.md": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" },
+          "b.md": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }
+        },
+        "recoveredReceipt": null,
+        "output": { "kind": "mutate", "operation": { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" } }
+      },
+      {
+        "name": "valid durable receipt recovery",
+        "intent": {
+          "id": "apply-1",
+          "revisionEventId": "revision-target",
+          "before": {
+            "a.md": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" },
+            "b.md": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }
+          },
+          "index": { "revisionEventId": "revision-target", "rootHash": "root", "paths": {}, "treeHashes": {}, "treeEpochs": {} },
+          "operations": [
+            { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" },
+            { "id": "apply-1:1", "kind": "remove", "path": "b.md", "expected": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }, "fileId": "file-b" }
+          ],
+          "completed": {}
+        },
+        "current": {
+          "a.md": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" },
+          "b.md": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }
+        },
+        "recoveredReceipt": { "operation": { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }, "result": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" } },
+        "output": { "kind": "record-receipt", "receipt": { "operation": { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }, "result": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" } } }
+      },
+      {
+        "name": "already-completed operation is skipped",
+        "intent": {
+          "id": "apply-1",
+          "revisionEventId": "revision-target",
+          "before": {
+            "a.md": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" },
+            "b.md": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }
+          },
+          "index": { "revisionEventId": "revision-target", "rootHash": "root", "paths": {}, "treeHashes": {}, "treeEpochs": {} },
+          "operations": [
+            { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" },
+            { "id": "apply-1:1", "kind": "remove", "path": "b.md", "expected": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }, "fileId": "file-b" }
+          ],
+          "completed": {
+            "apply-1:0": { "operation": { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }, "result": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" } }
+          }
+        },
+        "current": {
+          "a.md": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" },
+          "b.md": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }
+        },
+        "recoveredReceipt": null,
+        "output": { "kind": "mutate", "operation": { "id": "apply-1:1", "kind": "remove", "path": "b.md", "expected": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }, "fileId": "file-b" } }
+      },
+      {
+        "name": "all completed operations finalize",
+        "intent": {
+          "id": "apply-1",
+          "revisionEventId": "revision-target",
+          "before": {
+            "a.md": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" },
+            "b.md": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }
+          },
+          "index": { "revisionEventId": "revision-target", "rootHash": "root", "paths": {}, "treeHashes": {}, "treeEpochs": {} },
+          "operations": [
+            { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" },
+            { "id": "apply-1:1", "kind": "remove", "path": "b.md", "expected": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }, "fileId": "file-b" }
+          ],
+          "completed": {
+            "apply-1:0": { "operation": { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }, "result": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" } },
+            "apply-1:1": { "operation": { "id": "apply-1:1", "kind": "remove", "path": "b.md", "expected": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }, "fileId": "file-b" }, "result": null }
+          }
+        },
+        "current": { "a.md": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" } },
+        "recoveredReceipt": null,
+        "output": { "kind": "finalize" }
+      },
+      {
+        "name": "prototype-shaped path remains an ordinary file",
+        "intent": {
+          "id": "apply-prototype",
+          "revisionEventId": "revision-target",
+          "before": { "__proto__": { "fileId": "file-prototype", "contentGeneration": 4 } },
+          "index": { "revisionEventId": "revision-target", "rootHash": "root", "paths": {}, "treeHashes": {}, "treeEpochs": {} },
+          "operations": [
+            { "id": "constructor", "kind": "write", "path": "__proto__", "expected": { "fileId": "file-prototype", "contentGeneration": 4 }, "fileId": "file-prototype" }
+          ],
+          "completed": {}
+        },
+        "current": { "__proto__": { "fileId": "file-prototype", "contentGeneration": 4 } },
+        "recoveredReceipt": null,
+        "output": { "kind": "mutate", "operation": { "id": "constructor", "kind": "write", "path": "__proto__", "expected": { "fileId": "file-prototype", "contentGeneration": 4 }, "fileId": "file-prototype" } }
+      }
+    ],
+    "failures": [
+      {
+        "name": "stale target",
+        "intent": { "id": "apply-1", "revisionEventId": "revision-target", "before": { "a.md": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" } }, "index": { "revisionEventId": "revision-target", "rootHash": "root", "paths": {}, "treeHashes": {}, "treeEpochs": {} }, "operations": [{ "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }], "completed": {} },
+        "current": { "a.md": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" } },
+        "recoveredReceipt": null
+      },
+      {
+        "name": "mismatched receipt",
+        "intent": { "id": "apply-1", "revisionEventId": "revision-target", "before": { "a.md": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" } }, "index": { "revisionEventId": "revision-target", "rootHash": "root", "paths": {}, "treeHashes": {}, "treeEpochs": {} }, "operations": [{ "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }], "completed": {} },
+        "current": { "a.md": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" } },
+        "recoveredReceipt": { "operation": { "id": "apply-1:0", "kind": "write", "path": "other.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }, "result": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" } }
+      },
+      {
+        "name": "file changed after durable receipt",
+        "intent": { "id": "apply-1", "revisionEventId": "revision-target", "before": { "a.md": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" } }, "index": { "revisionEventId": "revision-target", "rootHash": "root", "paths": {}, "treeHashes": {}, "treeEpochs": {} }, "operations": [{ "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }], "completed": {} },
+        "current": { "a.md": { "fileId": "file-a", "contentGeneration": 3, "hostFileId": "host-a" } },
+        "recoveredReceipt": { "operation": { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }, "result": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" } }
+      },
+      {
+        "name": "extra file blocks finalization",
+        "intent": { "id": "apply-1", "revisionEventId": "revision-target", "before": { "a.md": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" } }, "index": { "revisionEventId": "revision-target", "rootHash": "root", "paths": {}, "treeHashes": {}, "treeEpochs": {} }, "operations": [{ "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }], "completed": { "apply-1:0": { "operation": { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }, "result": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" } } } },
+        "current": { "a.md": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" }, "extra.md": { "fileId": "extra", "contentGeneration": 1 } },
+        "recoveredReceipt": null
+      }
+    ]
+  },
   "membershipAuthority": {
     "membership": {
       "schemaVersion": 2,

@@ -37,6 +37,24 @@ import { ingestIncomingHeads } from "./incoming-reader.js";
 import { reconciliationPlan } from "./reconciliation.js";
 import { createApplyIntent, resumeGuardedApply } from "./guarded-apply.js";
 import { compareReplaceableEvents } from "../protocol/replaceable.js";
+import type { PublicationReceipt } from "./contracts.js";
+
+export function publicationAttemptOutcome(input: {
+  revisionEventId: string;
+  headEventId: string;
+  revisionReceipt: PublicationReceipt;
+  headReceipt?: PublicationReceipt;
+}): "retain" | "publish-head" | "complete" {
+  requireReceipt(input.revisionReceipt);
+  if (input.revisionReceipt.eventId !== input.revisionEventId)
+    throw new Error("Destination acknowledged a different revision");
+  if (input.revisionReceipt.state === "staged") return "retain";
+  if (!input.headReceipt) return "publish-head";
+  requireReceipt(input.headReceipt);
+  if (input.headReceipt.eventId !== input.headEventId)
+    throw new Error("Destination acknowledged a different HEAD");
+  return input.headReceipt.state === "staged" ? "retain" : "complete";
+}
 
 /** Network-independent history. Mutable/decrypted state never crosses repository APIs. */
 export class LocalSyncEngine {
@@ -337,18 +355,23 @@ export class LocalSyncEngine {
       }
       await this.requirePublicationAuthority();
       const receipt = await destination.publishRevision(event);
-      requireReceipt(receipt);
-      if (receipt.eventId !== entry.revisionEventId)
-        throw new Error("Destination acknowledged a different revision");
-      if (receipt.state === "staged") break;
+      const revisionOutcome = publicationAttemptOutcome({
+        revisionEventId: entry.revisionEventId,
+        headEventId: entry.head.id,
+        revisionReceipt: receipt,
+      });
+      if (revisionOutcome === "retain") break;
       await this.requirePublicationAuthority();
       const headReceipt = await destination.publishHead(entry.head, {
         expectedHeadEventId: entry.expectedHeadEventId,
       });
-      requireReceipt(headReceipt);
-      if (headReceipt.eventId !== entry.head.id)
-        throw new Error("Destination acknowledged a different HEAD");
-      if (headReceipt.state === "staged") break;
+      const headOutcome = publicationAttemptOutcome({
+        revisionEventId: entry.revisionEventId,
+        headEventId: entry.head.id,
+        revisionReceipt: receipt,
+        headReceipt,
+      });
+      if (headOutcome === "retain") break;
       await this.serial(async () => {
         // A checkpoint may have appended work while the network request was pending.
         if (this.state.outbox[0]?.head.id !== entry.head.id)

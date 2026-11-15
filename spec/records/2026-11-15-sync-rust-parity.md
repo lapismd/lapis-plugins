@@ -63,15 +63,36 @@ plans, ancestor-tip collapse, missing tips and multiple incomparable merge
 bases. Production TypeScript still gathers currently authorized heads and
 rechecks their ancestry before calling this planner.
 
+Publication retry now admits only exact revision and HEAD receipts and returns
+the same retain, publish-HEAD or complete transition in both engines. Staged
+acknowledgements retain the persisted event/ciphertext identity; accepted or
+applied revision acknowledgements can advance to the existing HEAD only.
+
+Guarded apply recovery now has a shared pure transition over the durable intent,
+observed complete vault generations and an optional host receipt. It validates
+receipt-operation identity, safe monotonic write generations, removals, a
+contiguous persisted receipt prefix and the complete expected vault before
+mutation, receipt admission or finalization. Cases cover required mutation,
+durable receipt recovery, already-completed work, stale and edited targets,
+mismatched receipts, extra-file finalization rejection and prototype-shaped
+paths/operation IDs. The prototype case exposed an inherited `constructor`
+lookup in the TypeScript expected-state builder; own-property admission repaired
+that exact failure without weakening the retained guarded-apply assertions.
+
 ## Focused results
 
 | Command | Result |
 | --- | --- |
 | Baseline Rust Sync unit run | 67 passed, 0 failed |
-| Focused TypeScript parity fixture | 93 passed, 0 failed |
-| Focused Rust parity fixture families | 10 passed, 0 failed |
+| Focused TypeScript parity fixture | 112 passed, 0 failed |
+| Focused Rust parity fixture families | 12 passed, 0 failed |
 | Rust protocol family after signature/envelope work | 51 passed, 0 failed |
-| Rust Sync family after incoming/reconciliation parity | 84 passed, 0 failed |
+| Rust Sync family after retry/apply-recovery parity | 86 passed, 0 failed |
+| Full TypeScript Sync unit run after retry/apply recovery | 19 files, 317 passed, 0 failed |
+| TypeScript/Svelte checks, package build and publint | Passed |
+| Rust fmt, clippy and build | Passed |
+| Root/package audit | Passed; 2/1 governed low findings ignored |
+| Specification validation, mdBook and spec-first | Passed |
 
 The first TypeScript fixture run failed one of 58 cases because a transformed
 JSON import discarded `__proto__`. Parsing the source bytes moved that exact
@@ -80,9 +101,8 @@ empty-string behavior were also corrected to the retained TypeScript outputs.
 
 ## Remaining Stage 2 gates
 
-This slice does not yet qualify persisted retry identity, durable idempotent apply receipts,
-rename/delete/binary/text merge
-planning, interrupted apply or one complete fixture history. Wider package,
+This slice does not yet qualify rename/delete/binary/text merge planning,
+host-persisted idempotent receipts, interrupted native apply or one complete fixture history. Wider package,
 clippy/build/audit/spec gates and hosted CI are recorded only after those
 runtime targets close. No Tauri, server, storage, release, publication or
 visual claim follows from this receipt.
