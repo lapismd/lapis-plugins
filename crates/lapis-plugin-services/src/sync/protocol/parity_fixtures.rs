@@ -1,6 +1,7 @@
 use super::*;
 use crate::sync::runtime::{
-    HistoryMembership, MembershipAuthorizationRecord, authorize_membership_record,
+    AuthenticatedHistoryGraph, HistoryMembership, MembershipAuthorizationRecord,
+    authorize_membership_record, plan_reconciliation_graph, validate_authenticated_history_graph,
     validate_membership,
 };
 use serde_json::Value;
@@ -243,6 +244,93 @@ fn membership_authority_matches_cutoff_outputs_and_failures() {
         }
         assert!(
             validate_membership(&invalid, &invalid.vault_id, &invalid.owner_public_key).is_err(),
+            "{}",
+            fixture["name"]
+        );
+    }
+}
+
+#[test]
+fn reconciliation_matches_complete_outputs_and_failures() {
+    let fixtures = fixtures();
+    let section = &fixtures["reconciliation"];
+    let parse_nodes = |value: &Value| -> HashMap<String, RevisionNode> {
+        value
+            .as_object()
+            .unwrap()
+            .iter()
+            .map(|(event_id, parents)| {
+                (
+                    event_id.clone(),
+                    RevisionNode {
+                        event_id: event_id.clone(),
+                        parents: parents
+                            .as_array()
+                            .unwrap()
+                            .iter()
+                            .map(|parent| AncestorRef {
+                                event_id: parent.as_str().unwrap().to_string(),
+                                archive_hash: format!("archive-{}", parent.as_str().unwrap()),
+                            })
+                            .collect(),
+                    },
+                )
+            })
+            .collect()
+    };
+    for fixture in section["cases"].as_array().unwrap() {
+        let remote: Vec<String> =
+            serde_json::from_value(fixture["remoteRevisionIds"].clone()).unwrap();
+        let result = plan_reconciliation_graph(
+            fixture["localRevisionId"].as_str(),
+            &remote,
+            &parse_nodes(&fixture["nodes"]),
+            fixture["localChanges"].as_bool().unwrap(),
+        )
+        .unwrap();
+        assert_eq!(
+            serde_json::to_value(result).unwrap(),
+            fixture["output"],
+            "{}",
+            fixture["name"]
+        );
+    }
+    for fixture in section["failures"].as_array().unwrap() {
+        let remote: Vec<String> =
+            serde_json::from_value(fixture["remoteRevisionIds"].clone()).unwrap();
+        assert!(
+            plan_reconciliation_graph(
+                fixture["localRevisionId"].as_str(),
+                &remote,
+                &parse_nodes(&fixture["nodes"]),
+                fixture["localChanges"].as_bool().unwrap(),
+            )
+            .is_err(),
+            "{}",
+            fixture["name"]
+        );
+    }
+}
+
+#[test]
+fn incoming_graph_matches_complete_outputs_and_failures() {
+    let fixtures = fixtures();
+    let section = &fixtures["incomingGraph"];
+    for fixture in section["successes"].as_array().unwrap() {
+        let graph: AuthenticatedHistoryGraph =
+            serde_json::from_value(fixture["graph"].clone()).unwrap();
+        assert_eq!(
+            serde_json::to_value(validate_authenticated_history_graph(&graph).unwrap()).unwrap(),
+            fixture["output"],
+            "{}",
+            fixture["name"]
+        );
+    }
+    for fixture in section["failures"].as_array().unwrap() {
+        let graph: AuthenticatedHistoryGraph =
+            serde_json::from_value(fixture["graph"].clone()).unwrap();
+        assert!(
+            validate_authenticated_history_graph(&graph).is_err(),
             "{}",
             fixture["name"]
         );

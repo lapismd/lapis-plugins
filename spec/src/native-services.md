@@ -126,6 +126,14 @@ boundaries. This closes current/retired identity and revoked-device cutoff
 outcomes without introducing a database, network client, filesystem effect or
 application scheduler.
 
+Authenticated incoming-graph validation and reconciliation are likewise pure.
+The caller supplies records only after signature, ciphertext and object-graph
+authentication. The shared algorithms reject missing/cyclic ancestry,
+mismatched parent/HEAD references and incomparable merge bases while retaining
+verified alternate encrypted archives for one immutable signed event. Fetching,
+durable staging, authority lookup and current-file observation remain explicit
+host responsibilities.
+
 This intake covers the existing lightweight metadata extractor. Task, custom
 projection and extension processors remain separate migration work. It neither
 loads JavaScript into the Rust service nor qualifies either host's owner cutover.

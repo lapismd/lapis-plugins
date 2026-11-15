@@ -168,6 +168,73 @@
       { "name": "missing head revision", "type": "head", "input": { "schemaVersion": 2, "vaultId": "v", "root": "r", "keyEpoch": 1, "currentEpoch": 1, "membershipGeneration": 0 } }
     ]
   },
+  "reconciliation": {
+    "cases": [
+      { "name": "empty history", "localRevisionId": null, "remoteRevisionIds": [], "localChanges": false, "nodes": {}, "output": { "kind": "clean", "tips": [] } },
+      { "name": "unchanged local tip", "localRevisionId": "a", "remoteRevisionIds": [], "localChanges": false, "nodes": { "a": [] }, "output": { "kind": "clean", "tips": ["a"] } },
+      { "name": "remote descendant fast-forward", "localRevisionId": "a", "remoteRevisionIds": ["c"], "localChanges": false, "nodes": { "a": [], "b": ["a"], "c": ["b"] }, "output": { "kind": "fast-forward", "tips": ["c"], "targetRevisionId": "c" } },
+      { "name": "dirty vault blocks fast-forward", "localRevisionId": "a", "remoteRevisionIds": ["c"], "localChanges": true, "nodes": { "a": [], "b": ["a"], "c": ["b"] }, "output": { "kind": "local-changes", "tips": ["c"] } },
+      { "name": "divergence has one merge base", "localRevisionId": "b", "remoteRevisionIds": ["c"], "localChanges": false, "nodes": { "a": [], "b": ["a"], "c": ["a"] }, "output": { "kind": "merge-required", "tips": ["b", "c"], "leftRevisionId": "b", "rightRevisionId": "c", "baseRevisionId": "a" } },
+      { "name": "unrelated histories stay explicit", "localRevisionId": "a", "remoteRevisionIds": ["b"], "localChanges": false, "nodes": { "a": [], "b": [] }, "output": { "kind": "unrelated", "tips": ["a", "b"], "leftRevisionId": "a", "rightRevisionId": "b" } },
+      { "name": "ancestor remote tips collapse", "localRevisionId": "c", "remoteRevisionIds": ["a", "b"], "localChanges": false, "nodes": { "a": [], "b": ["a"], "c": ["b"] }, "output": { "kind": "clean", "tips": ["c"] } }
+    ],
+    "failures": [
+      { "name": "missing tip", "localRevisionId": null, "remoteRevisionIds": ["missing"], "localChanges": false, "nodes": {} },
+      { "name": "multiple incomparable merge bases", "localRevisionId": "c", "remoteRevisionIds": ["d"], "localChanges": false, "nodes": { "a": [], "b": [], "c": ["a", "b"], "d": ["a", "b"] } }
+    ]
+  },
+  "incomingGraph": {
+    "successes": [
+      {
+        "name": "complete authenticated ancestry",
+        "graph": {
+          "revisions": {
+            "0000000000000000000000000000000000000000000000000000000000000000": { "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "root": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "parents": [] },
+            "1111111111111111111111111111111111111111111111111111111111111111": { "archiveHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "root": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "parents": [{ "eventId": "0000000000000000000000000000000000000000000000000000000000000000", "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }] }
+          },
+          "heads": [{ "revisionEventId": "1111111111111111111111111111111111111111111111111111111111111111", "revisionArchiveHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "root": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd" }]
+        },
+        "output": { "revisionIds": ["0000000000000000000000000000000000000000000000000000000000000000", "1111111111111111111111111111111111111111111111111111111111111111"], "headRevisionIds": ["1111111111111111111111111111111111111111111111111111111111111111"] }
+      },
+      {
+        "name": "multiple independent complete roots",
+        "graph": {
+          "revisions": {
+            "0000000000000000000000000000000000000000000000000000000000000000": { "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "root": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "parents": [] },
+            "2222222222222222222222222222222222222222222222222222222222222222": { "archiveHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "root": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "parents": [] }
+          },
+          "heads": []
+        },
+        "output": { "revisionIds": ["0000000000000000000000000000000000000000000000000000000000000000", "2222222222222222222222222222222222222222222222222222222222222222"], "headRevisionIds": [] }
+      }
+    ],
+    "failures": [
+      {
+        "name": "missing parent",
+        "graph": { "revisions": { "1111111111111111111111111111111111111111111111111111111111111111": { "archiveHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "root": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "parents": [{ "eventId": "0000000000000000000000000000000000000000000000000000000000000000", "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }] } }, "heads": [] }
+      },
+      {
+        "name": "parent archive mismatch",
+        "graph": { "revisions": { "0000000000000000000000000000000000000000000000000000000000000000": { "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "root": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "parents": [] }, "1111111111111111111111111111111111111111111111111111111111111111": { "archiveHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "root": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "parents": [{ "eventId": "0000000000000000000000000000000000000000000000000000000000000000", "archiveHash": "9999999999999999999999999999999999999999999999999999999999999999" }] } }, "heads": [] }
+      },
+      {
+        "name": "cyclic ancestry",
+        "graph": { "revisions": { "0000000000000000000000000000000000000000000000000000000000000000": { "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "root": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "parents": [{ "eventId": "1111111111111111111111111111111111111111111111111111111111111111", "archiveHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" }] }, "1111111111111111111111111111111111111111111111111111111111111111": { "archiveHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "root": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "parents": [{ "eventId": "0000000000000000000000000000000000000000000000000000000000000000", "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }] } }, "heads": [] }
+      },
+      {
+        "name": "HEAD archive mismatch",
+        "graph": { "revisions": { "0000000000000000000000000000000000000000000000000000000000000000": { "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "root": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "parents": [] } }, "heads": [{ "revisionEventId": "0000000000000000000000000000000000000000000000000000000000000000", "revisionArchiveHash": "9999999999999999999999999999999999999999999999999999999999999999", "root": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc" }] }
+      },
+      {
+        "name": "HEAD root mismatch",
+        "graph": { "revisions": { "0000000000000000000000000000000000000000000000000000000000000000": { "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "root": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "parents": [] } }, "heads": [{ "revisionEventId": "0000000000000000000000000000000000000000000000000000000000000000", "revisionArchiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "root": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd" }] }
+      },
+      {
+        "name": "missing HEAD revision",
+        "graph": { "revisions": {}, "heads": [{ "revisionEventId": "0000000000000000000000000000000000000000000000000000000000000000", "revisionArchiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "root": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc" }] }
+      }
+    ]
+  },
   "membershipAuthority": {
     "membership": {
       "schemaVersion": 2,

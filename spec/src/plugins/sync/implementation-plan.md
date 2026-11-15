@@ -97,8 +97,9 @@ This qualifies a source oracle; native services are still pending.
 ### 2. Implement Rust engine parity
 
 Status: **in progress.** The shared protocol corpus, signed-event verification,
-attestation readers and membership/cutoff authority are implemented; ingestion,
-retry, apply, merge and complete-history targets remain open in the Stage 2
+attestation readers, membership/cutoff authority, dependency validation and
+ancestry reconciliation are implemented; retry, apply, merge and
+complete-history targets remain open in the Stage 2
 receipt.
 
 Owner: Plugins native services; prerequisite: stage 1 oracle. Add pure codecs,

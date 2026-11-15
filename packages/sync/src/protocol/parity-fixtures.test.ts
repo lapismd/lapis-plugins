@@ -32,6 +32,11 @@ import type {
   SignedNostrEvent,
   SyncAuthorityContext,
 } from "../engine.js";
+import { planReconciliationGraph } from "../runtime/reconciliation.js";
+import {
+  validateAuthenticatedHistoryGraph,
+  type AuthenticatedHistoryGraph,
+} from "../runtime/incoming-reader.js";
 
 type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
 type FixtureCorpus = {
@@ -75,6 +80,31 @@ type FixtureCorpus = {
       type: "revision" | "head";
       input: Json;
     }>;
+  };
+  reconciliation: {
+    cases: Array<{
+      name: string;
+      localRevisionId: string | null;
+      remoteRevisionIds: string[];
+      localChanges: boolean;
+      nodes: Record<string, string[]>;
+      output: Json;
+    }>;
+    failures: Array<{
+      name: string;
+      localRevisionId: string | null;
+      remoteRevisionIds: string[];
+      localChanges: boolean;
+      nodes: Record<string, string[]>;
+    }>;
+  };
+  incomingGraph: {
+    successes: Array<{
+      name: string;
+      graph: AuthenticatedHistoryGraph;
+      output: Json;
+    }>;
+    failures: Array<{ name: string; graph: AuthenticatedHistoryGraph }>;
   };
   membershipAuthority: {
     membership: HistoryMembership;
@@ -167,6 +197,19 @@ const membershipContext: SyncAuthorityContext = {
     return false;
   },
 };
+const reconciliationNodes = (input: Record<string, string[]>) =>
+  new Map(
+    Object.entries(input).map(([eventId, parents]) => [
+      eventId,
+      {
+        eventId,
+        parents: parents.map((parent) => ({
+          eventId: parent,
+          archiveHash: `archive-${parent}`,
+        })),
+      },
+    ]),
+  );
 
 describe("frozen TypeScript/Rust protocol parity fixtures", () => {
   it("uses the supported fixture schema", () => {
@@ -266,6 +309,46 @@ describe("frozen TypeScript/Rust protocol parity fixtures", () => {
           ? parseRevisionPayload(fixture.input)
           : parseHeadPayload(fixture.input),
       ).toThrow();
+    },
+  );
+
+  it.each(fixtures.reconciliation.cases)(
+    "reconciliation: $name",
+    (fixture) => {
+      expect(
+        planReconciliationGraph({
+          ...fixture,
+          nodes: reconciliationNodes(fixture.nodes),
+        }),
+      ).toEqual(fixture.output);
+    },
+  );
+
+  it.each(fixtures.reconciliation.failures)(
+    "reconciliation failure: $name",
+    (fixture) => {
+      expect(() =>
+        planReconciliationGraph({
+          ...fixture,
+          nodes: reconciliationNodes(fixture.nodes),
+        }),
+      ).toThrow();
+    },
+  );
+
+  it.each(fixtures.incomingGraph.successes)(
+    "incoming graph: $name",
+    (fixture) => {
+      expect(validateAuthenticatedHistoryGraph(fixture.graph)).toEqual(
+        fixture.output,
+      );
+    },
+  );
+
+  it.each(fixtures.incomingGraph.failures)(
+    "incoming graph failure: $name",
+    (fixture) => {
+      expect(() => validateAuthenticatedHistoryGraph(fixture.graph)).toThrow();
     },
   );
 
