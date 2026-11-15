@@ -50,6 +50,9 @@ MUST NOT change native service revisions, runtime installation authority or
 plugin archive identity. Native admission continues to use signed release
 coordinates under LP-SPEC-002. The retained deferred release route keeps its
 legacy pin resolver; active consumers use the verified shared resolver.
+The shared verifier repair under LP-SPEC-036 selects one exact main-workflow
+certificate identity; native admission still requires its separately signed
+release coordinates after cache verification and frozen source installation.
 
 The Bases embed catalog renders file and fenced Board/Activity instances with
 an explicitly owned App. Read-only Search and Filter change only the embedded

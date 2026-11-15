@@ -717,3 +717,8 @@ adoption separately from the completed LN-HIST-020 preview.
 
 Skill-reference qualification checks authored frontmatter/relative links, examples through actual Lapis parsers, recursive npm/archive parity and signed inclusion. Formatters must preserve whitespace-sensitive Markdown examples. The reference correction changes no product interaction or accessibility behavior.
 [Qualification evidence](../records/2026-11-15-lapis-skill-references.md) retains source checks separately from consumer delivery.
+
+LP-SPEC-036 verifier qualification MUST exercise the pinned GitHub CLI against
+an actual signed index and independently reconstructed source inputs. A passing
+mocked bridge cannot establish CLI compatibility. Hosted promotion and warm
+consumer acceptance remain distinct from successful staging verification.
