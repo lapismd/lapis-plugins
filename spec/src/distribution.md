@@ -610,3 +610,6 @@ coverage under LP-SPEC-054. It mounts the real enabled RepositoryPlugin in the
 public WorkspaceShell with a memory-only host adapter. Its shared App bootstrap
 keeps unchanged defaults for existing stories; full catalog interaction/axe and
 package qualification remain distinct from either native application's delivery.
+
+Bases, Canvas and Markdown package their skill references recursively. Public skills.json, actual npm tarballs and signed archives MUST retain every authored reference byte. The independent patch Changeset describes this content correction; publication and host intake remain separate gates.
+[Qualification evidence](../records/2026-11-15-lapis-skill-references.md) retains source checks separately from consumer delivery.

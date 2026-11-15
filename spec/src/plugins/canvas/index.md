@@ -169,3 +169,6 @@ is tracked separately from consumer adoption.
 The Markdown peer and development ranges also admit compatible `^0.3.0` while
 retaining the existing 0.2 floor. [Peer release qualification](../../../records/2026-11-14-skill-release-peer-versioning.md)
 keeps this compatible dependency intake on its declared independent bump.
+
+The skill MUST route to packaged schema and complete document examples, including native validation constraints and the read-only, source-owned Canvas embed projection. Nested references MUST have the same bytes in source, public `skills.json`, npm tarballs and signed archives.
+[Reference qualification](../../../records/2026-11-15-lapis-skill-references.md) records parser and packaging evidence.

@@ -5,6 +5,10 @@ description: Create and edit Lapis JSON Canvas (.canvas) files with text, file, 
 
 # Lapis JSON Canvas
 
+Read the [schema and Lapis integration](references/SCHEMA.md) when validating or
+editing nodes and edges. Use [complete examples](references/EXAMPLES.md) for
+Markdown text, note sections, groups and layouts.
+
 Read an existing canvas before editing. Preserve unrelated nodes, edges,
 layout and extension fields. A `.canvas` file is JSON with `nodes` and `edges`
 arrays. Serialize JSON rather than assembling quoted text by hand.
@@ -12,11 +16,34 @@ arrays. Serialize JSON rather than assembling quoted text by hand.
 ```json
 {
   "nodes": [
-    {"id":"a1b2c3d4e5f67890","type":"text","x":0,"y":0,"width":320,"height":180,"text":"# Plan\n\nDiscuss [[Project]]."},
-    {"id":"b1b2c3d4e5f67890","type":"file","x":420,"y":0,"width":320,"height":180,"file":"Projects/Project.md"}
+    {
+      "id": "a1b2c3d4e5f67890",
+      "type": "text",
+      "x": 0,
+      "y": 0,
+      "width": 320,
+      "height": 180,
+      "text": "# Plan\n\nDiscuss [[Project]]."
+    },
+    {
+      "id": "b1b2c3d4e5f67890",
+      "type": "file",
+      "x": 420,
+      "y": 0,
+      "width": 320,
+      "height": 180,
+      "file": "Projects/Project.md"
+    }
   ],
   "edges": [
-    {"id":"c1b2c3d4e5f67890","fromNode":"a1b2c3d4e5f67890","toNode":"b1b2c3d4e5f67890","fromSide":"right","toSide":"left","toEnd":"arrow"}
+    {
+      "id": "c1b2c3d4e5f67890",
+      "fromNode": "a1b2c3d4e5f67890",
+      "toNode": "b1b2c3d4e5f67890",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow"
+    }
   ]
 }
 ```

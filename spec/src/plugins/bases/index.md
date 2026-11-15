@@ -309,3 +309,6 @@ Installation is explicit at the vault root. Package upgrades supply new skill
 content; skill updates preserve locally modified directories. `skills.json`
 and signed archives MUST contain the same authored skill bytes. Qualification
 is tracked separately from consumer adoption.
+
+The skill MUST route to packaged document/view and function references. Guidance MUST describe native view mappings and callback/date semantics, and identify the unavailable map renderer rather than infer capabilities from registration. Nested references MUST have the same bytes in source, public `skills.json`, npm tarballs and signed archives.
+[Reference qualification](../../../records/2026-11-15-lapis-skill-references.md) records parser and packaging evidence.

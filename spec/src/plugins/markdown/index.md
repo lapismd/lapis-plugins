@@ -313,3 +313,6 @@ retains the exact target and complete package results.
 Markdown accepts the API 0.6 / UI 0.2 registry cohort while retaining the
 qualified API 0.2/0.4 and UI 0.1 peer ranges. The shared catalog qualifies
 the published UI 0.2 exports; no host dependency override supplies compatibility.
+
+The skill MUST route to packaged references for rich Lapis/Mira syntax, typed properties and links, callouts and extended task states, embed ownership, and editor capabilities. It MUST distinguish Lapis extensions and settings from the common Obsidian-compatible subset. Nested references MUST have the same bytes in source, public `skills.json`, npm tarballs and signed archives.
+[Reference qualification](../../../records/2026-11-15-lapis-skill-references.md) records parser and packaging evidence.

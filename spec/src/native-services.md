@@ -385,3 +385,6 @@ share its explicit target commands and secret-free observations. Push review
 lives outside footer/settings lifetime; late replies are fenced on plugin close.
 Native custody, scheduling, authentication and transfer admission remain in the
 executing host. Hosts without this port retain legacy synchronization.
+
+Skill supporting references are passive package assets. Adding Lapis syntax, view and source-ownership guidance does not execute renderer code or grant native writes. Existing receipt and full-directory update guards also protect nested references.
+[Qualification evidence](../records/2026-11-15-lapis-skill-references.md) retains source checks separately from consumer delivery.
