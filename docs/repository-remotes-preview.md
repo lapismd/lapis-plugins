@@ -13,7 +13,7 @@ Run `pnpm storybook -- --port 6017 --host 127.0.0.1` from this workspace, then o
 - [History entry](http://127.0.0.1:6017/?path=/story/plugins-history-repository-remotes-and-credentials--history-entry)
 - [Narrow dark Server](http://127.0.0.1:6017/?path=/story/plugins-history-repository-remotes-and-credentials--server-narrow-dark)
 
-All 40 examples carry `visual-pending`. Each shows the full WorkspaceShell with
+All 41 examples carry `visual-pending`. Each shows the full WorkspaceShell with
 the repository status bar, without a description banner or a remote toolbar
 above History. All actions use memory services. No visual baselines are created
 or approved by this work.
@@ -31,6 +31,7 @@ or approved by this work.
 | SSH Unavailable / SSH Connected           | Host identity availability and connection; no private-key upload     |
 | Fetching                                  | Busy action controls; last fetched observation remains visible       |
 | Push Review                               | Exact remote, branch, bookmark, full commit and outgoing count       |
+| Locked Review Cannot Publish              | Retained review loses Push authority when storage locks; Cancel works |
 | Rejected Push                             | Failure toast; no claim that publication succeeded                   |
 | Unknown Push / Observe Does Not Republish | Retained request and explicit observation/stop                       |
 | Device Sign In / Expired Device Sign In   | Device code, cancellation, expiry and restart                        |
@@ -95,6 +96,6 @@ recovery paths. Application service adoption remains a later slice.
   lapis-app-core, with admitted Tauri/HTTP adapters and generated protocol DTOs.
 - Unknown pushes retain exact request identities; observation never republishes.
 
-Review this UI before proceeding with host adoption. Live native custody,
+The user has approved this UI for subsequent host adoption. Live native custody,
 network transport, server encryption, consumer acceptance and release are not
 qualified by these fixtures.

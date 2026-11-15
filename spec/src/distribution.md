@@ -585,3 +585,9 @@ Behavior expectations and visual baselines remain independently governed.
 Host-cohort qualification includes the published UI 0.2 peer accepted by API
 0.6. AI and Markdown retain UI 0.1 compatibility while admitting UI 0.2;
 release preparation must not publish a contradictory API/UI peer combination.
+
+The History source/review guard patch carries an independent patch Changeset.
+Local npm-pack, deterministic payload and synthetic signature checks qualify
+package content only. They do not publish version 0.3.1 again or authorize
+substituting local packages in consumers; final delivery uses a new registry
+version through the approved GitHub release workflow.

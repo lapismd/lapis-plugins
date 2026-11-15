@@ -1,6 +1,8 @@
 import type { LocalGraphCommit } from "@lapismd/jj-history";
+import type { HistorySource } from "./history-source.js";
 
 export type WorkingCopyStatus = {
+  source?: HistorySource;
   operation: string;
   revision: string;
   changeId: string;
@@ -37,6 +39,9 @@ export function parseWorkingCopyStatus(frame: string): WorkingCopyStatus {
     throw new Error("Working copy status exceeds limit");
   const value = record(JSON.parse(frame));
   if (value.version !== 1) throw new Error("Unsupported working copy status");
+  const source = value.source === undefined ? "backup" : value.source;
+  if (source !== "backup" && source !== "original")
+    throw new Error("Invalid working copy source");
   const commit = record(value.commit),
     author = record(commit.author);
   const timestamp = record(author.timestamp);
@@ -49,6 +54,7 @@ export function parseWorkingCopyStatus(frame: string): WorkingCopyStatus {
   if (uncounted > files || uncounted > 0 !== (lines === null))
     throw new Error("Incomplete working copy totals");
   return {
+    source,
     operation: id(value.operation, 128),
     revision: id(value.working_copy, 40),
     changeId: id(commit.change_id, 32),

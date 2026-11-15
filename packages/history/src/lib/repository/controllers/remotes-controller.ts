@@ -23,6 +23,7 @@ export class RepositoryRemotesController {
   #closed = false;
   #generation = 0;
   #operation?: { target: RemoteTarget; busy: RemoteTargetSettings["busy"] };
+  #dismissed = new Map<RemoteTarget, string>();
   readonly actions: RemotesSettingsActions;
   constructor(
     private readonly service: RepositoryRemotesService,
@@ -42,15 +43,10 @@ export class RepositoryRemotesController {
         this.#execute({ kind: "stop_push", target, requestId }),
       dismissReview: (target) => {
         if (!this.#snapshot || this.#closed) return;
-        this.#snapshot = {
-          ...this.#snapshot,
-          settings: {
-            ...this.#snapshot.settings,
-            targets: this.#snapshot.settings.targets.map((state) =>
-              state.target === target ? { ...state, review: undefined } : state
-            ),
-          },
-        };
+        const review = this.#snapshot.settings.targets.find(
+          (state) => state.target === target
+        )?.review;
+        if (review) this.#dismissed.set(target, review.id);
         this.#notify();
       },
       setAutomaticSync: (enabled) =>
@@ -90,6 +86,7 @@ export class RepositoryRemotesController {
     this.#closed = true;
     ++this.#generation;
     this.#listeners.clear();
+    this.#dismissed.clear();
     this.#snapshot = undefined;
   }
   #ready(): void {
@@ -161,11 +158,15 @@ export class RepositoryRemotesController {
   #project(): RemotesSettingsState {
     return {
       ...this.#snapshot!.settings,
-      targets: this.#snapshot!.settings.targets.map((target) =>
-        target.target === this.#operation?.target
-          ? { ...target, busy: this.#operation.busy }
-          : target
-      ),
+      targets: this.#snapshot!.settings.targets.map((target) => ({
+        ...target,
+        ...(target.review?.id === this.#dismissed.get(target.target)
+          ? { review: undefined }
+          : {}),
+        ...(target.target === this.#operation?.target
+          ? { busy: this.#operation.busy }
+          : {}),
+      })),
     };
   }
   #notify(): void {

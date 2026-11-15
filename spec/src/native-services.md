@@ -363,3 +363,8 @@ History recovery interactions; cold host qualification remains separate.
 The UI 0.2 / API 0.6 peer-cohort correction changes renderer package admission,
 not native algorithms, service ownership, or protocol capabilities. Native
 consumers retain their exact source pins and independent host qualification.
+
+The History source/review guard patch changes no native custody, generated
+command or transport authority. Native source identity is retained in renderer
+parsing; session dismissal and withdrawn push capability remain presentation
+rules. Production adoption and actual-host acceptance stay separate.

@@ -28,6 +28,17 @@ const deferred = () => {
   });
   return { promise, resolve };
 };
+test("status preserves the native source for working-copy navigation", () => {
+  const original = parseWorkingCopyStatus(
+    JSON.stringify({ ...frame, source: "original" })
+  );
+  assert.equal(original.source, "original");
+  assert.equal(value.source, "backup");
+  for (const source of ["unknown", null])
+    assert.throws(() =>
+      parseWorkingCopyStatus(JSON.stringify({ ...frame, source }))
+    );
+});
 test("status frame retains full identities/time and refuses false complete totals", () => {
   assert.equal(value.author.timestamp.millis, 9223372036854775807n);
   assert.equal(value.revision, frame.working_copy);

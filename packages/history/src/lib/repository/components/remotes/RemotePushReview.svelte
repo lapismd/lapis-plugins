@@ -59,7 +59,9 @@
       <p>Other branches stay unchanged. A changed remote requires a fresh review.</p>
       <Dialog.Footer>
         <Button variant="outline" disabled={busy} onclick={onClose}>Cancel</Button>
-        <Button disabled={busy} onclick={() => onPush(target.review!.id)}
+        <Button
+          disabled={busy || !target.canPush}
+          onclick={() => onPush(target.review!.id)}
           >{busy
             ? "Pushing…"
             : `Push to ${target.connection.name}/${target.connection.branch}`}</Button
