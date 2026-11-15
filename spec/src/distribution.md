@@ -558,8 +558,16 @@ Catalog acceptance may select a checkout-local Vitest browser API port with
 the default remains 63422. This isolates independent workspaces without changing
 published package metadata, runtime admission or release artifact generation.
 
+History's optional target-aware remotes service is a public package contract.
+Generated/packaged declarations and consumer acceptance must qualify it through
+public exports while preserving existing backup-only host compatibility.
+
 Under LP-SPEC-010, compatible internal peer updates MUST preserve the declared
 independent bump; out-of-range peers MUST retain major-version escalation. The
 frozen Changesets 2 CLI uses its range-aware peer option, guarded by a real CLI
 regression for both cases. [Peer release qualification](../records/2026-11-14-skill-release-peer-versioning.md)
 records the Markdown 0.3 peer intake without native or publisher-authority changes.
+
+History remote-management public exports use an independent minor release. The
+optional service contract is additive; each native host explicitly adopts the
+new package cohort after its own integration qualification.

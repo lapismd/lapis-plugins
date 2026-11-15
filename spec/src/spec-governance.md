@@ -666,6 +666,10 @@ The plugin skill packaging regression checks authored assets against npm exports
 
 [Skill archive evidence](../records/2026-11-14-plugin-skill-archives.md) retains signed-file inclusion, public npm parity and the failed prerequisite attempts.
 
+History remotes service qualification distinguishes public presentation-contract
+checks from native Core/Protocol, transport and host acceptance. Presentation
+unit tests cannot qualify credential custody or remote publication.
+
 Under LP-SPEC-010, compatible internal peer updates MUST preserve the declared
 independent bump; out-of-range peers MUST retain major-version escalation. The
 frozen Changesets 2 CLI uses its range-aware peer option, guarded by a real CLI

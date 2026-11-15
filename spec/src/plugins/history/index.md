@@ -258,3 +258,18 @@ Desktop OS storage, server encryption, SSH host setup and live publication are
 proposed UI states, not qualified implementations. Plain Git admission, original
 separate pull/merge commands, force-push and key management remain outside this slice. Review and
 app adoption, native custody/transport acceptance and release are separate gates.
+
+## Host remote service contract
+
+The public repository service MAY provide remote management alongside the legacy
+backup-only remote port. It MUST expose path-free snapshots, explicit target
+selection, advertised transport capabilities and opaque credential references.
+Every connection or transfer command MUST carry the expected native configuration
+revision. Push execution MUST identify a prior native review; uncertain results
+MUST retain their request identity for observation rather than replay.
+
+The shared presentation controller MUST NOT retry failed mutations automatically,
+transfer after saving, persist tokens, or accept late responses after disposal.
+Connection tests are explicit reachability/authentication checks without
+publication. Host implementations own credential custody and endpoint admission;
+presentation validation cannot authorize transport.

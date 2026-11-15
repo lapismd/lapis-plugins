@@ -296,6 +296,11 @@ Native hosts consume skill asset data through public package exports or verified
 
 The legacy AI skill-update command delegates to App skill management so the admitted native service retains write authority.
 
+The optional History remotes port carries explicit targets, opaque credential
+references, native configuration revisions and push review/status identities.
+Its shared presentation controller neither authorizes endpoints nor retries
+uncertain native mutations; host custody and publication retain authority.
+
 Under LP-SPEC-010, compatible internal peer updates MUST preserve the declared
 independent bump; out-of-range peers MUST retain major-version escalation. The
 frozen Changesets 2 CLI uses its range-aware peer option, guarded by a real CLI
