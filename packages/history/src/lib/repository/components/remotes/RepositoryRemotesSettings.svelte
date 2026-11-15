@@ -9,9 +9,10 @@
     RemotesSettingsState,
   } from "../../controllers/remotes-settings.js";
   let {
+    showReviews = true,
     state: snapshot,
     actions: commands,
-  }: { state: RemotesSettingsState; actions: RemotesSettingsActions } = $props();
+  }: { state: RemotesSettingsState; actions: RemotesSettingsActions; showReviews?: boolean } = $props();
   const id = $props.id();
   let busy = $state(false);
   const backup = $derived(snapshot.targets.find((target) => target.target === "backup"));
@@ -37,6 +38,7 @@
   </div>
   {#each snapshot.targets as target (target.target)}<RemoteConnectionSettings
       {target}
+      showReview={showReviews}
       state={snapshot}
       actions={commands}
     />{/each}

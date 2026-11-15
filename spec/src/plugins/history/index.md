@@ -85,6 +85,7 @@ chrome for host review compositions without depending on a desktop source path.
 | LN-HIST-018 | A backup service MAY expose explicit persisted selection separately from observation. When selected, observer start/stop and plugin teardown MUST NOT disable native capture. Settings MUST use the explicit selection action and reconcile saved state after failure without replay. Existing hosts without that extension MUST retain their prior behavior.                                                                                          |
 | LN-HIST-019 | Repository feedback MUST use transient workspace notices. Healthy and recovered observations MUST dismiss only transient notices and MUST NOT clear or write persisted notification history.                                                                                                                                                                                                                                                           |
 | LN-HIST-020 | Remotes and credentials MUST first be reviewed in shared production components mounted only by memory-backed Storybook fixtures. The preview MUST distinguish managed backup and admitted original JJ targets, explicit save/test/fetch/reviewed push, host-specific credential custody, opt-in backup synchronization and retained unknown push identities. It MUST NOT activate host transports, persist secrets or change existing plugin behavior. |
+| LN-HIST-021 | Hosts supplying native remotes MUST use one App-owned controller for settings, log actions and footer status. Push review MUST remain available with the footer hidden. Renderer synchronization MUST be disabled when native remotes are supplied; independent storage/adoption settings MUST remain available without forge accounts. Host admission, credential custody and automatic transfers remain native-owned.                                |
 | LN-HIST-001 | The repo MUST ship `@lapis-notes/history` at `packages/history` as an independently versioned first-party external plugin. An application profile MAY enable it by default. It MUST NOT reuse AI conversation-history view types or commands.                                                                                                                                                                                                          |
 | LN-HIST-002 | History MUST capture vault create, modify, rename, delete, and restore events into `AppDatabase` file-history tables only. It MUST NOT write snapshots into the vault, `.obsidian/`, or `.lapis/`.                                                                                                                                                                                                                                                     |
 | LN-HIST-003 | Tracking MUST skip internal `.lapis` paths, glob excludes, binaries, oversized files, and read failures. Defaults MUST be 256 KiB, 50 revisions, a 10s modify merge window, and the documented exclude globs. Empty include-glob and extension allowlists MUST track remaining UTF-8 text.                                                                                                                                                             |
@@ -243,9 +244,11 @@ MUST disable that action until sign-in restarts. The host port owns clipboard
 and browser effects; catalog fixtures record that handoff in memory only.
 
 The [preview inventory](../../../../docs/repository-remotes-preview.md) defines
-the first UI review slice under LN-HIST-020. Shared settings, history actions,
-credential dialogs and push review remain unregistered in runtime plugin
-composition. The only adapters are catalog-owned, memory-backed fixtures.
+the first UI review slice under LN-HIST-020. That slice kept shared settings,
+history actions, credentials and push review unregistered in runtime plugin
+composition. The user's completed UI review authorizes capability-gated adoption
+under LN-HIST-021. Catalog adapters remain memory-backed fixtures; they never
+qualify real host custody or transport.
 Credential submission clears the transient token field; inventories and activity
 contain identities only. Saving never performs a test, fetch or push.
 
@@ -289,3 +292,22 @@ credential storage; Cancel remains available when no push is running.
 Registry qualification for optional-state projection consumes API `^0.6.2` from
 npm. The temporary built API archive is retired after publication; hosted
 multiple-head recovery stories retain their exact first-click assertions.
+
+## Native remote presentation adoption
+
+When a host supplies `services.remotes`, the enabled Repository History plugin
+owns one native observation controller and one push-review host. Retained reviews
+MUST NOT open automatically during shell startup. An explicit review action
+selects its target; native settings, JJ Log, Op Log and the working-copy header
+share those actions. Footer hiding or settings closure MUST NOT dispose that
+controller or prevent review. Plugin teardown fences late replies and disposes
+its App-document portal without stopping already accepted native work.
+
+Both log headers show fetch/push only for their configured source. The existing
+working-copy details and split Git footer select the working-copy source, retain
+saved-local status and native diff statistics, and use observed incoming/outgoing
+counts. Missing connections open the matching settings. Native remote settings
+remain separate from storage, adoption and restore controls; unavailable forge
+accounts MUST NOT hide independent controls. Hosts without native remotes retain
+legacy compatibility. Providing native remotes disables renderer RepositorySync;
+only the executing host schedules explicitly opted-in backup synchronization.

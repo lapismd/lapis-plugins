@@ -4,6 +4,8 @@
     AppSettingsSection,
     type WorkspaceSettingsPageProps,
   } from "@lapismd/design-core/workspace/settings";
+  import { REMOTES_SETTINGS } from "../repository-remotes.svelte.js";
+  import NativeRemotesSettings from "../remotes/NativeRemotesSettings.svelte";
   import { BACKUP_SETTINGS } from "./backup-settings.js";
   import BackupSettingsField from "./BackupSettingsField.svelte";
   let { controller, app, section }: WorkspaceSettingsPageProps = $props();
@@ -11,9 +13,10 @@
   const backup = $derived(
     section.fields?.find((field) => field.id === BACKUP_SETTINGS),
   );
+  const remotes = $derived(section.fields?.find(field => field.id === REMOTES_SETTINGS));
   const general = $derived({
     ...section,
-    fields: section.fields?.filter((field) => field.id !== BACKUP_SETTINGS),
+    fields: section.fields?.filter((field) => field.id !== BACKUP_SETTINGS && field.id !== REMOTES_SETTINGS),
   });
 </script>
 
@@ -21,6 +24,7 @@
   <AppSettingsRoot {controller} {app}>
     <AppSettingsSection section={general} />
   </AppSettingsRoot>
+  {#if remotes?.type === "custom"}<section data-setting-id={REMOTES_SETTINGS}><NativeRemotesSettings field={remotes} /></section>{/if}
   {#if backup?.type === "custom"}
     <section
       class="repository-backup-section"

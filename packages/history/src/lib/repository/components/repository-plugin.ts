@@ -25,6 +25,7 @@ import { registerFileHistoryView } from "./file-history-view.js";
 import { BlameController } from "../controllers/blame-controller.js";
 import { BlameView } from "./blame/blame-view.js";
 import { registerBlameEditorActions } from "./blame/editor-actions.js";
+import { RepositoryRemotes } from "./repository-remotes.svelte.js";
 import { RepositoryStatus } from "./repository-status.js";
 import { RepositoryBackup } from "./repository-backup.js";
 import { registerRepositoryTools } from "./repository-tools.js";
@@ -38,6 +39,7 @@ type RepositoryController =
 
 export class RepositoryPlugin extends Plugin {
   backup?: RepositoryBackup;
+  remotes?: RepositoryRemotes;
   get restoreService() {
     return this.#services?.restore;
   }
@@ -133,6 +135,10 @@ export class RepositoryPlugin extends Plugin {
   async onload(): Promise<void> {
     this.#closing = undefined;
     this.#services = ownedRepository(this.app);
+    if (this.#services.remotes) {
+      this.remotes = new RepositoryRemotes(this, this.#services.remotes);
+      await this.remotes.start();
+    }
     if (this.#services.backup) {
       this.backup = new RepositoryBackup(this, this.#services);
       await this.backup.start();
@@ -266,6 +272,8 @@ export class RepositoryPlugin extends Plugin {
       await this.#closeTools?.();
       this.#closeTools = undefined;
       await this.#status?.close();
+      await this.remotes?.close();
+      this.remotes = undefined;
       await this.backup?.close();
       this.backup = undefined;
       this.#status = undefined;

@@ -240,5 +240,8 @@
   },
   "stories/plugins/history/remotes/Remotes.stories.ts": {
     "kind": "application"
+  },
+  "stories/plugins/history/remotes/NativeRemotes.stories.ts": {
+    "kind": "application"
   }
 }

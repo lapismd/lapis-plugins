@@ -17,28 +17,25 @@ export class RepositoryBackup {
   get enabled() {
     return this.#enabled;
   }
-  constructor(
-    readonly plugin: RepositoryPlugin,
-    services: RepositoryServices,
-  ) {
+  constructor(readonly plugin: RepositoryPlugin, services: RepositoryServices) {
     this.controller = new BackupController(
       services.backup!,
-      plugin.feedback("Vault backup"),
+      plugin.feedback("Vault backup")
     );
-    if (services.sync && services.remote)
+    if (!services.remotes && services.sync && services.remote)
       this.sync = new RepositorySync(plugin, services);
   }
   async start() {
     this.#progress = new BackgroundWork(
       this.plugin.app.notifications,
-      this.plugin.id,
+      this.plugin.id
     ).follow("Saving vault history", {
       subscribe: (listener) =>
         this.controller.subscribe((state) =>
           listener({
             busy: state.phase === "saving",
             phase: state.phase,
-          }),
+          })
         ),
     });
     const enabled = automaticBackup((await this.plugin.loadData()) ?? {});
@@ -58,7 +55,7 @@ export class RepositoryBackup {
         // A lost acknowledgement may follow a committed native selection.
         // Project the reconciled setting without replaying the mutation.
         await this.reconcile(
-          automaticBackup((await this.plugin.loadData()) ?? {}),
+          automaticBackup((await this.plugin.loadData()) ?? {})
         );
       }
       return;

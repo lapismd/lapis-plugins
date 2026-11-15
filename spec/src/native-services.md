@@ -368,3 +368,10 @@ The History source/review guard patch changes no native custody, generated
 command or transport authority. Native source identity is retained in renderer
 parsing; session dismissal and withdrawn push capability remain presentation
 rules. Production adoption and actual-host acceptance stay separate.
+
+The approved LN-HIST-021 adoption binds the optional native remotes service to
+one App-owned plugin controller. Settings, log actions and working-copy status
+share its explicit target commands and secret-free observations. Push review
+lives outside footer/settings lifetime; late replies are fenced on plugin close.
+Native custody, scheduling, authentication and transfer admission remain in the
+executing host. Hosts without this port retain legacy synchronization.

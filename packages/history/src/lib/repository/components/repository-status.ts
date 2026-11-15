@@ -31,7 +31,7 @@ export class RepositoryStatus {
   #settings?: ReturnType<typeof createBackupSettings>;
   constructor(
     private readonly plugin: RepositoryPlugin,
-    private readonly services: RepositoryServices,
+    private readonly services: RepositoryServices
   ) {}
   async start(): Promise<void> {
     this.#data = (await this.plugin.loadData()) ?? {};
@@ -56,7 +56,10 @@ export class RepositoryStatus {
         order: 46,
         navigationGroupId: "core-plugins",
         sourcePluginId: this.plugin.id,
-        page: this.#settings ? RepositorySettingsPage : undefined,
+        page:
+          this.#settings || this.plugin.remotes
+            ? RepositorySettingsPage
+            : undefined,
         fields: [
           ...(this.services.backup
             ? [
@@ -78,6 +81,7 @@ export class RepositoryStatus {
               "Show repository status in the status bar. Hiding it does not stop automatic backups.",
             default: true,
           },
+          ...(this.plugin.remotes ? [this.plugin.remotes.field] : []),
           ...(this.#settings ? [this.#settings.field] : []),
         ],
       },
@@ -126,7 +130,7 @@ export class RepositoryStatus {
                   : {};
               void this.#apply().catch((error) => this.plugin.report(error));
               listener();
-            },
+            }
           );
           return () => this.plugin.app.configuration.offref(ref);
         },
@@ -142,7 +146,7 @@ export class RepositoryStatus {
         await this.#hide();
         return;
       }
-      if (this.plugin.backup) {
+      if (this.plugin.backup && !this.services.remotes) {
         if (this.#remove) return;
         const controller = this.plugin.backup.controller;
         this.#remove = this.plugin.app.statusBar.registerItem({
@@ -173,28 +177,31 @@ export class RepositoryStatus {
       if (this.#controller || !this.services.workingCopy) return;
       const controller = new WorkingCopyController(
         this.services.workingCopy,
-        this.plugin.feedback("Working copy status"),
+        this.plugin.feedback("Working copy status")
       );
       this.#controller = controller;
       const activity = new BackgroundWork(
         this.plugin.app.notifications,
-        this.plugin.id,
+        this.plugin.id
       ).follow("Reading working copy status", {
         subscribe: (listener) =>
           controller.subscribe((state) =>
-            listener({ busy: state.busy, phase: state.status }),
+            listener({ busy: state.busy, phase: state.status })
           ),
       });
       this.#remove = this.plugin.app.statusBar.registerItem({
         id: "repository-history:working-copy",
         sourcePlugin: this.plugin.id,
-        alignment: "left",
+        alignment: this.plugin.remotes ? "center" : "left",
         priority: 15,
         mount: (host) => {
           const component = mount(RepositoryWorkingCopyStatus, {
             target: host,
             props: {
               controller,
+              remotes: this.plugin.remotes,
+              backup: this.plugin.backup?.controller,
+              presentation: this.plugin.remotes ? "split" : "full",
               openRevision: (operation, revision) =>
                 this.plugin
                   .open(operation, revision)

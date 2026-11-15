@@ -34,20 +34,30 @@ export function createBackupSettings(
   plugin: RepositoryPlugin,
   services: RepositoryServices
 ) {
-  if (!services.forges) return;
+  if (
+    !services.forges &&
+    !services.storage &&
+    !services.adoption &&
+    !services.remote
+  )
+    return;
   const sessions = new Set<{ close(): Promise<void> }>();
   const storage = storageSettings(plugin, services.storage);
   const adoption = adoptionSettings(plugin, services.adoption);
   const activity = new BackgroundWork(plugin.app.notifications, plugin.id);
   const forges = services.forges;
   function openPanel() {
-    const controller = new ForgeController(
-      forges,
-      plugin.feedback("Forge accounts", "repository-history:forge-accounts")
-    );
-    const progress = activity.follow("Connecting forge accounts", {
-      subscribe: (listener) => controller.subscribeActivity(listener),
-    });
+    const controller = forges
+      ? new ForgeController(
+          forges,
+          plugin.feedback("Forge accounts", "repository-history:forge-accounts")
+        )
+      : undefined;
+    const progress =
+      controller &&
+      activity.follow("Connecting forge accounts", {
+        subscribe: (listener) => controller.subscribeActivity(listener),
+      });
     const remote = services.remote
       ? new RemoteController(
           services.remote,
@@ -80,14 +90,14 @@ export function createBackupSettings(
         return (closing ??= (async () => {
           remote?.close();
           restore?.close();
-          await controller.close();
+          await controller?.close();
           // Fence replies now; account networking must not hold vault closure.
           // Progress remains owned until the actual native operations drain.
           void Promise.allSettled([
-            controller.drained(),
+            controller?.drained(),
             remote?.drained(),
           ]).then(() => {
-            progress();
+            progress?.();
             remoteProgress?.();
             sessions.delete(panel);
           });

@@ -591,3 +591,9 @@ Local npm-pack, deterministic payload and synthetic signature checks qualify
 package content only. They do not publish version 0.3.1 again or authorize
 substituting local packages in consumers; final delivery uses a new registry
 version through the approved GitHub release workflow.
+
+The LN-HIST-021 native remote composition family is classified as application
+coverage under LP-SPEC-054. It mounts the real enabled RepositoryPlugin in the
+public WorkspaceShell with a memory-only host adapter. Its shared App bootstrap
+keeps unchanged defaults for existing stories; full catalog interaction/axe and
+package qualification remain distinct from either native application's delivery.

@@ -8,11 +8,13 @@
   } from "../../controllers/remotes-settings.js";
   let {
     target,
+    portalTarget,
     busy = false,
     onPush,
     onClose,
   }: {
     target: RemoteTargetSettings;
+    portalTarget?: HTMLElement;
     busy?: boolean;
     onPush(id: string): void;
     onClose(): void;
@@ -27,6 +29,7 @@
   }}
 >
   <Dialog.Content
+    portalProps={portalTarget ? { to: portalTarget } : undefined}
     onEscapeKeydown={(event) => {
       if (busy) event.preventDefault();
     }}
