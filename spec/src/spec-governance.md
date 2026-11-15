@@ -722,3 +722,8 @@ LP-SPEC-036 verifier qualification MUST exercise the pinned GitHub CLI against
 an actual signed index and independently reconstructed source inputs. A passing
 mocked bridge cannot establish CLI compatibility. Hosted promotion and warm
 consumer acceptance remain distinct from successful staging verification.
+
+Remote-action tab-order qualification retains the first three failing browser
+cases, then proves one enabled tab stop per action in both native-remotes log
+headers and legacy backup controls. Full interaction/axe, root package gates and
+consumer acceptance remain required; visual baselines stay pending.

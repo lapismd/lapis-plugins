@@ -23,24 +23,29 @@
     remote?: RepositoryUpstreamBinding;
     compact?: boolean;
   } = $props();
-  let state: SyncState = $state({
+  let syncState: SyncState = $state({
     busy: false,
     phase: "ready",
     enabled: true,
     recovery: false,
   });
   onMount(() => {
-    const stop = remote ? undefined : controller?.subscribe((next) => (state = next));
+    const stop = remote ? undefined : controller?.subscribe((next) => (syncState = next));
     if (!remote) void controller?.run("status");
     return stop;
   });
+  let activeTooltip: string | undefined = $state(undefined);
+  function tooltipChanged(action: string, open: boolean) {
+    if (open) activeTooltip = action;
+    else if (activeTooltip === action) activeTooltip = undefined;
+  }
   const actions = [
     { action: "fetch", label: "Fetch from upstream", Icon: CircleArrowDown },
     { action: "pull", label: "Pull from upstream", Icon: ArrowDown },
     { action: "push", label: "Push to upstream", Icon: CircleArrowUp },
   ] as const;
-  const counts = $derived(remote ? remote.target.observation : state.upstream?.divergence);
-  const busy = $derived(remote ? Boolean(remote.target.busy) : state.busy);
+  const counts = $derived(remote ? remote.target.observation : syncState.upstream?.divergence);
+  const busy = $derived(remote ? Boolean(remote.target.busy) : syncState.busy);
   const targetLabel = $derived(
     remote ? remoteTargetLabel(remote.target.target).toLowerCase() : "upstream",
   );
@@ -58,9 +63,9 @@
       unavailable ||
       !controller ||
       busy ||
-      !state.upstream?.configuration ||
-      (action !== "fetch" && (state.recovery || Boolean(state.proposal?.conflicts.length))) ||
-      (action === "push" && !state.upstream?.configuration?.canPush)
+      !syncState.upstream?.configuration ||
+      (action !== "fetch" && (syncState.recovery || Boolean(syncState.proposal?.conflicts.length))) ||
+      (action === "push" && !syncState.upstream?.configuration?.canPush)
     );
   }
   function run(action: "fetch" | "pull" | "push") {
@@ -90,11 +95,17 @@
         {@const label = remote
           ? `${action.action === "fetch" ? "Fetch" : action.action === "pull" ? "Pull" : "Review push to"} ${targetLabel}`
           : action.label}
-        <Tooltip.Root>
+        <Tooltip.Root
+          open={activeTooltip === action.action}
+          onOpenChange={(open) => tooltipChanged(action.action, open)}
+        >
           <Tooltip.Trigger>
             {#snippet child({ props })}
-              <span {...props} class="action-trigger">
+              <!-- svelte-ignore a11y_no_noninteractive_tabindex (disabled controls retain keyboard access to their explanatory tooltip) -->
+              <span {...props} tabindex={disabled ? 0 : -1} class="action-trigger">
                 <Button
+                  onfocus={() => tooltipChanged(action.action, true)}
+                  onblur={() => tooltipChanged(action.action, false)}
                   aria-describedby={typeof props["aria-describedby"] === "string"
                     ? props["aria-describedby"]
                     : undefined}
