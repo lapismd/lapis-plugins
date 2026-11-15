@@ -143,6 +143,15 @@ recovered mutation result before it can record progress or finalize. The Rust
 transition performs no filesystem or repository I/O; durable receipt storage,
 exclusive mutation ownership and crash qualification remain host-owned gates.
 
+Three-way merge planning is now the next shared pure transition. Both engines
+produce the same automatic outcomes and explicit text, binary, delete/edit,
+same-path-addition and stable-identity divergent-rename conflicts. Complete
+materialization fixtures cover collision-safe keep-both naming and reject
+incomplete decisions, stale content generations, obsolete conflict IDs and
+resolved-text choices for binary content. The transition emits candidate files
+only; guarded application and durable merge publication remain separate host
+and runtime responsibilities.
+
 This intake covers the existing lightweight metadata extractor. Task, custom
 projection and extension processors remain separate migration work. It neither
 loads JavaScript into the Rust service nor qualifies either host's owner cutover.

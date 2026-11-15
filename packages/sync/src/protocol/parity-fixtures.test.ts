@@ -45,8 +45,30 @@ import type {
   ApplyReceipt,
   FileGeneration,
 } from "../runtime/incoming-contracts.js";
+import {
+  base64ToBytes,
+  bytesToBase64,
+  createMergeDraft,
+  deterministicKeepBothPath,
+  materialiseMergeDraft,
+  type MergeDraft,
+  type MergeResolution,
+} from "../runtime/merge.js";
 
 type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
+type EncodedMergeInput = {
+  baseRevisionId: string;
+  leftRevisionId: string;
+  rightRevisionId: string;
+  base: Record<string, string>;
+  left: Record<string, string>;
+  right: Record<string, string>;
+  baseFileIds?: Record<string, string>;
+  leftFileIds?: Record<string, string>;
+  rightFileIds?: Record<string, string>;
+  contentGenerations: Record<string, number>;
+  createdAt: number;
+};
 type FixtureCorpus = {
   schemaVersion: number;
   canonical: Array<{ name: string; input: Json; output: string }>;
@@ -144,6 +166,28 @@ type FixtureCorpus = {
       intent: ApplyIntent;
       current: Record<string, FileGeneration>;
       recoveredReceipt: ApplyReceipt | null;
+    }>;
+  };
+  mergePlanning: {
+    drafts: Record<string, MergeDraft>;
+    plans: Array<{
+      name: string;
+      input: EncodedMergeInput;
+      outputDraft: string;
+    }>;
+    materializations: Array<{
+      name: string;
+      draft: string;
+      resolutions: Record<string, MergeResolution>;
+      currentContentGenerations: Record<string, number>;
+      keepBoth: { alias: string; publicKey: string };
+      output: Record<string, string>;
+    }>;
+    failures: Array<{
+      name: string;
+      draft: string;
+      resolutions: Record<string, MergeResolution>;
+      currentContentGenerations: Record<string, number>;
     }>;
   };
   membershipAuthority: {
@@ -249,6 +293,17 @@ const reconciliationNodes = (input: Record<string, string[]>) =>
         })),
       },
     ]),
+  );
+const decodeMergeFiles = (files: Record<string, string>) =>
+  Object.fromEntries(
+    Object.entries(files).map(([path, value]) => [
+      path,
+      base64ToBytes(value),
+    ]),
+  );
+const encodeMergeFiles = (files: Record<string, Uint8Array>) =>
+  Object.fromEntries(
+    Object.entries(files).map(([path, value]) => [path, bytesToBase64(value)]),
   );
 
 describe("frozen TypeScript/Rust protocol parity fixtures", () => {
@@ -433,6 +488,63 @@ describe("frozen TypeScript/Rust protocol parity fixtures", () => {
           fixture.intent,
           fixture.current,
           fixture.recoveredReceipt,
+        ),
+      ).toThrow();
+    },
+  );
+
+  it.each(fixtures.mergePlanning.plans)("merge plan: $name", (fixture) => {
+    expect(
+      createMergeDraft({
+        ...fixture.input,
+        base: decodeMergeFiles(fixture.input.base),
+        left: decodeMergeFiles(fixture.input.left),
+        right: decodeMergeFiles(fixture.input.right),
+      }),
+    ).toEqual(fixtures.mergePlanning.drafts[fixture.outputDraft]);
+  });
+
+  it.each(fixtures.mergePlanning.materializations)(
+    "merge materialization: $name",
+    (fixture) => {
+      const draft = structuredClone(
+        fixtures.mergePlanning.drafts[fixture.draft],
+      );
+      draft.resolutions = structuredClone(fixture.resolutions);
+      const occupied = new Set(Object.keys(draft.automaticFiles));
+      expect(
+        encodeMergeFiles(
+          materialiseMergeDraft(
+            draft,
+            (path) => {
+              const chosen = deterministicKeepBothPath(
+                path,
+                fixture.keepBoth.alias,
+                fixture.keepBoth.publicKey,
+                occupied,
+              );
+              occupied.add(chosen);
+              return chosen;
+            },
+            fixture.currentContentGenerations,
+          ),
+        ),
+      ).toEqual(fixture.output);
+    },
+  );
+
+  it.each(fixtures.mergePlanning.failures)(
+    "merge failure: $name",
+    (fixture) => {
+      const draft = structuredClone(
+        fixtures.mergePlanning.drafts[fixture.draft],
+      );
+      draft.resolutions = structuredClone(fixture.resolutions);
+      expect(() =>
+        materialiseMergeDraft(
+          draft,
+          (path) => path,
+          fixture.currentContentGenerations,
         ),
       ).toThrow();
     },

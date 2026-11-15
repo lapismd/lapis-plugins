@@ -49,6 +49,7 @@ export function createMergeDraft(input: {
   leftFileIds?: Record<string, string>;
   rightFileIds?: Record<string, string>;
   contentGenerations: Record<string, number>;
+  createdAt?: number;
 }): MergeDraft {
   const automaticFiles: Record<string, string> = Object.create(null);
   const { conflicts, excludedPaths } = divergentRenameConflicts(input);
@@ -96,23 +97,27 @@ export function createMergeDraft(input: {
     automaticFiles,
     conflicts,
     resolutions: {},
-    createdAt: Date.now(),
+    createdAt: input.createdAt ?? Date.now(),
   };
 }
 
 export function materialiseMergeDraft(
   draft: MergeDraft,
   keepBothName: (path: string) => string,
+  currentContentGenerations?: Record<string, number>,
 ): Record<string, Uint8Array> {
-  const files = Object.fromEntries(
-    Object.entries(draft.automaticFiles).map(([path, value]) => [
-      path,
-      base64ToBytes(value),
-    ]),
+  validateMergeDraft(draft, currentContentGenerations);
+  const files: Record<string, Uint8Array> = Object.assign(
+    Object.create(null),
+    Object.fromEntries(
+      Object.entries(draft.automaticFiles).map(([path, value]) => [
+        path,
+        base64ToBytes(value),
+      ]),
+    ),
   );
   for (const conflict of draft.conflicts) {
-    const resolution = draft.resolutions[conflict.id];
-    if (!resolution) throw new Error(`Resolve ${conflict.path} before merging`);
+    const resolution = draft.resolutions[conflict.id]!;
     if (resolution.choice === "delete") continue;
     if (resolution.choice === "keep-both") {
       if (conflict.left) {
@@ -143,6 +148,39 @@ export function materialiseMergeDraft(
     }
   }
   return files;
+}
+
+function validateMergeDraft(
+  draft: MergeDraft,
+  currentContentGenerations?: Record<string, number>,
+): void {
+  if (currentContentGenerations) {
+    const expectedPaths = Object.keys(draft.contentGenerations);
+    if (
+      Object.keys(currentContentGenerations).length !== expectedPaths.length ||
+      expectedPaths.some(
+        (path) =>
+          !Object.hasOwn(currentContentGenerations, path) ||
+          currentContentGenerations[path] !== draft.contentGenerations[path],
+      )
+    )
+      throw new Error("Merge decisions are stale for the current vault");
+  }
+  const conflictIds = new Set<string>();
+  for (const conflict of draft.conflicts) {
+    if (conflictIds.has(conflict.id))
+      throw new Error("Merge draft contains duplicate conflict IDs");
+    conflictIds.add(conflict.id);
+    if (!Object.hasOwn(draft.resolutions, conflict.id))
+      throw new Error(`Resolve ${conflict.path} before merging`);
+    if (
+      conflict.binary &&
+      draft.resolutions[conflict.id]?.choice === "resolved"
+    )
+      throw new Error("Binary conflicts cannot use resolved text");
+  }
+  if (Object.keys(draft.resolutions).some((id) => !conflictIds.has(id)))
+    throw new Error("Merge draft contains a stale conflict decision");
 }
 
 function divergentRenameConflicts(input: {

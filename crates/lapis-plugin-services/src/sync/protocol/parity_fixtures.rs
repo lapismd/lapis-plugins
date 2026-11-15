@@ -1,13 +1,57 @@
 use super::*;
 use crate::sync::runtime::{
     AuthenticatedHistoryGraph, GuardedApplyIntent, GuardedApplyReceipt, GuardedFileGeneration,
-    HistoryMembership, MembershipAuthorizationRecord, PublicationReceipt,
-    authorize_membership_record, plan_apply_recovery_step, plan_reconciliation_graph,
-    publication_attempt_outcome, validate_authenticated_history_graph, validate_membership,
+    HistoryMembership, MembershipAuthorizationRecord, MergeDraftInput, PublicationReceipt,
+    RuntimeMergeDraft, RuntimeMergeResolution, authorize_membership_record, create_merge_draft,
+    deterministic_keep_both_path, materialise_merge_draft, plan_apply_recovery_step,
+    plan_reconciliation_graph, publication_attempt_outcome, validate_authenticated_history_graph,
+    validate_membership,
 };
+use base64::{Engine as _, engine::general_purpose::STANDARD as BASE64};
+use serde::Deserialize;
 use serde_json::Value;
 use std::cmp::Ordering;
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap, HashSet};
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct EncodedMergeInput {
+    base_revision_id: String,
+    left_revision_id: String,
+    right_revision_id: String,
+    base: HashMap<String, String>,
+    left: HashMap<String, String>,
+    right: HashMap<String, String>,
+    base_file_ids: Option<HashMap<String, String>>,
+    left_file_ids: Option<HashMap<String, String>>,
+    right_file_ids: Option<HashMap<String, String>>,
+    content_generations: HashMap<String, u64>,
+    created_at: u64,
+}
+
+fn decoded_merge_files(input: HashMap<String, String>) -> HashMap<String, Vec<u8>> {
+    input
+        .into_iter()
+        .map(|(path, value)| (path, BASE64.decode(value).unwrap()))
+        .collect()
+}
+
+fn merge_input(value: &Value) -> MergeDraftInput {
+    let input: EncodedMergeInput = serde_json::from_value(value.clone()).unwrap();
+    MergeDraftInput {
+        base_revision_id: input.base_revision_id,
+        left_revision_id: input.left_revision_id,
+        right_revision_id: input.right_revision_id,
+        base: decoded_merge_files(input.base),
+        left: decoded_merge_files(input.left),
+        right: decoded_merge_files(input.right),
+        base_file_ids: input.base_file_ids,
+        left_file_ids: input.left_file_ids,
+        right_file_ids: input.right_file_ids,
+        content_generations: input.content_generations,
+        created_at: input.created_at,
+    }
+}
 
 fn fixtures() -> Value {
     serde_json::from_str(include_str!(
@@ -415,6 +459,71 @@ fn apply_recovery_matches_complete_outputs_and_failures() {
             serde_json::from_value(fixture["recoveredReceipt"].clone()).unwrap();
         assert!(
             plan_apply_recovery_step(&intent, &current, recovered.as_ref()).is_err(),
+            "{}",
+            fixture["name"]
+        );
+    }
+}
+
+#[test]
+fn merge_planning_matches_complete_outputs_and_failures() {
+    let fixtures = fixtures();
+    let section = &fixtures["mergePlanning"];
+    let drafts = section["drafts"].as_object().unwrap();
+    for fixture in section["plans"].as_array().unwrap() {
+        let actual = create_merge_draft(&merge_input(&fixture["input"]));
+        let expected = &drafts[fixture["outputDraft"].as_str().unwrap()];
+        assert_eq!(
+            serde_json::to_value(actual).unwrap(),
+            *expected,
+            "{}",
+            fixture["name"]
+        );
+    }
+    for fixture in section["materializations"].as_array().unwrap() {
+        let mut draft: RuntimeMergeDraft =
+            serde_json::from_value(drafts[fixture["draft"].as_str().unwrap()].clone()).unwrap();
+        draft.resolutions = serde_json::from_value::<HashMap<String, RuntimeMergeResolution>>(
+            fixture["resolutions"].clone(),
+        )
+        .unwrap();
+        let current: HashMap<String, u64> =
+            serde_json::from_value(fixture["currentContentGenerations"].clone()).unwrap();
+        let alias = fixture["keepBoth"]["alias"].as_str().unwrap();
+        let public_key = fixture["keepBoth"]["publicKey"].as_str().unwrap();
+        let mut occupied: HashSet<String> = draft.automatic_files.keys().cloned().collect();
+        let actual = materialise_merge_draft(
+            &draft,
+            |path| {
+                let chosen = deterministic_keep_both_path(path, alias, public_key, &occupied);
+                occupied.insert(chosen.clone());
+                chosen
+            },
+            Some(&current),
+        )
+        .unwrap();
+        let encoded: BTreeMap<String, String> = actual
+            .into_iter()
+            .map(|(path, bytes)| (path, BASE64.encode(bytes)))
+            .collect();
+        assert_eq!(
+            serde_json::to_value(encoded).unwrap(),
+            fixture["output"],
+            "{}",
+            fixture["name"]
+        );
+    }
+    for fixture in section["failures"].as_array().unwrap() {
+        let mut draft: RuntimeMergeDraft =
+            serde_json::from_value(drafts[fixture["draft"].as_str().unwrap()].clone()).unwrap();
+        draft.resolutions = serde_json::from_value::<HashMap<String, RuntimeMergeResolution>>(
+            fixture["resolutions"].clone(),
+        )
+        .unwrap();
+        let current: HashMap<String, u64> =
+            serde_json::from_value(fixture["currentContentGenerations"].clone()).unwrap();
+        assert!(
+            materialise_merge_draft(&draft, ToOwned::to_owned, Some(&current)).is_err(),
             "{}",
             fixture["name"]
         );

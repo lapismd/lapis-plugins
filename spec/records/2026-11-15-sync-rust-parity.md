@@ -79,16 +79,25 @@ paths/operation IDs. The prototype case exposed an inherited `constructor`
 lookup in the TypeScript expected-state builder; own-property admission repaired
 that exact failure without weakening the retained guarded-apply assertions.
 
+Merge planning and materialization now use the same complete drafts in both
+engines. Automatic outcomes retain the changed side or identical edit; explicit
+conflicts cover text, binary, delete/edit, same-path addition and divergent
+renames joined by stable file identity. Keep-both produces the retained
+collision-safe device/key suffix. Materialization rejects missing decisions,
+changed content generations, obsolete conflict IDs and resolved text for binary
+content before returning candidate files. No filesystem mutation or merge
+publication is hidden inside this pure transition.
+
 ## Focused results
 
 | Command | Result |
 | --- | --- |
 | Baseline Rust Sync unit run | 67 passed, 0 failed |
-| Focused TypeScript parity fixture | 112 passed, 0 failed |
-| Focused Rust parity fixture families | 12 passed, 0 failed |
+| Focused TypeScript parity fixture | 120 passed, 0 failed |
+| Focused Rust parity fixture families | 13 passed, 0 failed |
 | Rust protocol family after signature/envelope work | 51 passed, 0 failed |
-| Rust Sync family after retry/apply-recovery parity | 86 passed, 0 failed |
-| Full TypeScript Sync unit run after retry/apply recovery | 19 files, 317 passed, 0 failed |
+| Rust Sync family after merge parity | 87 passed, 0 failed |
+| Full TypeScript Sync unit run after merge parity | 19 files, 325 passed, 0 failed |
 | TypeScript/Svelte checks, package build and publint | Passed |
 | Rust fmt, clippy and build | Passed |
 | Root/package audit | Passed; 2/1 governed low findings ignored |
@@ -101,8 +110,8 @@ empty-string behavior were also corrected to the retained TypeScript outputs.
 
 ## Remaining Stage 2 gates
 
-This slice does not yet qualify rename/delete/binary/text merge planning,
-host-persisted idempotent receipts, interrupted native apply or one complete fixture history. Wider package,
+This slice does not yet qualify host-persisted idempotent receipts, interrupted
+native apply or one complete fixture history. Wider package,
 clippy/build/audit/spec gates and hosted CI are recorded only after those
 runtime targets close. No Tauri, server, storage, release, publication or
 visual claim follows from this receipt.

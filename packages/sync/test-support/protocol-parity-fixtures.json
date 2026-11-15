@@ -391,6 +391,145 @@
       }
     ]
   },
+  "mergePlanning": {
+    "drafts": {
+      "automatic": {
+        "schemaVersion": 1,
+        "baseRevisionId": "A",
+        "leftRevisionId": "B",
+        "rightRevisionId": "C",
+        "contentGenerations": { "a.md": 4, "same.md": 2, "deleted.md": 1 },
+        "automaticFiles": { "a.md": "bGVmdA==", "same.md": "c2FtZQ==" },
+        "conflicts": [],
+        "resolutions": {},
+        "createdAt": 100
+      },
+      "conflicts": {
+        "schemaVersion": 1,
+        "baseRevisionId": "A",
+        "leftRevisionId": "B",
+        "rightRevisionId": "C",
+        "contentGenerations": { "a.md": 2, "delete.md": 2, "bin": 2, "added.md": 1 },
+        "automaticFiles": {},
+        "conflicts": [
+          { "id": "fecccc97532467ad:text-conflict", "path": "a.md", "kind": "text-conflict", "binary": false, "base": "YmFzZQ==", "left": "bGVmdA==", "right": "cmlnaHQ=" },
+          { "id": "30a02e02e1d40a44:same-path-addition", "path": "added.md", "kind": "same-path-addition", "binary": false, "base": null, "left": "bGVmdCBhZGQ=", "right": "cmlnaHQgYWRk" },
+          { "id": "51a1f05af85e342e:binary-change", "path": "bin", "kind": "binary-change", "binary": true, "base": "AAE=", "left": "AAI=", "right": "AAM=" },
+          { "id": "de034e1dc74741c7:delete-edit", "path": "delete.md", "kind": "delete-edit", "binary": false, "base": "YmFzZQ==", "left": "ZWRpdGVk", "right": null }
+        ],
+        "resolutions": {},
+        "createdAt": 101
+      },
+      "rename": {
+        "schemaVersion": 1,
+        "baseRevisionId": "A",
+        "leftRevisionId": "B",
+        "rightRevisionId": "C",
+        "contentGenerations": { "notes/original.md": 1 },
+        "automaticFiles": {},
+        "conflicts": [
+          { "id": "77814a11862385d4:divergent-rename", "path": "notes/original.md", "kind": "divergent-rename", "binary": false, "basePath": "notes/original.md", "leftPath": "notes/local-name.md", "rightPath": "notes/remote-name.md", "base": "YmFzZQ==", "left": "bG9jYWwgZWRpdA==", "right": "cmVtb3RlIGVkaXQ=" }
+        ],
+        "resolutions": {},
+        "createdAt": 102
+      },
+      "keepBoth": {
+        "schemaVersion": 1,
+        "baseRevisionId": "A",
+        "leftRevisionId": "B",
+        "rightRevisionId": "C",
+        "contentGenerations": { "note.md": 7 },
+        "automaticFiles": {},
+        "conflicts": [
+          { "id": "1188c3be78790ea6:same-path-addition", "path": "note.md", "kind": "same-path-addition", "binary": false, "base": null, "left": "bGVmdA==", "right": "cmlnaHQ=" }
+        ],
+        "resolutions": {},
+        "createdAt": 103
+      }
+    },
+    "plans": [
+      {
+        "name": "unchanged side and identical edit resolve automatically",
+        "input": {
+          "baseRevisionId": "A", "leftRevisionId": "B", "rightRevisionId": "C",
+          "base": { "a.md": "YmFzZQ==", "same.md": "YmFzZQ==", "deleted.md": "Z29uZQ==" },
+          "left": { "a.md": "bGVmdA==", "same.md": "c2FtZQ==" },
+          "right": { "a.md": "YmFzZQ==", "same.md": "c2FtZQ==" },
+          "contentGenerations": { "a.md": 4, "same.md": 2, "deleted.md": 1 },
+          "createdAt": 100
+        },
+        "outputDraft": "automatic"
+      },
+      {
+        "name": "text binary delete-edit and same-path addition conflicts",
+        "input": {
+          "baseRevisionId": "A", "leftRevisionId": "B", "rightRevisionId": "C",
+          "base": { "a.md": "YmFzZQ==", "delete.md": "YmFzZQ==", "bin": "AAE=" },
+          "left": { "a.md": "bGVmdA==", "delete.md": "ZWRpdGVk", "bin": "AAI=", "added.md": "bGVmdCBhZGQ=" },
+          "right": { "a.md": "cmlnaHQ=", "bin": "AAM=", "added.md": "cmlnaHQgYWRk" },
+          "contentGenerations": { "a.md": 2, "delete.md": 2, "bin": 2, "added.md": 1 },
+          "createdAt": 101
+        },
+        "outputDraft": "conflicts"
+      },
+      {
+        "name": "divergent rename uses stable file identity",
+        "input": {
+          "baseRevisionId": "A", "leftRevisionId": "B", "rightRevisionId": "C",
+          "base": { "notes/original.md": "YmFzZQ==" },
+          "left": { "notes/local-name.md": "bG9jYWwgZWRpdA==" },
+          "right": { "notes/remote-name.md": "cmVtb3RlIGVkaXQ=" },
+          "baseFileIds": { "notes/original.md": "stable-file" },
+          "leftFileIds": { "notes/local-name.md": "stable-file" },
+          "rightFileIds": { "notes/remote-name.md": "stable-file" },
+          "contentGenerations": { "notes/original.md": 1 },
+          "createdAt": 102
+        },
+        "outputDraft": "rename"
+      }
+    ],
+    "materializations": [
+      {
+        "name": "keep-both materializes deterministic collision-safe path",
+        "draft": "keepBoth",
+        "resolutions": { "1188c3be78790ea6:same-path-addition": { "choice": "keep-both" } },
+        "currentContentGenerations": { "note.md": 7 },
+        "keepBoth": { "alias": "Phone", "publicKey": "abcdef123456" },
+        "output": { "note.md": "bGVmdA==", "note (Phone-abcdef12).md": "cmlnaHQ=" }
+      }
+    ],
+    "failures": [
+      {
+        "name": "incomplete decision",
+        "draft": "keepBoth",
+        "resolutions": {},
+        "currentContentGenerations": { "note.md": 7 }
+      },
+      {
+        "name": "stale content generation",
+        "draft": "keepBoth",
+        "resolutions": { "1188c3be78790ea6:same-path-addition": { "choice": "left" } },
+        "currentContentGenerations": { "note.md": 8 }
+      },
+      {
+        "name": "stale conflict decision",
+        "draft": "automatic",
+        "resolutions": { "obsolete-conflict": { "choice": "left" } },
+        "currentContentGenerations": { "a.md": 4, "same.md": 2, "deleted.md": 1 }
+      },
+      {
+        "name": "binary conflict rejects resolved text",
+        "draft": "conflicts",
+        "resolutions": {
+          "fecccc97532467ad:text-conflict": { "choice": "left" },
+          "30a02e02e1d40a44:same-path-addition": { "choice": "left" },
+          "51a1f05af85e342e:binary-change": { "choice": "resolved", "content": "not binary" },
+          "de034e1dc74741c7:delete-edit": { "choice": "left" }
+        },
+        "currentContentGenerations": { "a.md": 2, "delete.md": 2, "bin": 2, "added.md": 1 }
+      }
+    ]
+  },
   "membershipAuthority": {
     "membership": {
       "schemaVersion": 2,
