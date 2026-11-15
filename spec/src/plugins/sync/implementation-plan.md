@@ -1,6 +1,6 @@
 # Lapis Sync future implementation plan
 
-**Planned, 14 November 2026; implementation and release deferred.** Read the
+**Planned 14 November 2026; implementation authorized 15 November 2026.** Read the
 [context and provenance](implementation-context.md) and [current Sync contract](index.md)
 before resuming. This is the new Rust/Tauri delivery direction. The original
 Deno records remain historical evidence, not a schedule to resume verbatim.
@@ -72,11 +72,16 @@ adds no product requirement completion or runtime contract implementation.
 
 ## Ordered implementation stages
 
-All stages below are pending. Each starts with the exact failing or unavailable
+Stage 1 is complete and Stage 2 is in progress; later stages remain pending.
+Each starts with the exact failing or unavailable
 boundary and ends with its recorded regression, manual journey, source revision
 and consumer evidence. Broader checks follow the workspace impact ladder.
 
 ### 1. Rebaseline retained TypeScript source and UI
+
+Status: **complete in the isolated implementation stack.** The exact before and
+after counts, native qualification and unqualified Docker/visual boundaries are
+recorded in the 15 November source-rebaseline receipt.
 
 Owner: Plugins; prerequisite: retained source/dependency and license inventory.
 Use the existing engine export and real App-backed UI. Run each retained file
@@ -90,6 +95,10 @@ history/compare/merge and unavailable operations without fabricated success.
 This qualifies a source oracle; native services are still pending.
 
 ### 2. Implement Rust engine parity
+
+Status: **in progress.** The shared protocol corpus, signed-event verification
+and attestation readers are implemented; runtime cutoff, ingestion, retry,
+apply, merge and complete-history targets remain open in the Stage 2 receipt.
 
 Owner: Plugins native services; prerequisite: stage 1 oracle. Add pure codecs,
 signature/envelope checks, crypto compatibility, membership/cutoff authority,

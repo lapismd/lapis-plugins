@@ -67,7 +67,13 @@ mod tests {
     use super::*;
     use std::cmp::Ordering;
 
-    fn make_event(kind: u32, pubkey: &str, d_tag: &str, created_at: u64, id: &str) -> SignedNostrEvent {
+    fn make_event(
+        kind: u32,
+        pubkey: &str,
+        d_tag: &str,
+        created_at: u64,
+        id: &str,
+    ) -> SignedNostrEvent {
         SignedNostrEvent {
             id: id.to_string(),
             pubkey: pubkey.to_string(),
@@ -113,10 +119,7 @@ mod tests {
     fn test_tie_breaks_on_id() {
         let a = make_event(30078, "pk", "d", 1000, "a".repeat(64).as_str());
         let b = make_event(30078, "pk", "d", 1000, "b".repeat(64).as_str());
-        assert_eq!(
-            compare_replaceable_events(&a, &b).unwrap(),
-            Ordering::Less
-        );
+        assert_eq!(compare_replaceable_events(&a, &b).unwrap(), Ordering::Less);
     }
 
     #[test]
@@ -133,9 +136,6 @@ mod tests {
     fn test_equal_events() {
         let a = make_event(30078, "pk", "d", 1000, "id");
         let b = make_event(30078, "pk", "d", 1000, "id");
-        assert_eq!(
-            compare_replaceable_events(&a, &b).unwrap(),
-            Ordering::Equal
-        );
+        assert_eq!(compare_replaceable_events(&a, &b).unwrap(), Ordering::Equal);
     }
 }

@@ -73,10 +73,7 @@ mod tests {
 
     #[test]
     fn test_vault_scope_tag() {
-        assert_eq!(
-            vault_scope_tag("my-vault"),
-            "lapis-sync-v1:my-vault"
-        );
+        assert_eq!(vault_scope_tag("my-vault"), "lapis-sync-v1:my-vault");
     }
 
     #[test]

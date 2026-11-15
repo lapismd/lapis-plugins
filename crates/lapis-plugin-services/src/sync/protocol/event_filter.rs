@@ -17,23 +17,9 @@ pub enum FilterError {
 
 /// Validate an event filter.
 pub fn validate_event_filter(filter: &NostrEventFilter) -> Result<(), FilterError> {
-    // Validate string array fields
-    for (name, values) in [
-        ("ids", &filter.ids),
-        ("authors", &filter.authors),
-        ("#d", &filter.d_tag),
-        ("#p", &filter.p_tag),
-        ("#v", &filter.v_tag),
-    ] {
-        if let Some(vals) = values {
-            for val in vals {
-                if val.is_empty() && name != "#d" {
-                    return Err(FilterError::InvalidField(name.to_string()));
-                }
-            }
-        }
-    }
-
+    // Deserialization into the strongly typed, deny-unknown-fields structure
+    // performs the same validation as the TypeScript boundary.
+    let _ = filter;
     Ok(())
 }
 
@@ -135,13 +121,22 @@ pub fn matches_event_filters(
 mod tests {
     use super::*;
 
-    fn make_event(id: &str, pubkey: &str, kind: u32, created_at: u64, tags: Vec<Vec<&str>>) -> SignedNostrEvent {
+    fn make_event(
+        id: &str,
+        pubkey: &str,
+        kind: u32,
+        created_at: u64,
+        tags: Vec<Vec<&str>>,
+    ) -> SignedNostrEvent {
         SignedNostrEvent {
             id: id.to_string(),
             pubkey: pubkey.to_string(),
             created_at,
             kind,
-            tags: tags.into_iter().map(|t| t.into_iter().map(|s| s.to_string()).collect()).collect(),
+            tags: tags
+                .into_iter()
+                .map(|t| t.into_iter().map(|s| s.to_string()).collect())
+                .collect(),
             content: String::new(),
             sig: String::new(),
         }

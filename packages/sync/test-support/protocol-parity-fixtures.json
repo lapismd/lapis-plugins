@@ -1,0 +1,188 @@
+{
+  "schemaVersion": 1,
+  "canonical": [
+    {
+      "name": "sorts nested object keys",
+      "input": { "z": { "b": 2, "a": 1 }, "a": [3, 2, 1] },
+      "output": "{\"a\":[3,2,1],\"z\":{\"a\":1,\"b\":2}}"
+    },
+    {
+      "name": "uses ECMAScript number rendering",
+      "input": [1.0, -0.0, 1e21, 1e-7, 0.000001],
+      "output": "[1,0,1e+21,1e-7,0.000001]"
+    },
+    {
+      "name": "retains prototype-shaped own keys",
+      "input": {
+        "prototype": "value",
+        "__proto__": { "polluted": true },
+        "constructor": "value"
+      },
+      "output": "{\"__proto__\":{\"polluted\":true},\"constructor\":\"value\",\"prototype\":\"value\"}"
+    },
+    {
+      "name": "escapes strings without whitespace",
+      "input": { "line": "one\ntwo", "quote": "say \"hi\"", "unicode": "λ" },
+      "output": "{\"line\":\"one\\ntwo\",\"quote\":\"say \\\"hi\\\"\",\"unicode\":\"λ\"}"
+    }
+  ],
+  "filter": {
+    "event": {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "pubkey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "created_at": 10,
+      "kind": 78,
+      "tags": [
+        ["d", "first"],
+        ["d", "second"],
+        ["p", "device"],
+        ["p", "other"],
+        ["v", "vault"]
+      ],
+      "content": "ciphertext",
+      "sig": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    },
+    "cases": [
+      { "name": "empty filter", "filter": {}, "matches": true },
+      { "name": "exact id", "filter": { "ids": ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"] }, "matches": true },
+      { "name": "empty ids", "filter": { "ids": [] }, "matches": false },
+      { "name": "first d tag only", "filter": { "#d": ["first"] }, "matches": true },
+      { "name": "later d tag is ignored", "filter": { "#d": ["second"] }, "matches": false },
+      { "name": "any p tag", "filter": { "#p": ["other"] }, "matches": true },
+      { "name": "combined constraints", "filter": { "kinds": [78], "#v": ["vault"], "since": 9 }, "matches": true },
+      { "name": "inclusive since", "filter": { "since": 10 }, "matches": true },
+      { "name": "later since", "filter": { "since": 11 }, "matches": false },
+      { "name": "empty string remains data", "filter": { "authors": [""] }, "matches": false }
+    ],
+    "invalid": [
+      { "name": "null", "filter": null },
+      { "name": "array", "filter": [] },
+      { "name": "unknown field", "filter": { "until": 20 } },
+      { "name": "negative since", "filter": { "since": -1 } },
+      { "name": "fractional since", "filter": { "since": 1.5 } },
+      { "name": "non-array ids", "filter": { "ids": "bad" } },
+      { "name": "numeric tag value", "filter": { "#d": [1] } },
+      { "name": "string kind", "filter": { "kinds": ["78"] } },
+      { "name": "negative kind", "filter": { "kinds": [-1] } }
+    ]
+  },
+  "replaceable": {
+    "events": {
+      "older": { "id": "c", "pubkey": "outer", "created_at": 10, "kind": 30078, "tags": [["d", "vault:head:device"]], "content": "ciphertext", "sig": "signature" },
+      "tieHigh": { "id": "b", "pubkey": "outer", "created_at": 11, "kind": 30078, "tags": [["d", "vault:head:device"]], "content": "ciphertext", "sig": "signature" },
+      "tieLow": { "id": "a", "pubkey": "outer", "created_at": 11, "kind": 30078, "tags": [["d", "vault:head:device"]], "content": "ciphertext", "sig": "signature" },
+      "phone": { "id": "d", "pubkey": "outer", "created_at": 11, "kind": 30078, "tags": [["d", "vault:head:phone"]], "content": "ciphertext", "sig": "signature" },
+      "immutable": { "id": "e", "pubkey": "outer", "created_at": 11, "kind": 78, "tags": [["d", "vault:head:device"]], "content": "ciphertext", "sig": "signature" }
+    },
+    "addresses": [
+      { "event": "older", "output": "[30078,\"outer\",\"vault:head:device\"]" },
+      { "event": "phone", "output": "[30078,\"outer\",\"vault:head:phone\"]" }
+    ],
+    "comparisons": [
+      { "left": "tieLow", "right": "tieHigh", "output": -1 },
+      { "left": "tieHigh", "right": "older", "output": -1 },
+      { "left": "older", "right": "tieHigh", "output": 1 }
+    ],
+    "failures": [
+      { "name": "different address", "left": "tieLow", "right": "phone" },
+      { "name": "immutable event", "left": "tieLow", "right": "immutable" }
+    ]
+  },
+  "ancestry": {
+    "nodes": {
+      "a": [],
+      "b": ["a"],
+      "c": ["a"],
+      "d": ["b", "c"],
+      "e": ["d"],
+      "orphan": ["missing"]
+    },
+    "ancestors": [
+      { "start": "e", "output": ["a", "b", "c", "d", "e"] },
+      { "start": "orphan", "output": ["missing", "orphan"] }
+    ],
+    "isAncestor": [
+      { "candidate": "a", "descendant": "e", "output": true },
+      { "candidate": "c", "descendant": "b", "output": false }
+    ],
+    "maximalHeads": [
+      { "heads": ["a", "d", "e"], "output": ["e"] },
+      { "heads": ["b", "c"], "output": ["b", "c"] }
+    ],
+    "nearestCommonAncestor": [
+      { "left": "b", "right": "c", "output": "a" },
+      { "left": "e", "right": "c", "output": "c" },
+      { "left": "a", "right": "missing", "output": null }
+    ]
+  },
+  "revisionReaders": {
+    "successes": [
+      {
+        "name": "current revision",
+        "type": "revision",
+        "input": {
+          "schemaVersion": 2,
+          "vaultId": "fixture-vault",
+          "keyEpoch": 1,
+          "currentEpoch": 2,
+          "membershipGeneration": 3,
+          "parents": [{ "eventId": "parent", "archiveHash": "archive" }],
+          "root": "root",
+          "changes": [{ "fileId": "note", "operation": "modify" }],
+          "message": "checkpoint",
+          "reason": "checkpoint",
+          "client": { "protocolVersion": 3 }
+        },
+        "output": {
+          "schemaVersion": 2,
+          "vaultId": "fixture-vault",
+          "keyEpoch": 1,
+          "currentEpoch": 2,
+          "membershipGeneration": 3,
+          "parents": [{ "eventId": "parent", "archiveHash": "archive" }],
+          "root": "root",
+          "changes": [{ "fileId": "note", "operation": "modify" }],
+          "message": "checkpoint",
+          "reason": "checkpoint",
+          "client": { "protocolVersion": 3 }
+        }
+      },
+      {
+        "name": "legacy revision upgrade",
+        "type": "revision",
+        "input": { "schemaVersion": 1, "vaultId": "fixture-vault", "keyEpoch": 2, "parents": [], "root": "root", "changes": [], "message": "legacy", "reason": "checkpoint", "client": { "protocolVersion": 1 } },
+        "output": { "schemaVersion": 2, "vaultId": "fixture-vault", "keyEpoch": 2, "currentEpoch": 2, "membershipGeneration": 0, "parents": [], "root": "root", "changes": [], "message": "legacy", "reason": "checkpoint", "client": { "protocolVersion": 1 } }
+      },
+      {
+        "name": "legacy head upgrade",
+        "type": "head",
+        "input": { "schemaVersion": 1, "vaultId": "fixture-vault", "revisionEventId": "revision", "revisionArchiveHash": "archive", "root": "root", "keyEpoch": 2 },
+        "output": { "schemaVersion": 2, "vaultId": "fixture-vault", "revisionEventId": "revision", "revisionArchiveHash": "archive", "root": "root", "keyEpoch": 2, "currentEpoch": 2, "membershipGeneration": 0 }
+      }
+    ],
+    "failures": [
+      { "name": "unsupported revision", "type": "revision", "input": { "schemaVersion": 9, "vaultId": "v", "root": "r", "keyEpoch": 1 } },
+      { "name": "missing revision root", "type": "revision", "input": { "schemaVersion": 2, "vaultId": "v", "keyEpoch": 1, "currentEpoch": 1, "membershipGeneration": 0 } },
+      { "name": "zero revision epoch", "type": "revision", "input": { "schemaVersion": 2, "vaultId": "v", "root": "r", "keyEpoch": 0, "currentEpoch": 1, "membershipGeneration": 0 } },
+      { "name": "negative membership generation", "type": "revision", "input": { "schemaVersion": 2, "vaultId": "v", "root": "r", "keyEpoch": 1, "currentEpoch": 1, "membershipGeneration": -1 } },
+      { "name": "missing head revision", "type": "head", "input": { "schemaVersion": 2, "vaultId": "v", "root": "r", "keyEpoch": 1, "currentEpoch": 1, "membershipGeneration": 0 } }
+    ]
+  },
+  "crypto": {
+    "sha256": { "inputUtf8": "hello", "outputHex": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824" },
+    "hkdfSha256": { "ikmUtf8": "input key material", "saltUtf8": "salt", "infoUtf8": "info", "outputHex": "f1840c1f388c8fc7a9137c561360962da050de51672f0d7c9fee3ff15c251fec" },
+    "hmacSha256": { "keyUtf8": "secret key", "inputUtf8": "message", "outputHex": "c431e4857a6b817f9eeaab86b00f78e210808e5a2b2ae1e5bb6befb213608eed" },
+    "xchacha20poly1305": { "keyHex": "4242424242424242424242424242424242424242424242424242424242424242", "nonceHex": "010101010101010101010101010101010101010101010101", "aadHex": "aabbcc", "plaintextUtf8": "secret message", "ciphertextHex": "148d47c405741afd475c837e06bb433c1d3c3cba472c3706632aaf741df1" }
+  },
+  "wire": {
+    "validSignedEvents": ["revision", "head", "secondHead", "membership", "legacyRevision"],
+    "deviceEnvelopes": [
+      { "event": "revision", "kind": 78, "legacy": false, "attestedPubkey": "4d4b6cd1361032ca9bd2aeb9d900aa4d45d9ead80ac9423374c451a7254d0766" },
+      { "event": "head", "kind": 30078, "legacy": false, "attestedPubkey": "4d4b6cd1361032ca9bd2aeb9d900aa4d45d9ead80ac9423374c451a7254d0766" },
+      { "event": "legacyRevision", "kind": 78, "legacy": true, "attestedPubkey": "4d4b6cd1361032ca9bd2aeb9d900aa4d45d9ead80ac9423374c451a7254d0766" }
+    ],
+    "rootEnvelopes": [
+      { "event": "membership", "legacy": false, "attestedPubkey": "62c0a046dacce86ddd0343c6d3c7c79c2208ba0d9c9cf24a6d046d21d21f90f7" }
+    ]
+  }
+}

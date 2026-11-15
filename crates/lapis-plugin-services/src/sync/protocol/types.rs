@@ -45,6 +45,7 @@ pub struct VaultScope {
 
 /// Event filter for querying events (NIP-01 compatible).
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct NostrEventFilter {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ids: Option<Vec<String>>,
@@ -129,9 +130,7 @@ pub trait RevisionTransport {
     ) -> impl std::future::Future<Output = Result<Box<dyn FnOnce() + Send>, String>> + Send;
 
     /// Query relay information (optional).
-    fn relay_info(
-        &mut self,
-    ) -> impl std::future::Future<Output = Result<Vec<u32>, String>> + Send;
+    fn relay_info(&mut self) -> impl std::future::Future<Output = Result<Vec<u32>, String>> + Send;
 
     /// Query events matching a filter (optional).
     fn query_events(

@@ -112,6 +112,12 @@ source pins and host-specific owner cutover retain their separate gates.
 | LN-NATIVE-002 | Native Markdown cache identity MUST use the retained MD5 of the UTF-8 source bytes. Application policy MUST own index publication and unattended lifetime.                                                                                                                                                                     |
 | LN-NATIVE-003 | The native Markdown parser version MUST change when metadata interpretation changes so unchanged source bytes cannot reuse stale derived metadata.                                                                                                                                                                             |
 | LN-NATIVE-004 | The native Canvas Search extractor MUST preserve the retained built-in provider’s ordered field extraction, blank-value filtering and original-source fallback. Shared complete outcomes MUST qualify both implementations. Application services MUST own provider selection, configuration, source admission and publication. |
+| LN-NATIVE-005 | Pure Rust Sync algorithms MUST remain independent of Tauri, HTTP, databases, renderers and application scheduling. Their protocol codecs MUST match the retained TypeScript engine through a shared frozen complete-output corpus, including expected failures. NIP-01 identifiers and BIP-340 signatures MUST be recomputed and verified for every accepted outer and attested event; mutable verification caches MUST NOT authorize changed records. Runtime parity and native host adoption retain separate gates. |
+
+The first LN-NATIVE-005 slice qualifies protocol-only algorithms. It does not
+qualify durable repositories, filesystem mutation, custody, scheduling, server
+participation or native host selection. Those effects remain owned by later
+shared-core, Server and Desktop stages.
 
 This intake covers the existing lightweight metadata extractor. Task, custom
 projection and extension processors remain separate migration work. It neither

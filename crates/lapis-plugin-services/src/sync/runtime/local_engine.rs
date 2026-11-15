@@ -192,7 +192,8 @@ impl LocalEngineState {
     /// Remove a completed outbox entry.
     pub fn complete_outbox_entry(&mut self, revision_event_id: &str) -> Result<(), EngineError> {
         let initial_len = self.outbox.len();
-        self.outbox.retain(|entry| entry.revision_event_id != revision_event_id);
+        self.outbox
+            .retain(|entry| entry.revision_event_id != revision_event_id);
         if self.outbox.len() == initial_len {
             return Err(EngineError::RevisionNotFound(revision_event_id.to_string()));
         }
@@ -245,7 +246,10 @@ impl LocalEngineState {
 
     /// Mark an apply operation as completed.
     pub fn complete_apply_operation(&mut self, file_id: &str) -> Result<(), EngineError> {
-        let intent = self.apply_intent.as_mut().ok_or(EngineError::NoApplyIntent)?;
+        let intent = self
+            .apply_intent
+            .as_mut()
+            .ok_or(EngineError::NoApplyIntent)?;
         if !intent.completed.contains(&file_id.to_string()) {
             intent.completed.push(file_id.to_string());
         }
@@ -254,7 +258,10 @@ impl LocalEngineState {
 
     /// Check if all apply operations are completed.
     pub fn is_apply_complete(&self) -> Result<bool, EngineError> {
-        let intent = self.apply_intent.as_ref().ok_or(EngineError::NoApplyIntent)?;
+        let intent = self
+            .apply_intent
+            .as_ref()
+            .ok_or(EngineError::NoApplyIntent)?;
         Ok(intent.completed.len() == intent.operations.len())
     }
 }

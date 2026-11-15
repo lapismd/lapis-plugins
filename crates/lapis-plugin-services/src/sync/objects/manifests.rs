@@ -191,8 +191,10 @@ pub fn split_path(path: &str) -> Result<Vec<String>, ManifestError> {
 
 /// Join path components.
 pub fn join_path(parts: &[String]) -> Result<String, ManifestError> {
-    let normalized: Result<Vec<String>, _> =
-        parts.iter().map(|p| normalize_component(p.as_str())).collect();
+    let normalized: Result<Vec<String>, _> = parts
+        .iter()
+        .map(|p| normalize_component(p.as_str()))
+        .collect();
     Ok(normalized?.join("/"))
 }
 

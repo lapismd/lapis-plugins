@@ -4,8 +4,8 @@
 //! Private keys never enter this module; all operations use host-provided key material.
 
 use chacha20poly1305::{
-    aead::{Aead, KeyInit},
     XChaCha20Poly1305, XNonce,
+    aead::{Aead, KeyInit},
 };
 use hkdf::Hkdf;
 use hmac::{Hmac, Mac};
@@ -49,15 +49,19 @@ pub fn hkdf_sha256(ikm: &[u8], salt: Option<&[u8]>, info: &[u8]) -> Result<[u8; 
 
 /// Compute HMAC-SHA256.
 pub fn hmac_sha256(key: &[u8], data: &[u8]) -> Result<[u8; 32], CryptoError> {
-    let mut mac = <HmacSha256 as Mac>::new_from_slice(key)
-        .map_err(|_| CryptoError::InvalidKeyLength)?;
+    let mut mac =
+        <HmacSha256 as Mac>::new_from_slice(key).map_err(|_| CryptoError::InvalidKeyLength)?;
     mac.update(data);
     let result = mac.finalize();
     Ok(result.into_bytes().into())
 }
 
 /// Verify HMAC-SHA256.
-pub fn hmac_sha256_verify(key: &[u8], data: &[u8], expected: &[u8; 32]) -> Result<bool, CryptoError> {
+pub fn hmac_sha256_verify(
+    key: &[u8],
+    data: &[u8],
+    expected: &[u8; 32],
+) -> Result<bool, CryptoError> {
     let computed = hmac_sha256(key, data)?;
     Ok(computed == *expected)
 }
@@ -94,7 +98,13 @@ pub fn xchacha20poly1305_encrypt(
     let ciphertext = if let Some(aad) = aad {
         use chacha20poly1305::aead::Payload;
         cipher
-            .encrypt(nonce, Payload { msg: plaintext, aad })
+            .encrypt(
+                nonce,
+                Payload {
+                    msg: plaintext,
+                    aad,
+                },
+            )
             .map_err(|_| CryptoError::EncryptionFailed)?
     } else {
         cipher
@@ -127,7 +137,13 @@ pub fn xchacha20poly1305_decrypt(
     let plaintext = if let Some(aad) = aad {
         use chacha20poly1305::aead::Payload;
         cipher
-            .decrypt(nonce, Payload { msg: ciphertext, aad })
+            .decrypt(
+                nonce,
+                Payload {
+                    msg: ciphertext,
+                    aad,
+                },
+            )
             .map_err(|_| CryptoError::DecryptionFailed)?
     } else {
         cipher

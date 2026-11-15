@@ -79,9 +79,7 @@ pub fn validate_membership(
     expected_vault_id: &str,
     expected_owner: &str,
 ) -> Result<(), MembershipError> {
-    if membership.vault_id != expected_vault_id
-        || membership.owner_public_key != expected_owner
-    {
+    if membership.vault_id != expected_vault_id || membership.owner_public_key != expected_owner {
         return Err(MembershipError::NotEnrolled);
     }
 
@@ -165,10 +163,7 @@ pub fn authorize_device(
 }
 
 /// Check if a key epoch is installed.
-pub fn check_epoch_installed(
-    installed_epochs: &[u32],
-    epoch: u32,
-) -> Result<(), MembershipError> {
+pub fn check_epoch_installed(installed_epochs: &[u32], epoch: u32) -> Result<(), MembershipError> {
     if installed_epochs.contains(&epoch) {
         Ok(())
     } else {
@@ -211,12 +206,7 @@ mod tests {
     #[test]
     fn test_validate_membership_valid() {
         let membership = make_membership();
-        assert!(validate_membership(
-            &membership,
-            "test-vault",
-            &"a".repeat(64)
-        )
-        .is_ok());
+        assert!(validate_membership(&membership, "test-vault", &"a".repeat(64)).is_ok());
     }
 
     #[test]
@@ -276,11 +266,6 @@ mod tests {
                 cutoff_heads: None,
             }],
         });
-        assert!(validate_membership(
-            &membership,
-            "test-vault",
-            &"a".repeat(64)
-        )
-        .is_ok());
+        assert!(validate_membership(&membership, "test-vault", &"a".repeat(64)).is_ok());
     }
 }

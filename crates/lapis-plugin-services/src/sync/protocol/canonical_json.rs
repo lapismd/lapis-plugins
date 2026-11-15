@@ -16,7 +16,10 @@ pub fn canonicalize(value: &Value) -> String {
     match value {
         Value::Null => "null".to_string(),
         Value::Bool(b) => if *b { "true" } else { "false" }.to_string(),
-        Value::Number(n) => n.to_string(),
+        Value::Number(n) => n
+            .as_f64()
+            .map(|value| ryu_js::Buffer::new().format(value).to_string())
+            .unwrap_or_else(|| n.to_string()),
         Value::String(s) => serde_json::to_string(s).unwrap_or_default(),
         Value::Array(arr) => {
             let items: Vec<String> = arr.iter().map(canonicalize).collect();
@@ -29,7 +32,11 @@ pub fn canonicalize(value: &Value) -> String {
                 .iter()
                 .map(|key| {
                     let value = map.get(*key).unwrap();
-                    format!("{}:{}", serde_json::to_string(key).unwrap_or_default(), canonicalize(value))
+                    format!(
+                        "{}:{}",
+                        serde_json::to_string(key).unwrap_or_default(),
+                        canonicalize(value)
+                    )
                 })
                 .collect();
             format!("{{{}}}", items.join(","))
@@ -66,6 +73,16 @@ mod tests {
     }
 
     #[test]
+    fn test_ecmascript_number_formatting() {
+        assert_eq!(canonicalize(&serde_json::from_str("1.0").unwrap()), "1");
+        assert_eq!(canonicalize(&serde_json::from_str("-0.0").unwrap()), "0");
+        assert_eq!(
+            canonicalize(&serde_json::from_str("1e+21").unwrap()),
+            "1e+21"
+        );
+    }
+
+    #[test]
     fn test_string() {
         assert_eq!(canonicalize(&json!("hello")), r#""hello""#);
         assert_eq!(canonicalize(&json!("")), r#""""#);
@@ -92,10 +109,7 @@ mod tests {
     #[test]
     fn test_nested_object() {
         let value = json!({"z": {"b": 2, "a": 1}, "a": [3, 2, 1]});
-        assert_eq!(
-            canonicalize(&value),
-            r#"{"a":[3,2,1],"z":{"a":1,"b":2}}"#
-        );
+        assert_eq!(canonicalize(&value), r#"{"a":[3,2,1],"z":{"a":1,"b":2}}"#);
     }
 
     #[test]

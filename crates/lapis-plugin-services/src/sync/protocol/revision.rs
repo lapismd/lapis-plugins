@@ -22,6 +22,7 @@ pub enum RevisionError {
 
 /// A file change within a revision.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct RevisionChange {
     pub file_id: String,
     pub operation: String, // "create" | "modify" | "rename" | "delete"
@@ -195,9 +196,7 @@ pub fn parse_revision_payload(value: &serde_json::Value) -> Result<RevisionPaylo
         changes,
         message,
         reason,
-        client: RevisionClient {
-            protocol_version,
-        },
+        client: RevisionClient { protocol_version },
     })
 }
 

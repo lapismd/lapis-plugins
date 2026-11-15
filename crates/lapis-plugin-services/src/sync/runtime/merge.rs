@@ -77,7 +77,11 @@ impl MergePlan {
     }
 
     /// Resolve a conflict.
-    pub fn resolve(&mut self, file_id: &str, resolution: MergeResolution) -> Result<(), MergeError> {
+    pub fn resolve(
+        &mut self,
+        file_id: &str,
+        resolution: MergeResolution,
+    ) -> Result<(), MergeError> {
         let conflict = self
             .conflicts
             .iter()
@@ -215,7 +219,10 @@ mod tests {
             remote_content: None,
         });
 
-        assert!(matches!(plan.to_draft(), Err(MergeError::IncompleteResolution)));
+        assert!(matches!(
+            plan.to_draft(),
+            Err(MergeError::IncompleteResolution)
+        ));
     }
 
     #[test]
