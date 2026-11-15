@@ -1,5 +1,11 @@
 # History changelog
 
+## 0.5.1
+
+### Patch Changes
+
+- [#146](https://github.com/lapismd/lapis-plugins/pull/146) [`03edd84`](https://github.com/lapismd/lapis-plugins/commit/03edd845b35cb3e33f4c963fce3ea787f8e373c4) Thanks [@stevejuma](https://github.com/stevejuma)! - Keep remote action keyboard navigation to one tab stop per enabled button, while retaining tooltip access for disabled actions.
+
 ## 0.5.0
 
 ### Minor Changes
