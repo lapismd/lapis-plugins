@@ -72,7 +72,7 @@ adds no product requirement completion or runtime contract implementation.
 
 ## Ordered implementation stages
 
-Stage 1 is complete and Stage 2 is in progress; later stages remain pending.
+Stages 1 and 2 are complete in the isolated implementation stack; later stages remain pending.
 Each starts with the exact failing or unavailable
 boundary and ends with its recorded regression, manual journey, source revision
 and consumer evidence. Broader checks follow the workspace impact ladder.
@@ -96,11 +96,11 @@ This qualifies a source oracle; native services are still pending.
 
 ### 2. Implement Rust engine parity
 
-Status: **in progress.** The shared protocol corpus, signed-event verification,
+Status: **complete in the isolated implementation stack.** The shared protocol corpus, signed-event verification,
 attestation readers, membership/cutoff authority, dependency validation and
 ancestry reconciliation, stable publication retry and pure guarded-apply
-recovery plus merge planning/materialization are implemented; the complete-history target remains open in the Stage 2
-receipt.
+recovery plus merge planning/materialization and the normalized complete-history
+journey are implemented in the Stage 2 receipt.
 
 Owner: Plugins native services; prerequisite: stage 1 oracle. Add pure codecs,
 signature/envelope checks, crypto compatibility, membership/cutoff authority,

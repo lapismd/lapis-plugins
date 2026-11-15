@@ -190,6 +190,32 @@ type FixtureCorpus = {
       currentContentGenerations: Record<string, number>;
     }>;
   };
+  completeHistory: {
+    input: {
+      checkpoint: {
+        revisionEventId: string;
+        headEventId: string;
+        objectHashes: string[];
+        ciphertextId: string;
+        durable: boolean;
+      };
+      outbox: Array<{
+        revisionEventId: string;
+        headEventId: string;
+        objectHashes: string[];
+        ciphertextId: string;
+      }>;
+      revisionReceipt: PublicationReceipt;
+      headReceipt: PublicationReceipt;
+      incomingGraph: AuthenticatedHistoryGraph;
+      localRevisionId: string;
+      remoteRevisionIds: string[];
+      applyIntent: ApplyIntent;
+      initialFiles: Record<string, FileGeneration>;
+      mutationReceipt: ApplyReceipt;
+    };
+    output: Json;
+  };
   membershipAuthority: {
     membership: HistoryMembership;
     installedEpochs: number[];
@@ -549,6 +575,68 @@ describe("frozen TypeScript/Rust protocol parity fixtures", () => {
       ).toThrow();
     },
   );
+
+  it("executes one normalized checkpoint-to-applied-tip history", () => {
+    const input = fixtures.completeHistory.input;
+    expect(input.checkpoint.durable).toBe(true);
+    expect(input.outbox[0]).toEqual({
+      revisionEventId: input.checkpoint.revisionEventId,
+      headEventId: input.checkpoint.headEventId,
+      objectHashes: input.checkpoint.objectHashes,
+      ciphertextId: input.checkpoint.ciphertextId,
+    });
+    const publication = publicationAttemptOutcome({
+      revisionEventId: input.checkpoint.revisionEventId,
+      headEventId: input.checkpoint.headEventId,
+      revisionReceipt: input.revisionReceipt,
+      headReceipt: input.headReceipt,
+    });
+    const ingestion = validateAuthenticatedHistoryGraph(input.incomingGraph);
+    const reconciliation = planReconciliationGraph({
+      localRevisionId: input.localRevisionId,
+      remoteRevisionIds: input.remoteRevisionIds,
+      localChanges: false,
+      nodes: reconciliationNodes(
+        Object.fromEntries(
+          Object.entries(input.incomingGraph.revisions).map(
+            ([revisionId, revision]) => [
+              revisionId,
+              revision.parents.map((parent) => parent.eventId),
+            ],
+          ),
+        ),
+      ),
+    });
+    const intent = structuredClone(input.applyIntent);
+    const current: Record<string, FileGeneration> = Object.assign(
+      Object.create(null),
+      structuredClone(input.initialFiles),
+    );
+    const applyRecovery = [planApplyRecoveryStep(intent, current, null)];
+    const operation = intent.operations[0]!;
+    if (input.mutationReceipt.result)
+      current[operation.path] = structuredClone(input.mutationReceipt.result);
+    else delete current[operation.path];
+    applyRecovery.push(
+      planApplyRecoveryStep(intent, current, input.mutationReceipt),
+    );
+    intent.completed[operation.id] = structuredClone(input.mutationReceipt);
+    applyRecovery.push(planApplyRecoveryStep(intent, current, null));
+    expect({
+      checkpoint: input.checkpoint,
+      publication,
+      outboxAfterPublication:
+        publication === "complete" ? input.outbox.slice(1) : input.outbox,
+      ingestion,
+      reconciliation,
+      applyRecovery,
+      resultingTip:
+        reconciliation.kind === "fast-forward"
+          ? reconciliation.targetRevisionId
+          : input.localRevisionId,
+      resultingFiles: current,
+    }).toEqual(fixtures.completeHistory.output);
+  });
 
   it.each(fixtures.membershipAuthority.cases)(
     "membership authority: $name",

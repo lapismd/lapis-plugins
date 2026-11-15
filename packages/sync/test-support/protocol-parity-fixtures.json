@@ -530,6 +530,66 @@
       }
     ]
   },
+  "completeHistory": {
+    "input": {
+      "checkpoint": {
+        "revisionEventId": "0000000000000000000000000000000000000000000000000000000000000000",
+        "headEventId": "head-local",
+        "objectHashes": ["object-a", "object-b"],
+        "ciphertextId": "ciphertext-1",
+        "durable": true
+      },
+      "outbox": [
+        {
+          "revisionEventId": "0000000000000000000000000000000000000000000000000000000000000000",
+          "headEventId": "head-local",
+          "objectHashes": ["object-a", "object-b"],
+          "ciphertextId": "ciphertext-1"
+        }
+      ],
+      "revisionReceipt": { "eventId": "0000000000000000000000000000000000000000000000000000000000000000", "state": "accepted" },
+      "headReceipt": { "eventId": "head-local", "state": "applied" },
+      "incomingGraph": {
+        "revisions": {
+          "0000000000000000000000000000000000000000000000000000000000000000": { "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "root": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "parents": [] },
+          "1111111111111111111111111111111111111111111111111111111111111111": { "archiveHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "root": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "parents": [{ "eventId": "0000000000000000000000000000000000000000000000000000000000000000", "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }] }
+        },
+        "heads": [{ "revisionEventId": "1111111111111111111111111111111111111111111111111111111111111111", "revisionArchiveHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "root": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd" }]
+      },
+      "localRevisionId": "0000000000000000000000000000000000000000000000000000000000000000",
+      "remoteRevisionIds": ["1111111111111111111111111111111111111111111111111111111111111111"],
+      "applyIntent": {
+        "id": "apply-history",
+        "revisionEventId": "1111111111111111111111111111111111111111111111111111111111111111",
+        "before": { "note.md": { "fileId": "stable-note", "contentGeneration": 1, "hostFileId": "host-note" } },
+        "index": { "revisionEventId": "1111111111111111111111111111111111111111111111111111111111111111", "rootHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "paths": {}, "treeHashes": {}, "treeEpochs": {} },
+        "operations": [{ "id": "apply-history:0", "kind": "write", "path": "note.md", "expected": { "fileId": "stable-note", "contentGeneration": 1, "hostFileId": "host-note" }, "fileId": "stable-note" }],
+        "completed": {}
+      },
+      "initialFiles": { "note.md": { "fileId": "stable-note", "contentGeneration": 1, "hostFileId": "host-note" } },
+      "mutationReceipt": { "operation": { "id": "apply-history:0", "kind": "write", "path": "note.md", "expected": { "fileId": "stable-note", "contentGeneration": 1, "hostFileId": "host-note" }, "fileId": "stable-note" }, "result": { "fileId": "stable-note", "contentGeneration": 2, "hostFileId": "host-note" } }
+    },
+    "output": {
+      "checkpoint": {
+        "revisionEventId": "0000000000000000000000000000000000000000000000000000000000000000",
+        "headEventId": "head-local",
+        "objectHashes": ["object-a", "object-b"],
+        "ciphertextId": "ciphertext-1",
+        "durable": true
+      },
+      "publication": "complete",
+      "outboxAfterPublication": [],
+      "ingestion": { "revisionIds": ["0000000000000000000000000000000000000000000000000000000000000000", "1111111111111111111111111111111111111111111111111111111111111111"], "headRevisionIds": ["1111111111111111111111111111111111111111111111111111111111111111"] },
+      "reconciliation": { "kind": "fast-forward", "tips": ["1111111111111111111111111111111111111111111111111111111111111111"], "targetRevisionId": "1111111111111111111111111111111111111111111111111111111111111111" },
+      "applyRecovery": [
+        { "kind": "mutate", "operation": { "id": "apply-history:0", "kind": "write", "path": "note.md", "expected": { "fileId": "stable-note", "contentGeneration": 1, "hostFileId": "host-note" }, "fileId": "stable-note" } },
+        { "kind": "record-receipt", "receipt": { "operation": { "id": "apply-history:0", "kind": "write", "path": "note.md", "expected": { "fileId": "stable-note", "contentGeneration": 1, "hostFileId": "host-note" }, "fileId": "stable-note" }, "result": { "fileId": "stable-note", "contentGeneration": 2, "hostFileId": "host-note" } } },
+        { "kind": "finalize" }
+      ],
+      "resultingTip": "1111111111111111111111111111111111111111111111111111111111111111",
+      "resultingFiles": { "note.md": { "fileId": "stable-note", "contentGeneration": 2, "hostFileId": "host-note" } }
+    }
+  },
   "membershipAuthority": {
     "membership": {
       "schemaVersion": 2,

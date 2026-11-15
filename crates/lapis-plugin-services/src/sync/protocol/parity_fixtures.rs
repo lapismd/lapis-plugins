@@ -1,11 +1,11 @@
 use super::*;
 use crate::sync::runtime::{
     AuthenticatedHistoryGraph, GuardedApplyIntent, GuardedApplyReceipt, GuardedFileGeneration,
-    HistoryMembership, MembershipAuthorizationRecord, MergeDraftInput, PublicationReceipt,
-    RuntimeMergeDraft, RuntimeMergeResolution, authorize_membership_record, create_merge_draft,
-    deterministic_keep_both_path, materialise_merge_draft, plan_apply_recovery_step,
-    plan_reconciliation_graph, publication_attempt_outcome, validate_authenticated_history_graph,
-    validate_membership,
+    HistoryMembership, MembershipAuthorizationRecord, MergeDraftInput, PublicationAttemptOutcome,
+    PublicationReceipt, ReconciliationPlan, RuntimeMergeDraft, RuntimeMergeResolution,
+    authorize_membership_record, create_merge_draft, deterministic_keep_both_path,
+    materialise_merge_draft, plan_apply_recovery_step, plan_reconciliation_graph,
+    publication_attempt_outcome, validate_authenticated_history_graph, validate_membership,
 };
 use base64::{Engine as _, engine::general_purpose::STANDARD as BASE64};
 use serde::Deserialize;
@@ -528,6 +528,104 @@ fn merge_planning_matches_complete_outputs_and_failures() {
             fixture["name"]
         );
     }
+}
+
+#[test]
+fn complete_normalized_history_matches_output() {
+    let fixtures = fixtures();
+    let section = &fixtures["completeHistory"];
+    let input = &section["input"];
+    let checkpoint = &input["checkpoint"];
+    assert_eq!(checkpoint["durable"], true);
+    let outbox = input["outbox"].as_array().unwrap();
+    let first = &outbox[0];
+    for field in [
+        "revisionEventId",
+        "headEventId",
+        "objectHashes",
+        "ciphertextId",
+    ] {
+        assert_eq!(first[field], checkpoint[field]);
+    }
+
+    let revision_receipt: PublicationReceipt =
+        serde_json::from_value(input["revisionReceipt"].clone()).unwrap();
+    let head_receipt: PublicationReceipt =
+        serde_json::from_value(input["headReceipt"].clone()).unwrap();
+    let publication = publication_attempt_outcome(
+        checkpoint["revisionEventId"].as_str().unwrap(),
+        checkpoint["headEventId"].as_str().unwrap(),
+        &revision_receipt,
+        Some(&head_receipt),
+    )
+    .unwrap();
+    let outbox_after = if publication == PublicationAttemptOutcome::Complete {
+        outbox[1..].to_vec()
+    } else {
+        outbox.clone()
+    };
+
+    let graph: AuthenticatedHistoryGraph =
+        serde_json::from_value(input["incomingGraph"].clone()).unwrap();
+    let ingestion = validate_authenticated_history_graph(&graph).unwrap();
+    let nodes: HashMap<String, RevisionNode> = graph
+        .revisions
+        .iter()
+        .map(|(event_id, revision)| {
+            (
+                event_id.clone(),
+                RevisionNode {
+                    event_id: event_id.clone(),
+                    parents: revision
+                        .parents
+                        .iter()
+                        .map(|parent| AncestorRef {
+                            event_id: parent.event_id.clone(),
+                            archive_hash: parent.archive_hash.clone(),
+                        })
+                        .collect(),
+                },
+            )
+        })
+        .collect();
+    let remote: Vec<String> = serde_json::from_value(input["remoteRevisionIds"].clone()).unwrap();
+    let reconciliation =
+        plan_reconciliation_graph(input["localRevisionId"].as_str(), &remote, &nodes, false)
+            .unwrap();
+
+    let mut intent: GuardedApplyIntent =
+        serde_json::from_value(input["applyIntent"].clone()).unwrap();
+    let mut current: HashMap<String, GuardedFileGeneration> =
+        serde_json::from_value(input["initialFiles"].clone()).unwrap();
+    let receipt: GuardedApplyReceipt =
+        serde_json::from_value(input["mutationReceipt"].clone()).unwrap();
+    let mut apply_recovery = vec![plan_apply_recovery_step(&intent, &current, None).unwrap()];
+    let operation = intent.operations[0].clone();
+    if let Some(result) = receipt.result.as_ref() {
+        current.insert(operation.path.clone(), result.clone());
+    } else {
+        current.remove(&operation.path);
+    }
+    apply_recovery.push(plan_apply_recovery_step(&intent, &current, Some(&receipt)).unwrap());
+    intent.completed.insert(operation.id, receipt);
+    apply_recovery.push(plan_apply_recovery_step(&intent, &current, None).unwrap());
+    let resulting_tip = match &reconciliation {
+        ReconciliationPlan::FastForward {
+            target_revision_id, ..
+        } => target_revision_id.clone(),
+        _ => input["localRevisionId"].as_str().unwrap().to_string(),
+    };
+    let actual = serde_json::json!({
+        "checkpoint": checkpoint,
+        "publication": publication,
+        "outboxAfterPublication": outbox_after,
+        "ingestion": ingestion,
+        "reconciliation": reconciliation,
+        "applyRecovery": apply_recovery,
+        "resultingTip": resulting_tip,
+        "resultingFiles": current,
+    });
+    assert_eq!(actual, section["output"]);
 }
 
 #[test]

@@ -1,8 +1,8 @@
 # Sync Rust parity implementation
 
 Stage 2 starts from the verified TypeScript source oracle at Plugins change
-`99c27412`. This receipt is append-only progress evidence, not a claim that the
-native engine or Stage 2 exit boundary is complete.
+`99c27412`. The completed receipt claims pure Rust/TypeScript algorithm parity;
+it does not claim native storage or host adoption.
 
 ## Starting boundary
 
@@ -88,16 +88,23 @@ changed content generations, obsolete conflict IDs and resolved text for binary
 content before returning candidate files. No filesystem mutation or merge
 publication is hidden inside this pure transition.
 
+One normalized fixture now composes a durable local checkpoint/outbox identity,
+exact accepted/applied publication receipts, an authenticated remote child,
+fast-forward reconciliation and mutate/record/finalize apply recovery. Both
+engines produce the same emptied outbox, accepted graph, transition sequence,
+resulting tip and stable-file generation. This inspects the complete algorithm
+journey without comparing randomized ciphertext or claiming real-disk effects.
+
 ## Focused results
 
 | Command | Result |
 | --- | --- |
 | Baseline Rust Sync unit run | 67 passed, 0 failed |
-| Focused TypeScript parity fixture | 120 passed, 0 failed |
-| Focused Rust parity fixture families | 13 passed, 0 failed |
+| Focused TypeScript parity fixture | 121 passed, 0 failed |
+| Focused Rust parity fixture families | 14 passed, 0 failed |
 | Rust protocol family after signature/envelope work | 51 passed, 0 failed |
-| Rust Sync family after merge parity | 87 passed, 0 failed |
-| Full TypeScript Sync unit run after merge parity | 19 files, 325 passed, 0 failed |
+| Rust Sync family at Stage 2 exit | 88 passed, 0 failed |
+| Full TypeScript Sync unit run at Stage 2 exit | 19 files, 326 passed, 0 failed |
 | TypeScript/Svelte checks, package build and publint | Passed |
 | Rust fmt, clippy and build | Passed |
 | Root/package audit | Passed; 2/1 governed low findings ignored |
@@ -108,10 +115,11 @@ JSON import discarded `__proto__`. Parsing the source bytes moved that exact
 case from one failure to zero. Rust canonical number formatting and filter
 empty-string behavior were also corrected to the retained TypeScript outputs.
 
-## Remaining Stage 2 gates
+## Stage 2 exit and remaining boundaries
 
-This slice does not yet qualify host-persisted idempotent receipts, interrupted
-native apply or one complete fixture history. Wider package,
-clippy/build/audit/spec gates and hosted CI are recorded only after those
-runtime targets close. No Tauri, server, storage, release, publication or
-visual claim follows from this receipt.
+The frozen corpus, runtime composition, wider package, clippy/build, audit and
+specification gates close the local Stage 2 boundary. Hosted PR qualification is
+recorded against the pushed exact head. Host-persisted receipts, interrupted
+real filesystem apply, Tauri, server storage/participation, release, publication
+and visual acceptance remain owned by later stages; none follows from this
+receipt.

@@ -176,15 +176,16 @@ explicit native run and hosted CI evidence do not qualify a local Docker run.
 No visual baseline, activation, publication or native-host claim follows from
 this source qualification.
 
-Native Stage 2 is in progress. The first audited slice adds NIP-01 identifier
+Native Stage 2 is complete in the isolated implementation stack. The audited work adds NIP-01 identifier
 and BIP-340 verification plus device/root envelope validation, and runs one
 frozen complete-output corpus through both implementations. The shared corpus
-currently passes 120 TypeScript cases and thirteen Rust fixture families; the Rust
-Sync unit total is 87. This protocol, membership and history-graph evidence is recorded in the
+currently passes 121 TypeScript cases and fourteen Rust fixture families; the Rust
+Sync unit total is 88. This protocol, membership and history-graph evidence is recorded in the
 [Stage 2 parity receipt](../../../records/2026-11-15-sync-rust-parity.md).
-Stable outbox retry and pure durable apply-recovery planning are now included.
-Full merge planning is also included; the complete-history fixture remains open,
-so the Stage 2 exit boundary is not yet claimed.
+Stable outbox retry, pure durable apply-recovery planning, full merge planning
+and one normalized checkpoint-to-applied-tip history are included. This claims
+only the pure Stage 2 algorithm boundary; real native storage, guarded filesystem
+effects, custody, host selection and application scheduling remain unqualified.
 
 The foundation implements protocol codecs, event filtering and replaceable
 ordering. UI qualification adds the plugin class, views, status and settings against an
