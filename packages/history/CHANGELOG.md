@@ -1,5 +1,12 @@
 # History changelog
 
+## 0.3.2
+
+### Patch Changes
+
+- [#131](https://github.com/lapismd/lapis-plugins/pull/131) [`04f6357`](https://github.com/lapismd/lapis-plugins/commit/04f6357cda1ca302aaa81e81828fe2f520a204c6) Thanks [@stevejuma](https://github.com/stevejuma)! - Preserve the native working-copy source, keep dismissed push reviews hidden
+  during refresh, and disable a retained review when push capability is unavailable.
+
 ## 0.3.1
 
 ### Patch Changes
