@@ -72,3 +72,26 @@ the current signed-cache migration:
 LP-SPEC-036: The checked-in image manifest pins the shared multi-architecture base and last verified dependency image by digest. Focused release-tool tests prove a changed lockfile can generate the next dependency-only context while the verified pin stays active, and that the digest-pin update records the new lock hash, tag, and digest in that single manifest. Workflow source tests prove CI and release containers resolve the manifest output without duplicated digest edits. The publication workflow emits an SBOM, provenance, and an idempotent pin PR; `turbo.json` requires signed remote artifacts and bounded timeouts without an Actions `.turbo` cache. Live fork and unavailable-service fallback acceptance remains. Tool downloads preserve the pinned archive and use a bounded official asset-API fallback after transient failures; see [hosted CI repair](../records/2026-11-08-kanban-hosted-ci.md).
 
 LP-SPEC-051: Nine executable workflow regressions cover stable rolling reviews across lockfile changes, open/terminal states, bounded legacy bot cleanup, unchanged pins, failed-publication preservation and main-only dispatch. See spec/records/2026-11-09-embed-heading-and-rolling-ci.md.
+
+## Hosted verifier correction
+
+The first hosted producer built and signed both platform manifests but stopped
+before promotion: GitHub CLI 2.102.0 rejects using `--signer-workflow` together
+with `--cert-identity`. Lapis CI PR #5 removes the redundant selector, retains
+the exact main-workflow certificate identity and every signed-subject, source,
+runner and complete-input check, and adds the exact regression (one failure
+before the fix, one pass after; all 44 shared-helper tests pass).
+
+All four source action pins now advance together to
+`29d83b5a61c0cf2b895873489de43f0d85e38e48`. Real pinned CLI verification and
+the complete resolver accepted the signed staging index
+`sha256:f3dfbb718cfe4c4a765ddfbd57a1b70b452fb0d267efd5a2bb20bac4c59f00d7`
+after independently reconstructing its 29-file context from producer source
+`392965da788f94fc49f96e7f6cf4c39793b1595b`; the identity exactly matches the
+receipt above. The failed producer did not promote an unverified cache. Hosted
+promotion, repeat reuse and complete warm consumer acceptance remain pending.
+
+This adoption passes all 234 release-tool tests, all nine focused cache wiring
+tests and actionlint. The first spec-first check rejected two omitted mapped
+chapters; the native-boundary and governance qualifications were added, retaining
+the strict mapping. The existing audit passes with its two recorded LOW ignores.

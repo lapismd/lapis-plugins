@@ -49,7 +49,7 @@ jobs:
         run: node scripts/prepare-ci-dependency-context.mjs --github-output "$GITHUB_OUTPUT"
       - name: Reuse or publish the signed complete-input identity
         id: publish
-        uses: lapismd/lapis-ci/actions/publish-dependency-image@617eb34fc337832401ef81feb9a2673033874e3b
+        uses: lapismd/lapis-ci/actions/publish-dependency-image@29d83b5a61c0cf2b895873489de43f0d85e38e48
         with:
           context: .ci/dependency-context
           base-image: ${{ steps.context.outputs.base_image }}

@@ -39,8 +39,8 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: 24.15.0
-      - uses: lapismd/lapis-ci/actions/setup-gh@617eb34fc337832401ef81feb9a2673033874e3b
-      - uses: lapismd/lapis-ci/actions/setup-image-tools@617eb34fc337832401ef81feb9a2673033874e3b
+      - uses: lapismd/lapis-ci/actions/setup-gh@29d83b5a61c0cf2b895873489de43f0d85e38e48
+      - uses: lapismd/lapis-ci/actions/setup-image-tools@29d83b5a61c0cf2b895873489de43f0d85e38e48
       - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4
         with:
           registry: ghcr.io
@@ -51,7 +51,7 @@ jobs:
         run: node scripts/prepare-ci-dependency-context.mjs --github-output "$GITHUB_OUTPUT"
       - name: Verify immutable dependency image or select the reviewed base
         id: resolve
-        uses: lapismd/lapis-ci/actions/resolve-dependency-image@617eb34fc337832401ef81feb9a2673033874e3b
+        uses: lapismd/lapis-ci/actions/resolve-dependency-image@29d83b5a61c0cf2b895873489de43f0d85e38e48
         with:
           context: .ci/dependency-context
           base-image: ${{ steps.context.outputs.base_image }}
