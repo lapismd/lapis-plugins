@@ -32,6 +32,79 @@ import {
 const HASH = /^[0-9a-f]{64}$/u;
 const MAX_ARCHIVE_BYTES = 4 * 1024 * 1024;
 
+export interface AuthenticatedHistoryGraph {
+  revisions: Record<
+    string,
+    {
+      archiveHash: string;
+      archiveAliases?: string[];
+      root: string;
+      parents: Array<{ eventId: string; archiveHash: string }>;
+    }
+  >;
+  heads: Array<{
+    revisionEventId: string;
+    revisionArchiveHash: string;
+    root: string;
+  }>;
+}
+
+/** Pure dependency validation after cryptographic/object authentication. */
+export function validateAuthenticatedHistoryGraph(
+  graph: AuthenticatedHistoryGraph,
+): { revisionIds: string[]; headRevisionIds: string[] } {
+  const revisionIds = Object.keys(graph.revisions).sort();
+  const visiting = new Set<string>();
+  const visited = new Set<string>();
+  const visit = (id: string) => {
+    if (visited.has(id)) return;
+    if (visiting.has(id)) throw new Error("Cyclic incoming ancestry");
+    const revision = Object.hasOwn(graph.revisions, id)
+      ? graph.revisions[id]
+      : undefined;
+    if (!revision) throw new Error("Incoming revision dependency is missing");
+    if (
+      !HASH.test(id) ||
+      !HASH.test(revision.archiveHash) ||
+      !HASH.test(revision.root) ||
+      revision.parents.length > 64 ||
+      new Set(revision.parents.map((parent) => parent.eventId)).size !==
+        revision.parents.length
+    )
+      throw new Error("Invalid incoming revision graph");
+    visiting.add(id);
+    for (const parent of revision.parents) {
+      const dependency = Object.hasOwn(graph.revisions, parent.eventId)
+        ? graph.revisions[parent.eventId]
+        : undefined;
+      if (!dependency)
+        throw new Error("Incoming revision dependency is missing");
+      if (
+        dependency.archiveHash !== parent.archiveHash &&
+        !dependency.archiveAliases?.includes(parent.archiveHash)
+      )
+        throw new Error("Incoming parent archive reference mismatch");
+      visit(parent.eventId);
+    }
+    visiting.delete(id);
+    visited.add(id);
+  };
+  for (const id of revisionIds) visit(id);
+  const headRevisionIds = graph.heads.map((head) => {
+    const revision = Object.hasOwn(graph.revisions, head.revisionEventId)
+      ? graph.revisions[head.revisionEventId]
+      : undefined;
+    if (!revision) throw new Error("Incoming HEAD dependency is missing");
+    if (
+      revision.archiveHash !== head.revisionArchiveHash ||
+      revision.root !== head.root
+    )
+      throw new Error("Incoming HEAD does not match its revision");
+    return head.revisionEventId;
+  });
+  return { revisionIds, headRevisionIds };
+}
+
 export function cachedIncomingObjects(
   options: LocalEngineOptions,
   source: BlobStore,
@@ -218,6 +291,12 @@ export async function ingestIncomingHeads(
     blobs = cachedIncomingObjects(options, source);
   const incomingHeads: AuthorizedIncomingRecord[] = [];
   const visiting = new Set<string>();
+  const archiveAliases = new Map(
+    Object.entries(state.revisions).map(([id, revision]) => [
+      id,
+      new Set([revision.archiveHash]),
+    ]),
+  );
   let visited = 0;
   const loadRevision = async (
     id: string,
@@ -240,6 +319,7 @@ export async function ingestIncomingHeads(
       unwrapDeviceTransportEvent(event, 78);
       if (canonicalize(event) !== canonicalize(known.event))
         throw new Error("Conflicting archive record");
+      archiveAliases.get(id)!.add(archiveHash);
       return;
     }
     visiting.add(id);
@@ -281,6 +361,7 @@ export async function ingestIncomingHeads(
         archiveHash,
         payload,
       };
+      archiveAliases.set(id, new Set([archiveHash]));
     } finally {
       visiting.delete(id);
     }
@@ -297,6 +378,29 @@ export async function ingestIncomingHeads(
     if (!previous || compareReplaceableEvents(raw, previous.event) < 0)
       state.heads[address] = { ...head, payload };
   }
+  validateAuthenticatedHistoryGraph({
+    revisions: Object.fromEntries(
+      Object.entries(state.revisions).map(([id, revision]) => [
+        id,
+        {
+          archiveHash: revision.archiveHash,
+          archiveAliases: [...(archiveAliases.get(id) ?? [])].filter(
+            (hash) => hash !== revision.archiveHash,
+          ),
+          root: revision.payload.root,
+          parents: revision.payload.parents,
+        },
+      ]),
+    ),
+    heads: incomingHeads.map((head) => {
+      const payload = head.payload as HeadPayload;
+      return {
+        revisionEventId: payload.revisionEventId,
+        revisionArchiveHash: payload.revisionArchiveHash,
+        root: payload.root,
+      };
+    }),
+  });
   // Cutoff proofs need the authenticated graph, including ancestors just downloaded.
   // No candidate state is persisted until every reachable revision and HEAD is authorized.
   const context = historyAuthorityContext(state),

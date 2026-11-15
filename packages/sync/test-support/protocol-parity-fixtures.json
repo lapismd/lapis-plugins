@@ -1,0 +1,675 @@
+{
+  "schemaVersion": 1,
+  "canonical": [
+    {
+      "name": "sorts nested object keys",
+      "input": { "z": { "b": 2, "a": 1 }, "a": [3, 2, 1] },
+      "output": "{\"a\":[3,2,1],\"z\":{\"a\":1,\"b\":2}}"
+    },
+    {
+      "name": "uses ECMAScript number rendering",
+      "input": [1.0, -0.0, 1e21, 1e-7, 0.000001],
+      "output": "[1,0,1e+21,1e-7,0.000001]"
+    },
+    {
+      "name": "retains prototype-shaped own keys",
+      "input": {
+        "prototype": "value",
+        "__proto__": { "polluted": true },
+        "constructor": "value"
+      },
+      "output": "{\"__proto__\":{\"polluted\":true},\"constructor\":\"value\",\"prototype\":\"value\"}"
+    },
+    {
+      "name": "escapes strings without whitespace",
+      "input": { "line": "one\ntwo", "quote": "say \"hi\"", "unicode": "λ" },
+      "output": "{\"line\":\"one\\ntwo\",\"quote\":\"say \\\"hi\\\"\",\"unicode\":\"λ\"}"
+    }
+  ],
+  "filter": {
+    "event": {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "pubkey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "created_at": 10,
+      "kind": 78,
+      "tags": [
+        ["d", "first"],
+        ["d", "second"],
+        ["p", "device"],
+        ["p", "other"],
+        ["v", "vault"]
+      ],
+      "content": "ciphertext",
+      "sig": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    },
+    "cases": [
+      { "name": "empty filter", "filter": {}, "matches": true },
+      { "name": "exact id", "filter": { "ids": ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"] }, "matches": true },
+      { "name": "empty ids", "filter": { "ids": [] }, "matches": false },
+      { "name": "first d tag only", "filter": { "#d": ["first"] }, "matches": true },
+      { "name": "later d tag is ignored", "filter": { "#d": ["second"] }, "matches": false },
+      { "name": "any p tag", "filter": { "#p": ["other"] }, "matches": true },
+      { "name": "combined constraints", "filter": { "kinds": [78], "#v": ["vault"], "since": 9 }, "matches": true },
+      { "name": "inclusive since", "filter": { "since": 10 }, "matches": true },
+      { "name": "later since", "filter": { "since": 11 }, "matches": false },
+      { "name": "empty string remains data", "filter": { "authors": [""] }, "matches": false }
+    ],
+    "invalid": [
+      { "name": "null", "filter": null },
+      { "name": "array", "filter": [] },
+      { "name": "unknown field", "filter": { "until": 20 } },
+      { "name": "negative since", "filter": { "since": -1 } },
+      { "name": "fractional since", "filter": { "since": 1.5 } },
+      { "name": "non-array ids", "filter": { "ids": "bad" } },
+      { "name": "numeric tag value", "filter": { "#d": [1] } },
+      { "name": "string kind", "filter": { "kinds": ["78"] } },
+      { "name": "negative kind", "filter": { "kinds": [-1] } }
+    ]
+  },
+  "replaceable": {
+    "events": {
+      "older": { "id": "c", "pubkey": "outer", "created_at": 10, "kind": 30078, "tags": [["d", "vault:head:device"]], "content": "ciphertext", "sig": "signature" },
+      "tieHigh": { "id": "b", "pubkey": "outer", "created_at": 11, "kind": 30078, "tags": [["d", "vault:head:device"]], "content": "ciphertext", "sig": "signature" },
+      "tieLow": { "id": "a", "pubkey": "outer", "created_at": 11, "kind": 30078, "tags": [["d", "vault:head:device"]], "content": "ciphertext", "sig": "signature" },
+      "phone": { "id": "d", "pubkey": "outer", "created_at": 11, "kind": 30078, "tags": [["d", "vault:head:phone"]], "content": "ciphertext", "sig": "signature" },
+      "immutable": { "id": "e", "pubkey": "outer", "created_at": 11, "kind": 78, "tags": [["d", "vault:head:device"]], "content": "ciphertext", "sig": "signature" }
+    },
+    "addresses": [
+      { "event": "older", "output": "[30078,\"outer\",\"vault:head:device\"]" },
+      { "event": "phone", "output": "[30078,\"outer\",\"vault:head:phone\"]" }
+    ],
+    "comparisons": [
+      { "left": "tieLow", "right": "tieHigh", "output": -1 },
+      { "left": "tieHigh", "right": "older", "output": -1 },
+      { "left": "older", "right": "tieHigh", "output": 1 }
+    ],
+    "failures": [
+      { "name": "different address", "left": "tieLow", "right": "phone" },
+      { "name": "immutable event", "left": "tieLow", "right": "immutable" }
+    ]
+  },
+  "ancestry": {
+    "nodes": {
+      "a": [],
+      "b": ["a"],
+      "c": ["a"],
+      "d": ["b", "c"],
+      "e": ["d"],
+      "orphan": ["missing"]
+    },
+    "ancestors": [
+      { "start": "e", "output": ["a", "b", "c", "d", "e"] },
+      { "start": "orphan", "output": ["missing", "orphan"] }
+    ],
+    "isAncestor": [
+      { "candidate": "a", "descendant": "e", "output": true },
+      { "candidate": "c", "descendant": "b", "output": false }
+    ],
+    "maximalHeads": [
+      { "heads": ["a", "d", "e"], "output": ["e"] },
+      { "heads": ["b", "c"], "output": ["b", "c"] }
+    ],
+    "nearestCommonAncestor": [
+      { "left": "b", "right": "c", "output": "a" },
+      { "left": "e", "right": "c", "output": "c" },
+      { "left": "a", "right": "missing", "output": null }
+    ]
+  },
+  "revisionReaders": {
+    "successes": [
+      {
+        "name": "current revision",
+        "type": "revision",
+        "input": {
+          "schemaVersion": 2,
+          "vaultId": "fixture-vault",
+          "keyEpoch": 1,
+          "currentEpoch": 2,
+          "membershipGeneration": 3,
+          "parents": [{ "eventId": "parent", "archiveHash": "archive" }],
+          "root": "root",
+          "changes": [{ "fileId": "note", "operation": "modify" }],
+          "message": "checkpoint",
+          "reason": "checkpoint",
+          "client": { "protocolVersion": 3 }
+        },
+        "output": {
+          "schemaVersion": 2,
+          "vaultId": "fixture-vault",
+          "keyEpoch": 1,
+          "currentEpoch": 2,
+          "membershipGeneration": 3,
+          "parents": [{ "eventId": "parent", "archiveHash": "archive" }],
+          "root": "root",
+          "changes": [{ "fileId": "note", "operation": "modify" }],
+          "message": "checkpoint",
+          "reason": "checkpoint",
+          "client": { "protocolVersion": 3 }
+        }
+      },
+      {
+        "name": "legacy revision upgrade",
+        "type": "revision",
+        "input": { "schemaVersion": 1, "vaultId": "fixture-vault", "keyEpoch": 2, "parents": [], "root": "root", "changes": [], "message": "legacy", "reason": "checkpoint", "client": { "protocolVersion": 1 } },
+        "output": { "schemaVersion": 2, "vaultId": "fixture-vault", "keyEpoch": 2, "currentEpoch": 2, "membershipGeneration": 0, "parents": [], "root": "root", "changes": [], "message": "legacy", "reason": "checkpoint", "client": { "protocolVersion": 1 } }
+      },
+      {
+        "name": "legacy head upgrade",
+        "type": "head",
+        "input": { "schemaVersion": 1, "vaultId": "fixture-vault", "revisionEventId": "revision", "revisionArchiveHash": "archive", "root": "root", "keyEpoch": 2 },
+        "output": { "schemaVersion": 2, "vaultId": "fixture-vault", "revisionEventId": "revision", "revisionArchiveHash": "archive", "root": "root", "keyEpoch": 2, "currentEpoch": 2, "membershipGeneration": 0 }
+      }
+    ],
+    "failures": [
+      { "name": "unsupported revision", "type": "revision", "input": { "schemaVersion": 9, "vaultId": "v", "root": "r", "keyEpoch": 1 } },
+      { "name": "missing revision root", "type": "revision", "input": { "schemaVersion": 2, "vaultId": "v", "keyEpoch": 1, "currentEpoch": 1, "membershipGeneration": 0 } },
+      { "name": "zero revision epoch", "type": "revision", "input": { "schemaVersion": 2, "vaultId": "v", "root": "r", "keyEpoch": 0, "currentEpoch": 1, "membershipGeneration": 0 } },
+      { "name": "negative membership generation", "type": "revision", "input": { "schemaVersion": 2, "vaultId": "v", "root": "r", "keyEpoch": 1, "currentEpoch": 1, "membershipGeneration": -1 } },
+      { "name": "missing head revision", "type": "head", "input": { "schemaVersion": 2, "vaultId": "v", "root": "r", "keyEpoch": 1, "currentEpoch": 1, "membershipGeneration": 0 } }
+    ]
+  },
+  "reconciliation": {
+    "cases": [
+      { "name": "empty history", "localRevisionId": null, "remoteRevisionIds": [], "localChanges": false, "nodes": {}, "output": { "kind": "clean", "tips": [] } },
+      { "name": "unchanged local tip", "localRevisionId": "a", "remoteRevisionIds": [], "localChanges": false, "nodes": { "a": [] }, "output": { "kind": "clean", "tips": ["a"] } },
+      { "name": "remote descendant fast-forward", "localRevisionId": "a", "remoteRevisionIds": ["c"], "localChanges": false, "nodes": { "a": [], "b": ["a"], "c": ["b"] }, "output": { "kind": "fast-forward", "tips": ["c"], "targetRevisionId": "c" } },
+      { "name": "dirty vault blocks fast-forward", "localRevisionId": "a", "remoteRevisionIds": ["c"], "localChanges": true, "nodes": { "a": [], "b": ["a"], "c": ["b"] }, "output": { "kind": "local-changes", "tips": ["c"] } },
+      { "name": "divergence has one merge base", "localRevisionId": "b", "remoteRevisionIds": ["c"], "localChanges": false, "nodes": { "a": [], "b": ["a"], "c": ["a"] }, "output": { "kind": "merge-required", "tips": ["b", "c"], "leftRevisionId": "b", "rightRevisionId": "c", "baseRevisionId": "a" } },
+      { "name": "unrelated histories stay explicit", "localRevisionId": "a", "remoteRevisionIds": ["b"], "localChanges": false, "nodes": { "a": [], "b": [] }, "output": { "kind": "unrelated", "tips": ["a", "b"], "leftRevisionId": "a", "rightRevisionId": "b" } },
+      { "name": "ancestor remote tips collapse", "localRevisionId": "c", "remoteRevisionIds": ["a", "b"], "localChanges": false, "nodes": { "a": [], "b": ["a"], "c": ["b"] }, "output": { "kind": "clean", "tips": ["c"] } }
+    ],
+    "failures": [
+      { "name": "missing tip", "localRevisionId": null, "remoteRevisionIds": ["missing"], "localChanges": false, "nodes": {} },
+      { "name": "multiple incomparable merge bases", "localRevisionId": "c", "remoteRevisionIds": ["d"], "localChanges": false, "nodes": { "a": [], "b": [], "c": ["a", "b"], "d": ["a", "b"] } }
+    ]
+  },
+  "incomingGraph": {
+    "successes": [
+      {
+        "name": "complete authenticated ancestry",
+        "graph": {
+          "revisions": {
+            "0000000000000000000000000000000000000000000000000000000000000000": { "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "root": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "parents": [] },
+            "1111111111111111111111111111111111111111111111111111111111111111": { "archiveHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "root": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "parents": [{ "eventId": "0000000000000000000000000000000000000000000000000000000000000000", "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }] }
+          },
+          "heads": [{ "revisionEventId": "1111111111111111111111111111111111111111111111111111111111111111", "revisionArchiveHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "root": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd" }]
+        },
+        "output": { "revisionIds": ["0000000000000000000000000000000000000000000000000000000000000000", "1111111111111111111111111111111111111111111111111111111111111111"], "headRevisionIds": ["1111111111111111111111111111111111111111111111111111111111111111"] }
+      },
+      {
+        "name": "multiple independent complete roots",
+        "graph": {
+          "revisions": {
+            "0000000000000000000000000000000000000000000000000000000000000000": { "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "root": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "parents": [] },
+            "2222222222222222222222222222222222222222222222222222222222222222": { "archiveHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "root": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "parents": [] }
+          },
+          "heads": []
+        },
+        "output": { "revisionIds": ["0000000000000000000000000000000000000000000000000000000000000000", "2222222222222222222222222222222222222222222222222222222222222222"], "headRevisionIds": [] }
+      }
+    ],
+    "failures": [
+      {
+        "name": "missing parent",
+        "graph": { "revisions": { "1111111111111111111111111111111111111111111111111111111111111111": { "archiveHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "root": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "parents": [{ "eventId": "0000000000000000000000000000000000000000000000000000000000000000", "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }] } }, "heads": [] }
+      },
+      {
+        "name": "parent archive mismatch",
+        "graph": { "revisions": { "0000000000000000000000000000000000000000000000000000000000000000": { "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "root": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "parents": [] }, "1111111111111111111111111111111111111111111111111111111111111111": { "archiveHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "root": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "parents": [{ "eventId": "0000000000000000000000000000000000000000000000000000000000000000", "archiveHash": "9999999999999999999999999999999999999999999999999999999999999999" }] } }, "heads": [] }
+      },
+      {
+        "name": "cyclic ancestry",
+        "graph": { "revisions": { "0000000000000000000000000000000000000000000000000000000000000000": { "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "root": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "parents": [{ "eventId": "1111111111111111111111111111111111111111111111111111111111111111", "archiveHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" }] }, "1111111111111111111111111111111111111111111111111111111111111111": { "archiveHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "root": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "parents": [{ "eventId": "0000000000000000000000000000000000000000000000000000000000000000", "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }] } }, "heads": [] }
+      },
+      {
+        "name": "HEAD archive mismatch",
+        "graph": { "revisions": { "0000000000000000000000000000000000000000000000000000000000000000": { "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "root": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "parents": [] } }, "heads": [{ "revisionEventId": "0000000000000000000000000000000000000000000000000000000000000000", "revisionArchiveHash": "9999999999999999999999999999999999999999999999999999999999999999", "root": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc" }] }
+      },
+      {
+        "name": "HEAD root mismatch",
+        "graph": { "revisions": { "0000000000000000000000000000000000000000000000000000000000000000": { "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "root": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "parents": [] } }, "heads": [{ "revisionEventId": "0000000000000000000000000000000000000000000000000000000000000000", "revisionArchiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "root": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd" }] }
+      },
+      {
+        "name": "missing HEAD revision",
+        "graph": { "revisions": {}, "heads": [{ "revisionEventId": "0000000000000000000000000000000000000000000000000000000000000000", "revisionArchiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "root": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc" }] }
+      }
+    ]
+  },
+  "outboxRetry": {
+    "successes": [
+      { "name": "revision remains staged", "revisionEventId": "revision", "headEventId": "head", "revisionReceipt": { "eventId": "revision", "state": "staged" }, "output": "retain" },
+      { "name": "accepted revision proceeds to HEAD", "revisionEventId": "revision", "headEventId": "head", "revisionReceipt": { "eventId": "revision", "state": "accepted" }, "output": "publish-head" },
+      { "name": "applied revision proceeds to HEAD", "revisionEventId": "revision", "headEventId": "head", "revisionReceipt": { "eventId": "revision", "state": "applied" }, "output": "publish-head" },
+      { "name": "staged HEAD retains exact outbox", "revisionEventId": "revision", "headEventId": "head", "revisionReceipt": { "eventId": "revision", "state": "accepted" }, "headReceipt": { "eventId": "head", "state": "staged" }, "output": "retain" },
+      { "name": "accepted HEAD completes", "revisionEventId": "revision", "headEventId": "head", "revisionReceipt": { "eventId": "revision", "state": "accepted" }, "headReceipt": { "eventId": "head", "state": "accepted" }, "output": "complete" },
+      { "name": "applied HEAD completes", "revisionEventId": "revision", "headEventId": "head", "revisionReceipt": { "eventId": "revision", "state": "applied" }, "headReceipt": { "eventId": "head", "state": "applied" }, "output": "complete" }
+    ],
+    "failures": [
+      { "name": "wrong revision acknowledgement", "revisionEventId": "revision", "headEventId": "head", "revisionReceipt": { "eventId": "other", "state": "accepted" } },
+      { "name": "wrong HEAD acknowledgement", "revisionEventId": "revision", "headEventId": "head", "revisionReceipt": { "eventId": "revision", "state": "accepted" }, "headReceipt": { "eventId": "other", "state": "accepted" } },
+      { "name": "unknown revision state", "revisionEventId": "revision", "headEventId": "head", "revisionReceipt": { "eventId": "revision", "state": "unknown" } },
+      { "name": "unknown HEAD state", "revisionEventId": "revision", "headEventId": "head", "revisionReceipt": { "eventId": "revision", "state": "accepted" }, "headReceipt": { "eventId": "head", "state": "unknown" } }
+    ]
+  },
+  "applyRecovery": {
+    "successes": [
+      {
+        "name": "mutation required",
+        "intent": {
+          "id": "apply-1",
+          "revisionEventId": "revision-target",
+          "before": {
+            "a.md": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" },
+            "b.md": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }
+          },
+          "index": { "revisionEventId": "revision-target", "rootHash": "root", "paths": {}, "treeHashes": {}, "treeEpochs": {} },
+          "operations": [
+            { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" },
+            { "id": "apply-1:1", "kind": "remove", "path": "b.md", "expected": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }, "fileId": "file-b" }
+          ],
+          "completed": {}
+        },
+        "current": {
+          "a.md": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" },
+          "b.md": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }
+        },
+        "recoveredReceipt": null,
+        "output": { "kind": "mutate", "operation": { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" } }
+      },
+      {
+        "name": "valid durable receipt recovery",
+        "intent": {
+          "id": "apply-1",
+          "revisionEventId": "revision-target",
+          "before": {
+            "a.md": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" },
+            "b.md": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }
+          },
+          "index": { "revisionEventId": "revision-target", "rootHash": "root", "paths": {}, "treeHashes": {}, "treeEpochs": {} },
+          "operations": [
+            { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" },
+            { "id": "apply-1:1", "kind": "remove", "path": "b.md", "expected": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }, "fileId": "file-b" }
+          ],
+          "completed": {}
+        },
+        "current": {
+          "a.md": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" },
+          "b.md": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }
+        },
+        "recoveredReceipt": { "operation": { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }, "result": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" } },
+        "output": { "kind": "record-receipt", "receipt": { "operation": { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }, "result": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" } } }
+      },
+      {
+        "name": "already-completed operation is skipped",
+        "intent": {
+          "id": "apply-1",
+          "revisionEventId": "revision-target",
+          "before": {
+            "a.md": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" },
+            "b.md": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }
+          },
+          "index": { "revisionEventId": "revision-target", "rootHash": "root", "paths": {}, "treeHashes": {}, "treeEpochs": {} },
+          "operations": [
+            { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" },
+            { "id": "apply-1:1", "kind": "remove", "path": "b.md", "expected": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }, "fileId": "file-b" }
+          ],
+          "completed": {
+            "apply-1:0": { "operation": { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }, "result": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" } }
+          }
+        },
+        "current": {
+          "a.md": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" },
+          "b.md": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }
+        },
+        "recoveredReceipt": null,
+        "output": { "kind": "mutate", "operation": { "id": "apply-1:1", "kind": "remove", "path": "b.md", "expected": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }, "fileId": "file-b" } }
+      },
+      {
+        "name": "all completed operations finalize",
+        "intent": {
+          "id": "apply-1",
+          "revisionEventId": "revision-target",
+          "before": {
+            "a.md": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" },
+            "b.md": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }
+          },
+          "index": { "revisionEventId": "revision-target", "rootHash": "root", "paths": {}, "treeHashes": {}, "treeEpochs": {} },
+          "operations": [
+            { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" },
+            { "id": "apply-1:1", "kind": "remove", "path": "b.md", "expected": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }, "fileId": "file-b" }
+          ],
+          "completed": {
+            "apply-1:0": { "operation": { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }, "result": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" } },
+            "apply-1:1": { "operation": { "id": "apply-1:1", "kind": "remove", "path": "b.md", "expected": { "fileId": "file-b", "contentGeneration": 3, "hostFileId": "host-b" }, "fileId": "file-b" }, "result": null }
+          }
+        },
+        "current": { "a.md": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" } },
+        "recoveredReceipt": null,
+        "output": { "kind": "finalize" }
+      },
+      {
+        "name": "prototype-shaped path remains an ordinary file",
+        "intent": {
+          "id": "apply-prototype",
+          "revisionEventId": "revision-target",
+          "before": { "__proto__": { "fileId": "file-prototype", "contentGeneration": 4 } },
+          "index": { "revisionEventId": "revision-target", "rootHash": "root", "paths": {}, "treeHashes": {}, "treeEpochs": {} },
+          "operations": [
+            { "id": "constructor", "kind": "write", "path": "__proto__", "expected": { "fileId": "file-prototype", "contentGeneration": 4 }, "fileId": "file-prototype" }
+          ],
+          "completed": {}
+        },
+        "current": { "__proto__": { "fileId": "file-prototype", "contentGeneration": 4 } },
+        "recoveredReceipt": null,
+        "output": { "kind": "mutate", "operation": { "id": "constructor", "kind": "write", "path": "__proto__", "expected": { "fileId": "file-prototype", "contentGeneration": 4 }, "fileId": "file-prototype" } }
+      }
+    ],
+    "failures": [
+      {
+        "name": "stale target",
+        "intent": { "id": "apply-1", "revisionEventId": "revision-target", "before": { "a.md": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" } }, "index": { "revisionEventId": "revision-target", "rootHash": "root", "paths": {}, "treeHashes": {}, "treeEpochs": {} }, "operations": [{ "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }], "completed": {} },
+        "current": { "a.md": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" } },
+        "recoveredReceipt": null
+      },
+      {
+        "name": "mismatched receipt",
+        "intent": { "id": "apply-1", "revisionEventId": "revision-target", "before": { "a.md": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" } }, "index": { "revisionEventId": "revision-target", "rootHash": "root", "paths": {}, "treeHashes": {}, "treeEpochs": {} }, "operations": [{ "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }], "completed": {} },
+        "current": { "a.md": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" } },
+        "recoveredReceipt": { "operation": { "id": "apply-1:0", "kind": "write", "path": "other.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }, "result": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" } }
+      },
+      {
+        "name": "file changed after durable receipt",
+        "intent": { "id": "apply-1", "revisionEventId": "revision-target", "before": { "a.md": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" } }, "index": { "revisionEventId": "revision-target", "rootHash": "root", "paths": {}, "treeHashes": {}, "treeEpochs": {} }, "operations": [{ "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }], "completed": {} },
+        "current": { "a.md": { "fileId": "file-a", "contentGeneration": 3, "hostFileId": "host-a" } },
+        "recoveredReceipt": { "operation": { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }, "result": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" } }
+      },
+      {
+        "name": "extra file blocks finalization",
+        "intent": { "id": "apply-1", "revisionEventId": "revision-target", "before": { "a.md": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" } }, "index": { "revisionEventId": "revision-target", "rootHash": "root", "paths": {}, "treeHashes": {}, "treeEpochs": {} }, "operations": [{ "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }], "completed": { "apply-1:0": { "operation": { "id": "apply-1:0", "kind": "write", "path": "a.md", "expected": { "fileId": "file-a", "contentGeneration": 1, "hostFileId": "host-a" }, "fileId": "file-a" }, "result": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" } } } },
+        "current": { "a.md": { "fileId": "file-a", "contentGeneration": 2, "hostFileId": "host-a" }, "extra.md": { "fileId": "extra", "contentGeneration": 1 } },
+        "recoveredReceipt": null
+      }
+    ]
+  },
+  "mergePlanning": {
+    "drafts": {
+      "automatic": {
+        "schemaVersion": 1,
+        "baseRevisionId": "A",
+        "leftRevisionId": "B",
+        "rightRevisionId": "C",
+        "contentGenerations": { "a.md": 4, "same.md": 2, "deleted.md": 1 },
+        "automaticFiles": { "a.md": "bGVmdA==", "same.md": "c2FtZQ==" },
+        "conflicts": [],
+        "resolutions": {},
+        "createdAt": 100
+      },
+      "conflicts": {
+        "schemaVersion": 1,
+        "baseRevisionId": "A",
+        "leftRevisionId": "B",
+        "rightRevisionId": "C",
+        "contentGenerations": { "a.md": 2, "delete.md": 2, "bin": 2, "added.md": 1 },
+        "automaticFiles": {},
+        "conflicts": [
+          { "id": "fecccc97532467ad:text-conflict", "path": "a.md", "kind": "text-conflict", "binary": false, "base": "YmFzZQ==", "left": "bGVmdA==", "right": "cmlnaHQ=" },
+          { "id": "30a02e02e1d40a44:same-path-addition", "path": "added.md", "kind": "same-path-addition", "binary": false, "base": null, "left": "bGVmdCBhZGQ=", "right": "cmlnaHQgYWRk" },
+          { "id": "51a1f05af85e342e:binary-change", "path": "bin", "kind": "binary-change", "binary": true, "base": "AAE=", "left": "AAI=", "right": "AAM=" },
+          { "id": "de034e1dc74741c7:delete-edit", "path": "delete.md", "kind": "delete-edit", "binary": false, "base": "YmFzZQ==", "left": "ZWRpdGVk", "right": null }
+        ],
+        "resolutions": {},
+        "createdAt": 101
+      },
+      "rename": {
+        "schemaVersion": 1,
+        "baseRevisionId": "A",
+        "leftRevisionId": "B",
+        "rightRevisionId": "C",
+        "contentGenerations": { "notes/original.md": 1 },
+        "automaticFiles": {},
+        "conflicts": [
+          { "id": "77814a11862385d4:divergent-rename", "path": "notes/original.md", "kind": "divergent-rename", "binary": false, "basePath": "notes/original.md", "leftPath": "notes/local-name.md", "rightPath": "notes/remote-name.md", "base": "YmFzZQ==", "left": "bG9jYWwgZWRpdA==", "right": "cmVtb3RlIGVkaXQ=" }
+        ],
+        "resolutions": {},
+        "createdAt": 102
+      },
+      "keepBoth": {
+        "schemaVersion": 1,
+        "baseRevisionId": "A",
+        "leftRevisionId": "B",
+        "rightRevisionId": "C",
+        "contentGenerations": { "note.md": 7 },
+        "automaticFiles": {},
+        "conflicts": [
+          { "id": "1188c3be78790ea6:same-path-addition", "path": "note.md", "kind": "same-path-addition", "binary": false, "base": null, "left": "bGVmdA==", "right": "cmlnaHQ=" }
+        ],
+        "resolutions": {},
+        "createdAt": 103
+      }
+    },
+    "plans": [
+      {
+        "name": "unchanged side and identical edit resolve automatically",
+        "input": {
+          "baseRevisionId": "A", "leftRevisionId": "B", "rightRevisionId": "C",
+          "base": { "a.md": "YmFzZQ==", "same.md": "YmFzZQ==", "deleted.md": "Z29uZQ==" },
+          "left": { "a.md": "bGVmdA==", "same.md": "c2FtZQ==" },
+          "right": { "a.md": "YmFzZQ==", "same.md": "c2FtZQ==" },
+          "contentGenerations": { "a.md": 4, "same.md": 2, "deleted.md": 1 },
+          "createdAt": 100
+        },
+        "outputDraft": "automatic"
+      },
+      {
+        "name": "text binary delete-edit and same-path addition conflicts",
+        "input": {
+          "baseRevisionId": "A", "leftRevisionId": "B", "rightRevisionId": "C",
+          "base": { "a.md": "YmFzZQ==", "delete.md": "YmFzZQ==", "bin": "AAE=" },
+          "left": { "a.md": "bGVmdA==", "delete.md": "ZWRpdGVk", "bin": "AAI=", "added.md": "bGVmdCBhZGQ=" },
+          "right": { "a.md": "cmlnaHQ=", "bin": "AAM=", "added.md": "cmlnaHQgYWRk" },
+          "contentGenerations": { "a.md": 2, "delete.md": 2, "bin": 2, "added.md": 1 },
+          "createdAt": 101
+        },
+        "outputDraft": "conflicts"
+      },
+      {
+        "name": "divergent rename uses stable file identity",
+        "input": {
+          "baseRevisionId": "A", "leftRevisionId": "B", "rightRevisionId": "C",
+          "base": { "notes/original.md": "YmFzZQ==" },
+          "left": { "notes/local-name.md": "bG9jYWwgZWRpdA==" },
+          "right": { "notes/remote-name.md": "cmVtb3RlIGVkaXQ=" },
+          "baseFileIds": { "notes/original.md": "stable-file" },
+          "leftFileIds": { "notes/local-name.md": "stable-file" },
+          "rightFileIds": { "notes/remote-name.md": "stable-file" },
+          "contentGenerations": { "notes/original.md": 1 },
+          "createdAt": 102
+        },
+        "outputDraft": "rename"
+      }
+    ],
+    "materializations": [
+      {
+        "name": "keep-both materializes deterministic collision-safe path",
+        "draft": "keepBoth",
+        "resolutions": { "1188c3be78790ea6:same-path-addition": { "choice": "keep-both" } },
+        "currentContentGenerations": { "note.md": 7 },
+        "keepBoth": { "alias": "Phone", "publicKey": "abcdef123456" },
+        "output": { "note.md": "bGVmdA==", "note (Phone-abcdef12).md": "cmlnaHQ=" }
+      }
+    ],
+    "failures": [
+      {
+        "name": "incomplete decision",
+        "draft": "keepBoth",
+        "resolutions": {},
+        "currentContentGenerations": { "note.md": 7 }
+      },
+      {
+        "name": "stale content generation",
+        "draft": "keepBoth",
+        "resolutions": { "1188c3be78790ea6:same-path-addition": { "choice": "left" } },
+        "currentContentGenerations": { "note.md": 8 }
+      },
+      {
+        "name": "stale conflict decision",
+        "draft": "automatic",
+        "resolutions": { "obsolete-conflict": { "choice": "left" } },
+        "currentContentGenerations": { "a.md": 4, "same.md": 2, "deleted.md": 1 }
+      },
+      {
+        "name": "binary conflict rejects resolved text",
+        "draft": "conflicts",
+        "resolutions": {
+          "fecccc97532467ad:text-conflict": { "choice": "left" },
+          "30a02e02e1d40a44:same-path-addition": { "choice": "left" },
+          "51a1f05af85e342e:binary-change": { "choice": "resolved", "content": "not binary" },
+          "de034e1dc74741c7:delete-edit": { "choice": "left" }
+        },
+        "currentContentGenerations": { "a.md": 2, "delete.md": 2, "bin": 2, "added.md": 1 }
+      }
+    ]
+  },
+  "completeHistory": {
+    "input": {
+      "checkpoint": {
+        "revisionEventId": "0000000000000000000000000000000000000000000000000000000000000000",
+        "headEventId": "head-local",
+        "objectHashes": ["object-a", "object-b"],
+        "ciphertextId": "ciphertext-1",
+        "durable": true
+      },
+      "outbox": [
+        {
+          "revisionEventId": "0000000000000000000000000000000000000000000000000000000000000000",
+          "headEventId": "head-local",
+          "objectHashes": ["object-a", "object-b"],
+          "ciphertextId": "ciphertext-1"
+        }
+      ],
+      "revisionReceipt": { "eventId": "0000000000000000000000000000000000000000000000000000000000000000", "state": "accepted" },
+      "headReceipt": { "eventId": "head-local", "state": "applied" },
+      "incomingGraph": {
+        "revisions": {
+          "0000000000000000000000000000000000000000000000000000000000000000": { "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "root": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "parents": [] },
+          "1111111111111111111111111111111111111111111111111111111111111111": { "archiveHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "root": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "parents": [{ "eventId": "0000000000000000000000000000000000000000000000000000000000000000", "archiveHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }] }
+        },
+        "heads": [{ "revisionEventId": "1111111111111111111111111111111111111111111111111111111111111111", "revisionArchiveHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "root": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd" }]
+      },
+      "localRevisionId": "0000000000000000000000000000000000000000000000000000000000000000",
+      "remoteRevisionIds": ["1111111111111111111111111111111111111111111111111111111111111111"],
+      "applyIntent": {
+        "id": "apply-history",
+        "revisionEventId": "1111111111111111111111111111111111111111111111111111111111111111",
+        "before": { "note.md": { "fileId": "stable-note", "contentGeneration": 1, "hostFileId": "host-note" } },
+        "index": { "revisionEventId": "1111111111111111111111111111111111111111111111111111111111111111", "rootHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "paths": {}, "treeHashes": {}, "treeEpochs": {} },
+        "operations": [{ "id": "apply-history:0", "kind": "write", "path": "note.md", "expected": { "fileId": "stable-note", "contentGeneration": 1, "hostFileId": "host-note" }, "fileId": "stable-note" }],
+        "completed": {}
+      },
+      "initialFiles": { "note.md": { "fileId": "stable-note", "contentGeneration": 1, "hostFileId": "host-note" } },
+      "mutationReceipt": { "operation": { "id": "apply-history:0", "kind": "write", "path": "note.md", "expected": { "fileId": "stable-note", "contentGeneration": 1, "hostFileId": "host-note" }, "fileId": "stable-note" }, "result": { "fileId": "stable-note", "contentGeneration": 2, "hostFileId": "host-note" } }
+    },
+    "output": {
+      "checkpoint": {
+        "revisionEventId": "0000000000000000000000000000000000000000000000000000000000000000",
+        "headEventId": "head-local",
+        "objectHashes": ["object-a", "object-b"],
+        "ciphertextId": "ciphertext-1",
+        "durable": true
+      },
+      "publication": "complete",
+      "outboxAfterPublication": [],
+      "ingestion": { "revisionIds": ["0000000000000000000000000000000000000000000000000000000000000000", "1111111111111111111111111111111111111111111111111111111111111111"], "headRevisionIds": ["1111111111111111111111111111111111111111111111111111111111111111"] },
+      "reconciliation": { "kind": "fast-forward", "tips": ["1111111111111111111111111111111111111111111111111111111111111111"], "targetRevisionId": "1111111111111111111111111111111111111111111111111111111111111111" },
+      "applyRecovery": [
+        { "kind": "mutate", "operation": { "id": "apply-history:0", "kind": "write", "path": "note.md", "expected": { "fileId": "stable-note", "contentGeneration": 1, "hostFileId": "host-note" }, "fileId": "stable-note" } },
+        { "kind": "record-receipt", "receipt": { "operation": { "id": "apply-history:0", "kind": "write", "path": "note.md", "expected": { "fileId": "stable-note", "contentGeneration": 1, "hostFileId": "host-note" }, "fileId": "stable-note" }, "result": { "fileId": "stable-note", "contentGeneration": 2, "hostFileId": "host-note" } } },
+        { "kind": "finalize" }
+      ],
+      "resultingTip": "1111111111111111111111111111111111111111111111111111111111111111",
+      "resultingFiles": { "note.md": { "fileId": "stable-note", "contentGeneration": 2, "hostFileId": "host-note" } }
+    }
+  },
+  "membershipAuthority": {
+    "membership": {
+      "schemaVersion": 2,
+      "vaultId": "fixture-vault",
+      "ownerPublicKey": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "generation": 3,
+      "currentEpoch": 2,
+      "devices": [
+        { "publicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "state": "active" },
+        { "publicKey": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "state": "revoked", "cutoffHead": "1111111111111111111111111111111111111111111111111111111111111111" }
+      ],
+      "syncIdentity": {
+        "publicKey": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "generation": 2,
+        "history": [
+          {
+            "publicKey": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "generation": 1,
+            "activatedMembershipGeneration": 0,
+            "retiredMembershipGeneration": 2,
+            "cutoffHeads": {
+              "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb": "1111111111111111111111111111111111111111111111111111111111111111",
+              "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          },
+          {
+            "publicKey": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "generation": 2,
+            "activatedMembershipGeneration": 2
+          }
+        ]
+      },
+      "legacyTransportCutoffHeads": {
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb": "1111111111111111111111111111111111111111111111111111111111111111"
+      }
+    },
+    "installedEpochs": [1, 2],
+    "ancestry": {
+      "0000000000000000000000000000000000000000000000000000000000000000": [],
+      "1111111111111111111111111111111111111111111111111111111111111111": ["0000000000000000000000000000000000000000000000000000000000000000"],
+      "2222222222222222222222222222222222222222222222222222222222222222": ["1111111111111111111111111111111111111111111111111111111111111111"]
+    },
+    "cases": [
+      { "name": "active device through current identity", "record": { "eventId": "2222222222222222222222222222222222222222222222222222222222222222", "eventKind": 78, "transportPublicKey": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "attestedDevicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "devicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 2, "currentEpoch": 2, "keyEpoch": 2 } }, "authorized": true },
+      { "name": "active HEAD through current identity", "record": { "eventId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "eventKind": 30078, "transportPublicKey": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "attestedDevicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "devicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 2, "currentEpoch": 2, "keyEpoch": 2, "revisionEventId": "2222222222222222222222222222222222222222222222222222222222222222" } }, "authorized": true },
+      { "name": "future membership generation", "record": { "eventId": "2222222222222222222222222222222222222222222222222222222222222222", "eventKind": 78, "transportPublicKey": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "attestedDevicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "devicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 4, "currentEpoch": 2, "keyEpoch": 2 } }, "authorized": false },
+      { "name": "uninstalled key epoch", "record": { "eventId": "2222222222222222222222222222222222222222222222222222222222222222", "eventKind": 78, "transportPublicKey": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "attestedDevicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "devicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 2, "currentEpoch": 2, "keyEpoch": 3 } }, "authorized": false },
+      { "name": "caller label differs from attested device", "record": { "eventId": "1111111111111111111111111111111111111111111111111111111111111111", "eventKind": 78, "transportPublicKey": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "attestedDevicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "devicePublicKey": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 1, "currentEpoch": 1, "keyEpoch": 1 } }, "authorized": false },
+      { "name": "revoked ancestry at cutoff", "record": { "eventId": "1111111111111111111111111111111111111111111111111111111111111111", "eventKind": 78, "transportPublicKey": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "attestedDevicePublicKey": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "devicePublicKey": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 1, "currentEpoch": 1, "keyEpoch": 1 } }, "authorized": true },
+      { "name": "revoked ancestry before cutoff", "record": { "eventId": "0000000000000000000000000000000000000000000000000000000000000000", "eventKind": 78, "transportPublicKey": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "attestedDevicePublicKey": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "devicePublicKey": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 1, "currentEpoch": 1, "keyEpoch": 1 } }, "authorized": true },
+      { "name": "revoked ancestry after cutoff", "record": { "eventId": "2222222222222222222222222222222222222222222222222222222222222222", "eventKind": 78, "transportPublicKey": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "attestedDevicePublicKey": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "devicePublicKey": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 1, "currentEpoch": 1, "keyEpoch": 1 } }, "authorized": false },
+      { "name": "revoked HEAD is never retained", "record": { "eventId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "eventKind": 30078, "transportPublicKey": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "attestedDevicePublicKey": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "devicePublicKey": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 1, "currentEpoch": 1, "keyEpoch": 1, "revisionEventId": "1111111111111111111111111111111111111111111111111111111111111111" } }, "authorized": false },
+      { "name": "retired identity at immutable cutoff", "record": { "eventId": "1111111111111111111111111111111111111111111111111111111111111111", "eventKind": 78, "transportPublicKey": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "attestedDevicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "devicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 1, "currentEpoch": 1, "keyEpoch": 1 } }, "authorized": true },
+      { "name": "retired identity beyond cutoff", "record": { "eventId": "2222222222222222222222222222222222222222222222222222222222222222", "eventKind": 78, "transportPublicKey": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "attestedDevicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "devicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 1, "currentEpoch": 1, "keyEpoch": 1 } }, "authorized": false },
+      { "name": "retired identity cannot sign retirement generation", "record": { "eventId": "1111111111111111111111111111111111111111111111111111111111111111", "eventKind": 78, "transportPublicKey": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "attestedDevicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "devicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 2, "currentEpoch": 2, "keyEpoch": 1 } }, "authorized": false },
+      { "name": "legacy event at explicit cutoff", "record": { "eventId": "1111111111111111111111111111111111111111111111111111111111111111", "eventKind": 78, "transportPublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "attestedDevicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "devicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "legacy": true, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 1, "currentEpoch": 1, "keyEpoch": 1 } }, "authorized": true },
+      { "name": "legacy event beyond explicit cutoff", "record": { "eventId": "2222222222222222222222222222222222222222222222222222222222222222", "eventKind": 78, "transportPublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "attestedDevicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "devicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "legacy": true, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 1, "currentEpoch": 1, "keyEpoch": 1 } }, "authorized": false },
+      { "name": "unknown device", "record": { "eventId": "1111111111111111111111111111111111111111111111111111111111111111", "eventKind": 78, "transportPublicKey": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "attestedDevicePublicKey": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "devicePublicKey": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 2, "currentEpoch": 2, "keyEpoch": 2 } }, "authorized": false }
+    ],
+    "invalidMemberships": [
+      { "name": "duplicate device", "patch": { "duplicateFirstDevice": true } },
+      { "name": "future active identity", "patch": { "activeIdentityGeneration": 4 } },
+      { "name": "no unique active identity", "patch": { "retireActiveIdentityAt": 3 } }
+    ]
+  },
+  "crypto": {
+    "sha256": { "inputUtf8": "hello", "outputHex": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824" },
+    "hkdfSha256": { "ikmUtf8": "input key material", "saltUtf8": "salt", "infoUtf8": "info", "outputHex": "f1840c1f388c8fc7a9137c561360962da050de51672f0d7c9fee3ff15c251fec" },
+    "hmacSha256": { "keyUtf8": "secret key", "inputUtf8": "message", "outputHex": "c431e4857a6b817f9eeaab86b00f78e210808e5a2b2ae1e5bb6befb213608eed" },
+    "xchacha20poly1305": { "keyHex": "4242424242424242424242424242424242424242424242424242424242424242", "nonceHex": "010101010101010101010101010101010101010101010101", "aadHex": "aabbcc", "plaintextUtf8": "secret message", "ciphertextHex": "148d47c405741afd475c837e06bb433c1d3c3cba472c3706632aaf741df1" }
+  },
+  "wire": {
+    "validSignedEvents": ["revision", "head", "secondHead", "membership", "legacyRevision"],
+    "deviceEnvelopes": [
+      { "event": "revision", "kind": 78, "legacy": false, "attestedPubkey": "4d4b6cd1361032ca9bd2aeb9d900aa4d45d9ead80ac9423374c451a7254d0766" },
+      { "event": "head", "kind": 30078, "legacy": false, "attestedPubkey": "4d4b6cd1361032ca9bd2aeb9d900aa4d45d9ead80ac9423374c451a7254d0766" },
+      { "event": "legacyRevision", "kind": 78, "legacy": true, "attestedPubkey": "4d4b6cd1361032ca9bd2aeb9d900aa4d45d9ead80ac9423374c451a7254d0766" }
+    ],
+    "rootEnvelopes": [
+      { "event": "membership", "legacy": false, "attestedPubkey": "62c0a046dacce86ddd0343c6d3c7c79c2208ba0d9c9cf24a6d046d21d21f90f7" }
+    ]
+  }
+}

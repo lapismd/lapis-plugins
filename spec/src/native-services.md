@@ -112,6 +112,53 @@ source pins and host-specific owner cutover retain their separate gates.
 | LN-NATIVE-002 | Native Markdown cache identity MUST use the retained MD5 of the UTF-8 source bytes. Application policy MUST own index publication and unattended lifetime.                                                                                                                                                                     |
 | LN-NATIVE-003 | The native Markdown parser version MUST change when metadata interpretation changes so unchanged source bytes cannot reuse stale derived metadata.                                                                                                                                                                             |
 | LN-NATIVE-004 | The native Canvas Search extractor MUST preserve the retained built-in provider’s ordered field extraction, blank-value filtering and original-source fallback. Shared complete outcomes MUST qualify both implementations. Application services MUST own provider selection, configuration, source admission and publication. |
+| LN-NATIVE-005 | Pure Rust Sync algorithms MUST remain independent of Tauri, HTTP, databases, renderers and application scheduling. Their protocol codecs MUST match the retained TypeScript engine through a shared frozen complete-output corpus, including expected failures. NIP-01 identifiers and BIP-340 signatures MUST be recomputed and verified for every accepted outer and attested event; mutable verification caches MUST NOT authorize changed records. Runtime parity and native host adoption retain separate gates. |
+
+LN-NATIVE-005 now qualifies the protocol and runtime algorithm corpus, including
+one normalized checkpoint-to-applied-tip history. It does not qualify durable
+repositories, filesystem mutation, custody, scheduling, server participation or
+native host selection. Those effects remain owned by later shared-core, Server
+and Desktop stages.
+
+The membership parity slice remains a pure transition over a verified record,
+owner-approved public membership, installed epoch numbers and an ancestry
+predicate. Signature/key custody and ancestry retrieval remain explicit caller
+boundaries. This closes current/retired identity and revoked-device cutoff
+outcomes without introducing a database, network client, filesystem effect or
+application scheduler.
+
+Authenticated incoming-graph validation and reconciliation are likewise pure.
+The caller supplies records only after signature, ciphertext and object-graph
+authentication. The shared algorithms reject missing/cyclic ancestry,
+mismatched parent/HEAD references and incomparable merge bases while retaining
+verified alternate encrypted archives for one immutable signed event. Fetching,
+durable staging, authority lookup and current-file observation remain explicit
+host responsibilities.
+
+Stable publication retry and guarded-apply recovery now share complete-output
+transitions with the TypeScript engine. Publication admission distinguishes
+staged, accepted and applied receipts without regenerating outbox identity.
+Apply recovery validates a durable prefix of idempotent receipts, prototype-
+shaped operation IDs and paths, the expected whole-vault generation set and a
+recovered mutation result before it can record progress or finalize. The Rust
+transition performs no filesystem or repository I/O; durable receipt storage,
+exclusive mutation ownership and crash qualification remain host-owned gates.
+
+Three-way merge planning is now the next shared pure transition. Both engines
+produce the same automatic outcomes and explicit text, binary, delete/edit,
+same-path-addition and stable-identity divergent-rename conflicts. Complete
+materialization fixtures cover collision-safe keep-both naming and reject
+incomplete decisions, stale content generations, obsolete conflict IDs and
+resolved-text choices for binary content. The transition emits candidate files
+only; guarded application and durable merge publication remain separate host
+and runtime responsibilities.
+
+The final normalized history composes the same persisted checkpoint/outbox
+identity, exact publication acknowledgements, authenticated incoming graph,
+fast-forward reconciliation and three-step apply recovery into one resulting
+tip and vault-generation outcome. This closes algorithm-composition parity; it
+does not substitute an in-memory fixture for the real-disk and crash boundaries
+owned by the next native-storage stage.
 
 This intake covers the existing lightweight metadata extractor. Task, custom
 projection and extension processors remain separate migration work. It neither

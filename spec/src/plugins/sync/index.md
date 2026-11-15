@@ -158,6 +158,13 @@ full-width action-feedback layout through its public npm exports.
 | LN-SYNC-047 | Sync Settings MUST expose host-backed sign-in, browser approval, cancellation and sign-out with explicit account, waiting, unavailable and failure states. Sign in MUST open the approval window within the click's user activation and retain a visible approval link with a copy action when opening is blocked. Account actions MUST pair relevant icons with their text labels. Account guidance MUST use shared smaller, muted settings-description styling; errors MUST remain distinct. Credentials MUST remain host-owned and MUST NOT enter Settings values or plugin persistence. Account sign-in MUST NOT enable enrollment or content operations. The private review host MAY keep its account session in memory until protected persistence is delivered. |
 | LN-SYNC-048 | Account changes and sign-out MUST invalidate connection health and cached vault discovery, abort pending discovery, and reject stale results. Changing the server MUST cancel the previous handoff and prevent credentials or results from crossing destinations. The review host MUST use direct cross-origin bearer requests without its earlier cookie proxy. |
 
+## Native algorithm parity
+
+<!-- prettier-ignore -->
+| ID | Requirement |
+| --- | --- |
+| LN-SYNC-050 | The retained TypeScript engine and pure Rust Sync algorithms MUST execute the same frozen complete-output fixtures for canonical JSON, supported event filters, replaceable ordering, ancestry, revision/HEAD legacy readers, fixed cryptographic vectors, NIP-01 event identity/signatures and device/root attestation envelopes. The fixture loader MUST preserve prototype-shaped own keys. Invalid filters, readers, signatures and envelopes MUST fail closed. Runtime parity additionally requires membership cutoff ancestry, missing-dependency ingestion, stable outbox retries, durable apply recovery, merge planning and one complete history; protocol-only evidence MUST NOT claim the Stage 2 exit boundary. |
+
 ## Delivery status
 
 The TypeScript source oracle is rebaselined before native parity work. All 18
@@ -168,6 +175,20 @@ reporter invocation and unavailable local Docker context are retained in the
 explicit native run and hosted CI evidence do not qualify a local Docker run.
 No visual baseline, activation, publication or native-host claim follows from
 this source qualification.
+
+Native Stage 2 is complete in the isolated implementation stack. The audited work adds NIP-01 identifier
+and BIP-340 verification plus device/root envelope validation, and runs one
+frozen complete-output corpus through both implementations. The shared corpus
+currently passes 121 TypeScript cases and fourteen Rust fixture families; the Rust
+Sync unit total is 88. This protocol, membership and history-graph evidence is recorded in the
+[Stage 2 parity receipt](../../../records/2026-11-15-sync-rust-parity.md).
+Stable outbox retry, pure durable apply-recovery planning, full merge planning
+and one normalized checkpoint-to-applied-tip history are included. This claims
+only the pure Stage 2 algorithm boundary; real native storage, guarded filesystem
+effects, custody, host selection and application scheduling remain unqualified.
+The [current-main rebase receipt](../../../records/2026-11-15-sync-main-rebase.md)
+separately qualifies the conflict-free Stage 1 and Stage 2 heads against the
+0.3.0 Plugins main line without changing those ownership boundaries.
 
 The foundation implements protocol codecs, event filtering and replaceable
 ordering. UI qualification adds the plugin class, views, status and settings against an
