@@ -186,6 +186,9 @@ Stable outbox retry, pure durable apply-recovery planning, full merge planning
 and one normalized checkpoint-to-applied-tip history are included. This claims
 only the pure Stage 2 algorithm boundary; real native storage, guarded filesystem
 effects, custody, host selection and application scheduling remain unqualified.
+The [current-main rebase receipt](../../../records/2026-11-15-sync-main-rebase.md)
+separately qualifies the conflict-free Stage 1 and Stage 2 heads against the
+0.3.0 Plugins main line without changing those ownership boundaries.
 
 The foundation implements protocol codecs, event filtering and replaceable
 ordering. UI qualification adds the plugin class, views, status and settings against an
