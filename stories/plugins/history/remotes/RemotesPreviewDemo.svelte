@@ -28,11 +28,19 @@
     void opening
       .then(async (runtime) => {
         if (disposed) return;
+        // An initial review belongs above Settings, not in a footer dialog
+        // that opens before Settings and is immediately unmounted beneath it.
+        const review = settings ? runtime.fixture.target("original").review : undefined;
+        if (review) runtime.fixture.update("original", { review: undefined });
         app = runtime.app;
         attachRemotesPreview(element, runtime);
         // Open only after the real shell mounts, matching a user opening Settings.
         await tick();
-        if (!disposed && settings) runtime.openSettings();
+        if (!disposed && settings) {
+          runtime.openSettings();
+          await tick();
+          if (!disposed && review) runtime.fixture.update("original", { review });
+        }
       })
       .catch((error) => {
         if (!disposed) failure = String(error);

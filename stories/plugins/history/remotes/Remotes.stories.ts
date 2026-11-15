@@ -91,6 +91,42 @@ export const SshConnected: Story = {
 };
 export const Fetching: Story = { args: { scenario: "fetching" } };
 export const PushReview: Story = { args: { scenario: "push-review" } };
+export const LockedReviewCannotPublish: Story = {
+  args: { host: "server", scenario: "push-review" },
+  play: async ({ canvasElement }) => {
+    const dialog = within(
+      await within(document.body).findByRole(
+        "dialog",
+        { name: "Push to original repository?" },
+        { timeout: 30_000 }
+      )
+    );
+    const fixture = remotesPreviewFor(canvasElement).fixture;
+    const close = fixture.actions.dismissReview;
+    const dismissed: string[] = [];
+    fixture.actions.dismissReview = (target) => {
+      dismissed.push(target);
+      close(target);
+    };
+    fixture.update("original", {
+      status: "credentials-required",
+      canFetch: false,
+      canPush: false,
+    });
+    fixture.state.storage = "locked";
+    await waitFor(() =>
+      expect(dialog.getByRole("button", { name: "Push to origin/main" })).toBeDisabled()
+    );
+    await expect(dialog.getByRole("button", { name: "Cancel" })).toBeEnabled();
+    await userEvent.click(dialog.getByRole("button", { name: "Cancel" }));
+    await expect(dismissed).toEqual(["original"]);
+    await expect(fixture.target("original").review).toBeUndefined();
+    await waitFor(() => expect(within(document.body).queryByRole("dialog", {
+      name: "Push to original repository?",
+    })).toBeNull());
+    await expect(fixture.activity.some((item) => item.kind === "push")).toBe(false);
+  },
+};
 export const UnknownPush: Story = { args: { scenario: "unknown" } };
 export const DeviceSignIn: Story = { args: { scenario: "device-sign-in" } };
 export const ExpiredDeviceSignIn: Story = {

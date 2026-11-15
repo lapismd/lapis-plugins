@@ -278,6 +278,14 @@ Connection tests are explicit reachability/authentication checks without
 publication. Host implementations own credential custody and endpoint admission;
 presentation validation cannot authorize transport.
 
+Working-copy frame parsing MUST preserve its native history source for subsequent
+navigation. Legacy frames without an explicit source retain backup semantics;
+unknown or null sources refuse. Dismissing a push review MUST suppress that same
+target/review identity through later observations in the current controller
+session, while a new native review remains visible. A retained review MUST NOT
+enable publication when the host withdraws push capability, including locked
+credential storage; Cancel remains available when no push is running.
+
 Registry qualification for optional-state projection consumes API `^0.6.2` from
 npm. The temporary built API archive is retired after publication; hosted
 multiple-head recovery stories retain their exact first-click assertions.

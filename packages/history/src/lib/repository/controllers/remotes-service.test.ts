@@ -34,6 +34,38 @@ function fixture() {
 }
 
 describe("native repository remote presentation boundary", () => {
+  it("keeps a dismissed review hidden across refresh but presents a new native review", async () => {
+    const { controller, service } = fixture();
+    const reviewed = snapshot();
+    reviewed.settings.targets = [
+      {
+        target: "original",
+        connection: null,
+        status: "connected",
+        bookmarks: [],
+        canFetch: true,
+        canPush: true,
+        review: {
+          id: "dismissed-review",
+          commit: "a".repeat(40),
+          summary: "Selected bookmark",
+          outgoing: 1,
+          remoteCommit: null,
+        },
+      },
+    ];
+    service.read.mockImplementation(async () => structuredClone(reviewed));
+    await controller.refresh();
+    controller.actions.dismissReview("original");
+    expect(controller.snapshot?.settings.targets[0]?.review).toBeUndefined();
+    await controller.refresh();
+    expect(controller.snapshot?.settings.targets[0]?.review).toBeUndefined();
+    reviewed.settings.targets[0]!.review!.id = "new-review";
+    await controller.refresh();
+    expect(controller.snapshot?.settings.targets[0]?.review?.id).toBe("new-review");
+    expect(service.execute).not.toHaveBeenCalled();
+    controller.close();
+  });
   it("saves only the selected target at the last observed configuration revision", async () => {
     const { controller, service } = fixture();
     await controller.refresh();

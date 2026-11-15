@@ -685,3 +685,9 @@ rerun against the published source fix rather than a catalog workaround.
 The UI 0.2 cohort is qualified through the shared catalog and public registry
 packages. Peer-range regressions cover AI, CSV and Markdown, while release
 records distinguish the cancelled pre-publication candidate from its replacement.
+
+Under LP-SPEC-002, the History source/review guard record retains each narrow
+failure, the reactive-wait correction, complete package checks and separate
+Storybook/packaging gates. Its new story remains visual-pending. Session-only
+review dismissal, native-source parsing and capability withdrawal must not be
+reported as live credential or host adoption qualification.
