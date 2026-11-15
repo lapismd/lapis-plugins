@@ -45,10 +45,11 @@ Canvas queue qualification (LN-CANVAS-024/025/026) covers captured board writes.
 
 Canvas editable-document validation belongs to the Canvas plugin (LN-CANVAS-005). Native Search retains its separately tested tolerant canvas-text extractor; it MUST NOT become an editable-file repair or persistence authority.
 
-Rolling dependency-image reviews update only the verified CI image pin. They
+Dependency-image cache selection and publication under LP-SPEC-036/051
 MUST NOT change native service revisions, runtime installation authority or
-plugin archive identity; native admission continues to use the signed release
-coordinates under LP-SPEC-002 and LP-SPEC-051.
+plugin archive identity. Native admission continues to use signed release
+coordinates under LP-SPEC-002. The retained deferred release route keeps its
+legacy pin resolver; active consumers use the verified shared resolver.
 
 The Bases embed catalog renders file and fenced Board/Activity instances with
 an explicitly owned App. Read-only Search and Filter change only the embedded

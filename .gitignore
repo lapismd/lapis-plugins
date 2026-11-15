@@ -5,6 +5,9 @@ dist/
 storybook-static/
 .turbo/
 .ci/dependency-context/
+.ci/dependency-image-receipt.json
+.ci/dependency-image-resolution.json
+.ci/dependency-image-publication.json
 **/.svelte-kit/
 **/.cursor/
 .release/

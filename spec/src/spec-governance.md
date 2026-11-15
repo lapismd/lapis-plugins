@@ -201,11 +201,13 @@ checks and explicit shared-catalog stories remain separate from installation
 and release selection. The retained source inventory records the Apache-2.0
 correction in the owning Nostr Sync repository before extraction.
 
-Dependency-image automation follows LP-SPEC-051: one rolling review retains
-immutable digest pins, terminal reviews receive a new PR, and successful
-publication closes only superseded same-repository bot hash-branch reviews.
-Executable workflow regressions retain failure preservation and main-only
-publication without changing normal required CI gates.
+Dependency-image automation follows LP-SPEC-051: one serialized main-only
+producer delegates staging, signed input provenance and immutable promotion to
+the shared Lapis CI action. Active consumers verify the current context through
+one read-only reusable resolver and retain unconditional frozen installs.
+Workflow regressions prohibit digest-pin writes and PR creation. Legacy pin
+helpers remain for rollback and the excluded deferred release route; superseded
+bot review cleanup follows qualified source and consumer acceptance.
 
 The verified shared CI image refresh maps its base pin, dependency-only build
 context and generated dependency digest to this chapter and Distribution.
@@ -373,7 +375,7 @@ cover late face registration and fallback-only availability; a shared readiness
 change requires the complete four-shard interaction/accessibility lane.
 CI image and remote-cache changes are protected by LP-SPEC-036. The checked-in
 image manifest, dependency-only context generator, Dockerfile, publication
-workflow, manifest pin updater, workflow pin resolvers, remote-cache
+workflow, shared-action adapters, retained rollback pin updater, remote-cache
 configuration, and their focused tests map to Distribution and this governance
 chapter. Local credentials remain in the ignored root `.env`; the tracked
 `.env.example` documents names only.

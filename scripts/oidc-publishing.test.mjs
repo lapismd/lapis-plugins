@@ -183,7 +183,7 @@ test("GitHub workflows run Node 24 actions and Node 24 builds", () => {
       ?.length,
     7
   );
-  assert.match(ciWorkflow, /jq -er .*\.ci\/images\.json/);
+  assert.match(ciWorkflow, /uses: \.\/\.github\/workflows\/resolve-dependency-image\.yml/);
   assert.match(workflow, /jq -er .*\.ci\/images\.json/);
   assert.match(ciSetup, /v24\.15\.0/);
   assert.match(ciSetup, /10\.34\.5/);
