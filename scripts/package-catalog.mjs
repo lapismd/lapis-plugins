@@ -40,7 +40,11 @@ const allPluginPackages = [
     pluginId: "lapis-markdown-lint",
   },
   { directory: "pdf", packageName: "@lapis-notes/pdf", pluginId: "lapis-pdf" },
-  { directory: "docx", packageName: "@lapis-notes/docx", pluginId: "lapis-docx" },
+  {
+    directory: "docx",
+    packageName: "@lapis-notes/docx",
+    pluginId: "lapis-docx",
+  },
   { directory: "csv", packageName: "@lapis-notes/csv", pluginId: "lapis-csv" },
   {
     directory: "search",
@@ -123,7 +127,7 @@ export const frameworkPackageVersions = new Map([
   ["@lapis-notes/api", "^0.2.0 || ^0.4.0 || ^0.6.0"],
   ["@lapis-notes/file-explorer", "^0.2.0"],
   ["@lapis-notes/language-service", "^0.1.2"],
-  ["@lapis-notes/ui", "^0.1.4"],
+  ["@lapis-notes/ui", "^0.1.4 || ^0.2.0"],
   ["@lapis-notes/workspace", "^0.3.0 || ^0.4.1"],
 ]);
 

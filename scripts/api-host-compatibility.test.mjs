@@ -26,3 +26,23 @@ for (const plugin of pluginPackages) {
     );
   });
 }
+
+for (const directory of ["ai", "markdown", "csv"]) {
+  test(`${directory} admits the API 0.6/UI 0.2 host and retains the UI 0.1 host`, async () => {
+    const pkg = JSON.parse(
+      await readFile(
+        new URL(`../packages/${directory}/package.json`, import.meta.url),
+        "utf8",
+      ),
+    );
+    assert.ok(
+      semver.satisfies("0.6.2", pkg.peerDependencies["@lapis-notes/api"]),
+    );
+    for (const version of ["0.1.10", "0.2.0"]) {
+      assert.ok(
+        semver.satisfies(version, pkg.peerDependencies["@lapis-notes/ui"]),
+        `${directory} excludes UI ${version}`,
+      );
+    }
+  });
+}

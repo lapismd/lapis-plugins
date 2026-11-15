@@ -359,3 +359,7 @@ records the Markdown 0.3 peer intake without native or publisher-authority chang
 The catalog's API 0.6.2 registry refresh changes no native custody or transport
 authority. It supplies the source-owned optional-state projection fix needed by
 History recovery interactions; cold host qualification remains separate.
+
+The UI 0.2 / API 0.6 peer-cohort correction changes renderer package admission,
+not native algorithms, service ownership, or protocol capabilities. Native
+consumers retain their exact source pins and independent host qualification.

@@ -681,3 +681,7 @@ records the Markdown 0.3 peer intake without native or publisher-authority chang
 The API 0.6.2 intake retires the temporary History catalog archive. Hosted
 multiple-head recovery failures remain recorded, with unchanged assertions
 rerun against the published source fix rather than a catalog workaround.
+
+The UI 0.2 cohort is qualified through the shared catalog and public registry
+packages. Peer-range regressions cover AI, CSV and Markdown, while release
+records distinguish the cancelled pre-publication candidate from its replacement.
