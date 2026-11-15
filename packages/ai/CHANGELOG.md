@@ -1,5 +1,11 @@
 # AI changelog
 
+## 0.1.15
+
+### Patch Changes
+
+- [#128](https://github.com/lapismd/lapis-plugins/pull/128) [`7167204`](https://github.com/lapismd/lapis-plugins/commit/7167204ea522e0456db8ac2dbe051bda3c8bb30b) Thanks [@stevejuma](https://github.com/stevejuma)! - Accept the published UI 0.2 host required by API 0.6, while retaining UI 0.1 compatibility. Qualify the shared catalog against the current UI package.
+
 ## 0.1.14
 
 ### Patch Changes
