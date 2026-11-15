@@ -313,3 +313,8 @@ legacy compatibility. Providing native remotes disables renderer RepositorySync;
 only the executing host schedules explicitly opted-in backup synchronization.
 
 History 0.5.0 has [verified npm, signed archive and live registry delivery](../../../records/2026-11-15-history-050-publication.md). Host registry intake and cold application acceptance remain separate gates under LN-HIST-021.
+
+Enabled upstream actions MUST contribute one keyboard tab stop per button;
+tooltip wrappers MUST NOT add redundant stops. Disabled controls MAY retain a
+focusable tooltip trigger so their unavailable explanation remains reachable.
+This applies to admitted remote actions and retained backup-service controls.

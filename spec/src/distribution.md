@@ -614,3 +614,7 @@ package qualification remain distinct from either native application's delivery.
 
 Bases, Canvas and Markdown package their skill references recursively. Public skills.json, actual npm tarballs and signed archives MUST retain every authored reference byte. The independent patch Changeset describes this content correction; publication and host intake remain separate gates.
 [Qualification evidence](../records/2026-11-15-lapis-skill-references.md) retains source checks separately from consumer delivery.
+
+History remote-action keyboard correction carries an independent patch Changeset.
+Registry ranges and public exports remain unchanged; the new patch must pass
+GitHub package/archive release qualification before final host adoption.

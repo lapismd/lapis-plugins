@@ -115,16 +115,24 @@ export const LockedReviewCannotPublish: Story = {
     });
     fixture.state.storage = "locked";
     await waitFor(() =>
-      expect(dialog.getByRole("button", { name: "Push to origin/main" })).toBeDisabled()
+      expect(
+        dialog.getByRole("button", { name: "Push to origin/main" })
+      ).toBeDisabled()
     );
     await expect(dialog.getByRole("button", { name: "Cancel" })).toBeEnabled();
     await userEvent.click(dialog.getByRole("button", { name: "Cancel" }));
     await expect(dismissed).toEqual(["original"]);
     await expect(fixture.target("original").review).toBeUndefined();
-    await waitFor(() => expect(within(document.body).queryByRole("dialog", {
-      name: "Push to original repository?",
-    })).toBeNull());
-    await expect(fixture.activity.some((item) => item.kind === "push")).toBe(false);
+    await waitFor(() =>
+      expect(
+        within(document.body).queryByRole("dialog", {
+          name: "Push to original repository?",
+        })
+      ).toBeNull()
+    );
+    await expect(fixture.activity.some((item) => item.kind === "push")).toBe(
+      false
+    );
   },
 };
 export const UnknownPush: Story = { args: { scenario: "unknown" } };
@@ -566,10 +574,19 @@ export const FooterSummary: Story = {
     await expect(footer.getByLabelText("Outgoing commits")).toHaveTextContent(
       "1"
     );
-    await userEvent.click(
-      footer.getByRole("button", { name: "Fetch original repository" })
-    );
     const fixture = remotesPreviewFor(canvasElement).fixture;
+    const fetch = footer.getByRole("button", { name: "Fetch original repository" });
+    fetch.focus();
+    await waitFor(() => expect(within(document.body).getByRole("tooltip")).toHaveTextContent("Fetch original repository"));
+    fixture.update("original", { busy: "fetching" });
+    await waitFor(() => expect(fetch).toBeDisabled());
+    await userEvent.hover(fetch.parentElement!);
+    fixture.update("original", { busy: undefined });
+    await waitFor(() => expect(fetch).toBeEnabled());
+    expect(footer.getByRole("button", { name: "Fetch original repository" })).toBe(fetch);
+    await userEvent.unhover(fetch.parentElement!);
+    await userEvent.hover(fetch.parentElement!);
+    await userEvent.click(fetch);
     await waitFor(() =>
       expect(fixture.activity).toEqual([
         { kind: "fetch", target: "original", id: undefined },
@@ -642,6 +659,16 @@ export const ExistingStatusControls: Story = {
       })
     );
     const fixture = remotesPreviewFor(canvasElement).fixture;
+    const first = details.getByRole("button", { name: "Fetch from upstream" });
+    first.focus();
+    await userEvent.tab();
+    await expect(
+      details.getByRole("button", { name: "Pull from upstream" })
+    ).toHaveFocus();
+    await userEvent.tab();
+    await expect(
+      details.getByRole("button", { name: "Push to upstream" })
+    ).toHaveFocus();
     for (const [label, kind] of [
       ["Fetch from upstream", "legacy-fetch"],
       ["Pull from upstream", "legacy-pull"],
@@ -677,9 +704,21 @@ export const LogRemoteActions: Story = {
     await expect(
       header.queryByRole("button", { name: "Pull original repository" })
     ).toBeNull();
-    await userEvent.click(
-      header.getByRole("button", { name: "Fetch original repository" })
-    );
+    const fetch = header.getByRole("button", {
+      name: "Fetch original repository",
+    });
+    fetch.focus();
+    await userEvent.tab();
+    await expect(
+      header.getByRole("button", { name: "Review push to original repository" })
+    ).toHaveFocus();
+    await userEvent.tab();
+    await expect(
+      header.getByRole("button", {
+        name: "Manage remotes for original repository",
+      })
+    ).toHaveFocus();
+    await userEvent.click(fetch);
     const fixture = remotesPreviewFor(canvasElement).fixture;
     await waitFor(() =>
       expect(
