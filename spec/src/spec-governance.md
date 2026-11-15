@@ -691,3 +691,11 @@ failure, the reactive-wait correction, complete package checks and separate
 Storybook/packaging gates. Its new story remains visual-pending. Session-only
 review dismissal, native-source parsing and capability withdrawal must not be
 reported as live credential or host adoption qualification.
+
+LN-HIST-021 adds classified application stories using the actual enabled
+RepositoryPlugin and public WorkspaceShell. Its shared bootstrap accepts optional
+host services and saved presentation data while retaining existing defaults.
+LP-SPEC-054 checks the real render path. Complete interaction/axe and artifact
+qualification remain required; these fixture proofs cannot advance cold native
+host or publication gates. The minor Changeset records production composition
+adoption separately from the completed LN-HIST-020 preview.

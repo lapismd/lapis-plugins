@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import RepositoryUpstreamActions from "./RepositoryUpstreamActions.svelte";
   import type { SyncController } from "../controllers/sync-controller.js";
+  import type { RepositoryRemotes } from "./repository-remotes.svelte.js";
   import type { RepositoryUpstreamBinding } from "../controllers/remotes-settings.js";
   import * as Popover from "@lapismd/design-core/shadcn/popover";
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
@@ -26,6 +27,7 @@
     copyText,
     upstream,
     remote,
+    remotes,
     backup,
     presentation = "full",
   }: {
@@ -34,6 +36,7 @@
     copyText(value: string): Promise<void>;
     upstream?: SyncController;
     remote?: RepositoryUpstreamBinding;
+    remotes?: RepositoryRemotes;
     backup?: BackupController;
     presentation?: "full" | "split";
   } = $props();
@@ -59,18 +62,19 @@
           ? "Saving locally"
           : "Local history needs attention",
   );
+  const selectedRemote = $derived(remote ?? remotes?.binding(statusState.value?.source ?? "backup"));
   const headerRemote = $derived(
-    remote
+    selectedRemote
       ? {
-          ...remote,
+          ...selectedRemote,
           push: () => {
             open = false;
-            remote.push();
+            selectedRemote.push();
           },
-          manage: remote.manage
+          manage: selectedRemote.manage
             ? () => {
                 open = false;
-                remote.manage?.();
+                selectedRemote.manage?.();
               }
             : undefined,
         }
@@ -192,8 +196,8 @@
           additions={value.lines.additions}
           deletions={value.lines.deletions}
         />{/if}
-      {#if remote?.target.connection}<RepositoryUpstreamActions
-          remote={{ ...remote, manage: undefined }}
+      {#if selectedRemote?.target.connection}<RepositoryUpstreamActions
+          remote={{ ...selectedRemote, manage: undefined }}
           compact
           unavailable={statusState.busy}
         />{/if}
@@ -212,8 +216,8 @@
         />{/if}
     </button>
   {/if}
-  {#if presentation === "full"}{#if remote}<RepositoryUpstreamActions
-        {remote}
+  {#if presentation === "full"}{#if selectedRemote}<RepositoryUpstreamActions
+        remote={selectedRemote}
         compact
         unavailable={statusState.busy}
       />{/if}

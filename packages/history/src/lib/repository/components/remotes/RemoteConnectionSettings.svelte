@@ -23,10 +23,12 @@
   } from "../../controllers/remotes-settings.js";
   let {
     target,
+    showReview = true,
     state: snapshot,
     actions: commands,
   }: {
     target: RemoteTargetSettings;
+    showReview?: boolean;
     state: RemotesSettingsState;
     actions: RemotesSettingsActions;
   } = $props();
@@ -98,7 +100,7 @@
   };
 </script>
 
-<section aria-label={label} aria-busy={busy} class="remote-target-settings">
+<section data-remote-target={target.target} aria-label={label} aria-busy={busy} class="remote-target-settings">
   <BackupCard
     title={label}
     Icon={target.target === "backup" ? Cloud : GitBranch}
@@ -277,12 +279,12 @@
       </div>{/if}
   </BackupCard>
 </section>
-<RemotePushReview
+{#if showReview}<RemotePushReview
   {target}
   {busy}
   onClose={() => commands.dismissReview(target.target)}
   onPush={(reviewId) => void perform(() => commands.push(target.target, reviewId))}
-/>
+/>{/if}
 
 <style>
   .remote-target-settings {

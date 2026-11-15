@@ -120,6 +120,7 @@ export class RepositoryView extends View {
       target: this.containerEl,
       props: {
         controller: this.#controller,
+        remote: this.plugin.remotes?.binding(this.#source),
         sources: this.plugin.sourcePicker(this.#source, (source) => {
           void this.plugin
             .open(undefined, undefined, source)

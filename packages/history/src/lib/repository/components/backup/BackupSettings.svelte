@@ -24,7 +24,7 @@
     storage,
     adoption,
   }: {
-    controller: ForgeController;
+    controller?: ForgeController;
     remote?: RemoteController;
     restore?: RestoreController;
     sync?: SyncController;
@@ -45,8 +45,7 @@
 </script>
 
 <div class="backup-settings-content">
-  <ForgeAccounts {controller}>
-    {#snippet remoteSettings()}
+  {#snippet remoteSettings()}
       {#if storage}<StorageSettings controller={storage} />{/if}
       {#if adoption}<AdoptionSettings controller={adoption} />{/if}
       {#if sync && setSyncEnabled}<SyncSettings
@@ -54,13 +53,14 @@
           setEnabled={setSyncEnabled}
           onReview={() => (conflictsOpen = true)}
         />{/if}
-      {#if remote}<RemoteSettings
+      {#if remote && controller}<RemoteSettings
           controller={remote}
           accounts={controller}
           {restore}
         />{/if}
-    {/snippet}
-  </ForgeAccounts>
+  {/snippet}
+  {#if controller}<ForgeAccounts {controller} {remoteSettings} />
+  {:else}{@render remoteSettings()}{/if}
   {#if restore}<RepositoryRestoreDialog controller={restore} />{/if}
 </div>
 {#if sync && conflictsOpen}
