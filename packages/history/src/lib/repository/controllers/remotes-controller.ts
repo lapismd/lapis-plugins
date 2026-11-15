@@ -1,6 +1,8 @@
 import type {
   RemotesSettingsActions,
   RemotesSettingsState,
+  RemoteTarget,
+  RemoteTargetSettings,
 } from "./remotes-settings.js";
 import type {
   RepositoryRemotesCommand,
@@ -20,6 +22,7 @@ export class RepositoryRemotesController {
   #busy = false;
   #closed = false;
   #generation = 0;
+  #operation?: { target: RemoteTarget; busy: RemoteTargetSettings["busy"] };
   readonly actions: RemotesSettingsActions;
   constructor(
     private readonly service: RepositoryRemotesService,
@@ -69,12 +72,12 @@ export class RepositoryRemotesController {
     };
   }
   get snapshot(): RepositoryRemotesSnapshot | undefined {
-    return this.#snapshot;
+    return this.#snapshot && { ...this.#snapshot, settings: this.#project() };
   }
   subscribe(listener: (state: RemotesSettingsState) => void): () => void {
     if (this.#closed) throw new Error("Repository remotes are closed");
     this.#listeners.add(listener);
-    if (this.#snapshot) listener(this.#snapshot.settings);
+    if (this.#snapshot) listener(this.#project());
     return () => this.#listeners.delete(listener);
   }
   async refresh(): Promise<void> {
@@ -101,6 +104,24 @@ export class RepositoryRemotesController {
     const expectedRevision = this.#snapshot.revision;
     this.#busy = true;
     const generation = ++this.#generation;
+    if ("target" in command) {
+      const busy =
+        command.kind === "test_connection"
+          ? "testing"
+          : command.kind === "push"
+          ? "pushing"
+          : ["fetch", "review_push", "observe_push"].includes(command.kind)
+          ? "fetching"
+          : undefined;
+      this.#operation = { target: command.target, busy };
+    }
+    if (
+      this.#operation?.busy &&
+      this.#snapshot.settings.targets.some(
+        (target) => target.target === this.#operation?.target
+      )
+    )
+      this.#notify();
     try {
       const result = await this.service.execute({
         ...command,
@@ -108,8 +129,23 @@ export class RepositoryRemotesController {
       });
       if (!this.#closed && generation === this.#generation)
         this.#accept(result);
+    } catch (error) {
+      // A read can reveal an accepted native intent after its response was lost.
+      // It never repeats the mutation or reconciles by publishing again.
+      if (!this.#closed) {
+        try {
+          const result = await this.service.read();
+          if (!this.#closed && generation === this.#generation)
+            this.#accept(result);
+        } catch {
+          // Keep the last observation and the original failure for explicit recovery.
+        }
+      }
+      throw error;
     } finally {
       this.#busy = false;
+      this.#operation = undefined;
+      if (!this.#closed && generation === this.#generation) this.#notify();
     }
   }
   #accept(snapshot: RepositoryRemotesSnapshot): void {
@@ -122,8 +158,19 @@ export class RepositoryRemotesController {
     this.#snapshot = snapshot;
     this.#notify();
   }
+  #project(): RemotesSettingsState {
+    return {
+      ...this.#snapshot!.settings,
+      targets: this.#snapshot!.settings.targets.map((target) =>
+        target.target === this.#operation?.target
+          ? { ...target, busy: this.#operation.busy }
+          : target
+      ),
+    };
+  }
   #notify(): void {
     if (!this.#snapshot) return;
-    for (const listener of this.#listeners) listener(this.#snapshot.settings);
+    const settings = this.#project();
+    for (const listener of this.#listeners) listener(settings);
   }
 }

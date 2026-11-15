@@ -1,5 +1,7 @@
 # Distribution and Releases
 
+LN-HIST-020 includes a patch to the public remote presentation controller: selected-target progress and status-only recovery after failed responses. Signed archives, npm publication and host adoption remain separate gates; this patch introduces no runtime registration or native transfer authority.
+
 LN-HIST-020 adds unregistered repository remote review components and a
 memory-backed shared catalog. The preview Changeset describes package contents
 only; it does not authorize publication or qualify live host remote transport.

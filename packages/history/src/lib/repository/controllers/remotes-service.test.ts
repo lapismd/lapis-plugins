@@ -154,3 +154,115 @@ describe("native repository remote presentation boundary", () => {
     expect(service.openSignIn).toHaveBeenCalledTimes(1);
   });
 });
+
+it("projects a pending fetch into target progress and clears it after completion", async () => {
+  const { controller, service } = fixture();
+  const loaded = snapshot();
+  loaded.settings.targets = [
+    {
+      target: "original",
+      connection: null,
+      status: "disconnected",
+      bookmarks: [],
+      canFetch: true,
+      canPush: false,
+    },
+  ];
+  service.read.mockResolvedValueOnce(loaded);
+  await controller.refresh();
+  let finish!: (value: RepositoryRemotesSnapshot) => void;
+  service.execute.mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        finish = resolve;
+      })
+  );
+  const listener = vi.fn();
+  controller.subscribe(listener);
+  const pending = controller.actions.fetch("original");
+  const busy = listener.mock.lastCall?.[0].targets[0]?.busy;
+  const late = vi.fn();
+  controller.subscribe(late);
+  expect(late.mock.lastCall?.[0].targets[0]?.busy).toBe("fetching");
+  expect(controller.snapshot?.settings.targets[0]?.busy).toBe("fetching");
+  expect(loaded.settings.targets[0]?.busy).toBeUndefined();
+  const finished = snapshot(4);
+  finished.settings.targets = loaded.settings.targets;
+  finish(finished);
+  await pending;
+  expect(busy).toBe("fetching");
+  expect(listener.mock.lastCall?.[0].targets[0]?.busy).toBeUndefined();
+  expect(service.execute).toHaveBeenCalledTimes(1);
+  controller.close();
+});
+
+it("reads retained native state after a lost response without replaying publication", async () => {
+  const { controller, service } = fixture();
+  await controller.refresh();
+  const retained = snapshot(4);
+  retained.settings.targets = [
+    {
+      target: "backup",
+      connection: null,
+      status: "disconnected",
+      bookmarks: [],
+      canFetch: false,
+      canPush: false,
+      publication: {
+        id: "native-request",
+        commit: "a".repeat(40),
+        outcome: "unknown",
+      },
+    },
+  ];
+  service.read.mockResolvedValueOnce(retained);
+  service.execute.mockRejectedValueOnce(new Error("lost response"));
+  await expect(
+    controller.actions.push("backup", "native-review")
+  ).rejects.toThrow("lost response");
+  expect(controller.snapshot?.settings.targets[0]?.publication?.id).toBe(
+    "native-request"
+  );
+  expect(service.execute).toHaveBeenCalledTimes(1);
+  expect(service.read).toHaveBeenCalledTimes(2);
+  controller.close();
+});
+
+it("preserves the original mutation failure when recovery status is unavailable", async () => {
+  const { controller, service } = fixture();
+  await controller.refresh();
+  service.execute.mockRejectedValueOnce(new Error("original lost response"));
+  service.read.mockRejectedValueOnce(new Error("status unavailable"));
+  await expect(
+    controller.actions.push("backup", "native-review")
+  ).rejects.toThrow("original lost response");
+  expect(controller.snapshot?.revision).toBe(3);
+  expect(service.execute).toHaveBeenCalledTimes(1);
+  expect(service.read).toHaveBeenCalledTimes(2);
+  controller.close();
+});
+
+it("fences a late recovery read after disposal without replaying its mutation", async () => {
+  const { controller, service } = fixture();
+  await controller.refresh();
+  let finish!: (value: RepositoryRemotesSnapshot) => void;
+  service.read.mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        finish = resolve;
+      })
+  );
+  service.execute.mockRejectedValueOnce(new Error("original lost response"));
+  const listener = vi.fn();
+  controller.subscribe(listener);
+  const pending = controller.actions.push("backup", "native-review");
+  const rejected = expect(pending).rejects.toThrow("original lost response");
+  await vi.waitFor(() => expect(service.read).toHaveBeenCalledTimes(2));
+  controller.close();
+  listener.mockClear();
+  finish(snapshot(4));
+  await rejected;
+  expect(controller.snapshot).toBeUndefined();
+  expect(listener).not.toHaveBeenCalled();
+  expect(service.execute).toHaveBeenCalledTimes(1);
+});

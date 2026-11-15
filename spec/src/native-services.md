@@ -1,5 +1,7 @@
 # Native first-party plugin services
 
+LN-HIST-020 presentation may read retained native status after a failed command response. That read must remain passive: it grants no credential access, re-execution, publication or reconciliation authority. Native adapters retain accepted-work lifetime and durable request identities.
+
 The LN-HIST-020 remote UI review receives catalog-owned memory adapters only.
 It introduces no native credential custody, repository write admission or host
 service registration. Those remain separate native implementation and consumer

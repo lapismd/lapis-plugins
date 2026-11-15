@@ -270,6 +270,10 @@ MUST retain their request identity for observation rather than replay.
 
 The shared presentation controller MUST NOT retry failed mutations automatically,
 transfer after saving, persist tokens, or accept late responses after disposal.
+Pending transfers MUST project progress only to their selected target, including
+new subscribers. After a mutation fails, one secret-free status read MAY expose
+its retained native request; a failed status read MUST preserve the original
+failure and last observation. This recovery never retries a mutation.
 Connection tests are explicit reachability/authentication checks without
 publication. Host implementations own credential custody and endpoint admission;
 presentation validation cannot authorize transport.

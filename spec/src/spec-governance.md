@@ -1,5 +1,7 @@
 # Specification Governance
 
+LN-HIST-020 qualification separates pending-target progress, safe recovery reads and late-disposal fencing from live native publication. Preserve exact before/after failures, original mutation errors and single-execution assertions. Source/controller and catalog passes cannot qualify host credential or network acceptance.
+
 Story composition inventory follows the current Jujutsu working-copy file list,
 including new stories in non-colocated workspaces. Git-only checkouts retain
 their Git inventory. A failed Jujutsu inventory MUST fail the check instead of
