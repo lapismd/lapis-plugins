@@ -5,7 +5,7 @@ import { PLACEMENTS, type SyncPlacement } from "../workspace-layout";
 const meta = {
   title: "Plugins/Sync/Panels/History",
   component: SyncWorkspaceDemo,
-  tags: ["!autodocs", "visual-pending", "test", "sync-unfinished"],
+  tags: ["!autodocs", "visual-pending", "test"],
   parameters: {
     layout: "fullscreen",
     docs: {

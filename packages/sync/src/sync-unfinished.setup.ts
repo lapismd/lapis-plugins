@@ -1,6 +1,2 @@
-import { beforeEach } from "vitest";
-
-// Sync is unfinished. Keep the suite in the tree and skip it.
-beforeEach(({ skip }) => {
-  skip();
-});
+// Sync Stage 1: Global skip removed for rebaseline.
+// Tests are repaired individually as they are restored.

@@ -7,7 +7,7 @@ import type { SyncStoryState } from "./preview-runtime";
 const meta = {
   title: "Plugins/Sync/States",
   component: SyncWorkspaceDemo,
-  tags: ["!autodocs", "visual-pending", "test", "sync-unfinished"],
+  tags: ["!autodocs", "visual-pending", "test"],
   parameters: { layout: "fullscreen" },
 } satisfies Meta<typeof SyncWorkspaceDemo>;
 export default meta;

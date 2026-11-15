@@ -1,11 +1,11 @@
 # Lapis Sync
 
-Future Rust/Tauri work is deferred in the [implementation plan](implementation-plan.md),
+Rust/Tauri delivery is governed by the [implementation plan](implementation-plan.md),
 with [source context and historical qualification](implementation-context.md)
 and the [Desktop integration backlog](https://github.com/lapismd/lapis-desktop/blob/main/spec/src/backlog/lapis-sync.md).
 These documents retain the full enrolled-server scope and distinguish it from
-Git repository synchronization. No current requirement status or parked-package
-gate changes. References below to native Desktop custody and Deno destination
+Git repository synchronization. Implementation work does not change the parked-package
+or release gates. References below to native Desktop custody and Deno destination
 delivery describe the retained Deno-era source; they do not qualify Tauri or
 the current Rust server. The new roadmap owns future native delivery.
 
@@ -29,11 +29,12 @@ The manifest-owned author avatar uses the SHA-256 Gravatar for `dev@lapis.md`
 with size 256 and initials fallback, as governed by LP-SPEC-041.
 
 Lapis Sync starts with the headless Nostr-compatible protocol foundation.
-The package remains private and parked until the Deno destination, endpoint
-security and consumer acceptance are complete. Unit tests and Storybook
-interaction stories are skipped while Sync is unfinished. The UI may be previewed in the
-shared catalog while Sync remains excluded from installation and releases. The existing Nostr
-Sync plugin keeps its identity and installation behavior.
+The package remains private and parked until the Rust destination, endpoint
+security and consumer acceptance are complete. Its retained TypeScript unit and
+Storybook interaction/accessibility suites execute as the source oracle. The UI
+may be previewed in the shared catalog while Sync remains excluded from
+installation and releases. The existing Nostr Sync plugin keeps its identity and
+installation behavior.
 
 Its shared-catalog dependencies are pinned by `packages/sync/pnpm-lock.yaml`
 and installed separately in CI with frozen registry resolution. This supports
@@ -52,7 +53,7 @@ upstream-equivalence removal and original diagnostics remain required.
 API 0.2.3 retains the released minimatch repair and settled initialization
 cleanup; the independent development
 root explicitly supplies its compatible Mira 0.1.4 peer.
-Sync remains parked, skipped and excluded from package publication.
+Sync remains parked and excluded from package publication.
 
 ## Requirements
 
@@ -158,6 +159,15 @@ full-width action-feedback layout through its public npm exports.
 | LN-SYNC-048 | Account changes and sign-out MUST invalidate connection health and cached vault discovery, abort pending discovery, and reject stale results. Changing the server MUST cancel the previous handoff and prevent credentials or results from crossing destinations. The review host MUST use direct cross-origin bearer requests without its earlier cookie proxy. |
 
 ## Delivery status
+
+The TypeScript source oracle is rebaselined before native parity work. All 18
+retained unit files execute independently with 205 passing cases, and all eight
+Sync story files execute 57 interaction/accessibility cases. The failed custom
+reporter invocation and unavailable local Docker context are retained in the
+[fresh receipt](../../../records/2026-11-15-sync-typescript-rebaseline.md); the
+explicit native run and hosted CI evidence do not qualify a local Docker run.
+No visual baseline, activation, publication or native-host claim follows from
+this source qualification.
 
 The foundation implements protocol codecs, event filtering and replaceable
 ordering. UI qualification adds the plugin class, views, status and settings against an
