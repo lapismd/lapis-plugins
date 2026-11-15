@@ -345,6 +345,10 @@ MUST preserve native and TypeScript source fingerprints, accepted observations
 and baseline outcomes; package version synchronization cannot admit a native
 behavior change or replace native artifact acceptance.
 
+The LP-SPEC-016 version-PR App authentication migration changes only PR creation
+authority. Native service admission, signed artifacts and their qualification
+lanes retain their existing ownership and checks.
+
 Canvas review adds no native service or parser changes. Settings and selection use existing App protection and plugin configuration contracts; PNG export and note conversion retain their released runtime and ownership boundaries.
 
 Native hosts consume skill asset data through public package exports or verified installed-plugin files. Skill installation belongs to the shared application service; plugin archives contain workflow text and grant no native execution authority.

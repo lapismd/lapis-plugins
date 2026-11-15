@@ -212,6 +212,12 @@ context and generated dependency digest to this chapter and Distribution.
 GitHub CLI comes from the upstream image. Skips drifted assets; later ones continue. A main push skips an empty version
 pull request and does not publish.
 
+The LP-SPEC-016 version-PR authentication boundary uses the existing scoped
+dependency App after the public-package eligibility check. Workflow regression
+coverage retains read-only default authority, ephemeral checkout credentials,
+the original version command and ordinary CI. Publication approval remains in
+the separate release workflow.
+
 Shared Storybook diagnostics now cover formatted Svelte warnings, diagnostic URLs
 and Error objects, and retain caught teardown failures for after-story and final
 cleanup checks. Dependency-originated diagnostics remain fatal under LP-SPEC-034.

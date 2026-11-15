@@ -129,9 +129,14 @@ test("a main push opens a version pull request only for a releasable changeset",
   assert.match(source, /if: steps\.releasable\.outputs\.releasable == 'true'/);
   assert.ok(
     source.indexOf("node scripts/version-public-packages.mjs --check") <
-      source.indexOf("changesets/action@v1.8.0"),
+      source.indexOf(
+        "changesets/action@63a615b9cd06ba9a3e6d13796c7fbcb080a60a0b",
+      ),
   );
-  assert.match(source, /changesets\/action@v1\.8\.0/);
+  assert.match(
+    source,
+    /changesets\/action@63a615b9cd06ba9a3e6d13796c7fbcb080a60a0b/,
+  );
   assert.match(source, /version: pnpm release:version/);
   assert.doesNotMatch(source, /release:publish|workflow_dispatch/);
   assert.match(release, /workflow_dispatch:/);

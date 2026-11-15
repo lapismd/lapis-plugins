@@ -1,5 +1,9 @@
 # Verification
 
+The LP-SPEC-016 authentication migration is tracked separately in
+[version PR authentication qualification](../records/2026-11-15-version-pr-authentication.md).
+Hosted creation/CI acceptance remains pending until recorded there.
+
 This matrix preserves the implementation evidence migrated with each plugin
 and records repository-level extraction and release gates.
 
