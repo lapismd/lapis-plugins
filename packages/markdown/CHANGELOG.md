@@ -1,5 +1,11 @@
 # Markdown changelog
 
+## 0.3.2
+
+### Patch Changes
+
+- [#142](https://github.com/lapismd/lapis-plugins/pull/142) [`505628c`](https://github.com/lapismd/lapis-plugins/commit/505628cb72801996021729183d2ddf2e8eccad51) Thanks [@stevejuma](https://github.com/stevejuma)! - Expand packaged agent skills with linked Lapis-specific references, rich Markdown syntax and editor capabilities, Bases view/query semantics, and validated Canvas examples. Include every supporting resource in npm and signed plugin archives.
+
 ## 0.3.1
 
 ### Patch Changes
