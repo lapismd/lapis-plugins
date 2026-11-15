@@ -1,5 +1,16 @@
 # History changelog
 
+## 0.3.0
+
+### Minor Changes
+
+- [#121](https://github.com/lapismd/lapis-plugins/pull/121) [`0475d96`](https://github.com/lapismd/lapis-plugins/commit/0475d96d6aee7c56822339a01d582d0ba16dd1e6) Thanks [@stevejuma](https://github.com/stevejuma)! - Add shared repository remote and credential review components, exercised only
+  by memory-backed Storybook previews before desktop or hosted adoption.
+
+  Expose optional target-aware host remote management with configuration revision
+  checks, native push review/status identities and a disposable presentation
+  controller that never retries uncertain mutations.
+
 ## 0.2.7
 
 ### Patch Changes
