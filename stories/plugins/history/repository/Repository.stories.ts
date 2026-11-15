@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
-import { expect, waitFor, within } from "storybook/test";
+import { expect, userEvent, waitFor, within } from "storybook/test";
 import RepositoryDemo from "./RepositoryDemo.svelte";
 import { cleanupRepositoryStories } from "./runtime.svelte";
 
@@ -14,11 +14,19 @@ const meta = {
     await waitFor(
       () =>
         expect(canvasElement.querySelector(".repository-shell")).not.toBeNull(),
-      { timeout: 30_000 }
+      {
+        timeout: 30_000,
+      }
     );
+    const header = within(
+      await canvas.findByRole("group", {
+        name: args.operations ? "Op Log header" : "JJ Log header",
+      })
+    );
+    await expect(header.queryByRole("combobox")).toBeNull();
     await expect(
-      await canvas.findByRole("combobox", {
-        name: args.operations ? "Pinned operation" : "Operation",
+      await canvas.findByRole("list", {
+        name: args.operations ? "Operation graph" : "Revision graph",
       })
     ).toBeVisible();
     await expect(
@@ -44,4 +52,40 @@ export const OperationLogDark: Story = {
 };
 export const OperationLogNarrow: Story = {
   args: { operations: true, narrow: true },
+};
+
+export const MultipleOperationHeads: Story = {
+  args: { scenario: "multiple" },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const heads = within(
+      await canvas.findByRole(
+        "group",
+        { name: "Operation heads" },
+        { timeout: 30_000 }
+      )
+    );
+    const head = heads.getAllByRole("button", {
+      name: /^Inspect operation /,
+    })[0];
+    await waitFor(() => expect(head).not.toBeDisabled());
+    await userEvent.click(head);
+    const log = within(
+      canvas.getByRole("region", {
+        name: args.operations
+          ? "Repository operation log"
+          : "Repository history",
+        exact: true,
+      })
+    );
+    await expect(
+      await log.findByRole("list", {
+        name: args.operations ? "Operation graph" : "Revision graph",
+      })
+    ).toBeVisible();
+  },
+};
+export const MultipleOperationLogHeads: Story = {
+  ...MultipleOperationHeads,
+  args: { scenario: "operation-multiple-heads", operations: true },
 };

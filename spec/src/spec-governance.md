@@ -1,5 +1,11 @@
 # Specification Governance
 
+Story composition inventory follows the current Jujutsu working-copy file list,
+including new stories in non-colocated workspaces. Git-only checkouts retain
+their Git inventory. A failed Jujutsu inventory MUST fail the check instead of
+silently selecting a stale Git index. This preserves LP-SPEC-054 classification
+and production-shell checks for the LN-HIST-020 remote UI review slice.
+
 The Hono override floor is 4.13.16. Root and parked Sync audits must reject
 the 4.13.13/4.13.14 MCP-SDK resolutions and pass after lockfile alignment;
 no CVE ignore is added.
@@ -93,6 +99,11 @@ filter, grouping, sort, summary and data-driven settings Select surface. Exact
 and complete catalog counts, public-archive provenance and the inherited Zod
 advisory are recorded in `spec/records/2026-10-25-bases-filter-names.md`.
 The advisory requires fresh acceptance for this patch before commit.
+
+Isolated catalog checkouts may select `LAPIS_PLUGINS_BROWSER_TEST_PORT` to
+retain a strict browser API listener without occupying another checkout's port.
+Invalid ports fail before startup; interaction assertions and shard coverage
+remain unchanged under LP-SPEC-053.
 
 LP-SPEC-053 defaults local portable validation to isolated Docker workers;
 hosted CI explicitly uses its provisioned native runtime. The repository-owned
@@ -655,8 +666,16 @@ The plugin skill packaging regression checks authored assets against npm exports
 
 [Skill archive evidence](../records/2026-11-14-plugin-skill-archives.md) retains signed-file inclusion, public npm parity and the failed prerequisite attempts.
 
+History remotes service qualification distinguishes public presentation-contract
+checks from native Core/Protocol, transport and host acceptance. Presentation
+unit tests cannot qualify credential custody or remote publication.
+
 Under LP-SPEC-010, compatible internal peer updates MUST preserve the declared
 independent bump; out-of-range peers MUST retain major-version escalation. The
 frozen Changesets 2 CLI uses its range-aware peer option, guarded by a real CLI
 regression for both cases. [Peer release qualification](../records/2026-11-14-skill-release-peer-versioning.md)
 records the Markdown 0.3 peer intake without native or publisher-authority changes.
+
+The API 0.6.2 intake retires the temporary History catalog archive. Hosted
+multiple-head recovery failures remain recorded, with unchanged assertions
+rerun against the published source fix rather than a catalog workaround.

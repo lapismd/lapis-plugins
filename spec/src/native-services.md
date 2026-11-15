@@ -1,5 +1,10 @@
 # Native first-party plugin services
 
+The LN-HIST-020 remote UI review receives catalog-owned memory adapters only.
+It introduces no native credential custody, repository write admission or host
+service registration. Those remain separate native implementation and consumer
+acceptance slices after UI review.
+
 Raising the Hono override to 4.13.16 repairs the MCP-SDK audit path. It
 introduces no native producer, service or transport.
 
@@ -148,7 +153,7 @@ export worker changes no native Markdown parser behavior.
 
 Archive-backed source qualification audits the actual installed dependency
 graph under LP-SPEC-057. Recorded unpatched audit exceptions add no native
-service. Local Storybook interaction uses eight browser shards. Pull-request CI runs four parallel shards. Each quarter is two sequential browser eighths with a 2 GiB shared-memory mount. The pull-request unit job and static publish install checksum-verified jj 0.45.1 before release checks. Story composition lists tracked files with git ls-files. An already published npm version whose tarball differs stays on the registry, later packages continue, an existing GitHub release whose .lapis-plugin asset differs stays in place, and a missing GitHub release is still created. A trusted-publisher rejection does not stop later packages. Sync tests are skipped. Source manifests and the root lockfile stay portable and omit the local pnpmfile checksum, and native
+service. Local Storybook interaction uses eight browser shards. An isolated checkout can select its strict browser API listener with `LAPIS_PLUGINS_BROWSER_TEST_PORT`; this changes no native engine or test admission. Pull-request CI runs four parallel shards. Each quarter is two sequential browser eighths with a 2 GiB shared-memory mount. The pull-request unit job and static publish install checksum-verified jj 0.45.1 before release checks. Story composition lists tracked files with git ls-files. An already published npm version whose tarball differs stays on the registry, later packages continue, an existing GitHub release whose .lapis-plugin asset differs stays in place, and a missing GitHub release is still created. A trusted-publisher rejection does not stop later packages. Sync tests are skipped. Source manifests and the root lockfile stay portable and omit the local pnpmfile checksum, and native
 service ownership and publication gates retain their existing contracts.
 
 ## Release-test isolation
@@ -291,8 +296,17 @@ Native hosts consume skill asset data through public package exports or verified
 
 The legacy AI skill-update command delegates to App skill management so the admitted native service retains write authority.
 
+The optional History remotes port carries explicit targets, opaque credential
+references, native configuration revisions and push review/status identities.
+Its shared presentation controller neither authorizes endpoints nor retries
+uncertain native mutations; host custody and publication retain authority.
+
 Under LP-SPEC-010, compatible internal peer updates MUST preserve the declared
 independent bump; out-of-range peers MUST retain major-version escalation. The
 frozen Changesets 2 CLI uses its range-aware peer option, guarded by a real CLI
 regression for both cases. [Peer release qualification](../records/2026-11-14-skill-release-peer-versioning.md)
 records the Markdown 0.3 peer intake without native or publisher-authority changes.
+
+The catalog's API 0.6.2 registry refresh changes no native custody or transport
+authority. It supplies the source-owned optional-state projection fix needed by
+History recovery interactions; cold host qualification remains separate.

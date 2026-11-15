@@ -8,8 +8,12 @@
   import RepositoryWorkspacePicker from "./RepositoryWorkspacePicker.svelte";
   import type { RepositoryWorkspace } from "../controllers/workspaces.js";
   import RefreshIcon from "@lucide/svelte/icons/refresh-cw";
+  import RepositoryUpstreamActions from "./RepositoryUpstreamActions.svelte";
+  import type { RepositoryUpstreamBinding } from "../controllers/remotes-settings.js";
   let {
     title,
+    remote,
+    showContextPickers = false,
     sources,
     count,
     operations,
@@ -26,6 +30,8 @@
     onWorkspaceOpen,
   }: {
     sources?: HistorySourcePicker;
+    remote?: RepositoryUpstreamBinding;
+    showContextPickers?: boolean;
     title: string;
     count: number;
     operations: string[];
@@ -49,22 +55,24 @@
     <ColumnCanvas.Count>{count}</ColumnCanvas.Count>
   </div>
   <div class="repository-log-actions">
-    {#if sources}<RepositorySourcePicker picker={sources} />{/if}
-    <RepositoryWorkspacePicker
-      {workspaces}
-      selected={workspace}
-      disabled={!operation}
-      onSelect={onWorkspaceSelect}
-      onOpen={onWorkspaceOpen}
-    />
-    <RepositoryOperationPinPicker
-      {operations}
-      {operation}
-      {nodes}
-      label={selectionLabel}
-      {onSelect}
-      {copyText}
-    />
+    {#if showContextPickers}
+      {#if sources}<RepositorySourcePicker picker={sources} />{/if}
+      <RepositoryWorkspacePicker
+        {workspaces}
+        selected={workspace}
+        disabled={!operation}
+        onSelect={onWorkspaceSelect}
+        onOpen={onWorkspaceOpen}
+      />
+      <RepositoryOperationPinPicker
+        {operations}
+        {operation}
+        {nodes}
+        label={selectionLabel}
+        {onSelect}
+        {copyText}
+      />{/if}
+    {#if remote?.target.connection}<RepositoryUpstreamActions {remote} />{/if}
     <Button
       variant="ghost"
       size="icon-xs"

@@ -1,3 +1,4 @@
+import { primaryShortcut } from "./keyboard";
 import { expandCanvasTools } from "./canvas-story-helpers";
 import { mountComponent, type App } from "@lapis-notes/api";
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
@@ -231,9 +232,9 @@ export const GroupImportedCards: Story = {
       return board!;
     }, { timeout: 30_000 });
     await userEvent.click(root.querySelector<HTMLElement>('[data-id="small"] .canvas-node-label')!);
-    await userEvent.keyboard('[ControlLeft>]');
+    await userEvent.keyboard(primaryShortcut('[ControlLeft>]'));
     await userEvent.click(root.querySelector<HTMLElement>('[data-id="target"] .canvas-node-label')!);
-    await userEvent.keyboard('[/ControlLeft]');
+    await userEvent.keyboard(primaryShortcut('[/ControlLeft]'));
     const group = await within(root).findByRole("button", { name: "Create group", exact: true });
     await userEvent.click(group);
     await waitFor(() => expect(root.querySelectorAll(".svelte-flow__node")).toHaveLength(3));
@@ -402,7 +403,7 @@ export const TextBeforeSwitch: Story = {
       return editor!;
     });
     await userEvent.click(editor);
-    await userEvent.keyboard("{Control>}a{/Control}Pending card draft");
+    await userEvent.keyboard(primaryShortcut("{Control>}a{/Control}Pending card draft"));
     expect(app.fileEditingSessions.hasDirty("Draft.canvas")).toBe(true);
     await app.workspace.activeLeaf!.openFile(next);
     await waitFor(() => expect(canvasElement.textContent).toContain("After the draft"));
@@ -432,7 +433,7 @@ export const TextBeforeRename: Story = {
       return value!;
     });
     await userEvent.click(editor);
-    await userEvent.keyboard("{Control>}a{/Control}Renamed card draft");
+    await userEvent.keyboard(primaryShortcut("{Control>}a{/Control}Renamed card draft"));
     await app.fileManager.renameFile(app.vault.getFileByPath("Draft.canvas")!, "Renamed.canvas");
     await waitFor(() => expect((app.workspace.activeLeaf!.view as unknown as { file: { path: string } }).file.path).toBe("Renamed.canvas"));
     expect(app.vault.getFileByPath("Draft.canvas")).toBeNull();
@@ -471,7 +472,7 @@ export const PendingTextConflict: Story = {
       return value!;
     });
     await userEvent.click(editor);
-    await userEvent.keyboard("{Control>}a{/Control}Reviewed pending card draft");
+    await userEvent.keyboard(primaryShortcut("{Control>}a{/Control}Reviewed pending card draft"));
     await waitFor(() => expect(app.fileEditingSessions.textConflicts.entries).toHaveLength(1));
     const conflict = app.fileEditingSessions.textConflicts.entries[0];
     expect(JSON.parse(conflict.local).nodes[0].text.trim()).toBe("Reviewed pending card draft");
@@ -508,7 +509,7 @@ export const PendingTextUseExternal: Story = {
       return value!;
     });
     await userEvent.click(editor);
-    await userEvent.keyboard("{Control>}a{/Control}Discard this local draft");
+    await userEvent.keyboard(primaryShortcut("{Control>}a{/Control}Discard this local draft"));
     await waitFor(() => expect(app.fileEditingSessions.textConflicts.entries).toHaveLength(1));
     await app.fileEditingSessions.textConflicts.entries[0].resolve("use-external");
     await app.fileEditingSessions.flush("Draft.canvas");
@@ -603,9 +604,9 @@ export const ClipboardHistory: Story = {
     const board = within(canvasElement);
     const node = (id: string) => canvasElement.querySelector<HTMLElement>(`[data-id="${id}"] .canvas-node-label`)!;
     await userEvent.click(node("small"));
-    await userEvent.keyboard("{Control>}");
+    await userEvent.keyboard(primaryShortcut("{Control>}"));
     await userEvent.click(node("target"));
-    await userEvent.keyboard("{/Control}");
+    await userEvent.keyboard(primaryShortcut("{/Control}"));
     await userEvent.click(board.getByRole("button", { name: "Duplicate selection", exact: true }));
     await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(4));
     await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__edge")).toHaveLength(2));
@@ -616,9 +617,9 @@ export const ClipboardHistory: Story = {
     // History restores document state; explicitly select the duplicate pair.
     const added = Array.from(canvasElement.querySelectorAll<HTMLElement>(".svelte-flow__node")).filter((element) => !["small", "target"].includes(element.dataset.id!));
     await userEvent.click(added[0].querySelector<HTMLElement>(".canvas-node-label")!);
-    await userEvent.keyboard("{Control>}");
+    await userEvent.keyboard(primaryShortcut("{Control>}"));
     await userEvent.click(added[1].querySelector<HTMLElement>(".canvas-node-label")!);
-    await userEvent.keyboard("{/Control}");
+    await userEvent.keyboard(primaryShortcut("{/Control}"));
     const removedIds = added.map((element) => element.dataset.id);
     await userEvent.click(board.getByRole("button", { name: "Cut selection", exact: true }));
     await waitFor(() => expect(canvasElement.querySelectorAll(".svelte-flow__node")).toHaveLength(2));
@@ -656,13 +657,13 @@ export const TextEditingHistory: Story = {
       expect(value).not.toBeNull(); return value!;
     });
     await userEvent.click(editor);
-    await userEvent.keyboard("{Control>}a{/Control}First text draft");
+    await userEvent.keyboard(primaryShortcut("{Control>}a{/Control}First text draft"));
     await app.fileEditingSessions.flush("Draft.canvas");
     const beforeEditorUndo = editor.textContent;
-    await userEvent.keyboard("{Control>}z{/Control}");
+    await userEvent.keyboard(primaryShortcut("{Control>}z{/Control}"));
     await waitFor(() => expect(editor.textContent).not.toBe(beforeEditorUndo));
     expect(editor.isConnected).toBe(true);
-    await userEvent.keyboard("{Control>}a{/Control}Completed text draft");
+    await userEvent.keyboard(primaryShortcut("{Control>}a{/Control}Completed text draft"));
     await app.fileEditingSessions.flush("Draft.canvas");
     await userEvent.click(board.getByRole("button", { name: "Undo", exact: true }));
     await app.fileEditingSessions.flush("Draft.canvas");

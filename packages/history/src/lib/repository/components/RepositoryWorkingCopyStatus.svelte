@@ -2,11 +2,16 @@
   import { onMount } from "svelte";
   import RepositoryUpstreamActions from "./RepositoryUpstreamActions.svelte";
   import type { SyncController } from "../controllers/sync-controller.js";
+  import type { RepositoryUpstreamBinding } from "../controllers/remotes-settings.js";
   import * as Popover from "@lapismd/design-core/shadcn/popover";
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
   import { FileChangeStats } from "@lapismd/design-core/diff";
   import { RelativeTime } from "@lapismd/design-core/shadcn/relative-time";
   import RefreshCw from "@lucide/svelte/icons/refresh-cw";
+  import ChevronsRight from "@lucide/svelte/icons/chevrons-right";
+  import ChevronsLeft from "@lucide/svelte/icons/chevrons-left";
+  import GitBranch from "@lucide/svelte/icons/git-branch";
+  import type { BackupController, BackupStatus } from "../controllers/backup.js";
   import GitCommitHorizontal from "@lucide/svelte/icons/git-commit-horizontal";
   import RepositoryAuthorAvatar from "./RepositoryAuthorAvatar.svelte";
   import RepositoryIdentifiers from "./RepositoryIdentifiers.svelte";
@@ -20,18 +25,56 @@
     openRevision,
     copyText,
     upstream,
+    remote,
+    backup,
+    presentation = "full",
   }: {
     controller: WorkingCopyController;
     openRevision(operation: string, revision: string): Promise<void>;
     copyText(value: string): Promise<void>;
     upstream?: SyncController;
+    remote?: RepositoryUpstreamBinding;
+    backup?: BackupController;
+    presentation?: "full" | "split";
   } = $props();
   let statusState: WorkingCopyState = $state({ busy: true, status: "loading" });
   let open = $state(false);
-  onMount(() =>
-    controller.subscribe((next) => {
-      statusState = next;
-    }),
+  let expanded = $state(false);
+  const expansionId = $props.id();
+  let local: BackupStatus | undefined = $state();
+  onMount(() => {
+    const stop = controller.subscribe((next) => (statusState = next));
+    const stopBackup = backup?.subscribe((next) => (local = next));
+    return () => {
+      stop();
+      stopBackup?.();
+    };
+  });
+  const localLabel = $derived(
+    !local
+      ? undefined
+      : local.phase === "ready"
+        ? "Saved locally"
+        : local.phase === "saving"
+          ? "Saving locally"
+          : "Local history needs attention",
+  );
+  const headerRemote = $derived(
+    remote
+      ? {
+          ...remote,
+          push: () => {
+            open = false;
+            remote.push();
+          },
+          manage: remote.manage
+            ? () => {
+                open = false;
+                remote.manage?.();
+              }
+            : undefined,
+        }
+      : undefined,
   );
   const value = $derived(statusState.value);
   const summaryLabel = $derived(
@@ -50,6 +93,7 @@
 
 <div
   class="repository-working-status"
+  class:split={presentation === "split"}
   aria-label="Repository working copy"
   aria-busy={statusState.busy}
 >
@@ -62,16 +106,18 @@
           class="summary"
           aria-label={`Working copy details: ${summaryLabel}`}
         >
-          <GitCommitHorizontal aria-hidden="true" />
-          {#if value}
-            <span>{value.files} {value.files === 1 ? "file" : "files"}</span>
-            {#if value.lines}<FileChangeStats
-                additions={value.lines.additions}
-                deletions={value.lines.deletions}
-              />{:else}<span>line counts unavailable</span>{/if}
-          {:else if statusState.status === "loading"}
-            <Skeleton style="height:.75rem;width:5.5rem" />
-          {:else}<span>Working copy unavailable</span>{/if}
+          {#if presentation === "split"}<GitBranch aria-hidden="true" />{:else}<GitCommitHorizontal
+              aria-hidden="true"
+            />{/if}
+          {#if presentation !== "split"}{#if value}
+              <span>{value.files} {value.files === 1 ? "file" : "files"}</span>
+              {#if value.lines}<FileChangeStats
+                  additions={value.lines.additions}
+                  deletions={value.lines.deletions}
+                />{:else}<span>line counts unavailable</span>{/if}
+            {:else if statusState.status === "loading"}
+              <Skeleton style="height:.75rem;width:5.5rem" />
+            {:else}<span>Working copy unavailable</span>{/if}{/if}
         </button>
       {/snippet}
     </Popover.Trigger>
@@ -84,17 +130,18 @@
     >
       <section class="working-card" aria-label="Working copy details">
         <header>
-          <GitCommitHorizontal aria-hidden="true" /><strong>Working copy</strong
-          >{#if value}<span class="workspace">{value.workspace}</span>{/if}
+          <GitCommitHorizontal aria-hidden="true" /><strong>Working copy</strong>{#if value}<span
+              class="workspace">{value.workspace}</span
+            >{/if}
           <RepositoryUpstreamActions
+            remote={headerRemote}
             controller={upstream}
             unavailable={statusState.busy}
           />
         </header>
         {#if value}
           <button type="button" class="subject" onclick={inspect}
-            >{value.description.split(/\r?\n/u)[0] ||
-              "(no description)"}</button
+            >{value.description.split(/\r?\n/u)[0] || "(no description)"}</button
           >
           <div class="identifiers">
             <RepositoryIdentifiers
@@ -114,10 +161,7 @@
             />
           </div>
           <div class="totals">
-            <span
-              >{value.files} changed {value.files === 1
-                ? "file"
-                : "files"}</span
+            <span>{value.files} changed {value.files === 1 ? "file" : "files"}</span
             >{#if value.lines}<FileChangeStats
                 additions={value.lines.additions}
                 deletions={value.lines.deletions}
@@ -127,33 +171,60 @@
               >{/if}
           </div>
           <p>
-            Includes unsnapshotted files and saved editor changes compared with
-            the working-copy parent. Editor changes appear after saving.
+            Includes unsnapshotted files and saved editor changes compared with the working-copy
+            parent. Editor changes appear after saving.
           </p>
-          <button type="button" class="open-log" onclick={inspect}
-            >Open in JJ Log</button
-          >
+          <button type="button" class="open-log" onclick={inspect}>Open in JJ Log</button>
         {:else if statusState.status === "loading"}
           <div class="loading" role="status" aria-label="Reading working copy">
             <Skeleton style="height:1rem;width:90%" /><Skeleton
               style="height:1rem;width:65%"
             /><Skeleton style="height:1rem;width:80%" />
           </div>
-        {:else}<p>
-            Status is unavailable. Refresh to read the current working copy.
-          </p>{/if}
+        {:else}<p>Status is unavailable. Refresh to read the current working copy.</p>{/if}
       </section>
     </Popover.Content>
   </Popover.Root>
-  <button
-    type="button"
-    class="refresh"
-    aria-label="Refresh working copy status"
-    title="Refresh working copy status"
-    disabled={statusState.busy}
-    onclick={() => controller.refresh()}
-    ><RefreshCw aria-hidden="true" /></button
-  >
+  {#if presentation === "split"}
+    <div id={expansionId} class="expanded-summary" hidden={!expanded}>
+      {#if localLabel}<span class="local-label">{localLabel}</span>{/if}
+      {#if value?.lines}<FileChangeStats
+          additions={value.lines.additions}
+          deletions={value.lines.deletions}
+        />{/if}
+      {#if remote?.target.connection}<RepositoryUpstreamActions
+          remote={{ ...remote, manage: undefined }}
+          compact
+          unavailable={statusState.busy}
+        />{/if}
+    </div>
+    <button
+      type="button"
+      class="expand-status"
+      aria-label={expanded ? "Collapse repository status" : "Expand repository status"}
+      title={expanded ? "Collapse repository status" : "Expand repository status"}
+      aria-expanded={expanded}
+      aria-controls={expansionId}
+      onclick={() => (expanded = !expanded)}
+    >
+      {#if expanded}<ChevronsLeft aria-hidden="true" />{:else}<ChevronsRight
+          aria-hidden="true"
+        />{/if}
+    </button>
+  {/if}
+  {#if presentation === "full"}{#if remote}<RepositoryUpstreamActions
+        {remote}
+        compact
+        unavailable={statusState.busy}
+      />{/if}
+    <button
+      type="button"
+      class="refresh"
+      aria-label="Refresh working copy status"
+      title="Refresh working copy status"
+      disabled={statusState.busy}
+      onclick={() => controller.refresh()}><RefreshCw aria-hidden="true" /></button
+    >{/if}
 </div>
 
 <style>
@@ -171,6 +242,44 @@
     border-radius: var(--radius);
     font: inherit;
     color: inherit;
+  }
+  .repository-working-status.split {
+    height: 1.25rem;
+    flex: none;
+  }
+  .split .summary,
+  .expand-status {
+    width: 1.5rem;
+    height: 1.25rem;
+    justify-content: center;
+    padding: 0;
+  }
+  .expanded-summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding-inline: 0.35rem;
+    white-space: nowrap;
+  }
+  .expanded-summary[hidden] {
+    display: none;
+  }
+  .expand-status {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    background: color-mix(
+      in oklab,
+      var(--ui-workspace-muted-foreground) 12%,
+      var(--ui-workspace-panel)
+    );
+  }
+  .expand-status :global(svg) {
+    width: 0.8rem;
+    height: 0.8rem;
+  }
+  .local-label {
+    white-space: nowrap;
   }
   button {
     appearance: none;
@@ -232,7 +341,9 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.75rem 1rem;
+    padding: 0.25rem 1rem;
+    background: var(--ui-column-canvas-column-background, var(--card));
+    border-radius: var(--radius) var(--radius) 0 0;
     border-bottom: 1px solid var(--border);
   }
   .workspace {

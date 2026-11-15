@@ -4,13 +4,25 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import CircleArrowDown from "@lucide/svelte/icons/circle-arrow-down";
   import ArrowDown from "@lucide/svelte/icons/arrow-down";
-  import ArrowUp from "@lucide/svelte/icons/arrow-up";
+  import CircleArrowUp from "@lucide/svelte/icons/circle-arrow-up";
+  import Settings2 from "@lucide/svelte/icons/settings-2";
+  import {
+    remoteTargetLabel,
+    type RepositoryUpstreamBinding,
+  } from "../controllers/remotes-settings.js";
   import type { SyncController } from "../controllers/sync-controller.js";
   import type { SyncState } from "../controllers/sync.js";
   let {
     controller,
     unavailable = false,
-  }: { controller?: SyncController; unavailable?: boolean } = $props();
+    remote,
+    compact = false,
+  }: {
+    controller?: SyncController;
+    unavailable?: boolean;
+    remote?: RepositoryUpstreamBinding;
+    compact?: boolean;
+  } = $props();
   let state: SyncState = $state({
     busy: false,
     phase: "ready",
@@ -18,70 +30,121 @@
     recovery: false,
   });
   onMount(() => {
-    const stop = controller?.subscribe((next) => (state = next));
-    void controller?.run("status");
+    const stop = remote ? undefined : controller?.subscribe((next) => (state = next));
+    if (!remote) void controller?.run("status");
     return stop;
   });
   const actions = [
     { action: "fetch", label: "Fetch from upstream", Icon: CircleArrowDown },
     { action: "pull", label: "Pull from upstream", Icon: ArrowDown },
-    { action: "push", label: "Push to upstream", Icon: ArrowUp },
+    { action: "push", label: "Push to upstream", Icon: CircleArrowUp },
   ] as const;
-  const counts = $derived(state.upstream?.divergence);
+  const counts = $derived(remote ? remote.target.observation : state.upstream?.divergence);
+  const busy = $derived(remote ? Boolean(remote.target.busy) : state.busy);
+  const targetLabel = $derived(
+    remote ? remoteTargetLabel(remote.target.target).toLowerCase() : "upstream",
+  );
+  function blocked(action: "fetch" | "pull" | "push") {
+    if (remote)
+      return (
+        unavailable ||
+        busy ||
+        !remote.target.connection ||
+        (action === "fetch" && !remote.target.canFetch) ||
+        (action === "push" &&
+          (!remote.target.canPush || remote.target.publication?.outcome === "unknown"))
+      );
+    return (
+      unavailable ||
+      !controller ||
+      busy ||
+      !state.upstream?.configuration ||
+      (action !== "fetch" && (state.recovery || Boolean(state.proposal?.conflicts.length))) ||
+      (action === "push" && !state.upstream?.configuration?.canPush)
+    );
+  }
+  function run(action: "fetch" | "pull" | "push") {
+    if (blocked(action)) return;
+    if (!remote) {
+      void controller?.run(action);
+      return;
+    }
+    if (action === "fetch") remote.fetch();
+    else remote.push();
+  }
 </script>
 
 <div
   class="upstream-actions"
+  class:compact
   role="group"
-  aria-label="Upstream actions"
-  aria-busy={state.busy}
+  aria-label={remote
+    ? `${remoteTargetLabel(remote.target.target)} upstream actions`
+    : "Upstream actions"}
+  aria-busy={busy}
 >
   <Tooltip.Provider>
     {#each actions as action (action.action)}
-      {@const blocked =
-        unavailable ||
-        !controller ||
-        state.busy ||
-        !state.upstream?.configuration ||
-        (action.action !== "fetch" &&
-          (state.recovery || Boolean(state.proposal?.conflicts.length))) ||
-        (action.action === "push" && !state.upstream?.configuration?.canPush)}
-      <Tooltip.Root>
-        <Tooltip.Trigger>
-          {#snippet child({ props })}
-            <span {...blocked ? props : {}} class="action-trigger">
-              <Button
-                {...!blocked ? props : {}}
-                variant="ghost"
-                size="sm"
-                class="upstream-action"
-                disabled={blocked}
-                onclick={(event) => {
-                  if (typeof props.onclick === "function") props.onclick(event);
-                  void controller?.run(action.action);
-                }}
-              >
-                <action.Icon data-icon="inline-start" aria-hidden="true" />
-                <span class="sr-label">{action.label}</span>
-                {#if action.action !== "fetch"}<span class="count"
-                    >{counts?.[
-                      action.action === "pull" ? "incoming" : "outgoing"
-                    ] ?? "—"}</span
+      {#if !remote || action.action !== "pull"}
+        {@const disabled = blocked(action.action)}
+        {@const label = remote
+          ? `${action.action === "fetch" ? "Fetch" : action.action === "pull" ? "Pull" : "Review push to"} ${targetLabel}`
+          : action.label}
+        <Tooltip.Root>
+          <Tooltip.Trigger>
+            {#snippet child({ props })}
+              <span {...props} class="action-trigger">
+                <Button
+                  aria-describedby={typeof props["aria-describedby"] === "string"
+                    ? props["aria-describedby"]
+                    : undefined}
+                  variant="ghost"
+                  size="icon-xs"
+                  class="upstream-action"
+                  aria-label={label}
+                  {disabled}
+                  onclick={(event) => {
+                    run(action.action);
+                  }}
+                >
+                  <action.Icon data-icon="inline-start" aria-hidden="true" />
+                  <span class="sr-label">{label}</span>
+                </Button>
+                {#if counts || !remote}<span
+                    class="count"
+                    aria-label={action.action === "push" ? "Outgoing commits" : "Incoming commits"}
+                    >{counts?.[action.action === "push" ? "outgoing" : "incoming"] ?? "—"}</span
                   >{/if}
-              </Button>
-            </span>
-          {/snippet}
-        </Tooltip.Trigger>
-        <Tooltip.Content role="tooltip">
-          <strong>{action.label}</strong>
-          {#if action.action !== "fetch"}<span class="count-description"
+              </span>
+            {/snippet}
+          </Tooltip.Trigger>
+          <Tooltip.Content role="tooltip">
+            <strong>{label}</strong>
+            {#if remote?.target.connection}<span class="count-description"
+                >{remote.target.connection.name}/{remote.target.connection.branch}</span
+              >{/if}
+            <span class="count-description"
               >{counts
-                ? `${counts[action.action === "pull" ? "incoming" : "outgoing"]} ${action.action === "pull" ? "incoming" : "outgoing"} commits since the last fetch`
+                ? `${counts[action.action === "push" ? "outgoing" : "incoming"]} ${action.action === "push" ? "outgoing" : "incoming"} commits since the last fetch`
                 : "Commit count unavailable until upstream history is fetched"}</span
-            >{/if}
-        </Tooltip.Content>
-      </Tooltip.Root>
+            >
+          </Tooltip.Content>
+        </Tooltip.Root>
+      {/if}
     {/each}
+    {#if remote?.manage}<Tooltip.Root>
+        <Tooltip.Trigger>
+          {#snippet child({ props })}<Button
+              {...props}
+              variant="ghost"
+              size="icon-xs"
+              class="upstream-action"
+              aria-label={`Manage remotes for ${targetLabel}`}
+              onclick={remote.manage}><Settings2 aria-hidden="true" /></Button
+            >{/snippet}
+        </Tooltip.Trigger>
+        <Tooltip.Content role="tooltip">Manage remotes for {targetLabel}</Tooltip.Content>
+      </Tooltip.Root>{/if}
   </Tooltip.Provider>
 </div>
 
@@ -92,9 +155,12 @@
     margin-inline-start: auto;
     gap: 0.125rem;
     flex: none;
+    --ui-button-radius: 999px;
   }
   .action-trigger {
     display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
   }
   .sr-label {
     position: absolute;
@@ -107,12 +173,17 @@
   }
   .upstream-actions :global(.upstream-action) {
     height: 1.75rem;
-    padding: 0 0.35rem;
+    width: 1.75rem;
+    padding: 0;
     gap: 0.3rem;
   }
   .upstream-actions :global(.upstream-action svg) {
     width: 1rem;
     height: 1rem;
+  }
+  .upstream-actions.compact :global(.upstream-action) {
+    height: 1.25rem;
+    width: 1.25rem;
   }
   .count {
     font-variant-numeric: tabular-nums;

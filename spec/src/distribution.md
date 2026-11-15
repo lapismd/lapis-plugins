@@ -1,5 +1,9 @@
 # Distribution and Releases
 
+LN-HIST-020 adds unregistered repository remote review components and a
+memory-backed shared catalog. The preview Changeset describes package contents
+only; it does not authorize publication or qualify live host remote transport.
+
 The Hono security override now selects 4.13.16 or later so MCP-SDK audit
 findings fail closed without advisory exceptions (LP-SPEC-017, LP-SPEC-048).
 Publication remains a separate approval gate.
@@ -549,8 +553,29 @@ Skill contributions carry their complete authored directories in both npm and si
 
 Signed skill archives and npm assets are byte-compared in [archive qualification](../records/2026-11-14-plugin-skill-archives.md), including every skill body and license.
 
+Catalog acceptance may select a checkout-local Vitest browser API port with
+`LAPIS_PLUGINS_BROWSER_TEST_PORT`. The port must be an integer from 1 to 65535;
+the default remains 63422. This isolates independent workspaces without changing
+published package metadata, runtime admission or release artifact generation.
+
+History's optional target-aware remotes service is a public package contract.
+Generated/packaged declarations and consumer acceptance must qualify it through
+public exports while preserving existing backup-only host compatibility.
+
 Under LP-SPEC-010, compatible internal peer updates MUST preserve the declared
 independent bump; out-of-range peers MUST retain major-version escalation. The
 frozen Changesets 2 CLI uses its range-aware peer option, guarded by a real CLI
 regression for both cases. [Peer release qualification](../records/2026-11-14-skill-release-peer-versioning.md)
 records the Markdown 0.3 peer intake without native or publisher-authority changes.
+
+History remote-management public exports use an independent minor release. The
+optional service contract is additive; each native host explicitly adopts the
+new package cohort after its own integration qualification.
+
+The remotes catalog resolves the published API 0.6.2 patch and its registry
+integrity, replacing the ignored development archive used to qualify the source
+fix. The root range makes the required projection correction explicit.
+
+Registry dependency intake MUST refresh compatibility-report dependency provenance
+through its guarded provenance-only command when the installed API changes.
+Behavior expectations and visual baselines remain independently governed.

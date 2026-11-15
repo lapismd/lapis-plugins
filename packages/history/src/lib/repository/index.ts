@@ -14,3 +14,11 @@ export { ownedAiHistory } from "./controllers/ai-history.js";
 export { nativeIndexedHistory } from "./controllers/native-indexed-search.js";
 export { HistoryIndexController } from "./controllers/history-index-controller.js";
 export type { IndexedHistoryService } from "./controllers/indexed-search.js";
+
+export type {
+  RepositoryRemotesService,
+  RepositoryRemotesSnapshot,
+  RepositoryRemotesCommand,
+  RepositoryRemoteCapabilities,
+} from "./controllers/remotes-service.js";
+export { RepositoryRemotesController } from "./controllers/remotes-controller.js";

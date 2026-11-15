@@ -102,6 +102,19 @@ export const NavigationFixture: Story = {
     );
   },
 };
+async function settleCamera(viewport: HTMLElement): Promise<void> {
+  await waitFor(async () => {
+    const before = viewport.style.transform;
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => resolve())
+    );
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => resolve())
+    );
+    expect(viewport.style.transform).toBe(before);
+  });
+}
+
 export const KeyboardNavigation: Story = {
   name: "Navigation and help preserve the board document",
   render: () => ({
@@ -183,13 +196,18 @@ export const KeyboardNavigation: Story = {
     await waitFor(() => expect(zoom()).toBeGreaterThan(1));
     await userEvent.keyboard("0");
     await waitFor(() => expect(zoom()).toBeCloseTo(1, 3));
-    const before = viewport.style.transform;
+    await settleCamera(viewport);
+    const beforePan = new DOMMatrix(getComputedStyle(viewport).transform).e;
     await userEvent.keyboard("{Alt>}{ArrowRight}{/Alt}");
-    await waitFor(() => expect(viewport.style.transform).not.toBe(before));
+    await settleCamera(viewport);
+    await waitFor(() =>
+      expect(new DOMMatrix(getComputedStyle(viewport).transform).e).toBeCloseTo(beforePan - 80, 3),
+    );
     const group = root.querySelector<HTMLElement>('[data-id="g"]')!;
     await userEvent.click(board.getByRole("button", { name: "Jump to group", exact: true }));
     await userEvent.type(within(canvasElement.ownerDocument.body).getByRole("combobox", { name: "Search groups", exact: true }), "Research");
     await userEvent.keyboard("{ArrowDown}{Enter}");
+    await settleCamera(viewport);
     await waitFor(() => {
       const frame = root.getBoundingClientRect(),
         bounds = group.getBoundingClientRect();
