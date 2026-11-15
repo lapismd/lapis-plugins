@@ -311,3 +311,5 @@ remain separate from storage, adoption and restore controls; unavailable forge
 accounts MUST NOT hide independent controls. Hosts without native remotes retain
 legacy compatibility. Providing native remotes disables renderer RepositorySync;
 only the executing host schedules explicitly opted-in backup synchronization.
+
+History 0.5.0 has [verified npm, signed archive and live registry delivery](../../../records/2026-11-15-history-050-publication.md). Host registry intake and cold application acceptance remain separate gates under LN-HIST-021.
