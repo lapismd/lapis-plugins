@@ -3,13 +3,14 @@
   import type { App } from "@lapis-notes/api";
   import { WorkspaceShell } from "@lapis-notes/workspace";
   import { openNativeRemotesStory, attachNativeRemotesStory } from "./native-runtime.svelte";
-  let { host = "server", footer = true, operations = false, narrow = false }: { host?: "desktop" | "server"; footer?: boolean; operations?: boolean; narrow?: boolean } = $props();
+  import type { NativeSyncScenario } from "./native-sync-fixture";
+  let { host = "server", footer = true, operations = false, narrow = false, syncScenario }: { host?: "desktop" | "server"; footer?: boolean; operations?: boolean; narrow?: boolean; syncScenario?: NativeSyncScenario } = $props();
   let app = $state.raw<App>();
   let element: HTMLDivElement;
   let failure = $state("");
   onMount(() => {
     let disposed = false;
-    const opening = openNativeRemotesStory(host, footer, operations);
+    const opening = openNativeRemotesStory(host, footer, operations, syncScenario);
     void opening.then(runtime => {
       if (disposed) return;
       app = runtime.app; attachNativeRemotesStory(element, runtime);

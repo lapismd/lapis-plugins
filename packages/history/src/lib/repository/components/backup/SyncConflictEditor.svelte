@@ -5,13 +5,13 @@
   import RepositoryConflictSurface from "../conflicts/RepositoryConflictSurface.svelte";
   import RepositoryConflictText from "../conflicts/RepositoryConflictText.svelte";
   import RepositorySkeleton from "../RepositorySkeleton.svelte";
-  import type { SyncController } from "../../controllers/sync-controller.js";
+  import type { SyncPresentation } from "../../controllers/native-sync.js";
   import type { SyncState } from "../../controllers/sync.js";
   let {
     controller,
     open,
     onClose,
-  }: { controller: SyncController; open: boolean; onClose(): void } = $props();
+  }: { controller: SyncPresentation; open: boolean; onClose(): void } = $props();
   let snapshot = $state<SyncState>({
     busy: false,
     phase: "ready",

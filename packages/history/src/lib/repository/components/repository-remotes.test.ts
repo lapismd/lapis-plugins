@@ -7,7 +7,7 @@ import type {
   RepositoryRemotesCommand,
   RepositoryRemotesSnapshot,
 } from "../controllers/remotes-service.js";
-function fixture() {
+function fixture(nativeSynchronization = false) {
   let snapshot: RepositoryRemotesSnapshot = {
     revision: 0,
     capabilities: {
@@ -102,17 +102,38 @@ function fixture() {
     loadData: async () => ({ showWorkingCopyStatus: false }),
     registerSettingsSection,
     report,
+    feedback: () => ({ report, recovered: vi.fn() }),
     app: {
       notifications: { notify: vi.fn() },
       statusBar: { registerItem: register },
     },
   } as unknown as RepositoryPlugin;
-  const remotes = new RepositoryRemotes(plugin, service);
+  const synchronization = {
+    read: vi.fn(async () => ({
+      revision: 0,
+      enabled: true,
+      busy: false,
+      phase: "ready" as const,
+      recovery: false,
+    })),
+    execute: vi.fn(async () => ({
+      revision: 0,
+      enabled: true,
+      busy: false,
+      phase: "ready" as const,
+      recovery: false,
+    })),
+  };
+  const remotes = new RepositoryRemotes(plugin, {
+    ...service,
+    ...(nativeSynchronization ? { synchronization } : {}),
+  });
   plugin.remotes = remotes;
   return {
     remotes,
     plugin,
     service,
+    synchronization,
     commands,
     register,
     registerSettingsSection,
@@ -126,6 +147,25 @@ function fixture() {
     resume: () => release?.(),
   };
 }
+it("observes native synchronization without scheduling transfers and retires its polling with the owner", async () => {
+  vi.useFakeTimers();
+  const f = fixture(true);
+  try {
+    expect(f.remotes.synchronization).toBeDefined();
+    await f.remotes.synchronization!.start();
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(f.synchronization.read.mock.calls.length).toBeGreaterThan(1);
+    expect(f.synchronization.execute).not.toHaveBeenCalled();
+    expect(f.commands).toEqual([]);
+    await f.remotes.close();
+    const observed = f.synchronization.read.mock.calls.length;
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(f.synchronization.read).toHaveBeenCalledTimes(observed);
+  } finally {
+    await f.remotes.close();
+    vi.useRealTimers();
+  }
+});
 it("does not auto-open retained reviews and presents only an explicitly selected target", async () => {
   const f = fixture();
   await f.remotes.refresh();

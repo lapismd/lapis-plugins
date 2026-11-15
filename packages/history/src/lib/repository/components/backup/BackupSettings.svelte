@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import RepositoryShell from "../RepositoryShell.svelte";
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
-  import type { SyncController } from "../../controllers/sync-controller.js";
+  import type { SyncPresentation } from "../../controllers/native-sync.js";
   import SyncConflictEditor from "./SyncConflictEditor.svelte";
   import SyncSettings from "./SyncSettings.svelte";
   import ForgeAccounts from "./ForgeAccounts.svelte";
@@ -27,7 +27,7 @@
     controller?: ForgeController;
     remote?: RemoteController;
     restore?: RestoreController;
-    sync?: SyncController;
+    sync?: SyncPresentation;
     setSyncEnabled?: (enabled: boolean) => Promise<void>;
     storage?: StorageController;
     adoption?: AdoptionController;
