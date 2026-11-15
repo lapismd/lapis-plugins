@@ -714,3 +714,6 @@ LP-SPEC-054 checks the real render path. Complete interaction/axe and artifact
 qualification remain required; these fixture proofs cannot advance cold native
 host or publication gates. The minor Changeset records production composition
 adoption separately from the completed LN-HIST-020 preview.
+
+Skill-reference qualification checks authored frontmatter/relative links, examples through actual Lapis parsers, recursive npm/archive parity and signed inclusion. Formatters must preserve whitespace-sensitive Markdown examples. The reference correction changes no product interaction or accessibility behavior.
+[Qualification evidence](../records/2026-11-15-lapis-skill-references.md) retains source checks separately from consumer delivery.

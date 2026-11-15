@@ -1,9 +1,20 @@
 ---
 name: lapis-markdown
-description: Create and edit Lapis Markdown notes, YAML properties, wikilinks, embeds and callouts.
+description: Create and edit rich Lapis/Mira Markdown, including grid tables, directives, extended task states, properties, links and embeds.
 ---
 
 # Lapis Markdown
+
+Lapis/Mira supports a richer authoring surface than the common Obsidian-compatible
+subset: grid tables with spans, directives, list callouts, extended task states,
+code-line metadata, math, diagrams and rich editable previews. Use the Lapis
+contract rather than limiting a note to upstream examples. Load detail by task:
+
+- [Rich syntax and examples](references/RICH_SYNTAX.md): grid tables, directives, code, math and diagrams.
+- [Properties and links](references/PROPERTIES_AND_LINKS.md): typed data, file identity and metadata.
+- [Callouts and task states](references/CALLOUTS_AND_TASKS.md): folding, list callouts and nonbinary markers.
+- [Embeds and previews](references/EMBEDS.md): source ownership, providers and editable hover cards.
+- [Editor capabilities](references/EDITOR_CAPABILITIES.md): supported modes, settings defaults, optional AI and doodle dividers.
 
 Read the existing note and nearby vault conventions before editing. Preserve
 unrelated frontmatter and document content. Use ordinary Markdown plus Lapis
