@@ -581,3 +581,7 @@ fix. The root range makes the required projection correction explicit.
 Registry dependency intake MUST refresh compatibility-report dependency provenance
 through its guarded provenance-only command when the installed API changes.
 Behavior expectations and visual baselines remain independently governed.
+
+Host-cohort qualification includes the published UI 0.2 peer accepted by API
+0.6. AI and Markdown retain UI 0.1 compatibility while admitting UI 0.2;
+release preparation must not publish a contradictory API/UI peer combination.

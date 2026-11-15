@@ -309,3 +309,7 @@ The authored skill example is checked by the production metadata parser for
 properties, headings, aliases and internal/image references.
 [Example qualification](../../../records/2026-11-14-skill-example-verification.md)
 retains the exact target and complete package results.
+
+Markdown accepts the API 0.6 / UI 0.2 registry cohort while retaining the
+qualified API 0.2/0.4 and UI 0.1 peer ranges. The shared catalog qualifies
+the published UI 0.2 exports; no host dependency override supplies compatibility.

@@ -612,3 +612,6 @@ The legacy Update bundled skills entrypoint delegates to the protected App updat
 The Markdown peer and development ranges also admit compatible `^0.3.0` while
 retaining the existing 0.2 floor. [Peer release qualification](../../../records/2026-11-14-skill-release-peer-versioning.md)
 keeps this compatible dependency intake on its declared independent bump.
+
+AI accepts the API 0.6 / UI 0.2 registry cohort while retaining the qualified
+UI 0.1 peer range. Qualification uses the built public UI 0.2 package.
