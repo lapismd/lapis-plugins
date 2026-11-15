@@ -168,6 +168,71 @@
       { "name": "missing head revision", "type": "head", "input": { "schemaVersion": 2, "vaultId": "v", "root": "r", "keyEpoch": 1, "currentEpoch": 1, "membershipGeneration": 0 } }
     ]
   },
+  "membershipAuthority": {
+    "membership": {
+      "schemaVersion": 2,
+      "vaultId": "fixture-vault",
+      "ownerPublicKey": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "generation": 3,
+      "currentEpoch": 2,
+      "devices": [
+        { "publicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "state": "active" },
+        { "publicKey": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "state": "revoked", "cutoffHead": "1111111111111111111111111111111111111111111111111111111111111111" }
+      ],
+      "syncIdentity": {
+        "publicKey": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "generation": 2,
+        "history": [
+          {
+            "publicKey": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "generation": 1,
+            "activatedMembershipGeneration": 0,
+            "retiredMembershipGeneration": 2,
+            "cutoffHeads": {
+              "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb": "1111111111111111111111111111111111111111111111111111111111111111",
+              "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          },
+          {
+            "publicKey": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "generation": 2,
+            "activatedMembershipGeneration": 2
+          }
+        ]
+      },
+      "legacyTransportCutoffHeads": {
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb": "1111111111111111111111111111111111111111111111111111111111111111"
+      }
+    },
+    "installedEpochs": [1, 2],
+    "ancestry": {
+      "0000000000000000000000000000000000000000000000000000000000000000": [],
+      "1111111111111111111111111111111111111111111111111111111111111111": ["0000000000000000000000000000000000000000000000000000000000000000"],
+      "2222222222222222222222222222222222222222222222222222222222222222": ["1111111111111111111111111111111111111111111111111111111111111111"]
+    },
+    "cases": [
+      { "name": "active device through current identity", "record": { "eventId": "2222222222222222222222222222222222222222222222222222222222222222", "eventKind": 78, "transportPublicKey": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "attestedDevicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "devicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 2, "currentEpoch": 2, "keyEpoch": 2 } }, "authorized": true },
+      { "name": "active HEAD through current identity", "record": { "eventId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "eventKind": 30078, "transportPublicKey": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "attestedDevicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "devicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 2, "currentEpoch": 2, "keyEpoch": 2, "revisionEventId": "2222222222222222222222222222222222222222222222222222222222222222" } }, "authorized": true },
+      { "name": "future membership generation", "record": { "eventId": "2222222222222222222222222222222222222222222222222222222222222222", "eventKind": 78, "transportPublicKey": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "attestedDevicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "devicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 4, "currentEpoch": 2, "keyEpoch": 2 } }, "authorized": false },
+      { "name": "uninstalled key epoch", "record": { "eventId": "2222222222222222222222222222222222222222222222222222222222222222", "eventKind": 78, "transportPublicKey": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "attestedDevicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "devicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 2, "currentEpoch": 2, "keyEpoch": 3 } }, "authorized": false },
+      { "name": "caller label differs from attested device", "record": { "eventId": "1111111111111111111111111111111111111111111111111111111111111111", "eventKind": 78, "transportPublicKey": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "attestedDevicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "devicePublicKey": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 1, "currentEpoch": 1, "keyEpoch": 1 } }, "authorized": false },
+      { "name": "revoked ancestry at cutoff", "record": { "eventId": "1111111111111111111111111111111111111111111111111111111111111111", "eventKind": 78, "transportPublicKey": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "attestedDevicePublicKey": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "devicePublicKey": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 1, "currentEpoch": 1, "keyEpoch": 1 } }, "authorized": true },
+      { "name": "revoked ancestry before cutoff", "record": { "eventId": "0000000000000000000000000000000000000000000000000000000000000000", "eventKind": 78, "transportPublicKey": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "attestedDevicePublicKey": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "devicePublicKey": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 1, "currentEpoch": 1, "keyEpoch": 1 } }, "authorized": true },
+      { "name": "revoked ancestry after cutoff", "record": { "eventId": "2222222222222222222222222222222222222222222222222222222222222222", "eventKind": 78, "transportPublicKey": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "attestedDevicePublicKey": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "devicePublicKey": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 1, "currentEpoch": 1, "keyEpoch": 1 } }, "authorized": false },
+      { "name": "revoked HEAD is never retained", "record": { "eventId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "eventKind": 30078, "transportPublicKey": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "attestedDevicePublicKey": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "devicePublicKey": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 1, "currentEpoch": 1, "keyEpoch": 1, "revisionEventId": "1111111111111111111111111111111111111111111111111111111111111111" } }, "authorized": false },
+      { "name": "retired identity at immutable cutoff", "record": { "eventId": "1111111111111111111111111111111111111111111111111111111111111111", "eventKind": 78, "transportPublicKey": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "attestedDevicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "devicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 1, "currentEpoch": 1, "keyEpoch": 1 } }, "authorized": true },
+      { "name": "retired identity beyond cutoff", "record": { "eventId": "2222222222222222222222222222222222222222222222222222222222222222", "eventKind": 78, "transportPublicKey": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "attestedDevicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "devicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 1, "currentEpoch": 1, "keyEpoch": 1 } }, "authorized": false },
+      { "name": "retired identity cannot sign retirement generation", "record": { "eventId": "1111111111111111111111111111111111111111111111111111111111111111", "eventKind": 78, "transportPublicKey": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "attestedDevicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "devicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 2, "currentEpoch": 2, "keyEpoch": 1 } }, "authorized": false },
+      { "name": "legacy event at explicit cutoff", "record": { "eventId": "1111111111111111111111111111111111111111111111111111111111111111", "eventKind": 78, "transportPublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "attestedDevicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "devicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "legacy": true, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 1, "currentEpoch": 1, "keyEpoch": 1 } }, "authorized": true },
+      { "name": "legacy event beyond explicit cutoff", "record": { "eventId": "2222222222222222222222222222222222222222222222222222222222222222", "eventKind": 78, "transportPublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "attestedDevicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "devicePublicKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "legacy": true, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 1, "currentEpoch": 1, "keyEpoch": 1 } }, "authorized": false },
+      { "name": "unknown device", "record": { "eventId": "1111111111111111111111111111111111111111111111111111111111111111", "eventKind": 78, "transportPublicKey": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "attestedDevicePublicKey": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "devicePublicKey": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "legacy": false, "payload": { "vaultId": "fixture-vault", "membershipGeneration": 2, "currentEpoch": 2, "keyEpoch": 2 } }, "authorized": false }
+    ],
+    "invalidMemberships": [
+      { "name": "duplicate device", "patch": { "duplicateFirstDevice": true } },
+      { "name": "future active identity", "patch": { "activeIdentityGeneration": 4 } },
+      { "name": "no unique active identity", "patch": { "retireActiveIdentityAt": 3 } }
+    ]
+  },
   "crypto": {
     "sha256": { "inputUtf8": "hello", "outputHex": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824" },
     "hkdfSha256": { "ikmUtf8": "input key material", "saltUtf8": "salt", "infoUtf8": "info", "outputHex": "f1840c1f388c8fc7a9137c561360962da050de51672f0d7c9fee3ff15c251fec" },

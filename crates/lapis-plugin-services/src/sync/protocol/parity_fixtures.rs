@@ -1,4 +1,8 @@
 use super::*;
+use crate::sync::runtime::{
+    HistoryMembership, MembershipAuthorizationRecord, authorize_membership_record,
+    validate_membership,
+};
 use serde_json::Value;
 use std::cmp::Ordering;
 use std::collections::HashMap;
@@ -175,6 +179,73 @@ fn revision_readers_match_complete_outputs_and_failures() {
             _ => unreachable!(),
         };
         assert!(failed, "{}", fixture["name"]);
+    }
+}
+
+#[test]
+fn membership_authority_matches_cutoff_outputs_and_failures() {
+    let fixtures = fixtures();
+    let section = &fixtures["membershipAuthority"];
+    let membership: HistoryMembership =
+        serde_json::from_value(section["membership"].clone()).unwrap();
+    validate_membership(
+        &membership,
+        &membership.vault_id,
+        &membership.owner_public_key,
+    )
+    .unwrap();
+    let epochs: Vec<u32> = serde_json::from_value(section["installedEpochs"].clone()).unwrap();
+    let ancestry: HashMap<String, Vec<String>> =
+        serde_json::from_value(section["ancestry"].clone()).unwrap();
+    let is_ancestor_or_equal = |candidate: &str, descendant: &str| {
+        let mut pending = vec![descendant.to_string()];
+        let mut seen = std::collections::HashSet::new();
+        while let Some(id) = pending.pop() {
+            if !seen.insert(id.clone()) {
+                continue;
+            }
+            if id == candidate {
+                return true;
+            }
+            pending.extend(ancestry.get(&id).cloned().unwrap_or_default());
+        }
+        false
+    };
+    for fixture in section["cases"].as_array().unwrap() {
+        let record: MembershipAuthorizationRecord =
+            serde_json::from_value(fixture["record"].clone()).unwrap();
+        assert_eq!(
+            authorize_membership_record(&membership, &epochs, &record, is_ancestor_or_equal)
+                .unwrap(),
+            fixture["authorized"].as_bool().unwrap(),
+            "{}",
+            fixture["name"]
+        );
+    }
+    for fixture in section["invalidMemberships"].as_array().unwrap() {
+        let mut invalid = membership.clone();
+        let patch = &fixture["patch"];
+        if patch["duplicateFirstDevice"].as_bool() == Some(true) {
+            invalid.devices.push(invalid.devices[0].clone());
+        }
+        if let Some(generation) = patch["activeIdentityGeneration"].as_u64() {
+            invalid.sync_identity.as_mut().unwrap().generation = generation as u32;
+        }
+        if let Some(generation) = patch["retireActiveIdentityAt"].as_u64() {
+            let identity = invalid.sync_identity.as_mut().unwrap();
+            let public_key = identity.public_key.clone();
+            identity
+                .history
+                .iter_mut()
+                .find(|entry| entry.public_key == public_key)
+                .unwrap()
+                .retired_membership_generation = Some(generation as u32);
+        }
+        assert!(
+            validate_membership(&invalid, &invalid.vault_id, &invalid.owner_public_key).is_err(),
+            "{}",
+            fixture["name"]
+        );
     }
 }
 

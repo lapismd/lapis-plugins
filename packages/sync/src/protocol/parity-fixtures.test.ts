@@ -8,6 +8,7 @@ import { describe, expect, it } from "vitest";
 import wireJson from "../../test-support/nostr-wire-fixtures.json";
 import {
   ancestorIds,
+  authorizeMembershipRecord,
   canonicalize,
   compareReplaceableEvents,
   isAncestor,
@@ -20,12 +21,16 @@ import {
   unwrapDeviceTransportEvent,
   unwrapRootAuthorityEvent,
   validateEventFilter,
+  validateHistoryMembership,
   verifySignedEvent,
 } from "../engine.js";
 import type {
   NostrEventFilter,
+  HistoryMembership,
+  MembershipAuthorizationRecord,
   RevisionNode,
   SignedNostrEvent,
+  SyncAuthorityContext,
 } from "../engine.js";
 
 type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
@@ -69,6 +74,24 @@ type FixtureCorpus = {
       name: string;
       type: "revision" | "head";
       input: Json;
+    }>;
+  };
+  membershipAuthority: {
+    membership: HistoryMembership;
+    installedEpochs: number[];
+    ancestry: Record<string, string[]>;
+    cases: Array<{
+      name: string;
+      record: MembershipAuthorizationRecord;
+      authorized: boolean;
+    }>;
+    invalidMemberships: Array<{
+      name: string;
+      patch: {
+        duplicateFirstDevice?: boolean;
+        activeIdentityGeneration?: number;
+        retireActiveIdentityAt?: number;
+      };
     }>;
   };
   crypto: {
@@ -130,6 +153,20 @@ const nodes = new Map<string, RevisionNode>(
     },
   ]),
 );
+const membershipContext: SyncAuthorityContext = {
+  isAncestorOrEqual(candidate, descendant) {
+    const pending = [descendant];
+    const seen = new Set<string>();
+    while (pending.length) {
+      const id = pending.pop()!;
+      if (seen.has(id)) continue;
+      seen.add(id);
+      if (id === candidate) return true;
+      pending.push(...(fixtures.membershipAuthority.ancestry[id] ?? []));
+    }
+    return false;
+  },
+};
 
 describe("frozen TypeScript/Rust protocol parity fixtures", () => {
   it("uses the supported fixture schema", () => {
@@ -228,6 +265,46 @@ describe("frozen TypeScript/Rust protocol parity fixtures", () => {
         fixture.type === "revision"
           ? parseRevisionPayload(fixture.input)
           : parseHeadPayload(fixture.input),
+      ).toThrow();
+    },
+  );
+
+  it.each(fixtures.membershipAuthority.cases)(
+    "membership authority: $name",
+    (fixture) => {
+      expect(
+        authorizeMembershipRecord({
+          membership: fixtures.membershipAuthority.membership,
+          installedEpochs: fixtures.membershipAuthority.installedEpochs,
+          context: membershipContext,
+          record: fixture.record,
+        }),
+      ).toBe(fixture.authorized);
+    },
+  );
+
+  it.each(fixtures.membershipAuthority.invalidMemberships)(
+    "invalid membership: $name",
+    (fixture) => {
+      const membership = structuredClone(
+        fixtures.membershipAuthority.membership,
+      );
+      if (fixture.patch.duplicateFirstDevice)
+        membership.devices.push(structuredClone(membership.devices[0]));
+      if (fixture.patch.activeIdentityGeneration !== undefined)
+        membership.syncIdentity!.generation =
+          fixture.patch.activeIdentityGeneration;
+      if (fixture.patch.retireActiveIdentityAt !== undefined)
+        membership.syncIdentity!.history.find(
+          (entry) =>
+            entry.publicKey === membership.syncIdentity!.publicKey,
+        )!.retiredMembershipGeneration = fixture.patch.retireActiveIdentityAt;
+      expect(() =>
+        validateHistoryMembership(
+          membership,
+          membership.vaultId,
+          membership.ownerPublicKey,
+        ),
       ).toThrow();
     },
   );

@@ -179,11 +179,11 @@ this source qualification.
 Native Stage 2 is in progress. The first audited slice adds NIP-01 identifier
 and BIP-340 verification plus device/root envelope validation, and runs one
 frozen complete-output corpus through both implementations. The shared corpus
-currently passes 58 TypeScript cases and seven Rust fixture families; the Rust
-Sync unit total is 82. This protocol evidence is recorded in the
+currently passes 76 TypeScript cases and eight Rust fixture families; the Rust
+Sync unit total is 80. This protocol and membership evidence is recorded in the
 [Stage 2 parity receipt](../../../records/2026-11-15-sync-rust-parity.md).
-Membership cutoff ancestry, ingestion/reconciliation, stable retry, durable
-apply recovery, full merge planning and the complete-history fixture remain
+Ingestion/reconciliation, stable retry, durable apply recovery, full merge
+planning and the complete-history fixture remain
 open, so the Stage 2 exit boundary is not yet claimed.
 
 The foundation implements protocol codecs, event filtering and replaceable

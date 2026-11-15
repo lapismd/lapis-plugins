@@ -119,6 +119,13 @@ qualify durable repositories, filesystem mutation, custody, scheduling, server
 participation or native host selection. Those effects remain owned by later
 shared-core, Server and Desktop stages.
 
+The membership parity slice remains a pure transition over a verified record,
+owner-approved public membership, installed epoch numbers and an ancestry
+predicate. Signature/key custody and ancestry retrieval remain explicit caller
+boundaries. This closes current/retired identity and revoked-device cutoff
+outcomes without introducing a database, network client, filesystem effect or
+application scheduler.
+
 This intake covers the existing lightweight metadata extractor. Task, custom
 projection and extension processors remain separate migration work. It neither
 loads JavaScript into the Rust service nor qualifies either host's owner cutover.

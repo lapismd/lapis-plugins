@@ -32,6 +32,8 @@ The corpus records complete expected successes and failures for:
 - fixed SHA-256, HKDF-SHA256, HMAC-SHA256 and XChaCha20-Poly1305 outputs;
 - frozen NIP-01 records, device attestations, root attestations and explicit
   legacy reads.
+- owner-approved membership structure, installed epochs, current/retired Sync
+  Identities, revoked-device ancestry and immutable cutoffs.
 
 Rust now recomputes the NIP-01 serialized event ID and verifies the BIP-340
 signature with the x-only public key. It verifies both outer and inner records,
@@ -39,14 +41,23 @@ requires matching kind/timestamp/tags, rejects malformed envelopes and does not
 trust mutable verification caches. The fixed wire records are shared with the
 retained TypeScript compatibility test.
 
+The membership policy now has a pure verified-record boundary shared by both
+engines. The TypeScript production authority still verifies the signed envelope
+before entering it. The complete outcomes cover active and revoked devices,
+revision versus HEAD policy, retired identity generations, explicit legacy
+cutoffs, attested-device mismatch, unknown devices and invalid membership
+lineage. Generation zero and lowercase wire-key rules now match the retained
+TypeScript policy.
+
 ## Focused results
 
 | Command | Result |
 | --- | --- |
 | Baseline Rust Sync unit run | 67 passed, 0 failed |
-| Focused TypeScript parity fixture | 58 passed, 0 failed |
-| Focused Rust parity fixture families | 7 passed, 0 failed |
+| Focused TypeScript parity fixture | 76 passed, 0 failed |
+| Focused Rust parity fixture families | 8 passed, 0 failed |
 | Rust protocol family after signature/envelope work | 51 passed, 0 failed |
+| Rust Sync family after membership parity | 80 passed, 0 failed |
 
 The first TypeScript fixture run failed one of 58 cases because a transformed
 JSON import discarded `__proto__`. Parsing the source bytes moved that exact
@@ -55,9 +66,9 @@ empty-string behavior were also corrected to the retained TypeScript outputs.
 
 ## Remaining Stage 2 gates
 
-This slice does not yet qualify membership generation/cutoff ancestry,
-authenticated missing-dependency ingestion, reconciliation, persisted retry
-identity, durable idempotent apply receipts, rename/delete/binary/text merge
+This slice does not yet qualify authenticated missing-dependency ingestion,
+reconciliation, persisted retry identity, durable idempotent apply receipts,
+rename/delete/binary/text merge
 planning, interrupted apply or one complete fixture history. Wider package,
 clippy/build/audit/spec gates and hosted CI are recorded only after those
 runtime targets close. No Tauri, server, storage, release, publication or
