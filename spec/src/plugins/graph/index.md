@@ -188,3 +188,10 @@ retains package identity, explicit App ownership and separate native/release gat
 The Markdown peer and development ranges also admit compatible `^0.3.0` while
 retaining the existing 0.2 floor. [Peer release qualification](../../../records/2026-11-14-skill-release-peer-versioning.md)
 keeps this compatible dependency intake on its declared independent bump.
+
+
+The reviewed first-party maintenance intake updates `@lapismd/design-core` `^0.13.2` → `^0.13.4` (dependencies).
+[Registry intake evidence](../../../records/2026-11-16-first-party-pilot-intake.md)
+retains the package identity, existing App ownership and independent release
+intent. This dependency qualification does not replace its functional,
+interaction, accessibility or publication gates.

@@ -4,7 +4,7 @@
   "implementation": {
     "packageVersion": "0.4.1",
     "dependencies": {
-      "@lapis-notes/api": "0.6.2",
+      "@lapis-notes/api": "0.6.7",
       "peaql": "0.1.25",
       "luxon": "3.7.2",
       "moment": "2.31.0"

@@ -316,3 +316,10 @@ the published UI 0.2 exports; no host dependency override supplies compatibility
 
 The skill MUST route to packaged references for rich Lapis/Mira syntax, typed properties and links, callouts and extended task states, embed ownership, and editor capabilities. It MUST distinguish Lapis extensions and settings from the common Obsidian-compatible subset. Nested references MUST have the same bytes in source, public `skills.json`, npm tarballs and signed archives.
 [Reference qualification](../../../records/2026-11-15-lapis-skill-references.md) records parser and packaging evidence.
+
+
+The reviewed first-party maintenance intake updates `@lapismd/mira-editor` `~0.0.4` → `~0.0.5` (dependencies); `@lapismd/mira-plugin-mermaid` `~0.0.4` → `~0.0.5` (dependencies).
+[Registry intake evidence](../../../records/2026-11-16-first-party-pilot-intake.md)
+retains the package identity, existing App ownership and independent release
+intent. This dependency qualification does not replace its functional,
+interaction, accessibility or publication gates.

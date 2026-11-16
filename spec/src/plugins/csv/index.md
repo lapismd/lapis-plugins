@@ -194,3 +194,10 @@ retains package identity, explicit App ownership and separate native/release gat
 
 CSV accepts the published API 0.6 / UI 0.2 host cohort while retaining UI 0.1
 compatibility. The shared catalog qualifies the current public UI exports.
+
+
+The reviewed first-party maintenance intake updates `@lapismd/design-core` `^0.13.2` → `^0.13.4` (dependencies).
+[Registry intake evidence](../../../records/2026-11-16-first-party-pilot-intake.md)
+retains the package identity, existing App ownership and independent release
+intent. This dependency qualification does not replace its functional,
+interaction, accessibility or publication gates.

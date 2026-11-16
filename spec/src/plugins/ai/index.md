@@ -615,3 +615,10 @@ keeps this compatible dependency intake on its declared independent bump.
 
 AI accepts the API 0.6 / UI 0.2 registry cohort while retaining the qualified
 UI 0.1 peer range. Qualification uses the built public UI 0.2 package.
+
+
+The reviewed first-party maintenance intake updates `@lapismd/design-core` `^0.13.2` → `^0.13.4` (dependencies).
+[Registry intake evidence](../../../records/2026-11-16-first-party-pilot-intake.md)
+retains the package identity, existing App ownership and independent release
+intent. This dependency qualification does not replace its functional,
+interaction, accessibility or publication gates.
