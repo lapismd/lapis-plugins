@@ -1,5 +1,11 @@
 # Markdown changelog
 
+## 0.3.3
+
+### Patch Changes
+
+- [#127](https://github.com/lapismd/lapis-plugins/pull/127) [`7784b5b`](https://github.com/lapismd/lapis-plugins/commit/7784b5b6e5df1ff3241304580a483c161d9de2c3) Thanks [@lapismd-dependency-bot](https://github.com/apps/lapismd-dependency-bot)! - Refresh first-party Lapis dependencies to the published versions recorded in this pull request.
+
 ## 0.3.2
 
 ### Patch Changes
