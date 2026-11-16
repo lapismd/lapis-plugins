@@ -4,6 +4,12 @@ The LP-SPEC-016 authentication migration is tracked separately in
 [version PR authentication qualification](../records/2026-11-15-version-pr-authentication.md).
 Hosted creation/CI acceptance remains pending until recorded there.
 
+The first source-owned shared runtime-guard adoption and actual Node24/no-Deno
+whole-recipe proof for LP-SPEC-016 are recorded in
+[version runtime guard qualification](../records/2026-11-16-version-runtime-guard.md).
+The recipe proof is complete; hosted adoption CI and the next genuine version
+candidate remain separate qualification boundaries.
+
 Current LP-SPEC-036/051 cache migration qualification is recorded in
 [verified dependency images](../records/2026-11-15-verified-dependency-images.md).
 Producer publication and cold/warm consumer acceptance remain pending.

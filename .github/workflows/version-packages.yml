@@ -40,6 +40,11 @@ jobs:
       - name: Decide whether a changeset can bump a published package
         id: releasable
         run: node scripts/version-public-packages.mjs --check
+      - name: Validate source-owned version runtime
+        if: steps.releasable.outputs.releasable == 'true'
+        uses: lapismd/lapis-ci/actions/guard-version-runtime@c6f5827520787256cce793a1a33b75f86e14bd81
+        with:
+          qualification-file: .github/versioning-runtime.json
       - name: Mint repository-scoped version PR token
         if: steps.releasable.outputs.releasable == 'true'
         id: app

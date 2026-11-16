@@ -1,5 +1,10 @@
 # Native first-party plugin services
 
+LP-SPEC-016's shared version-runtime guard operates only in releasable package
+version preparation before the writer App token. Its qualified Node24 recipe
+does not activate or rewrite any native/frozen service task; native admission,
+producer lifetimes and separate publication approvals retain their owners.
+
 LN-HIST-021 additionally admits an optional native synchronization observation
 port. The App-owned observer polls only passive status and sends explicit user
 commands with retained revisions, candidates and apply identities. Core owns

@@ -68,6 +68,15 @@ source and host acceptance remain separate.
 
 ## Local validation contracts
 
+LP-SPEC-016 version preparation MUST validate the source-owned qualification
+data through the pinned shared Lapis CI runtime guard after a releasable public
+changeset is detected and before minting the version writer App token. Empty
+jobs MUST retain their no-op path without guard or writer execution. The
+qualified CLI2/config/custom version command and frozen setup remain unchanged;
+changed runtime or recipe inputs require source-owned requalification. The
+[actual Node24 recipe proof and adoption record](../records/2026-11-16-version-runtime-guard.md)
+retains the genuine historical note, exact runtime closure and separate gates.
+
 Shared specification tooling resolves published `@lapismd/spec-validator` 0.2.0.
 Host `spec:search` uses the system QMD binary and is not a Docker release lane.
 
