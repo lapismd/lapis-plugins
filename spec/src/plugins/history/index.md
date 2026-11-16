@@ -318,3 +318,5 @@ Enabled upstream actions MUST contribute one keyboard tab stop per button;
 tooltip wrappers MUST NOT add redundant stops. Disabled controls MAY retain a
 focusable tooltip trigger so their unavailable explanation remains reachable.
 This applies to admitted remote actions and retained backup-service controls.
+
+History 0.5.1 has [verified GitHub signing and live registry delivery](../../../records/2026-11-16-history-051-publication.md), superseding the pending keyboard patch publication. Host acceptance and releases remain separately owned.
