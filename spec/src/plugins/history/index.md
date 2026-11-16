@@ -98,6 +98,11 @@ chrome for host review compositions without depending on a desktop source path.
 | LN-HIST-010 | Storybook MUST provide `Plugins/History/Shell` Desktop and Mobile stories that boot a real App with Explorer on the left, a multi-section Welcome note plus its stored-pair compare in the main area, and History plus Search retained on the collapsed right. Docs source MUST use public `@lapis-notes/history` imports. New visuals MUST stay `visual-pending`.                                                                                                                                                |
 | LN-HIST-011 | History MUST register a Design Core settings section titled History under core-plugins. The section MUST expose exclude globs, include globs, tracked extensions, retention, size cap, merge window, and debounce. Values MUST persist through plugin data and apply to capture.                                                                                                                                                                                                                                  |
 
+Native remote-composition acceptance waits for the reviewed connection to be
+visibly rendered before Cancel, preserving exact repository identity and
+no-push assertions. [Dialog visibility evidence](../../../records/2026-11-16-history-review-visibility.md)
+keeps the intermittent publisher failure distinct from cold source acceptance.
+
 ### LN-HIST-003 acceptance details
 
 Tracking policy verifies:
