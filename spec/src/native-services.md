@@ -406,3 +406,11 @@ The LP-SPEC-059 completion callback reads workflow metadata through pinned
 coordinator code. It changes no native service, credential custody or plugin
 runtime, and grants no native or publication authority. Existing functional
 checks and excluded Nostr/Deno routes retain their current boundaries.
+
+
+The November16 pilot intake uses registry API0.6.7, UI0.2.2, Workspace0.4.7,
+Core0.13.4, repaired Mira Editor/Mermaid0.0.5 and Deno-free validator0.2.1.
+[Its source record](../records/2026-11-16-first-party-pilot-intake.md) separates
+normal package ranges, the ten independent runtime patch intents and a
+provenance-only Bases audit refresh. Native services, signing authority and
+held hosts are unchanged; publication still needs its existing exact-source gates.

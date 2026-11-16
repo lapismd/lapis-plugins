@@ -81,3 +81,10 @@ The public API peer admits released `^0.6.0` alongside its existing 0.2 and
 Language Service 0.1.6, Workspace 0.4.3, Core 0.13.2 and Mira 0.2 through
 registry exports. [Registry qualification](../../../records/2026-11-14-skills-api06-release-intake.md)
 retains package identity, explicit App ownership and separate native/release gates.
+
+
+The reviewed first-party maintenance intake updates `@lapismd/design-core` `^0.13.2` → `^0.13.4` (dependencies).
+[Registry intake evidence](../../../records/2026-11-16-first-party-pilot-intake.md)
+retains the package identity, existing App ownership and independent release
+intent. This dependency qualification does not replace its functional,
+interaction, accessibility or publication gates.

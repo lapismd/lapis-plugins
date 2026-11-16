@@ -172,3 +172,10 @@ keeps this compatible dependency intake on its declared independent bump.
 
 The skill MUST route to packaged schema and complete document examples, including native validation constraints and the read-only, source-owned Canvas embed projection. Nested references MUST have the same bytes in source, public `skills.json`, npm tarballs and signed archives.
 [Reference qualification](../../../records/2026-11-15-lapis-skill-references.md) records parser and packaging evidence.
+
+
+The reviewed first-party maintenance intake updates `@lapismd/design-core` `^0.13.2` → `^0.13.4` (dependencies).
+[Registry intake evidence](../../../records/2026-11-16-first-party-pilot-intake.md)
+retains the package identity, existing App ownership and independent release
+intent. This dependency qualification does not replace its functional,
+interaction, accessibility or publication gates.

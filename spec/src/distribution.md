@@ -628,3 +628,11 @@ Bases, Canvas and Markdown package their skill references recursively. Public sk
 History remote-action keyboard correction carries an independent patch Changeset.
 Registry ranges and public exports remain unchanged; the new patch must pass
 GitHub package/archive release qualification before final host adoption.
+
+
+The November16 pilot intake uses registry API0.6.7, UI0.2.2, Workspace0.4.7,
+Core0.13.4, repaired Mira Editor/Mermaid0.0.5 and Deno-free validator0.2.1.
+[Its source record](../records/2026-11-16-first-party-pilot-intake.md) separates
+normal package ranges, the ten independent runtime patch intents and a
+provenance-only Bases audit refresh. Native services, signing authority and
+held hosts are unchanged; publication still needs its existing exact-source gates.

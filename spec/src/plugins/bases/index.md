@@ -312,3 +312,10 @@ is tracked separately from consumer adoption.
 
 The skill MUST route to packaged document/view and function references. Guidance MUST describe native view mappings and callback/date semantics, and identify the unavailable map renderer rather than infer capabilities from registration. Nested references MUST have the same bytes in source, public `skills.json`, npm tarballs and signed archives.
 [Reference qualification](../../../records/2026-11-15-lapis-skill-references.md) records parser and packaging evidence.
+
+
+The reviewed first-party maintenance intake updates `@lapismd/design-core` `^0.13.2` → `^0.13.4` (dependencies).
+[Registry intake evidence](../../../records/2026-11-16-first-party-pilot-intake.md)
+retains the package identity, existing App ownership and independent release
+intent. This dependency qualification does not replace its functional,
+interaction, accessibility or publication gates.
