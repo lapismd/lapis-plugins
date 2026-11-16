@@ -220,6 +220,13 @@ coverage retains read-only default authority, ephemeral checkout credentials,
 the original version command and ordinary CI. Publication approval remains in
 the separate release workflow.
 
+The same LP-SPEC-016 boundary consumes source-owned qualification JSON and the
+pinned shared Lapis CI guard only when the existing eligibility check is true.
+Integration regressions bind current recipe/config hashes and guard-before-App
+ordering. Green source CI alone is not portability proof: the historical genuine
+Node24/no-Deno whole-recipe receipt and unchanged current runtime closure are
+recorded separately, without replacing any functional or publication gate.
+
 Shared Storybook diagnostics now cover formatted Svelte warnings, diagnostic URLs
 and Error objects, and retain caught teardown failures for after-story and final
 cleanup checks. Dependency-originated diagnostics remain fatal under LP-SPEC-034.
