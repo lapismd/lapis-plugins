@@ -401,3 +401,8 @@ Skill supporting references are passive package assets. Adding Lapis syntax, vie
 History remote-action tab order is renderer-only presentation. It does not
 change explicit targets, credential custody, command admission, synchronization
 semantics or native source identity. Disabled tooltips retain keyboard access.
+
+The LP-SPEC-059 completion callback reads workflow metadata through pinned
+coordinator code. It changes no native service, credential custody or plugin
+runtime, and grants no native or publication authority. Existing functional
+checks and excluded Nostr/Deno routes retain their current boundaries.
