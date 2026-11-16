@@ -734,3 +734,12 @@ Remote-action tab-order qualification retains the first three failing browser
 cases, then proves one enabled tab stop per action in both native-remotes log
 headers and legacy backup controls. Full interaction/axe, root package gates and
 consumer acceptance remain required; visual baselines stay pending.
+
+LP-SPEC-059 maps the source-owned dependency completion callback to the reviewed
+coordinator merge `e3c91cb3bc19f19299842054a9309b0ca44da5b6`. The caller
+requests only contents/Actions/PR reads and binds only the existing named
+`LAPIS_DEPENDENCY_APP_PRIVATE_KEY`; `LAPIS_DEPENDENCY_APP_CLIENT_ID` remains a
+required public repository variable. It runs no local steps or candidate data.
+The runtime audit checks this exact delegated runner separately while retaining
+explicit native selection for every local validation workflow. Hosted current
+CI and a genuine wake-up remain separate acceptance after source adoption.
