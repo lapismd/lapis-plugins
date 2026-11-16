@@ -122,9 +122,11 @@ export const FooterAndLog: Story = {
         name: "Push to original repository?",
       })
     );
-    await expect(
-      review.getByText("origin · https://github.com/alex/knowledge.git")
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        review.getByText("origin · https://github.com/alex/knowledge.git")
+      ).toBeVisible()
+    );
     await userEvent.click(review.getByRole("button", { name: "Cancel" }));
     await expect(runtime.commands.some((c) => c.kind === "push")).toBe(false);
   },
