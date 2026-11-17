@@ -23,11 +23,11 @@ test("metadata dispatch payload is minimal and exact-commit scoped", () => {
   });
   assert.throws(
     () => metadataDispatchPayload(plugin, "short"),
-    /full Git source commit/
+    /full Git source commit/,
   );
 });
 
-test("metadata dispatch dry run covers every active manifest without network access", async () => {
+test("metadata dispatch dry run covers every non-retired active manifest without network access", async () => {
   const payloads = await dispatchPluginMetadata({
     sourceCommit,
     dryRun: true,
@@ -35,15 +35,15 @@ test("metadata dispatch dry run covers every active manifest without network acc
       throw new Error("network should not be used");
     },
   });
-  const expected = await activePluginManifests(
-    new URL("../packages/", import.meta.url)
-  );
+  const expected = (
+    await activePluginManifests(new URL("../packages/", import.meta.url))
+  ).filter((plugin) => plugin.packageName !== "@lapis-notes/ai");
   assert.ok(expected.some((plugin) => plugin.directory === "csv"));
   assert.deepEqual(
     [...payloads].sort((left, right) =>
       left.client_payload.package_name.localeCompare(
-        right.client_payload.package_name
-      )
+        right.client_payload.package_name,
+      ),
     ),
     expected.map((plugin) => ({
       event_type: "plugin_metadata",
@@ -53,11 +53,11 @@ test("metadata dispatch dry run covers every active manifest without network acc
         plugin_id: plugin.pluginId,
         source_commit: sourceCommit,
       },
-    }))
+    })),
   );
   assert.equal(
     new Set(payloads.map((item) => item.client_payload.plugin_id)).size,
-    expected.length
+    expected.length,
   );
   assert.deepEqual(
     payloads.find((item) => item.client_payload.plugin_id === "lapis-slides"),
@@ -69,7 +69,7 @@ test("metadata dispatch dry run covers every active manifest without network acc
         plugin_id: "lapis-slides",
         source_commit: sourceCommit,
       },
-    }
+    },
   );
 });
 
@@ -80,6 +80,6 @@ test("metadata dispatch requires the scoped registry token before network access
       sourceCommit,
       token: "",
     }),
-    /REGISTRY_GITHUB_TOKEN is required/
+    /REGISTRY_GITHUB_TOKEN is required/,
   );
 });

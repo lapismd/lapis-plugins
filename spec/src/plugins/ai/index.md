@@ -1,5 +1,11 @@
 # AI Plugin
 
+Shared package publication is retired under LP-SPEC-060. Source and its existing
+behavior remain temporarily during ordered consumer/catalog removal; this page
+does not authorize new publication. Tauri-owned AI and App Profile native chat
+are preserved by their owning applications. Notes tracks remaining work in
+`docs/plans/legacy-runtime-retirement-progress.md`.
+
 Catalog tool-disclosure assertions include Design Core 0.6's visible target and
 group metadata in accessible names; expanding details still verifies the actual
 captured command/output and exact approval state.

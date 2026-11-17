@@ -3,11 +3,6 @@ name: Publish approved Nostr plugin releases
 on:
   workflow_dispatch:
     inputs:
-      plugin_ai:
-        description: Release @lapis-notes/ai
-        required: true
-        default: true
-        type: boolean
       plugin_bases:
         description: Release @lapis-notes/bases
         required: true
@@ -145,7 +140,6 @@ jobs:
         run: |
           set -euo pipefail
           plugin_names=(
-            ai
             bases
             bookmarks
             canvas
@@ -164,7 +158,6 @@ jobs:
             wordcount
           )
           plugin_inputs=(
-            "${{ inputs.plugin_ai }}"
             "${{ inputs.plugin_bases }}"
             "${{ inputs.plugin_bookmarks }}"
             "${{ inputs.plugin_canvas }}"

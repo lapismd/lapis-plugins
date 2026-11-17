@@ -26,6 +26,17 @@ Markdown references. Structured version notes use the exact Changesets
 `CHANGELOG.md` section or a validated `releases[version].changelog` override
 with title, description and tags. Notes are never silently truncated.
 
+## Retired shared AI distribution
+
+`@lapis-notes/ai` is retired from both publication workflows, release-plan
+selection and metadata dispatch. Its source remains temporarily for the ordered
+consumer/catalog removal; building or packing it does not permit publication.
+Stale and mixed release plans containing its coordinates fail before any side
+effect. Preserve historical npm versions and signed archives. Tauri-owned AI
+and App Profile native chat remain supported by their owning applications.
+See the Notes `docs/plans/legacy-runtime-retirement-progress.md` coordination
+record for remaining package/data/consumer work and release gates.
+
 ## Parked Community plugin
 
 `@lapis-notes/community` is parked for this release. Its package manifest has
@@ -94,7 +105,7 @@ archive, the dispatch uses that archive's original signed source commit rather
 than the current workflow commit. It never rewrites the retained artifact. Secrets contain
 private key material; release logs and artifacts never do.
 
-The manual workflow presents one checkbox per plugin, with every plugin selected
+The manual workflow presents one checkbox per plugin, with every releasable plugin selected
 by default. Clear any plugin that should not be included in that run. The
 advanced replacement checkbox only clobbers the selected same-version GitHub
 archive and checksum after npm integrity matches and the public registry source

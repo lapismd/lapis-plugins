@@ -1,5 +1,13 @@
 # Distribution and Releases
 
+Shared AI retirement begins with publication safeguards. Its source/catalog
+removal and native/data acceptance remain pending; Tauri-owned AI and App
+Profile native chat remain active in their owning hosts.
+
+| ID | Requirement |
+| --- | --- |
+| LP-SPEC-060 | Shared `@lapis-notes/ai` MUST be excluded from both manual release workflows, generated release plans and metadata dispatch. Direct selection and stale plans containing its package, plugin or release-tag coordinates MUST fail before any publication or dispatch, including mixed plans. Retained source during consumer removal MUST NOT confer release eligibility. Historical artifacts MUST remain immutable. |
+
 The LN-HIST-021 native synchronization extension is an optional public host port
 with an independent History minor release intent. Existing hosts retain their
 current contract. Production sync and conflict components are reused through a

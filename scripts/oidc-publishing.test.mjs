@@ -142,7 +142,6 @@ test("reuses blocking CI and reverifies the downloaded production candidate", ()
 
 test("offers explicit plugin checkboxes instead of a free-form selector", () => {
   for (const input of [
-    "plugin_ai",
     "plugin_bases",
     "plugin_bookmarks",
     "plugin_canvas",

@@ -2,7 +2,10 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-import { parkedPluginPackages, pluginPackages } from "./package-catalog.mjs";
+import {
+  parkedPluginPackages,
+  releasablePluginPackages,
+} from "./package-catalog.mjs";
 
 test("static publication requires activation, protected approval and the pinned blocking CI", async () => {
   const source = await readFile(
@@ -90,13 +93,13 @@ test("static qualification has no Community dependency and retains relay tests s
   }
 });
 
-test("approved release lists every public plugin and no parked package", async () => {
+test("approved release lists every releasable plugin and no retired or parked package", async () => {
   for (const file of [
     "../.github/workflows/release.yml",
     "../.github/workflows/release-nostr.yml",
   ]) {
     const source = await readFile(new URL(file, import.meta.url), "utf8");
-    for (const plugin of pluginPackages) {
+    for (const plugin of releasablePluginPackages) {
       const input = plugin.directory.replaceAll("-", "_");
       assert.match(source, new RegExp(`^      plugin_${input}:$`, "m"), file);
       assert.ok(

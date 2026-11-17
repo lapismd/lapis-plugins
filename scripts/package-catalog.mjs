@@ -100,7 +100,34 @@ export const pluginPackages = allPluginPackages.filter(
   (plugin) => !parkedPluginPackages.includes(plugin),
 );
 
+// Retirement is independent of source retention while consumer removal is staged.
+// Keep these coordinates after deleting the package to reject stale release plans.
+export const retiredPluginPackages = [
+  { directory: "ai", packageName: "@lapis-notes/ai", pluginId: "ai" },
+];
+export const releasablePluginPackages = pluginPackages.filter(
+  (plugin) =>
+    !retiredPluginPackages.some(
+      (retired) => retired.packageName === plugin.packageName,
+    ),
+);
+
 export function assertReleaseIsActive(release) {
+  if (
+    retiredPluginPackages.some((plugin) =>
+      [
+        release.packageName,
+        release.pluginId,
+        release.directory,
+        release.releaseTag?.split("@")[0],
+      ].some((selector) =>
+        [plugin.packageName, plugin.pluginId, plugin.directory].includes(
+          selector,
+        ),
+      ),
+    )
+  )
+    throw new Error("Selected plugin is retired; publication is forbidden.");
   if (
     parkedPluginPackages.some((plugin) =>
       [

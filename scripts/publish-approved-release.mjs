@@ -45,6 +45,7 @@ export async function publishSelectedReleases(
   ) {
     throw new Error("Approved publication operations are required.");
   }
+  for (const release of releases) assertReleaseIsActive(release);
   const unauthorized = [];
   for (const release of releases) {
     try {
