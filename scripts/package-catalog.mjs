@@ -2,7 +2,6 @@ import { rendererHostModulePattern } from "./lib/svelte-runtime-contract.mjs";
 import { readFileSync } from "node:fs";
 
 const allPluginPackages = [
-  { directory: "ai", packageName: "@lapis-notes/ai", pluginId: "ai" },
   { directory: "bases", packageName: "@lapis-notes/bases", pluginId: "bases" },
   {
     directory: "bookmarks",
@@ -100,7 +99,7 @@ export const pluginPackages = allPluginPackages.filter(
   (plugin) => !parkedPluginPackages.includes(plugin),
 );
 
-// Retirement is independent of source retention while consumer removal is staged.
+// Retired coordinates stay denied after source removal.
 // Keep these coordinates after deleting the package to reject stale release plans.
 export const retiredPluginPackages = [
   { directory: "ai", packageName: "@lapis-notes/ai", pluginId: "ai" },

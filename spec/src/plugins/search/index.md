@@ -134,7 +134,7 @@ Its bundled `notes_search` callback captures `SearchManager`, requests only the
 `search:markdown` source under the trusted scope prefix, and projects bounded
 path, score, and snippet data without exposing database or MCP objects.
 The tool description names indexed vault search and tells the agent to prefer
-it over host-cwd shell lookup (LN-AI-108).
+it over host-cwd shell lookup (LN-SRCH-039).
 The tool also enforces an aggregate structured-result budget after database
 ranking, so a high requested limit cannot expand transport or durable tool
 projection beyond the host's bounded-result contract.
@@ -304,3 +304,10 @@ The reviewed first-party maintenance intake updates `@lapismd/design-core` `^0.1
 retains the package identity, existing App ownership and independent release
 intent. This dependency qualification does not replace its functional,
 interaction, accessibility or publication gates.
+
+
+The Search tool-result catalog mounts the public `SearchToolResult` with an
+explicit real App and WorkspaceShell. It verifies accessible filename/path
+naming, real vault-leaf opening, retained result visibility and the production
+empty state without the retired shared AI chat harness (LP-SPEC-061). Native
+chat/transcript retention remains a separate host integration boundary.

@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "run": "lapis-plugins-validation-c82776f1-bea2-49a8-b077-14a4ee285cfb",
+  "lane": "ci:release",
+  "args": [],
+  "image": "sha256:33830a41fdee3f7308ed34eeb84ef23df50e5a108bc660553288914d1b1d975e",
+  "imageTarget": "ui",
+  "workspace": "55d27623addbee08",
+  "resources": {
+    "cpus": 4,
+    "memoryGiB": 12,
+    "shmGiB": 8,
+    "nodeHeapMiB": 6144
+  },
+  "source": {
+    "schema": 1,
+    "revision": "e8de1fa4ce5b8c0503395df22832901abcd4efc1",
+    "parents": [
+      "c9da95f4781d536ad037673240ad4e50eabbba83"
+    ],
+    "fileCount": 2256,
+    "archives": [],
+    "packSha256": "2de39331b925ed1a9f34e020c3ffb58b0c4892cf5e1fc29b34830081dcf12566"
+  },
+  "started": "2026-11-17T15:56:48.480Z",
+  "status": "passed",
+  "tools": {
+    "node": "v24.15.0",
+    "pnpm": "10.34.5",
+    "jj": "jj 0.45.1-7c41cdeb16b6b321c64e789a966b6adf723816a5",
+    "git": "git version 2.39.5",
+    "mdbook": "mdbook v0.5.4",
+    "deno": "deno 2.9.7 (stable, release, x86_64-unknown-linux-gnu)\nv8 15.0.245.2-rusty\ntypescript 6.0.3"
+  },
+  "invocations": [
+    {
+      "args": [],
+      "status": "passed"
+    }
+  ],
+  "exitCode": 0,
+  "finished": "2026-11-17T16:02:11.670Z"
+}

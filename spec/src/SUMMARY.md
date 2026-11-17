@@ -5,7 +5,7 @@
 - [Registry media](registry-media.md)
 - [Native plugin services](native-services.md)
 - [Plugins](plugins/index.md)
-  - [Plugins / AI](plugins/ai/index.md)
+  - [Retired shared AI](plugins/ai/index.md)
   - [Plugins / Bases](plugins/bases/index.md)
   - [Plugins / Bookmarks](plugins/bookmarks/index.md)
   - [Plugins / Canvas](plugins/canvas/index.md)

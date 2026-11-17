@@ -15,7 +15,7 @@ Hold these for a later release.
 `;
 
 const mixed = `---
-"@lapis-notes/ai": patch
+"@lapis-notes/bookmarks": patch
 "@lapis-notes/bases": patch
 ---
 

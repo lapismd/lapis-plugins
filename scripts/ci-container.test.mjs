@@ -11,7 +11,7 @@ const options = {
   root: "/repo",
   image: "ghcr.io/lapismd/lapis-plugins-ci@sha256:abc",
   lockfileSha256: "1".repeat(64),
-  packageDirectories: ["search", "ai"],
+  packageDirectories: ["search", "bookmarks"],
   platform: "linux/arm64",
 };
 
@@ -22,20 +22,34 @@ test("local container uses native Linux architecture", () => {
 
 test("remote cache is enabled only with all four settings", () => {
   assert.equal(hasCompleteRemoteCache({ TURBO_TOKEN: "token" }), false);
-  assert.equal(hasCompleteRemoteCache({
-    TURBO_API: "https://cache.example",
-    TURBO_TEAM: "lapismd",
-    TURBO_TOKEN: "token",
-    TURBO_REMOTE_CACHE_SIGNATURE_KEY: "signature",
-  }), true);
+  assert.equal(
+    hasCompleteRemoteCache({
+      TURBO_API: "https://cache.example",
+      TURBO_TEAM: "lapismd",
+      TURBO_TOKEN: "token",
+      TURBO_REMOTE_CACHE_SIGNATURE_KEY: "signature",
+    }),
+    true,
+  );
 });
 
 test("container forwards remote-cache names without embedding values", () => {
   const args = buildContainerArgs({ ...options, remoteCache: true });
   assert.ok(args.includes("TURBO_TOKEN"));
-  assert.equal(args.some((arg) => arg.includes("signature-value")), false);
-  assert.ok(args.includes("lapis-plugins-ai-node-modules-1111111111111111:/workspace/packages/ai/node_modules"));
-  assert.ok(args.includes("lapis-plugins-search-node-modules-1111111111111111:/workspace/packages/search/node_modules"));
+  assert.equal(
+    args.some((arg) => arg.includes("signature-value")),
+    false,
+  );
+  assert.ok(
+    args.includes(
+      "lapis-plugins-bookmarks-node-modules-1111111111111111:/workspace/packages/bookmarks/node_modules",
+    ),
+  );
+  assert.ok(
+    args.includes(
+      "lapis-plugins-search-node-modules-1111111111111111:/workspace/packages/search/node_modules",
+    ),
+  );
 });
 
 test("container omits remote names for a secretless run", () => {

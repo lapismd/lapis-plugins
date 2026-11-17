@@ -1,0 +1,82 @@
+[
+  {
+    "packageName": "@lapis-notes/bases",
+    "version": "0.4.2",
+    "sha256": "b2d162c358c7087625127f03fbc61824ae4980d51a5658c8b61541cbbfad4e69"
+  },
+  {
+    "packageName": "@lapis-notes/bookmarks",
+    "version": "0.1.13",
+    "sha256": "922c1d19eb2b37ac26b3a30aef053aa564d32c045355c8c39e195c1cf0c773a6"
+  },
+  {
+    "packageName": "@lapis-notes/canvas",
+    "version": "0.4.2",
+    "sha256": "b8736177b4f14e0a4a0306b831ec0f39c5a92ade5fc0c04db5e71b2776626c4d"
+  },
+  {
+    "packageName": "@lapis-notes/csv",
+    "version": "0.2.10",
+    "sha256": "e8ad4fa4b312c016e843737ab3c983577662f2370f793942be32609764be5c36"
+  },
+  {
+    "packageName": "@lapis-notes/docx",
+    "version": "0.2.3",
+    "sha256": "98e2fea45f4ab154b550164d2ea1313f6a73123eb6f490d180bc90f20316e848"
+  },
+  {
+    "packageName": "@lapis-notes/graph",
+    "version": "0.1.13",
+    "sha256": "1365a8d50c129aea913245676be992c06022681e9daacc9426d5825d5705e2b4"
+  },
+  {
+    "packageName": "@lapis-notes/history",
+    "version": "0.5.1",
+    "sha256": "6bc912435ad8095fadca1a4368c7dd6c906d4c17b450f388993bd861c7805049"
+  },
+  {
+    "packageName": "@lapis-notes/markdown",
+    "version": "0.3.3",
+    "sha256": "f8a5305d2984c66d12aa81ede0c6fc43476425fc35cb2efabc4985ad4d7bdfe1"
+  },
+  {
+    "packageName": "@lapis-notes/markdown-lint",
+    "version": "0.1.5",
+    "sha256": "dd8a649a9e04682e98b025b0b402acfb9bc25c89124a0c18ca21ac1c7b7be2f3"
+  },
+  {
+    "packageName": "@lapis-notes/pdf",
+    "version": "0.2.3",
+    "sha256": "0ee17a40913a6772759b8bfcec33bb621d7b3e2bac098794327a2fe815298c5c"
+  },
+  {
+    "packageName": "@lapis-notes/search",
+    "version": "0.1.13",
+    "sha256": "fee14b5fb0cd5965773d4696ac06fea74d5ff12500b8ebea45c7a8b28b929f87"
+  },
+  {
+    "packageName": "@lapis-notes/slides",
+    "version": "0.1.4",
+    "sha256": "6baf390299e2bcf3eba1f0bf4023586c6373f6518d69a340e5d04f96ecceef9d"
+  },
+  {
+    "packageName": "@lapis-notes/source-editor",
+    "version": "0.1.12",
+    "sha256": "52b9ca782b3b9437eeb562b9eff213467cd8aeff4dc86bb05855b8b88564deee"
+  },
+  {
+    "packageName": "@lapis-notes/spellcheck",
+    "version": "0.1.6",
+    "sha256": "61ae18bd9e478d64c7364917af2baf4c44bfd7a1556d34efc36b692d2d2c67b4"
+  },
+  {
+    "packageName": "@lapis-notes/transcripts",
+    "version": "0.2.9",
+    "sha256": "b631c638e31950b3434685a43e7fd4bb33a0d9ce52579814c95dae68f89420dc"
+  },
+  {
+    "packageName": "@lapis-notes/wordcount",
+    "version": "0.1.5",
+    "sha256": "33a30d3e80d0338cdedcd92e822e19ba987f63aa962cadff6558770726ea4711"
+  }
+]

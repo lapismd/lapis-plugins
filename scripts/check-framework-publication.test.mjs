@@ -4,7 +4,7 @@ import { spawnSync } from "node:child_process";
 import test from "node:test";
 import { checkFrameworkPublication } from "./check-framework-publication.mjs";
 
-test("checks the published framework ranges and controller without Community", () => {
+test("checks the published framework ranges without retired controller or Community", () => {
   const coordinates = [];
   checkFrameworkPublication({
     lookup(coordinate) {
@@ -24,8 +24,10 @@ test("checks the published framework ranges and controller without Community", (
   assert.ok(coordinates.includes("@lapis-notes/file-explorer@^0.2.0"));
   assert.ok(coordinates.includes("@lapis-notes/ui@^0.1.4 || ^0.2.0"));
   assert.ok(coordinates.includes("@lapis-notes/language-service@^0.1.2"));
-  assert.ok(coordinates.includes("@lapismd/ai-controller@^0.1.0"));
-  assert.equal(coordinates.length, 6);
+  assert.ok(
+    coordinates.every((coordinate) => !coordinate.includes("ai-controller")),
+  );
+  assert.equal(coordinates.length, 5);
   assert.ok(
     coordinates.every((coordinate) => !coordinate.includes("community")),
   );

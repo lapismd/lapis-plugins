@@ -29,9 +29,10 @@ with title, description and tags. Notes are never silently truncated.
 ## Retired shared AI distribution
 
 `@lapis-notes/ai` is retired from both publication workflows, release-plan
-selection and metadata dispatch. Its source remains temporarily for the ordered
-consumer/catalog removal; building or packing it does not permit publication.
-Stale and mixed release plans containing its coordinates fail before any side
+selection and metadata dispatch. Its implementation, exports, media and catalog are removed from this repository;
+Notes consumer/probe removal remains tracked separately.
+Deferred head renewal rejects retired AI before OIDC/signing or renewed-template
+construction. Stale and mixed release plans containing its coordinates fail before any side
 effect. Preserve historical npm versions and signed archives. Tauri-owned AI
 and App Profile native chat remain supported by their owning applications.
 See the Notes `docs/plans/legacy-runtime-retirement-progress.md` coordination

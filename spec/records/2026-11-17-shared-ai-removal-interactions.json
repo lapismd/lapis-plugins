@@ -1,0 +1,111 @@
+{
+  "schema": 1,
+  "run": "lapis-plugins-validation-6372c0cc-2a46-42b8-bce1-c9984c7e0d36",
+  "lane": "test:storybook",
+  "args": [],
+  "image": "sha256:33830a41fdee3f7308ed34eeb84ef23df50e5a108bc660553288914d1b1d975e",
+  "imageTarget": "ui",
+  "workspace": "55d27623addbee08",
+  "resources": {
+    "cpus": 4,
+    "memoryGiB": 12,
+    "shmGiB": 8,
+    "nodeHeapMiB": 6144
+  },
+  "source": {
+    "schema": 1,
+    "revision": "bad5293a2d7c1373301879c89ffc75be7660defe",
+    "parents": [
+      "c9da95f4781d536ad037673240ad4e50eabbba83"
+    ],
+    "fileCount": 2256,
+    "archives": [],
+    "packSha256": "72d8a5d573966b912e6254e077dcbdefd93dae7d391ecf11d9e0173931146efa"
+  },
+  "started": "2026-11-17T16:02:50.639Z",
+  "status": "passed",
+  "tools": {
+    "node": "v24.15.0",
+    "pnpm": "10.34.5",
+    "jj": "jj 0.45.1-7c41cdeb16b6b321c64e789a966b6adf723816a5",
+    "git": "git version 2.39.5",
+    "mdbook": "mdbook v0.5.4",
+    "deno": "deno 2.9.7 (stable, release, x86_64-unknown-linux-gnu)\nv8 15.0.245.2-rusty\ntypescript 6.0.3"
+  },
+  "invocations": [
+    {
+      "args": [
+        "--shard=1/8",
+        "--reporter=default",
+        "--reporter=junit",
+        "--outputFile=.release/ci-results/storybook-1.xml"
+      ],
+      "status": "passed"
+    },
+    {
+      "args": [
+        "--shard=2/8",
+        "--reporter=default",
+        "--reporter=junit",
+        "--outputFile=.release/ci-results/storybook-2.xml"
+      ],
+      "status": "passed"
+    },
+    {
+      "args": [
+        "--shard=3/8",
+        "--reporter=default",
+        "--reporter=junit",
+        "--outputFile=.release/ci-results/storybook-3.xml"
+      ],
+      "status": "passed"
+    },
+    {
+      "args": [
+        "--shard=4/8",
+        "--reporter=default",
+        "--reporter=junit",
+        "--outputFile=.release/ci-results/storybook-4.xml"
+      ],
+      "status": "passed"
+    },
+    {
+      "args": [
+        "--shard=5/8",
+        "--reporter=default",
+        "--reporter=junit",
+        "--outputFile=.release/ci-results/storybook-5.xml"
+      ],
+      "status": "passed"
+    },
+    {
+      "args": [
+        "--shard=6/8",
+        "--reporter=default",
+        "--reporter=junit",
+        "--outputFile=.release/ci-results/storybook-6.xml"
+      ],
+      "status": "passed"
+    },
+    {
+      "args": [
+        "--shard=7/8",
+        "--reporter=default",
+        "--reporter=junit",
+        "--outputFile=.release/ci-results/storybook-7.xml"
+      ],
+      "status": "passed"
+    },
+    {
+      "args": [
+        "--shard=8/8",
+        "--reporter=default",
+        "--reporter=junit",
+        "--outputFile=.release/ci-results/storybook-8.xml"
+      ],
+      "status": "passed"
+    }
+  ],
+  "exitCode": 0,
+  "finished": "2026-11-17T16:13:41.947Z"
+}

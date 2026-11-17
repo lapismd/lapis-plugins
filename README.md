@@ -10,7 +10,6 @@ signed `.lapis-plugin` release asset.
 
 | Package                      | Runtime plugin ID     |
 | ---------------------------- | --------------------- |
-| `@lapis-notes/ai`            | `ai`                  |
 | `@lapis-notes/bases`         | `bases`               |
 | `@lapis-notes/bookmarks`     | `bookmarks`           |
 | `@lapis-notes/graph`         | `lapis-graph`         |
@@ -25,6 +24,11 @@ signed `.lapis-plugin` release asset.
 
 The package name and runtime ID intentionally remain separate compatibility
 contracts. Runtime IDs are not changed during extraction.
+
+The former shared AI package is retired; current AI belongs to Tauri and App
+Profile native chat in their owning hosts. Its publication tombstone remains in
+release tooling. See the [retirement contract](spec/src/plugins/ai/index.md) and
+Notes' progress record for pending consumer removal and release gates.
 
 ## Development
 

@@ -1,8 +1,8 @@
 # Distribution and Releases
 
-Shared AI retirement begins with publication safeguards. Its source/catalog
-removal and native/data acceptance remain pending; Tauri-owned AI and App
-Profile native chat remain active in their owning hosts.
+Shared AI publication, source and catalog are retired. Consumer/probe removal
+and native/data acceptance remain pending; Tauri-owned AI and App Profile native
+chat remain active in their owning hosts.
 
 | ID          | Requirement                                                                                                                                                                                                                                                                                                                                                                                                           |
 | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -358,13 +358,9 @@ stays on the published `^0.7.4` range. Storybook keeps prebundling
 
 Shared Storybook imports API's public `build/vite` helper for prebuilt Turso
 client and worker modules. The helper is shipped by its owning package; consumers
-do not copy its transform or rewrite dependency files. Preview never starts
-`lapis-ai-controller`. When `LAPIS_AGENT_RUNTIME_URL` and
-`LAPIS_AGENT_RUNTIME_TOKEN` are set, it registers the same thin controller
-connection bridge Notes uses so live stories are not silently Fake. Local
-controller migration acceptance uses documented temporary tarballs until their
-approved registry releases.
-The AI Chat catalog also exercises the two OpenCode harness choices through its public composer while keeping the Storybook execution fixture deterministic.
+do not copy its transform or rewrite dependency files. The retired shared AI controller bridge and catalog are absent under
+LP-SPEC-061. Shared Storybook does not attach that legacy service; surviving
+plugin stories retain their public App/workspace boot and acceptance.
 
 Nostr release publication and head renewal remain deferred behind `NOSTR_RELEASE_ENABLED`. Static publication uses the separate `STATIC_RELEASE_ENABLED` switch, the existing `release.yml` trusted-publisher identity, and the protected first-publication gate. A rerun skips a published npm version, leaves a different tarball, leaves an existing GitHub release whose .lapis-plugin asset differs, and still creates a missing GitHub release. A package the trusted publisher rejects does not stop later packages, and provenance stays on. Markdown dependents declare `^0.2.0`. Until that release exists, the workspace install links the local Markdown package, and package checks wait for its build so the embed export exists.
 

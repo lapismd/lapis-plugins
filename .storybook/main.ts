@@ -20,9 +20,6 @@ const packageAliases = [
   ],
   ["@lapis-notes/lapis-plugin-sync/styles.css", "packages/sync/src/styles.css"],
   ["@lapis-notes/lapis-plugin-sync", "packages/sync/src/index.ts"],
-  ["@lapis-notes/ai/runtimes", "packages/ai/src/lib/runtime-adapters.ts"],
-  ["@lapis-notes/ai/styles.css", "packages/ai/src/lib/styles.css"],
-  ["@lapis-notes/ai", "packages/ai/src/lib/index.ts"],
   ["@lapis-notes/bases/styles.css", "packages/bases/src/lib/styles.css"],
   ["@lapis-notes/bases", "packages/bases/src/lib/index.ts"],
   [
@@ -102,7 +99,7 @@ const linkedWorkspaceRoots = [
 ];
 const siblingDesignCore = path.resolve(repoRoot, "../design-core");
 const usesSiblingDesignCore = linkedRoots.some((root) =>
-  root.includes(`${path.sep}@lapismd+design-core@file+..+design-core`)
+  root.includes(`${path.sep}@lapismd+design-core@file+..+design-core`),
 );
 const siblingDesignCoreAliases = usesSiblingDesignCore
   ? [
@@ -129,7 +126,7 @@ const config: StorybookConfig = {
   stories: [
     ...pluginPackages.map(
       (plugin) =>
-        `../stories/plugins/${plugin.directory}/**/*.stories.@(js|ts|svelte)`
+        `../stories/plugins/${plugin.directory}/**/*.stories.@(js|ts|svelte)`,
     ),
     // Private UI qualification; this does not activate Sync or release selection.
     "../stories/plugins/sync/**/*.stories.@(js|ts|svelte)",
@@ -160,7 +157,7 @@ const config: StorybookConfig = {
     const nonSveltePlugins = plugins.filter(
       (plugin) =>
         !plugin?.name?.startsWith("vite-plugin-svelte") &&
-        plugin?.name !== "sveltekit-autoimport-configuration"
+        plugin?.name !== "sveltekit-autoimport-configuration",
     );
     viteConfig.plugins = [
       tursoBundleBuildPlugin(),
@@ -174,14 +171,6 @@ const config: StorybookConfig = {
       ...nonSveltePlugins,
     ];
     return mergeConfig(viteConfig, {
-      define: {
-        "import.meta.env.LAPIS_AGENT_RUNTIME_URL": JSON.stringify(
-          process.env.LAPIS_AGENT_RUNTIME_URL ?? ""
-        ),
-        "import.meta.env.LAPIS_AGENT_RUNTIME_TOKEN": JSON.stringify(
-          process.env.LAPIS_AGENT_RUNTIME_TOKEN ?? ""
-        ),
-      },
       resolve: {
         dedupe: [
           "svelte",
@@ -196,14 +185,14 @@ const config: StorybookConfig = {
             find: /^@cw\/shared$/,
             replacement: path.join(
               repoRoot,
-              "packages/docx/vendor/wordcanvas/shared/src/index.ts"
+              "packages/docx/vendor/wordcanvas/shared/src/index.ts",
             ),
           },
           {
             find: /^harper\.js\/binaryInlined$/,
             replacement: path.join(
               repoRoot,
-              "packages/spellcheck/node_modules/harper.js/dist/binaryInlined.js"
+              "packages/spellcheck/node_modules/harper.js/dist/binaryInlined.js",
             ),
           },
           {
@@ -213,7 +202,7 @@ const config: StorybookConfig = {
           ...siblingDesignCoreAliases,
           ...packageAliases.map(([find, replacement]) => ({
             find: new RegExp(
-              `^${find.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`
+              `^${find.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
             ),
             replacement: path.join(repoRoot, replacement),
           })),
@@ -221,7 +210,7 @@ const config: StorybookConfig = {
             find: /^\$lib(?:\/(.*))?$/,
             replacement: `${path.join(
               repoRoot,
-              "packages/markdown/src/lib"
+              "packages/markdown/src/lib",
             )}/$1`,
           },
         ],
