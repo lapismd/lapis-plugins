@@ -19,6 +19,9 @@ auditConfig:
     # spec/records/2026-10-29-unpatched-audit-exceptions.md
     - CVE-2025-14505
     - CVE-2026-93753
+    # User-approved temporary Picomatch exception; no patched release exists.
+    # Scope, exposure and removal: spec/records/2026-11-17-picomatch-audit-exception.md
+    - CVE-2026-112366
 
 linkWorkspacePackages: true
 # Hosts explicitly supply optional feature peers, including unpublished migration clients.

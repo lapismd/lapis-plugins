@@ -4,8 +4,8 @@ Shared AI retirement begins with publication safeguards. Its source/catalog
 removal and native/data acceptance remain pending; Tauri-owned AI and App
 Profile native chat remain active in their owning hosts.
 
-| ID | Requirement |
-| --- | --- |
+| ID          | Requirement                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | LP-SPEC-060 | Shared `@lapis-notes/ai` MUST be excluded from both manual release workflows, generated release plans and metadata dispatch. Direct selection and stale plans containing its package, plugin or release-tag coordinates MUST fail before any publication or dispatch, including mixed plans. Retained source during consumer removal MUST NOT confer release eligibility. Historical artifacts MUST remain immutable. |
 
 The LN-HIST-021 native synchronization extension is an optional public host port
@@ -236,7 +236,10 @@ plugins that exchange API classes through public exports. The frozen lockfile
 must deduplicate compatible CodeMirror peer versions; a type cast or alias is
 not a substitute for a coherent dependency graph. Audit exceptions for
 unpatched advisories must record dependency paths, input exposure and removal
-conditions in `spec/records` alongside their CVE entries.
+conditions in `spec/records` alongside their CVE entries. The explicitly approved
+Picomatch CVE-2026-112366 exception covers only this unpatched advisory in root
+and private Sync tooling; all other audit findings remain blocking. Its exposure
+and removal condition are recorded in the November 17 audit receipt.
 
 The shared catalog and private Sync development graph consume released UI
 0.1.3, whose retained runtime imports are declared as runtime dependencies.
@@ -636,7 +639,6 @@ Bases, Canvas and Markdown package their skill references recursively. Public sk
 History remote-action keyboard correction carries an independent patch Changeset.
 Registry ranges and public exports remain unchanged; the new patch must pass
 GitHub package/archive release qualification before final host adoption.
-
 
 The November16 pilot intake uses registry API0.6.7, UI0.2.2, Workspace0.4.7,
 Core0.13.4, repaired Mira Editor/Mermaid0.0.5 and Deno-free validator0.2.1.
