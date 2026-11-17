@@ -1,0 +1,273 @@
+{
+  "schema": 1,
+  "name": "@lapis-notes/ai",
+  "authorization": "User approved exact 11-version metadata candidate on 2026-11-17",
+  "status": "passed",
+  "versions": [
+    {
+      "version": "0.1.0",
+      "message": "Packaging defect in this version. Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+      "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.0.tgz",
+      "integrity": "sha512-LMTCoPScx+uBwJiHTq0Z37AiCh2uSza/b8NTz5v2tMwiLJbKlQnTD9b2qZ8ZVPVatCWblIeAy3F0C8m8jGKe3g==",
+      "artifactIdentityUnchanged": true
+    },
+    {
+      "version": "0.1.1",
+      "message": "Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+      "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.1.tgz",
+      "integrity": "sha512-4U4m6FJd0vw79DGZFFnlfaWSg3FKRyQjLpszCPMkb2wlo6MX5qqXBF6vQklLqs4xiUfGzMiP4l6ysE9tmW5Gfw==",
+      "artifactIdentityUnchanged": true
+    },
+    {
+      "version": "0.1.2",
+      "message": "Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+      "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.2.tgz",
+      "integrity": "sha512-mGSvO4NNQcfTyGPHeQgWqLYn64f2EbOLa3Bgpnzg78TAvuCzdwqZwkLw9YGigP3JTXHI6AZwog7jLtrcAU11pQ==",
+      "artifactIdentityUnchanged": true
+    },
+    {
+      "version": "0.1.5",
+      "message": "Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+      "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.5.tgz",
+      "integrity": "sha512-Tlob7hm8mp92uM/7vkdQMzyDF/hQ3HJxgTe3a7Z47+0xGUD16bXnmppTIzmf9MFWYBabFh4W1BAIArfG2/A2ww==",
+      "artifactIdentityUnchanged": true
+    },
+    {
+      "version": "0.1.6",
+      "message": "Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+      "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.6.tgz",
+      "integrity": "sha512-MYIQMS3w8ZtXawoajlcQ8o4s22/Vh+a/6YVC3TgeYBc3arNLqLTn7VHXnNI00eI2fUBEPBEqO9EvfUT6D/ryRw==",
+      "artifactIdentityUnchanged": true
+    },
+    {
+      "version": "0.1.7",
+      "message": "Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+      "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.7.tgz",
+      "integrity": "sha512-7Agp+zdA6nPcwoGIAz1ppu2fpqzrEEIiz6nPgbRe6PSefzyXfTQ7CXaxaXwuJTs/sxEBvA06jBQqIA8ueb7z6w==",
+      "artifactIdentityUnchanged": true
+    },
+    {
+      "version": "0.1.8",
+      "message": "Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+      "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.8.tgz",
+      "integrity": "sha512-COs2+zX0AAgv3SdnhIiOrffgO/A/YcyTvIam/JagW1nsTe5fdrFHTKoGk5W1gQa1HIRefvKvLld4z7H87v8aew==",
+      "artifactIdentityUnchanged": true
+    },
+    {
+      "version": "0.1.12",
+      "message": "Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+      "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.12.tgz",
+      "integrity": "sha512-49cs/HCuLR+4aSNZBSd69vxPettui2dKlcG6R4nYO6oAAXQh9CEqrPHfrsITEiI64IhtJmIoWTzaaF9KbvucrQ==",
+      "artifactIdentityUnchanged": true
+    },
+    {
+      "version": "0.1.13",
+      "message": "Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+      "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.13.tgz",
+      "integrity": "sha512-WPKUcLdMUIHMUgt0rIcuVv84Sw2rRBMwidZwZxg2tYXrqNsdckQkj7cyMPE4PBIWBQ/0TuwOd+T/fNP6ISr6Tg==",
+      "artifactIdentityUnchanged": true
+    },
+    {
+      "version": "0.1.15",
+      "message": "Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+      "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.15.tgz",
+      "integrity": "sha512-wdAMoa72a0fkdc7/ITMwRsYLl4Xor/7viXnfKRAbhR72drOhGnq+UcaTZiUMxRNepwZTxcttgxJAOqZ90Glt6w==",
+      "artifactIdentityUnchanged": true
+    },
+    {
+      "version": "0.1.16",
+      "message": "Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+      "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.16.tgz",
+      "integrity": "sha512-lbwAEQcHCeHvAH6zRDLslJYUrPrwIP4YzHrZ5hae3ASEBf8wyKksUwUZOjueeYUJnNCqHKLpseikp6wfqozAug==",
+      "artifactIdentityUnchanged": true
+    }
+  ],
+  "noUnpublish": true,
+  "noPackagePublication": true,
+  "archiveDownloads": [
+    {
+      "version": "0.1.0",
+      "http": 200,
+      "bytes": 182532,
+      "integrity": "sha512-LMTCoPScx+uBwJiHTq0Z37AiCh2uSza/b8NTz5v2tMwiLJbKlQnTD9b2qZ8ZVPVatCWblIeAy3F0C8m8jGKe3g==",
+      "originalIntegrityVerified": true
+    },
+    {
+      "version": "0.1.1",
+      "http": 200,
+      "bytes": 182527,
+      "integrity": "sha512-4U4m6FJd0vw79DGZFFnlfaWSg3FKRyQjLpszCPMkb2wlo6MX5qqXBF6vQklLqs4xiUfGzMiP4l6ysE9tmW5Gfw==",
+      "originalIntegrityVerified": true
+    },
+    {
+      "version": "0.1.2",
+      "http": 200,
+      "bytes": 182635,
+      "integrity": "sha512-mGSvO4NNQcfTyGPHeQgWqLYn64f2EbOLa3Bgpnzg78TAvuCzdwqZwkLw9YGigP3JTXHI6AZwog7jLtrcAU11pQ==",
+      "originalIntegrityVerified": true
+    },
+    {
+      "version": "0.1.5",
+      "http": 200,
+      "bytes": 164367,
+      "integrity": "sha512-Tlob7hm8mp92uM/7vkdQMzyDF/hQ3HJxgTe3a7Z47+0xGUD16bXnmppTIzmf9MFWYBabFh4W1BAIArfG2/A2ww==",
+      "originalIntegrityVerified": true
+    },
+    {
+      "version": "0.1.6",
+      "http": 200,
+      "bytes": 164963,
+      "integrity": "sha512-MYIQMS3w8ZtXawoajlcQ8o4s22/Vh+a/6YVC3TgeYBc3arNLqLTn7VHXnNI00eI2fUBEPBEqO9EvfUT6D/ryRw==",
+      "originalIntegrityVerified": true
+    },
+    {
+      "version": "0.1.7",
+      "http": 200,
+      "bytes": 165112,
+      "integrity": "sha512-7Agp+zdA6nPcwoGIAz1ppu2fpqzrEEIiz6nPgbRe6PSefzyXfTQ7CXaxaXwuJTs/sxEBvA06jBQqIA8ueb7z6w==",
+      "originalIntegrityVerified": true
+    },
+    {
+      "version": "0.1.8",
+      "http": 200,
+      "bytes": 165288,
+      "integrity": "sha512-COs2+zX0AAgv3SdnhIiOrffgO/A/YcyTvIam/JagW1nsTe5fdrFHTKoGk5W1gQa1HIRefvKvLld4z7H87v8aew==",
+      "originalIntegrityVerified": true
+    },
+    {
+      "version": "0.1.12",
+      "http": 200,
+      "bytes": 165691,
+      "integrity": "sha512-49cs/HCuLR+4aSNZBSd69vxPettui2dKlcG6R4nYO6oAAXQh9CEqrPHfrsITEiI64IhtJmIoWTzaaF9KbvucrQ==",
+      "originalIntegrityVerified": true
+    },
+    {
+      "version": "0.1.13",
+      "http": 200,
+      "bytes": 165760,
+      "integrity": "sha512-WPKUcLdMUIHMUgt0rIcuVv84Sw2rRBMwidZwZxg2tYXrqNsdckQkj7cyMPE4PBIWBQ/0TuwOd+T/fNP6ISr6Tg==",
+      "originalIntegrityVerified": true
+    },
+    {
+      "version": "0.1.15",
+      "http": 200,
+      "bytes": 166210,
+      "integrity": "sha512-wdAMoa72a0fkdc7/ITMwRsYLl4Xor/7viXnfKRAbhR72drOhGnq+UcaTZiUMxRNepwZTxcttgxJAOqZ90Glt6w==",
+      "originalIntegrityVerified": true
+    },
+    {
+      "version": "0.1.16",
+      "http": 200,
+      "bytes": 166260,
+      "integrity": "sha512-lbwAEQcHCeHvAH6zRDLslJYUrPrwIP4YzHrZ5hae3ASEBf8wyKksUwUZOjueeYUJnNCqHKLpseikp6wfqozAug==",
+      "originalIntegrityVerified": true
+    }
+  ],
+  "publishedVersionsUnchanged": true,
+  "latestTagUnchanged": true,
+  "verification": "Fresh public metadata and every original tarball downloaded and SHA-512 verified",
+  "approvedCandidate": {
+    "schema": 1,
+    "name": "@lapis-notes/ai",
+    "latest": "0.1.16",
+    "versions": [
+      {
+        "version": "0.1.0",
+        "before": "Packaging defect: use 0.1.1 or later.",
+        "proposed": "Packaging defect in this version. Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+        "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.0.tgz",
+        "integrity": "sha512-LMTCoPScx+uBwJiHTq0Z37AiCh2uSza/b8NTz5v2tMwiLJbKlQnTD9b2qZ8ZVPVatCWblIeAy3F0C8m8jGKe3g=="
+      },
+      {
+        "version": "0.1.1",
+        "before": null,
+        "proposed": "Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+        "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.1.tgz",
+        "integrity": "sha512-4U4m6FJd0vw79DGZFFnlfaWSg3FKRyQjLpszCPMkb2wlo6MX5qqXBF6vQklLqs4xiUfGzMiP4l6ysE9tmW5Gfw=="
+      },
+      {
+        "version": "0.1.2",
+        "before": null,
+        "proposed": "Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+        "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.2.tgz",
+        "integrity": "sha512-mGSvO4NNQcfTyGPHeQgWqLYn64f2EbOLa3Bgpnzg78TAvuCzdwqZwkLw9YGigP3JTXHI6AZwog7jLtrcAU11pQ=="
+      },
+      {
+        "version": "0.1.5",
+        "before": null,
+        "proposed": "Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+        "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.5.tgz",
+        "integrity": "sha512-Tlob7hm8mp92uM/7vkdQMzyDF/hQ3HJxgTe3a7Z47+0xGUD16bXnmppTIzmf9MFWYBabFh4W1BAIArfG2/A2ww=="
+      },
+      {
+        "version": "0.1.6",
+        "before": null,
+        "proposed": "Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+        "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.6.tgz",
+        "integrity": "sha512-MYIQMS3w8ZtXawoajlcQ8o4s22/Vh+a/6YVC3TgeYBc3arNLqLTn7VHXnNI00eI2fUBEPBEqO9EvfUT6D/ryRw=="
+      },
+      {
+        "version": "0.1.7",
+        "before": null,
+        "proposed": "Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+        "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.7.tgz",
+        "integrity": "sha512-7Agp+zdA6nPcwoGIAz1ppu2fpqzrEEIiz6nPgbRe6PSefzyXfTQ7CXaxaXwuJTs/sxEBvA06jBQqIA8ueb7z6w=="
+      },
+      {
+        "version": "0.1.8",
+        "before": null,
+        "proposed": "Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+        "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.8.tgz",
+        "integrity": "sha512-COs2+zX0AAgv3SdnhIiOrffgO/A/YcyTvIam/JagW1nsTe5fdrFHTKoGk5W1gQa1HIRefvKvLld4z7H87v8aew=="
+      },
+      {
+        "version": "0.1.12",
+        "before": null,
+        "proposed": "Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+        "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.12.tgz",
+        "integrity": "sha512-49cs/HCuLR+4aSNZBSd69vxPettui2dKlcG6R4nYO6oAAXQh9CEqrPHfrsITEiI64IhtJmIoWTzaaF9KbvucrQ=="
+      },
+      {
+        "version": "0.1.13",
+        "before": null,
+        "proposed": "Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+        "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.13.tgz",
+        "integrity": "sha512-WPKUcLdMUIHMUgt0rIcuVv84Sw2rRBMwidZwZxg2tYXrqNsdckQkj7cyMPE4PBIWBQ/0TuwOd+T/fNP6ISr6Tg=="
+      },
+      {
+        "version": "0.1.15",
+        "before": null,
+        "proposed": "Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+        "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.15.tgz",
+        "integrity": "sha512-wdAMoa72a0fkdc7/ITMwRsYLl4Xor/7viXnfKRAbhR72drOhGnq+UcaTZiUMxRNepwZTxcttgxJAOqZ90Glt6w=="
+      },
+      {
+        "version": "0.1.16",
+        "before": null,
+        "proposed": "Retired shared AI plugin. Use the AI bundled with Lapis Desktop; keep existing settings, conversations and memory. See https://github.com/lapismd/lapis-desktop.",
+        "tarball": "https://registry.npmjs.org/@lapis-notes/ai/-/ai-0.1.16.tgz",
+        "integrity": "sha512-lbwAEQcHCeHvAH6zRDLslJYUrPrwIP4YzHrZ5hae3ASEBf8wyKksUwUZOjueeYUJnNCqHKLpseikp6wfqozAug=="
+      }
+    ],
+    "gate": "User approval required before npm deprecate; no unpublish or artifact changes"
+  },
+  "attempts": [
+    "Initial npm whoami returned E401; no mutation was attempted before web login.",
+    "The first unused account-authentication challenge was cancelled before mutation; fresh metadata confirmed no changes.",
+    "0.1.0 metadata applied successfully, but the first bounded verification read remained stale; a fresh read confirmed the exact message and unchanged artifact identities. The mutation was not replayed.",
+    "The exact semver union of the remaining ten versions applied their common message after account authentication. Every version was independently verified."
+  ],
+  "ownerAudit": {
+    "command": "pnpm run audit --json",
+    "exitCode": 0,
+    "policy": "Existing approved CVE-2026-112366 exception unchanged",
+    "rawMetadataVulnerabilities": {
+      "info": 0,
+      "low": 1,
+      "moderate": 0,
+      "high": 2,
+      "critical": 0
+    },
+    "activeAdvisories": {}
+  }
+}
