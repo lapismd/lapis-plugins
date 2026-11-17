@@ -1,5 +1,65 @@
 # Search Plugin
 
+<!-- dependency-intake:framework-registry:start -->
+
+Current registry dependency coordinates; qualification remains separate.
+
+<!-- prettier-ignore -->
+| Manifest | Dependency | Range | Locked version |
+| --- | --- | --- | --- |
+| `package.json` (devDependencies) | `@lapis-notes/api` | `^0.6.7` | `0.6.7` |
+| `package.json` (devDependencies) | `@lapis-notes/file-explorer` | `^0.2.8` | `0.2.8` |
+| `package.json` (devDependencies) | `@lapis-notes/language-service` | `^0.1.6` | `0.1.6` |
+| `package.json` (devDependencies) | `@lapis-notes/ui` | `^0.2.2` | `0.2.2` |
+| `package.json` (devDependencies) | `@lapis-notes/workspace` | `^0.4.7` | `0.4.7` |
+| `package.json` (devDependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `package.json` (devDependencies) | `@lapismd/mira` | `~0.2.0` | `0.2.0` |
+| `package.json` (devDependencies) | `@lapismd/mira-editor` | `~0.0.5` | `0.0.5` |
+| `package.json` (devDependencies) | `@lapismd/mira-plugin-ai` | `~0.0.4` | `0.0.4` |
+| `package.json` (devDependencies) | `@lapismd/mira-plugin-mermaid` | `~0.0.5` | `0.0.5` |
+| `package.json` (devDependencies) | `@lapismd/spec-validator` | `^0.2.1` | `0.2.1` |
+| `package.json` (devDependencies) | `@lapismd/storybook-addon-visual-delta` | `0.1.5` | `0.1.5` |
+| `packages/bases/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/bases/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/bookmarks/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/bookmarks/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/canvas/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/canvas/package.json` (dependencies) | `@lapismd/mira` | `~0.2.0` | `0.2.0` |
+| `packages/canvas/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.4 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/csv/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/csv/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/csv/package.json` (peerDependencies) | `@lapis-notes/ui` | `^0.1.4 \|\| ^0.2.0` | Peer support |
+| `packages/docx/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/graph/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/graph/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/history/package.json` (dependencies) | `@lapismd/design-core` | `^0.7.4 \|\| ^0.9.0 \|\| ^0.10.0 \|\| ^0.12.0 \|\| ^0.13.0` | `0.13.4` |
+| `packages/history/package.json` (devDependencies) | `@lapismd/jj-history` | `0.1.0` | `0.1.0` |
+| `packages/history/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/history/package.json` (peerDependencies) | `@lapismd/jj-history` | `^0.1.0` | Peer support |
+| `packages/markdown-lint/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/markdown-lint/package.json` (peerDependencies) | `@lapis-notes/language-service` | `^0.1.2` | Peer support |
+| `packages/markdown/package.json` (dependencies) | `@lapismd/design-core` | `^0.7.4 \|\| ^0.8.0 \|\| ^0.9.0 \|\| ^0.10.0 \|\| ^0.12.0 \|\| ^0.13.0` | `0.13.4` |
+| `packages/markdown/package.json` (dependencies) | `@lapismd/mira` | `~0.2.0` | `0.2.0` |
+| `packages/markdown/package.json` (dependencies) | `@lapismd/mira-editor` | `~0.0.5` | `0.0.5` |
+| `packages/markdown/package.json` (dependencies) | `@lapismd/mira-plugin-ai` | `~0.0.4` | `0.0.4` |
+| `packages/markdown/package.json` (dependencies) | `@lapismd/mira-plugin-mermaid` | `~0.0.5` | `0.0.5` |
+| `packages/markdown/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/markdown/package.json` (peerDependencies) | `@lapis-notes/ui` | `^0.1.4 \|\| ^0.2.0` | Peer support |
+| `packages/pdf/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/search/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/search/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/slides/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/source-editor/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/source-editor/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/spellcheck/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/transcripts/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/transcripts/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/wordcount/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+
+Manifest, peer and integrity facts SHA256: `5c28d1fee82c155f5a55ac77d38d9f4b5d6b259f46e7bfa192516edc4bbf236f`.
+
+<!-- dependency-intake:framework-registry:end -->
+
 Catalog filter triggers use their complete current accessible name, including
 the selected file type and retrieval mode. Selection and persistence assertions
 remain required after opening the public controls.
@@ -209,7 +269,7 @@ files without a Search provider do not invalidate the checkpoint.
 | LN-SRCH-051 | Search MUST consume App-owned, lifecycle-managed result providers with cancellable pages, stable identities, declared capabilities and provider-owned navigation/context. Current-file queries and document providers MUST remain independent.                                                                                                        |
 | LN-SRCH-052 | Search MUST default to Current files and offer History and Everything scopes. Historical matches MUST group distinct versions beneath file rows, retain exact revision labels and distinguish saved versions, checkpoint metadata, deletions and unavailable text. Unsupported filters or retrieval modes MUST NOT silently broaden a provider query. |
 | LN-SRCH-053 | Search MUST publish provider pages incrementally, preserve successful peers after source failure, fence obsolete replies and generations, retain row expansion and loaded context, and keep incomplete indexing/paging distinguishable from a final empty result. Version activation and context expansion MUST remain provider-owned.                |
-| LN-SRCH-054 | Search MUST send command and background-indexing notices through its explicitly owned App. A concurrent compatibility host, delayed failure or vault switch MUST NOT redirect feedback to another App. |
+| LN-SRCH-054 | Search MUST send command and background-indexing notices through its explicitly owned App. A concurrent compatibility host, delayed failure or vault switch MUST NOT redirect feedback to another App.                                                                                                                                                |
 
 Saved-version rows use compact disclosures and matching snippet insets, without
 inheriting a second Sidebar sub-list indent. The sort control keeps its
@@ -298,13 +358,11 @@ Language Service 0.1.6, Workspace 0.4.3, Core 0.13.2 and Mira 0.2 through
 registry exports. [Registry qualification](../../../records/2026-11-14-skills-api06-release-intake.md)
 retains package identity, explicit App ownership and separate native/release gates.
 
-
 The reviewed first-party maintenance intake updates `@lapismd/design-core` `^0.13.2` → `^0.13.4` (dependencies).
 [Registry intake evidence](../../../records/2026-11-16-first-party-pilot-intake.md)
 retains the package identity, existing App ownership and independent release
 intent. This dependency qualification does not replace its functional,
 interaction, accessibility or publication gates.
-
 
 The Search tool-result catalog mounts the public `SearchToolResult` with an
 explicit real App and WorkspaceShell. It verifies accessible filename/path

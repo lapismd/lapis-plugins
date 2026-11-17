@@ -44,6 +44,8 @@
     "test:canvas-browser": "node scripts/validation.mjs run test:canvas-browser",
     "spec:validate": "node scripts/dependency-automation/spec-policy.mjs validate",
     "spec:check": "node scripts/dependency-automation/spec-policy.mjs check",
+    "check:dependency-intake": "node scripts/dependency-automation/check-workspace-intake.mjs",
+    "test:dependency-intake": "node scripts/validation.mjs run test:dependency-intake",
     "spec:first": "node scripts/dependency-automation/spec-policy.mjs first",
     "spec:build": "node scripts/dependency-automation/spec-policy.mjs build",
     "spec:serve": "spec-validator serve",
@@ -135,6 +137,7 @@
     "typescript": "~5.9.3",
     "vite": "^7.3.7",
     "vite-plugin-node-polyfills": "^0.28.0",
-    "vitest": "^4.1.12"
+    "vitest": "^4.1.12",
+    "yaml": "2.9.1"
   }
 }
