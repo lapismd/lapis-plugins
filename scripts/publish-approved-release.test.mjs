@@ -15,9 +15,9 @@ import {
 
 const releases = [
   {
-    packageName: "@lapis-notes/ai",
-    pluginId: "ai",
-    releaseTag: "ai@0.1.2",
+    packageName: "@lapis-notes/bookmarks",
+    pluginId: "bookmarks",
+    releaseTag: "bookmarks@0.1.2",
     version: "0.1.2",
   },
   {
@@ -29,13 +29,13 @@ const releases = [
 ];
 
 test("parses the workflow's explicit comma-separated plugin selection", () => {
-  assert.deepEqual(parseOptions(["--plugins", "ai,lapis-graph"]), {
+  assert.deepEqual(parseOptions(["--plugins", "bookmarks,lapis-graph"]), {
     pluginsExplicit: true,
     replaceGithubAssets: false,
-    selectors: ["ai", "lapis-graph"],
+    selectors: ["bookmarks", "lapis-graph"],
   });
   assert.deepEqual(
-    selectReleases(releases, ["lapis-graph", "@lapis-notes/ai"]),
+    selectReleases(releases, ["lapis-graph", "@lapis-notes/bookmarks"]),
     releases
   );
 });
@@ -103,7 +103,7 @@ test("replacement requires an explicit plugin selection", () => {
     /requires an explicit --plugins selection/
   );
   assert.equal(
-    parseOptions(["--plugins", "ai", "--replace-github-assets"])
+    parseOptions(["--plugins", "bookmarks", "--replace-github-assets"])
       .replaceGithubAssets,
     true
   );

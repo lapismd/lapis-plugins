@@ -5,28 +5,6 @@
   "stories/plugins/canvas/NoteConversion.stories.ts": {
     "kind": "application"
   },
-  "stories/plugins/ai/AiChat.stories.ts": {
-    "kind": "component",
-    "subject": "@lapis-notes/ai#AiChatPanel"
-  },
-  "stories/plugins/ai/AiLiveHost.stories.ts": {
-    "kind": "application"
-  },
-  "stories/plugins/ai/RegistryScreenshots.stories.ts": {
-    "kind": "application"
-  },
-  "stories/plugins/ai/panels/Catalog.stories.ts": {
-    "kind": "application"
-  },
-  "stories/plugins/ai/panels/Chat.stories.ts": {
-    "kind": "application"
-  },
-  "stories/plugins/ai/panels/History.stories.ts": {
-    "kind": "application"
-  },
-  "stories/plugins/ai/shell/Shell.stories.ts": {
-    "kind": "application"
-  },
   "stories/plugins/bases/BasesViews.stories.ts": {
     "kind": "component",
     "subject": "@lapis-notes/bases#BasesViewSurface"
@@ -164,7 +142,7 @@
   },
   "stories/plugins/search/SearchToolResult.stories.ts": {
     "kind": "component",
-    "subject": "@lapis-notes/ai#AiChatPanel"
+    "subject": "@lapis-notes/search#SearchToolResult"
   },
   "stories/plugins/search/panels/Recovery.stories.ts": {
     "kind": "application"

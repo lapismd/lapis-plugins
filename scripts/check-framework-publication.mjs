@@ -1,5 +1,4 @@
 import { spawnSync } from "node:child_process";
-import { readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { frameworkPackageVersions } from "./package-catalog.mjs";
 
@@ -9,17 +8,7 @@ export function checkFrameworkPublication({
       encoding: "utf8",
     }),
 } = {}) {
-  const root = JSON.parse(
-    readFileSync(
-      new URL("../packages/ai/package.json", import.meta.url),
-      "utf8"
-    )
-  );
   const requirements = new Map(frameworkPackageVersions);
-  requirements.set(
-    "@lapismd/ai-controller",
-    root.dependencies["@lapismd/ai-controller"]
-  );
   for (const [name, range] of requirements) {
     if (!range)
       throw new Error(`Missing published framework range for ${name}`);
@@ -29,7 +18,7 @@ export function checkFrameworkPublication({
       throw new Error(
         `Published framework prerequisite unavailable: ${coordinate}\n${
           result.stderr ?? result.error?.message ?? "npm lookup failed"
-        }`
+        }`,
       );
     const versions = JSON.parse(result.stdout);
     if (

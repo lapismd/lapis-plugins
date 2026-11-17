@@ -2,7 +2,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { pluginPackages } from "./package-catalog.mjs";
+import { releasablePluginPackages } from "./package-catalog.mjs";
 import { parseOptions, selectReleases } from "./publish-approved-release.mjs";
 import { prepareStaticReleaseCandidate } from "./lib/static-release-candidate.mjs";
 import { assertStaticReleaseKey } from "./lib/static-release-trust.mjs";
@@ -13,7 +13,7 @@ const options = parseOptions(
   process.argv.slice(2).filter((argument) => argument !== "--production")
 );
 const selected = selectReleases(
-  pluginPackages.map((plugin) => ({
+  releasablePluginPackages.map((plugin) => ({
     ...plugin,
     releaseTag: `${plugin.directory}@candidate`,
   })),

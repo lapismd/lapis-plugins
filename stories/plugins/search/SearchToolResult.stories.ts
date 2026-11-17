@@ -1,8 +1,8 @@
 import { SearchToolResult } from "@lapis-notes/search";
 import type { Meta, StoryObj } from "@storybook/svelte-vite";
-import { expect, userEvent, within } from "storybook/test";
-import AiChatDemo from "../ai/AiChatDemo.svelte";
-import { createNotesSearchSeedItems } from "../ai/AiChat.example-sources";
+import { expect, userEvent, waitFor, within } from "storybook/test";
+import type { App, FileView } from "@lapis-notes/api";
+import SearchToolResultDemo from "./SearchToolResultDemo.svelte";
 
 const meta = {
   title: "Plugins/Search/Tool results",
@@ -13,54 +13,45 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 export const AccessibleFileNavigation: Story = {
   render: () => ({
-    Component: AiChatDemo,
-    props: {
-      enableSearchResult: true,
-      seedItems: createNotesSearchSeedItems(),
-    },
+    Component: SearchToolResultDemo,
   }),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(
-      await canvas.findByRole("button", {
-        name: /^Show details for notes_search(?:\s|$)/,
-      })
+    await waitFor(() =>
+      expect(
+        canvasElement.querySelector('[data-app-shell-ready="true"]'),
+      ).not.toBeNull(),
     );
     const hit = await canvas.findByRole("button", { name: /^Open auth.md/ });
     await expect(hit).toHaveAccessibleName("Open auth.md Projects/auth.md");
     await expect(hit).toHaveTextContent("auth.md");
     await expect(hit).toHaveTextContent("Projects/auth.md");
     await userEvent.click(hit);
-    await expect(canvas.getByTestId("ai-chat-demo")).toHaveAttribute(
-      "data-opened-paths",
-      "Projects/auth.md"
+    const fixture = canvas.getByTestId(
+      "search-tool-result-demo",
+    ) as HTMLElement & { __lapisApp?: App };
+    await waitFor(() =>
+      expect(
+        (fixture.__lapisApp?.workspace.activeLeaf?.view as FileView)?.file
+          ?.path,
+      ).toBe("Projects/auth.md"),
     );
-    await expect(canvas.getByTestId("ai-chat-panel")).toBeVisible();
+    await expect(
+      canvas.getByRole("region", { name: "Search tool result" }),
+    ).toBeVisible();
   },
 };
 
 export const EmptyResults: Story = {
   render: () => ({
-    Component: AiChatDemo,
-    props: {
-      enableSearchResult: true,
-      seedItems: createNotesSearchSeedItems().map((item) =>
-        item.type === "tool"
-          ? { ...item, output: JSON.stringify({ results: [] }) }
-          : item
-      ),
-    },
+    Component: SearchToolResultDemo,
+    props: { empty: true },
   }),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(
-      await canvas.findByRole("button", {
-        name: /^Show details for notes_search(?:\s|$)/,
-      })
-    );
     const empty = await canvas.findByText("No matching notes.");
     const root = empty.closest(
-      '[data-ui-component="empty"][data-ui-part="empty"]'
+      '[data-ui-component="empty"][data-ui-part="empty"]',
     );
     expect(root).not.toBeNull();
     expect(root?.querySelector("svg")).not.toBeNull();

@@ -14,6 +14,7 @@ import {
   selectQuorumRegistryHeads,
 } from "./lib/registry-release-lineage.mjs";
 import { postJson, requestOidcToken } from "./nostr-release.mjs";
+import { assertRegistryHeadsActive } from "./lib/retired-registry-heads.mjs";
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && path.resolve(process.argv[1]) === scriptPath) {
@@ -33,6 +34,7 @@ export async function main(dependencies = {}) {
   const expiring = [...selectQuorumRegistryHeads(loaded).values()]
     .filter(({ head }) => headNeedsRenewal(head.content.validUntil, now))
     .toSorted((left, right) => left.pluginId.localeCompare(right.pluginId));
+  assertRegistryHeadsActive(expiring);
   if (expiring.length === 0) {
     console.log("No Registry heads need freshness renewal.");
     return;
@@ -45,7 +47,7 @@ export async function main(dependencies = {}) {
   for (const candidate of expiring) {
     const createdAt = Math.max(
       Math.floor(now.valueOf() / 1_000),
-      candidate.head.event.created_at + 1
+      candidate.head.event.created_at + 1,
     );
     const template = createRenewedHeadTemplate(candidate.head, createdAt);
     const response = await postJson(
@@ -58,7 +60,7 @@ export async function main(dependencies = {}) {
         event: template,
       },
       oidcToken,
-      fetchImpl
+      fetchImpl,
     );
     const parsed = parseNip29RegistryHead(response.event, candidate.pluginId);
     if (
@@ -67,7 +69,7 @@ export async function main(dependencies = {}) {
       !sameTemplate(response.event, template)
     ) {
       throw new Error(
-        `${candidate.pluginId}: signer returned a mismatched renewal head.`
+        `${candidate.pluginId}: signer returned a mismatched renewal head.`,
       );
     }
     heads.push(response.event);
@@ -80,7 +82,7 @@ export async function main(dependencies = {}) {
       heads,
     },
     oidcToken,
-    fetchImpl
+    fetchImpl,
   );
   const acknowledgements = Array.isArray(publication.acknowledgements)
     ? publication.acknowledgements
@@ -92,13 +94,13 @@ export async function main(dependencies = {}) {
           (entry) =>
             entry?.eventId === head.id &&
             entry?.accepted === true &&
-            typeof entry.relay === "string"
+            typeof entry.relay === "string",
         )
-        .map((entry) => entry.relay)
+        .map((entry) => entry.relay),
     );
     if (accepted.size < environment.quorum) {
       throw new Error(
-        `${head.id}: Registry head publication quorum not reached (${accepted.size}/${environment.quorum}).`
+        `${head.id}: Registry head publication quorum not reached (${accepted.size}/${environment.quorum}).`,
       );
     }
   }
@@ -112,6 +114,7 @@ export function headNeedsRenewal(validUntil, now, windowDays = 7) {
 }
 
 export function createRenewedHeadTemplate(head, createdAt) {
+  assertRegistryHeadsActive([{ pluginId: head.content.pluginId }]);
   const issuedAt = new Date(createdAt * 1_000).toISOString();
   return createNip29RegistryHeadTemplate(
     {
@@ -120,10 +123,10 @@ export function createRenewedHeadTemplate(head, createdAt) {
       previousHeadEventId: head.event.id,
       issuedAt,
       validUntil: new Date(
-        Date.parse(issuedAt) + 30 * 24 * 60 * 60 * 1_000
+        Date.parse(issuedAt) + 30 * 24 * 60 * 60 * 1_000,
       ).toISOString(),
     },
-    createdAt
+    createdAt,
   );
 }
 

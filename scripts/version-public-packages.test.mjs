@@ -18,7 +18,7 @@ import {
 } from "./version-public-packages.mjs";
 
 const mixed = `---
-"@lapis-notes/ai": patch
+"@lapis-notes/bookmarks": patch
 "@lapis-notes/bases": patch
 "@lapis-notes/history": minor
 ---
@@ -33,7 +33,7 @@ test("splits explicitly held entries out of a mixed changeset", () => {
   ]);
   assert.deepEqual(
     parsed.rest.map((entry) => entry.name),
-    ["@lapis-notes/ai"],
+    ["@lapis-notes/bookmarks"],
   );
   assert.deepEqual(
     parsed.held.map((entry) => `${entry.name}:${entry.bump}`),
@@ -41,7 +41,7 @@ test("splits explicitly held entries out of a mixed changeset", () => {
   );
   assert.match(
     renderChangeset(parsed.rest, parsed.body),
-    /"@lapis-notes\/ai": patch/,
+    /"@lapis-notes\/bookmarks": patch/,
   );
   assert.doesNotMatch(
     renderChangeset(parsed.rest, parsed.body),

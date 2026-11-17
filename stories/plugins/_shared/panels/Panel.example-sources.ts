@@ -5,9 +5,6 @@ import {
 } from "./create-panel-demo";
 
 const publicComponents: Partial<Record<PanelDemoKind, string>> = {
-  "ai-history": "AiHistoryPanel",
-  "ai-catalog": "AiCatalogPanel",
-  "ai-chat": "AiChatPanel",
   explorer: "ExplorerPanel",
   "file-properties": "FileProperties",
   outline: "Outline",
@@ -41,36 +38,32 @@ export function panelExampleSource(
     kind === "graph" || kind === "local-graph"
       ? "@lapis-notes/graph"
       : kind === "search"
-        ? "@lapis-notes/search"
-        : kind === "bookmarks"
-          ? "@lapis-notes/bookmarks"
-          : kind === "history"
-            ? "@lapis-notes/history"
-            : kind === "explorer"
-              ? "@lapis-notes/file-explorer"
-              : kind === "ai-history" ||
-                  kind === "ai-catalog" ||
-                  kind === "ai-chat"
-                ? "@lapis-notes/ai"
-                : "@lapis-notes/markdown";
-  const panelImport = `  import { ${publicComponents[kind] ?? "AllProperties"} } from "${packageName}";\n`;
+      ? "@lapis-notes/search"
+      : kind === "bookmarks"
+      ? "@lapis-notes/bookmarks"
+      : kind === "history"
+      ? "@lapis-notes/history"
+      : kind === "explorer"
+      ? "@lapis-notes/file-explorer"
+      : "@lapis-notes/markdown";
+  const panelImport = `  import { ${
+    publicComponents[kind] ?? "AllProperties"
+  } } from "${packageName}";\n`;
   const pluginName =
     kind === "graph" || kind === "local-graph"
       ? "Graph"
       : kind === "search"
-        ? "Search"
-        : kind === "bookmarks"
-          ? "Bookmarks"
-          : kind === "history"
-            ? "History"
-            : kind === "explorer"
-              ? "Explorer"
-              : kind === "ai-history" ||
-                  kind === "ai-catalog" ||
-                  kind === "ai-chat"
-                ? "AI"
-                : "Markdown";
-  const registrationNote = `  // The enabled ${pluginName} plugin registers the workspace view that renders ${publicComponents[kind] ?? "AllProperties"}.`;
+      ? "Search"
+      : kind === "bookmarks"
+      ? "Bookmarks"
+      : kind === "history"
+      ? "History"
+      : kind === "explorer"
+      ? "Explorer"
+      : "Markdown";
+  const registrationNote = `  // The enabled ${pluginName} plugin registers the workspace view that renders ${
+    publicComponents[kind] ?? "AllProperties"
+  }.`;
 
   return `<script lang="ts">
   import { onMount } from "svelte";

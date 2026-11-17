@@ -7,7 +7,6 @@ const REGISTRY_DOCS_FILE = "stories/plugins/_shared/registry/registry-docs.ts";
 const HISTORY_COMPARE_FILE = "stories/plugins/history/Compare.stories.ts";
 const SLIDES_DECKS_FILE = "stories/plugins/slides/Decks.stories.ts";
 const FULL_WORKSPACE_STORY_INVENTORY = [
-  "stories/plugins/ai/shell/Shell.stories.ts",
   "stories/plugins/bases/BasesViews.stories.ts",
   "stories/plugins/bases/BasesWorkflows.stories.ts",
   "stories/plugins/bases/Embeds.stories.ts",

@@ -1,5 +1,10 @@
 # Lapis Sync
 
+The user-approved temporary Picomatch CVE-2026-112366 exception covers Sync's
+`svelte-check > fdir > picomatch` development path only. No patched npm release
+exists. Remove it after qualified patched intake and an audit without the ignore;
+see the [audit receipt](../../../records/2026-11-17-picomatch-audit-exception.md).
+
 Rust/Tauri delivery is governed by the [implementation plan](implementation-plan.md),
 with [source context and historical qualification](implementation-context.md)
 and the [Desktop integration backlog](https://github.com/lapismd/lapis-desktop/blob/main/spec/src/backlog/lapis-sync.md).

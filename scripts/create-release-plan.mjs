@@ -11,7 +11,7 @@ import {
   registryReleaseEnvironment,
   resolveRegistryReleaseLineage,
 } from "./lib/registry-release-lineage.mjs";
-import { pluginPackages } from "./package-catalog.mjs";
+import { releasablePluginPackages } from "./package-catalog.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const production = process.argv.includes("--production");
@@ -35,7 +35,7 @@ const registryState = production
     })
   : undefined;
 
-for (const plugin of pluginPackages) {
+for (const plugin of releasablePluginPackages) {
   const packageJson = JSON.parse(
     await readFile(
       path.join(root, "packages", plugin.directory, "package.json"),

@@ -67,7 +67,7 @@ test("publication orchestration requires explicitly supplied approved operations
 });
 
 test("partial publication attempts every package and skips GitHub only for rejected npm packages", async () => {
-  const releases = ["canvas", "ai", "csv", "transcripts", "pdf"].map((id) => ({
+  const releases = ["canvas", "bookmarks", "csv", "transcripts", "pdf"].map((id) => ({
     packageName: `@lapis-notes/${id}`,
     version: "0.2.1",
   }));
@@ -106,8 +106,8 @@ test("partial publication attempts every package and skips GitHub only for rejec
   );
   assert.deepEqual(calls, [
     "npm:@lapis-notes/canvas",
-    "npm:@lapis-notes/ai",
-    "github:@lapis-notes/ai",
+    "npm:@lapis-notes/bookmarks",
+    "github:@lapis-notes/bookmarks",
     "npm:@lapis-notes/csv",
     "npm:@lapis-notes/transcripts",
     "npm:@lapis-notes/pdf",

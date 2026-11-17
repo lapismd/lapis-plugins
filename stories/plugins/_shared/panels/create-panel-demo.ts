@@ -17,12 +17,6 @@ import {
 import "@lapis-notes/graph/styles.css";
 import { HistoryPlugin, HistoryViewType } from "@lapis-notes/history";
 import {
-  AiCatalogViewType,
-  AiHistoryViewType,
-  AiPlugin,
-  AiViewType,
-} from "@lapis-notes/ai";
-import {
   FileExplorerPlugin,
   FileExplorerViewType,
 } from "@lapis-notes/file-explorer";
@@ -44,9 +38,6 @@ import { WordCountPlugin } from "@lapis-notes/wordcount";
 import { watchMetadata } from "../../../workspace/watch-metadata";
 
 export type PanelDemoKind =
-  | "ai-history"
-  | "ai-catalog"
-  | "ai-chat"
   | "all-properties"
   | "explorer"
   | "file-properties"
@@ -105,9 +96,6 @@ export const PANEL_DEMO_LAYOUTS: PanelDemoLayout[] = [
 ];
 
 export const PANEL_VIEW_TYPE: Record<PanelDemoKind, string> = {
-  "ai-history": AiHistoryViewType,
-  "ai-catalog": AiCatalogViewType,
-  "ai-chat": AiViewType,
   "all-properties": AllPropertiesViewType,
   explorer: FileExplorerViewType,
   "file-properties": FilePropertiesViewType,
@@ -130,24 +118,6 @@ export const PANEL_LEAF_META: Record<
   PanelDemoKind,
   { title: string; icon: string; group: string; requiresFile: boolean }
 > = {
-  "ai-history": {
-    title: "AI conversations",
-    icon: "history",
-    group: "AI",
-    requiresFile: true,
-  },
-  "ai-catalog": {
-    title: "Catalog",
-    icon: "library",
-    group: "AI",
-    requiresFile: true,
-  },
-  "ai-chat": {
-    title: "AI chat",
-    icon: "bot",
-    group: "AI",
-    requiresFile: false,
-  },
   "all-properties": {
     title: "All properties",
     icon: "archive",
@@ -749,8 +719,6 @@ export function createPanelDemoSeed(
     ),
     "Assets/map.png": bytesFromBase64(PANEL_MAP_PNG),
     ...(useRegistryGraphData ? createGraphSeed() : {}),
-    ...(kind === "ai-history" ? createAiHistorySeed() : {}),
-    ...(kind === "ai-catalog" ? createAiCatalogSeed() : {}),
     ...(kind === "history" ? createHistorySeed() : {}),
     ...(kind === "bookmarks" ? createBookmarksSeed() : {}),
   };
@@ -861,11 +829,7 @@ function createBookmarksDocument() {
 
 function createBookmarksSeed(): Record<string, string> {
   return {
-    ".lapis/bookmarks.json": JSON.stringify(
-      createBookmarksDocument(),
-      null,
-      2,
-    ),
+    ".lapis/bookmarks.json": JSON.stringify(createBookmarksDocument(), null, 2),
   };
 }
 
@@ -900,98 +864,6 @@ async function seedHistoryRevisions(app: App): Promise<void> {
   });
 }
 
-function createAiCatalogSeed(): Record<string, string> {
-  return {
-    "Notes/.agents/skills/daily/SKILL.md": [
-      "---",
-      "name: daily",
-      "description: Daily notes",
-      "---",
-      "",
-      "Daily skill body.",
-      "",
-    ].join("\n"),
-    "Notes/.agents/commands/review.md": [
-      "---",
-      "description: Review the current note for gaps",
-      "kind: prompt",
-      "---",
-      "",
-      "Review $ARGUMENTS. Report missing tests first.",
-      "",
-    ].join("\n"),
-  };
-}
-
-function createAiHistorySeed(): Record<string, string> {
-  return {
-    ...conversationSeed({
-      scopeDir: "Notes",
-      id: "123e4567-e89b-42d3-a456-426614174000",
-      title: "Summarize project notes",
-      status: "active",
-      message: "Summarize the project notes and identify the next milestone.",
-      updatedAt: "2026-08-16T11:30:00.000Z",
-    }),
-    ...conversationSeed({
-      scopeDir: "Notes",
-      id: "223e4567-e89b-42d3-a456-426614174001",
-      title: "Archived planning chat",
-      status: "archived",
-      message: "Review the planning notes from last week.",
-      updatedAt: "2026-08-15T09:00:00.000Z",
-    }),
-    ...conversationSeed({
-      scopeDir: "Projects/Atlas",
-      id: "323e4567-e89b-42d3-a456-426614174002",
-      title: "Fix parser errors",
-      status: "active",
-      message: "Find the parser error in the Atlas import pipeline.",
-      updatedAt: "2026-08-16T10:00:00.000Z",
-    }),
-    ...conversationSeed({
-      scopeDir: "",
-      id: "423e4567-e89b-42d3-a456-426614174003",
-      title: "Plan vault release",
-      status: "active",
-      message: "Draft a release checklist for the whole vault.",
-      updatedAt: "2026-08-14T13:00:00.000Z",
-    }),
-  };
-}
-
-function conversationSeed(input: {
-  scopeDir: string;
-  id: string;
-  title: string;
-  status: "active" | "archived";
-  message: string;
-  updatedAt: string;
-}): Record<string, string> {
-  const scopePrefix = input.scopeDir ? `${input.scopeDir}/` : "";
-  const root = `${scopePrefix}.lapis/agents/sessions/${input.id}`;
-  return {
-    [`${root}/metadata.yaml`]: [
-      "schemaVersion: 1",
-      `id: ${input.id}`,
-      `title: ${JSON.stringify(input.title)}`,
-      'createdAt: "2026-08-14T08:00:00.000Z"',
-      `updatedAt: ${JSON.stringify(input.updatedAt)}`,
-      `status: ${input.status}`,
-      "",
-    ].join("\n"),
-    [`${root}/agents.jsonl`]: "",
-    [`${root}/transcript.jsonl`]: `${JSON.stringify({
-      schemaVersion: 1,
-      id: `message-${input.id}`,
-      type: "message",
-      role: "user",
-      text: input.message,
-      createdAt: input.updatedAt,
-    })}\n`,
-  };
-}
-
 function findMarkdownLeaf(app: App): WorkspaceLeaf | null {
   let found: WorkspaceLeaf | null = null;
   app.workspace.iterateRootLeaves((leaf) => {
@@ -1021,7 +893,11 @@ function presetMainDocument(
     children?: Array<{ children?: Array<Record<string, unknown>> }>;
   };
   const leafNode = main.children?.[0]?.children?.[0];
-  if (!leafNode || leafNode.type !== "leaf" || typeof leafNode.id !== "string") {
+  if (
+    !leafNode ||
+    leafNode.type !== "leaf" ||
+    typeof leafNode.id !== "string"
+  ) {
     throw new Error("Panel demo has no main document leaf to preset");
   }
   leafNode.state = {
@@ -1041,21 +917,17 @@ export async function bootPanelDemo(
   const seed = createPanelDemoSeed(kind, layout, options);
   if (options.files) Object.assign(seed, options.files);
   if (options.openDocument) {
-    const workspace = JSON.parse(String(seed[".lapis/workspace.json"])) as Record<
-      string,
-      unknown
-    >;
+    const workspace = JSON.parse(
+      String(seed[".lapis/workspace.json"]),
+    ) as Record<string, unknown>;
     presetMainDocument(workspace, options.openDocument);
     seed[".lapis/workspace.json"] = JSON.stringify(workspace, null, 2);
   }
-  const adapter = new PanelDemoVaultAdapter(
-    seed,
-    {
-      name: `Lapis Panel ${kind} ${layout}`,
-      vaultId: `lapis-panel-${kind}-${layout}`,
-      clock: 1_700_000_000_000,
-    },
-  );
+  const adapter = new PanelDemoVaultAdapter(seed, {
+    name: `Lapis Panel ${kind} ${layout}`,
+    vaultId: `lapis-panel-${kind}-${layout}`,
+    clock: 1_700_000_000_000,
+  });
   const app = new App({
     version: "0.0.1-story",
     configPath: ".lapis/app.json",
@@ -1091,12 +963,6 @@ export async function bootPanelDemo(
     },
     { plugin: BookmarksPlugin, required: false, enabledByDefault: true },
     { plugin: HistoryPlugin, required: false, enabledByDefault: true },
-    {
-      plugin: AiPlugin,
-      required: false,
-      enabledByDefault: true,
-      distribution: "bundled",
-    },
     ...(options.plugins ?? []),
   ]);
 
@@ -1161,11 +1027,6 @@ export async function bootPanelDemo(
   }
   if (kind === "history") {
     await seedHistoryRevisions(app);
-  }
-  const aiPlugin = app.plugins.plugins.get("ai");
-  if (aiPlugin instanceof AiPlugin) {
-    await aiPlugin.updateSettings({ defaultRuntime: "fake" });
-    await aiPlugin.conversationIndex.rebuild();
   }
   await app.workspace.loadLayout();
 

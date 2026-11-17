@@ -307,7 +307,6 @@ function validateCatalogEntry(catalog, capture) {
 
 function registryStoryTitle(directory) {
   const labels = {
-    ai: "AI",
     bases: "Bases",
     bookmarks: "Bookmarks",
     community: "Community",

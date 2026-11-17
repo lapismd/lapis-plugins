@@ -199,7 +199,7 @@ not construct or persist that presentation.
 Markdown also owns `notes_list`. That callback captures the plugin's Vault,
 accepts only scoped portable Markdown paths outside `.obsidian`, `.lapis`, and
 `.trash`, and returns bounded transport-neutral records. The list description
-tells the agent to prefer it over host-cwd directory walking (LN-AI-108).
+tells the agent to prefer it over host-cwd directory walking (LN-MD-093).
 Bounded reads and mutating file edits belong to API `read`, `write`, `edit`,
 and `apply_patch`.
 The narrow `@lapis-notes/markdown/agent-tools` entry exposes the list factory

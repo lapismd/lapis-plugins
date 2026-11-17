@@ -1,7 +1,13 @@
 #!/usr/bin/env node
-import { pluginPackages, pluginPackageBySelector } from "./package-catalog.mjs";
+import {
+  releasablePluginPackages,
+  retiredPluginPackages,
+  pluginPackageBySelector,
+  assertReleaseIsActive,
+} from "./package-catalog.mjs";
 
 export function metadataDispatchPayload(plugin, sourceCommit) {
+  assertReleaseIsActive(plugin);
   if (!/^[0-9a-f]{40}$/.test(sourceCommit)) {
     throw new Error("Metadata dispatch requires a full Git source commit ID.");
   }
@@ -17,9 +23,14 @@ export function metadataDispatchPayload(plugin, sourceCommit) {
 }
 
 export function selectPlugins(selector) {
-  if (selector === "all") return pluginPackages;
+  if (selector === "all") return releasablePluginPackages;
+  const retired = retiredPluginPackages.find((plugin) =>
+    [plugin.directory, plugin.packageName, plugin.pluginId].includes(selector),
+  );
+  if (retired) assertReleaseIsActive(retired);
   const plugin = pluginPackageBySelector(selector);
   if (!plugin) throw new Error(`Unknown plugin selector: ${selector}.`);
+  assertReleaseIsActive(plugin);
   return [plugin];
 }
 
@@ -52,7 +63,9 @@ export async function dispatchPluginMetadata({
     );
     if (!response.ok) {
       throw new Error(
-        `Registry metadata dispatch failed for ${payload.client_payload.plugin_id}: ${response.status} ${await response.text()}`,
+        `Registry metadata dispatch failed for ${
+          payload.client_payload.plugin_id
+        }: ${response.status} ${await response.text()}`,
       );
     }
   }

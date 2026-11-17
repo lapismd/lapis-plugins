@@ -5,7 +5,6 @@ import {
 } from "@lapismd/spec-validator";
 
 const packages = [
-  "ai",
   "bases",
   "bookmarks",
   "canvas",
@@ -41,6 +40,7 @@ export default defineConfig(tableRequirements(), {
     storybookCatalog: "LP-SPEC-045",
   },
   diagnostics: {
+    "RETIRED-SHARED-AI": "LP-SPEC-061",
     "STORYBOOK-PARITY": "LP-SPEC-054",
     "STORYBOOK-DOCS-CONTRACT": "LP-SPEC-044",
     "STORYBOOK-DOCS-COMPONENT": "LP-SPEC-046",
@@ -96,6 +96,10 @@ export default defineConfig(tableRequirements(), {
       ],
       rules: [
         {
+          pattern: "^(?:packages/ai/|stories/plugins/ai/)",
+          chapters: ["spec/src/plugins/ai/index.md"],
+        },
+        {
           pattern: "^crates/lapis-plugin-services/",
           chapters: ["spec/src/native-services.md"],
         },
@@ -132,6 +136,7 @@ export default defineConfig(tableRequirements(), {
     },
   },
   plugins: [
+    "scripts/spec-validation/retired-ai.mjs",
     "scripts/spec-validation/storybook-parity.mjs",
     "scripts/spec-validation/storybook-docs-audit.mjs",
   ],

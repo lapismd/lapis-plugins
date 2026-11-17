@@ -1,6 +1,14 @@
 #!/usr/bin/env node
 
-import { appendFile, cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import {
+  appendFile,
+  cp,
+  mkdir,
+  readFile,
+  readdir,
+  rm,
+  writeFile,
+} from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -11,13 +19,18 @@ import {
   validateCiImageManifest,
 } from "./lib/ci-images.mjs";
 
-const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const repositoryRoot = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+);
 
 export async function prepareCiDependencyContext({
   root = repositoryRoot,
   outDir = path.join(root, ".ci/dependency-context"),
 } = {}) {
-  const manifest = await validateCiImageManifest(root, { requireCurrentLockfile: false });
+  const manifest = await validateCiImageManifest(root, {
+    requireCurrentLockfile: false,
+  });
   const lockfileSha256 = await sha256File(path.join(root, "pnpm-lock.yaml"));
 
   await rm(outDir, { recursive: true, force: true });
@@ -27,7 +40,11 @@ export async function prepareCiDependencyContext({
     path.join(outDir, "Dockerfile"),
   );
 
-  for (const relativePath of ["package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml"]) {
+  for (const relativePath of [
+    "package.json",
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+  ]) {
     await copyRelative(root, outDir, relativePath);
   }
   await cp(path.join(root, "patches"), path.join(outDir, "patches"), {
@@ -35,7 +52,11 @@ export async function prepareCiDependencyContext({
   });
 
   for (const pluginDirectory of await packageDirectories(root)) {
-    await copyRelative(root, outDir, path.join("packages", pluginDirectory, "package.json"));
+    await copyRelative(
+      root,
+      outDir,
+      path.join("packages", pluginDirectory, "package.json"),
+    );
   }
 
   const metadata = {
@@ -52,14 +73,29 @@ export async function prepareCiDependencyContext({
 }
 
 async function packageDirectories(root) {
-  const workspace = await readFile(path.join(root, "pnpm-workspace.yaml"), "utf8");
+  const workspace = await readFile(
+    path.join(root, "pnpm-workspace.yaml"),
+    "utf8",
+  );
   if (!workspace.includes('"packages/*"')) {
-    throw new Error('Dependency context expects the "packages/*" workspace layout.');
+    throw new Error(
+      'Dependency context expects the "packages/*" workspace layout.',
+    );
   }
-  const catalogSource = await readFile(path.join(root, "scripts/package-catalog.mjs"), "utf8");
-  return [...catalogSource.matchAll(/directory:\s*"([a-z0-9-]+)"/g)]
-    .map((match) => match[1])
-    .sort();
+  const packages = await readdir(path.join(root, "packages"), {
+    withFileTypes: true,
+  });
+  const directories = [];
+  for (const entry of packages) {
+    if (!entry.isDirectory()) continue;
+    try {
+      await readFile(path.join(root, "packages", entry.name, "package.json"));
+      directories.push(entry.name);
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+    }
+  }
+  return directories.sort();
 }
 
 async function copyRelative(root, outDir, relativePath) {
@@ -98,5 +134,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       ].join("\n"),
     );
   }
-  console.log(`Prepared dependency image ${metadata.dependencyImage}:${metadata.tag}.`);
+  console.log(
+    `Prepared dependency image ${metadata.dependencyImage}:${metadata.tag}.`,
+  );
 }

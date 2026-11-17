@@ -72,7 +72,7 @@ test("operator preflight reports every failure without printing npm credentials"
   const logs = [];
   await assert.rejects(
     checkTrustedPublishers(
-      ["canvas", "csv", "ai"].map((id) => ({
+      ["canvas", "csv", "bookmarks"].map((id) => ({
         packageName: `@lapis-notes/${id}`,
       })),
       {
@@ -100,7 +100,7 @@ test("operator preflight reports every failure without printing npm credentials"
 
 test("a matching configuration does not claim OIDC activation or publication", async () => {
   const logs = [];
-  await checkTrustedPublishers([{ packageName: "@lapis-notes/ai" }], {
+  await checkTrustedPublishers([{ packageName: "@lapis-notes/bookmarks" }], {
     readTrust: async () => [valid],
     log: (message) => logs.push(message),
   });

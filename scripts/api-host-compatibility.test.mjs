@@ -27,7 +27,7 @@ for (const plugin of pluginPackages) {
   });
 }
 
-for (const directory of ["ai", "markdown", "csv"]) {
+for (const directory of ["markdown", "csv"]) {
   test(`${directory} admits the API 0.6/UI 0.2 host and retains the UI 0.1 host`, async () => {
     const pkg = JSON.parse(
       await readFile(
