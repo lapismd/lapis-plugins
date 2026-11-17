@@ -3,8 +3,9 @@
 Rust/Tauri delivery is governed by the [implementation plan](implementation-plan.md),
 with [source context and historical qualification](implementation-context.md)
 and the [Desktop integration backlog](https://github.com/lapismd/lapis-desktop/blob/main/spec/src/backlog/lapis-sync.md).
-These documents retain the full enrolled-server scope and distinguish it from
-Git repository synchronization. Implementation work does not change the parked-package
+The active scope is the manual encrypted two-device macOS MVP with a
+ciphertext-only Server destination. The full enrolled/editable-server roadmap
+is retained as deferred follow-up, separate from Git repository synchronization. Implementation work does not change the parked-package
 or release gates. References below to native Desktop custody and Deno destination
 delivery describe the retained Deno-era source; they do not qualify Tauri or
 the current Rust server. The new roadmap owns future native delivery.

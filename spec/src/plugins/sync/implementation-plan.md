@@ -1,4 +1,4 @@
-# Lapis Sync future implementation plan
+# Lapis Sync MVP implementation plan
 
 **Planned 14 November 2026; implementation authorized 15 November 2026.** Read the
 [context and provenance](implementation-context.md) and [current Sync contract](index.md)
@@ -7,14 +7,87 @@ Deno records remain historical evidence, not a schedule to resume verbatim.
 The [Desktop plan](https://github.com/lapismd/lapis-desktop/blob/main/spec/src/backlog/lapis-sync.md)
 owns consumer admission and native acceptance.
 
-## Completion and ownership
+## Active delivery scope: manual encrypted MVP
 
-The first complete feature connects offline Desktop vaults to one configured
-Lapis Server destination. Two enrolled devices exchange notes, attachments and
-immutable revision ancestry with an enrolled, readable managed server vault.
-Web sessions edit that server vault; server changes propagate even with no
-browser open. Offline history, conflicts, restore and recovery survive restart.
-Installation is optional and disabled by default after qualification.
+**Scope revised by the user on 17 November 2026.** This section supersedes the
+original full-feature completion boundary below. Deferred features remain saved
+for later; they are not prerequisites for completing this MVP. Existing code,
+protocol compatibility, security invariants and immutable receipts are retained.
+This is a plan change, not evidence that the MVP works or permission to release.
+
+The MVP supports two independent macOS ARM64 Desktop devices, one logical vault
+and one configured Lapis Server destination per local vault. Notes and
+attachments remain editable offline. An explicit **Sync now** action persists a
+local encrypted checkpoint, uploads/downloads accepted history and safely applies
+non-conflicting changes. Show progress, last successful sync and actionable
+errors through one minimal production settings/status surface.
+
+The server is an authenticated encrypted destination only for this MVP. It is
+not enrolled as a decrypting editing endpoint, receives no content keys, and
+creates no readable managed Sync working vault. Account access, device pairing,
+transport authorization and content/owner authority remain separate. Two local
+devices require authenticated, expiring, replay-protected owner-approved pairing.
+Use existing Rust/Core and public App contracts; do not revive Deno or add a
+second authoritative renderer engine to shorten delivery.
+
+### MVP implementation order and completion boundary
+
+1. Finish native App/session admission and lifecycle plus real HTTPS account
+   connection, protected restore/sign-out and local-device pairing.
+2. Connect durable encrypted checkpoint/history/outbox to the existing native
+   owner, then authenticated dependency-ordered upload and bounded download.
+3. Implement manual bidirectional guarded apply through Sync now, including
+   create/update/delete. Represent rename as delete/add initially; explicit
+   tombstones, identities and conflict checks still govern deletion.
+4. Persist conflict state and preserve both versions. Stop visibly for manual
+   resolution; never select a winner or overwrite a draft automatically. A
+   minimal explicit resolution/retry path must allow safe progress afterwards.
+5. Prove the complete journey with independent stores/keys and a real server:
+   A edits offline → Sync now → Server → B receives exact files; B edits →
+   Sync now → Server → A receives them. Repeat after device/server cold restart,
+   lost acknowledgements and interrupted transfer/apply.
+
+MVP acceptance also covers dirty/retired/embedded/multi-window writers (protect
+or refuse), conflicting text/binary/delete/add changes, populated-root collision
+refusal, empty/partial-page safety, bounded catch-up/index rebuild, scoped root/
+profile/vault access, locked/missing keys and corrupt/missing dependencies.
+Durable encrypted history/outbox, exact retry bytes/IDs, staged/accepted/applied
+separation, exclusive apply ownership and unknown-outcome inspection remain
+mandatory. Attachments use bounded streaming with the retained 64 MiB in-flight
+target; broad synthetic 3 GiB qualification is deferred. Keep a minimal encrypted
+recovery export/import with an actual independent-device restoration test;
+account reset cannot substitute for content recovery.
+
+Run the required affected source/artifact/consumer, architecture/App ownership,
+functional, keyboard/accessibility, specification and actual macOS boundaries.
+Repair and execute MVP-relevant retained cases; no blanket unskip, weakened
+assertion or claim that parked cases passed. Deferred-only scenarios retain
+explicit unqualified status. Visual review stays visual-pending. Optional Sync
+remains disabled by default; private test intake does not authorize publication,
+registry updates, production deployment or installed-application replacement.
+
+### Deferred until after MVP
+
+- Enrolled decrypting server endpoint, managed working vault, Web → Desktop
+  editing and browser-free server/external-change capture.
+- Automatic checkpoints/sync, reconnect scheduling, watchers and background
+  participant lifetime. Manual restart/retry recovery remains an MVP gate. The
+  retained 20-second quiet/five-minute maximum policy applies when resumed.
+- Rich History/File History/Compare/Merge UI, automatic conflict resolution,
+  semantic rename detection and forward file/vault restore.
+- Device revocation management, key/Sync Identity rotation and advanced recovery
+  workflows. Existing authority/cutoff validation and safe refusal stay binding;
+  do not claim compromised-key recovery before those workflows are qualified.
+- Other Desktop platforms, all six UI placements and broader platform/performance
+  qualification beyond the supported MVP boundary.
+- Public package/registry/distribution work and the previously deferred external
+  destinations, migration, collaboration, selective sync and garbage collection.
+
+## Ownership retained for MVP and deferred follow-up
+
+The ownership table describes the full architecture. Scheduling, server editing
+participation and expanded presentation responsibilities apply only when their
+explicitly deferred features resume.
 
 | Owner                                      | Planned responsibilities                                                                                                                                         |
 | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -70,9 +143,13 @@ Before each protected implementation slice, update the owning API, Plugins,
 Server and Desktop requirements/verification as applicable. This saved roadmap
 adds no product requirement completion or runtime contract implementation.
 
-## Ordered implementation stages
+## Retained full roadmap: MVP subsets first, larger work deferred
 
-Stages 1 and 2 are complete in the isolated implementation stack; later stages remain pending.
+Stages 1 and 2 have recorded source receipts; later stages remain partial or
+pending. Their original exits below describe the full roadmap, not extra MVP
+gates. Execute only the subsets required by the active MVP sequence above;
+server enrollment/editing, automatic operation and expanded recovery/UI remain
+explicitly deferred. Recheck current source evidence before relying on a receipt.
 Each starts with the exact failing or unavailable
 boundary and ends with its recorded regression, manual journey, source revision
 and consumer evidence. Broader checks follow the workspace impact ladder.
@@ -241,7 +318,11 @@ disable/re-enable/update/uninstall and cold restoration. Public publication,
 signed release assets/registry dispatch and installed-app replacement retain
 their existing explicit approval gates. No Rust crate publication is assumed.
 
-## Blocking acceptance matrix
+## Deferred full-feature acceptance matrix
+
+The full matrix is retained for follow-up. Shared safety cases also apply to
+the MVP as specified above; Web/server participation, automation, expanded UI,
+rotation and additional-platform rows are deferred, not passed.
 
 | Scenario                                        | Required outcome / evidence boundary                                                                                            |
 | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
@@ -282,5 +363,5 @@ refresh source/artifact revisions and API dependency floors rather than using
 historical versions as installation instructions. Use verified public archives
 for private migration acceptance, portable npm ranges/registry lockfiles and
 source-first fixes. Record source, artifacts, consumer and release results
-separately and commit each verified owning-repository slice. The next authorized
-feature task starts at stage 1; saving this document does not start it.
+separately and commit each verified owning-repository slice. Continue from verified foundations toward the active MVP round trip; do not
+restart completed slices or resume deferred features without a scope change.

@@ -1,6 +1,6 @@
 # Lapis Sync implementation context
 
-**Investigation baseline: 14 November 2026. Implementation deferred.** This
+**Investigation baseline: 14 November 2026; historical context.** This
 chapter records what survived the Deno migration and the decisions retained for
 future work. The [implementation plan](implementation-plan.md) owns the new
 delivery sequence; the [Sync contract](index.md) and verification retain current
@@ -9,6 +9,18 @@ requirements and qualification. Saving this context completes no product gate.
 The corresponding [Desktop backlog](https://github.com/lapismd/lapis-desktop/blob/main/spec/src/backlog/lapis-sync.md)
 owns Tauri intake and native acceptance. The linked future documents must be
 landed in both repositories before those remote links become available.
+
+## Current scope override: 17 November 2026
+
+The user selected the [manual encrypted MVP](implementation-plan.md): two macOS
+ARM64 Desktop devices and one authenticated ciphertext-only Server destination.
+Decrypting server enrollment, managed working-vault/Web editing, automatic
+operation, rich conflict/history/restore UI, rotation and expanded platform
+qualification are deferred. Minimal conflict preservation, encrypted recovery,
+writer protection, durable retries and safe apply remain MVP requirements.
+The decisions and source inventory below describe the original full roadmap and
+its dated investigation baseline; they do not override the new delivery scope.
+Existing source qualification and parked/release status remain separate.
 
 ## Product decisions retained
 
