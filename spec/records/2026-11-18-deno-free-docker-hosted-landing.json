@@ -1,0 +1,163 @@
+{
+  "schema": 1,
+  "requirement": "LP-SPEC-053",
+  "repository": "lapismd/lapis-plugins",
+  "pr": 158,
+  "pr_url": "https://github.com/lapismd/lapis-plugins/pull/158",
+  "base": "8a90c1063dab11af5e5c211bc00a3ebbce79c0cd",
+  "checked_head": "54552e6353f05d66556180799992569a417d8735",
+  "landing": {
+    "merge": "2bab1ccd6e63cacfb2c2a57fc492b60efdd7f56c",
+    "merged_at": "2026-11-18T04:36:41Z",
+    "checked_and_merge_tree": "c804f30fb861edf96bc881d90385c2a0dd7a6784",
+    "tree_equivalence_verified": true,
+    "diagnostic_child_tree_identical": true
+  },
+  "hosted": {
+    "run": 44234359523,
+    "run_url": "https://github.com/lapismd/lapis-plugins/actions/runs/44234359523",
+    "attempt1": {
+      "conclusion": "failure",
+      "passed": 361,
+      "unexecuted": 49,
+      "unhandled_setup_errors": 1,
+      "failed_job": 134567978322,
+      "aggregate": 134571590604,
+      "failed_internal_shard": "5/8",
+      "failed_file": "stories/plugins/search/panels/Recovery.stories.ts",
+      "internal_5_of_8_passed": 29,
+      "internal_6_of_8_executed": false,
+      "failure": "Browser connection closed during tester setup; createTesters RPC closed",
+      "failure_cause": "unresolved"
+    },
+    "targeted_retry": {
+      "accepted_requests": 1,
+      "original_job": 134567978322,
+      "accepted_at": "2026-11-18T04:22:15.462307+00:00",
+      "scope": "quarter 3 and dependent aggregate",
+      "source_config_assertions_timeouts_filters_changed": false
+    },
+    "attempt2": {
+      "conclusion": "success",
+      "passed": 410,
+      "failed": 0,
+      "skipped_cases": 0,
+      "unexecuted": 0,
+      "quarter3_job": 134574812256,
+      "quarter3_passed": [30, 48],
+      "all_eighths_passed": [48, 46, 58, 67, 30, 48, 64, 49],
+      "aggregate": 134577006234,
+      "aggregate_result": "All blocking Lapis Plugins validation lanes passed.",
+      "aggregate_completed_at": "2026-11-18T04:34:40Z",
+      "jobs_successful": 15,
+      "expected_fast_spec_only_job_skipped": true,
+      "full_product_and_canonical_path": "passed"
+    },
+    "dependency_image": "ghcr.io/lapismd/lapis-plugins-ci@sha256:d54d5625978f49e5b9360e2fae7480818effa195c19b49d49454687124ac2d9f"
+  },
+  "cold_diagnostics": [
+    {
+      "run": "de43cf4b-1040-4b46-9288-542b0ae2a370",
+      "source": "43afa8039d306e2d110c676ddae765cde5d72f62",
+      "image": "sha256:3078eab0ae796a0fbcabd8af91461d78ee3e1d50e46449a0332259a8ef6b42e7",
+      "resources": {
+        "cpus": 2,
+        "memoryGiB": 12,
+        "shmGiB": 2,
+        "nodeHeapMiB": 6144
+      },
+      "args": ["--shard=5/8"],
+      "status": "passed",
+      "tests_passed": 30,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cold_vitest_execution": true,
+      "started": "2026-11-18T04:16:50.313Z",
+      "finished": "2026-11-18T04:18:46.218Z",
+      "retained": [
+        {
+          "path": ".local/validation/runs/lapis-plugins-validation-de43cf4b-1040-4b46-9288-542b0ae2a370/result.json",
+          "sha256": "02342bdedf0f9fd2e358c1b8008d5e806637d88e9a386b8403f0717c3bb52d27"
+        },
+        {
+          "path": ".local/validation/runs/lapis-plugins-validation-de43cf4b-1040-4b46-9288-542b0ae2a370/container.log",
+          "sha256": "8b33a024459f391f6ad0cf6649d6419c10e728aecf0b5baab1976d759f3068d3"
+        },
+        {
+          "path": ".local/validation/runs/lapis-plugins-validation-de43cf4b-1040-4b46-9288-542b0ae2a370/.release_ci-results/storybook-1.xml",
+          "sha256": "7df7044953f4a6fb82e2bf17d35f83dc516ca6fc02175ed5cc71384682bfff07"
+        }
+      ]
+    },
+    {
+      "run": "76ddb3d2-bc72-46a7-876b-4d53c05599ac",
+      "source": "43afa8039d306e2d110c676ddae765cde5d72f62",
+      "image": "sha256:3078eab0ae796a0fbcabd8af91461d78ee3e1d50e46449a0332259a8ef6b42e7",
+      "resources": {
+        "cpus": 2,
+        "memoryGiB": 12,
+        "shmGiB": 2,
+        "nodeHeapMiB": 6144
+      },
+      "args": ["stories/plugins/search/panels/Recovery.stories.ts"],
+      "status": "passed",
+      "tests_passed": 1,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cold_vitest_execution": true,
+      "started": "2026-11-18T04:19:30.119Z",
+      "finished": "2026-11-18T04:20:09.993Z",
+      "retained": [
+        {
+          "path": ".local/validation/runs/lapis-plugins-validation-76ddb3d2-bc72-46a7-876b-4d53c05599ac/result.json",
+          "sha256": "3bd20a925b0a8717ef2c772a09864afd2cef9b8a6e39396140a03ae171228f4f"
+        },
+        {
+          "path": ".local/validation/runs/lapis-plugins-validation-76ddb3d2-bc72-46a7-876b-4d53c05599ac/container.log",
+          "sha256": "ed47834087f990d27366d079ca5bac4193be69b110da57f3009ea9bf8776b07e"
+        },
+        {
+          "path": ".local/validation/runs/lapis-plugins-validation-76ddb3d2-bc72-46a7-876b-4d53c05599ac/.release_ci-results/storybook-1.xml",
+          "sha256": "e8923a144f23aa459332927785b828421f78c09c409d4c3b999ac3390dfc748a"
+        }
+      ]
+    }
+  ],
+  "retained_hosted_evidence": [
+    {
+      "path": ".local/validation/hosted-pr158-run44234359523-job134567978322.log",
+      "sha256": "ef6a87fce0197f5d476b7120b05e7cf75ef51ebef8a6ee2908add05976a9ea58"
+    },
+    {
+      "path": ".local/validation/hosted-pr158-run44234359523-attempt2-job134574812256.log",
+      "sha256": "bef23ecfe33c04b161ee986fc390bf2c906cd96cf34252a5278f296d100358b8"
+    },
+    {
+      "path": ".local/validation/hosted-pr158-run44234359523-attempt2-job134577006234.log",
+      "sha256": "09ec94c19423cd816aa5ef050de90ccf52cfa17c82819c5ce59c1f786cfc1dfe"
+    },
+    {
+      "path": ".local/validation/pr158-browser-diagnostic-summary.json",
+      "sha256": "ba532ab5d7ce67c7170ff6f2c9fcbfb94479ef1dc36a25204fdf9cc2b8db2546"
+    },
+    {
+      "path": ".local/validation/pr158-merge-preflight.json",
+      "sha256": "742dc654739c1f3946d842cfe734072cdadb340250b8ba0433f76b4d45ae13ea"
+    }
+  ],
+  "classification": {
+    "original_cause_unresolved": true,
+    "product_fix_claimed": false,
+    "quarantine_added": false,
+    "test_exception_or_waiver_added": false,
+    "publication_or_native_acceptance_claimed": false
+  },
+  "actual_main_followup": {
+    "ci_run": 44238530243,
+    "version_packages_run": 44238530347,
+    "independent_from_pr_qualification": true,
+    "dispatch_or_retry_by_receipt": false
+  }
+}
