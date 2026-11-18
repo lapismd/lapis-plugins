@@ -7,38 +7,38 @@ Current registry dependency coordinates; qualification remains separate.
 <!-- prettier-ignore -->
 | Manifest | Dependency | Range | Locked version |
 | --- | --- | --- | --- |
-| `package.json` (devDependencies) | `@lapis-notes/api` | `^0.6.7` | `0.6.7` |
+| `package.json` (devDependencies) | `@lapis-notes/api` | `^0.6.9` | `0.6.9` |
 | `package.json` (devDependencies) | `@lapis-notes/file-explorer` | `^0.2.8` | `0.2.8` |
 | `package.json` (devDependencies) | `@lapis-notes/language-service` | `^0.1.6` | `0.1.6` |
-| `package.json` (devDependencies) | `@lapis-notes/ui` | `^0.2.2` | `0.2.2` |
-| `package.json` (devDependencies) | `@lapis-notes/workspace` | `^0.4.7` | `0.4.7` |
-| `package.json` (devDependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `package.json` (devDependencies) | `@lapis-notes/ui` | `^0.2.4` | `0.2.4` |
+| `package.json` (devDependencies) | `@lapis-notes/workspace` | `^0.4.8` | `0.4.8` |
+| `package.json` (devDependencies) | `@lapismd/design-core` | `^0.13.5` | `0.13.5` |
 | `package.json` (devDependencies) | `@lapismd/mira` | `~0.2.0` | `0.2.0` |
 | `package.json` (devDependencies) | `@lapismd/mira-editor` | `~0.0.5` | `0.0.5` |
 | `package.json` (devDependencies) | `@lapismd/mira-plugin-ai` | `~0.0.4` | `0.0.4` |
 | `package.json` (devDependencies) | `@lapismd/mira-plugin-mermaid` | `~0.0.5` | `0.0.5` |
 | `package.json` (devDependencies) | `@lapismd/spec-validator` | `^0.2.1` | `0.2.1` |
 | `package.json` (devDependencies) | `@lapismd/storybook-addon-visual-delta` | `0.1.5` | `0.1.5` |
-| `packages/bases/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/bases/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.5` | `0.13.5` |
 | `packages/bases/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
-| `packages/bookmarks/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/bookmarks/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.5` | `0.13.5` |
 | `packages/bookmarks/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
-| `packages/canvas/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/canvas/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.5` | `0.13.5` |
 | `packages/canvas/package.json` (dependencies) | `@lapismd/mira` | `~0.2.0` | `0.2.0` |
 | `packages/canvas/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.4 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
-| `packages/csv/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/csv/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.5` | `0.13.5` |
 | `packages/csv/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
 | `packages/csv/package.json` (peerDependencies) | `@lapis-notes/ui` | `^0.1.4 \|\| ^0.2.0` | Peer support |
 | `packages/docx/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
-| `packages/graph/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/graph/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.5` | `0.13.5` |
 | `packages/graph/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
-| `packages/history/package.json` (dependencies) | `@lapismd/design-core` | `^0.7.4 \|\| ^0.9.0 \|\| ^0.10.0 \|\| ^0.12.0 \|\| ^0.13.0` | `0.13.4` |
+| `packages/history/package.json` (dependencies) | `@lapismd/design-core` | `^0.7.4 \|\| ^0.9.0 \|\| ^0.10.0 \|\| ^0.12.0 \|\| ^0.13.0` | `0.13.5` |
 | `packages/history/package.json` (devDependencies) | `@lapismd/jj-history` | `0.1.0` | `0.1.0` |
 | `packages/history/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
 | `packages/history/package.json` (peerDependencies) | `@lapismd/jj-history` | `^0.1.0` | Peer support |
 | `packages/markdown-lint/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
 | `packages/markdown-lint/package.json` (peerDependencies) | `@lapis-notes/language-service` | `^0.1.2` | Peer support |
-| `packages/markdown/package.json` (dependencies) | `@lapismd/design-core` | `^0.7.4 \|\| ^0.8.0 \|\| ^0.9.0 \|\| ^0.10.0 \|\| ^0.12.0 \|\| ^0.13.0` | `0.13.4` |
+| `packages/markdown/package.json` (dependencies) | `@lapismd/design-core` | `^0.7.4 \|\| ^0.8.0 \|\| ^0.9.0 \|\| ^0.10.0 \|\| ^0.12.0 \|\| ^0.13.0` | `0.13.5` |
 | `packages/markdown/package.json` (dependencies) | `@lapismd/mira` | `~0.2.0` | `0.2.0` |
 | `packages/markdown/package.json` (dependencies) | `@lapismd/mira-editor` | `~0.0.5` | `0.0.5` |
 | `packages/markdown/package.json` (dependencies) | `@lapismd/mira-plugin-ai` | `~0.0.4` | `0.0.4` |
@@ -46,17 +46,17 @@ Current registry dependency coordinates; qualification remains separate.
 | `packages/markdown/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
 | `packages/markdown/package.json` (peerDependencies) | `@lapis-notes/ui` | `^0.1.4 \|\| ^0.2.0` | Peer support |
 | `packages/pdf/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
-| `packages/search/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/search/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.5` | `0.13.5` |
 | `packages/search/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
 | `packages/slides/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
-| `packages/source-editor/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/source-editor/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.5` | `0.13.5` |
 | `packages/source-editor/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
 | `packages/spellcheck/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
-| `packages/transcripts/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/transcripts/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.5` | `0.13.5` |
 | `packages/transcripts/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
 | `packages/wordcount/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
 
-Manifest, peer and integrity facts SHA256: `5c28d1fee82c155f5a55ac77d38d9f4b5d6b259f46e7bfa192516edc4bbf236f`.
+Manifest, peer and integrity facts SHA256: `5fb8fd3432ea29e392aaabcea0dee6227fe9af0008ea5627b7f1c7226f94467e`.
 
 <!-- dependency-intake:framework-registry:end -->
 
