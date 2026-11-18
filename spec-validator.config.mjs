@@ -27,6 +27,15 @@ const packages = [
 
 export default defineConfig(tableRequirements(), {
   name: "lapis-plugins",
+  check: {
+    lanes: [
+      {
+        name: "dependency-intake",
+        command: "node",
+        args: ["scripts/dependency-automation/check-workspace-intake.mjs"],
+      },
+    ],
+  },
   idPattern: /^(?:LN-[A-Z-]+|LP-SPEC)-\d{3}$/,
   ruleIds: {
     summary: "LP-SPEC-001",

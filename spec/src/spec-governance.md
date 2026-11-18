@@ -1,5 +1,79 @@
 # Specification Governance
 
+<!-- dependency-intake:framework-registry:start -->
+
+Current registry dependency coordinates; qualification remains separate.
+
+<!-- prettier-ignore -->
+| Manifest | Dependency | Range | Locked version |
+| --- | --- | --- | --- |
+| `package.json` (devDependencies) | `@lapis-notes/api` | `^0.6.7` | `0.6.7` |
+| `package.json` (devDependencies) | `@lapis-notes/file-explorer` | `^0.2.8` | `0.2.8` |
+| `package.json` (devDependencies) | `@lapis-notes/language-service` | `^0.1.6` | `0.1.6` |
+| `package.json` (devDependencies) | `@lapis-notes/ui` | `^0.2.2` | `0.2.2` |
+| `package.json` (devDependencies) | `@lapis-notes/workspace` | `^0.4.7` | `0.4.7` |
+| `package.json` (devDependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `package.json` (devDependencies) | `@lapismd/mira` | `~0.2.0` | `0.2.0` |
+| `package.json` (devDependencies) | `@lapismd/mira-editor` | `~0.0.5` | `0.0.5` |
+| `package.json` (devDependencies) | `@lapismd/mira-plugin-ai` | `~0.0.4` | `0.0.4` |
+| `package.json` (devDependencies) | `@lapismd/mira-plugin-mermaid` | `~0.0.5` | `0.0.5` |
+| `package.json` (devDependencies) | `@lapismd/spec-validator` | `^0.2.1` | `0.2.1` |
+| `package.json` (devDependencies) | `@lapismd/storybook-addon-visual-delta` | `0.1.5` | `0.1.5` |
+| `packages/bases/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/bases/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/bookmarks/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/bookmarks/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/canvas/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/canvas/package.json` (dependencies) | `@lapismd/mira` | `~0.2.0` | `0.2.0` |
+| `packages/canvas/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.4 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/csv/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/csv/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/csv/package.json` (peerDependencies) | `@lapis-notes/ui` | `^0.1.4 \|\| ^0.2.0` | Peer support |
+| `packages/docx/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/graph/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/graph/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/history/package.json` (dependencies) | `@lapismd/design-core` | `^0.7.4 \|\| ^0.9.0 \|\| ^0.10.0 \|\| ^0.12.0 \|\| ^0.13.0` | `0.13.4` |
+| `packages/history/package.json` (devDependencies) | `@lapismd/jj-history` | `0.1.0` | `0.1.0` |
+| `packages/history/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/history/package.json` (peerDependencies) | `@lapismd/jj-history` | `^0.1.0` | Peer support |
+| `packages/markdown-lint/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/markdown-lint/package.json` (peerDependencies) | `@lapis-notes/language-service` | `^0.1.2` | Peer support |
+| `packages/markdown/package.json` (dependencies) | `@lapismd/design-core` | `^0.7.4 \|\| ^0.8.0 \|\| ^0.9.0 \|\| ^0.10.0 \|\| ^0.12.0 \|\| ^0.13.0` | `0.13.4` |
+| `packages/markdown/package.json` (dependencies) | `@lapismd/mira` | `~0.2.0` | `0.2.0` |
+| `packages/markdown/package.json` (dependencies) | `@lapismd/mira-editor` | `~0.0.5` | `0.0.5` |
+| `packages/markdown/package.json` (dependencies) | `@lapismd/mira-plugin-ai` | `~0.0.4` | `0.0.4` |
+| `packages/markdown/package.json` (dependencies) | `@lapismd/mira-plugin-mermaid` | `~0.0.5` | `0.0.5` |
+| `packages/markdown/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/markdown/package.json` (peerDependencies) | `@lapis-notes/ui` | `^0.1.4 \|\| ^0.2.0` | Peer support |
+| `packages/pdf/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/search/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/search/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/slides/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/source-editor/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/source-editor/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/spellcheck/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/transcripts/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/transcripts/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/wordcount/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+
+Manifest, peer and integrity facts SHA256: `5c28d1fee82c155f5a55ac77d38d9f4b5d6b259f46e7bfa192516edc4bbf236f`.
+
+<!-- dependency-intake:framework-registry:end -->
+
+## Bounded first-party workspace intake
+
+| ID          | Requirement                                                                                                                                                                                                                                                                                                                                                     |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| LP-SPEC-062 | First-party dependency intake MUST retain the reviewed active-manifest/registry-owner map, independently verify compatible patch facts and lock/manifest/canonical closure in ordinary checks outside bot exemptions, and reject unsupported migrations, stale policy, same-version integrity mutation, unrelated source changes and unapproved release intent. |
+
+The source profile excludes parked Community/Sync and retired shared AI products.
+Existing App ownership, public host contracts, audits, signed image reuse,
+package/archive/signature qualification and release authority remain binding.
+The normal check and aggregate specification lane execute the independent
+source check; version preparation executes it before any writer authority.
+The separate coordinator activation and actual durable settlement/replay remain
+required. This source preparation enables no repository writer by itself.
+
 LN-HIST-021 qualification includes passive native status without transfer
 scheduling, exact recovery identities, stale/late response fencing and teardown.
 Retain the missing-observer and rejected-selection baselines. Failed selection
@@ -744,7 +818,6 @@ required public repository variable. It runs no local steps or candidate data.
 The runtime audit checks this exact delegated runner separately while retaining
 explicit native selection for every local validation workflow. Hosted current
 CI and a genuine wake-up remain separate acceptance after source adoption.
-
 
 The November16 pilot intake uses registry API0.6.7, UI0.2.2, Workspace0.4.7,
 Core0.13.4, repaired Mira Editor/Mermaid0.0.5 and Deno-free validator0.2.1.

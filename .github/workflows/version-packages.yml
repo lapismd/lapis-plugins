@@ -37,6 +37,8 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - uses: ./.github/actions/ci-setup
+      - name: Validate source-owned dependency intake
+        run: pnpm check:dependency-intake
       - name: Decide whether a changeset can bump a published package
         id: releasable
         run: node scripts/version-public-packages.mjs --check

@@ -1,5 +1,65 @@
 # PDF Plugin
 
+<!-- dependency-intake:framework-registry:start -->
+
+Current registry dependency coordinates; qualification remains separate.
+
+<!-- prettier-ignore -->
+| Manifest | Dependency | Range | Locked version |
+| --- | --- | --- | --- |
+| `package.json` (devDependencies) | `@lapis-notes/api` | `^0.6.7` | `0.6.7` |
+| `package.json` (devDependencies) | `@lapis-notes/file-explorer` | `^0.2.8` | `0.2.8` |
+| `package.json` (devDependencies) | `@lapis-notes/language-service` | `^0.1.6` | `0.1.6` |
+| `package.json` (devDependencies) | `@lapis-notes/ui` | `^0.2.2` | `0.2.2` |
+| `package.json` (devDependencies) | `@lapis-notes/workspace` | `^0.4.7` | `0.4.7` |
+| `package.json` (devDependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `package.json` (devDependencies) | `@lapismd/mira` | `~0.2.0` | `0.2.0` |
+| `package.json` (devDependencies) | `@lapismd/mira-editor` | `~0.0.5` | `0.0.5` |
+| `package.json` (devDependencies) | `@lapismd/mira-plugin-ai` | `~0.0.4` | `0.0.4` |
+| `package.json` (devDependencies) | `@lapismd/mira-plugin-mermaid` | `~0.0.5` | `0.0.5` |
+| `package.json` (devDependencies) | `@lapismd/spec-validator` | `^0.2.1` | `0.2.1` |
+| `package.json` (devDependencies) | `@lapismd/storybook-addon-visual-delta` | `0.1.5` | `0.1.5` |
+| `packages/bases/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/bases/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/bookmarks/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/bookmarks/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/canvas/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/canvas/package.json` (dependencies) | `@lapismd/mira` | `~0.2.0` | `0.2.0` |
+| `packages/canvas/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.4 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/csv/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/csv/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/csv/package.json` (peerDependencies) | `@lapis-notes/ui` | `^0.1.4 \|\| ^0.2.0` | Peer support |
+| `packages/docx/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/graph/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/graph/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/history/package.json` (dependencies) | `@lapismd/design-core` | `^0.7.4 \|\| ^0.9.0 \|\| ^0.10.0 \|\| ^0.12.0 \|\| ^0.13.0` | `0.13.4` |
+| `packages/history/package.json` (devDependencies) | `@lapismd/jj-history` | `0.1.0` | `0.1.0` |
+| `packages/history/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/history/package.json` (peerDependencies) | `@lapismd/jj-history` | `^0.1.0` | Peer support |
+| `packages/markdown-lint/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/markdown-lint/package.json` (peerDependencies) | `@lapis-notes/language-service` | `^0.1.2` | Peer support |
+| `packages/markdown/package.json` (dependencies) | `@lapismd/design-core` | `^0.7.4 \|\| ^0.8.0 \|\| ^0.9.0 \|\| ^0.10.0 \|\| ^0.12.0 \|\| ^0.13.0` | `0.13.4` |
+| `packages/markdown/package.json` (dependencies) | `@lapismd/mira` | `~0.2.0` | `0.2.0` |
+| `packages/markdown/package.json` (dependencies) | `@lapismd/mira-editor` | `~0.0.5` | `0.0.5` |
+| `packages/markdown/package.json` (dependencies) | `@lapismd/mira-plugin-ai` | `~0.0.4` | `0.0.4` |
+| `packages/markdown/package.json` (dependencies) | `@lapismd/mira-plugin-mermaid` | `~0.0.5` | `0.0.5` |
+| `packages/markdown/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/markdown/package.json` (peerDependencies) | `@lapis-notes/ui` | `^0.1.4 \|\| ^0.2.0` | Peer support |
+| `packages/pdf/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/search/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/search/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/slides/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/source-editor/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/source-editor/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/spellcheck/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/transcripts/package.json` (dependencies) | `@lapismd/design-core` | `^0.13.4` | `0.13.4` |
+| `packages/transcripts/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+| `packages/wordcount/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
+
+Manifest, peer and integrity facts SHA256: `5c28d1fee82c155f5a55ac77d38d9f4b5d6b259f46e7bfa192516edc4bbf236f`.
+
+<!-- dependency-intake:framework-registry:end -->
+
 `@lapis-notes/pdf` opens a vault PDF in a file view and in a note embed.
 `Plugins/PDF/Panels/Viewing` is the first governed surface. It loads a seeded
 sample, with a photograph, two columns, and a table, in every placement, and Middle (Top Tabs) also opens a Markdown
@@ -46,11 +106,11 @@ package and does not add it to a host profile.
 
 ## Requirements
 
-| ID        | Requirement |
-| --------- | ----------- |
+| ID         | Requirement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | LN-PDF-001 | PDF MUST live at `packages/pdf` as `@lapis-notes/pdf@0.2.1` with runtime id `lapis-pdf` and view type `lapis-pdf`. The plugin class MUST receive `App` from its constructor and MUST NOT read or assign `globalThis.app`. It MUST register the file view, an exclusive `*.pdf` association, `registerExtensions(["pdf"], "lapis-pdf")`, an Open PDF command, and `embedRegistry.register("pdf", ...)`. The file view and the embed MUST call one mount helper. That helper MUST lazy-load `@embedpdf/snippet`, open the file through `vault.getResourceUrl`, and revoke the issued URL on destroy. A non-fetchable URL MUST fall back to a blob URL created from `readBinary`, and that blob URL MUST be revoked instead. A mount that finishes after dispose MUST be destroyed immediately. Document open and document close MUST be disabled. The host MUST have a pixel height. `@embedpdf/snippet` MUST be bundled and MUST NOT be added to the host external allowlist. Defaults MUST be fit-width zoom, vertical scroll, and page gap 10. The plugin MUST register a PDF settings section and configuration schema for `lapis-pdf.forceDarkPages`, defaulting to on. While that setting is on and the document theme is dark, rendered page images MUST use `invert(1) hue-rotate(180deg)`. An open viewer MUST follow a later change to the setting or the document theme class. An embedded PDF MUST use the theme border and a small theme radius. |
-| LN-PDF-002 | `Plugins/PDF/Panels/Viewing` MUST open `packages/pdf/assets/sample.pdf`, seeded as `Sample.pdf`, in all six governed placements: Middle (Top Tabs), Stacked Tabs, Left Sidebar, Right Sidebar, Bottom Panel, and Sidebar As a Group. The story MUST show the viewer host, at least one rendered page, and both sidebars for that placement. It MUST NOT depend on PDF text being selectable in the DOM. Closing or leaving the view MUST remove that viewer. The play function MUST then restore the open file, and Middle (Top Tabs) MUST restore the note, so the settled story shows the file. Middle (Top Tabs) MUST also open a Markdown note containing `![[Sample.pdf]]` and show the same viewer inside the embed frame with the filename caption. An ordinary note embed in that note MUST stay a Markdown preview. The viewing stories MUST stay `visual-pending` and MUST NOT create Visual Delta baselines. `Plugins/PDF/Registry Screenshots` MUST capture the open PDF as the banner and the note embed as the gallery card, with `registry-media` and `visual-pending` tags. |
-| LN-PDF-003 | Zoom, scroll, and page-gap settings, `--pdf-*` theme tokens, the file-view pane action for page inversion, and web or native resource-url checks MUST stay deferred. Publication MUST follow the explicit LP-SPEC-016 release gate and use a new immutable patch version. Host-profile adoption MUST remain separately approved. |
+| LN-PDF-002 | `Plugins/PDF/Panels/Viewing` MUST open `packages/pdf/assets/sample.pdf`, seeded as `Sample.pdf`, in all six governed placements: Middle (Top Tabs), Stacked Tabs, Left Sidebar, Right Sidebar, Bottom Panel, and Sidebar As a Group. The story MUST show the viewer host, at least one rendered page, and both sidebars for that placement. It MUST NOT depend on PDF text being selectable in the DOM. Closing or leaving the view MUST remove that viewer. The play function MUST then restore the open file, and Middle (Top Tabs) MUST restore the note, so the settled story shows the file. Middle (Top Tabs) MUST also open a Markdown note containing `![[Sample.pdf]]` and show the same viewer inside the embed frame with the filename caption. An ordinary note embed in that note MUST stay a Markdown preview. The viewing stories MUST stay `visual-pending` and MUST NOT create Visual Delta baselines. `Plugins/PDF/Registry Screenshots` MUST capture the open PDF as the banner and the note embed as the gallery card, with `registry-media` and `visual-pending` tags.                                                                                                                                                                                                                                                                                                                                                                 |
+| LN-PDF-003 | Zoom, scroll, and page-gap settings, `--pdf-*` theme tokens, the file-view pane action for page inversion, and web or native resource-url checks MUST stay deferred. Publication MUST follow the explicit LP-SPEC-016 release gate and use a new immutable patch version. Host-profile adoption MUST remain separately approved.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 
 ## Verification
 
