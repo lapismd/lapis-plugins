@@ -174,6 +174,33 @@ test("accepts provenance-only Bases report refresh with selected intake", () => 
     "0.2.1",
   );
 });
+test("accepts selected package peer metadata and non-selected peer-context refresh", () => {
+  const d = data();
+  const lock = YAML.parse(d.files["pnpm-lock.yaml"]);
+  const selected = Object.keys(lock.packages).find((key) =>
+    key.startsWith(`${sdk}@`),
+  );
+  assert.ok(selected, "selected SDK package entry");
+  lock.packages[selected] = {
+    ...lock.packages[selected],
+    peerDependencies: {
+      ...(lock.packages[selected].peerDependencies ?? {}),
+      "@lapis-notes/ui": "^0.2.4",
+    },
+  };
+  const apiSnap = Object.keys(lock.snapshots ?? {}).find((key) =>
+    key.startsWith("@lapis-notes/api@"),
+  );
+  if (apiSnap && lock.snapshots[apiSnap]?.dependencies?.["@lapismd/ai-host"]) {
+    lock.snapshots[apiSnap].dependencies["@lapismd/ai-host"] =
+      "0.3.0(bare-buffer@3.7.3)(zod@4.6.7)";
+  }
+  d.files["pnpm-lock.yaml"] = YAML.stringify(lock);
+  assert.equal(
+    verifyIntake(d).manifests["package.json"].devDependencies[sdk].version,
+    "0.2.1",
+  );
+});
 for (const [name, mutate] of [
   [
     "unsupported 0.x minor",
