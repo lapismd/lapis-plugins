@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "upstreamReviewedAt": "2026-11-12",
   "implementation": {
-    "packageVersion": "0.4.2",
+    "packageVersion": "0.4.3",
     "dependencies": {
       "@lapis-notes/api": "0.6.9",
       "peaql": "0.1.25",
