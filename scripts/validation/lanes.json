@@ -17,7 +17,7 @@
   "spec:first": "node scripts/dependency-automation/spec-policy.mjs first",
   "spec:check": "pnpm check:dependency-intake && node scripts/dependency-automation/spec-policy.mjs check && pnpm check:app-ownership",
   "spec:validate": "node scripts/dependency-automation/spec-policy.mjs validate",
-  "validation:check": "node --test scripts/validation.test.mjs scripts/spec-validation/storybook-parity.test.mjs",
+  "validation:check": "node --test scripts/validation.test.mjs scripts/validation-toolchain.test.mjs scripts/spec-validation/storybook-parity.test.mjs",
   "validation:smoke": "node scripts/validation/smoke.mjs",
   "check:storybook-parity": "node scripts/spec-validation/check-storybook-parity.mjs",
   "test:storybook-parity": "node --test scripts/spec-validation/storybook-parity.test.mjs",

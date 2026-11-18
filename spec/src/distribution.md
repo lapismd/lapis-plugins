@@ -136,6 +136,13 @@ source and host acceptance remain separate.
 
 ## Local validation contracts
 
+Portable Docker images MUST NOT install or expose Deno. Each registered worker
+MUST run without Deno while still requiring successful version probes for Node,
+pnpm, Jujutsu, Git and mdBook; missing or failed required tools remain fatal.
+Preserve separately invoked private Sync native-review acceptance and its
+operator-provided Deno runtime outside portable Docker lanes. This tooling
+retirement changes no plugin, public export, Sync service or native contract.
+
 LP-SPEC-016 version preparation MUST validate the source-owned qualification
 data through the pinned shared Lapis CI runtime guard after a releasable public
 changeset is detected and before minting the version writer App token. Empty

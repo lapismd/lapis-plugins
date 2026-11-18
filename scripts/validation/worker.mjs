@@ -7,6 +7,7 @@ import {
   validateArchives,
   laneInvocations,
   validationNodeHeap,
+  validationToolVersions,
 } from "./model.mjs";
 import { execute } from "./process.mjs";
 const root = "/work/lapis-plugins",
@@ -201,20 +202,7 @@ try {
       source.revision,
       ...(source.base ? ["--base", source.base] : [])
     );
-  result.tools = Object.fromEntries(
-    [
-      "node",
-      "pnpm",
-      "jj",
-      "git",
-      "mdbook",
-      "deno",
-      ...(request.imageTarget === "full" ? ["rustc", "cargo"] : []),
-    ].map((tool) => [
-      tool,
-      execFileSync(tool, ["--version"], { encoding: "utf8" }).trim(),
-    ])
-  );
+  result.tools = validationToolVersions(request.imageTarget);
   result.invocations = [];
   for (const [index, invocation] of laneInvocations(
     request.lane,

@@ -188,6 +188,11 @@ retain a strict browser API listener without occupying another checkout's port.
 Invalid ports fail before startup; interaction assertions and shard coverage
 remain unchanged under LP-SPEC-053.
 
+LP-SPEC-053 portable Docker workers have no Deno runtime prerequisite. Image
+builds reject an unexpected Deno executable; non-Deno tool probes still fail
+closed. Private Sync native-review commands retain their explicitly supplied
+external Deno runtime and parked/future contracts.
+
 LP-SPEC-053 defaults local portable validation to isolated Docker workers;
 hosted CI explicitly uses its provisioned native runtime. The repository-owned
 composition plugin enforces LP-SPEC-054 and LP-SPEC-055 beside existing Docs,

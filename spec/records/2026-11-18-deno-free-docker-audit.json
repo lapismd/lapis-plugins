@@ -1,0 +1,81 @@
+{
+  "sourceBase": "8a90c1063dab11af5e5c211bc00a3ebbce79c0cd",
+  "image": "sha256:3078eab0ae796a0fbcabd8af91461d78ee3e1d50e46449a0332259a8ef6b42e7",
+  "sourcePolicyAndLockFilesUnchanged": true,
+  "sourceFileSha256": {
+    "package.json": "2daf88363d2c4446bf5cccdf589e7cb34422e950ca9c8d6816a59ba20dd1d2d4",
+    "pnpm-lock.yaml": "fc17d0cab81d867505c66c866579b04fc32f1bab88c72f8c511b889b3b542b58",
+    "pnpm-workspace.yaml": "95df0bbc119e77933b938121b60e54405d8507cb2fc3c4b8c17d9534f6d63c1b",
+    "packages/sync/package.json": "d393faaac8cfc67cec219b10864a6856bd15815af86b003369a13baa2eea211f"
+  },
+  "ordinaryAuditCommand": "pnpm audit --json",
+  "ordinaryAuditExitCode": 0,
+  "ordinaryPolicyRetained": true,
+  "diagnosticOnly": "A separate isolated Docker input omitted ignoreCves to expose filtered advisory identities; this stricter diagnostic exits 1 and is not used as a passing gate. Tracked policy, overrides and dependencies remain unchanged.",
+  "diagnosticExitCode": 1,
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 1,
+      "moderate": 0,
+      "high": 2,
+      "critical": 0
+    },
+    "dependencies": 1320,
+    "devDependencies": 0,
+    "optionalDependencies": 0,
+    "totalDependencies": 1320
+  },
+  "advisories": [
+    {
+      "id": "GHSA-848j-6mx2-7j84",
+      "cves": ["CVE-2025-14505"],
+      "package": "elliptic",
+      "severity": "low",
+      "findings": [
+        {
+          "version": "6.6.1",
+          "paths": [
+            ".>vite-plugin-node-polyfills>node-stdlib-browser>crypto-browserify>browserify-sign>elliptic"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GHSA-fc5q-39xc-vjpf",
+      "cves": ["CVE-2026-112366"],
+      "package": "picomatch",
+      "severity": "high",
+      "findings": [
+        {
+          "version": "2.3.2",
+          "paths": [".>@changesets/cli>@changesets/config>micromatch>picomatch"]
+        },
+        {
+          "version": "4.0.7",
+          "paths": [".>@storybook/addon-docs>unplugin>picomatch"]
+        }
+      ]
+    }
+  ],
+  "privateSyncAudit": {
+    "command": "pnpm audit --ignore-workspace --json",
+    "exitCode": 0,
+    "sourcePackageSha256": "d393faaac8cfc67cec219b10864a6856bd15815af86b003369a13baa2eea211f",
+    "sourceLockSha256": "a939fca93206b10ce522c82d579881fcd5ba14eb258e11a4bf36775b6583d8fd",
+    "metadata": {
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 1,
+        "critical": 0
+      },
+      "dependencies": 676,
+      "devDependencies": 0,
+      "optionalDependencies": 0,
+      "totalDependencies": 676
+    },
+    "policy": "Unchanged private Sync allowance; filtered advisory list is empty. No new exception."
+  }
+}
