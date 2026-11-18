@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "run": "lapis-plugins-validation-88bc679b-074d-41fa-acc1-25340c93a4fa",
+  "lane": "validation:sync",
+  "args": [],
+  "image": "sha256:3078eab0ae796a0fbcabd8af91461d78ee3e1d50e46449a0332259a8ef6b42e7",
+  "imageTarget": "ui",
+  "workspace": "a70d2894b56e630c",
+  "resources": {
+    "cpus": 2,
+    "memoryGiB": 4,
+    "shmGiB": 2,
+    "nodeHeapMiB": 2048
+  },
+  "source": {
+    "schema": 1,
+    "revision": "ea1cc3942844782618b35c5732f44b83a3975f45",
+    "parents": ["8a90c1063dab11af5e5c211bc00a3ebbce79c0cd"],
+    "fileCount": 2276,
+    "archives": [],
+    "packSha256": "d84a6a129c81064a099c210c45244bc536e5859407fbe8200c6eae9ae2226233"
+  },
+  "started": "2026-11-18T03:49:35.561Z",
+  "status": "passed",
+  "tools": {
+    "node": "v24.15.0",
+    "pnpm": "10.34.5",
+    "jj": "jj 0.45.1-7c41cdeb16b6b321c64e789a966b6adf723816a5",
+    "git": "git version 2.39.5",
+    "mdbook": "mdbook v0.5.4"
+  },
+  "invocations": [
+    {
+      "args": [],
+      "status": "passed"
+    }
+  ],
+  "exitCode": 0,
+  "finished": "2026-11-18T03:50:29.178Z"
+}

@@ -1,0 +1,108 @@
+{
+  "schema": 1,
+  "run": "lapis-plugins-validation-f1f8dacb-e67e-4c2a-8bc9-d8a6ab6891dd",
+  "lane": "test:storybook",
+  "args": [],
+  "image": "sha256:3078eab0ae796a0fbcabd8af91461d78ee3e1d50e46449a0332259a8ef6b42e7",
+  "imageTarget": "ui",
+  "workspace": "a70d2894b56e630c",
+  "resources": {
+    "cpus": 2,
+    "memoryGiB": 12,
+    "shmGiB": 2,
+    "nodeHeapMiB": 6144
+  },
+  "source": {
+    "schema": 1,
+    "revision": "b29f4ab32892e99f9348ca670b7291491d54f1ab",
+    "parents": ["8a90c1063dab11af5e5c211bc00a3ebbce79c0cd"],
+    "fileCount": 2275,
+    "archives": [],
+    "packSha256": "54a6acf217ff11fe0b46abfa9ebee5f23020708cdcf5e45a8c897538462e67c9"
+  },
+  "started": "2026-11-18T03:35:37.673Z",
+  "status": "passed",
+  "tools": {
+    "node": "v24.15.0",
+    "pnpm": "10.34.5",
+    "jj": "jj 0.45.1-7c41cdeb16b6b321c64e789a966b6adf723816a5",
+    "git": "git version 2.39.5",
+    "mdbook": "mdbook v0.5.4"
+  },
+  "invocations": [
+    {
+      "args": [
+        "--shard=1/8",
+        "--reporter=default",
+        "--reporter=junit",
+        "--outputFile=.release/ci-results/storybook-1.xml"
+      ],
+      "status": "passed"
+    },
+    {
+      "args": [
+        "--shard=2/8",
+        "--reporter=default",
+        "--reporter=junit",
+        "--outputFile=.release/ci-results/storybook-2.xml"
+      ],
+      "status": "passed"
+    },
+    {
+      "args": [
+        "--shard=3/8",
+        "--reporter=default",
+        "--reporter=junit",
+        "--outputFile=.release/ci-results/storybook-3.xml"
+      ],
+      "status": "passed"
+    },
+    {
+      "args": [
+        "--shard=4/8",
+        "--reporter=default",
+        "--reporter=junit",
+        "--outputFile=.release/ci-results/storybook-4.xml"
+      ],
+      "status": "passed"
+    },
+    {
+      "args": [
+        "--shard=5/8",
+        "--reporter=default",
+        "--reporter=junit",
+        "--outputFile=.release/ci-results/storybook-5.xml"
+      ],
+      "status": "passed"
+    },
+    {
+      "args": [
+        "--shard=6/8",
+        "--reporter=default",
+        "--reporter=junit",
+        "--outputFile=.release/ci-results/storybook-6.xml"
+      ],
+      "status": "passed"
+    },
+    {
+      "args": [
+        "--shard=7/8",
+        "--reporter=default",
+        "--reporter=junit",
+        "--outputFile=.release/ci-results/storybook-7.xml"
+      ],
+      "status": "passed"
+    },
+    {
+      "args": [
+        "--shard=8/8",
+        "--reporter=default",
+        "--reporter=junit",
+        "--outputFile=.release/ci-results/storybook-8.xml"
+      ],
+      "status": "passed"
+    }
+  ],
+  "exitCode": 0,
+  "finished": "2026-11-18T03:48:55.434Z"
+}

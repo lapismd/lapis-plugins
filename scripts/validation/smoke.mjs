@@ -1,8 +1,17 @@
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { chromium, webkit } from "@playwright/test";
 
 assert.equal(process.platform, "linux");
+const deno = spawnSync(
+  "/bin/sh",
+  ["-c", "if command -v deno >/dev/null 2>&1; then exit 0; else exit 1; fi"],
+  {
+    encoding: "utf8"
+  }
+);
+assert.equal(deno.error, undefined);
+assert.equal(deno.status, 1, "finished portable image must not expose Deno");
 for (const tool of ["node", "pnpm", "jj", "mdbook"])
   console.log(execFileSync(tool, ["--version"], { encoding: "utf8" }).trim());
 for (const engine of [chromium, webkit]) {

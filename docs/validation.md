@@ -11,6 +11,13 @@ Hosted CI explicitly selects its already-provisioned native environment.
 Platform-native packaging, live-provider acceptance and visual baseline approval
 remain independent lanes.
 
+The portable image and registered worker lanes do not require Deno. Image
+admission rejects an unexpected Deno executable; the finished-image smoke also
+checks its absence before launching Chromium and WebKit. Node, pnpm, Jujutsu,
+Git and mdBook remain mandatory version probes, with failed probes blocking. The
+separately invoked private Sync native-account review keeps its external Deno
+prerequisite and is not part of these portable Docker lanes.
+
 ## Images and execution
 
 ```sh

@@ -1,0 +1,79 @@
+[
+  {
+    "run": "lapis-plugins-validation-70f7addb-edeb-4184-a196-6ef22055e22f",
+    "lane": "validation:smoke",
+    "image": "sha256:3078eab0ae796a0fbcabd8af91461d78ee3e1d50e46449a0332259a8ef6b42e7",
+    "resources": {
+      "cpus": 2,
+      "memoryGiB": 4,
+      "shmGiB": 2,
+      "nodeHeapMiB": 2048
+    },
+    "status": "failed",
+    "exitCode": 1,
+    "error": "spawnSync deno ENOENT",
+    "invocations": null,
+    "tools": null,
+    "sourceRevision": "37814d21c105b64ff8a66e14f5aebcbdcbd0109f",
+    "sourceParents": ["8a90c1063dab11af5e5c211bc00a3ebbce79c0cd"]
+  },
+  {
+    "run": "lapis-plugins-validation-24af8ecb-259c-4678-957a-4abec993b328",
+    "lane": "validation:smoke",
+    "image": "sha256:3078eab0ae796a0fbcabd8af91461d78ee3e1d50e46449a0332259a8ef6b42e7",
+    "resources": {
+      "cpus": 2,
+      "memoryGiB": 4,
+      "shmGiB": 2,
+      "nodeHeapMiB": 2048
+    },
+    "status": "failed",
+    "exitCode": 1,
+    "error": "Validation invocation failed; inspect the per-invocation reports.",
+    "invocations": [
+      {
+        "args": [],
+        "status": "failed",
+        "error": "/bin/sh exited 1"
+      }
+    ],
+    "tools": {
+      "node": "v24.15.0",
+      "pnpm": "10.34.5",
+      "jj": "jj 0.45.1-7c41cdeb16b6b321c64e789a966b6adf723816a5",
+      "git": "git version 2.39.5",
+      "mdbook": "mdbook v0.5.4"
+    },
+    "sourceRevision": "1b1b6020baf30d6a39406e1190d9d098c98d29bc",
+    "sourceParents": ["8a90c1063dab11af5e5c211bc00a3ebbce79c0cd"]
+  },
+  {
+    "run": "lapis-plugins-validation-726ed165-83f4-4e51-aafe-b6eff35d06b9",
+    "lane": "validation:smoke",
+    "image": "sha256:3078eab0ae796a0fbcabd8af91461d78ee3e1d50e46449a0332259a8ef6b42e7",
+    "resources": {
+      "cpus": 2,
+      "memoryGiB": 4,
+      "shmGiB": 2,
+      "nodeHeapMiB": 2048
+    },
+    "status": "passed",
+    "exitCode": 0,
+    "error": null,
+    "invocations": [
+      {
+        "args": [],
+        "status": "passed"
+      }
+    ],
+    "tools": {
+      "node": "v24.15.0",
+      "pnpm": "10.34.5",
+      "jj": "jj 0.45.1-7c41cdeb16b6b321c64e789a966b6adf723816a5",
+      "git": "git version 2.39.5",
+      "mdbook": "mdbook v0.5.4"
+    },
+    "sourceRevision": "282c38903886e1a6420cecd0e27264937c703a35",
+    "sourceParents": ["8a90c1063dab11af5e5c211bc00a3ebbce79c0cd"]
+  }
+]

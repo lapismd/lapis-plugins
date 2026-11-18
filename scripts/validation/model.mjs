@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { execFileSync } from "node:child_process";
 export const label = "dev.lapismd.lapis-plugins.validation";
 export function validationConfig(local = {}, environment = process.env) {
   const config = {
@@ -70,6 +71,23 @@ export function validateArchives(entries) {
   return entries;
 }
 export const laneImage = () => "ui";
+
+/** Mandatory tool identities; portable workers have no Deno prerequisite. */
+export function validationToolVersions(imageTarget, env = process.env) {
+  return Object.fromEntries(
+    [
+      "node",
+      "pnpm",
+      "jj",
+      "git",
+      "mdbook",
+      ...(imageTarget === "full" ? ["rustc", "cargo"] : [])
+    ].map((tool) => [
+      tool,
+      execFileSync(tool, ["--version"], { encoding: "utf8", env }).trim()
+    ])
+  );
+}
 
 /** Reserve at least half the container for browsers, native buffers and workers. */
 export function validationNodeHeap(memoryGiB) {
