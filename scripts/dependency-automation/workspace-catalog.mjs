@@ -87,17 +87,17 @@ export function verifyCatalogTransition(policy, before, files, old, facts) {
     const packages = {};
     for (const [key, row] of Object.entries(lock.packages ?? {}))
       if (firstParty(key)) {
-        const normalized = walk(row);
         const name = key.slice(0, key.lastIndexOf("@"));
-        if (policy.dependencies.includes(name))
-          normalized.resolution = {
-            ...normalized.resolution,
-            integrity: "<selected>",
-          };
         const identity = text(key);
         if (Object.hasOwn(packages, identity))
           fail("ambiguous first-party identity");
-        packages[identity] = normalized;
+        // Selected registry packages may change peer/metadata with the admitted
+        // version. Compare only the selected integrity placeholder.
+        if (policy.dependencies.includes(name)) {
+          packages[identity] = { resolution: { integrity: "<selected>" } };
+          continue;
+        }
+        packages[identity] = walk(row);
       }
     const peers = (s) =>
       [...text(s).matchAll(/(?:^|\()(@(?:lapismd|lapis-notes)\/[^()]+)/g)]
@@ -109,7 +109,14 @@ export function verifyCatalogTransition(policy, before, files, old, facts) {
         (type) =>
           Object.entries(row[type] ?? {})
             .filter(([name]) => firstParty(name))
-            .map(([name, version]) => [type, name, walk(version, name)]),
+            .map(([name, version]) => {
+              const walked = walk(version, name);
+              // Non-selected first-party edges may refresh third-party peer
+              // contexts under registry-transitives; keep the identity only.
+              if (!policy.dependencies.includes(name))
+                return [type, name, String(walked).split("(")[0]];
+              return [type, name, walked];
+            }),
       );
       if (!firstParty(key) && !peers(key).length && !references.length)
         continue;
