@@ -236,6 +236,9 @@ export function verifyIntake({
     "pnpm-workspace.yaml",
     "pnpm-lock.yaml",
     ...policy.chapters,
+    // LN-BASE-045 / distribution: registry intake refreshes this
+    // provenance-only when the installed API cohort changes.
+    "docs/bases-compatibility/report.json",
   ]);
   const changesets = changedFiles.filter((p) =>
     /^\.changeset\/lapis-dependencies-[a-f0-9]{12}\.md$/.test(p),

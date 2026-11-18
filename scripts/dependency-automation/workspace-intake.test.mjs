@@ -166,6 +166,14 @@ test("accepts a compatible SDK patch with independently derived source facts", (
     verifyIntake(data()).manifests["package.json"].devDependencies[sdk].version,
     "0.2.1",
   ));
+test("accepts provenance-only Bases report refresh with selected intake", () => {
+  const d = data();
+  d.changedFiles.push("docs/bases-compatibility/report.json");
+  assert.equal(
+    verifyIntake(d).manifests["package.json"].devDependencies[sdk].version,
+    "0.2.1",
+  );
+});
 for (const [name, mutate] of [
   [
     "unsupported 0.x minor",
