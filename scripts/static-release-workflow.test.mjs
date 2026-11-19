@@ -38,6 +38,10 @@ test("static publication requires activation, protected approval and the pinned 
   assert.match(source, /uses: \.\/\.github\/actions\/ci-setup/);
   assert.match(
     source,
+    /static-publish:[\s\S]*?uses: actions\/checkout@v7\n\s+with:\n\s+fetch-depth: 0/,
+  );
+  assert.match(
+    source,
     /image: \$\{\{ needs\.image-pin\.outputs\.reference \}\}/,
   );
   assert.match(source, /trap 'rm -f "\$key_file"' EXIT/);
