@@ -79,20 +79,22 @@ that every current installation contains the latest source.
 - API `file-editing-sessions.ts` and `sync-editor-flush.ts` supply writer
   admission/protection and workspace-editor flushing; full Sync guard selection
   still requires all admitted writer types and host lifecycle integration.
-- Notes `packages/deno-host-services/src/sync-*` and
-  `packages/desktop-deno/src/{deno-sync-*,sync-*-protocol.ts}` retain native
-  storage/filesystem and renderer bridge references. Native broker/account
-  source remains under `packages/desktop-deno/src-deno`.
+- Notes `packages/deno-host-services/src/sync-*` retains portable host-service
+  references. The retired `packages/desktop-deno` bridge, native broker and
+  account source remain available only through Notes history and its retirement
+  archive; they are not current implementation.
 - Plugins `crates/lapis-plugin-services` is the existing home for pure native
   plugin algorithms. Sync algorithms are planned there, not implemented today.
 - Desktop `NotesWorkspace.svelte` constructs the ordinary App and disposes its
   generic Sync service. Its plugin inventories omit Lapis Sync. Git repository
   synchronization elsewhere in Desktop does not supply the missing service.
 
-The old Deno server source was retired from the current Notes tree; ignored
-build/node_modules directories are not current implementation. Retrieve exact
-historical files through repository history. Do not revive the frozen Desktop
-or treat development review hosts as production acceptance.
+The old Deno server and Desktop source were retired from the current Notes tree;
+ignored build/node_modules directories are not current implementation. Retrieve
+exact historical files through repository history. The preserved `dev/sync`
+review fixture has no supported native/server driver until the Rust/Tauri plan
+provides one. Do not revive the frozen Desktop or treat development review hosts
+as production acceptance.
 
 ## Historical provenance
 

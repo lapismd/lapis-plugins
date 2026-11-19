@@ -247,7 +247,8 @@ selection. This host milestone does not connect the Sync UI or activate apply.
 
 Current App-backed catalog seeds and copyable host examples use `.lapis`
 for application state, matching the Notes-wide default. Historical vault data
-and the frozen Deno host are not migrated or edited.
+is not migrated or edited; retired host source remains only in repository
+history.
 
 The private catalog install is frozen separately from the root workspace. Its
 current API 0.2.3/Core 0.7.2 graph and validation tooling retain the published
