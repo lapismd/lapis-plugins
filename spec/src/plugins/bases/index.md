@@ -241,9 +241,9 @@ The port keeps query and TanStack-to-Svelte adapters private. Package evidence
 retains the legacy 14-file / 142-test baseline and adds regressions for explicit
 App flow, ordered and flushed writes, URL revocation, invalid read-only YAML,
 and the published entrypoint without expanding the public surface.
-Deno desktop, web, and the real-App catalog import the plugin and stylesheet from
-the package, register it through a story-owned static profile, and load it
-before metadata and persisted layout restoration.
+Web and the real-App catalog import the plugin and stylesheet from the package,
+register it through a story-owned static profile, and load it before metadata
+and persisted layout restoration.
 
 ## Presentation and workflow components
 
@@ -299,8 +299,8 @@ ranges now admit that boundary directly; the Avatar repair remains a recorded
 local candidate until the separate release gate.
 
 Current App-backed catalog seeds and copyable host examples use `.lapis`
-for application state, matching the Notes-wide default. Historical vault data
-and the frozen Deno host are not migrated or edited.
+for application state, matching the Notes-wide default. This package does not
+migrate or edit historical vault data.
 
 ## File artwork
 

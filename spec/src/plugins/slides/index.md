@@ -150,8 +150,8 @@ ranges now admit that boundary directly; the Avatar repair remains a recorded
 local candidate until the separate release gate.
 
 Current App-backed catalog seeds and copyable host examples use `.lapis`
-for application state, matching the Notes-wide default. Historical vault data
-and the frozen Deno host are not migrated or edited.
+for application state, matching the Notes-wide default. This package does not
+migrate or edit historical vault data.
 
 Release recovery prepares `slides@0.1.2` from the current source through the common signed-archive pipeline. The earlier `0.1.1` npm version and GitHub assets remain immutable. Package, archive and Storybook qualification precede the manual publication gate.
 

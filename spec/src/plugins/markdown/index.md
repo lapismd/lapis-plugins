@@ -163,8 +163,8 @@ packed plugin shares the host's App and framework identity.
 The production plugin also owns the Tags panel. Its persisted panel IDs follow
 the canonical Obsidian-compatible names governed by `LN-MD-085` and
 `LN-MD-086`, while former Lapis IDs remain load-only compatibility aliases.
-The Deno desktop host loads the same public Markdown package and verified asset
-metadata as web; Markdown does not own a desktop-specific loader or asset URL.
+Supported application hosts load the same public Markdown package and verified
+asset metadata; Markdown does not own a host-specific loader or asset URL.
 Package acceptance resolves Markdown manifest metadata from the packed npm
 package, independently of the repository source layout.
 
