@@ -28,6 +28,7 @@ test("audit rejects live-Deno review restoration but keeps engine portability", 
     "packages/sync/registry-content/overview.md",
     "spec/src/distribution.md",
     "spec/src/spec-governance.md",
+    "spec/src/plugins/sync/implementation-context.md",
     "spec/src/plugins/sync/index.md",
     "spec/src/verification.md",
   ])
@@ -59,6 +60,19 @@ test("audit rejects live-Deno review restoration but keeps engine portability", 
   );
   await writeFile(
     path.join(root, "packages/sync/registry-content/overview.md"),
+    "retained\n",
+  );
+  await writeFile(
+    path.join(root, "spec/src/plugins/sync/implementation-context.md"),
+    "Do not revive the frozen Desktop.\n",
+  );
+  assert.ok(
+    auditRetiredSyncDenoReview(root).some((finding) =>
+      finding.includes("spec/src/plugins/sync/implementation-context.md"),
+    ),
+  );
+  await writeFile(
+    path.join(root, "spec/src/plugins/sync/implementation-context.md"),
     "retained\n",
   );
   await writeFile(

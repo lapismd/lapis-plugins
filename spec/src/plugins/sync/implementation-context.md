@@ -52,7 +52,7 @@ of Git checkpoints into Sync revisions is planned in this first scope.
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
 | `packages/sync`             | Protocol codecs, encrypted object graph, local checkpoint/outbox, ancestry and membership policies, guarded-apply foundations and retained UI    | No complete production runtime; private, excluded from installation and release; tests/stories parked          |
 | `lapis-notes/packages/api`  | Scoped identity/change cursors, guarded I/O, generated state, origin/network grants, crypto, pairing, membership, recovery and editor protection | Current native consumer selection and complete Sync writer qualification                                       |
-| Notes Deno desktop/services | Dedicated stores, wrapped keys/Keychain custody, admitted security/data RPC, guarded filesystem and durable receipts                             | Frozen Desktop reference; earlier acceptance does not qualify Tauri/Rust                                       |
+| Retired Notes Deno desktop/services | Dedicated stores, wrapped keys/Keychain custody, admitted security/data RPC, guarded filesystem and durable receipts                     | Historical reference only; earlier acceptance does not qualify Tauri/Rust                                     |
 | `lapis-desktop`             | Generic API SyncHostService construction/disposal, editor registry and native application infrastructure                                         | No installed Sync plugin, native Sync security/local provider, engine integration or scheduler                 |
 | Old Deno server             | Account authorization/handoff, managed-vault discovery and connection review                                                                     | Durable destination and continuously operating Sync participant were unfinished                                |
 | `lapis-server`              | Hosted managed vaults, authenticated access and shared Rust application services                                                                 | Sync-specific authorization integration, enrollment, event/object repository, destination APIs and participant |
@@ -93,8 +93,8 @@ The old Deno server and Desktop source were retired from the current Notes tree;
 ignored build/node_modules directories are not current implementation. Retrieve
 exact historical files through repository history. The preserved `dev/sync`
 review fixture has no supported native/server driver until the Rust/Tauri plan
-provides one. Do not revive the frozen Desktop or treat development review hosts
-as production acceptance.
+provides one. Do not revive the retired Desktop or treat development review
+hosts as production acceptance.
 
 ## Historical provenance
 
