@@ -13,13 +13,19 @@ test("retired live-Deno Sync review has no driver or current authority", () => {
 test("audit rejects live-Deno review restoration but keeps engine portability", async (t) => {
   const root = await mkdtemp(path.join(tmpdir(), "lapis-sync-deno-review-"));
   t.after(() => rm(root, { recursive: true, force: true }));
-  for (const directory of ["dev/sync", "spec/src/plugins/sync"])
+  for (const directory of [
+    "dev/sync",
+    "packages/sync/registry-content",
+    "spec/src/plugins/sync",
+  ])
     await mkdir(path.join(root, directory), { recursive: true });
   for (const file of [
     "dev/sync/main.ts",
     "dev/sync/Review.svelte",
     "dev/sync/playwright.config.ts",
     "dev/sync/vite.config.mjs",
+    "packages/sync/README.md",
+    "packages/sync/registry-content/overview.md",
     "spec/src/distribution.md",
     "spec/src/spec-governance.md",
     "spec/src/plugins/sync/index.md",
@@ -32,6 +38,29 @@ test("audit rejects live-Deno review restoration but keeps engine portability", 
         : "retained\n",
     );
   assert.deepEqual(auditRetiredSyncDenoReview(root), []);
+  await writeFile(
+    path.join(root, "packages/sync/README.md"),
+    "Start the existing Notes Deno server for the private review.\n",
+  );
+  assert.ok(
+    auditRetiredSyncDenoReview(root).some((finding) =>
+      finding.includes("packages/sync/README.md"),
+    ),
+  );
+  await writeFile(path.join(root, "packages/sync/README.md"), "retained\n");
+  await writeFile(
+    path.join(root, "packages/sync/registry-content/overview.md"),
+    "The Deno transport is still under development.\n",
+  );
+  assert.ok(
+    auditRetiredSyncDenoReview(root).some((finding) =>
+      finding.includes("packages/sync/registry-content/overview.md"),
+    ),
+  );
+  await writeFile(
+    path.join(root, "packages/sync/registry-content/overview.md"),
+    "retained\n",
+  );
   await writeFile(
     path.join(root, "dev/sync/native-sign-in.spec.ts"),
     'spawn("deno", ["run", "driver.ts"]);\n',
