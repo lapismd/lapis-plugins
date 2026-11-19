@@ -5,10 +5,11 @@ an injectable runtime, plus a headless Nostr-compatible protocol foundation for
 Lapis Server. End-to-end encryption is mandatory; only enrolled endpoints may
 read or mutate synchronized content.
 
-The package remains private. Its default runtime checks real Deno protocol
-and account access through the existing authenticated control plane. It never
-claims that connection success means content is synchronized. Enrollment,
-checkpoints, transfer and scheduling remain subsequent implementation slices.
+The package remains private. Its retained browser review renders the account
+and connection states without claiming that connection success means content is
+synchronized. Live account, native-process and protected-persistence acceptance
+wait for the planned Rust/Tauri host. Enrollment, checkpoints, transfer and
+scheduling remain subsequent implementation slices.
 
 `SyncPlugin` owns the workspace commands, status bar and declarative settings.
 Hosts can provide a complete `SyncRuntime` through `SyncPluginOptions.createRuntime`; the
@@ -76,12 +77,8 @@ and temporary dependency limits. Licensed under [Apache-2.0](LICENSE.md); see
 ## Private connection review
 
 Run `pnpm dev:sync` from this repository after building Source Editor and
-Markdown. This opens a persistent local vault at `http://localhost:6080/`.
-Start the existing Notes Deno server at `http://localhost:8797/`, sign in there,
-and create a managed vault. In Sync Settings enter that URL, choose the managed vault by name,
-then choose **Test connection**. The selected UUID has a truncated copy control. The localhost HTTP exception is host-only and
-never saved in plugin configuration. No content is sent.
-
-The private host proxies control-plane reads to that exact loopback origin;
-account cookies stay HTTP-only. Normal deployments require HTTPS and an
-authenticated host transport through `SyncPluginOptions.connection.request`.
+Markdown to render the retained browser fixture at `http://localhost:6080/`.
+There is no supported live account host for this review. Do not restore or
+start the retired Notes Deno server or native driver. Resume live connection
+acceptance only after the owning Sync plan supplies the reviewed Rust/Tauri
+server and native-account adapter.

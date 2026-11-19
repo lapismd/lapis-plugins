@@ -9,5 +9,5 @@ content. Device pairing and recovery controls keep secrets out of ordinary
 plugin settings.
 
 This plugin is currently a private preview. The catalog uses an injected
-preview runtime; the Deno transport is still under development and these
+preview runtime; the planned Rust/Tauri host is future delivery and these
 screenshots do not demonstrate a live server connection.

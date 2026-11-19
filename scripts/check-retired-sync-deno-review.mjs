@@ -18,6 +18,8 @@ const implementationFiles = [
 ];
 
 const currentAuthorityFiles = [
+  "packages/sync/README.md",
+  "packages/sync/registry-content/overview.md",
   "spec/src/distribution.md",
   "spec/src/spec-governance.md",
   "spec/src/plugins/sync/index.md",
@@ -28,7 +30,7 @@ const implementationReference =
   /VITE_SYNC_NATIVE_REVIEW|LAPIS_SYNC_NATIVE_(?:HOST_DRIVER|REVIEW_CLIENT)|runtime:\s*["']deno-desktop["']|Deno desktop window|real Deno|spawn\(\s*["']deno["']|native-(?:playwright|sign-in)/u;
 
 const staleAuthorityReference =
-  /Preserve separately invoked private Sync native-review acceptance|Private Sync native-review commands retain|operator-provided Deno runtime|explicitly supplied external Deno runtime|real Deno (?:protocol|journey|selection\/reload acceptance)|private-app\/Deno acceptance|real-server\/Keychain UI journey/u;
+  /Preserve separately invoked private Sync native-review acceptance|Private Sync native-review commands retain|operator-provided Deno runtime|explicitly supplied external Deno runtime|real Deno (?:protocol|journey|selection\/reload acceptance)|private-app\/Deno acceptance|real-server\/Keychain UI journey|existing Notes Deno server|Deno transport is still under development/u;
 
 function inspectFile(directory, relative, pattern, message, errors) {
   const absolute = path.join(directory, relative);
