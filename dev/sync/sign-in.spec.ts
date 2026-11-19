@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { test, expect } from "@playwright/test";
 
-test("Sync Settings signs into real Deno, discovers vaults and signs out across origins", async ({
+test("Sync Settings signs into the account server, discovers vaults and signs out across origins", async ({
   page,
   context,
 }) => {

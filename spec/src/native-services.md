@@ -150,6 +150,9 @@ API 0.2.3 settles browser Sync initialization before its owned cleanup. The
 root and independent Sync validation graphs take that published repair while
 preserving qualified Rust revisions, native algorithms and host capabilities.
 Final hosted/native acceptance remains with each consumer.
+Retiring the unsupported live-Deno review driver changes no LN-NATIVE-005
+algorithm, fixture or source pin. The parked browser review remains available;
+native account and process acceptance waits for the planned Rust/Tauri host.
 Core 0.7.4 is the verified registry renderer input for both graphs. Retain the
 canonical root Bits patch when building runtime bundles; changing this npm
 input does not advance or replace a qualified native Git revision.

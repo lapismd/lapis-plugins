@@ -50,6 +50,7 @@ export default defineConfig(tableRequirements(), {
   },
   diagnostics: {
     "RETIRED-SHARED-AI": "LP-SPEC-061",
+    "RETIRED-SYNC-DENO-REVIEW": "LP-SPEC-063",
     "STORYBOOK-PARITY": "LP-SPEC-054",
     "STORYBOOK-DOCS-CONTRACT": "LP-SPEC-044",
     "STORYBOOK-DOCS-COMPONENT": "LP-SPEC-046",
@@ -112,6 +113,14 @@ export default defineConfig(tableRequirements(), {
           pattern: "^crates/lapis-plugin-services/",
           chapters: ["spec/src/native-services.md"],
         },
+        {
+          pattern: "^dev/sync/",
+          chapters: [
+            "spec/src/plugins/sync/index.md",
+            "spec/src/distribution.md",
+            "spec/src/spec-governance.md",
+          ],
+        },
         ...packages.map((name) => ({
           pattern: `^packages/${name}/`,
           chapters: [`spec/src/plugins/${name}/index.md`],
@@ -140,12 +149,13 @@ export default defineConfig(tableRequirements(), {
       ],
       protected: [
         "^crates/lapis-plugin-services/",
-        "^(?:packages/|stories/|package\\.json$|pnpm-|turbo\\.json$|svelte\\.config\\.js$|vitest\\.config\\.ts$|\\.storybook/|\\.changeset/|\\.github/|scripts/|patches/|README\\.md$|RELEASING\\.md$|AGENTS\\.md$|spec-validator\\.config\\.mjs$)",
+        "^(?:dev/sync/|packages/|stories/|package\\.json$|pnpm-|turbo\\.json$|svelte\\.config\\.js$|vitest\\.config\\.ts$|\\.storybook/|\\.changeset/|\\.github/|scripts/|patches/|README\\.md$|RELEASING\\.md$|AGENTS\\.md$|spec-validator\\.config\\.mjs$)",
       ],
     },
   },
   plugins: [
     "scripts/spec-validation/retired-ai.mjs",
+    "scripts/spec-validation/retired-sync-deno-review.mjs",
     "scripts/spec-validation/storybook-parity.mjs",
     "scripts/spec-validation/storybook-docs-audit.mjs",
   ],

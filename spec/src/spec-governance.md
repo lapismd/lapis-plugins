@@ -65,6 +65,7 @@ Manifest, peer and integrity facts SHA256: `c8fa6b73967b90792fef1db96b6104c0ec7a
 | ID          | Requirement                                                                                                                                                                                                                                                                                                                                                     |
 | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | LP-SPEC-062 | First-party dependency intake MUST retain the reviewed active-manifest/registry-owner map, independently verify compatible patch facts and lock/manifest/canonical closure in ordinary checks outside bot exemptions, and reject unsupported migrations, stale policy, same-version integrity mutation, unrelated source changes and unapproved release intent. |
+| LP-SPEC-063 | Normal and canonical checks MUST reject restoration of retired live-Deno Sync review drivers, native command entrypoints or Deno Desktop bridge selection. The parked engine's Node/Deno portability evidence, browser review and future Rust/Tauri contracts MUST remain intact.                                                                               |
 
 The source profile excludes parked Community/Sync and retired shared AI products.
 Existing App ownership, public host contracts, audits, signed image reuse,
@@ -190,8 +191,9 @@ remain unchanged under LP-SPEC-053.
 
 LP-SPEC-053 portable Docker workers have no Deno runtime prerequisite. Image
 builds reject an unexpected Deno executable; non-Deno tool probes still fail
-closed. Private Sync native-review commands retain their explicitly supplied
-external Deno runtime and parked/future contracts.
+closed. The parked Sync browser review retains its future contracts, but the
+unsupported live-Deno review driver and native command entrypoints stay
+retired.
 
 LP-SPEC-053 defaults local portable validation to isolated Docker workers;
 hosted CI explicitly uses its provisioned native runtime. The repository-owned
@@ -246,10 +248,10 @@ assertions. Cold focused stories qualify overlay readiness, tool-summary
 selectors and Bases picker accessibility; full suites remain required in CI
 under the user's local memory-pressure constraint.
 
-Private Sync sign-in acceptance records its isolated host's real Deno journey
-separately from Storybook fixtures. A host dependency compatibility repair keeps
-the frozen registry graph and startup evidence explicit; it does not waive
-normal CI, packaging or publication gates.
+Private Sync sign-in acceptance records its isolated browser review against a
+loopback account server separately from Storybook fixtures. A host dependency
+compatibility repair keeps the frozen registry graph and startup evidence
+explicit; it does not waive normal CI, packaging or publication gates.
 
 Bases query-controls acceptance keeps the results menu visible for axe, covering
 its limit label and input. A reproduced contrast failure is fixed in the owning
