@@ -204,6 +204,8 @@ jobs:
         password: ${{ github.token }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - uses: ./.github/actions/ci-setup
       - name: Install pinned upstream JJ for release gates
         run: node scripts/validation/install-tools.mjs --ci

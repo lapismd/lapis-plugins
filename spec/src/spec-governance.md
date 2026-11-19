@@ -72,6 +72,9 @@ Existing App ownership, public host contracts, audits, signed image reuse,
 package/archive/signature qualification and release authority remain binding.
 The normal check and aggregate specification lane execute the independent
 source check; version preparation executes it before any writer authority.
+Protected release qualification MUST retain source ancestry so the same
+dependency-intake check can compare the selected source with its parent before
+any package publication, release asset, or registry dispatch.
 The separate coordinator activation and actual durable settlement/replay remain
 required. This source preparation enables no repository writer by itself.
 
