@@ -144,7 +144,7 @@ full-width action-feedback layout through its public npm exports.
 <!-- prettier-ignore -->
 | ID | Requirement |
 | --- | --- |
-| LN-SYNC-042 | The private plugin MUST verify the real Deno protocol and account-authorized managed-vault access without claiming enrollment or synchronized content. Owner or editor access is required. Connection checks MUST use deadlines, reject redirects and stale or disposed results, distinguish access denial from an unavailable server, and never persist credentials. HTTPS is required by default; a private development host MAY explicitly allow HTTP on literal loopback hosts without persisting that policy. |
+| LN-SYNC-042 | The private browser review MUST verify account-authorized managed-vault access without claiming enrollment or synchronized content. Owner or editor access is required. Connection checks MUST use deadlines, reject redirects and stale or disposed results, distinguish access denial from an unavailable server, never persist credentials, and require HTTPS except explicitly allowed literal-loopback development. Live native acceptance MUST wait for the planned Rust/Tauri host. |
 
 ## Managed vault selection
 
@@ -233,10 +233,11 @@ and network pairing delivery remain required before production runtime activatio
 The native kernel durably upgrades supported legacy roots to indexed journal
 format 2 before access; actual earlier kernels reject that format in Node and
 Deno acceptance. This does not activate application or server synchronization.
-The private default now checks real Deno protocol and account access through
-the existing control plane. It starts disconnected and exposes only connection
-testing; success does not grant enrollment or content authority. Deno event/object storage, enrollment and
-server capture/apply remain subsequent slices in the saved implementation plan.
+The private browser default checks account access through the existing control
+plane. It starts disconnected and exposes only connection testing; success does
+not grant enrollment or content authority. Native event/object storage,
+enrollment and server capture/apply remain subsequent Rust/Tauri slices in the
+saved implementation plan.
 
 The owning API also qualifies registered/protected asynchronous document loads
 and managed file/folder rename admission through public editing sessions.

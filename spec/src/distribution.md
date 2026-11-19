@@ -139,9 +139,10 @@ source and host acceptance remain separate.
 Portable Docker images MUST NOT install or expose Deno. Each registered worker
 MUST run without Deno while still requiring successful version probes for Node,
 pnpm, Jujutsu, Git and mdBook; missing or failed required tools remain fatal.
-Preserve separately invoked private Sync native-review acceptance and its
-operator-provided Deno runtime outside portable Docker lanes. This tooling
-retirement changes no plugin, public export, Sync service or native contract.
+The parked Sync review is browser-only after retirement of its unsupported
+live-Deno driver. Future native acceptance waits for the planned Rust/Tauri
+host. This tooling retirement changes no plugin, public export, Sync service,
+portable engine or native contract.
 
 LP-SPEC-016 version preparation MUST validate the source-owned qualification
 data through the pinned shared Lapis CI runtime guard after a releasable public
