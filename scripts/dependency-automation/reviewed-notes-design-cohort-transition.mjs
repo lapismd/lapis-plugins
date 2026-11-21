@@ -27,6 +27,7 @@ const receipt = {
   documents:
     "8e0962fdb9e03795964b83f715a03e765321902cb8a7add1b78975573894446a",
   paths: [
+    "docs/bases-compatibility/report.json",
     "package.json",
     "pnpm-lock.yaml",
     "scripts/dependency-automation/check-workspace-intake.mjs",
