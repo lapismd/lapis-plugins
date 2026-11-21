@@ -283,7 +283,7 @@ importers:
         specifier: ^0.4.0
         version: 0.4.0(svelte@5.56.10)
       '@lapismd/design-core':
-        specifier: ^0.13.6
+        specifier: ^0.13.7
         version: 0.13.7(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte':
         specifier: ^0.523.0
@@ -350,7 +350,7 @@ importers:
   packages/bookmarks:
     dependencies:
       '@lapismd/design-core':
-        specifier: ^0.13.6
+        specifier: ^0.13.7
         version: 0.13.7(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte':
         specifier: ^0.523.0
@@ -387,7 +387,7 @@ importers:
   packages/canvas:
     dependencies:
       '@lapismd/design-core':
-        specifier: ^0.13.6
+        specifier: ^0.13.7
         version: 0.13.7(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lapismd/mira':
         specifier: ~0.2.0
@@ -445,7 +445,7 @@ importers:
         specifier: ^0.4.0
         version: 0.4.0(svelte@5.56.10)
       '@lapismd/design-core':
-        specifier: ^0.13.6
+        specifier: ^0.13.7
         version: 0.13.7(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte':
         specifier: ^0.523.0
@@ -543,7 +543,7 @@ importers:
   packages/graph:
     dependencies:
       '@lapismd/design-core':
-        specifier: ^0.13.6
+        specifier: ^0.13.7
         version: 0.13.7(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte':
         specifier: ^0.523.0
@@ -745,7 +745,7 @@ importers:
   packages/search:
     dependencies:
       '@lapismd/design-core':
-        specifier: ^0.13.6
+        specifier: ^0.13.7
         version: 0.13.7(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte':
         specifier: ^0.523.0
@@ -834,7 +834,7 @@ importers:
         specifier: ^6.1.2
         version: 6.1.3
       '@lapismd/design-core':
-        specifier: ^0.13.6
+        specifier: ^0.13.7
         version: 0.13.7(svelte@5.56.10)(tailwindcss@4.3.3)
     devDependencies:
       '@sveltejs/package':
@@ -884,7 +884,7 @@ importers:
   packages/transcripts:
     dependencies:
       '@lapismd/design-core':
-        specifier: ^0.13.6
+        specifier: ^0.13.7
         version: 0.13.7(svelte@5.56.10)(tailwindcss@4.3.3)
       '@lucide/svelte':
         specifier: ^0.523.0
