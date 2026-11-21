@@ -1,5 +1,11 @@
 # Transcripts
 
+## 0.2.13
+
+### Patch Changes
+
+- [#175](https://github.com/lapismd/lapis-plugins/pull/175) [`eeb779b`](https://github.com/lapismd/lapis-plugins/commit/eeb779b664034eeba3ee49fac83da39dc8232f39) Thanks [@lapismd-dependency-bot](https://github.com/apps/lapismd-dependency-bot)! - Refresh first-party Lapis dependencies to the published versions recorded in this pull request.
+
 ## 0.2.12
 
 ### Patch Changes
