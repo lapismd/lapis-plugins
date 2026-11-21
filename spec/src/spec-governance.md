@@ -136,6 +136,12 @@ and full interaction/accessibility gates (LN-BASE-008/011/043, LP-SPEC-054).
 
 <!-- dependency-automation-policy -->
 
+The canonical intake guard correctly rejects a first-party proposal when pnpm
+also refreshes an unrelated direct importer. CodeMirror Lint 6.9.8 and
+React/React DOM 19.3.1 are therefore qualified in a separate lock-only source
+change, leaving the subsequent API, UI, Workspace and Design Core receipt
+bounded to its admitted packages and release intent (LP-SPEC-024).
+
 The Core 0.12.3 Bases prerequisite retains explicit source, verified-archive and registry-only evidence for the repeated-embed landmark and ID contract. Its dependency intake updates the mapped distribution and native-boundary chapters; it adds no spec-first exemption and does not authorize a plugin release.
 
 Dependency update PRs from the trusted LapisMD App, Dependabot or Renovate MAY skip specification checks using the PR author rather than the rerun actor. Functional checks remain required. The shared `lapismd/dependency-automation` coordinator proposes published first-party npm updates with Changeset release intent where required; it does not merge, publish, sign or deploy. This CI policy changes no runtime or public contract in this chapter.

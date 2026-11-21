@@ -123,6 +123,14 @@ publication gates (LN-BASE-008/011, LP-SPEC-054).
 
 <!-- dependency-automation-policy -->
 
+The current canonical dependency recovery keeps unrelated direct resolutions
+outside its first-party receipt. A separately reviewed lock-only prerequisite
+advances CodeMirror Lint to 6.9.8 and React/React DOM to 19.3.1 within the
+existing source-owned ranges before API, UI, Workspace and Design Core are
+reconciled. It changes no manifest, package version, public plugin contract or
+publication authority; the frozen install and dependency-intake guard remain
+required (LP-SPEC-024).
+
 The Bases Board/Activity renderer requires released Design Core 0.12.3 for independent repeated Board/Activity landmark and ID ownership. Root and Bases ranges declare that minimum; the root, Bases and the compatible UI peer graph resolve that released package identity. Temporary archive checks remain distinct from registry-only qualification, and this intake does not approve a plugin release.
 
 Dependency update PRs from the trusted LapisMD App, Dependabot or Renovate MAY skip specification checks using the PR author rather than the rerun actor. Functional checks remain required. The shared `lapismd/dependency-automation` coordinator proposes published first-party npm updates with Changeset release intent where required; it does not merge, publish, sign or deploy. This CI policy changes no runtime or public contract in this chapter.
