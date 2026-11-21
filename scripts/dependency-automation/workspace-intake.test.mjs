@@ -174,7 +174,7 @@ test("accepts provenance-only Bases report refresh with selected intake", () => 
     "0.2.1",
   );
 });
-test("accepts selected package peer metadata and non-selected peer-context refresh", () => {
+test("rejects selected package peer metadata and non-selected peer-context refresh", () => {
   const d = data();
   const lock = YAML.parse(d.files["pnpm-lock.yaml"]);
   const selected = Object.keys(lock.packages).find((key) =>
@@ -196,10 +196,7 @@ test("accepts selected package peer metadata and non-selected peer-context refre
       "0.3.0(bare-buffer@3.7.3)(zod@4.6.7)";
   }
   d.files["pnpm-lock.yaml"] = YAML.stringify(lock);
-  assert.equal(
-    verifyIntake(d).manifests["package.json"].devDependencies[sdk].version,
-    "0.2.1",
-  );
+  assert.throws(() => verifyIntake(d), /first-party metadata|first-party edge/);
 });
 for (const [name, mutate] of [
   [
