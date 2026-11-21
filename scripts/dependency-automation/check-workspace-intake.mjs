@@ -1,14 +1,17 @@
-import { existsSync, readFileSync, realpathSync } from "node:fs";
-import { execFileSync } from "node:child_process";
+import { existsSync, lstatSync, readFileSync, realpathSync } from "node:fs";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { isDeepStrictEqual } from "node:util";
+import { sourceIntakeReader } from "./source-intake-reader.mjs";
 import { intakeFacts, verifyIntake } from "./workspace-intake.mjs";
 
-export function checkWorkspaceIntake(root = process.cwd()) {
+export function checkWorkspaceIntake(
+  root = process.cwd(),
+  sourceReader = sourceIntakeReader,
+) {
   const read = (path) => {
     const target = resolve(root, path);
-    if (realpathSync(target) !== target)
+    if (realpathSync(target) !== target || !lstatSync(target).isFile())
       throw Error("Non-regular intake source");
     return readFileSync(target, "utf8");
   };
@@ -17,60 +20,10 @@ export function checkWorkspaceIntake(root = process.cwd()) {
     policy = JSON.parse(policyBytes);
   const inputs = ["pnpm-workspace.yaml", "pnpm-lock.yaml", ...policy.manifests],
     documents = Object.fromEntries(policy.chapters.map((p) => [p, read(p)]));
-  const run = (command, args) =>
-    execFileSync(command, args, {
-      cwd: root,
-      encoding: "utf8",
-      maxBuffer: 3 * 1024 * 1024,
-    });
-  const jj = existsSync(resolve(root, ".jj"));
-  const parent = (
-    jj
-      ? run("jj", [
-          "--ignore-working-copy",
-          "log",
-          "-r",
-          "@",
-          "--no-graph",
-          "-T",
-          'parents.map(|p| p.commit_id()).join("\\n")',
-        ])
-      : run("git", ["rev-parse", "HEAD^1"])
-  )
-    .trim()
-    .split("\n")[0];
-  if (!/^[a-f0-9]{40}$/.test(parent))
-    throw Error("Intake source ancestry unavailable");
-  const previous = (p) =>
-    jj
-      ? run("jj", [
-          "--ignore-working-copy",
-          "file",
-          "show",
-          "-r",
-          parent,
-          "--",
-          p,
-        ])
-      : run("git", ["show", `${parent}:${p}`]);
+  const previous = sourceReader(root);
   const before = Object.fromEntries(inputs.map((p) => [p, previous(p)])),
     files = Object.fromEntries(inputs.map((p) => [p, read(p)]));
-  const changedFiles = (
-    jj
-      ? run("jj", [
-          "--no-pager",
-          "diff",
-          "--from",
-          parent,
-          "--to",
-          "@",
-          "--name-only",
-        ])
-      : run("git", ["diff", "--name-only", parent, "HEAD"])
-  )
-    .trim()
-    .split("\n")
-    .filter(Boolean);
+  const changedFiles = previous.changedFiles();
   let basePolicyBytes, baseDocuments;
   if (
     !isDeepStrictEqual(intakeFacts(policy, before), intakeFacts(policy, files))
@@ -91,6 +44,7 @@ export function checkWorkspaceIntake(root = process.cwd()) {
     basePolicyBytes,
     baseDocuments,
     changedFiles,
+    sourceSha: previous.sourceSha,
   });
 }
 if (

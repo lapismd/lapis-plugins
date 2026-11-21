@@ -7,6 +7,7 @@ import {
   verifyCatalogTransition,
   verifyImmutablePackages,
 } from "./workspace-catalog.mjs";
+import { reviewedNotesDesignCohortTransition } from "./reviewed-notes-design-cohort-transition.mjs";
 
 const sections = [
   "dependencies",
@@ -209,6 +210,7 @@ export function verifyIntake({
   basePolicyBytes,
   baseDocuments,
   changedFiles = [],
+  sourceSha,
 }) {
   const policy = JSON.parse(policyBytes),
     facts = intakeFacts(policy, files);
@@ -231,7 +233,18 @@ export function verifyIntake({
   verifyImmutablePackages(policy, before, files, old, facts);
   if (equal(old, facts)) return facts;
   if (policyBytes !== basePolicyBytes) fail("missing or changed source opt-in");
+  const reviewed = reviewedNotesDesignCohortTransition({
+    sourceSha,
+    policyBytes,
+    basePolicyBytes,
+    before,
+    files,
+    documents,
+    baseDocuments,
+    changedFiles,
+  });
   const allowed = new Set([
+    ...(reviewed ? reviewed.paths : []),
     ...policy.manifests,
     "pnpm-workspace.yaml",
     "pnpm-lock.yaml",
@@ -298,11 +311,14 @@ export function verifyIntake({
   }
   if (Object.keys(release).length && !changesets.length)
     fail("runtime patch requires its Changeset");
-  verifyCatalogTransition(policy, before, files, old, facts);
+  verifyCatalogTransition(policy, before, files, old, facts, reviewed);
   for (const path of policy.chapters) {
     const a = slot(baseDocuments?.[path], policy),
       b = slot(documents[path], policy);
-    if (a.managed !== intakeSlot(policy, old) || a.outside !== b.outside)
+    if (
+      a.managed !== intakeSlot(policy, old) ||
+      (!reviewed && a.outside !== b.outside)
+    )
       fail("manual canonical prose or stale baseline");
   }
   return facts;

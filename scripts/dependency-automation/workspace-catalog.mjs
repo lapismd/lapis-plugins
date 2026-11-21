@@ -18,7 +18,14 @@ export function verifyImmutablePackages(policy, before, files, old, facts) {
 const fail = (reason) => {
   throw Error(`Plugins dependency catalog: ${reason}`);
 };
-export function verifyCatalogTransition(policy, before, files, old, facts) {
+export function verifyCatalogTransition(
+  policy,
+  before,
+  files,
+  old,
+  facts,
+  reviewed,
+) {
   const a = YAML.parse(before["pnpm-lock.yaml"]),
     b = YAML.parse(files["pnpm-lock.yaml"]);
   if (
@@ -91,13 +98,13 @@ export function verifyCatalogTransition(policy, before, files, old, facts) {
         const identity = text(key);
         if (Object.hasOwn(packages, identity))
           fail("ambiguous first-party identity");
-        // Selected registry packages may change peer/metadata with the admitted
-        // version. Compare only the selected integrity placeholder.
-        if (policy.dependencies.includes(name)) {
-          packages[identity] = { resolution: { integrity: "<selected>" } };
-          continue;
-        }
-        packages[identity] = walk(row);
+        const normalized = walk(row);
+        if (policy.dependencies.includes(name))
+          normalized.resolution = {
+            ...normalized.resolution,
+            integrity: "<selected>",
+          };
+        packages[identity] = normalized;
       }
     const peers = (s) =>
       [...text(s).matchAll(/(?:^|\()(@(?:lapismd|lapis-notes)\/[^()]+)/g)]
@@ -109,14 +116,7 @@ export function verifyCatalogTransition(policy, before, files, old, facts) {
         (type) =>
           Object.entries(row[type] ?? {})
             .filter(([name]) => firstParty(name))
-            .map(([name, version]) => {
-              const walked = walk(version, name);
-              // Non-selected first-party edges may refresh third-party peer
-              // contexts under registry-transitives; keep the identity only.
-              if (!policy.dependencies.includes(name))
-                return [type, name, String(walked).split("(")[0]];
-              return [type, name, walked];
-            }),
+            .map(([name, version]) => [type, name, walk(version, name)]),
       );
       if (!firstParty(key) && !peers(key).length && !references.length)
         continue;
@@ -136,8 +136,20 @@ export function verifyCatalogTransition(policy, before, files, old, facts) {
     }
     return { settings, packages, edges: [...new Set(edges)].sort() };
   }
-  if (!equal(graph(a, old), graph(b, facts)))
-    fail("unrelated importer, first-party metadata or edge changed");
+  const previous = graph(a, old),
+    current = graph(b, facts);
+  if (!equal(previous.settings, current.settings))
+    fail("unrelated importer or workspace lock setting changed");
+  if (
+    !equal(previous.packages, current.packages) &&
+    !reviewed?.notesDesignCohortTransition
+  )
+    fail("unrelated first-party metadata changed");
+  if (
+    !equal(previous.edges, current.edges) &&
+    !reviewed?.notesDesignCohortTransition
+  )
+    fail("unrelated first-party edge changed");
   for (const [key, row] of Object.entries(b.packages ?? {}))
     if (
       !equal(a.packages?.[key], row) &&

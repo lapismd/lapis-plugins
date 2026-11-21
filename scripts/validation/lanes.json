@@ -5,7 +5,7 @@
   "check:no-tailwind": "node scripts/check-no-tailwind.mjs",
   "packages:check": "node scripts/sync-package-metadata.mjs --check && node scripts/sync-package-docs.mjs --check && node scripts/check-package-boundaries.mjs && node scripts/check-registry-metadata.mjs",
   "test": "node --env-file-if-exists=.env scripts/run-turbo.mjs test",
-  "test:dependency-intake": "node --test scripts/dependency-automation/workspace-intake.test.mjs",
+  "test:dependency-intake": "node --test scripts/dependency-automation/workspace-intake.test.mjs scripts/dependency-automation/reviewed-notes-design-cohort-transition.test.mjs scripts/dependency-automation/source-intake-reader.test.mjs",
   "test:release": "node --test scripts/*.test.mjs scripts/dependency-automation/workspace-intake.test.mjs",
   "test:release:nostr": "node --test scripts/deferred-nostr-tests/*.test.mjs",
   "packages:pack": "node --env-file-if-exists=.env scripts/pack-packages.mjs",
