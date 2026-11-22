@@ -198,6 +198,12 @@ source pins and host-specific owner cutover retain their separate gates.
 | LN-NATIVE-004 | The native Canvas Search extractor MUST preserve the retained built-in provider’s ordered field extraction, blank-value filtering and original-source fallback. Shared complete outcomes MUST qualify both implementations. Application services MUST own provider selection, configuration, source admission and publication.                                                                                                                                                                                        |
 | LN-NATIVE-005 | Pure Rust Sync algorithms MUST remain independent of Tauri, HTTP, databases, renderers and application scheduling. Their protocol codecs MUST match the retained TypeScript engine through a shared frozen complete-output corpus, including expected failures. NIP-01 identifiers and BIP-340 signatures MUST be recomputed and verified for every accepted outer and attested event; mutable verification caches MUST NOT authorize changed records. Runtime parity and native host adoption retain separate gates. |
 
+The native Markdown service also provides strict frontmatter inspection and
+per-key patching for saved notes. Patches MUST preserve the Markdown body and
+unrelated YAML source, compare the reparsed result with the intended mapping,
+and refuse malformed documents or layouts that cannot be safely edited.
+File admission, version checks and publication belong to the host.
+
 LN-NATIVE-005 now qualifies the protocol and runtime algorithm corpus, including
 one normalized checkpoint-to-applied-tip history. It does not qualify durable
 repositories, filesystem mutation, custody, scheduling, server participation or

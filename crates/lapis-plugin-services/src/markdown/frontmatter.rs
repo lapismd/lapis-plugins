@@ -46,7 +46,7 @@ fn key(node: &Yaml<'_>, depth: usize) -> Result<String, ()> {
     })
 }
 
-fn convert(node: &Yaml<'_>, depth: usize) -> Result<Value, ()> {
+pub(super) fn convert(node: &Yaml<'_>, depth: usize) -> Result<Value, ()> {
     if depth > 128 {
         return Err(());
     }
