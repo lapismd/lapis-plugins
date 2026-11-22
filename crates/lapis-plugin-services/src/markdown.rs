@@ -1,4 +1,7 @@
 mod frontmatter;
+mod frontmatter_edit;
+
+pub use frontmatter_edit::{FrontmatterError, patch_frontmatter, read_frontmatter};
 
 use regex::Regex;
 use serde_json::{Map, Value, json};
