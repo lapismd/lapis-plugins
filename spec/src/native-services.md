@@ -7,7 +7,7 @@ Current registry dependency coordinates; qualification remains separate.
 <!-- prettier-ignore -->
 | Manifest | Dependency | Range | Locked version |
 | --- | --- | --- | --- |
-| `package.json` (devDependencies) | `@lapis-notes/api` | `^0.6.12` | `0.6.12` |
+| `package.json` (devDependencies) | `@lapis-notes/api` | `^0.6.14` | `0.6.14` |
 | `package.json` (devDependencies) | `@lapis-notes/file-explorer` | `^0.2.8` | `0.2.8` |
 | `package.json` (devDependencies) | `@lapis-notes/language-service` | `^0.1.6` | `0.1.6` |
 | `package.json` (devDependencies) | `@lapis-notes/ui` | `^0.2.8` | `0.2.8` |
@@ -56,7 +56,7 @@ Current registry dependency coordinates; qualification remains separate.
 | `packages/transcripts/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
 | `packages/wordcount/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
 
-Manifest, peer and integrity facts SHA256: `9fafea062c9cf34dcace3dfce3fced28865bf99e2262aa7809f5ed16d27234be`.
+Manifest, peer and integrity facts SHA256: `65765116c3a38c447819c9726803ec1b25cf615b635cac68c2cdf4fb1d04187b`.
 
 <!-- dependency-intake:framework-registry:end -->
 
@@ -491,3 +491,6 @@ held hosts are unchanged; publication still needs its existing exact-source gate
 
 The registry fixture's patched localization development dependency changes no
 native engine revision, generated native contract, feature gate or host custody.
+
+The API 0.6.14 fixture intake changes only the private registry development
+graph; native revisions, host custody and feature authority retain their gates.

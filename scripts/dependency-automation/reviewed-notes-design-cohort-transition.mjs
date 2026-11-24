@@ -3,7 +3,7 @@ import { isDeepStrictEqual as equal } from "node:util";
 
 // Reviewed source, never loaded from a candidate manifest, actor or environment.
 // The immutable receipt is populated after the complete candidate is assembled.
-const receipt = {
+const originalReceipt = {
   sourceSha: "32b1680b478e8094716c94cdc89a4854660bf4d8",
   policy: "83acf38da08046331ae7d7475df1c73e01a0706aa7a9a97b36e1aa04c5a5cf52",
   before: {
@@ -24,8 +24,7 @@ const receipt = {
   },
   baseDocuments:
     "b548b6959f8fb2a20c02a3672301275e6192aeb9a010698d11b6bf2e24311d29",
-  documents:
-    "8e0962fdb9e03795964b83f715a03e765321902cb8a7add1b78975573894446a",
+  documents: "8e0962fdb9e03795964b83f715a03e765321902cb8a7add1b78975573894446a",
   paths: [
     "docs/bases-compatibility/report.json",
     "package.json",
@@ -64,6 +63,59 @@ const receipt = {
   ],
 };
 
+const localizationReceipt = {
+  sourceSha: "44d97ac52a04e93b872878bc448500e023446e7b",
+  policy: "83acf38da08046331ae7d7475df1c73e01a0706aa7a9a97b36e1aa04c5a5cf52",
+  before: {
+    "package.json":
+      "bf4af834b404b896afb565105166eccf62597ea709654905c02ed598433359ae",
+    "pnpm-workspace.yaml":
+      "95df0bbc119e77933b938121b60e54405d8507cb2fc3c4b8c17d9534f6d63c1b",
+    "pnpm-lock.yaml":
+      "8e47e8291545a7de58c728f2fbd6d68c2a7bf3a2532da978801ab4ac6fca246e",
+  },
+  after: {
+    "package.json":
+      "1f5dacdf1aad0daf4695376d65b0893e092ff691b2fef9ac01afe53124363b8e",
+    "pnpm-workspace.yaml":
+      "95df0bbc119e77933b938121b60e54405d8507cb2fc3c4b8c17d9534f6d63c1b",
+    "pnpm-lock.yaml":
+      "7a038bbb8ed84e04fa4d49d9f5eac4a24bfab421eb8c7665fdd85685c461e7d4",
+  },
+  baseDocuments:
+    "ff79a09c41dec058c67175f1c0a6644f98887db74d6be9046ff3f6fc9e839550",
+  documents: "4cb9d8d59ef682d798e13ffbdb22db16997aad10d8baa98b09e837bdc82cfe87",
+  paths: [
+    "docs/bases-compatibility/report.json",
+    "package.json",
+    "pnpm-lock.yaml",
+    "scripts/dependency-automation/reviewed-notes-design-cohort-transition.mjs",
+    "scripts/dependency-automation/reviewed-notes-design-cohort-transition.test.mjs",
+    "scripts/fixtures/reviewed-localization-peer-transition.json.gz",
+    "spec/records/2026-11-24-api-0614-registry-intake.md",
+    "spec/src/distribution.md",
+    "spec/src/native-services.md",
+    "spec/src/plugins/bases/index.md",
+    "spec/src/plugins/bookmarks/index.md",
+    "spec/src/plugins/canvas/index.md",
+    "spec/src/plugins/csv/index.md",
+    "spec/src/plugins/docx/index.md",
+    "spec/src/plugins/graph/index.md",
+    "spec/src/plugins/history/index.md",
+    "spec/src/plugins/markdown-lint/index.md",
+    "spec/src/plugins/markdown/index.md",
+    "spec/src/plugins/pdf/index.md",
+    "spec/src/plugins/search/index.md",
+    "spec/src/plugins/slides/index.md",
+    "spec/src/plugins/source-editor/index.md",
+    "spec/src/plugins/spellcheck/index.md",
+    "spec/src/plugins/transcripts/index.md",
+    "spec/src/plugins/wordcount/index.md",
+    "spec/src/spec-governance.md",
+    "spec/src/verification.md",
+  ],
+};
+
 const hash = (value) => createHash("sha256").update(value).digest("hex");
 
 export function reviewedNotesDesignCohortTransition(data) {
@@ -76,7 +128,11 @@ export function reviewedNotesDesignCohortTransition(data) {
   const fail = () => {
     throw Error("Reviewed Notes and Design cohort transition binding mismatch");
   };
+  const receipt = [originalReceipt, localizationReceipt].find(
+    (entry) => entry.sourceSha === data.sourceSha,
+  );
   if (
+    !receipt ||
     data.sourceSha !== receipt.sourceSha ||
     hash(data.policyBytes) !== receipt.policy ||
     hash(data.basePolicyBytes) !== receipt.policy ||
