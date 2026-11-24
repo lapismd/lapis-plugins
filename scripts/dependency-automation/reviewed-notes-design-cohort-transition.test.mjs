@@ -30,15 +30,13 @@ test("real Notes and Design cohort transition admits exact immutable source only
     "0.2.8",
   );
   assert.equal(
-    facts.manifests["package.json"].devDependencies[
-      "@lapis-notes/workspace"
-    ].version,
+    facts.manifests["package.json"].devDependencies["@lapis-notes/workspace"]
+      .version,
     "0.4.10",
   );
   assert.equal(
-    facts.manifests["package.json"].devDependencies[
-      "@lapismd/design-core"
-    ].version,
+    facts.manifests["package.json"].devDependencies["@lapismd/design-core"]
+      .version,
     "0.13.7",
   );
   assert.deepEqual(data, saved);
@@ -63,7 +61,8 @@ for (const [name, mutate] of [
     "missing reviewed implementation",
     (data) =>
       (data.changedFiles = data.changedFiles.filter(
-        (path) => path !== "scripts/dependency-automation/workspace-catalog.mjs",
+        (path) =>
+          path !== "scripts/dependency-automation/workspace-catalog.mjs",
       )),
   ],
   ["extra path", (data) => data.changedFiles.push("src/unreviewed.ts")],
@@ -105,6 +104,70 @@ for (const [name, mutate] of [
 ])
   test(`Notes and Design cohort transition rejects ${name}`, () => {
     const data = fresh();
+    mutate(data);
+    assert.throws(() => verifyIntake(data));
+  });
+
+const localizationFixture = JSON.parse(
+  gunzipSync(
+    readFileSync(
+      new URL(
+        "../fixtures/reviewed-localization-peer-transition.json.gz",
+        import.meta.url,
+      ),
+    ),
+  ),
+);
+test("published localization peer intake admits its exact reviewed source", () => {
+  const data = structuredClone(localizationFixture);
+  const saved = structuredClone(data);
+  const facts = verifyIntake(data);
+  assert.equal(
+    facts.manifests["package.json"].devDependencies["@lapis-notes/api"].version,
+    "0.6.14",
+  );
+  assert.deepEqual(data, saved);
+});
+for (const [name, mutate] of [
+  [
+    "historical receipt replay",
+    (data) => (data.sourceSha = "32b1680b478e8094716c94cdc89a4854660bf4d8"),
+  ],
+  [
+    "changed localization peer",
+    (data) => {
+      const lock = YAML.parse(data.files["pnpm-lock.yaml"]);
+      lock.packages["@lapis-notes/api@0.6.14"].peerDependencies.i18next = "*";
+      data.files["pnpm-lock.yaml"] = YAML.stringify(lock);
+    },
+  ],
+  ["another base", (data) => (data.sourceSha = "e".repeat(40))],
+  ["changed policy", (data) => (data.policyBytes += " ")],
+  ["changed manifest", (data) => (data.files["package.json"] += " ")],
+  ["changed lock", (data) => (data.files["pnpm-lock.yaml"] += " ")],
+  ["changed workspace", (data) => (data.files["pnpm-workspace.yaml"] += " ")],
+  ["extra scope", (data) => data.changedFiles.push("src/unreviewed.ts")],
+  [
+    "ordinary intake",
+    (data) =>
+      (data.changedFiles = data.changedFiles.filter(
+        (p) =>
+          p !==
+          "scripts/dependency-automation/reviewed-notes-design-cohort-transition.mjs",
+      )),
+  ],
+  [
+    "canonical prose",
+    (data) => (data.documents[Object.keys(data.documents)[0]] += "unreviewed"),
+  ],
+  [
+    "canonical baseline",
+    (data) =>
+      (data.baseDocuments[Object.keys(data.baseDocuments)[0]] += "unreviewed"),
+  ],
+])
+  test(`localization peer transition rejects ${name}`, () => {
+    const data = structuredClone(localizationFixture);
     mutate(data);
     assert.throws(() => verifyIntake(data));
   });

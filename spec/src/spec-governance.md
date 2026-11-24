@@ -7,7 +7,7 @@ Current registry dependency coordinates; qualification remains separate.
 <!-- prettier-ignore -->
 | Manifest | Dependency | Range | Locked version |
 | --- | --- | --- | --- |
-| `package.json` (devDependencies) | `@lapis-notes/api` | `^0.6.12` | `0.6.12` |
+| `package.json` (devDependencies) | `@lapis-notes/api` | `^0.6.14` | `0.6.14` |
 | `package.json` (devDependencies) | `@lapis-notes/file-explorer` | `^0.2.8` | `0.2.8` |
 | `package.json` (devDependencies) | `@lapis-notes/language-service` | `^0.1.6` | `0.1.6` |
 | `package.json` (devDependencies) | `@lapis-notes/ui` | `^0.2.8` | `0.2.8` |
@@ -56,7 +56,7 @@ Current registry dependency coordinates; qualification remains separate.
 | `packages/transcripts/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
 | `packages/wordcount/package.json` (peerDependencies) | `@lapis-notes/api` | `^0.2.0 \|\| ^0.4.0 \|\| ^0.6.0` | Peer support |
 
-Manifest, peer and integrity facts SHA256: `9fafea062c9cf34dcace3dfce3fced28865bf99e2262aa7809f5ed16d27234be`.
+Manifest, peer and integrity facts SHA256: `65765116c3a38c447819c9726803ec1b25cf615b635cac68c2cdf4fb1d04187b`.
 
 <!-- dependency-intake:framework-registry:end -->
 
@@ -846,12 +846,17 @@ held hosts are unchanged; publication still needs its existing exact-source gate
 
 Registry-fixture tooling selects patched i18next `^26.3.4` as a direct private
 development dependency. LP-SPEC-057 keeps the installed graph audit unchanged.
-Notes API PR 198 qualifies that major and adds its public peer support; the
-private fixture temporarily records the older published API peer warning until
-that owner release is available. No plugin package range, runtime source, audit
+Published API 0.6.14 supplies the qualified compatible peer contract. The private
+root consumes that registry release, resolving the temporary current-API warning.
+The parked historical API line retains its documented private warning. No plugin package range, runtime source, audit
 ignore, publication or registry dispatch is changed by this tooling refresh.
 
 The separate parked Sync lockfile also supplies patched i18next explicitly.
 CI keeps its independent `pnpm --dir packages/sync audit --ignore-workspace`
 gate. No audit exception or peer-validation setting changes; legacy API peer
 warnings remain visible in this private, excluded validation graph.
+
+API 0.6.14's new localization peer metadata enters through a reviewed,
+source-bound transition. Its receipt binds the immutable base, unchanged policy,
+exact manifest/lock/workspace bytes, canonical slots and complete path set.
+Ordinary intake continues rejecting other metadata and source-scope changes.
