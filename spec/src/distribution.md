@@ -718,3 +718,7 @@ Core0.13.4, repaired Mira Editor/Mermaid0.0.5 and Deno-free validator0.2.1.
 normal package ranges, the ten independent runtime patch intents and a
 provenance-only Bases audit refresh. Native services, signing authority and
 held hosts are unchanged; publication still needs its existing exact-source gates.
+
+Registry-fixture development now selects patched i18next 26 through its normal
+private root range. The fixture's ordinary audit remains mandatory, and this
+refresh creates no plugin release, public artifact or registry dispatch.

@@ -843,3 +843,10 @@ Core0.13.4, repaired Mira Editor/Mermaid0.0.5 and Deno-free validator0.2.1.
 normal package ranges, the ten independent runtime patch intents and a
 provenance-only Bases audit refresh. Native services, signing authority and
 held hosts are unchanged; publication still needs its existing exact-source gates.
+
+Registry-fixture tooling selects patched i18next `^26.3.4` as a direct private
+development dependency. LP-SPEC-057 keeps the installed graph audit unchanged.
+Notes API PR 198 qualifies that major and adds its public peer support; the
+private fixture temporarily records the older published API peer warning until
+that owner release is available. No plugin package range, runtime source, audit
+ignore, publication or registry dispatch is changed by this tooling refresh.
