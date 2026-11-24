@@ -850,3 +850,8 @@ Notes API PR 198 qualifies that major and adds its public peer support; the
 private fixture temporarily records the older published API peer warning until
 that owner release is available. No plugin package range, runtime source, audit
 ignore, publication or registry dispatch is changed by this tooling refresh.
+
+The separate parked Sync lockfile also supplies patched i18next explicitly.
+CI keeps its independent `pnpm --dir packages/sync audit --ignore-workspace`
+gate. No audit exception or peer-validation setting changes; legacy API peer
+warnings remain visible in this private, excluded validation graph.

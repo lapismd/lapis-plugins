@@ -256,3 +256,10 @@ current API 0.2.3/Core 0.7.2 graph and validation tooling retain the published
 Vitest, body-parser and fast-uri repairs. Its audit has no unignored findings;
 the historical Zod gate no longer applies to this graph. The existing scoped
 development deepmerge CVE-2026-93753 ignore remains until a patched release.
+
+The parked package explicitly supplies patched i18next `^26.3.4` in its private
+standalone development graph. Its independent audit rejects the vulnerable
+inherited API peer resolution. The retained API 0.2.3 declaration produces a
+visible legacy peer warning; this private validation context does not change
+that published contract or qualify Sync for installation or publication.
+Retirement guards, unfinished test skips and workspace exclusions remain in force.
