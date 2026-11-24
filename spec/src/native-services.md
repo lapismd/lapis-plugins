@@ -488,3 +488,6 @@ Core0.13.4, repaired Mira Editor/Mermaid0.0.5 and Deno-free validator0.2.1.
 normal package ranges, the ten independent runtime patch intents and a
 provenance-only Bases audit refresh. Native services, signing authority and
 held hosts are unchanged; publication still needs its existing exact-source gates.
+
+The registry fixture's patched localization development dependency changes no
+native engine revision, generated native contract, feature gate or host custody.
